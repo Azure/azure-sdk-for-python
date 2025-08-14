@@ -1083,7 +1083,10 @@
         "percentilesw",
         "plotly",
         "nbformat",
-        "nbconvert"
+        "nbconvert",
+        "rollupby",
+        "milli",
+        "resourceid"
       ]
     },
     {

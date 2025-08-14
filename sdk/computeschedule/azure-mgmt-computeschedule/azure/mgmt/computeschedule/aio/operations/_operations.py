@@ -9,7 +9,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, overload
+from typing import Any, AsyncIterator, Callable, Dict, IO, List, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -25,18 +25,41 @@ from azure.core.exceptions import (
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
+from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
+from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ..._validation import api_version_validation
 from ...operations._operations import (
+    build_occurrence_extension_list_occurrence_by_vms_request,
+    build_occurrences_cancel_request,
+    build_occurrences_delay_request,
+    build_occurrences_get_request,
+    build_occurrences_list_by_scheduled_action_request,
+    build_occurrences_list_resources_request,
     build_operations_list_request,
+    build_scheduled_action_extension_list_by_vms_request,
+    build_scheduled_actions_attach_resources_request,
+    build_scheduled_actions_cancel_next_occurrence_request,
+    build_scheduled_actions_create_or_update_request,
+    build_scheduled_actions_delete_request,
+    build_scheduled_actions_detach_resources_request,
+    build_scheduled_actions_disable_request,
+    build_scheduled_actions_enable_request,
+    build_scheduled_actions_get_request,
+    build_scheduled_actions_list_by_resource_group_request,
+    build_scheduled_actions_list_by_subscription_request,
+    build_scheduled_actions_list_resources_request,
+    build_scheduled_actions_patch_resources_request,
+    build_scheduled_actions_trigger_manual_occurrence_request,
+    build_scheduled_actions_update_request,
     build_scheduled_actions_virtual_machines_cancel_operations_request,
     build_scheduled_actions_virtual_machines_execute_create_request,
     build_scheduled_actions_virtual_machines_execute_deallocate_request,
@@ -157,7 +180,7 @@ class Operations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ScheduledActionsOperations:
+class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1125,6 +1148,7 @@ class ScheduledActionsOperations:
         params_added_on={
             "2025-05-01": ["api_version", "subscription_id", "locationparameter", "content_type", "accept"]
         },
+        api_versions_list=["2025-05-01", "2025-04-15-preview"],
     )
     async def virtual_machines_execute_create(
         self, locationparameter: str, request_body: Union[_models.ExecuteCreateRequest, JSON, IO[bytes]], **kwargs: Any
@@ -1276,6 +1300,7 @@ class ScheduledActionsOperations:
         params_added_on={
             "2025-05-01": ["api_version", "subscription_id", "locationparameter", "content_type", "accept"]
         },
+        api_versions_list=["2025-05-01", "2025-04-15-preview"],
     )
     async def virtual_machines_execute_delete(
         self, locationparameter: str, request_body: Union[_models.ExecuteDeleteRequest, JSON, IO[bytes]], **kwargs: Any
@@ -1799,3 +1824,2933 @@ class ScheduledActionsOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-04-15-preview",
+        params_added_on={
+            "2025-04-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "scheduled_action_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-04-15-preview"],
+    )
+    async def get(self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any) -> _models.ScheduledAction:
+        """Get a ScheduledAction.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the ScheduledAction. Required.
+        :type scheduled_action_name: str
+        :return: ScheduledAction. The ScheduledAction is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.ScheduledAction
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ScheduledAction] = kwargs.pop("cls", None)
+
+        _request = build_scheduled_actions_get_request(
+            resource_group_name=resource_group_name,
+            scheduled_action_name=scheduled_action_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.ScheduledAction, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2025-04-15-preview",
+        params_added_on={
+            "2025-04-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "scheduled_action_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-04-15-preview"],
+    )
+    async def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        resource: Union[_models.ScheduledAction, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_scheduled_actions_create_or_update_request(
+            resource_group_name=resource_group_name,
+            scheduled_action_name=scheduled_action_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        resource: _models.ScheduledAction,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ScheduledAction]:
+        """Create a ScheduledAction.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the ScheduledAction. Required.
+        :type scheduled_action_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.computeschedule.models.ScheduledAction
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ScheduledAction. The ScheduledAction is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.computeschedule.models.ScheduledAction]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        resource: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ScheduledAction]:
+        """Create a ScheduledAction.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the ScheduledAction. Required.
+        :type scheduled_action_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ScheduledAction. The ScheduledAction is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.computeschedule.models.ScheduledAction]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ScheduledAction]:
+        """Create a ScheduledAction.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the ScheduledAction. Required.
+        :type scheduled_action_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ScheduledAction. The ScheduledAction is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.computeschedule.models.ScheduledAction]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-04-15-preview",
+        params_added_on={
+            "2025-04-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "scheduled_action_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-04-15-preview"],
+    )
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        resource: Union[_models.ScheduledAction, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ScheduledAction]:
+        """Create a ScheduledAction.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the ScheduledAction. Required.
+        :type scheduled_action_name: str
+        :param resource: Resource create parameters. Is one of the following types: ScheduledAction,
+         JSON, IO[bytes] Required.
+        :type resource: ~azure.mgmt.computeschedule.models.ScheduledAction or JSON or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns ScheduledAction. The ScheduledAction is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.computeschedule.models.ScheduledAction]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ScheduledAction] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                scheduled_action_name=scheduled_action_name,
+                resource=resource,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.ScheduledAction, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.ScheduledAction].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.ScheduledAction](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @overload
+    async def update(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        properties: _models.ScheduledActionUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.ScheduledAction:
+        """Update a ScheduledAction.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the ScheduledAction. Required.
+        :type scheduled_action_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.computeschedule.models.ScheduledActionUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ScheduledAction. The ScheduledAction is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.ScheduledAction
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        properties: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.ScheduledAction:
+        """Update a ScheduledAction.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the ScheduledAction. Required.
+        :type scheduled_action_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ScheduledAction. The ScheduledAction is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.ScheduledAction
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        properties: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.ScheduledAction:
+        """Update a ScheduledAction.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the ScheduledAction. Required.
+        :type scheduled_action_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ScheduledAction. The ScheduledAction is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.ScheduledAction
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-04-15-preview",
+        params_added_on={
+            "2025-04-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "scheduled_action_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-04-15-preview"],
+    )
+    async def update(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        properties: Union[_models.ScheduledActionUpdate, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.ScheduledAction:
+        """Update a ScheduledAction.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the ScheduledAction. Required.
+        :type scheduled_action_name: str
+        :param properties: The resource properties to be updated. Is one of the following types:
+         ScheduledActionUpdate, JSON, IO[bytes] Required.
+        :type properties: ~azure.mgmt.computeschedule.models.ScheduledActionUpdate or JSON or IO[bytes]
+        :return: ScheduledAction. The ScheduledAction is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.ScheduledAction
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ScheduledAction] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(properties, (IOBase, bytes)):
+            _content = properties
+        else:
+            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_scheduled_actions_update_request(
+            resource_group_name=resource_group_name,
+            scheduled_action_name=scheduled_action_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.ScheduledAction, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2025-04-15-preview",
+        params_added_on={
+            "2025-04-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "scheduled_action_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-04-15-preview"],
+    )
+    async def _delete_initial(
+        self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_scheduled_actions_delete_request(
+            resource_group_name=resource_group_name,
+            scheduled_action_name=scheduled_action_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-04-15-preview",
+        params_added_on={
+            "2025-04-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "scheduled_action_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-04-15-preview"],
+    )
+    async def begin_delete(
+        self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Delete a ScheduledAction.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the ScheduledAction. Required.
+        :type scheduled_action_name: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                scheduled_action_name=scheduled_action_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-04-15-preview",
+        params_added_on={"2025-04-15-preview": ["api_version", "subscription_id", "resource_group_name", "accept"]},
+        api_versions_list=["2025-04-15-preview"],
+    )
+    def list_by_resource_group(
+        self, resource_group_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.ScheduledAction"]:
+        """List ScheduledAction resources by resource group.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :return: An iterator like instance of ScheduledAction
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.computeschedule.models.ScheduledAction]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.ScheduledAction]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_scheduled_actions_list_by_resource_group_request(
+                    resource_group_name=resource_group_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.ScheduledAction], deserialized.get("value", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-04-15-preview",
+        params_added_on={"2025-04-15-preview": ["api_version", "subscription_id", "accept"]},
+        api_versions_list=["2025-04-15-preview"],
+    )
+    def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.ScheduledAction"]:
+        """List ScheduledAction resources by subscription ID.
+
+        :return: An iterator like instance of ScheduledAction
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.computeschedule.models.ScheduledAction]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.ScheduledAction]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_scheduled_actions_list_by_subscription_request(
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.ScheduledAction], deserialized.get("value", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-04-15-preview",
+        params_added_on={
+            "2025-04-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "scheduled_action_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-04-15-preview"],
+    )
+    def list_resources(
+        self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.ScheduledActionResource"]:
+        """List resources attached to Scheduled Actions.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the ScheduledAction. Required.
+        :type scheduled_action_name: str
+        :return: An iterator like instance of ScheduledActionResource
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.computeschedule.models.ScheduledActionResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.ScheduledActionResource]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_scheduled_actions_list_resources_request(
+                    resource_group_name=resource_group_name,
+                    scheduled_action_name=scheduled_action_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.ScheduledActionResource], deserialized.get("value", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @overload
+    async def attach_resources(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        body: _models.ResourceAttachRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.RecurringActionsResourceOperationResult:
+        """A synchronous resource action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the ScheduledAction. Required.
+        :type scheduled_action_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.computeschedule.models.ResourceAttachRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
+         is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def attach_resources(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        body: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.RecurringActionsResourceOperationResult:
+        """A synchronous resource action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the ScheduledAction. Required.
+        :type scheduled_action_name: str
+        :param body: The content of the action request. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
+         is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def attach_resources(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.RecurringActionsResourceOperationResult:
+        """A synchronous resource action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the ScheduledAction. Required.
+        :type scheduled_action_name: str
+        :param body: The content of the action request. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
+         is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-04-15-preview",
+        params_added_on={
+            "2025-04-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "scheduled_action_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-04-15-preview"],
+    )
+    async def attach_resources(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        body: Union[_models.ResourceAttachRequest, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.RecurringActionsResourceOperationResult:
+        """A synchronous resource action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the ScheduledAction. Required.
+        :type scheduled_action_name: str
+        :param body: The content of the action request. Is one of the following types:
+         ResourceAttachRequest, JSON, IO[bytes] Required.
+        :type body: ~azure.mgmt.computeschedule.models.ResourceAttachRequest or JSON or IO[bytes]
+        :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
+         is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.RecurringActionsResourceOperationResult] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_scheduled_actions_attach_resources_request(
+            resource_group_name=resource_group_name,
+            scheduled_action_name=scheduled_action_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.RecurringActionsResourceOperationResult, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def detach_resources(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        body: _models.ResourceDetachRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.RecurringActionsResourceOperationResult:
+        """A synchronous resource action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the ScheduledAction. Required.
+        :type scheduled_action_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.computeschedule.models.ResourceDetachRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
+         is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def detach_resources(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        body: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.RecurringActionsResourceOperationResult:
+        """A synchronous resource action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the ScheduledAction. Required.
+        :type scheduled_action_name: str
+        :param body: The content of the action request. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
+         is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def detach_resources(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.RecurringActionsResourceOperationResult:
+        """A synchronous resource action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the ScheduledAction. Required.
+        :type scheduled_action_name: str
+        :param body: The content of the action request. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
+         is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-04-15-preview",
+        params_added_on={
+            "2025-04-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "scheduled_action_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-04-15-preview"],
+    )
+    async def detach_resources(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        body: Union[_models.ResourceDetachRequest, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.RecurringActionsResourceOperationResult:
+        """A synchronous resource action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the ScheduledAction. Required.
+        :type scheduled_action_name: str
+        :param body: The content of the action request. Is one of the following types:
+         ResourceDetachRequest, JSON, IO[bytes] Required.
+        :type body: ~azure.mgmt.computeschedule.models.ResourceDetachRequest or JSON or IO[bytes]
+        :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
+         is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.RecurringActionsResourceOperationResult] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_scheduled_actions_detach_resources_request(
+            resource_group_name=resource_group_name,
+            scheduled_action_name=scheduled_action_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.RecurringActionsResourceOperationResult, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def patch_resources(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        body: _models.ResourcePatchRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.RecurringActionsResourceOperationResult:
+        """A synchronous resource action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the ScheduledAction. Required.
+        :type scheduled_action_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.computeschedule.models.ResourcePatchRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
+         is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def patch_resources(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        body: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.RecurringActionsResourceOperationResult:
+        """A synchronous resource action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the ScheduledAction. Required.
+        :type scheduled_action_name: str
+        :param body: The content of the action request. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
+         is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def patch_resources(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.RecurringActionsResourceOperationResult:
+        """A synchronous resource action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the ScheduledAction. Required.
+        :type scheduled_action_name: str
+        :param body: The content of the action request. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
+         is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-04-15-preview",
+        params_added_on={
+            "2025-04-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "scheduled_action_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-04-15-preview"],
+    )
+    async def patch_resources(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        body: Union[_models.ResourcePatchRequest, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.RecurringActionsResourceOperationResult:
+        """A synchronous resource action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the ScheduledAction. Required.
+        :type scheduled_action_name: str
+        :param body: The content of the action request. Is one of the following types:
+         ResourcePatchRequest, JSON, IO[bytes] Required.
+        :type body: ~azure.mgmt.computeschedule.models.ResourcePatchRequest or JSON or IO[bytes]
+        :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
+         is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.RecurringActionsResourceOperationResult] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_scheduled_actions_patch_resources_request(
+            resource_group_name=resource_group_name,
+            scheduled_action_name=scheduled_action_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.RecurringActionsResourceOperationResult, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-04-15-preview",
+        params_added_on={
+            "2025-04-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "scheduled_action_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-04-15-preview"],
+    )
+    async def disable(self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any) -> None:
+        """A synchronous resource action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the ScheduledAction. Required.
+        :type scheduled_action_name: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_scheduled_actions_disable_request(
+            resource_group_name=resource_group_name,
+            scheduled_action_name=scheduled_action_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-04-15-preview",
+        params_added_on={
+            "2025-04-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "scheduled_action_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-04-15-preview"],
+    )
+    async def enable(self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any) -> None:
+        """A synchronous resource action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the ScheduledAction. Required.
+        :type scheduled_action_name: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_scheduled_actions_enable_request(
+            resource_group_name=resource_group_name,
+            scheduled_action_name=scheduled_action_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @overload
+    async def cancel_next_occurrence(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        body: _models.CancelOccurrenceRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.RecurringActionsResourceOperationResult:
+        """A synchronous resource action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the ScheduledAction. Required.
+        :type scheduled_action_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.computeschedule.models.CancelOccurrenceRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
+         is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def cancel_next_occurrence(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        body: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.RecurringActionsResourceOperationResult:
+        """A synchronous resource action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the ScheduledAction. Required.
+        :type scheduled_action_name: str
+        :param body: The content of the action request. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
+         is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def cancel_next_occurrence(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.RecurringActionsResourceOperationResult:
+        """A synchronous resource action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the ScheduledAction. Required.
+        :type scheduled_action_name: str
+        :param body: The content of the action request. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
+         is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-04-15-preview",
+        params_added_on={
+            "2025-04-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "scheduled_action_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-04-15-preview"],
+    )
+    async def cancel_next_occurrence(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        body: Union[_models.CancelOccurrenceRequest, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.RecurringActionsResourceOperationResult:
+        """A synchronous resource action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the ScheduledAction. Required.
+        :type scheduled_action_name: str
+        :param body: The content of the action request. Is one of the following types:
+         CancelOccurrenceRequest, JSON, IO[bytes] Required.
+        :type body: ~azure.mgmt.computeschedule.models.CancelOccurrenceRequest or JSON or IO[bytes]
+        :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
+         is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.RecurringActionsResourceOperationResult] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_scheduled_actions_cancel_next_occurrence_request(
+            resource_group_name=resource_group_name,
+            scheduled_action_name=scheduled_action_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.RecurringActionsResourceOperationResult, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-04-15-preview",
+        params_added_on={
+            "2025-04-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "scheduled_action_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-04-15-preview"],
+    )
+    async def trigger_manual_occurrence(
+        self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any
+    ) -> _models.Occurrence:
+        """A synchronous resource action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the ScheduledAction. Required.
+        :type scheduled_action_name: str
+        :return: Occurrence. The Occurrence is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.Occurrence
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.Occurrence] = kwargs.pop("cls", None)
+
+        _request = build_scheduled_actions_trigger_manual_occurrence_request(
+            resource_group_name=resource_group_name,
+            scheduled_action_name=scheduled_action_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.Occurrence, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class ScheduledActionExtensionOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.computeschedule.aio.ComputeScheduleMgmtClient`'s
+        :attr:`scheduled_action_extension` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ComputeScheduleMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-04-15-preview",
+        params_added_on={"2025-04-15-preview": ["api_version", "resource_uri", "accept"]},
+        api_versions_list=["2025-04-15-preview"],
+    )
+    def list_by_vms(self, resource_uri: str, **kwargs: Any) -> AsyncItemPaged["_models.ScheduledActionResources"]:
+        """List ScheduledActionResources resources by parent.
+
+        :param resource_uri: The fully qualified Azure Resource manager identifier of the resource.
+         Required.
+        :type resource_uri: str
+        :return: An iterator like instance of ScheduledActionResources
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.computeschedule.models.ScheduledActionResources]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.ScheduledActionResources]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_scheduled_action_extension_list_by_vms_request(
+                    resource_uri=resource_uri,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.ScheduledActionResources], deserialized.get("value", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class OccurrencesOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.computeschedule.aio.ComputeScheduleMgmtClient`'s
+        :attr:`occurrences` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ComputeScheduleMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-04-15-preview",
+        params_added_on={
+            "2025-04-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "scheduled_action_name",
+                "occurrence_id",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-04-15-preview"],
+    )
+    async def get(
+        self, resource_group_name: str, scheduled_action_name: str, occurrence_id: str, **kwargs: Any
+    ) -> _models.Occurrence:
+        """Get a Occurrence.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the ScheduledAction. Required.
+        :type scheduled_action_name: str
+        :param occurrence_id: The name of the Occurrence. Required.
+        :type occurrence_id: str
+        :return: Occurrence. The Occurrence is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.Occurrence
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.Occurrence] = kwargs.pop("cls", None)
+
+        _request = build_occurrences_get_request(
+            resource_group_name=resource_group_name,
+            scheduled_action_name=scheduled_action_name,
+            occurrence_id=occurrence_id,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.Occurrence, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-04-15-preview",
+        params_added_on={
+            "2025-04-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "scheduled_action_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-04-15-preview"],
+    )
+    def list_by_scheduled_action(
+        self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.Occurrence"]:
+        """List Occurrence resources by ScheduledAction.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the ScheduledAction. Required.
+        :type scheduled_action_name: str
+        :return: An iterator like instance of Occurrence
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.computeschedule.models.Occurrence]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.Occurrence]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_occurrences_list_by_scheduled_action_request(
+                    resource_group_name=resource_group_name,
+                    scheduled_action_name=scheduled_action_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.Occurrence], deserialized.get("value", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-04-15-preview",
+        params_added_on={
+            "2025-04-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "scheduled_action_name",
+                "occurrence_id",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-04-15-preview"],
+    )
+    def list_resources(
+        self, resource_group_name: str, scheduled_action_name: str, occurrence_id: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.OccurrenceResource"]:
+        """List resources attached to Scheduled Actions for the given occurrence.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the ScheduledAction. Required.
+        :type scheduled_action_name: str
+        :param occurrence_id: The name of the Occurrence. Required.
+        :type occurrence_id: str
+        :return: An iterator like instance of OccurrenceResource
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.computeschedule.models.OccurrenceResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.OccurrenceResource]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_occurrences_list_resources_request(
+                    resource_group_name=resource_group_name,
+                    scheduled_action_name=scheduled_action_name,
+                    occurrence_id=occurrence_id,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.OccurrenceResource], deserialized.get("value", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @overload
+    async def cancel(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        occurrence_id: str,
+        body: _models.CancelOccurrenceRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.RecurringActionsResourceOperationResult:
+        """A synchronous resource action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the ScheduledAction. Required.
+        :type scheduled_action_name: str
+        :param occurrence_id: The name of the Occurrence. Required.
+        :type occurrence_id: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.computeschedule.models.CancelOccurrenceRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
+         is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def cancel(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        occurrence_id: str,
+        body: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.RecurringActionsResourceOperationResult:
+        """A synchronous resource action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the ScheduledAction. Required.
+        :type scheduled_action_name: str
+        :param occurrence_id: The name of the Occurrence. Required.
+        :type occurrence_id: str
+        :param body: The content of the action request. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
+         is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def cancel(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        occurrence_id: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.RecurringActionsResourceOperationResult:
+        """A synchronous resource action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the ScheduledAction. Required.
+        :type scheduled_action_name: str
+        :param occurrence_id: The name of the Occurrence. Required.
+        :type occurrence_id: str
+        :param body: The content of the action request. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
+         is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-04-15-preview",
+        params_added_on={
+            "2025-04-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "scheduled_action_name",
+                "occurrence_id",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-04-15-preview"],
+    )
+    async def cancel(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        occurrence_id: str,
+        body: Union[_models.CancelOccurrenceRequest, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.RecurringActionsResourceOperationResult:
+        """A synchronous resource action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the ScheduledAction. Required.
+        :type scheduled_action_name: str
+        :param occurrence_id: The name of the Occurrence. Required.
+        :type occurrence_id: str
+        :param body: The content of the action request. Is one of the following types:
+         CancelOccurrenceRequest, JSON, IO[bytes] Required.
+        :type body: ~azure.mgmt.computeschedule.models.CancelOccurrenceRequest or JSON or IO[bytes]
+        :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
+         is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.RecurringActionsResourceOperationResult] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_occurrences_cancel_request(
+            resource_group_name=resource_group_name,
+            scheduled_action_name=scheduled_action_name,
+            occurrence_id=occurrence_id,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.RecurringActionsResourceOperationResult, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2025-04-15-preview",
+        params_added_on={
+            "2025-04-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "scheduled_action_name",
+                "occurrence_id",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-04-15-preview"],
+    )
+    async def _delay_initial(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        occurrence_id: str,
+        body: Union[_models.DelayRequest, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_occurrences_delay_request(
+            resource_group_name=resource_group_name,
+            scheduled_action_name=scheduled_action_name,
+            occurrence_id=occurrence_id,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_delay(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        occurrence_id: str,
+        body: _models.DelayRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.RecurringActionsResourceOperationResult]:
+        """A long-running resource action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the ScheduledAction. Required.
+        :type scheduled_action_name: str
+        :param occurrence_id: The name of the Occurrence. Required.
+        :type occurrence_id: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.computeschedule.models.DelayRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns RecurringActionsResourceOperationResult.
+         The RecurringActionsResourceOperationResult is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_delay(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        occurrence_id: str,
+        body: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.RecurringActionsResourceOperationResult]:
+        """A long-running resource action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the ScheduledAction. Required.
+        :type scheduled_action_name: str
+        :param occurrence_id: The name of the Occurrence. Required.
+        :type occurrence_id: str
+        :param body: The content of the action request. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns RecurringActionsResourceOperationResult.
+         The RecurringActionsResourceOperationResult is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_delay(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        occurrence_id: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.RecurringActionsResourceOperationResult]:
+        """A long-running resource action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the ScheduledAction. Required.
+        :type scheduled_action_name: str
+        :param occurrence_id: The name of the Occurrence. Required.
+        :type occurrence_id: str
+        :param body: The content of the action request. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns RecurringActionsResourceOperationResult.
+         The RecurringActionsResourceOperationResult is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-04-15-preview",
+        params_added_on={
+            "2025-04-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "scheduled_action_name",
+                "occurrence_id",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-04-15-preview"],
+    )
+    async def begin_delay(
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        occurrence_id: str,
+        body: Union[_models.DelayRequest, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.RecurringActionsResourceOperationResult]:
+        """A long-running resource action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduled_action_name: The name of the ScheduledAction. Required.
+        :type scheduled_action_name: str
+        :param occurrence_id: The name of the Occurrence. Required.
+        :type occurrence_id: str
+        :param body: The content of the action request. Is one of the following types: DelayRequest,
+         JSON, IO[bytes] Required.
+        :type body: ~azure.mgmt.computeschedule.models.DelayRequest or JSON or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns RecurringActionsResourceOperationResult.
+         The RecurringActionsResourceOperationResult is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.RecurringActionsResourceOperationResult] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delay_initial(
+                resource_group_name=resource_group_name,
+                scheduled_action_name=scheduled_action_name,
+                occurrence_id=occurrence_id,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response_headers = {}
+            response = pipeline_response.http_response
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+            deserialized = _deserialize(_models.RecurringActionsResourceOperationResult, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.RecurringActionsResourceOperationResult].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.RecurringActionsResourceOperationResult](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+
+class OccurrenceExtensionOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.computeschedule.aio.ComputeScheduleMgmtClient`'s
+        :attr:`occurrence_extension` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ComputeScheduleMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-04-15-preview",
+        params_added_on={"2025-04-15-preview": ["api_version", "resource_uri", "accept"]},
+        api_versions_list=["2025-04-15-preview"],
+    )
+    def list_occurrence_by_vms(
+        self, resource_uri: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.OccurrenceExtensionResource"]:
+        """List OccurrenceExtensionResource resources by parent.
+
+        :param resource_uri: The fully qualified Azure Resource manager identifier of the resource.
+         Required.
+        :type resource_uri: str
+        :return: An iterator like instance of OccurrenceExtensionResource
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.computeschedule.models.OccurrenceExtensionResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.OccurrenceExtensionResource]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_occurrence_extension_list_occurrence_by_vms_request(
+                    resource_uri=resource_uri,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.OccurrenceExtensionResource], deserialized.get("value", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)

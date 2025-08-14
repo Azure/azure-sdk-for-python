@@ -4,7 +4,8 @@
 
 """End-to-end test.
 """
-
+import logging
+import threading
 import time
 import unittest
 import urllib.parse as urllib
@@ -125,13 +126,14 @@ class TestCRUDOperations(unittest.TestCase):
         self.assertEqual(replaced_document.get('key'), document_definition.get('key'))
 
         # upsert document(create scenario)
-        document_definition['id'] = 'document2'
-        document_definition['key'] = 'value2'
+        new_document_definition = {'id': 'document2',
+                               'key': 'value2',
+                               'pk': 'pk'}
 
-        upserted_document = created_collection.upsert_item(body=document_definition)
+        upserted_document = created_collection.upsert_item(body=new_document_definition)
 
-        self.assertEqual(upserted_document.get('id'), document_definition.get('id'))
-        self.assertEqual(upserted_document.get('key'), document_definition.get('key'))
+        self.assertEqual(upserted_document.get('id'), new_document_definition.get('id'))
+        self.assertEqual(upserted_document.get('key'), new_document_definition.get('key'))
 
         documentlist = list(created_collection.read_all_items())
         self.assertEqual(2, len(documentlist))
@@ -616,6 +618,33 @@ class TestCRUDOperations(unittest.TestCase):
                                            created_collection.read_item,
                                            replaced_document['id'],
                                            replaced_document['id'])
+
+    def test_read_collection_only_once(self):
+        # Add filter to the filtered diagnostics handler
+        mock_handler = test_config.MockHandler()
+        logger = logging.getLogger("azure.cosmos")
+        logger.setLevel(logging.INFO)
+        logger.addHandler(mock_handler)
+
+        client = cosmos_client.CosmosClient(self.host, self.masterKey)
+        database = client.get_database_client(self.configs.TEST_DATABASE_ID)
+        container = database.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
+
+        def upsert_worker():
+            # Synchronously perform the upsert item operation
+            container.upsert_item(body={'id': str(uuid.uuid4()), 'name': f'sample-'})
+
+        # Perform 10 concurrent upserts
+        threads = []
+        for i in range(10):
+            t = threading.Thread(target=upsert_worker)
+            threads.append(t)
+            t.start()
+
+        for t in threads:
+            t.join()
+        assert sum("'x-ms-thinclient-proxy-resource-type': 'colls'" in response.message for response in mock_handler.messages) == 1
+
 
     def test_document_upsert(self):
         # create database

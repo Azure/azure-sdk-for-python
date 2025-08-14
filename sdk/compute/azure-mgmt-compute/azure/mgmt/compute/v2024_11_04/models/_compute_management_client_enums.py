@@ -38,6 +38,15 @@ class CloudServiceUpgradeMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SIMULTANEOUS = "Simultaneous"
 
 
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
+
+
 class ExtendedLocationTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of extendedLocation."""
 

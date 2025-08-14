@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.servicebus.v2021_11_01.aio import ServiceBusManagementClient
+from azure.mgmt.servicebus.aio import ServiceBusManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -25,7 +25,7 @@ class TestServiceBusManagementPrivateLinkResourcesOperationsAsync(AzureMgmtRecor
         response = await self.client.private_link_resources.get(
             resource_group_name=resource_group.name,
             namespace_name="str",
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
 
         # please add some check logic here by yourself

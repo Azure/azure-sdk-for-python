@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.compute import ComputeManagementClient
+from azure.mgmt.compute.v2024_11_01 import ComputeManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -17,6 +17,39 @@ AZURE_LOCATION = "eastus"
 class TestComputeManagementProximityPlacementGroupsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(ComputeManagementClient)
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_proximity_placement_groups_list_by_subscription(self, resource_group):
+        response = self.client.proximity_placement_groups.list_by_subscription(
+            api_version="2024-11-01",
+        )
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_proximity_placement_groups_list_by_resource_group(self, resource_group):
+        response = self.client.proximity_placement_groups.list_by_resource_group(
+            resource_group_name=resource_group.name,
+            api_version="2024-11-01",
+        )
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_proximity_placement_groups_get(self, resource_group):
+        response = self.client.proximity_placement_groups.get(
+            resource_group_name=resource_group.name,
+            proximity_placement_group_name="str",
+            api_version="2024-11-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
@@ -49,6 +82,14 @@ class TestComputeManagementProximityPlacementGroupsOperations(AzureMgmtRecordedT
                 "intent": {"vmSizes": ["str"]},
                 "name": "str",
                 "proximityPlacementGroupType": "str",
+                "systemData": {
+                    "createdAt": "2020-02-20 00:00:00",
+                    "createdBy": "str",
+                    "createdByType": "str",
+                    "lastModifiedAt": "2020-02-20 00:00:00",
+                    "lastModifiedBy": "str",
+                    "lastModifiedByType": "str",
+                },
                 "tags": {"str": "str"},
                 "type": "str",
                 "virtualMachineScaleSets": [
@@ -105,38 +146,5 @@ class TestComputeManagementProximityPlacementGroupsOperations(AzureMgmtRecordedT
             api_version="2024-11-01",
         )
 
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_proximity_placement_groups_get(self, resource_group):
-        response = self.client.proximity_placement_groups.get(
-            resource_group_name=resource_group.name,
-            proximity_placement_group_name="str",
-            api_version="2024-11-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_proximity_placement_groups_list_by_subscription(self, resource_group):
-        response = self.client.proximity_placement_groups.list_by_subscription(
-            api_version="2024-11-01",
-        )
-        result = [r for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_proximity_placement_groups_list_by_resource_group(self, resource_group):
-        response = self.client.proximity_placement_groups.list_by_resource_group(
-            resource_group_name=resource_group.name,
-            api_version="2024-11-01",
-        )
-        result = [r for r in response]
         # please add some check logic here by yourself
         # ...

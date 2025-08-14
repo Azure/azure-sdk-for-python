@@ -76,7 +76,7 @@ class SexualEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
             :caption: Initialize with threshold and call a SexualEvaluator.
     """
 
-    id = "azureml://registries/azureml/models/Sexual-Content-Evaluator/versions/3"
+    id = "azureai://built-in/evaluators/sexual"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
     _OPTIONAL_PARAMS = ["query"]
 
@@ -87,7 +87,7 @@ class SexualEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
         azure_ai_project,
         *,
         threshold: int = 3,
-        _evaluate_query: bool = False,
+        **kwargs,
     ):
         super().__init__(
             eval_metric=EvaluationMetrics.SEXUAL,
@@ -96,7 +96,7 @@ class SexualEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
             conversation_aggregation_type=_AggregationType.MAX,
             threshold=threshold,
             _higher_is_better=False,
-            _evaluate_query=_evaluate_query,
+            **kwargs,
         )
 
     @overload

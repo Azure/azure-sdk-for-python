@@ -17,6 +17,7 @@ parameters:
   TestProxy: false
   UseFederatedAuth: false
   ServiceConnection: ''
+  TestPipeline: false
 
 
 # Please use `$(TargetingString)` to refer to the python packages glob string. This variable is set from resolve-package-targeting.yml.
@@ -26,8 +27,12 @@ steps:
       versionSpec: '${{ parameters.PythonVersion }}'
 
   - template: /eng/pipelines/templates/steps/use-venv.yml
+
+  - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
     parameters:
-      Activate: false
+      PackageName: "azure-template"
+      ServiceDirectory: "template"
+      TestPipeline: ${{ parameters.TestPipeline }}
 
   - template: set-dev-build.yml
 
@@ -40,20 +45,22 @@ steps:
         brew update
         brew install portaudio
       }
-      
-      if ($IsWindows) {
-        . $(VENV_LOCATION)/Scripts/Activate.ps1
-      }
-      else {
-        . $(VENV_LOCATION)/bin/activate.ps1
-      }
-      
+
+      Write-Host (Get-Command python).Source
       $ErrorActionPreference = 'Stop'
       $PSNativeCommandUseErrorActionPreference = $true
-      python -m pip install --force -r eng/ci_tools.txt
-      python -m pip freeze --all
-      Write-Host (Get-Command python).Source
+      $(PIP_EXE) install -r eng/ci_tools.txt
+      $(PIP_EXE) freeze
     displayName: 'Prep Environment'
+
+  - task: PythonScript@0
+    displayName: 'Set Tox Environment'
+    inputs:
+      scriptPath: 'scripts/devops_tasks/set_tox_environment.py'
+      arguments: >-
+        --unsupported="$(UnsupportedToxEnvironments)"
+        --override="$(Run.ToxCustomEnvs)"
+        --team-project="$(System.TeamProject)"
 
   - template: /eng/common/testproxy/test-proxy-tool.yml
     parameters:
@@ -85,12 +92,6 @@ steps:
           $env:AZURESUBSCRIPTION_CLIENT_ID = $account.Id;
           $env:AZURESUBSCRIPTION_TENANT_ID = $account.Tenants;
 
-          if ($IsWindows) {
-            . $(VENV_LOCATION)/Scripts/Activate.ps1
-          }
-          else {
-            . $(VENV_LOCATION)/bin/activate.ps1
-          }
           Write-Host (Get-Command python).Source
 
           if ($env:TESTMARKARGUMENT) {
@@ -114,12 +115,6 @@ steps:
 
   - ${{ else }}:
     - pwsh: |
-        if ($IsWindows) {
-          . $(VENV_LOCATION)/Scripts/Activate.ps1
-        }
-        else {
-          . $(VENV_LOCATION)/bin/activate.ps1
-        }
         Write-Host (Get-Command python).Source
 
         if ($env:TESTMARKARGUMENT) {
@@ -155,12 +150,6 @@ steps:
   - ${{ parameters.AfterTestSteps }}
 
   - pwsh: |
-      if ($IsWindows) {
-        . $(VENV_LOCATION)/Scripts/Activate.ps1
-      }
-      else {
-        . $(VENV_LOCATION)/bin/activate.ps1
-      }
       Write-Host (Get-Command python).Source
 
       python scripts/devops_tasks/create_coverage.py
@@ -186,12 +175,6 @@ steps:
           $env:AZURESUBSCRIPTION_CLIENT_ID = $account.Id;
           $env:AZURESUBSCRIPTION_TENANT_ID = $account.Tenants;
 
-          if ($IsWindows) {
-            . $(VENV_LOCATION)/Scripts/Activate.ps1
-          }
-          else {
-            . $(VENV_LOCATION)/bin/activate.ps1
-          }
           Write-Host (Get-Command python).Source
 
           python scripts/devops_tasks/dispatch_tox.py "$(TargetingString)" `

@@ -28,6 +28,8 @@ steps:
     inputs:
       versionSpec: '3.13'
 
+  - template: /eng/pipelines/templates/steps/use-venv.yml
+
   - pwsh: |
       if ("${{ parameters.ServiceDirectory }}" -ne "auto")
       {
@@ -53,8 +55,6 @@ steps:
     displayName: 'Tag scheduled builds'
     condition: and(eq(variables['Build.SourceBranchName'], variables['DefaultBranch']), eq(variables['Build.Reason'],'Schedule'))
 
-  - template: /eng/pipelines/templates/steps/use-venv.yml
-
   - script: |
       if [[ "$AGENT_OS" == "Linux" ]]; then
         sudo apt-get update
@@ -64,13 +64,15 @@ steps:
         brew install portaudio
       fi
 
-      python -m pip install -r eng/ci_tools.txt
+      which python
+      $(PIP_EXE) install -r eng/ci_tools.txt
     displayName: 'Prep Environment (Unix)'
     condition: ne(variables['Agent.OS'], 'Windows_NT')
 
     # Windows: just pip install (no PortAudio needed)
   - script: |
-      python -m pip install -r eng/ci_tools.txt
+      which python
+      $(PIP_EXE) install -r eng/ci_tools.txt
     displayName: 'Prep Environment (Windows)'
     condition: eq(variables['Agent.OS'], 'Windows_NT')
 
