@@ -8,21 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import (
-    Any,
-    AsyncIterable,
-    AsyncIterator,
-    Callable,
-    Dict,
-    IO,
-    List,
-    Literal,
-    Optional,
-    TypeVar,
-    Union,
-    cast,
-    overload,
-)
+from typing import Any, AsyncIterator, Callable, Dict, IO, List, Literal, Optional, TypeVar, Union, cast, overload
 
 from azure.core import AsyncPipelineClient
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -404,6 +390,7 @@ from ...operations._operations import (
     build_network_security_perimeter_profiles_delete_request,
     build_network_security_perimeter_profiles_get_request,
     build_network_security_perimeter_profiles_list_request,
+    build_network_security_perimeter_service_tags_list_request,
     build_network_security_perimeters_create_or_update_request,
     build_network_security_perimeters_delete_request,
     build_network_security_perimeters_get_request,
@@ -1285,7 +1272,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.ApplicationGateway"]:
+    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.ApplicationGateway"]:
         """Lists all application gateways in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -1351,7 +1338,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_all(self, **kwargs: Any) -> AsyncIterable["_models.ApplicationGateway"]:
+    def list_all(self, **kwargs: Any) -> AsyncItemPaged["_models.ApplicationGateway"]:
         """Gets all the application gateways in a subscription.
 
         :return: An iterator like instance of either ApplicationGateway or the result of cls(response)
@@ -2204,7 +2191,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def list_available_ssl_predefined_policies(
         self, **kwargs: Any
-    ) -> AsyncIterable["_models.ApplicationGatewaySslPredefinedPolicy"]:
+    ) -> AsyncItemPaged["_models.ApplicationGatewaySslPredefinedPolicy"]:
         """Lists all SSL predefined policies for configuring Ssl policy.
 
         :return: An iterator like instance of either ApplicationGatewaySslPredefinedPolicy or the
@@ -2344,7 +2331,7 @@ class ApplicationGatewayPrivateLinkResourcesOperations:  # pylint: disable=name-
     @distributed_trace
     def list(
         self, resource_group_name: str, application_gateway_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.ApplicationGatewayPrivateLinkResource"]:
+    ) -> AsyncItemPaged["_models.ApplicationGatewayPrivateLinkResource"]:
         """Lists all private link resources on an application gateway.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -2824,7 +2811,7 @@ class ApplicationGatewayPrivateEndpointConnectionsOperations:  # pylint: disable
     @distributed_trace
     def list(
         self, resource_group_name: str, application_gateway_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.ApplicationGatewayPrivateEndpointConnection"]:
+    ) -> AsyncItemPaged["_models.ApplicationGatewayPrivateEndpointConnection"]:
         """Lists all private endpoint connections on an application gateway.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -2986,7 +2973,7 @@ class ApplicationGatewayWafDynamicManifestsOperations:  # pylint: disable=name-t
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def get(self, location: str, **kwargs: Any) -> AsyncIterable["_models.ApplicationGatewayWafDynamicManifestResult"]:
+    def get(self, location: str, **kwargs: Any) -> AsyncItemPaged["_models.ApplicationGatewayWafDynamicManifestResult"]:
         """Gets the regional application gateway waf manifest.
 
         :param location: The region where the nrp are located at. Required.
@@ -3557,7 +3544,7 @@ class ApplicationSecurityGroupsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_all(self, **kwargs: Any) -> AsyncIterable["_models.ApplicationSecurityGroup"]:
+    def list_all(self, **kwargs: Any) -> AsyncItemPaged["_models.ApplicationSecurityGroup"]:
         """Gets all application security groups in a subscription.
 
         :return: An iterator like instance of either ApplicationSecurityGroup or the result of
@@ -3622,7 +3609,7 @@ class ApplicationSecurityGroupsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.ApplicationSecurityGroup"]:
+    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.ApplicationSecurityGroup"]:
         """Gets all the application security groups in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -3710,7 +3697,7 @@ class AvailableDelegationsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, location: str, **kwargs: Any) -> AsyncIterable["_models.AvailableDelegation"]:
+    def list(self, location: str, **kwargs: Any) -> AsyncItemPaged["_models.AvailableDelegation"]:
         """Gets all of the available subnet delegations for this subscription in this region.
 
         :param location: The location of the subnet. Required.
@@ -3798,7 +3785,7 @@ class AvailableResourceGroupDelegationsOperations:  # pylint: disable=name-too-l
     @distributed_trace
     def list(
         self, location: str, resource_group_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.AvailableDelegation"]:
+    ) -> AsyncItemPaged["_models.AvailableDelegation"]:
         """Gets all of the available subnet delegations for this resource group in this region.
 
         :param location: The location of the domain name. Required.
@@ -3887,7 +3874,7 @@ class AvailableServiceAliasesOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, location: str, **kwargs: Any) -> AsyncIterable["_models.AvailableServiceAlias"]:
+    def list(self, location: str, **kwargs: Any) -> AsyncItemPaged["_models.AvailableServiceAlias"]:
         """Gets all available service aliases for this subscription in this region.
 
         :param location: The location. Required.
@@ -3957,7 +3944,7 @@ class AvailableServiceAliasesOperations:
     @distributed_trace
     def list_by_resource_group(
         self, resource_group_name: str, location: str, **kwargs: Any
-    ) -> AsyncIterable["_models.AvailableServiceAlias"]:
+    ) -> AsyncItemPaged["_models.AvailableServiceAlias"]:
         """Gets all available service aliases for this resource group in this region.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -4594,7 +4581,7 @@ class AzureFirewallsOperations:
         )
 
     @distributed_trace
-    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.AzureFirewall"]:
+    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.AzureFirewall"]:
         """Lists all Azure Firewalls in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -4660,7 +4647,7 @@ class AzureFirewallsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_all(self, **kwargs: Any) -> AsyncIterable["_models.AzureFirewall"]:
+    def list_all(self, **kwargs: Any) -> AsyncItemPaged["_models.AzureFirewall"]:
         """Gets all the Azure Firewalls in a subscription.
 
         :return: An iterator like instance of either AzureFirewall or the result of cls(response)
@@ -5041,7 +5028,7 @@ class AzureFirewallFqdnTagsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list_all(self, **kwargs: Any) -> AsyncIterable["_models.AzureFirewallFqdnTag"]:
+    def list_all(self, **kwargs: Any) -> AsyncItemPaged["_models.AzureFirewallFqdnTag"]:
         """Gets all the Azure Firewall FQDN Tags in a subscription.
 
         :return: An iterator like instance of either AzureFirewallFqdnTag or the result of
@@ -5181,7 +5168,7 @@ class WebCategoriesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_by_subscription(self, **kwargs: Any) -> AsyncIterable["_models.AzureWebCategory"]:
+    def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.AzureWebCategory"]:
         """Gets all the Azure Web Categories in a subscription.
 
         :return: An iterator like instance of either AzureWebCategory or the result of cls(response)
@@ -5810,7 +5797,7 @@ class BastionHostsOperations:
         )
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.BastionHost"]:
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.BastionHost"]:
         """Lists all Bastion Hosts in a subscription.
 
         :return: An iterator like instance of either BastionHost or the result of cls(response)
@@ -5873,7 +5860,7 @@ class BastionHostsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.BastionHost"]:
+    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.BastionHost"]:
         """Lists all Bastion Hosts in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -5939,7 +5926,9 @@ class BastionHostsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class NetworkManagementClientOperationsMixin(ClientMixinABC[AsyncPipelineClient, NetworkManagementClientConfiguration]):
+class _NetworkManagementClientOperationsMixin(
+    ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], NetworkManagementClientConfiguration]
+):
 
     async def _put_bastion_shareable_link_initial(
         self,
@@ -6016,7 +6005,7 @@ class NetworkManagementClientOperationsMixin(ClientMixinABC[AsyncPipelineClient,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[AsyncIterable["_models.BastionShareableLink"]]:
+    ) -> AsyncLROPoller[AsyncItemPaged["_models.BastionShareableLink"]]:
         """Creates a Bastion Shareable Links for all the VMs specified in the request.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -6045,7 +6034,7 @@ class NetworkManagementClientOperationsMixin(ClientMixinABC[AsyncPipelineClient,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[AsyncIterable["_models.BastionShareableLink"]]:
+    ) -> AsyncLROPoller[AsyncItemPaged["_models.BastionShareableLink"]]:
         """Creates a Bastion Shareable Links for all the VMs specified in the request.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -6072,7 +6061,7 @@ class NetworkManagementClientOperationsMixin(ClientMixinABC[AsyncPipelineClient,
         bastion_host_name: str,
         bsl_request: Union[_models.BastionShareableLinkListRequest, IO[bytes]],
         **kwargs: Any
-    ) -> AsyncLROPoller[AsyncIterable["_models.BastionShareableLink"]]:
+    ) -> AsyncLROPoller[AsyncItemPaged["_models.BastionShareableLink"]]:
         """Creates a Bastion Shareable Links for all the VMs specified in the request.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -6190,13 +6179,13 @@ class NetworkManagementClientOperationsMixin(ClientMixinABC[AsyncPipelineClient,
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[AsyncIterable["_models.BastionShareableLink"]].from_continuation_token(
+            return AsyncLROPoller[AsyncItemPaged["_models.BastionShareableLink"]].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[AsyncIterable["_models.BastionShareableLink"]](
+        return AsyncLROPoller[AsyncItemPaged["_models.BastionShareableLink"]](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
@@ -6585,7 +6574,7 @@ class NetworkManagementClientOperationsMixin(ClientMixinABC[AsyncPipelineClient,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncIterable["_models.BastionShareableLink"]:
+    ) -> AsyncItemPaged["_models.BastionShareableLink"]:
         """Return the Bastion Shareable Links for all the VMs specified in the request.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -6614,7 +6603,7 @@ class NetworkManagementClientOperationsMixin(ClientMixinABC[AsyncPipelineClient,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncIterable["_models.BastionShareableLink"]:
+    ) -> AsyncItemPaged["_models.BastionShareableLink"]:
         """Return the Bastion Shareable Links for all the VMs specified in the request.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -6641,7 +6630,7 @@ class NetworkManagementClientOperationsMixin(ClientMixinABC[AsyncPipelineClient,
         bastion_host_name: str,
         bsl_request: Union[_models.BastionShareableLinkListRequest, IO[bytes]],
         **kwargs: Any
-    ) -> AsyncIterable["_models.BastionShareableLink"]:
+    ) -> AsyncItemPaged["_models.BastionShareableLink"]:
         """Return the Bastion Shareable Links for all the VMs specified in the request.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -6778,7 +6767,7 @@ class NetworkManagementClientOperationsMixin(ClientMixinABC[AsyncPipelineClient,
     @distributed_trace_async
     async def begin_get_active_sessions(
         self, resource_group_name: str, bastion_host_name: str, **kwargs: Any
-    ) -> AsyncLROPoller[AsyncIterable["_models.BastionActiveSession"]]:
+    ) -> AsyncLROPoller[AsyncItemPaged["_models.BastionActiveSession"]]:
         """Returns the list of currently active sessions on the Bastion.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -6880,13 +6869,13 @@ class NetworkManagementClientOperationsMixin(ClientMixinABC[AsyncPipelineClient,
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[AsyncIterable["_models.BastionActiveSession"]].from_continuation_token(
+            return AsyncLROPoller[AsyncItemPaged["_models.BastionActiveSession"]].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[AsyncIterable["_models.BastionActiveSession"]](
+        return AsyncLROPoller[AsyncItemPaged["_models.BastionActiveSession"]](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
@@ -6899,7 +6888,7 @@ class NetworkManagementClientOperationsMixin(ClientMixinABC[AsyncPipelineClient,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncIterable["_models.BastionSessionState"]:
+    ) -> AsyncItemPaged["_models.BastionSessionState"]:
         """Returns the list of currently active sessions on the Bastion.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -6925,7 +6914,7 @@ class NetworkManagementClientOperationsMixin(ClientMixinABC[AsyncPipelineClient,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncIterable["_models.BastionSessionState"]:
+    ) -> AsyncItemPaged["_models.BastionSessionState"]:
         """Returns the list of currently active sessions on the Bastion.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -6949,7 +6938,7 @@ class NetworkManagementClientOperationsMixin(ClientMixinABC[AsyncPipelineClient,
         bastion_host_name: str,
         session_ids: Union[_models.SessionIds, IO[bytes]],
         **kwargs: Any
-    ) -> AsyncIterable["_models.BastionSessionState"]:
+    ) -> AsyncItemPaged["_models.BastionSessionState"]:
         """Returns the list of currently active sessions on the Bastion.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -7989,7 +7978,7 @@ class NetworkInterfacesOperations:
     @distributed_trace
     def list_cloud_service_role_instance_network_interfaces(  # pylint: disable=name-too-long
         self, resource_group_name: str, cloud_service_name: str, role_instance_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.NetworkInterface"]:
+    ) -> AsyncItemPaged["_models.NetworkInterface"]:
         """Gets information about all network interfaces in a role instance in a cloud service.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -8063,7 +8052,7 @@ class NetworkInterfacesOperations:
     @distributed_trace
     def list_cloud_service_network_interfaces(
         self, resource_group_name: str, cloud_service_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.NetworkInterface"]:
+    ) -> AsyncItemPaged["_models.NetworkInterface"]:
         """Gets all network interfaces in a cloud service.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -8690,7 +8679,7 @@ class NetworkInterfacesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_all(self, **kwargs: Any) -> AsyncIterable["_models.NetworkInterface"]:
+    def list_all(self, **kwargs: Any) -> AsyncItemPaged["_models.NetworkInterface"]:
         """Gets all network interfaces in a subscription.
 
         :return: An iterator like instance of either NetworkInterface or the result of cls(response)
@@ -8753,7 +8742,7 @@ class NetworkInterfacesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.NetworkInterface"]:
+    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.NetworkInterface"]:
         """Gets all network interfaces in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -9044,7 +9033,7 @@ class NetworkInterfacesOperations:
     @distributed_trace
     def list_virtual_machine_scale_set_vm_network_interfaces(  # pylint: disable=name-too-long
         self, resource_group_name: str, virtual_machine_scale_set_name: str, virtualmachine_index: str, **kwargs: Any
-    ) -> AsyncIterable["_models.NetworkInterface"]:
+    ) -> AsyncItemPaged["_models.NetworkInterface"]:
         """Gets information about all network interfaces in a virtual machine in a virtual machine scale
         set.
 
@@ -9119,7 +9108,7 @@ class NetworkInterfacesOperations:
     @distributed_trace
     def list_virtual_machine_scale_set_network_interfaces(  # pylint: disable=name-too-long
         self, resource_group_name: str, virtual_machine_scale_set_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.NetworkInterface"]:
+    ) -> AsyncItemPaged["_models.NetworkInterface"]:
         """Gets all network interfaces in a virtual machine scale set.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -9269,7 +9258,7 @@ class NetworkInterfacesOperations:
         *,
         expand: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.NetworkInterfaceIPConfiguration"]:
+    ) -> AsyncItemPaged["_models.NetworkInterfaceIPConfiguration"]:
         """Get the specified network interface ip configuration in a virtual machine scale set.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -9447,7 +9436,7 @@ class PublicIPAddressesOperations:
     @distributed_trace
     def list_cloud_service_public_ip_addresses(
         self, resource_group_name: str, cloud_service_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.PublicIPAddress"]:
+    ) -> AsyncItemPaged["_models.PublicIPAddress"]:
         """Gets information about all public IP addresses on a cloud service level.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -9524,7 +9513,7 @@ class PublicIPAddressesOperations:
         network_interface_name: str,
         ip_configuration_name: str,
         **kwargs: Any
-    ) -> AsyncIterable["_models.PublicIPAddress"]:
+    ) -> AsyncItemPaged["_models.PublicIPAddress"]:
         """Gets information about all public IP addresses in a role instance IP configuration in a cloud
         service.
 
@@ -10173,7 +10162,7 @@ class PublicIPAddressesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_all(self, **kwargs: Any) -> AsyncIterable["_models.PublicIPAddress"]:
+    def list_all(self, **kwargs: Any) -> AsyncItemPaged["_models.PublicIPAddress"]:
         """Gets all the public IP addresses in a subscription.
 
         :return: An iterator like instance of either PublicIPAddress or the result of cls(response)
@@ -10236,7 +10225,7 @@ class PublicIPAddressesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.PublicIPAddress"]:
+    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.PublicIPAddress"]:
         """Gets all public IP addresses in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -10420,7 +10409,7 @@ class PublicIPAddressesOperations:
     @distributed_trace
     def list_virtual_machine_scale_set_public_ip_addresses(  # pylint: disable=name-too-long
         self, resource_group_name: str, virtual_machine_scale_set_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.PublicIPAddress"]:
+    ) -> AsyncItemPaged["_models.PublicIPAddress"]:
         """Gets information about all public IP addresses on a virtual machine scale set level.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -10497,7 +10486,7 @@ class PublicIPAddressesOperations:
         network_interface_name: str,
         ip_configuration_name: str,
         **kwargs: Any
-    ) -> AsyncIterable["_models.PublicIPAddress"]:
+    ) -> AsyncItemPaged["_models.PublicIPAddress"]:
         """Gets information about all public IP addresses in a virtual machine IP configuration in a
         virtual machine scale set.
 
@@ -11473,7 +11462,7 @@ class CustomIPPrefixesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_all(self, **kwargs: Any) -> AsyncIterable["_models.CustomIpPrefix"]:
+    def list_all(self, **kwargs: Any) -> AsyncItemPaged["_models.CustomIpPrefix"]:
         """Gets all the custom IP prefixes in a subscription.
 
         :return: An iterator like instance of either CustomIpPrefix or the result of cls(response)
@@ -11536,7 +11525,7 @@ class CustomIPPrefixesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.CustomIpPrefix"]:
+    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.CustomIpPrefix"]:
         """Gets all custom IP prefixes in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -12614,7 +12603,7 @@ class DdosProtectionPlansOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.DdosProtectionPlan"]:
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.DdosProtectionPlan"]:
         """Gets all DDoS protection plans in a subscription.
 
         :return: An iterator like instance of either DdosProtectionPlan or the result of cls(response)
@@ -12679,7 +12668,7 @@ class DdosProtectionPlansOperations:
     @distributed_trace
     def list_by_resource_group(
         self, resource_group_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.DdosProtectionPlan"]:
+    ) -> AsyncItemPaged["_models.DdosProtectionPlan"]:
         """Gets all the DDoS protection plans in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -13120,7 +13109,7 @@ class DscpConfigurationOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.DscpConfiguration"]:
+    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.DscpConfiguration"]:
         """Gets a DSCP Configuration.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -13186,7 +13175,7 @@ class DscpConfigurationOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_all(self, **kwargs: Any) -> AsyncIterable["_models.DscpConfiguration"]:
+    def list_all(self, **kwargs: Any) -> AsyncItemPaged["_models.DscpConfiguration"]:
         """Gets all dscp configurations in a subscription.
 
         :return: An iterator like instance of either DscpConfiguration or the result of cls(response)
@@ -13269,7 +13258,7 @@ class AvailableEndpointServicesOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, location: str, **kwargs: Any) -> AsyncIterable["_models.EndpointServiceResult"]:
+    def list(self, location: str, **kwargs: Any) -> AsyncItemPaged["_models.EndpointServiceResult"]:
         """List what values of endpoint services are available for use.
 
         :param location: The location to check available endpoint services. Required.
@@ -13739,7 +13728,7 @@ class ExpressRouteCircuitAuthorizationsOperations:  # pylint: disable=name-too-l
     @distributed_trace
     def list(
         self, resource_group_name: str, circuit_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.ExpressRouteCircuitAuthorization"]:
+    ) -> AsyncItemPaged["_models.ExpressRouteCircuitAuthorization"]:
         """Gets all authorizations in an express route circuit.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -14210,7 +14199,7 @@ class ExpressRouteCircuitPeeringsOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, circuit_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.ExpressRouteCircuitPeering"]:
+    ) -> AsyncItemPaged["_models.ExpressRouteCircuitPeering"]:
         """Gets all peerings in a specified express route circuit.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -14704,7 +14693,7 @@ class ExpressRouteCircuitConnectionsOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, circuit_name: str, peering_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.ExpressRouteCircuitConnection"]:
+    ) -> AsyncItemPaged["_models.ExpressRouteCircuitConnection"]:
         """Gets all global reach connections associated with a private peering in an express route
         circuit.
 
@@ -14864,7 +14853,7 @@ class PeerExpressRouteCircuitConnectionsOperations:  # pylint: disable=name-too-
     @distributed_trace
     def list(
         self, resource_group_name: str, circuit_name: str, peering_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.PeerExpressRouteCircuitConnection"]:
+    ) -> AsyncItemPaged["_models.PeerExpressRouteCircuitConnection"]:
         """Gets all global reach peer connections associated with a private peering in an express route
         circuit.
 
@@ -15918,7 +15907,7 @@ class ExpressRouteCircuitsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.ExpressRouteCircuit"]:
+    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.ExpressRouteCircuit"]:
         """Gets all the express route circuits in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -15984,7 +15973,7 @@ class ExpressRouteCircuitsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_all(self, **kwargs: Any) -> AsyncIterable["_models.ExpressRouteCircuit"]:
+    def list_all(self, **kwargs: Any) -> AsyncItemPaged["_models.ExpressRouteCircuit"]:
         """Gets all the express route circuits in a subscription.
 
         :return: An iterator like instance of either ExpressRouteCircuit or the result of cls(response)
@@ -16067,7 +16056,7 @@ class ExpressRouteServiceProvidersOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.ExpressRouteServiceProvider"]:
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.ExpressRouteServiceProvider"]:
         """Gets all the available express route service providers.
 
         :return: An iterator like instance of either ExpressRouteServiceProvider or the result of
@@ -16154,7 +16143,7 @@ class ExpressRouteCrossConnectionsOperations:
     @distributed_trace
     def list(
         self, *, filter: Optional[str] = None, **kwargs: Any
-    ) -> AsyncIterable["_models.ExpressRouteCrossConnection"]:
+    ) -> AsyncItemPaged["_models.ExpressRouteCrossConnection"]:
         """Retrieves all the ExpressRouteCrossConnections in a subscription.
 
         :keyword filter: The filter to apply on the operation. For example, you can use $filter=name eq
@@ -16225,7 +16214,7 @@ class ExpressRouteCrossConnectionsOperations:
     @distributed_trace
     def list_by_resource_group(
         self, resource_group_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.ExpressRouteCrossConnection"]:
+    ) -> AsyncItemPaged["_models.ExpressRouteCrossConnection"]:
         """Retrieves all the ExpressRouteCrossConnections in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -17068,7 +17057,7 @@ class ExpressRouteCrossConnectionPeeringsOperations:  # pylint: disable=name-too
     @distributed_trace
     def list(
         self, resource_group_name: str, cross_connection_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.ExpressRouteCrossConnectionPeering"]:
+    ) -> AsyncItemPaged["_models.ExpressRouteCrossConnectionPeering"]:
         """Gets all peerings in a specified ExpressRouteCrossConnection.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -17539,7 +17528,7 @@ class ExpressRoutePortsLocationsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.ExpressRoutePortsLocation"]:
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.ExpressRoutePortsLocation"]:
         """Retrieves all ExpressRoutePort peering locations. Does not return available bandwidths for each
         location. Available bandwidths can only be obtained when retrieving a specific peering
         location.
@@ -18169,7 +18158,7 @@ class ExpressRoutePortsOperations:
     @distributed_trace
     def list_by_resource_group(
         self, resource_group_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.ExpressRoutePort"]:
+    ) -> AsyncItemPaged["_models.ExpressRoutePort"]:
         """List all the ExpressRoutePort resources in the specified resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -18235,7 +18224,7 @@ class ExpressRoutePortsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.ExpressRoutePort"]:
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.ExpressRoutePort"]:
         """List all the ExpressRoutePort resources in the specified subscription.
 
         :return: An iterator like instance of either ExpressRoutePort or the result of cls(response)
@@ -18506,7 +18495,7 @@ class ExpressRouteLinksOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, express_route_port_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.ExpressRouteLink"]:
+    ) -> AsyncItemPaged["_models.ExpressRouteLink"]:
         """Retrieve the ExpressRouteLink sub-resources of the specified ExpressRoutePort resource.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -18985,7 +18974,7 @@ class ExpressRoutePortAuthorizationsOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, express_route_port_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.ExpressRoutePortAuthorization"]:
+    ) -> AsyncItemPaged["_models.ExpressRoutePortAuthorization"]:
         """Gets all authorizations in an express route port.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -19634,7 +19623,7 @@ class FirewallPoliciesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.FirewallPolicy"]:
+    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.FirewallPolicy"]:
         """Lists all Firewall Policies in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -19700,7 +19689,7 @@ class FirewallPoliciesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_all(self, **kwargs: Any) -> AsyncIterable["_models.FirewallPolicy"]:
+    def list_all(self, **kwargs: Any) -> AsyncItemPaged["_models.FirewallPolicy"]:
         """Gets all the Firewall Policies in a subscription.
 
         :return: An iterator like instance of either FirewallPolicy or the result of cls(response)
@@ -20164,7 +20153,7 @@ class FirewallPolicyRuleCollectionGroupsOperations:  # pylint: disable=name-too-
     @distributed_trace
     def list(
         self, resource_group_name: str, firewall_policy_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.FirewallPolicyRuleCollectionGroup"]:
+    ) -> AsyncItemPaged["_models.FirewallPolicyRuleCollectionGroup"]:
         """Lists all FirewallPolicyRuleCollectionGroups in a FirewallPolicy resource.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -21612,7 +21601,7 @@ class IpamPoolsOperations:
         sort_key: Optional[str] = None,
         sort_value: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.IpamPool"]:
+    ) -> AsyncItemPaged["_models.IpamPool"]:
         """Gets list of Pool resources at Network Manager level.
 
         Gets list of Pool resources at Network Manager level.
@@ -22354,7 +22343,7 @@ class IpamPoolsOperations:
     @distributed_trace
     def list_associated_resources(
         self, resource_group_name: str, network_manager_name: str, pool_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.PoolAssociation"]:
+    ) -> AsyncItemPaged["_models.PoolAssociation"]:
         """List Associated Resource in the Pool.
 
         List Associated Resource in the Pool.
@@ -22461,7 +22450,7 @@ class StaticCidrsOperations:
         sort_key: Optional[str] = None,
         sort_value: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.StaticCidr"]:
+    ) -> AsyncItemPaged["_models.StaticCidr"]:
         """Gets list of Static CIDR resources at Network Manager level.
 
         Gets list of Static CIDR resources at Network Manager level.
@@ -23404,7 +23393,7 @@ class IpAllocationsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.IpAllocation"]:
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.IpAllocation"]:
         """Gets all IpAllocations in a subscription.
 
         :return: An iterator like instance of either IpAllocation or the result of cls(response)
@@ -23467,7 +23456,7 @@ class IpAllocationsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.IpAllocation"]:
+    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.IpAllocation"]:
         """Gets all IpAllocations in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -24040,7 +24029,7 @@ class IpGroupsOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
-    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.IpGroup"]:
+    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.IpGroup"]:
         """Gets all IpGroups in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -24107,7 +24096,7 @@ class IpGroupsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.IpGroup"]:
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.IpGroup"]:
         """Gets all IpGroups in a subscription.
 
         :return: An iterator like instance of either IpGroup or the result of cls(response)
@@ -24677,7 +24666,7 @@ class LoadBalancersOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_all(self, **kwargs: Any) -> AsyncIterable["_models.LoadBalancer"]:
+    def list_all(self, **kwargs: Any) -> AsyncItemPaged["_models.LoadBalancer"]:
         """Gets all the load balancers in a subscription.
 
         :return: An iterator like instance of either LoadBalancer or the result of cls(response)
@@ -24740,7 +24729,7 @@ class LoadBalancersOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.LoadBalancer"]:
+    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.LoadBalancer"]:
         """Gets all the load balancers in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -25327,7 +25316,7 @@ class LoadBalancerBackendAddressPoolsOperations:  # pylint: disable=name-too-lon
     @distributed_trace
     def list(
         self, resource_group_name: str, load_balancer_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.BackendAddressPool"]:
+    ) -> AsyncItemPaged["_models.BackendAddressPool"]:
         """Gets all the load balancer backed address pools.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -25793,7 +25782,7 @@ class LoadBalancerFrontendIPConfigurationsOperations:  # pylint: disable=name-to
     @distributed_trace
     def list(
         self, resource_group_name: str, load_balancer_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.FrontendIPConfiguration"]:
+    ) -> AsyncItemPaged["_models.FrontendIPConfiguration"]:
         """Gets all the load balancer frontend IP configurations.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -25945,7 +25934,7 @@ class InboundNatRulesOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, load_balancer_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.InboundNatRule"]:
+    ) -> AsyncItemPaged["_models.InboundNatRule"]:
         """Gets all the inbound NAT rules in a load balancer.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -26420,7 +26409,7 @@ class LoadBalancerLoadBalancingRulesOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, load_balancer_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.LoadBalancingRule"]:
+    ) -> AsyncItemPaged["_models.LoadBalancingRule"]:
         """Gets all the load balancing rules in a load balancer.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -26690,7 +26679,7 @@ class LoadBalancerOutboundRulesOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, load_balancer_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.OutboundRule"]:
+    ) -> AsyncItemPaged["_models.OutboundRule"]:
         """Gets all the outbound rules in a load balancer.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -26840,7 +26829,7 @@ class LoadBalancerNetworkInterfacesOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, load_balancer_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.NetworkInterface"]:
+    ) -> AsyncItemPaged["_models.NetworkInterface"]:
         """Gets associated load balancer network interfaces.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -26929,7 +26918,7 @@ class LoadBalancerProbesOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, resource_group_name: str, load_balancer_name: str, **kwargs: Any) -> AsyncIterable["_models.Probe"]:
+    def list(self, resource_group_name: str, load_balancer_name: str, **kwargs: Any) -> AsyncItemPaged["_models.Probe"]:
         """Gets all the load balancer probes.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -27561,7 +27550,7 @@ class NatGatewaysOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_all(self, **kwargs: Any) -> AsyncIterable["_models.NatGateway"]:
+    def list_all(self, **kwargs: Any) -> AsyncItemPaged["_models.NatGateway"]:
         """Gets all the Nat Gateways in a subscription.
 
         :return: An iterator like instance of either NatGateway or the result of cls(response)
@@ -27624,7 +27613,7 @@ class NatGatewaysOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.NatGateway"]:
+    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.NatGateway"]:
         """Gets all nat gateways in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -27712,7 +27701,7 @@ class NetworkInterfaceIPConfigurationsOperations:  # pylint: disable=name-too-lo
     @distributed_trace
     def list(
         self, resource_group_name: str, network_interface_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.NetworkInterfaceIPConfiguration"]:
+    ) -> AsyncItemPaged["_models.NetworkInterfaceIPConfiguration"]:
         """Get all ip configurations in a network interface.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -27864,7 +27853,7 @@ class NetworkInterfaceLoadBalancersOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, network_interface_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.LoadBalancer"]:
+    ) -> AsyncItemPaged["_models.LoadBalancer"]:
         """List all load balancers in a network interface.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -28335,7 +28324,7 @@ class NetworkInterfaceTapConfigurationsOperations:  # pylint: disable=name-too-l
     @distributed_trace
     def list(
         self, resource_group_name: str, network_interface_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.NetworkInterfaceTapConfiguration"]:
+    ) -> AsyncItemPaged["_models.NetworkInterfaceTapConfiguration"]:
         """Get all Tap configurations in a network interface.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -28852,7 +28841,7 @@ class NetworkManagersOperations:
     @distributed_trace
     def list_by_subscription(
         self, *, top: Optional[int] = None, skip_token: Optional[str] = None, **kwargs: Any
-    ) -> AsyncIterable["_models.NetworkManager"]:
+    ) -> AsyncItemPaged["_models.NetworkManager"]:
         """List all network managers in a subscription.
 
         :keyword top: An optional query parameter which specifies the maximum number of records to be
@@ -28927,7 +28916,7 @@ class NetworkManagersOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, *, top: Optional[int] = None, skip_token: Optional[str] = None, **kwargs: Any
-    ) -> AsyncIterable["_models.NetworkManager"]:
+    ) -> AsyncItemPaged["_models.NetworkManager"]:
         """List network managers in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -29619,7 +29608,7 @@ class SubscriptionNetworkManagerConnectionsOperations:  # pylint: disable=name-t
     @distributed_trace
     def list(
         self, *, top: Optional[int] = None, skip_token: Optional[str] = None, **kwargs: Any
-    ) -> AsyncIterable["_models.NetworkManagerConnection"]:
+    ) -> AsyncItemPaged["_models.NetworkManagerConnection"]:
         """List all network manager connections created by this subscription.
 
         :keyword top: An optional query parameter which specifies the maximum number of records to be
@@ -29951,7 +29940,7 @@ class ManagementGroupNetworkManagerConnectionsOperations:  # pylint: disable=nam
     @distributed_trace
     def list(
         self, management_group_id: str, *, top: Optional[int] = None, skip_token: Optional[str] = None, **kwargs: Any
-    ) -> AsyncIterable["_models.NetworkManagerConnection"]:
+    ) -> AsyncItemPaged["_models.NetworkManagerConnection"]:
         """List all network manager connections created by this management group.
 
         :param management_group_id: The management group Id which uniquely identify the Microsoft Azure
@@ -30396,7 +30385,7 @@ class ConnectivityConfigurationsOperations:
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.ConnectivityConfiguration"]:
+    ) -> AsyncItemPaged["_models.ConnectivityConfiguration"]:
         """Lists all the network manager connectivity configuration in a specified network manager.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -30855,7 +30844,7 @@ class NetworkGroupsOperations:
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.NetworkGroup"]:
+    ) -> AsyncItemPaged["_models.NetworkGroup"]:
         """Lists the specified network group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -31240,7 +31229,7 @@ class StaticMembersOperations:
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.StaticMember"]:
+    ) -> AsyncItemPaged["_models.StaticMember"]:
         """Lists the specified static member.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -31350,7 +31339,7 @@ class NetworkManagerRoutingConfigurationsOperations:  # pylint: disable=name-too
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.NetworkManagerRoutingConfiguration"]:
+    ) -> AsyncItemPaged["_models.NetworkManagerRoutingConfiguration"]:
         """Lists all the network manager routing configurations in a network manager, in a paginated
         format.
 
@@ -31796,7 +31785,7 @@ class RoutingRuleCollectionsOperations:
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.RoutingRuleCollection"]:
+    ) -> AsyncItemPaged["_models.RoutingRuleCollection"]:
         """Lists all the rule collections in a routing configuration, in a paginated format.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -32273,7 +32262,7 @@ class RoutingRulesOperations:
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.RoutingRule"]:
+    ) -> AsyncItemPaged["_models.RoutingRule"]:
         """List all network manager routing configuration routing rules.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -33021,7 +33010,7 @@ class ScopeConnectionsOperations:
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.ScopeConnection"]:
+    ) -> AsyncItemPaged["_models.ScopeConnection"]:
         """List all scope connections created by this network manager.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -33128,7 +33117,7 @@ class SecurityAdminConfigurationsOperations:
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.SecurityAdminConfiguration"]:
+    ) -> AsyncItemPaged["_models.SecurityAdminConfiguration"]:
         """Lists all the network manager security admin configurations in a network manager, in a
         paginated format.
 
@@ -33574,7 +33563,7 @@ class AdminRuleCollectionsOperations:
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.AdminRuleCollection"]:
+    ) -> AsyncItemPaged["_models.AdminRuleCollection"]:
         """Lists all the rule collections in a security admin configuration, in a paginated format.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -34047,7 +34036,7 @@ class AdminRulesOperations:
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.BaseAdminRule"]:
+    ) -> AsyncItemPaged["_models.BaseAdminRule"]:
         """List all network manager security configuration admin rules.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -34542,7 +34531,7 @@ class SecurityUserConfigurationsOperations:
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.SecurityUserConfiguration"]:
+    ) -> AsyncItemPaged["_models.SecurityUserConfiguration"]:
         """Lists all the network manager security user configurations in a network manager, in a paginated
         format.
 
@@ -34990,7 +34979,7 @@ class SecurityUserRuleCollectionsOperations:
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.SecurityUserRuleCollection"]:
+    ) -> AsyncItemPaged["_models.SecurityUserRuleCollection"]:
         """Lists all the security user rule collections in a security configuration, in a paginated
         format.
 
@@ -35471,7 +35460,7 @@ class SecurityUserRulesOperations:
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.SecurityUserRule"]:
+    ) -> AsyncItemPaged["_models.SecurityUserRule"]:
         """Lists all Security User Rules in a rule collection.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -36381,7 +36370,7 @@ class NetworkProfilesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_all(self, **kwargs: Any) -> AsyncIterable["_models.NetworkProfile"]:
+    def list_all(self, **kwargs: Any) -> AsyncItemPaged["_models.NetworkProfile"]:
         """Gets all the network profiles in a subscription.
 
         :return: An iterator like instance of either NetworkProfile or the result of cls(response)
@@ -36444,7 +36433,7 @@ class NetworkProfilesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.NetworkProfile"]:
+    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.NetworkProfile"]:
         """Gets all network profiles in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -37016,7 +37005,7 @@ class NetworkSecurityGroupsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_all(self, **kwargs: Any) -> AsyncIterable["_models.NetworkSecurityGroup"]:
+    def list_all(self, **kwargs: Any) -> AsyncItemPaged["_models.NetworkSecurityGroup"]:
         """Gets all network security groups in a subscription.
 
         :return: An iterator like instance of either NetworkSecurityGroup or the result of
@@ -37081,7 +37070,7 @@ class NetworkSecurityGroupsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.NetworkSecurityGroup"]:
+    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.NetworkSecurityGroup"]:
         """Gets all network security groups in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -37546,7 +37535,7 @@ class SecurityRulesOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, network_security_group_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.SecurityRule"]:
+    ) -> AsyncItemPaged["_models.SecurityRule"]:
         """Gets all security rules in a network security group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -37637,7 +37626,7 @@ class DefaultSecurityRulesOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, network_security_group_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.SecurityRule"]:
+    ) -> AsyncItemPaged["_models.SecurityRule"]:
         """Gets all default security rules in a network security group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -38227,7 +38216,7 @@ class NetworkSecurityPerimetersOperations:
     @distributed_trace
     def list_by_subscription(
         self, *, top: Optional[int] = None, skip_token: Optional[str] = None, **kwargs: Any
-    ) -> AsyncIterable["_models.NetworkSecurityPerimeter"]:
+    ) -> AsyncItemPaged["_models.NetworkSecurityPerimeter"]:
         """List all network security perimeters in a subscription.
 
         :keyword top: An optional query parameter which specifies the maximum number of records to be
@@ -38304,7 +38293,7 @@ class NetworkSecurityPerimetersOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, *, top: Optional[int] = None, skip_token: Optional[str] = None, **kwargs: Any
-    ) -> AsyncIterable["_models.NetworkSecurityPerimeter"]:
+    ) -> AsyncItemPaged["_models.NetworkSecurityPerimeter"]:
         """List network security perimeters in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -38663,7 +38652,7 @@ class NetworkSecurityPerimeterProfilesOperations:  # pylint: disable=name-too-lo
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.NspProfile"]:
+    ) -> AsyncItemPaged["_models.NspProfile"]:
         """Lists the NSP profiles in the specified network security perimeter.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -39050,7 +39039,7 @@ class NetworkSecurityPerimeterAccessRulesOperations:  # pylint: disable=name-too
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.NspAccessRule"]:
+    ) -> AsyncItemPaged["_models.NspAccessRule"]:
         """Lists the NSP access rules in the specified NSP profile.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -39623,7 +39612,7 @@ class NetworkSecurityPerimeterAssociationsOperations:  # pylint: disable=name-to
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.NspAssociation"]:
+    ) -> AsyncItemPaged["_models.NspAssociation"]:
         """Lists the NSP resource associations.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -39793,7 +39782,7 @@ class NetworkSecurityPerimeterAssociableResourceTypesOperations:  # pylint: disa
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, location: str, **kwargs: Any) -> AsyncIterable["_models.PerimeterAssociableResource"]:
+    def list(self, location: str, **kwargs: Any) -> AsyncItemPaged["_models.PerimeterAssociableResource"]:
         """Gets the list of resources that are onboarded with NSP. These resources can be associated with
         a network security perimeter.
 
@@ -40200,7 +40189,7 @@ class NetworkSecurityPerimeterLinksOperations:
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.NspLink"]:
+    ) -> AsyncItemPaged["_models.NspLink"]:
         """Lists the NSP Link resources in the specified network security perimeter.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -40480,7 +40469,7 @@ class NetworkSecurityPerimeterLinkReferencesOperations:  # pylint: disable=name-
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.NspLinkReference"]:
+    ) -> AsyncItemPaged["_models.NspLinkReference"]:
         """Lists the NSP LinkReference resources in the specified network security perimeter.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -40847,7 +40836,7 @@ class NetworkSecurityPerimeterLoggingConfigurationsOperations:  # pylint: disabl
     @distributed_trace
     def list(
         self, resource_group_name: str, network_security_perimeter_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.NspLoggingConfiguration"]:
+    ) -> AsyncItemPaged["_models.NspLoggingConfiguration"]:
         """Lists the NSP logging configuration.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -40992,6 +40981,95 @@ class NetworkSecurityPerimeterOperationStatusesOperations:  # pylint: disable=na
         return deserialized  # type: ignore
 
 
+class NetworkSecurityPerimeterServiceTagsOperations:  # pylint: disable=name-too-long
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
+        :attr:`network_security_perimeter_service_tags` attribute.
+    """
+
+    models = _models
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: NetworkManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    def list(self, location: str, **kwargs: Any) -> AsyncItemPaged["_models.NspServiceTagsResource"]:
+        """Gets the list of service tags supported by NSP. These service tags can be used to create access
+        rules in NSP.
+
+        :param location: The location of network security perimeter. Required.
+        :type location: str
+        :return: An iterator like instance of either NspServiceTagsResource or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.NspServiceTagsResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        cls: ClsType[_models.NspServiceTagsListResult] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_network_security_perimeter_service_tags_list_request(
+                    location=location,
+                    subscription_id=self._config.subscription_id,
+                    api_version=api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                _request.url = self._client.format_url(_request.url)
+
+            else:
+                _request = HttpRequest("GET", next_link)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = self._deserialize("NspServiceTagsListResult", pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.next_link or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
 class ReachabilityAnalysisIntentsOperations:
     """
     .. warning::
@@ -41024,7 +41102,7 @@ class ReachabilityAnalysisIntentsOperations:
         sort_key: Optional[str] = None,
         sort_value: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.ReachabilityAnalysisIntent"]:
+    ) -> AsyncItemPaged["_models.ReachabilityAnalysisIntent"]:
         """Gets list of Reachability Analysis Intents .
 
         Gets list of Reachability Analysis Intents .
@@ -41438,7 +41516,7 @@ class ReachabilityAnalysisRunsOperations:
         sort_key: Optional[str] = None,
         sort_value: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.ReachabilityAnalysisRun"]:
+    ) -> AsyncItemPaged["_models.ReachabilityAnalysisRun"]:
         """Gets list of Reachability Analysis Runs.
 
         Gets list of Reachability Analysis Runs.
@@ -41916,7 +41994,7 @@ class VerifierWorkspacesOperations:
         sort_key: Optional[str] = None,
         sort_value: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.VerifierWorkspace"]:
+    ) -> AsyncItemPaged["_models.VerifierWorkspace"]:
         """Gets list of Verifier Workspaces.
 
         Gets list of Verifier Workspaces.
@@ -43670,7 +43748,7 @@ class NetworkVirtualAppliancesOperations:
     @distributed_trace
     def list_by_resource_group(
         self, resource_group_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.NetworkVirtualAppliance"]:
+    ) -> AsyncItemPaged["_models.NetworkVirtualAppliance"]:
         """Lists all Network Virtual Appliances in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -43738,7 +43816,7 @@ class NetworkVirtualAppliancesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.NetworkVirtualAppliance"]:
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.NetworkVirtualAppliance"]:
         """Gets all Network Virtual Appliances in a subscription.
 
         :return: An iterator like instance of either NetworkVirtualAppliance or the result of
@@ -44200,7 +44278,7 @@ class VirtualApplianceSitesOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, network_virtual_appliance_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.VirtualApplianceSite"]:
+    ) -> AsyncItemPaged["_models.VirtualApplianceSite"]:
         """Lists all Network Virtual Appliance Sites in a Network Virtual Appliance resource.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -44291,7 +44369,7 @@ class VirtualApplianceSkusOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.NetworkVirtualApplianceSku"]:
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.NetworkVirtualApplianceSku"]:
         """List all SKUs available for a virtual appliance.
 
         :return: An iterator like instance of either NetworkVirtualApplianceSku or the result of
@@ -45131,7 +45209,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.NetworkWatcher"]:
+    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.NetworkWatcher"]:
         """Gets all network watchers by resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -45198,7 +45276,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_all(self, **kwargs: Any) -> AsyncIterable["_models.NetworkWatcher"]:
+    def list_all(self, **kwargs: Any) -> AsyncItemPaged["_models.NetworkWatcher"]:
         """Gets all network watchers by subscription.
 
         :return: An iterator like instance of either NetworkWatcher or the result of cls(response)
@@ -48162,7 +48240,7 @@ class PacketCapturesOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, network_watcher_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.PacketCaptureResult"]:
+    ) -> AsyncItemPaged["_models.PacketCaptureResult"]:
         """Lists all packet capture sessions within the specified resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -48904,7 +48982,7 @@ class ConnectionMonitorsOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, network_watcher_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.ConnectionMonitorResult"]:
+    ) -> AsyncItemPaged["_models.ConnectionMonitorResult"]:
         """Lists all connection monitors for the specified Network Watcher.
 
         :param resource_group_name: The name of the resource group containing Network Watcher.
@@ -49513,7 +49591,7 @@ class FlowLogsOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, network_watcher_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.FlowLog"]:
+    ) -> AsyncItemPaged["_models.FlowLog"]:
         """Lists all flow log resources for the specified Network Watcher.
 
         :param resource_group_name: The name of the resource group containing Network Watcher.
@@ -49604,7 +49682,7 @@ class Operations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.Operation"]:
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.Operation"]:
         """Lists all of the available Network Rest API operations.
 
         :return: An iterator like instance of either Operation or the result of cls(response)
@@ -50048,7 +50126,7 @@ class PrivateEndpointsOperations:
         )
 
     @distributed_trace
-    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.PrivateEndpoint"]:
+    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.PrivateEndpoint"]:
         """Gets all private endpoints in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -50115,7 +50193,7 @@ class PrivateEndpointsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_by_subscription(self, **kwargs: Any) -> AsyncIterable["_models.PrivateEndpoint"]:
+    def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.PrivateEndpoint"]:
         """Gets all private endpoints in a subscription.
 
         :return: An iterator like instance of either PrivateEndpoint or the result of cls(response)
@@ -50199,7 +50277,7 @@ class AvailablePrivateEndpointTypesOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, location: str, **kwargs: Any) -> AsyncIterable["_models.AvailablePrivateEndpointType"]:
+    def list(self, location: str, **kwargs: Any) -> AsyncItemPaged["_models.AvailablePrivateEndpointType"]:
         """Returns all of the resource types that can be linked to a Private Endpoint in this subscription
         in this region.
 
@@ -50270,7 +50348,7 @@ class AvailablePrivateEndpointTypesOperations:
     @distributed_trace
     def list_by_resource_group(
         self, location: str, resource_group_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.AvailablePrivateEndpointType"]:
+    ) -> AsyncItemPaged["_models.AvailablePrivateEndpointType"]:
         """Returns all of the resource types that can be linked to a Private Endpoint in this subscription
         in this region.
 
@@ -50739,7 +50817,7 @@ class PrivateDnsZoneGroupsOperations:
     @distributed_trace
     def list(
         self, private_endpoint_name: str, resource_group_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.PrivateDnsZoneGroup"]:
+    ) -> AsyncItemPaged["_models.PrivateDnsZoneGroup"]:
         """Gets all private dns zone groups in a private endpoint.
 
         :param private_endpoint_name: The name of the private endpoint. Required.
@@ -51187,7 +51265,7 @@ class PrivateLinkServicesOperations:
         )
 
     @distributed_trace
-    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.PrivateLinkService"]:
+    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.PrivateLinkService"]:
         """Gets all private link services in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -51254,7 +51332,7 @@ class PrivateLinkServicesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_by_subscription(self, **kwargs: Any) -> AsyncIterable["_models.PrivateLinkService"]:
+    def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.PrivateLinkService"]:
         """Gets all private link service in a subscription.
 
         :return: An iterator like instance of either PrivateLinkService or the result of cls(response)
@@ -51641,7 +51719,7 @@ class PrivateLinkServicesOperations:
     @distributed_trace
     def list_private_endpoint_connections(
         self, resource_group_name: str, service_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.PrivateEndpointConnection"]:
+    ) -> AsyncItemPaged["_models.PrivateEndpointConnection"]:
         """Gets all private end point connections for a specific private link service.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -52091,7 +52169,7 @@ class PrivateLinkServicesOperations:
     @distributed_trace
     def list_auto_approved_private_link_services(
         self, location: str, **kwargs: Any
-    ) -> AsyncIterable["_models.AutoApprovedPrivateLinkService"]:
+    ) -> AsyncItemPaged["_models.AutoApprovedPrivateLinkService"]:
         """Returns all of the private link service ids that can be linked to a Private Endpoint with auto
         approved in this subscription in this region.
 
@@ -52162,7 +52240,7 @@ class PrivateLinkServicesOperations:
     @distributed_trace
     def list_auto_approved_private_link_services_by_resource_group(  # pylint: disable=name-too-long
         self, location: str, resource_group_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.AutoApprovedPrivateLinkService"]:
+    ) -> AsyncItemPaged["_models.AutoApprovedPrivateLinkService"]:
         """Returns all of the private link service ids that can be linked to a Private Endpoint with auto
         approved in this subscription in this region.
 
@@ -52741,7 +52819,7 @@ class PublicIPPrefixesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_all(self, **kwargs: Any) -> AsyncIterable["_models.PublicIPPrefix"]:
+    def list_all(self, **kwargs: Any) -> AsyncItemPaged["_models.PublicIPPrefix"]:
         """Gets all the public IP prefixes in a subscription.
 
         :return: An iterator like instance of either PublicIPPrefix or the result of cls(response)
@@ -52804,7 +52882,7 @@ class PublicIPPrefixesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.PublicIPPrefix"]:
+    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.PublicIPPrefix"]:
         """Gets all public IP prefixes in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -53384,7 +53462,7 @@ class RouteFiltersOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.RouteFilter"]:
+    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.RouteFilter"]:
         """Gets all route filters in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -53450,7 +53528,7 @@ class RouteFiltersOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.RouteFilter"]:
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.RouteFilter"]:
         """Gets all route filters in a subscription.
 
         :return: An iterator like instance of either RouteFilter or the result of cls(response)
@@ -53918,7 +53996,7 @@ class RouteFilterRulesOperations:
     @distributed_trace
     def list_by_route_filter(
         self, resource_group_name: str, route_filter_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.RouteFilterRule"]:
+    ) -> AsyncItemPaged["_models.RouteFilterRule"]:
         """Gets all RouteFilterRules in a route filter.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -54491,7 +54569,7 @@ class RouteTablesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.RouteTable"]:
+    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.RouteTable"]:
         """Gets all route tables in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -54557,7 +54635,7 @@ class RouteTablesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_all(self, **kwargs: Any) -> AsyncIterable["_models.RouteTable"]:
+    def list_all(self, **kwargs: Any) -> AsyncItemPaged["_models.RouteTable"]:
         """Gets all route tables in a subscription.
 
         :return: An iterator like instance of either RouteTable or the result of cls(response)
@@ -55010,7 +55088,7 @@ class RoutesOperations:
         )
 
     @distributed_trace
-    def list(self, resource_group_name: str, route_table_name: str, **kwargs: Any) -> AsyncIterable["_models.Route"]:
+    def list(self, resource_group_name: str, route_table_name: str, **kwargs: Any) -> AsyncItemPaged["_models.Route"]:
         """Gets all routes in a route table.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -55584,7 +55662,7 @@ class SecurityPartnerProvidersOperations:
     @distributed_trace
     def list_by_resource_group(
         self, resource_group_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.SecurityPartnerProvider"]:
+    ) -> AsyncItemPaged["_models.SecurityPartnerProvider"]:
         """Lists all Security Partner Providers in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -55652,7 +55730,7 @@ class SecurityPartnerProvidersOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.SecurityPartnerProvider"]:
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.SecurityPartnerProvider"]:
         """Gets all the Security Partner Providers in a subscription.
 
         :return: An iterator like instance of either SecurityPartnerProvider or the result of
@@ -55737,7 +55815,7 @@ class BgpServiceCommunitiesOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.BgpServiceCommunity"]:
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.BgpServiceCommunity"]:
         """Gets all the available bgp service communities.
 
         :return: An iterator like instance of either BgpServiceCommunity or the result of cls(response)
@@ -56311,7 +56389,7 @@ class ServiceEndpointPoliciesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.ServiceEndpointPolicy"]:
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.ServiceEndpointPolicy"]:
         """Gets all the service endpoint policies in a subscription.
 
         :return: An iterator like instance of either ServiceEndpointPolicy or the result of
@@ -56378,7 +56456,7 @@ class ServiceEndpointPoliciesOperations:
     @distributed_trace
     def list_by_resource_group(
         self, resource_group_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.ServiceEndpointPolicy"]:
+    ) -> AsyncItemPaged["_models.ServiceEndpointPolicy"]:
         """Gets all service endpoint Policies in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -56869,7 +56947,7 @@ class ServiceEndpointPolicyDefinitionsOperations:  # pylint: disable=name-too-lo
     @distributed_trace
     def list_by_resource_group(
         self, resource_group_name: str, service_endpoint_policy_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.ServiceEndpointPolicyDefinition"]:
+    ) -> AsyncItemPaged["_models.ServiceEndpointPolicyDefinition"]:
         """Gets all service endpoint policy definitions in a service end point policy.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -57040,7 +57118,7 @@ class ServiceTagInformationOperations:
         no_address_prefixes: Optional[bool] = None,
         tag_name: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.ServiceTagInformation"]:
+    ) -> AsyncItemPaged["_models.ServiceTagInformation"]:
         """Gets a list of service tag information resources with pagination.
 
         :param location: The location that will be used as a reference for cloud (not as a filter based
@@ -57137,7 +57215,7 @@ class UsagesOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, location: str, **kwargs: Any) -> AsyncIterable["_models.Usage"]:
+    def list(self, location: str, **kwargs: Any) -> AsyncItemPaged["_models.Usage"]:
         """List network usages for a subscription.
 
         :param location: The location where resource usage is queried. Required.
@@ -57709,7 +57787,7 @@ class VirtualNetworksOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_all(self, **kwargs: Any) -> AsyncIterable["_models.VirtualNetwork"]:
+    def list_all(self, **kwargs: Any) -> AsyncItemPaged["_models.VirtualNetwork"]:
         """Gets all virtual networks in a subscription.
 
         :return: An iterator like instance of either VirtualNetwork or the result of cls(response)
@@ -57772,7 +57850,7 @@ class VirtualNetworksOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.VirtualNetwork"]:
+    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.VirtualNetwork"]:
         """Gets all virtual networks in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -57899,7 +57977,7 @@ class VirtualNetworksOperations:
     @distributed_trace
     def list_usage(
         self, resource_group_name: str, virtual_network_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.VirtualNetworkUsage"]:
+    ) -> AsyncItemPaged["_models.VirtualNetworkUsage"]:
         """Lists usage stats.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -58034,7 +58112,7 @@ class VirtualNetworksOperations:
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncLROPoller[AsyncIterable["_models.PublicIpDdosProtectionStatusResult"]]:
+    ) -> AsyncLROPoller[AsyncItemPaged["_models.PublicIpDdosProtectionStatusResult"]]:
         """Gets the Ddos Protection Status of all IP Addresses under the Virtual Network.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -58146,13 +58224,13 @@ class VirtualNetworksOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[AsyncIterable["_models.PublicIpDdosProtectionStatusResult"]].from_continuation_token(
+            return AsyncLROPoller[AsyncItemPaged["_models.PublicIpDdosProtectionStatusResult"]].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[AsyncIterable["_models.PublicIpDdosProtectionStatusResult"]](
+        return AsyncLROPoller[AsyncItemPaged["_models.PublicIpDdosProtectionStatusResult"]](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
@@ -58967,7 +59045,7 @@ class SubnetsOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, virtual_network_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.Subnet"]:
+    ) -> AsyncItemPaged["_models.Subnet"]:
         """Gets all subnets in a virtual network.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -59610,7 +59688,7 @@ class VirtualNetworkPeeringsOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, virtual_network_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.VirtualNetworkPeering"]:
+    ) -> AsyncItemPaged["_models.VirtualNetworkPeering"]:
         """Gets all virtual network peerings in a virtual network.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -60249,7 +60327,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         )
 
     @distributed_trace
-    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.VirtualNetworkGateway"]:
+    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.VirtualNetworkGateway"]:
         """Gets all virtual network gateways by resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -60319,7 +60397,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
     @distributed_trace
     def list_connections(
         self, resource_group_name: str, virtual_network_gateway_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.VirtualNetworkGatewayConnectionListEntity"]:
+    ) -> AsyncItemPaged["_models.VirtualNetworkGatewayConnectionListEntity"]:
         """Gets all the connections in a virtual network gateway.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -64848,7 +64926,9 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.VirtualNetworkGatewayConnection"]:
+    def list(
+        self, resource_group_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.VirtualNetworkGatewayConnection"]:
         """The List VirtualNetworkGatewayConnections operation retrieves all the virtual network gateways
         connections created.
 
@@ -66231,7 +66311,7 @@ class LocalNetworkGatewaysOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.LocalNetworkGateway"]:
+    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.LocalNetworkGateway"]:
         """Gets all the local network gateways in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -66698,7 +66778,7 @@ class VirtualNetworkGatewayNatRulesOperations:
     @distributed_trace
     def list_by_virtual_network_gateway(
         self, resource_group_name: str, virtual_network_gateway_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.VirtualNetworkGatewayNatRule"]:
+    ) -> AsyncItemPaged["_models.VirtualNetworkGatewayNatRule"]:
         """Retrieves all nat rules for a particular virtual network gateway.
 
         :param resource_group_name: The resource group name of the virtual network gateway. Required.
@@ -67266,7 +67346,7 @@ class VirtualNetworkTapsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_all(self, **kwargs: Any) -> AsyncIterable["_models.VirtualNetworkTap"]:
+    def list_all(self, **kwargs: Any) -> AsyncItemPaged["_models.VirtualNetworkTap"]:
         """Gets all the VirtualNetworkTaps in a subscription.
 
         :return: An iterator like instance of either VirtualNetworkTap or the result of cls(response)
@@ -67331,7 +67411,7 @@ class VirtualNetworkTapsOperations:
     @distributed_trace
     def list_by_resource_group(
         self, resource_group_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.VirtualNetworkTap"]:
+    ) -> AsyncItemPaged["_models.VirtualNetworkTap"]:
         """Gets all the VirtualNetworkTaps in a subscription.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -67777,7 +67857,9 @@ class VirtualRoutersOperations:
         )
 
     @distributed_trace
-    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.VirtualRouter"]:
+    def list_by_resource_group(
+        self, resource_group_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.VirtualRouter"]:
         """Lists all Virtual Routers in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -67844,7 +67926,7 @@ class VirtualRoutersOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.VirtualRouter"]:
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.VirtualRouter"]:
         """Gets all the Virtual Routers in a subscription.
 
         :return: An iterator like instance of either VirtualRouter or the result of cls(response)
@@ -68308,7 +68390,7 @@ class VirtualRouterPeeringsOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, virtual_router_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.VirtualRouterPeering"]:
+    ) -> AsyncItemPaged["_models.VirtualRouterPeering"]:
         """Lists all Virtual Router Peerings in a Virtual Router resource.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -68879,7 +68961,7 @@ class VirtualWansOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
-    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.VirtualWAN"]:
+    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.VirtualWAN"]:
         """Lists all the VirtualWANs in a resource group.
 
         :param resource_group_name: The resource group name of the VirtualWan. Required.
@@ -68945,7 +69027,7 @@ class VirtualWansOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.VirtualWAN"]:
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.VirtualWAN"]:
         """Lists all the VirtualWANs in a subscription.
 
         :return: An iterator like instance of either VirtualWAN or the result of cls(response)
@@ -69505,7 +69587,7 @@ class VpnSitesOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
-    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.VpnSite"]:
+    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.VpnSite"]:
         """Lists all the vpnSites in a resource group.
 
         :param resource_group_name: The resource group name of the VpnSite. Required.
@@ -69571,7 +69653,7 @@ class VpnSitesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.VpnSite"]:
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.VpnSite"]:
         """Lists all the VpnSites in a subscription.
 
         :return: An iterator like instance of either VpnSite or the result of cls(response)
@@ -69715,7 +69797,7 @@ class VpnSiteLinksOperations:
     @distributed_trace
     def list_by_vpn_site(
         self, resource_group_name: str, vpn_site_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.VpnSiteLink"]:
+    ) -> AsyncItemPaged["_models.VpnSiteLink"]:
         """Lists all the vpnSiteLinks in a resource group for a vpn site.
 
         :param resource_group_name: The resource group name of the VpnSite. Required.
@@ -70510,7 +70592,7 @@ class VpnServerConfigurationsOperations:
     @distributed_trace
     def list_by_resource_group(
         self, resource_group_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.VpnServerConfiguration"]:
+    ) -> AsyncItemPaged["_models.VpnServerConfiguration"]:
         """Lists all the vpnServerConfigurations in a resource group.
 
         :param resource_group_name: The resource group name of the VpnServerConfiguration. Required.
@@ -70578,7 +70660,7 @@ class VpnServerConfigurationsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.VpnServerConfiguration"]:
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.VpnServerConfiguration"]:
         """Lists all the VpnServerConfigurations in a subscription.
 
         :return: An iterator like instance of either VpnServerConfiguration or the result of
@@ -71061,7 +71143,7 @@ class ConfigurationPolicyGroupsOperations:
     @distributed_trace
     def list_by_vpn_server_configuration(
         self, resource_group_name: str, vpn_server_configuration_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.VpnServerConfigurationPolicyGroup"]:
+    ) -> AsyncItemPaged["_models.VpnServerConfigurationPolicyGroup"]:
         """Lists all the configurationPolicyGroups in a resource group for a vpnServerConfiguration.
 
         :param resource_group_name: The resource group name of the VpnServerConfiguration. Required.
@@ -71631,7 +71713,7 @@ class VirtualHubsOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
-    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.VirtualHub"]:
+    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.VirtualHub"]:
         """Lists all the VirtualHubs in a resource group.
 
         :param resource_group_name: The resource group name of the VirtualHub. Required.
@@ -71697,7 +71779,7 @@ class VirtualHubsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.VirtualHub"]:
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.VirtualHub"]:
         """Lists all the VirtualHubs in a subscription.
 
         :return: An iterator like instance of either VirtualHub or the result of cls(response)
@@ -72749,7 +72831,9 @@ class RouteMapsOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
-    def list(self, resource_group_name: str, virtual_hub_name: str, **kwargs: Any) -> AsyncIterable["_models.RouteMap"]:
+    def list(
+        self, resource_group_name: str, virtual_hub_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.RouteMap"]:
         """Retrieves the details of all RouteMaps.
 
         :param resource_group_name: The resource group name of the RouteMap's resource group'.
@@ -73225,7 +73309,7 @@ class HubVirtualNetworkConnectionsOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, virtual_hub_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.HubVirtualNetworkConnection"]:
+    ) -> AsyncItemPaged["_models.HubVirtualNetworkConnection"]:
         """Retrieves the details of all HubVirtualNetworkConnections.
 
         :param resource_group_name: The resource group name of the VirtualHub. Required.
@@ -74361,7 +74445,7 @@ class VpnGatewaysOperations:
         return AsyncLROPoller[str](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
-    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.VpnGateway"]:
+    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.VpnGateway"]:
         """Lists all the VpnGateways in a resource group.
 
         :param resource_group_name: The resource group name of the VpnGateway. Required.
@@ -74427,7 +74511,7 @@ class VpnGatewaysOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.VpnGateway"]:
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.VpnGateway"]:
         """Lists all the VpnGateways in a subscription.
 
         :return: An iterator like instance of either VpnGateway or the result of cls(response)
@@ -74642,7 +74726,7 @@ class VpnLinkConnectionsOperations:
         connection_name: str,
         link_connection_name: str,
         **kwargs: Any
-    ) -> AsyncIterable["_models.ConnectionSharedKeyResult"]:
+    ) -> AsyncItemPaged["_models.ConnectionSharedKeyResult"]:
         """Lists all shared keys of VpnLink connection specified.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -75211,7 +75295,7 @@ class VpnLinkConnectionsOperations:
     @distributed_trace
     def list_by_vpn_connection(
         self, resource_group_name: str, gateway_name: str, connection_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.VpnSiteLinkConnection"]:
+    ) -> AsyncItemPaged["_models.VpnSiteLinkConnection"]:
         """Retrieves all vpn site link connections for a particular virtual wan vpn gateway vpn
         connection.
 
@@ -76096,7 +76180,7 @@ class VpnConnectionsOperations:
     @distributed_trace
     def list_by_vpn_gateway(
         self, resource_group_name: str, gateway_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.VpnConnection"]:
+    ) -> AsyncItemPaged["_models.VpnConnection"]:
         """Retrieves all vpn connections for a particular virtual wan vpn gateway.
 
         :param resource_group_name: The resource group name of the VpnGateway. Required.
@@ -76650,7 +76734,7 @@ class NatRulesOperations:
     @distributed_trace
     def list_by_vpn_gateway(
         self, resource_group_name: str, gateway_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.VpnGatewayNatRule"]:
+    ) -> AsyncItemPaged["_models.VpnGatewayNatRule"]:
         """Retrieves all nat rules for a particular virtual wan vpn gateway.
 
         :param resource_group_name: The resource group name of the VpnGateway. Required.
@@ -77283,7 +77367,9 @@ class P2SVpnGatewaysOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
-    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.P2SVpnGateway"]:
+    def list_by_resource_group(
+        self, resource_group_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.P2SVpnGateway"]:
         """Lists all the P2SVpnGateways in a resource group.
 
         :param resource_group_name: The resource group name of the P2SVpnGateway. Required.
@@ -77349,7 +77435,7 @@ class P2SVpnGatewaysOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.P2SVpnGateway"]:
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.P2SVpnGateway"]:
         """Lists all the P2SVpnGateways in a subscription.
 
         :return: An iterator like instance of either P2SVpnGateway or the result of cls(response)
@@ -78746,7 +78832,7 @@ class VirtualHubRouteTableV2SOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, virtual_hub_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.VirtualHubRouteTableV2"]:
+    ) -> AsyncItemPaged["_models.VirtualHubRouteTableV2"]:
         """Retrieves the details of all VirtualHubRouteTableV2s.
 
         :param resource_group_name: The resource group name of the VirtualHub. Required.
@@ -80354,7 +80440,7 @@ class NetworkVirtualApplianceConnectionsOperations:  # pylint: disable=name-too-
     @distributed_trace
     def list(
         self, resource_group_name: str, network_virtual_appliance_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.NetworkVirtualApplianceConnection"]:
+    ) -> AsyncItemPaged["_models.NetworkVirtualApplianceConnection"]:
         """Lists NetworkVirtualApplianceConnections under the NVA.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -80843,7 +80929,7 @@ class VirtualHubBgpConnectionsOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, virtual_hub_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.BgpConnection"]:
+    ) -> AsyncItemPaged["_models.BgpConnection"]:
         """Retrieves the details of all VirtualHubBgpConnections.
 
         :param resource_group_name: The resource group name of the VirtualHub. Required.
@@ -81542,7 +81628,7 @@ class VirtualHubIpConfigurationOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, virtual_hub_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.HubIpConfiguration"]:
+    ) -> AsyncItemPaged["_models.HubIpConfiguration"]:
         """Retrieves the details of all VirtualHubIpConfigurations.
 
         :param resource_group_name: The resource group name of the VirtualHub. Required.
@@ -82006,7 +82092,7 @@ class HubRouteTablesOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, virtual_hub_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.HubRouteTable"]:
+    ) -> AsyncItemPaged["_models.HubRouteTable"]:
         """Retrieves the details of all RouteTables.
 
         :param resource_group_name: The resource group name of the VirtualHub. Required.
@@ -82475,7 +82561,7 @@ class RoutingIntentOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, virtual_hub_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.RoutingIntent"]:
+    ) -> AsyncItemPaged["_models.RoutingIntent"]:
         """Retrieves the details of all RoutingIntent child resources of the VirtualHub.
 
         :param resource_group_name: The resource group name of the VirtualHub. Required.
@@ -82564,7 +82650,7 @@ class WebApplicationFirewallPoliciesOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.WebApplicationFirewallPolicy"]:
+    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.WebApplicationFirewallPolicy"]:
         """Lists all of the protection policies within a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -82632,7 +82718,7 @@ class WebApplicationFirewallPoliciesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_all(self, **kwargs: Any) -> AsyncIterable["_models.WebApplicationFirewallPolicy"]:
+    def list_all(self, **kwargs: Any) -> AsyncItemPaged["_models.WebApplicationFirewallPolicy"]:
         """Gets all the WAF policies in a subscription.
 
         :return: An iterator like instance of either WebApplicationFirewallPolicy or the result of
