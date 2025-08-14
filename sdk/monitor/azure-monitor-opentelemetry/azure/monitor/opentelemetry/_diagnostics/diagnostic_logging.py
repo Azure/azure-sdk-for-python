@@ -86,7 +86,7 @@ class AzureDiagnosticLogging:
                         f_handler.setFormatter(formatter)
                         _diagnostic_file_logger.addHandler(f_handler)
                         AzureDiagnosticLogging._initialized = True
-                    except Exception as e:
+                    except Exception as e:  # pylint: disable=broad-except
                         _logger.error("Failed to initialize Azure Monitor diagnostic logging: %s", e)
                         AzureDiagnosticLogging._initialized = False
 
