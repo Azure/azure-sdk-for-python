@@ -8,6 +8,7 @@ import os
 import random
 import subprocess
 import errno
+from typing import Union
 from enum import Enum
 
 from azure.monitor.opentelemetry.exporter._utils import PeriodicTask
@@ -37,6 +38,7 @@ def _seconds(seconds):
     return datetime.timedelta(seconds=seconds)
 
 class StorageExportResult(Enum):
+    LOCAL_FILE_BLOB_SUCCESS = 0
     CLIENT_STORAGE_DISABLED = 1
     CLIENT_PERSISTENCE_CAPACITY_REACHED = 2
     CLIENT_READONLY = 3
@@ -60,9 +62,7 @@ class LocalFileBlob:
             pass  # keep silent
         return None
 
-    def put(self, data, lease_period=0):
-        #TODO: Modify method to remove the return of self as it is not being used anywhere.
-        # Add typing to method
+    def put(self, data, lease_period=0) -> Union[StorageExportResult, str]:
         try:
             fullpath = self.fullpath + ".tmp"
             with open(fullpath, "w", encoding="utf-8") as file:
@@ -76,7 +76,7 @@ class LocalFileBlob:
                 timestamp = _now() + _seconds(lease_period)
                 self.fullpath += "@{}.lock".format(_fmt(timestamp))
             os.rename(fullpath, self.fullpath)
-            return self
+            return StorageExportResult.LOCAL_FILE_BLOB_SUCCESS
         except Exception as ex:
             return str(ex)
 
@@ -194,10 +194,7 @@ class LocalFileStorage:
             pass
         return None
 
-    def put(self, data, lease_period=None):
-        # TODO: Remove the blob.put result as we are not using it anywhere and use StorageExportResult instead,
-        # Should still capture exceptions returned from LocalFileBlob.put
-        # Add typing for method
+    def put(self, data, lease_period=None) -> Union[StorageExportResult, str]:
         try:
             if not self._enabled:
                 if get_local_storage_setup_state_readonly():
