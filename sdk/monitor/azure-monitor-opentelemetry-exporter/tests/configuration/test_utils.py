@@ -27,26 +27,35 @@ class TestOneSettingsResponse(unittest.TestCase):
         self.assertEqual(response.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
         self.assertEqual(response.settings, {})
         self.assertIsNone(response.version)
+        self.assertEqual(response.status_code, 200)
 
     def test_init_custom_values(self):
         """Test OneSettingsResponse initialization with custom values."""
         etag = "test-etag"
-        refresh_interval = 1800.0
+        refresh_interval = 1800
         settings = {"key1": "value1", "key2": "value2"}
         version = 5
+        status_code = 304
         
-        response = OneSettingsResponse(etag, refresh_interval, settings, version)
+        response = OneSettingsResponse(etag, refresh_interval, settings, version, status_code)
         
         self.assertEqual(response.etag, etag)
         self.assertEqual(response.refresh_interval, refresh_interval)
         self.assertEqual(response.settings, settings)
         self.assertEqual(response.version, version)
+        self.assertEqual(response.status_code, status_code)
 
     def test_init_empty_settings_dict(self):
         """Test OneSettingsResponse handles None settings correctly."""
         response = OneSettingsResponse(settings=None)
         
         self.assertEqual(response.settings, {})
+
+    def test_init_custom_status_code(self):
+        """Test OneSettingsResponse with custom status code."""
+        response = OneSettingsResponse(status_code=404)
+        
+        self.assertEqual(response.status_code, 404)
 
 
 class TestMakeOneSettingsRequest(unittest.TestCase):
@@ -59,7 +68,7 @@ class TestMakeOneSettingsRequest(unittest.TestCase):
         # Setup
         mock_response = Mock()
         mock_get.return_value = mock_response
-        expected_response = OneSettingsResponse(etag="test-etag")
+        expected_response = OneSettingsResponse(etag="test-etag", status_code=200)
         mock_parse.return_value = expected_response
         
         url = "https://test.example.com"
@@ -104,6 +113,7 @@ class TestMakeOneSettingsRequest(unittest.TestCase):
         self.assertIsInstance(result, OneSettingsResponse)
         self.assertIsNone(result.etag)
         self.assertEqual(result.settings, {})
+        self.assertEqual(result.status_code, 200)  # Default status code
         mock_logger.warning.assert_called_once()
 
     @patch('azure.monitor.opentelemetry.exporter._configuration._utils.requests.get')
@@ -123,6 +133,7 @@ class TestMakeOneSettingsRequest(unittest.TestCase):
         
         # Verify
         self.assertIsInstance(result, OneSettingsResponse)
+        self.assertEqual(result.status_code, 200)  # Default status code
         mock_logger.warning.assert_called_once()
 
     @patch('azure.monitor.opentelemetry.exporter._configuration._utils.requests.get')
@@ -137,6 +148,7 @@ class TestMakeOneSettingsRequest(unittest.TestCase):
         
         # Verify
         self.assertIsInstance(result, OneSettingsResponse)
+        self.assertEqual(result.status_code, 200)  # Default status code
         mock_logger.warning.assert_called_once()
 
 
@@ -147,11 +159,10 @@ class TestParseOneSettingsResponse(unittest.TestCase):
         """Test parsing 200 response with valid settings."""
         # Setup
         mock_response = Mock()
-        mock_response.__bool__ = Mock(return_value=True)
         mock_response.status_code = 200
         mock_response.headers = {
             "ETag": "test-etag-123",
-            "x-ms-onesetinterval": "1800"
+            "x-ms-onesetinterval": "60" # Onesettings returns interval in minutes
         }
         
         settings_data = {
@@ -167,15 +178,15 @@ class TestParseOneSettingsResponse(unittest.TestCase):
         
         # Verify
         self.assertEqual(result.etag, "test-etag-123")
-        self.assertEqual(result.refresh_interval, 1800.0)
+        self.assertEqual(result.refresh_interval, 3600)
         self.assertEqual(result.settings, settings_data["settings"])
         self.assertEqual(result.version, 5)
+        self.assertEqual(result.status_code, 200)
 
     def test_parse_304_response(self):
         """Test parsing 304 Not Modified response."""
         # Setup
         mock_response = Mock()
-        mock_response.__bool__ = Mock(return_value=True)
         mock_response.status_code = 304
         mock_response.headers = {"ETag": "test-etag-123"}
         mock_response.content = b""
@@ -187,6 +198,7 @@ class TestParseOneSettingsResponse(unittest.TestCase):
         self.assertEqual(result.etag, "test-etag-123")
         self.assertEqual(result.settings, {})
         self.assertIsNone(result.version)
+        self.assertEqual(result.status_code, 304)
 
     def test_parse_error_status_codes(self):
         """Test parsing various error status codes."""
@@ -195,7 +207,6 @@ class TestParseOneSettingsResponse(unittest.TestCase):
         for status_code in error_codes:
             with self.subTest(status_code=status_code):
                 mock_response = Mock()
-                mock_response.__bool__ = Mock(return_value=True)
                 mock_response.status_code = status_code
                 mock_response.headers = {}
                 mock_response.content = b"Error content"
@@ -205,13 +216,13 @@ class TestParseOneSettingsResponse(unittest.TestCase):
                 
                 self.assertIsInstance(result, OneSettingsResponse)
                 self.assertEqual(result.settings, {})
+                self.assertEqual(result.status_code, status_code)
                 mock_logger.warning.assert_called_once()
 
     def test_parse_invalid_refresh_interval(self):
         """Test parsing response with invalid refresh interval."""
         # Setup
         mock_response = Mock()
-        mock_response.__bool__ = Mock(return_value=True)
         mock_response.status_code = 200
         mock_response.headers = {"x-ms-onesetinterval": "invalid-number"}
         mock_response.content = b""
@@ -222,13 +233,13 @@ class TestParseOneSettingsResponse(unittest.TestCase):
         
         # Verify
         self.assertEqual(result.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
+        self.assertEqual(result.status_code, 200)
         mock_logger.warning.assert_called_once()
 
     def test_parse_invalid_json_content(self):
         """Test parsing response with invalid JSON content."""
         # Setup
         mock_response = Mock()
-        mock_response.__bool__ = Mock(return_value=True)
         mock_response.status_code = 200
         mock_response.headers = {}
         mock_response.content = b"invalid json content"
@@ -239,13 +250,13 @@ class TestParseOneSettingsResponse(unittest.TestCase):
         
         # Verify
         self.assertEqual(result.settings, {})
+        self.assertEqual(result.status_code, 200)
         mock_logger.warning.assert_called_once()
 
     def test_parse_invalid_version_format(self):
         """Test parsing response with invalid version format."""
         # Setup
         mock_response = Mock()
-        mock_response.__bool__ = Mock(return_value=True)
         mock_response.status_code = 200
         mock_response.headers = {}
         
@@ -264,13 +275,13 @@ class TestParseOneSettingsResponse(unittest.TestCase):
         # Verify
         self.assertEqual(result.settings, settings_data["settings"])
         self.assertIsNone(result.version)
+        self.assertEqual(result.status_code, 200)
         mock_logger.warning.assert_called_once()
 
     def test_parse_unicode_decode_error(self):
         """Test parsing response with unicode decode error."""
         # Setup
         mock_response = Mock()
-        mock_response.__bool__ = Mock(return_value=True)
         mock_response.status_code = 200
         mock_response.headers = {}
         mock_response.content = b'\x80\x81\x82'  # Invalid UTF-8
@@ -281,13 +292,13 @@ class TestParseOneSettingsResponse(unittest.TestCase):
         
         # Verify
         self.assertEqual(result.settings, {})
+        self.assertEqual(result.status_code, 200)
         mock_logger.warning.assert_called_once()
 
     def test_parse_no_headers(self):
         """Test parsing response with no headers."""
         # Setup
         mock_response = Mock()
-        mock_response.__bool__ = Mock(return_value=True)
         mock_response.status_code = 200
         mock_response.headers = None
         mock_response.content = b""
@@ -298,12 +309,12 @@ class TestParseOneSettingsResponse(unittest.TestCase):
         # Verify
         self.assertIsNone(result.etag)
         self.assertEqual(result.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
+        self.assertEqual(result.status_code, 200)
 
     def test_parse_settings_without_version(self):
         """Test parsing response with settings but no version key."""
         # Setup
         mock_response = Mock()
-        mock_response.__bool__ = Mock(return_value=True)
         mock_response.status_code = 200
         mock_response.headers = {}
         
@@ -321,6 +332,7 @@ class TestParseOneSettingsResponse(unittest.TestCase):
         # Verify
         self.assertEqual(result.settings, settings_data["settings"])
         self.assertIsNone(result.version)
+        self.assertEqual(result.status_code, 200)
 
 
 if __name__ == '__main__':
