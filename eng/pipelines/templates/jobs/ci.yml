@@ -209,6 +209,14 @@ jobs:
       os: linux
 
     steps:
+    - task: UsePythonVersion@0
+      displayName: 'Use Python $(PythonVersion)'
+      condition: succeededOrFailed()
+      inputs:
+        versionSpec: '$(PythonVersion)'
+
+    - template: /eng/pipelines/templates/steps/use-venv.yml
+
     - template: /eng/common/pipelines/templates/steps/check-spelling.yml
       parameters:
         ContinueOnError: false
@@ -275,6 +283,7 @@ jobs:
           - task: UsePythonVersion@0
             inputs:
               versionSpec: '3.12'
+          - template: /eng/pipelines/templates/steps/use-venv.yml
           - template: /eng/common/pipelines/templates/steps/save-package-properties.yml
             parameters:
               ServiceDirectory: ${{parameters.ServiceDirectory}}
@@ -310,8 +319,11 @@ jobs:
         - task: UsePythonVersion@0
           inputs:
             versionSpec: '3.12'
+        - template: /eng/pipelines/templates/steps/use-venv.yml
         - pwsh: |
-            python -m pip install "./tools/azure-sdk-tools[build]"
+            $ErrorActionPreference = 'Stop'
+            $PSNativeCommandUseErrorActionPreference = $true
+            $(PIP_EXE) install "./tools/azure-sdk-tools[build]"
           displayName: 'Prep Environment'
         - task: PythonScript@0
           displayName: 'Ensure service coverage'
