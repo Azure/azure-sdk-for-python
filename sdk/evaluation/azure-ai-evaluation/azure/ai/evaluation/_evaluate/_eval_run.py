@@ -81,6 +81,8 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
         ~azure.ai.evaluation._promptflow.azure._lite_azure_management_client.LiteMLClient
     :param promptflow_run: The promptflow run used by the
     :type promptflow_run: Optional[promptflow._sdk.entities.Run]
+    :param tags: A dictionary of tags to be added to the evaluation run for tracking and organization purposes.
+    :type tags: Optional[Dict[str, str]]
     """
 
     _MAX_RETRIES = 5
@@ -98,6 +100,7 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
         workspace_name: str,
         management_client: LiteMLClient,
         promptflow_run: Optional[Run] = None,
+        tags: Optional[Dict[str, str]] = None,
     ) -> None:
         self._tracking_uri: str = tracking_uri
         self._subscription_id: str = subscription_id
@@ -107,6 +110,7 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
         self._is_promptflow_run: bool = promptflow_run is not None
         self._run_name = run_name
         self._promptflow_run = promptflow_run
+        self._tags = tags or {}
         self._status = RunStatus.NOT_STARTED
         self._url_base: Optional[str] = None
         self._info: Optional[RunInfo] = None
@@ -173,11 +177,20 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
                 )
             else:
                 url = f"https://{self._url_base}/mlflow/v2.0" f"{self._get_scope()}/api/2.0/mlflow/runs/create"
+
+                # Prepare tags: start with user tags, ensure mlflow.user is set
+                run_tags = self._tags.copy()
+                if "mlflow.user" not in run_tags:
+                    run_tags["mlflow.user"] = "azure-ai-evaluation"
+
+                # Convert tags to MLflow format
+                tags_list = [{"key": key, "value": value} for key, value in run_tags.items()]
+
                 body = {
                     "experiment_id": "0",
                     "user_id": "azure-ai-evaluation",
                     "start_time": int(time.time() * 1000),
-                    "tags": [{"key": "mlflow.user", "value": "azure-ai-evaluation"}],
+                    "tags": tags_list,
                 }
                 if self._run_name:
                     body["run_name"] = self._run_name
