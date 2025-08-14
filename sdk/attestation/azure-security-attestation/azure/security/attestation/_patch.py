@@ -10,7 +10,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 import base64
 import json
-from typing import Dict, List, Any, TYPE_CHECKING, Tuple, Union
+from typing import Dict, List, Any, TYPE_CHECKING, Tuple, Union, Self
 from threading import Lock
 from cryptography.hazmat.primitives import serialization
 from cryptography.x509 import load_pem_x509_certificate
@@ -87,9 +87,7 @@ class AttestationClient:
 
     """
 
-    def __init__(self, endpoint, credential, **kwargs):
-        # type: (str, TokenCredential, Any) -> None
-
+    def __init__(self, endpoint: str, credential: TokenCredential, **kwargs) -> None:
         if not credential:
             raise ValueError("Missing credential.")
         self._config = AttestationClientConfiguration(**kwargs)
@@ -98,8 +96,7 @@ class AttestationClient:
         self._signing_certificates = None
 
     @distributed_trace
-    def get_open_id_metadata(self, **kwargs):
-        # type: (Dict[str, Any]) -> Dict[str, Any]
+    def get_open_id_metadata(self, **kwargs: Any) -> Dict[str, Any]:
         """Retrieves the OpenID metadata configuration document for this attestation instance.
 
         The metadata configuration document is defined in the `OpenID Connect
@@ -118,8 +115,7 @@ class AttestationClient:
         return self._client.metadata_configuration.get(**kwargs)
 
     @distributed_trace
-    def get_signing_certificates(self, **kwargs):
-        # type: (Any) -> List[AttestationSigner]
+    def get_signing_certificates(self, **kwargs) -> List[AttestationSigner]:
         """Returns the set of signing certificates used to sign attestation tokens.
 
         :return: A list of :class:`azure.security.attestation.AttestationSigner` objects.
@@ -131,11 +127,10 @@ class AttestationClient:
 
         """
         signing_certificates = self._client.signing_certificates.get(**kwargs)
-        return [AttestationSigner._from_generated(key) for key in signing_certificates.keys]
+        return [AttestationSigner._from_generated(key) for key in signing_certificates["keys"]]
 
     @distributed_trace
-    def attest_sgx_enclave(self, quote, **kwargs):
-        # type: (bytes, **Any) -> Tuple[AttestationResult, AttestationToken]
+    def attest_sgx_enclave(self, quote: bytes, **kwargs) -> Tuple[AttestationResult, AttestationToken]:
         """Attests the validity of an SGX quote.
 
         :param bytes quote: An SGX quote generated from an Intel(tm) SGX enclave
@@ -250,8 +245,7 @@ class AttestationClient:
         )
 
     @distributed_trace
-    def attest_open_enclave(self, report, **kwargs):
-        # type: (bytes, **Any) -> Tuple[AttestationResult, AttestationToken]
+    def attest_open_enclave(self, report: bytes, **kwargs) -> Tuple[AttestationResult, AttestationToken]:
         """Attests the validity of an Open Enclave report.
 
         :param bytes report: An open_enclave report generated from an Intel(tm)
@@ -385,8 +379,7 @@ class AttestationClient:
         result = TpmAttestationResult(response.data)
         return result
 
-    def _get_signers(self, **kwargs):
-        # type: (**Any) -> list[AttestationSigner]
+    def _get_signers(self, **kwargs: Any) -> list[AttestationSigner]:
         """Returns the set of signing certificates used to sign attestation tokens."""
 
         with self._statelock:
@@ -399,17 +392,14 @@ class AttestationClient:
             signers = self._signing_certificates
         return signers
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         self._client.close()
 
-    def __enter__(self):
-        # type: () -> AttestationClient
+    def __enter__(self) -> Self:
         self._client.__enter__()
         return self
 
-    def __exit__(self, *exc_details):
-        # type: (Any) -> None
+    def __exit__(self, *exc_details) -> None:
         self._client.__exit__(*exc_details)
 
 
@@ -467,8 +457,7 @@ class AttestationAdministrationClient:
 
     """
 
-    def __init__(self, endpoint, credential, **kwargs):
-        # type: (str, TokenCredential, **Any) -> None
+    def __init__(self, endpoint: str, credential: TokenCredential, **kwargs: Any) -> None:
         if not credential:
             raise ValueError("Missing credential.")
         self._config = AttestationClientConfiguration(**kwargs)
@@ -485,8 +474,7 @@ class AttestationAdministrationClient:
             self._signing_key, self._signing_certificate = validate_signing_keys(signing_key, signing_certificate)
 
     @distributed_trace
-    def get_policy(self, attestation_type, **kwargs):
-        # type: (Union[str, AttestationType], **Any) -> Tuple[str, AttestationToken]
+    def get_policy(self, attestation_type: Union[str, AttestationType], **kwargs: Any) -> Tuple[str, AttestationToken]:
         """Retrieves the attestation policy for a specified attestation type.
 
         :param attestation_type: :class:`azure.security.attestation.AttestationType` for
@@ -547,8 +535,7 @@ class AttestationAdministrationClient:
         return actual_policy.decode("utf-8"), token
 
     @distributed_trace
-    def set_policy(self, attestation_type, attestation_policy, **kwargs):
-        # type: (Union[str, AttestationType], str, **Any) -> Tuple[AttestationPolicyResult, AttestationToken]
+    def set_policy(self, attestation_type: Union[str, AttestationType], attestation_policy: str, **kwargs: Any) -> Tuple[AttestationPolicyResult, AttestationToken]:
         """Sets the attestation policy for the specified attestation type.
 
         :param attestation_type: :class:`azure.security.attestation.AttestationType` for
@@ -647,8 +634,7 @@ class AttestationAdministrationClient:
         )
 
     @distributed_trace
-    def reset_policy(self, attestation_type, **kwargs):
-        # type: (Union[str, AttestationType], **Dict[str, Any]) -> Tuple[AttestationPolicyResult, AttestationToken]
+    def reset_policy(self, attestation_type: Union[str, AttestationType], **kwargs: Any) -> Tuple[AttestationPolicyResult, AttestationToken]:
         """Resets the attestation policy for the specified attestation type to the default value.
 
         :param attestation_type: :class:`azure.security.attestation.AttestationType` for
@@ -733,8 +719,7 @@ class AttestationAdministrationClient:
         return (AttestationPolicyResult._from_generated(token._get_body()), token)
 
     @distributed_trace
-    def get_policy_management_certificates(self, **kwargs):
-        # type: (**Any) -> Tuple[List[List[str]], AttestationToken]
+    def get_policy_management_certificates(self, **kwargs: Any) -> Tuple[List[List[str]], AttestationToken]:
         """Retrieves the set of policy management certificates for the instance.
 
         The list of policy management certificates will only have values if the
@@ -796,8 +781,7 @@ class AttestationAdministrationClient:
         return certificates, token
 
     @distributed_trace
-    def add_policy_management_certificate(self, *args, **kwargs):
-        # type: (*str, **Any) -> Tuple[AttestationPolicyCertificateResult, AttestationToken]
+    def add_policy_management_certificate(self, *args: str, **kwargs: Any) -> Tuple[AttestationPolicyCertificateResult, AttestationToken]:
         """Adds a new policy management certificate to the set of policy management certificates for the instance.
 
         :param str certificate_to_add: Required. PEM encoded X.509 certificate to add to
@@ -897,8 +881,7 @@ class AttestationAdministrationClient:
         )
 
     @distributed_trace
-    def remove_policy_management_certificate(self, *args, **kwargs):
-        # type: (*str, **Any) -> Tuple[AttestationPolicyCertificateResult, AttestationToken]
+    def remove_policy_management_certificate(self, *args: str, **kwargs: Any) -> Tuple[AttestationPolicyCertificateResult, AttestationToken]:
         """Removes a policy management certificate from the set of policy management certificates for the instance.
 
         :param str certificate_to_remove: Required. PEM encoded X.509 certificate to remove from
@@ -992,8 +975,7 @@ class AttestationAdministrationClient:
             token,
         )
 
-    def _get_signers(self, **kwargs):
-        # type: (**Any) -> List[AttestationSigner]
+    def _get_signers(self, **kwargs: Any) -> List[AttestationSigner]:
         """Returns the set of signing certificates used to sign attestation tokens."""
 
         with self._statelock:
@@ -1006,17 +988,14 @@ class AttestationAdministrationClient:
             signers = self._signing_certificates
         return signers
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         self._client.close()
 
-    def __enter__(self):
-        # type: () -> AttestationAdministrationClient
+    def __enter__(self) -> Self:
         self._client.__enter__()
         return self
 
-    def __exit__(self, *exc_details):
-        # type: (Any) -> None
+    def __exit__(self, *exc_details) -> None:
         self._client.__exit__(*exc_details)
 
 
@@ -1040,8 +1019,7 @@ class AttestationClientConfiguration(Configuration):
     :keyword bool validate_not_before_time: If true, validate the "Not Before" time in the token.
     """
 
-    def __init__(self, **kwargs):
-        # type: (**Any) -> None
+    def __init__(self, **kwargs: Any) -> None:
         super(AttestationClientConfiguration, self).__init__(**kwargs)  # pylint: disable=super-with-arguments
 
         self._kwargs = kwargs.copy()
