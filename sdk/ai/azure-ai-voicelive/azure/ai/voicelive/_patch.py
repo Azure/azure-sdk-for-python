@@ -722,7 +722,7 @@ def connect(
     :keyword headers: Optional headers to include in the WebSocket handshake.
     :keyword type headers: Mapping[str, Any] or None
     :keyword connection_options: Advanced WebSocket options passed to :func:`websockets.sync.client.connect`.
-    :keyword type connection_options: ~azure.ai.voicelive.WebsocketConnectionOptions or None
+    :keyword type connection_options: ~azure.ai.voicelive.WebsocketConnectionOptions or None.
     :keyword kwargs: Additional keyword arguments passed to the parent class.
     :paramtype kwargs: Any
     :return: A context manager that yields a connected :class:`~azure.ai.voicelive.VoiceLiveConnection`.
