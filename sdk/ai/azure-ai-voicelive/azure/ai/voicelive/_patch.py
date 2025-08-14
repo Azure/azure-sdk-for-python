@@ -18,11 +18,6 @@ except Exception:  # Python <=3.10
     from typing_extensions import NotRequired
 
 from typing import TYPE_CHECKING, Optional, Mapping, Sequence, Tuple, Union, Iterator, Any, Dict, List, cast
-try:
-    from typing import TypeAlias
-except Exception:  # pragma: no cover
-    from typing_extensions import TypeAlias  # type: ignore[assignment]
-
 from typing_extensions import TypedDict
 from azure.ai.voicelive.models._models import (
     ClientEventConversationItemCreate,
@@ -594,7 +589,7 @@ class _VoiceLiveConnectionManager(AbstractContextManager["VoiceLiveConnection"])
         api_version: str,
         extra_query: Mapping[str, Any],
         extra_headers: Mapping[str, Any],
-        connection_options: WebsocketConnectionOptions,
+        connection_options: Optional[WebsocketConnectionOptions] = None,
         **kwargs: Any,
     ) -> None:
         self._credential = credential

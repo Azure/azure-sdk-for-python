@@ -8,7 +8,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Any, Dict, List, Optional, Type, Union, cast
+from typing import Any, Dict, Optional, Type, Union, cast
 import json
 import logging
 
@@ -44,7 +44,7 @@ from ._models import (
     ServerEventResponseAudioDone,
     ResponseSession,
 )
-from ._enums import ServerEventType, ClientEventType
+from ._enums import ServerEventType
 
 __all__ = [
     "ClientEvent",
@@ -59,17 +59,21 @@ class ClientEvent(ClientEventGenerated):
 
     @classmethod
     def to_dict(cls, event: "ClientEvent") -> Dict[str, Any]:
-        """Recursively convert the event to a JSON-serializable dictionary."""
+        """Recursively convert the event to a JSON-serializable dictionary.
+
+        :param event: The ClientEvent instance to convert.
+        :type event: ~azure.ai.voicelive.models.ClientEvent
+        :return: A dictionary representation of the event.
+        :rtype: Dict[str, Any]
+        """
         result = {"type": event.type}
 
         if hasattr(event, "event_id") and event.event_id is not None:
             result["event_id"] = event.event_id
 
-        # Include all other public attributes that are not methods or base fields
         for attr in dir(event):
             if attr.startswith("_") or attr in ("type", "event_id") or callable(getattr(event, attr)):
                 continue
-
             value = getattr(event, attr)
             result[attr] = cls._to_jsonable(value)
 
@@ -77,21 +81,32 @@ class ClientEvent(ClientEventGenerated):
 
     @staticmethod
     def _to_jsonable(obj: Any) -> Any:
-        """Convert objects to a JSON-serializable format."""
+        """Convert an object to a JSON-serializable format.
+
+        :param obj: The object to convert.
+        :type obj: Any
+        :return: A JSON-serializable representation of the object.
+        :rtype: Any
+        """
         if hasattr(obj, "serialize_data"):
             return obj.serialize_data()
-        elif isinstance(obj, (list, tuple)):
+        if isinstance(obj, (list, tuple)):
             return [ClientEvent._to_jsonable(v) for v in obj]
-        elif isinstance(obj, dict):
+        if isinstance(obj, dict):
             return {k: ClientEvent._to_jsonable(v) for k, v in obj.items()}
-        elif hasattr(obj, "__dict__"):
+        if hasattr(obj, "__dict__"):
             return {k: ClientEvent._to_jsonable(v) for k, v in vars(obj).items() if not k.startswith("_")}
-        else:
-            return obj
+        return obj
 
     @classmethod
     def serialize(cls, event: "ClientEvent") -> str:
-        """Serialize the event to a JSON string."""
+        """Serialize the event to a JSON string.
+
+        :param event: The ClientEvent instance to serialize.
+        :type event: ~azure.ai.voicelive.models.ClientEvent
+        :return: A JSON string representation of the event.
+        :rtype: str
+        """
         return json.dumps(cls.to_dict(event))
 
 
@@ -100,7 +115,13 @@ class ServerEvent(ServerEventGenerated):
 
     @staticmethod
     def _normalize_event_type(raw: Any) -> Optional[ServerEventType]:
-        """Convert an incoming 'type' (str/enum/other) to ServerEventType or None."""
+        """Convert an incoming 'type' value to ServerEventType or None.
+
+        :param raw: The raw type value (string, enum, or other) to normalize.
+        :type raw: Any
+        :return: A ServerEventType if recognized, otherwise None.
+        :rtype: Optional[~azure.ai.voicelive.models.ServerEventType]
+        """
         if isinstance(raw, ServerEventType):
             return raw
         if isinstance(raw, str):
@@ -123,10 +144,8 @@ class ServerEvent(ServerEventGenerated):
         if isinstance(data, bytes):
             data = data.decode("utf-8")
 
-        # Parse JSON
         data_dict = json.loads(data)
 
-        # Determine the event type
         event_type = data_dict.get("type")
         if not event_type:
             raise ValueError("Event data is missing 'type' field")
@@ -142,11 +161,9 @@ class ServerEvent(ServerEventGenerated):
         :return: A ServerEvent instance.
         :rtype: ~azure.ai.voicelive.models.ServerEvent
         """
-        # Determine and normalize the event type
         raw_type: Any = data.get("type")
         event_type = cls._normalize_event_type(raw_type)
 
-        # Map event type to appropriate class
         event_class_map: Dict[ServerEventType, Type[Any]] = {
             ServerEventType.SESSION_CREATED: ServerEventSessionCreated,
             ServerEventType.SESSION_UPDATED: ServerEventSessionUpdated,
@@ -181,22 +198,22 @@ class ServerEvent(ServerEventGenerated):
         else:
             event_class = cast(Type[Any], event_class_map.get(event_type, cls))
 
-         # Special handling for certain event types
         if event_type is not None and event_type in (ServerEventType.SESSION_CREATED, ServerEventType.SESSION_UPDATED):
             session_data = data.get("session", {})
             if isinstance(session_data, dict):
-                session = ResponseSession(**session_data)
-                data["session"] = session
+                data["session"] = ResponseSession(**session_data)
 
-        # Create and return the event instance
         try:
             event_data = data.copy()
-            # Only pop 'type' when we know it's one of the mapped subclasses
             if event_type is not None and event_type in event_class_map:
                 event_data.pop("type", None)
             return event_class(**event_data)
         except TypeError as e:
-            log.warning(f"Could not create {event_class.__name__} from data: {e}. Falling back to base class.")
+            log.warning(
+                "Could not create %s from data: %s. Falling back to base class.",
+                event_class.__name__,
+                e,
+            )
             type_str: str = (
                 raw_type if isinstance(raw_type, str)
                 else (raw_type.value if isinstance(raw_type, ServerEventType) else "")

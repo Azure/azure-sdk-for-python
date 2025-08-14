@@ -7,7 +7,6 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-import aiohttp
 import json
 import logging
 from contextlib import AbstractAsyncContextManager
@@ -33,11 +32,11 @@ from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.pipeline import policies
 from ..models import ClientEvent, ServerEvent, RequestSession
 from .._patch import ConnectionError, ConnectionClosed
+
 try:  # Python 3.11+
     from typing import NotRequired  # type: ignore[attr-defined]
 except ImportError:  # Python <=3.10
     from typing_extensions import NotRequired
-
 
 __all__: List[str] = [
     "connect",
@@ -730,6 +729,7 @@ def connect(
     :keyword ~azure.ai.voicelive.aio.WebsocketConnectionOptions connection_options:
         Optional advanced WebSocket options compatible with :mod:`aiohttp`.
     :keyword Any kwargs: Additional keyword arguments for advanced configuration.
+        Passed through to the underlying WebSocket connection manager.
 
     :return: An async context manager yielding a connected :class:`~azure.ai.voicelive.aio.VoiceLiveConnection`.
     :rtype: collections.abc.AsyncContextManager[~azure.ai.voicelive.aio.VoiceLiveConnection]
