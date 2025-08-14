@@ -9,7 +9,7 @@ import asyncio
 async def run_workload(client_id, client_logger):
     session = create_custom_session()
     async with AsyncClient(COSMOS_URI,
-                           COSMOS_KEY,
+                           COSMOS_CREDENTIAL,
                            multiple_write_locations=USE_MULTIPLE_WRITABLE_LOCATIONS,
                            preferred_locations=PREFERRED_LOCATIONS,
                            transport=AioHttpTransport(session=session, session_owner=False),
