@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -55,7 +56,7 @@ def main():
                     },
                 },
                 "dynamicPoolConfiguration": {
-                    "lifecycleConfiguration": {"lifecycleType": "OnContainerExit", "maxAlivePeriodInSeconds": 86400}
+                    "lifecycleConfiguration": {"cooldownPeriodInSeconds": 600, "lifecycleType": "Timed"}
                 },
                 "environmentId": "/subscriptions/34adfa4f-cedf-4dc0-ba29-b6d1a69ab345/resourceGroups/rg/providers/Microsoft.App/managedEnvironments/demokube",
                 "managedIdentitySettings": [{"identity": "system", "lifecycle": "Main"}],
@@ -68,6 +69,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/SessionPools_LifecycleTimed_CreateOrUpdate.json
+# x-ms-original-file: specification/app/resource-manager/Microsoft.App/preview/2025-02-02-preview/examples/SessionPools_LifecycleTimed_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

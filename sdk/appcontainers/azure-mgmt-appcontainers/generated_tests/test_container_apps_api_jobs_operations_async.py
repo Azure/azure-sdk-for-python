@@ -25,7 +25,7 @@ class TestContainerAppsAPIJobsOperationsAsync(AzureMgmtRecordedTestCase):
         response = self.client.jobs.list_detectors(
             resource_group_name=resource_group.name,
             job_name="str",
-            api_version="2025-01-01",
+            api_version="2025-02-02-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestContainerAppsAPIJobsOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             job_name="str",
             detector_name="str",
-            api_version="2025-01-01",
+            api_version="2025-02-02-preview",
         )
 
         # please add some check logic here by yourself
@@ -51,7 +51,7 @@ class TestContainerAppsAPIJobsOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             job_name="str",
             api_name="str",
-            api_version="2025-01-01",
+            api_version="2025-02-02-preview",
         )
 
         # please add some check logic here by yourself
@@ -61,7 +61,7 @@ class TestContainerAppsAPIJobsOperationsAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_jobs_list_by_subscription(self, resource_group):
         response = self.client.jobs.list_by_subscription(
-            api_version="2025-01-01",
+            api_version="2025-02-02-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -72,7 +72,7 @@ class TestContainerAppsAPIJobsOperationsAsync(AzureMgmtRecordedTestCase):
     async def test_jobs_list_by_resource_group(self, resource_group):
         response = self.client.jobs.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-01-01",
+            api_version="2025-02-02-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -84,7 +84,7 @@ class TestContainerAppsAPIJobsOperationsAsync(AzureMgmtRecordedTestCase):
         response = await self.client.jobs.get(
             resource_group_name=resource_group.name,
             job_name="str",
-            api_version="2025-01-01",
+            api_version="2025-02-02-preview",
         )
 
         # please add some check logic here by yourself
@@ -135,6 +135,7 @@ class TestContainerAppsAPIJobsOperationsAsync(AzureMgmtRecordedTestCase):
                     },
                     "environmentId": "str",
                     "eventStreamEndpoint": "str",
+                    "extendedLocation": {"name": "str", "type": "str"},
                     "id": "str",
                     "identity": {
                         "type": "str",
@@ -145,6 +146,7 @@ class TestContainerAppsAPIJobsOperationsAsync(AzureMgmtRecordedTestCase):
                     "name": "str",
                     "outboundIpAddresses": ["str"],
                     "provisioningState": "str",
+                    "runningState": "str",
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",
                         "createdBy": "str",
@@ -161,6 +163,7 @@ class TestContainerAppsAPIJobsOperationsAsync(AzureMgmtRecordedTestCase):
                                 "command": ["str"],
                                 "env": [{"name": "str", "secretRef": "str", "value": "str"}],
                                 "image": "str",
+                                "imageType": "str",
                                 "name": "str",
                                 "probes": [
                                     {
@@ -181,7 +184,7 @@ class TestContainerAppsAPIJobsOperationsAsync(AzureMgmtRecordedTestCase):
                                         "type": "str",
                                     }
                                 ],
-                                "resources": {"cpu": 0.0, "ephemeralStorage": "str", "memory": "str"},
+                                "resources": {"cpu": 0.0, "ephemeralStorage": "str", "gpu": 0.0, "memory": "str"},
                                 "volumeMounts": [{"mountPath": "str", "subPath": "str", "volumeName": "str"}],
                             }
                         ],
@@ -191,8 +194,9 @@ class TestContainerAppsAPIJobsOperationsAsync(AzureMgmtRecordedTestCase):
                                 "command": ["str"],
                                 "env": [{"name": "str", "secretRef": "str", "value": "str"}],
                                 "image": "str",
+                                "imageType": "str",
                                 "name": "str",
-                                "resources": {"cpu": 0.0, "ephemeralStorage": "str", "memory": "str"},
+                                "resources": {"cpu": 0.0, "ephemeralStorage": "str", "gpu": 0.0, "memory": "str"},
                                 "volumeMounts": [{"mountPath": "str", "subPath": "str", "volumeName": "str"}],
                             }
                         ],
@@ -209,7 +213,7 @@ class TestContainerAppsAPIJobsOperationsAsync(AzureMgmtRecordedTestCase):
                     "type": "str",
                     "workloadProfileName": "str",
                 },
-                api_version="2025-01-01",
+                api_version="2025-02-02-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -223,7 +227,7 @@ class TestContainerAppsAPIJobsOperationsAsync(AzureMgmtRecordedTestCase):
             await self.client.jobs.begin_delete(
                 resource_group_name=resource_group.name,
                 job_name="str",
-                api_version="2025-01-01",
+                api_version="2025-02-02-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -238,6 +242,7 @@ class TestContainerAppsAPIJobsOperationsAsync(AzureMgmtRecordedTestCase):
                 resource_group_name=resource_group.name,
                 job_name="str",
                 job_envelope={
+                    "extendedLocation": {"name": "str", "type": "str"},
                     "identity": {
                         "type": "str",
                         "principalId": "str",
@@ -289,6 +294,7 @@ class TestContainerAppsAPIJobsOperationsAsync(AzureMgmtRecordedTestCase):
                                     "command": ["str"],
                                     "env": [{"name": "str", "secretRef": "str", "value": "str"}],
                                     "image": "str",
+                                    "imageType": "str",
                                     "name": "str",
                                     "probes": [
                                         {
@@ -309,7 +315,7 @@ class TestContainerAppsAPIJobsOperationsAsync(AzureMgmtRecordedTestCase):
                                             "type": "str",
                                         }
                                     ],
-                                    "resources": {"cpu": 0.0, "ephemeralStorage": "str", "memory": "str"},
+                                    "resources": {"cpu": 0.0, "ephemeralStorage": "str", "gpu": 0.0, "memory": "str"},
                                     "volumeMounts": [{"mountPath": "str", "subPath": "str", "volumeName": "str"}],
                                 }
                             ],
@@ -319,8 +325,9 @@ class TestContainerAppsAPIJobsOperationsAsync(AzureMgmtRecordedTestCase):
                                     "command": ["str"],
                                     "env": [{"name": "str", "secretRef": "str", "value": "str"}],
                                     "image": "str",
+                                    "imageType": "str",
                                     "name": "str",
-                                    "resources": {"cpu": 0.0, "ephemeralStorage": "str", "memory": "str"},
+                                    "resources": {"cpu": 0.0, "ephemeralStorage": "str", "gpu": 0.0, "memory": "str"},
                                     "volumeMounts": [{"mountPath": "str", "subPath": "str", "volumeName": "str"}],
                                 }
                             ],
@@ -337,7 +344,7 @@ class TestContainerAppsAPIJobsOperationsAsync(AzureMgmtRecordedTestCase):
                     },
                     "tags": {"str": "str"},
                 },
-                api_version="2025-01-01",
+                api_version="2025-02-02-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -351,7 +358,7 @@ class TestContainerAppsAPIJobsOperationsAsync(AzureMgmtRecordedTestCase):
             await self.client.jobs.begin_start(
                 resource_group_name=resource_group.name,
                 job_name="str",
-                api_version="2025-01-01",
+                api_version="2025-02-02-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -366,7 +373,7 @@ class TestContainerAppsAPIJobsOperationsAsync(AzureMgmtRecordedTestCase):
                 resource_group_name=resource_group.name,
                 job_name="str",
                 job_execution_name="str",
-                api_version="2025-01-01",
+                api_version="2025-02-02-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -380,7 +387,7 @@ class TestContainerAppsAPIJobsOperationsAsync(AzureMgmtRecordedTestCase):
             await self.client.jobs.begin_stop_multiple_executions(
                 resource_group_name=resource_group.name,
                 job_name="str",
-                api_version="2025-01-01",
+                api_version="2025-02-02-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -393,8 +400,36 @@ class TestContainerAppsAPIJobsOperationsAsync(AzureMgmtRecordedTestCase):
         response = await self.client.jobs.list_secrets(
             resource_group_name=resource_group.name,
             job_name="str",
-            api_version="2025-01-01",
+            api_version="2025-02-02-preview",
         )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_jobs_begin_resume(self, resource_group):
+        response = await (
+            await self.client.jobs.begin_resume(
+                resource_group_name=resource_group.name,
+                job_name="str",
+                api_version="2025-02-02-preview",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_jobs_begin_suspend(self, resource_group):
+        response = await (
+            await self.client.jobs.begin_suspend(
+                resource_group_name=resource_group.name,
+                job_name="str",
+                api_version="2025-02-02-preview",
+            )
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...

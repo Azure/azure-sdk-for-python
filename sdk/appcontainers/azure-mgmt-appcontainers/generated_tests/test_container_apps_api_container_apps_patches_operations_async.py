@@ -21,11 +21,11 @@ class TestContainerAppsAPIContainerAppsPatchesOperationsAsync(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_container_app(self, resource_group):
+    async def test_container_apps_patches_list_by_container_app(self, resource_group):
         response = self.client.container_apps_patches.list_by_container_app(
             resource_group_name=resource_group.name,
             container_app_name="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-02-02-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -33,12 +33,12 @@ class TestContainerAppsAPIContainerAppsPatchesOperationsAsync(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_container_apps_patches_get(self, resource_group):
         response = await self.client.container_apps_patches.get(
             resource_group_name=resource_group.name,
             container_app_name="str",
             patch_name="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-02-02-preview",
         )
 
         # please add some check logic here by yourself
@@ -46,13 +46,13 @@ class TestContainerAppsAPIContainerAppsPatchesOperationsAsync(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_container_apps_patches_begin_delete(self, resource_group):
         response = await (
             await self.client.container_apps_patches.begin_delete(
                 resource_group_name=resource_group.name,
                 container_app_name="str",
                 patch_name="str",
-                api_version="2024-08-02-preview",
+                api_version="2025-02-02-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -61,14 +61,14 @@ class TestContainerAppsAPIContainerAppsPatchesOperationsAsync(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_skip_configure(self, resource_group):
+    async def test_container_apps_patches_begin_skip_configure(self, resource_group):
         response = await (
             await self.client.container_apps_patches.begin_skip_configure(
                 resource_group_name=resource_group.name,
                 container_app_name="str",
                 patch_name="str",
                 patch_skip_config={"skip": bool},
-                api_version="2024-08-02-preview",
+                api_version="2025-02-02-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -77,13 +77,13 @@ class TestContainerAppsAPIContainerAppsPatchesOperationsAsync(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_apply(self, resource_group):
+    async def test_container_apps_patches_begin_apply(self, resource_group):
         response = await (
             await self.client.container_apps_patches.begin_apply(
                 resource_group_name=resource_group.name,
                 container_app_name="str",
                 patch_name="str",
-                api_version="2024-08-02-preview",
+                api_version="2025-02-02-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 

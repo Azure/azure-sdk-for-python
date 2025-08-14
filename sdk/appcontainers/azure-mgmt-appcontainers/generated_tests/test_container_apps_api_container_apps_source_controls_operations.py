@@ -24,7 +24,7 @@ class TestContainerAppsAPIContainerAppsSourceControlsOperations(AzureMgmtRecorde
         response = self.client.container_apps_source_controls.list_by_container_app(
             resource_group_name=resource_group.name,
             container_app_name="str",
-            api_version="2025-01-01",
+            api_version="2025-02-02-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestContainerAppsAPIContainerAppsSourceControlsOperations(AzureMgmtRecorde
             resource_group_name=resource_group.name,
             container_app_name="str",
             source_control_name="str",
-            api_version="2025-01-01",
+            api_version="2025-02-02-preview",
         )
 
         # please add some check logic here by yourself
@@ -60,7 +60,9 @@ class TestContainerAppsAPIContainerAppsSourceControlsOperations(AzureMgmtRecorde
                         "subscriptionId": "str",
                         "tenantId": "str",
                     },
+                    "buildEnvironmentVariables": [{"name": "str", "value": "str"}],
                     "contextPath": "str",
+                    "dockerfilePath": "str",
                     "githubPersonalAccessToken": "str",
                     "image": "str",
                     "os": "str",
@@ -83,7 +85,7 @@ class TestContainerAppsAPIContainerAppsSourceControlsOperations(AzureMgmtRecorde
                 },
                 "type": "str",
             },
-            api_version="2025-01-01",
+            api_version="2025-02-02-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -96,7 +98,7 @@ class TestContainerAppsAPIContainerAppsSourceControlsOperations(AzureMgmtRecorde
             resource_group_name=resource_group.name,
             container_app_name="str",
             source_control_name="str",
-            api_version="2025-01-01",
+            api_version="2025-02-02-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

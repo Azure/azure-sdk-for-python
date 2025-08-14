@@ -20,9 +20,9 @@ class TestContainerAppsAPIBuildersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_subscription(self, resource_group):
+    def test_builders_list_by_subscription(self, resource_group):
         response = self.client.builders.list_by_subscription(
-            api_version="2024-08-02-preview",
+            api_version="2025-02-02-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -30,10 +30,10 @@ class TestContainerAppsAPIBuildersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_resource_group(self, resource_group):
+    def test_builders_list_by_resource_group(self, resource_group):
         response = self.client.builders.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-08-02-preview",
+            api_version="2025-02-02-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -41,11 +41,11 @@ class TestContainerAppsAPIBuildersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_builders_get(self, resource_group):
         response = self.client.builders.get(
             resource_group_name=resource_group.name,
             builder_name="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-02-02-preview",
         )
 
         # please add some check logic here by yourself
@@ -53,7 +53,7 @@ class TestContainerAppsAPIBuildersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_builders_begin_create_or_update(self, resource_group):
         response = self.client.builders.begin_create_or_update(
             resource_group_name=resource_group.name,
             builder_name="str",
@@ -81,7 +81,7 @@ class TestContainerAppsAPIBuildersOperations(AzureMgmtRecordedTestCase):
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2024-08-02-preview",
+            api_version="2025-02-02-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -89,7 +89,7 @@ class TestContainerAppsAPIBuildersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_update(self, resource_group):
+    def test_builders_begin_update(self, resource_group):
         response = self.client.builders.begin_update(
             resource_group_name=resource_group.name,
             builder_name="str",
@@ -103,7 +103,7 @@ class TestContainerAppsAPIBuildersOperations(AzureMgmtRecordedTestCase):
                 },
                 "tags": {"str": "str"},
             },
-            api_version="2024-08-02-preview",
+            api_version="2025-02-02-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -111,11 +111,11 @@ class TestContainerAppsAPIBuildersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_builders_begin_delete(self, resource_group):
         response = self.client.builders.begin_delete(
             resource_group_name=resource_group.name,
             builder_name="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-02-02-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
