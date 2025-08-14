@@ -634,7 +634,7 @@ class AttestationToken:
     def _json_web_key(self):
         # type: () -> Union[JSONWebKey, None]
         jwk = self._header.get("jwk")
-        return JSONWebKey.deserialize(jwk)
+        return JSONWebKey._deserialize(jwk, [])
 
     def to_jwt_string(self):
         # type: () -> str
@@ -699,7 +699,7 @@ class AttestationToken:
         :rtype: Any
         """
         try:
-            return self._body_type.deserialize(self._body)
+            return self._body_type._deserialize(self._body, [])
         except AttributeError:
             return self._body
 
