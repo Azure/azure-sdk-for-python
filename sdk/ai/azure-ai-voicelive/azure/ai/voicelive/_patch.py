@@ -655,7 +655,7 @@ class _VoiceLiveConnectionManager(AbstractContextManager["VoiceLiveConnection"])
         :type exc_tb: types.TracebackType | None
         :rtype: None
         """
-        
+
         if self.__connection is not None:
             self.__connection.close()
 
