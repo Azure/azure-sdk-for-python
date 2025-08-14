@@ -4985,10 +4985,11 @@ class RunStepDeltaToolCall(_Model):
     call details.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    RunStepDeltaAzureAISearchToolCall, RunStepDeltaBingGroundingToolCall,
-    RunStepDeltaCodeInterpreterToolCall, RunStepDeltaConnectedAgentToolCall,
-    RunStepDeltaDeepResearchToolCall, RunStepDeltaFileSearchToolCall, RunStepDeltaFunctionToolCall,
-    RunStepDeltaMcpToolCall, RunStepDeltaOpenAPIToolCall
+    RunStepDeltaAzureAISearchToolCall, RunStepDeltaCustomBingGroundingToolCall,
+    RunStepDeltaBingGroundingToolCall, RunStepDeltaCodeInterpreterToolCall,
+    RunStepDeltaConnectedAgentToolCall, RunStepDeltaDeepResearchToolCall,
+    RunStepDeltaFileSearchToolCall, RunStepDeltaFunctionToolCall, RunStepDeltaMcpToolCall,
+    RunStepDeltaOpenAPIToolCall
 
     :ivar index: The index of the tool call detail in the run step's tool_calls array. Required.
     :vartype index: int
@@ -5416,6 +5417,46 @@ class RunStepDeltaConnectedAgentToolCall(RunStepDeltaToolCall, discriminator="co
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, type="connected_agent", **kwargs)
+
+
+class RunStepDeltaCustomBingGroundingToolCall(RunStepDeltaToolCall, discriminator="bing_custom_search"):
+    """Represents the custom bing grounding tool call in a streaming run step.
+
+    :ivar index: The index of the tool call detail in the run step's tool_calls array. Required.
+    :vartype index: int
+    :ivar id: The ID of the tool call, used when submitting outputs to the run. Required.
+    :vartype id: str
+    :ivar type: The object type, which is always 'bing_custom_search'. Required. Default value is
+     "bing_custom_search".
+    :vartype type: str
+    :ivar bing_custom_search: Reserved for future use. Required.
+    :vartype bing_custom_search: dict[str, str]
+    """
+
+    type: Literal["bing_custom_search"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always 'bing_custom_search'. Required. Default value is
+     \"bing_custom_search\"."""
+    bing_custom_search: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Reserved for future use. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        index: int,
+        id: str,  # pylint: disable=redefined-builtin
+        bing_custom_search: Dict[str, str],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="bing_custom_search", **kwargs)
 
 
 class RunStepDeltaDeepResearchToolCall(RunStepDeltaToolCall, discriminator="deep_research"):

@@ -28,6 +28,7 @@ from azure.ai.agents.models import (
     AzureAISearchTool,
     AzureFunctionStorageQueue,
     AzureFunctionTool,
+    BingCustomSearchTool,
     BingGroundingTool,
     BrowserAutomationTool,
     CodeInterpreterTool,
@@ -53,12 +54,14 @@ from azure.ai.agents.models import (
     ResponseFormatJsonSchemaType,
     RunAdditionalFieldList,
     RunStepAzureAISearchToolCall,
+    RunStepBingCustomSearchToolCall,
     RunStepBingGroundingToolCall,
     RunStepBrowserAutomationToolCall,
     RunStepConnectedAgentToolCall,
     RunStepDeepResearchToolCall,
     RunStepDeltaAzureAISearchToolCall,
     RunStepDeltaChunk,
+    RunStepDeltaCustomBingGroundingToolCall,
     RunStepDeltaBingGroundingToolCall,
     RunStepDeltaFileSearchToolCall,
     RunStepDeltaOpenAPIToolCall,
@@ -3430,6 +3433,54 @@ class TestAgentClient(TestAgentClientBase):
                 instructions="You are helpful agent",
                 prompt="How does wikipedia explain Euler's Identity?",
                 expected_delta_class=RunStepDeltaBingGroundingToolCall,
+                uri_annotation=MessageTextUrlCitationDetails(
+                    url="*",
+                    title="*",
+                ),
+            )
+
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_custom_bing_grounding_tool(self, **kwargs):
+        """Test Bing grounding tool call in non-streaming Scenario."""
+        with self.create_client(by_endpoint=True, **kwargs) as client:
+            model_name = "gpt-4o"
+            bing_custom_tool = BingCustomSearchTool(
+                connection_id=kwargs.get("azure_ai_agents_tests_bing_custom_connection_id"),
+                instance_name=kwargs.get("azure_ai_agents_tests_bing_configuration_name")
+            )
+
+            self._do_test_tool(
+                client=client,
+                model_name=model_name,
+                tool_to_test=bing_custom_tool,
+                instructions="You are helpful agent",
+                prompt="How many medals did the USA win in the 2024 summer olympics?",
+                expected_class=RunStepBingCustomSearchToolCall,
+                uri_annotation=MessageTextUrlCitationDetails(
+                    url="*",
+                    title="*",
+                ),
+            )
+
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_custom_bing_grounding_tool_streaming(self, **kwargs):
+        """Test Bing grounding tool call in streaming Scenario."""
+        with self.create_client(by_endpoint=True, **kwargs) as client:
+            model_name = "gpt-4o"
+            bing_custom_tool = BingCustomSearchTool(
+                connection_id=kwargs.get("azure_ai_agents_tests_bing_custom_connection_id"),
+                instance_name=kwargs.get("azure_ai_agents_tests_bing_configuration_name")
+            )
+
+            self._do_test_tool_streaming(
+                client=client,
+                model_name=model_name,
+                tool_to_test=bing_custom_tool,
+                instructions="You are helpful agent",
+                prompt="How many medals did the USA win in the 2024 summer olympics?",
+                expected_delta_class=RunStepDeltaCustomBingGroundingToolCall,
                 uri_annotation=MessageTextUrlCitationDetails(
                     url="*",
                     title="*",

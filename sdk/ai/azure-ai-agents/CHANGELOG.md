@@ -8,6 +8,7 @@
 ### Features Added
 
 - Add `RunStepDetailsActivity`, describing MCP function parameters.
+- Add `RunStepDeltaCustomBingGroundingToolCall`, describing `BingCustomSearchTool` updates in streaming scenario.
 
 ### Bugs Fixed
 
