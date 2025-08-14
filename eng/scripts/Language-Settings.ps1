@@ -173,7 +173,7 @@ function Get-AllPackageInfoFromRepo ($serviceDirectory)
     }
 
     Write-Host "Running get_package_properties.py to retrieve package properties"
-    $allPkgPropLines = python (Join-path eng scripts get_package_properties.py) -s $searchPath
+    $allPkgPropLines = python (Join-path $RepoRoot eng scripts get_package_properties.py) -s $searchPath
   }
   catch
   {
