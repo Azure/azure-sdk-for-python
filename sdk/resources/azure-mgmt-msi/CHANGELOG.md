@@ -1,6 +1,6 @@
 # Release History
 
-## 8.0.0 (2025-08-15)
+## 8.0.0b1 (2025-08-15)
 
 ### Breaking Changes
 
