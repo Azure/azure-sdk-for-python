@@ -23,6 +23,7 @@ class BatchPerfTest(_PerfTestBase):
         self._test_proxy_policy: Optional[PerfTestProxyPolicy] = None
         self._client_kwargs: Dict[str, Any] = {}
         self._recording_id: Optional[str] = None
+        self._latencies: List[float] = []
 
         if self.args.insecure:
             # Disable SSL verification for SDK Client
@@ -147,8 +148,12 @@ class BatchPerfTest(_PerfTestBase):
             self._save_profile("sync", output_path=self.args.profile_path)
             self._print_profile_stats()
         else:
+            self._latencies = []
             while self._last_completion_time < duration:
+                start = time.perf_counter_ns()
                 self._completed_operations += self.run_batch_sync()
+                if self.args.latency:
+                    self._latencies.append((time.perf_counter_ns() - start) / 1_000_000)
                 self._last_completion_time = time.time() - starttime
 
     async def run_all_async(self, duration: int, *, run_profiler: bool = False, **kwargs) -> None:
@@ -168,6 +173,10 @@ class BatchPerfTest(_PerfTestBase):
             self._save_profile("async", output_path=self.args.profile_path)
             self._print_profile_stats()
         else:
+            self._latencies = []
             while self._last_completion_time < duration:
+                start = time.perf_counter_ns()
                 self._completed_operations += await self.run_batch_async()
+                if self.args.latency:
+                    self._latencies.append((time.perf_counter_ns() - start) / 1_000_000)
                 self._last_completion_time = time.time() - starttime
