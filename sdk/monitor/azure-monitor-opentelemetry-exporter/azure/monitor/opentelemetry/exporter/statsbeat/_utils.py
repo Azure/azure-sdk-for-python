@@ -24,6 +24,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _EU_ENDPOINTS,
     _REQ_DURATION_NAME,
     _REQ_SUCCESS_NAME,
+    _APPLICATIONINSIGHTS_SDKSTATS_EXPORT_INTERVAL,
 )
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     _REQUESTS_MAP_LOCK,
@@ -178,3 +179,12 @@ def _track_retry_items(customer_statsbeat_metrics, envelopes: List[TelemetryItem
                     retry_code,
                     str(message)
                 )
+
+def _get_customer_sdkstats_export_interval() -> int:
+    customer_sdkstats_ei_env = os.environ.get(_APPLICATIONINSIGHTS_SDKSTATS_EXPORT_INTERVAL)
+    if customer_sdkstats_ei_env:
+        try:
+            return int(customer_sdkstats_ei_env)
+        except ValueError:
+            return _DEFAULT_STATS_SHORT_EXPORT_INTERVAL
+    return _DEFAULT_STATS_SHORT_EXPORT_INTERVAL
