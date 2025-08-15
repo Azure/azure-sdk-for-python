@@ -12,6 +12,8 @@
 
 ### Bugs Fixed
 
+- Fixed the issue when the `create_and_process` call hangs if MCP tool approval is required.
+
 ### Sample updates
 
 - Bing Grounding and Bing Custom Search samples were fixed to correctly present references.
