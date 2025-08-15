@@ -1862,6 +1862,26 @@ class TestStorageShare(StorageRecordedTestCase):
         finally:
             self._delete_shares()
 
+    @FileSharePreparer()
+    @recorded_by_proxy
+    def test_smb_directory_lease(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+
+        share1 = self.fsc.get_share_client(self.get_resource_name(TEST_SHARE_PREFIX) + "1")
+        share1.create_share(enable_smb_directory_lease=True)
+        assert share1.get_share_properties().enable_smb_directory_lease == True
+        share1.set_share_properties(access_tier="Hot", enable_smb_directory_lease=False)
+        assert share1.get_share_properties().enable_smb_directory_lease == False
+
+        share2 = self.fsc.get_share_client(self.get_resource_name(TEST_SHARE_PREFIX) + "2")
+        share2.create_share(enable_smb_directory_lease=False)
+        assert share2.get_share_properties().enable_smb_directory_lease == False
+        share2.set_share_properties(access_tier="Hot", enable_smb_directory_lease=True)
+        assert share2.get_share_properties().enable_smb_directory_lease == True
+
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()
