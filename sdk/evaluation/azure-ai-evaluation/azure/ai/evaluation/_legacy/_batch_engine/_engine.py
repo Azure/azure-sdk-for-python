@@ -148,9 +148,6 @@ class BatchEngine:
         }
         resolved_mapping: Dict[str, str] = default_column_mapping.copy()
 
-        for name, value in parameters.items():
-            if value and value.default is not inspect.Parameter.empty:
-                resolved_mapping.pop(name)
 
         resolved_mapping.update(column_mapping or {})
         return resolved_mapping
@@ -159,7 +156,7 @@ class BatchEngine:
 
         return {
             DEFAULTS_KEY: {
-                name: value.default
+                f"data.{name}": value.default
                 for name, value in inspect.signature(self._func).parameters.items()
                 if value.default is not inspect.Parameter.empty
             }

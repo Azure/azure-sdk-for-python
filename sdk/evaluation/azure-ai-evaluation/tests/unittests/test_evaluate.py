@@ -154,6 +154,14 @@ def _question_answer_override_target(query, response):
     return {"query": "new query", "response": "new response"}
 
 
+def _target_with_not_provided_parameter(query, not_provided="Default Value"):
+    return {"query": query, "response": not_provided}
+
+
+def _target_with_optional_response(query, response="Default Value"):
+    return {"query": query, "response": response}
+
+
 @pytest.mark.usefixtures("mock_model_config")
 @pytest.mark.unittest
 class TestEvaluate:
@@ -688,7 +696,7 @@ class TestEvaluate:
 
     @pytest.mark.skip(reason="Breaking CI by crashing pytest somehow")
     def test_optional_inputs_with_data(self, questions_file, questions_answers_basic_file):
-        from test_evaluators.test_inputs_evaluators import HalfOptionalEval, NoInputEval, NonOptionalEval, OptionalEval
+        from .test_evaluators.test_inputs_evaluators import HalfOptionalEval, NoInputEval, NonOptionalEval, OptionalEval
 
         # All variants work with both keyworded inputs
         results = evaluate(
@@ -736,7 +744,7 @@ class TestEvaluate:
 
     @pytest.mark.skip(reason="Breaking CI by crashing pytest somehow")
     def test_optional_inputs_with_target(self, questions_file, questions_answers_basic_file):
-        from test_evaluators.test_inputs_evaluators import EchoEval
+        from .test_evaluators.test_inputs_evaluators import EchoEval
 
         # Check that target overrides default inputs
         target_answer_results = evaluate(
@@ -775,7 +783,7 @@ class TestEvaluate:
         assert double_override_results["rows"][0]["outputs.echo.echo_response"] == "new response"
 
     def test_conversation_aggregation_types(self, evaluate_test_data_conversion_jsonl_file):
-        from test_evaluators.test_inputs_evaluators import CountingEval
+        from .test_evaluators.test_inputs_evaluators import CountingEval
 
         counting_eval = CountingEval()
         evaluators = {"count": counting_eval}
@@ -852,7 +860,7 @@ class TestEvaluate:
     def test_aggregation_serialization(self, evaluate_test_data_conversion_jsonl_file, use_async):
         # This test exists to ensure that PF doesn't crash when trying to serialize a
         # complex aggregation function.
-        from test_evaluators.test_inputs_evaluators import CountingEval
+        from .test_evaluators.test_inputs_evaluators import CountingEval
 
         counting_eval = CountingEval()
         evaluators = {"count": counting_eval}
@@ -975,6 +983,47 @@ class TestEvaluate:
         result = _convert_name_map_into_property_entries(test_map, segment_length=10, max_segments=1)
         assert result[EvaluationRunProperties.NAME_MAP_LENGTH] == -1
         assert len(result) == 1
+
+    def test_target_optional_param_isnt_required(self, evaluate_test_data_jsonl_file):
+        """Validates that"""
+        from ..e2etests.custom_evaluators.echo import EchoEvaluator
+
+        result = evaluate(
+            data=evaluate_test_data_jsonl_file,
+            target=_target_with_not_provided_parameter,
+            evaluators={
+                "echo": EchoEvaluator(),
+            },
+        )
+
+        assert result is not None
+
+        # Double check that query and response are in input, but "not_required" isn't
+        assert all("inputs.not_provided" not in row for row in result["rows"])
+        assert all({"inputs.query"}.issubset(row) for row in result["rows"])
+
+        # Validate the optional param uses default when not provided
+        assert all(row["outputs.echo.response"] == "Default Value" for row in result["rows"])
+
+    def test_target_optional_param_overriden_when_available(self, evaluate_test_data_jsonl_file):
+        """Validates that a target function's optional parameters are used"""
+        from ..e2etests.custom_evaluators.echo import EchoEvaluator
+
+        result = evaluate(
+            data=evaluate_test_data_jsonl_file,
+            target=_target_with_optional_response,
+            evaluators={
+                "echo": EchoEvaluator(),
+            },
+        )
+
+        assert result is not None
+
+        # Double check that query and response are in input, but "not_required" isn't
+        assert all({"inputs.query", "inputs.response"}.issubset(row) for row in result["rows"])
+
+        # Validate that "response" from input overrides default value
+        assert all(row["outputs.echo.response"] != "Default Value" for row in result["rows"])
 
 
 @pytest.mark.unittest
