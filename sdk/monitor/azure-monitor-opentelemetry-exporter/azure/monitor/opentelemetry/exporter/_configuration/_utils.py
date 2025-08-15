@@ -24,6 +24,7 @@ class OneSettingsResponse:
         refresh_interval (int): Interval in seconds for the next configuration refresh
         settings (Dict[str, str]): Dictionary of configuration key-value pairs
         version (Optional[int]): Configuration version number for change tracking
+        status_code (int): HTTP status code from the response
     """
 
     def __init__(
@@ -31,7 +32,8 @@ class OneSettingsResponse:
         etag: Optional[str] = None,
         refresh_interval: int = _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS,
         settings: Optional[Dict[str, str]] = None,
-        version: Optional[int] = None
+        version: Optional[int] = None,
+        status_code: int = 200
     ):
         """Initialize OneSettingsResponse with configuration data.
 
@@ -42,11 +44,13 @@ class OneSettingsResponse:
             settings (Optional[Dict[str, str]], optional): Configuration settings dictionary.
                 Defaults to empty dict if None.
             version (Optional[int], optional): Configuration version number. Defaults to None.
+            status_code (int, optional): HTTP status code. Defaults to 200.
         """
         self.etag = etag
         self.refresh_interval = refresh_interval
         self.settings = settings or {}
         self.version = version
+        self.status_code = status_code
 
 
 def make_onesettings_request(url: str, query_dict: Optional[Dict[str, str]] = None,
@@ -115,6 +119,7 @@ def _parse_onesettings_response(response: requests.Response) -> OneSettingsRespo
         - refresh_interval: Next refresh interval from headers
         - settings: Configuration key-value pairs (empty for 304/errors)
         - version: Configuration version number for change tracking
+        - status_code: HTTP status code of the response
     :rtype: OneSettingsResponse
     Note:
         This function logs warnings for various error conditions but does not
@@ -131,7 +136,9 @@ def _parse_onesettings_response(response: requests.Response) -> OneSettingsRespo
         etag = response.headers.get("ETag")
         refresh_interval_header = response.headers.get("x-ms-onesetinterval")
         try:
-            refresh_interval = int(refresh_interval_header) if refresh_interval_header else refresh_interval
+            # Note: OneSettings refresh interval is in minutes, convert to seconds
+            if refresh_interval_header:
+                refresh_interval = int(refresh_interval_header) * 60
         except (ValueError, TypeError):
             logger.warning("Invalid refresh interval format: %s", refresh_interval_header)
             refresh_interval = _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS
@@ -162,4 +169,4 @@ def _parse_onesettings_response(response: requests.Response) -> OneSettingsRespo
     elif status_code == 500:
         logger.warning("Internal server error from OneSettings: %s", response.content)
 
-    return OneSettingsResponse(etag, refresh_interval, settings, version)
+    return OneSettingsResponse(etag, refresh_interval, settings, version, status_code)

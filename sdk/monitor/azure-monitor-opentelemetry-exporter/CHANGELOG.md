@@ -5,6 +5,8 @@
 ### Features Added
 - Customer Facing Statsbeat: Added remaining drop codes to base
   ([#42382](https://github.com/Azure/azure-sdk-for-python/pull/42382))
+- Refactored the put methods in storage.py for LocalFileBlob and LocalFileStorage
+  ([#42502](https://github.com/Azure/azure-sdk-for-python/pull/42502))
 
 ### Breaking Changes
 
@@ -12,12 +14,14 @@
 
 ### Other Changes
 
+- Configuration manager/worker fetch via OneSettings part 1 - Change detection
+  ([#42360] https://github.com/Azure/azure-sdk-for-python/pull/42360)
+- Configuration manager/worker fetch via OneSettings part 2 - Concurrency and refactoring of _ConfigurationManager
+  ([#42508] https://github.com/Azure/azure-sdk-for-python/pull/42508)
+
 ## 1.0.0b41 (2025-07-31)
 
 ### Features Added
-
-- Configuration manager/worker fetch via OneSettings part 1
-  ([#42360] https://github.com/Azure/azure-sdk-for-python/pull/42360)
 - Added RateLimited Sampler 
   ([#41954](https://github.com/Azure/azure-sdk-for-python/pull/41954))
 - Refactored Application Insights Sampler Code

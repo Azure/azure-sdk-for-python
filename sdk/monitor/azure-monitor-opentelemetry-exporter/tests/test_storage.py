@@ -70,9 +70,9 @@ class TestLocalFileBlob(unittest.TestCase):
         test_input = [1, 2, 3]
         result = blob.put(test_input)
         # Should return the blob itself (self) on success
-        self.assertIsInstance(result, LocalFileBlob)
-        self.assertEqual(result, blob)
-        
+        self.assertIsInstance(result, StorageExportResult)
+        self.assertEqual(result, StorageExportResult.LOCAL_FILE_BLOB_SUCCESS)
+
     def test_put_file_write_error_returns_string(self):
         blob = LocalFileBlob(os.path.join(TEST_FOLDER, "write_error_blob"))
         test_input = [1, 2, 3]
@@ -129,8 +129,8 @@ class TestLocalFileBlob(unittest.TestCase):
         lease_period = 60
         
         result = blob.put(test_input, lease_period=lease_period)
-        self.assertIsInstance(result, LocalFileBlob)
-        self.assertEqual(result, blob)
+        self.assertIsInstance(result, StorageExportResult)
+        self.assertEqual(result, StorageExportResult.LOCAL_FILE_BLOB_SUCCESS)
         # File should have .lock extension due to lease period
         self.assertTrue(blob.fullpath.endswith(".lock"))
         
@@ -150,8 +150,8 @@ class TestLocalFileBlob(unittest.TestCase):
         empty_data = []
         
         result = blob.put(empty_data)
-        self.assertIsInstance(result, LocalFileBlob)
-        self.assertEqual(result, blob)
+        self.assertIsInstance(result, StorageExportResult)
+        self.assertEqual(result, StorageExportResult.LOCAL_FILE_BLOB_SUCCESS)
         
     def test_put_large_data_success(self):
         blob = LocalFileBlob(os.path.join(TEST_FOLDER, "large_data_blob"))
@@ -159,8 +159,8 @@ class TestLocalFileBlob(unittest.TestCase):
         large_data = [{"id": i, "value": f"data_{i}"} for i in range(1000)]
         
         result = blob.put(large_data)
-        self.assertIsInstance(result, LocalFileBlob)
-        self.assertEqual(result, blob)
+        self.assertIsInstance(result, StorageExportResult)
+        self.assertEqual(result, StorageExportResult.LOCAL_FILE_BLOB_SUCCESS)
         
         # Verify data can be retrieved
         retrieved_data = blob.get()
@@ -174,13 +174,25 @@ class TestLocalFileBlob(unittest.TestCase):
         
         # Test successful case
         result_success = blob.put(test_input)
-        self.assertTrue(isinstance(result_success, LocalFileBlob) or isinstance(result_success, str))
+        self.assertTrue(isinstance(result_success, StorageExportResult) or isinstance(result_success, str))
         
         # Test error case
         blob2 = LocalFileBlob(os.path.join(TEST_FOLDER, "consistency_blob2"))
         with mock.patch("os.rename", side_effect=Exception("Test error")):
             result_error = blob2.put(test_input)
             self.assertIsInstance(result_error, str)
+            
+    def test_put_invalid_return_type(self):
+        blob = LocalFileBlob(os.path.join(TEST_FOLDER, "invalid_return_blob"))
+        test_input = [1, 2, 3]
+        
+        # This tests that even if os.rename somehow returns something unexpected,
+        # the put method still maintains its type contract
+        with mock.patch("os.rename", return_value=42):
+            result = blob.put(test_input)
+            # Should either convert to string or return StorageExportResult
+            self.assertTrue(isinstance(result, (StorageExportResult, str)),
+                          f"Expected StorageExportResult or str, got {type(result)}")
 
     @unittest.skip("transient storage")
     def test_put(self):
@@ -334,7 +346,7 @@ class TestLocalFileStorage(unittest.TestCase):
         test_input = (1, 2, 3)
         with LocalFileStorage(os.path.join(TEST_FOLDER, "success_test")) as stor:
             result = stor.put(test_input, lease_period=0)  # No lease period so file is immediately available
-            self.assertIsInstance(result, LocalFileBlob)
+            self.assertIsInstance(result, StorageExportResult)
             self.assertEqual(stor.get().get(), test_input)
     
     def test_put_blob_put_failure_returns_string(self):
@@ -379,19 +391,19 @@ class TestLocalFileStorage(unittest.TestCase):
         
         with LocalFileStorage(os.path.join(TEST_FOLDER, "lease_test")) as stor:
             result = stor.put(test_input, lease_period=custom_lease_period)
-            self.assertIsInstance(result, LocalFileBlob)
+            self.assertIsInstance(result, StorageExportResult)
             # Verify the file was created with lease period
-            self.assertTrue(result.fullpath.endswith(".lock"))
+            self.assertEqual(result, StorageExportResult.LOCAL_FILE_BLOB_SUCCESS)
 
     def test_put_default_lease_period(self):
         test_input = (1, 2, 3)
         
         with LocalFileStorage(os.path.join(TEST_FOLDER, "default_lease_test"), lease_period=90) as stor:
             result = stor.put(test_input)
-            self.assertIsInstance(result, LocalFileBlob)
+            self.assertIsInstance(result, StorageExportResult)
             # File should be created with lease (since default lease_period > 0)
-            self.assertTrue(result.fullpath.endswith(".lock"))
-    
+            self.assertEqual(result, StorageExportResult.LOCAL_FILE_BLOB_SUCCESS)
+
     def test_check_and_set_folder_permissions_oserror_sets_exception_state(self):
         test_input = (1, 2, 3)
         test_error_message = "OSError: Permission denied creating directory"
@@ -671,7 +683,7 @@ class TestLocalFileStorage(unittest.TestCase):
         with LocalFileStorage(os.path.join(TEST_FOLDER, "recovery_test2")) as stor2:
             if stor2._enabled:  # Storage should be enabled now
                 result = stor2.put(test_input, lease_period=0)
-                self.assertIsInstance(result, LocalFileBlob)
+                self.assertIsInstance(result, StorageExportResult)
                 retrieved_data = stor2.get().get()
                 self.assertEqual(retrieved_data, test_input)
 
@@ -740,6 +752,17 @@ class TestLocalFileStorage(unittest.TestCase):
             # When storage is disabled and readonly state is set, put() should return CLIENT_READONLY
             result = stor.put(test_input)
             self.assertEqual(result, StorageExportResult.CLIENT_READONLY)
+            
+    def test_storage_put_invalid_return_type(self):
+        test_input = (1, 2, 3)
+        
+        with LocalFileStorage(os.path.join(TEST_FOLDER, "invalid_return_test")) as stor:
+            # Mock _check_storage_size to return a non-boolean value
+            with mock.patch.object(stor, '_check_storage_size', return_value=42):
+                result = stor.put(test_input)
+                # Should maintain return type contract despite invalid internal return
+                self.assertTrue(isinstance(result, (StorageExportResult, str)),
+                              f"Expected StorageExportResult or str, got {type(result)}")
 
     def test_readonly_state_priority_over_exception_state(self):
         test_input = (1, 2, 3)

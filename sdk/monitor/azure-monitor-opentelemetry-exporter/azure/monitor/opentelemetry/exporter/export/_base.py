@@ -223,7 +223,7 @@ class BaseExporter:
                         # For any exceptions occurred in put method of either LocalFileStorage or LocalFileBlob, track dropped item with reason
                         _track_dropped_items(self._customer_statsbeat_metrics, envelopes, DropCode.CLIENT_EXCEPTION, result_from_storage_put)
                     else:
-                        # LocalFileBlob.put returns either an exception(failure, handled above) or the file path(success), eventually that will be removed since this value is not being utilized elsewhere
+                        # LocalFileBlob.put returns StorageExportResult.LOCAL_FILE_BLOB_SUCCESS here. Don't need to track anything in this case.
                         pass
             elif result == ExportResult.SUCCESS:
                 # Try to send any cached events
