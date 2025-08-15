@@ -75,7 +75,7 @@ async def main() -> None:
         _, raw_http_response = await poller.result()
         
         # Save the raw JSON response
-        save_json_to_file(raw_http_response.json(), "content_analyzers_analyze_binary")
+        save_json_to_file(raw_http_response.json(), filename_prefix="content_analyzers_analyze_binary")
         # Note: For easier data access, see object model samples: 
         #    content_analyzers_analyze_binary.py
         #    content_analyzers_analyze_url.py

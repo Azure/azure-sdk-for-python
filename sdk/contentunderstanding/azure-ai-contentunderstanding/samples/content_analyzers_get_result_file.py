@@ -96,11 +96,17 @@ async def main():
         await poller.result()
         print(f"✅ Analyzer '{analyzer_id}' created successfully!")
 
-        # Read the FlightSimulator.mp4 video file
-        video_path = "sample_files/FlightSimulator.mp4"
-        print(f"📹 Reading video file: {video_path}")
-        with open(video_path, "rb") as video_file:
-            video_content = video_file.read()
+        # Use the FlightSimulator.mp4 video file from remote location
+        asset_url = "https://github.com/Azure-Samples/azure-ai-content-understanding-assets/raw/refs/heads/main/videos/sdk_samples/FlightSimulator.mp4"
+        print(f"📹 Using video file from URL: {asset_url}")
+        
+        # Download the video content from the URL
+        import urllib.request
+        try:
+            video_content = urllib.request.urlopen(asset_url).read()
+        except Exception as e:
+            print(f"❌ Failed to download video from URL: {e}")
+            raise
 
         # Begin video analysis operation
         print(f"🎬 Starting video analysis with analyzer '{analyzer_id}'...")
