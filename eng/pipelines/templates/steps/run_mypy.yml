@@ -10,13 +10,27 @@ steps:
   - task: UsePythonVersion@0
     displayName: 'Use Python 3.9'
     inputs:
-     versionSpec: '3.9'
+      versionSpec: '3.9'
     condition: and(succeededOrFailed(), ne(variables['Skip.MyPy'],'true'))
 
+  # Prep Environment (Unix): PortAudio + ci tools
+  - script: |
+      if [ "$AGENT_OS" = "Linux" ]; then
+        sudo apt-get update
+        sudo apt-get install -y portaudio19-dev libasound2-dev
+      elif [ "$AGENT_OS" = "Darwin" ]; then
+        brew update
+        brew install portaudio
+      fi
+      python -m pip install -r eng/ci_tools.txt
+    displayName: 'Prep Environment (Unix)'
+    condition: and(succeededOrFailed(), ne(variables['Skip.MyPy'],'true'), ne(variables['Agent.OS'], 'Windows_NT'))
+
+  # Prep Environment (Windows): ci tools only
   - script: |
       python -m pip install -r eng/ci_tools.txt
-    displayName: 'Prep Environment'
-    condition: and(succeededOrFailed(), ne(variables['Skip.MyPy'],'true'))
+    displayName: 'Prep Environment (Windows)'
+    condition: and(succeededOrFailed(), ne(variables['Skip.MyPy'],'true'), eq(variables['Agent.OS'], 'Windows_NT'))
 
   - task: PythonScript@0
     displayName: 'Run MyPy'
