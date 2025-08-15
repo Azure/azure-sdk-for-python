@@ -19,7 +19,6 @@ param azureStorageAccountResourceId string
 param aiSearchExists bool
 param azureStorageExists bool
 
-var canaryRegions = ['eastus2euap', 'centraluseuap']
 var acsParts = split(aiSearchResourceId, '/')
 
 resource existingSearchService 'Microsoft.Search/searchServices@2024-06-01-preview' existing = if (aiSearchExists) {

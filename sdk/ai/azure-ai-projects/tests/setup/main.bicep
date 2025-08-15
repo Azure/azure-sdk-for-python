@@ -25,7 +25,7 @@ param location string = 'eastus'
 
 @maxLength(9)
 @description('The name of the Azure AI Foundry resource.')
-param aiServices string = 'foundy'
+param aiServices string = 'foundry'
 
 @description('Name for your project resource.')
 param firstProjectName string = 'project'
@@ -113,6 +113,7 @@ module aiDependencies 'modules-standard/standard-dependent-resources.bicep' = {
     // Storage Account
     azureStorageAccountResourceId: azureStorageAccountResourceId
     azureStorageExists: validateExistingResources.outputs.azureStorageExists
+  }
 }
 
 /*
