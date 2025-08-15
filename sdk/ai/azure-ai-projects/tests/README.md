@@ -28,7 +28,7 @@ Steps to deploy a new Foundry project:
 * Create a new resource group in your subscription (update resource group name and location as needed):<br>
 `az group create --name dcohen-rg-projects-sdk-tests --location eastus`
 * Create a Foundry project in the resource group (update resouce group name, AI service name and AI Foundry project name as needed):<br>
-`az deployment group create --resource-group dcohen-rg-projects-sdk-tests --template-file main.bicep --parameters aiFoundryName=foundry-resource aiProjectName=project-resource`
+`az deployment group create --resource-group dcohen-rg-projects-sdk-tests --template-file main.bicep`
 
 The above instructions were inspired by these articles
 * ["Quickstart: Create an Azure AI Foundry project using a Bicep file"](https://learn.microsoft.com/azure/ai-foundry/how-to/create-azure-ai-project-template)
