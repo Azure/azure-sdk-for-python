@@ -35,7 +35,6 @@ from azure.cosmos._change_feed.change_feed_utils import validate_kwargs
 
 from ._cosmos_client_connection_async import CosmosClientConnection
 from ._scripts import ScriptsProxy
-from .. import exceptions
 from .. import _utils as utils
 from .._base import (
     build_options as _build_options,

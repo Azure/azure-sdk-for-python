@@ -22,7 +22,7 @@
 import logging
 from collections.abc import Sequence
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from typing import Dict, List, Tuple, Any, Mapping, Optional, TYPE_CHECKING
+from typing import Dict, List, Tuple, Any, Optional, TYPE_CHECKING
 
 from azure.core.utils import CaseInsensitiveDict
 
@@ -54,7 +54,7 @@ class ReadItemsHelperSync:
         self.client = client
         self.collection_link = collection_link
         self.items = items
-        self.options = options if options is not None else {}
+        self.options = dict(options) if options is not None else {}
         self.partition_key_definition = partition_key_definition
         self.kwargs = kwargs
         self.executor = executor

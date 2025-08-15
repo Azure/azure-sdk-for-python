@@ -21,7 +21,7 @@
 
 """Internal query builder for multi-item operations."""
 
-from typing import Dict, List, Tuple, Any, TYPE_CHECKING
+from typing import Dict, Tuple, Any, TYPE_CHECKING, Sequence
 
 from azure.cosmos.partition_key import _Undefined, _Empty, NonePartitionKeyValue
 if TYPE_CHECKING:
@@ -49,12 +49,12 @@ class _QueryBuilder:
 
     @staticmethod
     def is_id_partition_key_query(
-            items: List[Tuple[str, "_PartitionKeyType"]],
+            items: Sequence[Tuple[str, "_PartitionKeyType"]],
             partition_key_definition: Dict[str, Any]
     ) -> bool:
         """Check if we can use the optimized ID IN query.
 
-        :param list[tuple[str, any]] items: The list of items to check.
+        :param Sequence[tuple[str, any]] items: The list of items to check.
         :param dict[str, any] partition_key_definition: The partition key definition of the container.
         :return: True if the optimized ID IN query can be used, False otherwise.
         :rtype: bool
@@ -71,13 +71,13 @@ class _QueryBuilder:
 
     @staticmethod
     def is_single_logical_partition_query(
-            items: List[Tuple[str, "_PartitionKeyType"]]
+            items: Sequence[Tuple[str, "_PartitionKeyType"]]
     ) -> bool:
         """Check if all items in a chunk belong to the same logical partition.
 
         This is used to determine if an optimized query with an IN clause can be used.
 
-        :param list[tuple[str, any]] items: The list of items to check.
+        :param Sequence[tuple[str, any]] items: The list of items to check.
         :return: True if all items belong to the same logical partition, False otherwise.
         :rtype: bool
         """
@@ -88,14 +88,14 @@ class _QueryBuilder:
 
     @staticmethod
     def build_pk_and_id_in_query(
-            items: List[Tuple[str, "_PartitionKeyType"]],
+            items: Sequence[Tuple[str, "_PartitionKeyType"]],
             partition_key_definition: Dict[str, Any]
     ) -> Dict[str, Any]:
         """Build a query for items in a single logical partition using an IN clause for IDs.
 
         e.g., SELECT * FROM c WHERE c.pk = @pk AND c.id IN (@id1, @id2)
 
-        :param list[tuple[str, any]] items: The list of items to build the query for.
+        :param Sequence[tuple[str, any]] items: The list of items to build the query for.
         :param dict[str, any] partition_key_definition: The partition key definition of the container.
         :return: A dictionary containing the query text and parameters.
         :rtype: dict[str, any]
@@ -114,10 +114,10 @@ class _QueryBuilder:
         return {"query": query_text, "parameters": parameters}
 
     @staticmethod
-    def build_id_in_query(items: List[Tuple[str, "_PartitionKeyType"]]) -> Dict[str, Any]:
+    def build_id_in_query(items: Sequence[Tuple[str, "_PartitionKeyType"]]) -> Dict[str, Any]:
         """Build optimized query using ID IN clause when ID equals partition key.
 
-        :param list[tuple[str, any]] items: The list of items to build the query for.
+        :param Sequence[tuple[str, any]] items: The list of items to build the query for.
         :return: A dictionary containing the query text and parameters.
         :rtype: dict[str, any]
         """
@@ -131,12 +131,12 @@ class _QueryBuilder:
 
     @staticmethod
     def build_parameterized_query_for_items(
-            items_by_partition: Dict[str, List[Tuple[str, "_PartitionKeyType"]]],
+            items_by_partition: Dict[str, Sequence[Tuple[str, "_PartitionKeyType"]]],
             partition_key_definition: Dict[str, Any]
     ) -> Dict[str, Any]:
         """Builds a parameterized SQL query for reading multiple items.
 
-        :param dict[str, list[tuple[str, any]]] items_by_partition: A dictionary of items grouped by partition key.
+        :param dict[str, Sequence[tuple[str, any]]] items_by_partition: A dictionary of items grouped by partition key.
         :param dict[str, any] partition_key_definition: The partition key definition of the container.
         :return: A dictionary containing the query text and parameters.
         :rtype: dict[str, any]

@@ -28,14 +28,14 @@ from typing import (
     Any,
     Sequence,
     Optional,
-    TYPE_CHECKING, Union
+    TYPE_CHECKING, Union, Mapping
 )
 
 from azure.cosmos import _base, exceptions
 from azure.core.utils import CaseInsensitiveDict
 from azure.cosmos._query_builder import _QueryBuilder
-from azure.cosmos.partition_key import _get_partition_key_from_partition_key_definition, NonePartitionKeyValue, _Empty, \
-    _Undefined
+from azure.cosmos.partition_key import _get_partition_key_from_partition_key_definition, \
+    NonePartitionKeyValue, _Empty, _Undefined
 from azure.cosmos import CosmosList
 
 if TYPE_CHECKING:
@@ -59,7 +59,7 @@ class ReadItemsHelperAsync:
             client: 'CosmosClientConnection',
             collection_link: str,
             items: Sequence[Tuple[str, "PartitionKeyType"]],
-            options: Optional[Dict[str, Any]],
+            options: Optional[Mapping[str, Any]],
             partition_key_definition: Dict[str, Any],
             max_concurrency: int = 10,
             **kwargs: Any
@@ -67,7 +67,7 @@ class ReadItemsHelperAsync:
         self.client = client
         self.collection_link = collection_link
         self.items = items
-        self.options = options if options is not None else {}
+        self.options = dict(options) if options is not None else {}
         self.partition_key_definition = partition_key_definition
         self.kwargs = kwargs
         self.max_concurrency = max_concurrency
@@ -104,7 +104,8 @@ class ReadItemsHelperAsync:
         """
         Groups items by their partition key range ID efficiently while preserving original order.
 
-        :return: A dictionary mapping partition key range IDs to lists of tuples containing the original index, item ID, and partition key value.
+        :return: A dictionary mapping partition key range IDs to lists of tuples containing the
+                    original index, item ID, and partition key value.
         :rtype: dict[str, list[tuple[int, str, PartitionKeyType]]]
         """
         collection_rid = _base.GetResourceIdOrFullNameFromLink(self.collection_link)
