@@ -23,8 +23,9 @@ class TestBackupClientTests(KeyVaultTestCase):
 
     def create_key_client(self, vault_uri, **kwargs):
         from azure.keyvault.keys import KeyClient
+
         credential = self.get_credential(KeyClient)
-        return self.create_client_from_credential(KeyClient, credential=credential, vault_url=vault_uri, **kwargs )
+        return self.create_client_from_credential(KeyClient, credential=credential, vault_url=vault_uri, **kwargs)
 
     @pytest.mark.parametrize("api_version", only_default)
     @KeyVaultBackupClientPreparer()
@@ -98,7 +99,6 @@ class TestBackupClientTests(KeyVaultTestCase):
         key_client = self.create_key_client(managed_hsm_url)
         key_name = self.get_resource_name("selective-restore-test-key")
         key_client.create_rsa_key(key_name)
-
 
         # backup the vault
         container_uri = kwargs.pop("container_uri")
@@ -188,7 +188,9 @@ class TestBackupClientTests(KeyVaultTestCase):
         sas_token = kwargs.pop("sas_token")
 
         if self.is_live and not sas_token:
-            pytest.skip("SAS token is required for live tests. Please set the BLOB_STORAGE_SAS_TOKEN environment variable.")
+            pytest.skip(
+                "SAS token is required for live tests. Please set the BLOB_STORAGE_SAS_TOKEN environment variable."
+            )
 
         client.begin_pre_backup(container_uri, sas_token=sas_token).wait()
         backup_poller = client.begin_backup(container_uri, sas_token)  # Test positional SAS token for backwards compat

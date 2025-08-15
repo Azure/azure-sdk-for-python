@@ -46,9 +46,7 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
                 + "poller's continuation_token() method"
             ) from ex
 
-        pipeline_response = await status_method(
-            job_id=job_id, cls=lambda pipeline_response, _, __: pipeline_response
-        )
+        pipeline_response = await status_method(job_id=job_id, cls=lambda pipeline_response, _, __: pipeline_response)
         if "azure-asyncoperation" not in pipeline_response.http_response.headers:
             pipeline_response.http_response.headers["azure-asyncoperation"] = status_url
         return base64.b64encode(pickle.dumps(pipeline_response)).decode("ascii")
@@ -61,8 +59,7 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
         use_managed_identity: Literal[True],
         continuation_token: Optional[str] = None,
         **kwargs: Any,
-    ) -> AsyncLROPoller[KeyVaultBackupResult]:
-        ...
+    ) -> AsyncLROPoller[KeyVaultBackupResult]: ...
 
     @overload
     async def begin_backup(
@@ -72,8 +69,7 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
         sas_token: str,
         continuation_token: Optional[str] = None,
         **kwargs: Any,
-    ) -> AsyncLROPoller[KeyVaultBackupResult]:
-        ...
+    ) -> AsyncLROPoller[KeyVaultBackupResult]: ...
 
     # Disabling pylint checks because they don't correctly handle overloads
     @distributed_trace_async
@@ -139,8 +135,7 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
         key_name: Optional[str] = None,
         continuation_token: Optional[str] = None,
         **kwargs: Any,
-    ) -> AsyncLROPoller[None]:
-        ...
+    ) -> AsyncLROPoller[None]: ...
 
     @overload
     async def begin_restore(
@@ -151,8 +146,7 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
         key_name: Optional[str] = None,
         continuation_token: Optional[str] = None,
         **kwargs: Any,
-    ) -> AsyncLROPoller[None]:
-        ...
+    ) -> AsyncLROPoller[None]: ...
 
     # Disabling pylint checks because they don't correctly handle overloads
     @distributed_trace_async
@@ -245,8 +239,7 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
         use_managed_identity: Literal[True],
         continuation_token: Optional[str] = None,
         **kwargs: Any,
-    ) -> AsyncLROPoller[None]:
-        ...
+    ) -> AsyncLROPoller[None]: ...
 
     @overload
     async def begin_pre_backup(
@@ -256,8 +249,7 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
         sas_token: str,
         continuation_token: Optional[str] = None,
         **kwargs: Any,
-    ) -> AsyncLROPoller[None]:
-        ...
+    ) -> AsyncLROPoller[None]: ...
 
     @distributed_trace_async
     async def begin_pre_backup(  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -313,8 +305,7 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
         use_managed_identity: Literal[True],
         continuation_token: Optional[str] = None,
         **kwargs: Any,
-    ) -> AsyncLROPoller[None]:
-        ...
+    ) -> AsyncLROPoller[None]: ...
 
     @overload
     async def begin_pre_restore(
@@ -324,8 +315,7 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
         sas_token: str,
         continuation_token: Optional[str] = None,
         **kwargs: Any,
-    ) -> AsyncLROPoller[None]:
-        ...
+    ) -> AsyncLROPoller[None]: ...
 
     @distributed_trace_async
     async def begin_pre_restore(  # pylint: disable=docstring-keyword-should-match-keyword-only

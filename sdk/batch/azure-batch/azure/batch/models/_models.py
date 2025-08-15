@@ -11,14 +11,13 @@
 import datetime
 from typing import Any, Dict, List, Mapping, Optional, TYPE_CHECKING, Union, overload
 
-from .. import _model_base
-from .._model_base import rest_field
+from ....client._utils.model_base import Model as _Model, rest_field
 
 if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AffinityInfo(_model_base.Model):
+class AffinityInfo(_Model):
     """A locality hint that can be used by the Batch service to select a Compute Node
     on which to start a Task.
 
@@ -54,7 +53,7 @@ class AffinityInfo(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class AuthenticationTokenSettings(_model_base.Model):
+class AuthenticationTokenSettings(_Model):
     """The settings for an authentication token that the Task can use to perform Batch
     service operations.
 
@@ -91,7 +90,7 @@ class AuthenticationTokenSettings(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class AutomaticOsUpgradePolicy(_model_base.Model):
+class AutomaticOsUpgradePolicy(_Model):
     """The configuration parameters used for performing automatic OS upgrade.
 
     :ivar disable_automatic_rollback: Whether OS image rollback feature should be disabled.
@@ -154,7 +153,7 @@ class AutomaticOsUpgradePolicy(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class AutoScaleRun(_model_base.Model):
+class AutoScaleRun(_Model):
     """The results and errors from an execution of a Pool autoscale formula.
 
     :ivar timestamp: The time at which the autoscale formula was last evaluated. Required.
@@ -202,7 +201,7 @@ class AutoScaleRun(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class AutoScaleRunError(_model_base.Model):
+class AutoScaleRunError(_Model):
     """An error that occurred when executing or evaluating a Pool autoscale formula.
 
     :ivar code: An identifier for the autoscale error. Codes are invariant and are intended to be
@@ -246,7 +245,7 @@ class AutoScaleRunError(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class AutoUserSpecification(_model_base.Model):
+class AutoUserSpecification(_Model):
     """Specifies the options for the auto user that runs an Azure Batch Task.
 
     :ivar scope: The scope for the auto user. The default value is pool. If the pool is running
@@ -293,7 +292,7 @@ class AutoUserSpecification(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureBlobFileSystemConfiguration(_model_base.Model):
+class AzureBlobFileSystemConfiguration(_Model):
     """Information used to connect to an Azure Storage Container using Blobfuse.
 
     :ivar account_name: The Azure Storage Account name. Required.
@@ -372,7 +371,7 @@ class AzureBlobFileSystemConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureFileShareConfiguration(_model_base.Model):
+class AzureFileShareConfiguration(_Model):
     """Information used to connect to an Azure Fileshare.
 
     :ivar account_name: The Azure Storage account name. Required.
@@ -431,7 +430,7 @@ class AzureFileShareConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchApplication(_model_base.Model):
+class BatchApplication(_Model):
     """Contains information about an application in an Azure Batch Account.
 
     :ivar id: A string that uniquely identifies the application within the Account. Required.
@@ -469,7 +468,7 @@ class BatchApplication(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchApplicationPackageReference(_model_base.Model):
+class BatchApplicationPackageReference(_Model):
     """A reference to an Package to be deployed to Compute Nodes.
 
     :ivar application_id: The ID of the application to deploy. When creating a pool, the package's
@@ -516,7 +515,7 @@ class BatchApplicationPackageReference(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchAutoPoolSpecification(_model_base.Model):
+class BatchAutoPoolSpecification(_Model):
     """Specifies characteristics for a temporary 'auto pool'. The Batch service will
     create this auto Pool when the Job is submitted.
 
@@ -583,7 +582,7 @@ class BatchAutoPoolSpecification(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchCertificate(_model_base.Model):
+class BatchCertificate(_Model):
     """A Certificate that can be installed on Compute Nodes and can be used to
     authenticate operations on the machine.
 
@@ -686,7 +685,7 @@ class BatchCertificate(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchCertificateReference(_model_base.Model):
+class BatchCertificateReference(_Model):
     """A reference to a Certificate to be installed on Compute Nodes in a Pool. Warning: This object
     is deprecated and will be removed after February, 2024. Please use the `Azure KeyVault
     Extension <https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide>`_
@@ -774,7 +773,7 @@ class BatchCertificateReference(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchError(_model_base.Model):
+class BatchError(_Model):
     """An error response received from the Azure Batch service.
 
     :ivar code: An identifier for the error. Codes are invariant and are intended to be consumed
@@ -820,7 +819,7 @@ class BatchError(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchErrorDetail(_model_base.Model):
+class BatchErrorDetail(_Model):
     """An item of additional information included in an Azure Batch error response.
 
     :ivar key: An identifier specifying the meaning of the Value property.
@@ -853,7 +852,7 @@ class BatchErrorDetail(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchErrorMessage(_model_base.Model):
+class BatchErrorMessage(_Model):
     """An error message received in an Azure Batch error response.
 
     :ivar lang: The language code of the error message.
@@ -886,7 +885,7 @@ class BatchErrorMessage(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJob(_model_base.Model):
+class BatchJob(_Model):
     """An Azure Batch Job.
 
     :ivar id: A string that uniquely identifies the Job within the Account. The ID is
@@ -1113,7 +1112,7 @@ class BatchJob(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobConstraints(_model_base.Model):
+class BatchJobConstraints(_Model):
     """The execution constraints for a Job.
 
     :ivar max_wall_clock_time: The maximum elapsed time that the Job may run, measured from the
@@ -1169,7 +1168,7 @@ class BatchJobConstraints(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobCreateContent(_model_base.Model):
+class BatchJobCreateContent(_Model):
     """Parameters for creating an Azure Batch Job.
 
     :ivar id: A string that uniquely identifies the Job within the Account. The ID can contain any
@@ -1381,7 +1380,7 @@ class BatchJobCreateContent(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobDisableContent(_model_base.Model):
+class BatchJobDisableContent(_Model):
     """Parameters for disabling an Azure Batch Job.
 
     :ivar disable_tasks: What to do with active Tasks associated with the Job. Required. Known
@@ -1413,7 +1412,7 @@ class BatchJobDisableContent(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobExecutionInfo(_model_base.Model):
+class BatchJobExecutionInfo(_Model):
     """Contains information about the execution of a Job in the Azure Batch service.
 
     :ivar start_time: The start time of the Job. This is the time at which the Job was created.
@@ -1500,7 +1499,7 @@ class BatchJobExecutionInfo(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobManagerTask(_model_base.Model):
+class BatchJobManagerTask(_Model):
     """Specifies details of a Job Manager Task.
     The Job Manager Task is automatically started when the Job is created. The
     Batch service tries to schedule the Job Manager Task before any other Tasks in
@@ -1762,7 +1761,7 @@ class BatchJobManagerTask(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobNetworkConfiguration(_model_base.Model):
+class BatchJobNetworkConfiguration(_Model):
     """The network configuration for the Job.
 
     :ivar subnet_id: The ARM resource identifier of the virtual network subnet which Compute Nodes
@@ -1839,7 +1838,7 @@ class BatchJobNetworkConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobPreparationAndReleaseTaskStatus(_model_base.Model):
+class BatchJobPreparationAndReleaseTaskStatus(_Model):
     """The status of the Job Preparation and Job Release Tasks on a Compute Node.
 
     :ivar pool_id: The ID of the Pool containing the Compute Node to which this entry refers.
@@ -1896,7 +1895,7 @@ class BatchJobPreparationAndReleaseTaskStatus(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobPreparationTask(_model_base.Model):
+class BatchJobPreparationTask(_Model):
     """A Job Preparation Task to run before any Tasks of the Job on any given Compute Node.
     You can use Job Preparation to prepare a Node to run Tasks for the Job.
     Activities commonly performed in Job Preparation include: Downloading common
@@ -2086,7 +2085,7 @@ class BatchJobPreparationTask(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobPreparationTaskExecutionInfo(_model_base.Model):
+class BatchJobPreparationTaskExecutionInfo(_Model):
     """Contains information about the execution of a Job Preparation Task on a Compute
     Node.
 
@@ -2228,7 +2227,7 @@ class BatchJobPreparationTaskExecutionInfo(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobReleaseTask(_model_base.Model):
+class BatchJobReleaseTask(_Model):
     """A Job Release Task to run on Job completion on any Compute Node where the Job has run.
     The Job Release Task runs when the Job ends, because of one of the following:
     The user calls the Terminate Job API, or the Delete Job API while the Job is
@@ -2383,7 +2382,7 @@ class BatchJobReleaseTask(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobReleaseTaskExecutionInfo(_model_base.Model):
+class BatchJobReleaseTaskExecutionInfo(_Model):
     """Contains information about the execution of a Job Release Task on a Compute
     Node.
 
@@ -2494,7 +2493,7 @@ class BatchJobReleaseTaskExecutionInfo(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobSchedule(_model_base.Model):
+class BatchJobSchedule(_Model):
     """A Job Schedule that allows recurring Jobs by specifying when to run Jobs and a
     specification used to create each Job.
 
@@ -2622,7 +2621,7 @@ class BatchJobSchedule(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobScheduleConfiguration(_model_base.Model):
+class BatchJobScheduleConfiguration(_Model):
     """The schedule according to which Jobs will be created. All times are fixed
     respective to UTC and are not impacted by daylight saving time.
 
@@ -2726,7 +2725,7 @@ class BatchJobScheduleConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobScheduleCreateContent(_model_base.Model):
+class BatchJobScheduleCreateContent(_Model):
     """Parameters for creating an Azure Batch Job Schedule.
 
     :ivar id: A string that uniquely identifies the schedule within the Account. The ID can contain
@@ -2794,7 +2793,7 @@ class BatchJobScheduleCreateContent(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobScheduleExecutionInfo(_model_base.Model):
+class BatchJobScheduleExecutionInfo(_Model):
     """Contains information about Jobs that have been and will be run under a Job
     Schedule.
 
@@ -2849,7 +2848,7 @@ class BatchJobScheduleExecutionInfo(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobScheduleStatistics(_model_base.Model):
+class BatchJobScheduleStatistics(_Model):
     """Resource usage statistics for a Job Schedule.
 
     :ivar url: The URL of the statistics. Required.
@@ -3003,7 +3002,7 @@ class BatchJobScheduleStatistics(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobScheduleUpdateContent(_model_base.Model):
+class BatchJobScheduleUpdateContent(_Model):
     """Parameters for updating an Azure Batch Job Schedule.
 
     :ivar schedule: The schedule according to which Jobs will be created. All times are fixed
@@ -3057,7 +3056,7 @@ class BatchJobScheduleUpdateContent(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobSchedulingError(_model_base.Model):
+class BatchJobSchedulingError(_Model):
     """An error encountered by the Batch service when scheduling a Job.
 
     :ivar category: The category of the Job scheduling error. Required. Known values are:
@@ -3110,7 +3109,7 @@ class BatchJobSchedulingError(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobSpecification(_model_base.Model):
+class BatchJobSpecification(_Model):
     """Specifies details of the Jobs to be created on a schedule.
 
     :ivar priority: The priority of Jobs created under this schedule. Priority values can range
@@ -3315,7 +3314,7 @@ class BatchJobSpecification(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobStatistics(_model_base.Model):
+class BatchJobStatistics(_Model):
     """Resource usage statistics for a Job.
 
     :ivar url: The URL of the statistics. Required.
@@ -3460,7 +3459,7 @@ class BatchJobStatistics(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobTerminateContent(_model_base.Model):
+class BatchJobTerminateContent(_Model):
     """Parameters for terminating an Azure Batch Job.
 
     :ivar termination_reason: The text you want to appear as the Job's TerminationReason. The
@@ -3491,7 +3490,7 @@ class BatchJobTerminateContent(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobUpdateContent(_model_base.Model):
+class BatchJobUpdateContent(_Model):
     """Parameters for updating an Azure Batch Job.
 
     :ivar priority: The priority of the Job. Priority values can range from -1000 to 1000, with
@@ -3609,7 +3608,7 @@ class BatchJobUpdateContent(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchNode(_model_base.Model):
+class BatchNode(_Model):
     """A Compute Node in the Batch service.
 
     :ivar id: The ID of the Compute Node. Every Compute Node that is added to a Pool is assigned a
@@ -3863,7 +3862,7 @@ class BatchNode(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchNodeAgentInfo(_model_base.Model):
+class BatchNodeAgentInfo(_Model):
     """The Batch Compute Node agent is a program that runs on each Compute Node in the
     Pool and provides Batch capability on the Compute Node.
 
@@ -3908,7 +3907,7 @@ class BatchNodeAgentInfo(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchNodeCounts(_model_base.Model):
+class BatchNodeCounts(_Model):
     """The number of Compute Nodes in each Compute Node state.
 
     :ivar creating: The number of Compute Nodes in the creating state. Required.
@@ -4021,7 +4020,7 @@ class BatchNodeCounts(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchNodeDeallocateContent(_model_base.Model):
+class BatchNodeDeallocateContent(_Model):
     """Options for deallocating a Compute Node.
 
     :ivar node_deallocate_option: When to deallocate the Compute Node and what to do with currently
@@ -4055,7 +4054,7 @@ class BatchNodeDeallocateContent(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchNodeDisableSchedulingContent(_model_base.Model):
+class BatchNodeDisableSchedulingContent(_Model):
     """Parameters for disabling scheduling on an Azure Batch Compute Node.
 
     :ivar node_disable_scheduling_option: What to do with currently running Tasks when disabling
@@ -4089,7 +4088,7 @@ class BatchNodeDisableSchedulingContent(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchNodeEndpointConfiguration(_model_base.Model):
+class BatchNodeEndpointConfiguration(_Model):
     """The endpoint configuration for the Compute Node.
 
     :ivar inbound_endpoints: The list of inbound endpoints that are accessible on the Compute Node.
@@ -4120,7 +4119,7 @@ class BatchNodeEndpointConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchNodeError(_model_base.Model):
+class BatchNodeError(_Model):
     """An error encountered by a Compute Node.
 
     :ivar code: An identifier for the Compute Node error. Codes are invariant and are intended to
@@ -4164,7 +4163,7 @@ class BatchNodeError(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchNodeFile(_model_base.Model):
+class BatchNodeFile(_Model):
     """Information about a file or directory on a Compute Node.
 
     :ivar name: The file path.
@@ -4211,7 +4210,7 @@ class BatchNodeFile(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchNodeIdentityReference(_model_base.Model):
+class BatchNodeIdentityReference(_Model):
     """The reference to a user assigned identity associated with the Batch pool which
     a compute node will use.
 
@@ -4242,7 +4241,7 @@ class BatchNodeIdentityReference(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchNodeInfo(_model_base.Model):
+class BatchNodeInfo(_Model):
     """Information about the Compute Node on which a Task ran.
 
     :ivar affinity_id: An identifier for the Node on which the Task ran, which can be passed when
@@ -4303,7 +4302,7 @@ class BatchNodeInfo(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchNodePlacementConfiguration(_model_base.Model):
+class BatchNodePlacementConfiguration(_Model):
     """For regional placement, nodes in the pool will be allocated in the same region.
     For zonal placement, nodes in the pool will be spread across different zones
     with best effort balancing.
@@ -4339,7 +4338,7 @@ class BatchNodePlacementConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchNodeRebootContent(_model_base.Model):
+class BatchNodeRebootContent(_Model):
     """Parameters for rebooting an Azure Batch Compute Node.
 
     :ivar node_reboot_option: When to reboot the Compute Node and what to do with currently running
@@ -4373,7 +4372,7 @@ class BatchNodeRebootContent(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchNodeReimageContent(_model_base.Model):
+class BatchNodeReimageContent(_Model):
     """Parameters for reimaging an Azure Batch Compute Node.
 
     :ivar node_reimage_option: When to reimage the Compute Node and what to do with currently
@@ -4407,7 +4406,7 @@ class BatchNodeReimageContent(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchNodeRemoteLoginSettings(_model_base.Model):
+class BatchNodeRemoteLoginSettings(_Model):
     """The remote login settings for a Compute Node.
 
     :ivar remote_login_ip_address: The IP address used for remote login to the Compute Node.
@@ -4445,7 +4444,7 @@ class BatchNodeRemoteLoginSettings(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchNodeRemoveContent(_model_base.Model):
+class BatchNodeRemoveContent(_Model):
     """Parameters for removing nodes from an Azure Batch Pool.
 
     :ivar node_list: A list containing the IDs of the Compute Nodes to be removed from the
@@ -4499,7 +4498,7 @@ class BatchNodeRemoveContent(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchNodeUserCreateContent(_model_base.Model):
+class BatchNodeUserCreateContent(_Model):
     """Parameters for creating a user account for RDP or SSH access on an Azure Batch Compute Node.
 
     :ivar name: The user name of the Account. Required.
@@ -4565,7 +4564,7 @@ class BatchNodeUserCreateContent(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchNodeUserUpdateContent(_model_base.Model):
+class BatchNodeUserUpdateContent(_Model):
     """Parameters for updating a user account for RDP or SSH access on an Azure Batch Compute Node.
 
     :ivar password: The password of the Account. The password is required for Windows Compute
@@ -4622,7 +4621,7 @@ class BatchNodeUserUpdateContent(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchNodeVMExtension(_model_base.Model):
+class BatchNodeVMExtension(_Model):
     """The configuration for virtual machine extension instance view.
 
     :ivar provisioning_state: The provisioning state of the virtual machine extension.
@@ -4666,7 +4665,7 @@ class BatchNodeVMExtension(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchPool(_model_base.Model):
+class BatchPool(_Model):
     """A Pool in the Azure Batch service.
 
     :ivar id: A string that uniquely identifies the Pool within the Account. The ID can contain any
@@ -4992,7 +4991,7 @@ class BatchPool(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchPoolCreateContent(_model_base.Model):
+class BatchPoolCreateContent(_Model):
     """Parameters for creating an Azure Batch Pool.
 
     :ivar id: A string that uniquely identifies the Pool within the Account. The ID can contain any
@@ -5294,7 +5293,7 @@ class BatchPoolCreateContent(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchPoolEnableAutoScaleContent(_model_base.Model):
+class BatchPoolEnableAutoScaleContent(_Model):
     """Parameters for enabling automatic scaling on an Azure Batch Pool.
 
     :ivar auto_scale_formula: The formula for the desired number of Compute Nodes in the Pool. The
@@ -5356,7 +5355,7 @@ class BatchPoolEnableAutoScaleContent(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchPoolEndpointConfiguration(_model_base.Model):
+class BatchPoolEndpointConfiguration(_Model):
     """The endpoint configuration for a Pool.
 
     :ivar inbound_nat_pools: A list of inbound NAT Pools that can be used to address specific ports
@@ -5393,7 +5392,7 @@ class BatchPoolEndpointConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchPoolEvaluateAutoScaleContent(_model_base.Model):
+class BatchPoolEvaluateAutoScaleContent(_Model):
     """Parameters for evaluating an automatic scaling formula on an Azure Batch Pool.
 
     :ivar auto_scale_formula: The formula for the desired number of Compute Nodes in the Pool. The
@@ -5433,7 +5432,7 @@ class BatchPoolEvaluateAutoScaleContent(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchPoolIdentity(_model_base.Model):
+class BatchPoolIdentity(_Model):
     """The identity of the Batch pool, if configured.
 
     :ivar type: The identity of the Batch pool, if configured. The list of user identities
@@ -5481,7 +5480,7 @@ class BatchPoolIdentity(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchPoolInfo(_model_base.Model):
+class BatchPoolInfo(_Model):
     """Specifies how a Job should be assigned to a Pool.
 
     :ivar pool_id: The ID of an existing Pool. All the Tasks of the Job will run on the specified
@@ -5538,7 +5537,7 @@ class BatchPoolInfo(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchPoolNodeCounts(_model_base.Model):
+class BatchPoolNodeCounts(_Model):
     """The number of Compute Nodes in each state for a Pool.
 
     :ivar pool_id: The ID of the Pool. Required.
@@ -5580,7 +5579,7 @@ class BatchPoolNodeCounts(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchPoolReplaceContent(_model_base.Model):
+class BatchPoolReplaceContent(_Model):
     """Parameters for replacing properties on an Azure Batch Pool.
 
     :ivar start_task: A Task to run on each Compute Node as it joins the Pool. The Task runs when
@@ -5690,7 +5689,7 @@ class BatchPoolReplaceContent(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchPoolResizeContent(_model_base.Model):
+class BatchPoolResizeContent(_Model):
     """Parameters for changing the size of an Azure Batch Pool.
 
     :ivar target_dedicated_nodes: The desired number of dedicated Compute Nodes in the Pool.
@@ -5752,7 +5751,7 @@ class BatchPoolResizeContent(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchPoolResourceStatistics(_model_base.Model):
+class BatchPoolResourceStatistics(_Model):
     """Statistics related to resource consumption by Compute Nodes in a Pool.
 
     :ivar start_time: The start time of the time range covered by the statistics. Required.
@@ -5871,7 +5870,7 @@ class BatchPoolResourceStatistics(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchPoolSpecification(_model_base.Model):
+class BatchPoolSpecification(_Model):
     """Specification for creating a new Pool.
 
     :ivar display_name: The display name for the Pool. The display name need not be unique and can
@@ -6151,7 +6150,7 @@ class BatchPoolSpecification(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchPoolStatistics(_model_base.Model):
+class BatchPoolStatistics(_Model):
     """Contains utilization and resource usage statistics for the lifetime of a Pool.
 
     :ivar url: The URL for the statistics. Required.
@@ -6209,7 +6208,7 @@ class BatchPoolStatistics(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchPoolUpdateContent(_model_base.Model):
+class BatchPoolUpdateContent(_Model):
     """Parameters for updating an Azure Batch Pool.
 
     :ivar display_name: The display name for the Pool. The display name need not be unique and can
@@ -6439,7 +6438,7 @@ class BatchPoolUpdateContent(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchPoolUsageMetrics(_model_base.Model):
+class BatchPoolUsageMetrics(_Model):
     """Usage metrics for a Pool across an aggregation interval.
 
     :ivar pool_id: The ID of the Pool whose metrics are aggregated in this entry. Required.
@@ -6501,7 +6500,7 @@ class BatchPoolUsageMetrics(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchPoolUsageStatistics(_model_base.Model):
+class BatchPoolUsageStatistics(_Model):
     """Statistics related to Pool usage information.
 
     :ivar start_time: The start time of the time range covered by the statistics. Required.
@@ -6549,7 +6548,7 @@ class BatchPoolUsageStatistics(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchStartTask(_model_base.Model):
+class BatchStartTask(_Model):
     """Batch will retry Tasks when a recovery operation is triggered on a Node.
     Examples of recovery operations include (but are not limited to) when an
     unhealthy Node is rebooted or a Compute Node disappeared due to host failure.
@@ -6700,7 +6699,7 @@ class BatchStartTask(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchStartTaskInfo(_model_base.Model):
+class BatchStartTaskInfo(_Model):
     """Information about a StartTask running on a Compute Node.
 
     :ivar state: The state of the StartTask on the Compute Node. Required. Known values are:
@@ -6825,7 +6824,7 @@ class BatchStartTaskInfo(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchSubtask(_model_base.Model):
+class BatchSubtask(_Model):
     """Information about an Azure Batch subtask.
 
     :ivar id: The ID of the subtask.
@@ -6957,7 +6956,7 @@ class BatchSubtask(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchSupportedImage(_model_base.Model):
+class BatchSupportedImage(_Model):
     """A reference to the Azure Virtual Machines Marketplace Image and additional
     information about the Image.
 
@@ -7033,7 +7032,7 @@ class BatchSupportedImage(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchTask(_model_base.Model):
+class BatchTask(_Model):
     """Batch will retry Tasks when a recovery operation is triggered on a Node.
     Examples of recovery operations include (but are not limited to) when an
     unhealthy Node is rebooted or a Compute Node disappeared due to host failure.
@@ -7297,7 +7296,7 @@ class BatchTask(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchTaskAddCollectionResult(_model_base.Model):
+class BatchTaskAddCollectionResult(_Model):
     """The result of adding a collection of Tasks to a Job.
 
     :ivar value: The results of the add Task collection operation.
@@ -7327,7 +7326,7 @@ class BatchTaskAddCollectionResult(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchTaskAddResult(_model_base.Model):
+class BatchTaskAddResult(_Model):
     """Result for a single Task added as part of an add Task collection operation.
 
     :ivar status: The status of the add Task request. Required. Known values are: "success",
@@ -7392,7 +7391,7 @@ class BatchTaskAddResult(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchTaskConstraints(_model_base.Model):
+class BatchTaskConstraints(_Model):
     """Execution constraints to apply to a Task.
 
     :ivar max_wall_clock_time: The maximum elapsed time that the Task may run, measured from the
@@ -7460,7 +7459,7 @@ class BatchTaskConstraints(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchTaskContainerExecutionInfo(_model_base.Model):
+class BatchTaskContainerExecutionInfo(_Model):
     """Contains information about the container which a Task is executing.
 
     :ivar container_id: The ID of the container.
@@ -7506,7 +7505,7 @@ class BatchTaskContainerExecutionInfo(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchTaskContainerSettings(_model_base.Model):
+class BatchTaskContainerSettings(_Model):
     """The container settings for a Task.
 
     :ivar container_run_options: Additional options to the container create command. These
@@ -7580,7 +7579,7 @@ class BatchTaskContainerSettings(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchTaskCounts(_model_base.Model):
+class BatchTaskCounts(_Model):
     """The Task counts for a Job.
 
     :ivar active: The number of Tasks in the active state. Required.
@@ -7632,7 +7631,7 @@ class BatchTaskCounts(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchTaskCountsResult(_model_base.Model):
+class BatchTaskCountsResult(_Model):
     """The Task and TaskSlot counts for a Job.
 
     :ivar task_counts: The number of Tasks per state. Required.
@@ -7669,7 +7668,7 @@ class BatchTaskCountsResult(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchTaskCreateContent(_model_base.Model):
+class BatchTaskCreateContent(_Model):
     """Parameters for creating an Azure Batch Task.
 
     :ivar id: A string that uniquely identifies the Task within the Job. The ID can contain any
@@ -7905,7 +7904,7 @@ class BatchTaskCreateContent(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchTaskDependencies(_model_base.Model):
+class BatchTaskDependencies(_Model):
     """Specifies any dependencies of a Task. Any Task that is explicitly specified or
     within a dependency range must complete before the dependant Task will be
     scheduled.
@@ -7954,7 +7953,7 @@ class BatchTaskDependencies(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchTaskExecutionInfo(_model_base.Model):
+class BatchTaskExecutionInfo(_Model):
     """Information about the execution of a Task.
 
     :ivar start_time: The time at which the Task started running. 'Running' corresponds to the
@@ -8094,7 +8093,7 @@ class BatchTaskExecutionInfo(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchTaskFailureInfo(_model_base.Model):
+class BatchTaskFailureInfo(_Model):
     """Information about a Task failure.
 
     :ivar category: The category of the Task error. Required. Known values are: "usererror" and
@@ -8145,7 +8144,7 @@ class BatchTaskFailureInfo(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchTaskGroup(_model_base.Model):
+class BatchTaskGroup(_Model):
     """A collection of Azure Batch Tasks to add.
 
     :ivar value: The collection of Tasks to add. The maximum count of Tasks is 100. The total
@@ -8181,7 +8180,7 @@ class BatchTaskGroup(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchTaskIdRange(_model_base.Model):
+class BatchTaskIdRange(_Model):
     """The start and end of the range are inclusive. For example, if a range has start
     9 and end 12, then it represents Tasks '9', '10', '11' and '12'.
 
@@ -8215,7 +8214,7 @@ class BatchTaskIdRange(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchTaskInfo(_model_base.Model):
+class BatchTaskInfo(_Model):
     """Information about a Task running on a Compute Node.
 
     :ivar task_url: The URL of the Task.
@@ -8274,7 +8273,7 @@ class BatchTaskInfo(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchTaskSchedulingPolicy(_model_base.Model):
+class BatchTaskSchedulingPolicy(_Model):
     """Specifies how Tasks should be distributed across Compute Nodes.
 
     :ivar node_fill_type: How Tasks are distributed across Compute Nodes in a Pool. If not
@@ -8306,7 +8305,7 @@ class BatchTaskSchedulingPolicy(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchTaskSlotCounts(_model_base.Model):
+class BatchTaskSlotCounts(_Model):
     """The TaskSlot counts for a Job.
 
     :ivar active: The number of TaskSlots for active Tasks. Required.
@@ -8354,7 +8353,7 @@ class BatchTaskSlotCounts(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchTaskStatistics(_model_base.Model):
+class BatchTaskStatistics(_Model):
     """Resource usage statistics for a Task.
 
     :ivar url: The URL of the statistics. Required.
@@ -8465,7 +8464,7 @@ class BatchTaskStatistics(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class CifsMountConfiguration(_model_base.Model):
+class CifsMountConfiguration(_Model):
     """Information used to connect to a CIFS file system.
 
     :ivar username: The user to use for authentication against the CIFS file system. Required.
@@ -8523,7 +8522,7 @@ class CifsMountConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ContainerConfiguration(_model_base.Model):
+class ContainerConfiguration(_Model):
     """The configuration for container-enabled Pools.
 
     :ivar type: The container technology to be used. Required. Known values are: "dockerCompatible"
@@ -8575,7 +8574,7 @@ class ContainerConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ContainerHostBatchBindMountEntry(_model_base.Model):
+class ContainerHostBatchBindMountEntry(_Model):
     """The entry of path and mount mode you want to mount into task container.
 
     :ivar source: The path which be mounted to container customer can select. Known values are:
@@ -8621,7 +8620,7 @@ class ContainerHostBatchBindMountEntry(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ContainerRegistryReference(_model_base.Model):
+class ContainerRegistryReference(_Model):
     """A private container registry.
 
     :ivar username: The user name to log into the registry server.
@@ -8670,7 +8669,7 @@ class ContainerRegistryReference(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DataDisk(_model_base.Model):
+class DataDisk(_Model):
     """Settings which will be used by the data disks associated to Compute Nodes in
     the Pool. When using attached data disks, you need to mount and format the
     disks from within a VM to use them.
@@ -8734,7 +8733,7 @@ class DataDisk(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DeleteBatchCertificateError(_model_base.Model):
+class DeleteBatchCertificateError(_Model):
     """An error encountered by the Batch service when deleting a Certificate.
 
     :ivar code: An identifier for the Certificate deletion error. Codes are invariant and are
@@ -8784,7 +8783,7 @@ class DeleteBatchCertificateError(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DiffDiskSettings(_model_base.Model):
+class DiffDiskSettings(_Model):
     """Specifies the ephemeral Disk Settings for the operating system disk used by the
     compute node (VM).
 
@@ -8833,7 +8832,7 @@ class DiffDiskSettings(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DiskEncryptionConfiguration(_model_base.Model):
+class DiskEncryptionConfiguration(_Model):
     """The disk encryption configuration applied on compute nodes in the pool.
     Disk encryption configuration is not supported on Linux pool created with
     Azure Compute Gallery Image.
@@ -8867,7 +8866,7 @@ class DiskEncryptionConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class EnvironmentSetting(_model_base.Model):
+class EnvironmentSetting(_Model):
     """An environment variable to be set on a Task process.
 
     :ivar name: The name of the environment variable. Required.
@@ -8900,7 +8899,7 @@ class EnvironmentSetting(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ExitCodeMapping(_model_base.Model):
+class ExitCodeMapping(_Model):
     """How the Batch service should respond if a Task exits with a particular exit
     code.
 
@@ -8937,7 +8936,7 @@ class ExitCodeMapping(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ExitCodeRangeMapping(_model_base.Model):
+class ExitCodeRangeMapping(_Model):
     """A range of exit codes and how the Batch service should respond to exit codes
     within that range.
 
@@ -8980,7 +8979,7 @@ class ExitCodeRangeMapping(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ExitConditions(_model_base.Model):
+class ExitConditions(_Model):
     """Specifies how the Batch service should respond when the Task completes.
 
     :ivar exit_codes: A list of individual Task exit codes and how the Batch service should respond
@@ -9053,7 +9052,7 @@ class ExitConditions(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ExitOptions(_model_base.Model):
+class ExitOptions(_Model):
     """Specifies how the Batch service responds to a particular exit condition.
 
     :ivar job_action: An action to take on the Job containing the Task, if the Task completes with
@@ -9107,7 +9106,7 @@ class ExitOptions(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class FileProperties(_model_base.Model):
+class FileProperties(_Model):
     """The properties of a file on a Compute Node.
 
     :ivar creation_time: The file creation time. The creation time is not returned for files on
@@ -9166,89 +9165,7 @@ class FileProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class GetCertificateResponse(_model_base.Model):
-    """GetCertificateResponse.
-
-    :ivar thumbprint: The X.509 thumbprint of the Certificate. This is a sequence of up to 40 hex
-     digits (it may include spaces but these are removed). Required.
-    :vartype thumbprint: str
-    :ivar thumbprint_algorithm: The algorithm used to derive the thumbprint. This must be sha1.
-     Required.
-    :vartype thumbprint_algorithm: str
-    :ivar url: The URL of the Certificate.
-    :vartype url: str
-    :ivar state: The state of the Certificate. Known values are: "active", "deleting", and
-     "deletefailed".
-    :vartype state: str or ~azure.batch.models.BatchCertificateState
-    :ivar state_transition_time: The time at which the Certificate entered its current state.
-    :vartype state_transition_time: ~datetime.datetime
-    :ivar previous_state: The previous state of the Certificate. This property is not set if the
-     Certificate is in its initial active state. Known values are: "active", "deleting", and
-     "deletefailed".
-    :vartype previous_state: str or ~azure.batch.models.BatchCertificateState
-    :ivar previous_state_transition_time: The time at which the Certificate entered its previous
-     state. This property is not set if the Certificate is in its initial Active state.
-    :vartype previous_state_transition_time: ~datetime.datetime
-    :ivar public_data: The public part of the Certificate as a base-64 encoded .cer file.
-    :vartype public_data: str
-    :ivar delete_certificate_error: The error that occurred on the last attempt to delete this
-     Certificate. This property is set only if the Certificate is in the DeleteFailed state.
-    :vartype delete_certificate_error: ~azure.batch.models.DeleteBatchCertificateError
-    """
-
-    thumbprint: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The X.509 thumbprint of the Certificate. This is a sequence of up to 40 hex digits (it may
-     include spaces but these are removed). Required."""
-    thumbprint_algorithm: str = rest_field(
-        name="thumbprintAlgorithm", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The algorithm used to derive the thumbprint. This must be sha1. Required."""
-    url: Optional[str] = rest_field(visibility=["read"])
-    """The URL of the Certificate."""
-    state: Optional[Union[str, "_models.BatchCertificateState"]] = rest_field(visibility=["read"])
-    """The state of the Certificate. Known values are: \"active\", \"deleting\", and \"deletefailed\"."""
-    state_transition_time: Optional[datetime.datetime] = rest_field(
-        name="stateTransitionTime", visibility=["read"], format="rfc3339"
-    )
-    """The time at which the Certificate entered its current state."""
-    previous_state: Optional[Union[str, "_models.BatchCertificateState"]] = rest_field(
-        name="previousState", visibility=["read"]
-    )
-    """The previous state of the Certificate. This property is not set if the Certificate is in its
-     initial active state. Known values are: \"active\", \"deleting\", and \"deletefailed\"."""
-    previous_state_transition_time: Optional[datetime.datetime] = rest_field(
-        name="previousStateTransitionTime", visibility=["read"], format="rfc3339"
-    )
-    """The time at which the Certificate entered its previous state. This property is not set if the
-     Certificate is in its initial Active state."""
-    public_data: Optional[str] = rest_field(name="publicData", visibility=["read"])
-    """The public part of the Certificate as a base-64 encoded .cer file."""
-    delete_certificate_error: Optional["_models.DeleteBatchCertificateError"] = rest_field(
-        name="deleteCertificateError", visibility=["read"]
-    )
-    """The error that occurred on the last attempt to delete this Certificate. This property is set
-     only if the Certificate is in the DeleteFailed state."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        thumbprint: str,
-        thumbprint_algorithm: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class HttpHeader(_model_base.Model):
+class HttpHeader(_Model):
     """An HTTP header name-value pair.
 
     :ivar name: The case-insensitive name of the header to be used while uploading output files.
@@ -9282,7 +9199,7 @@ class HttpHeader(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ImageReference(_model_base.Model):
+class ImageReference(_Model):
     """A reference to an Azure Virtual Machines Marketplace Image or a Azure Compute Gallery Image.
     To get the list of all Azure Marketplace Image references verified by Azure Batch, see the
     ' List Supported Images ' operation.
@@ -9391,7 +9308,7 @@ class ImageReference(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class InboundEndpoint(_model_base.Model):
+class InboundEndpoint(_Model):
     """An inbound endpoint on a Compute Node.
 
     :ivar name: The name of the endpoint. Required.
@@ -9448,7 +9365,7 @@ class InboundEndpoint(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class InboundNatPool(_model_base.Model):
+class InboundNatPool(_Model):
     """A inbound NAT Pool that can be used to address specific ports on Compute Nodes
     in a Batch Pool externally.
 
@@ -9548,7 +9465,7 @@ class InboundNatPool(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class InstanceViewStatus(_model_base.Model):
+class InstanceViewStatus(_Model):
     """The instance view status.
 
     :ivar code: The status code.
@@ -9602,7 +9519,7 @@ class InstanceViewStatus(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class LinuxUserConfiguration(_model_base.Model):
+class LinuxUserConfiguration(_Model):
     """Properties used to create a user Account on a Linux Compute Node.
 
     :ivar uid: The user ID of the user Account. The uid and gid properties must be specified
@@ -9657,7 +9574,7 @@ class LinuxUserConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedDisk(_model_base.Model):
+class ManagedDisk(_Model):
     """The managed disk parameters.
 
     :ivar storage_account_type: The storage account type for managed disk. Known values are:
@@ -9696,7 +9613,7 @@ class ManagedDisk(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class MetadataItem(_model_base.Model):
+class MetadataItem(_Model):
     """The Batch service does not assign any meaning to this metadata; it is solely
     for the use of user code.
 
@@ -9730,7 +9647,7 @@ class MetadataItem(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class MountConfiguration(_model_base.Model):
+class MountConfiguration(_Model):
     """The file system to mount on each node.
 
     :ivar azure_blob_file_system_configuration: The Azure Storage Container to mount using blob
@@ -9790,7 +9707,7 @@ class MountConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class MultiInstanceSettings(_model_base.Model):
+class MultiInstanceSettings(_Model):
     """Multi-instance Tasks are commonly used to support MPI Tasks. In the MPI case,
     if any of the subtasks fail (for example due to exiting with a non-zero exit
     code) the entire multi-instance Task fails. The multi-instance Task is then
@@ -9860,7 +9777,7 @@ class MultiInstanceSettings(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class NameValuePair(_model_base.Model):
+class NameValuePair(_Model):
     """Represents a name-value pair.
 
     :ivar name: The name in the name-value pair.
@@ -9893,7 +9810,7 @@ class NameValuePair(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkConfiguration(_model_base.Model):
+class NetworkConfiguration(_Model):
     """The network configuration for a Pool.
 
     :ivar subnet_id: The ARM resource identifier of the virtual network subnet which the Compute
@@ -9994,7 +9911,7 @@ class NetworkConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkSecurityGroupRule(_model_base.Model):
+class NetworkSecurityGroupRule(_Model):
     """A network security group rule to apply to an inbound endpoint.
 
     :ivar priority: The priority for this rule. Priorities within a Pool must be unique and are
@@ -10068,7 +9985,7 @@ class NetworkSecurityGroupRule(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class NfsMountConfiguration(_model_base.Model):
+class NfsMountConfiguration(_Model):
     """Information used to connect to an NFS file system.
 
     :ivar source: The URI of the file system to mount. Required.
@@ -10116,7 +10033,7 @@ class NfsMountConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class OSDisk(_model_base.Model):
+class OSDisk(_Model):
     """Settings for the operating system disk of the compute node (VM).
 
     :ivar ephemeral_os_disk_settings: Specifies the ephemeral Disk Settings for the operating
@@ -10181,7 +10098,7 @@ class OSDisk(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class OutputFile(_model_base.Model):
+class OutputFile(_Model):
     """On every file uploads, Batch service writes two log files to the compute node,
     'fileuploadout.txt' and 'fileuploaderr.txt'. These log files are used to learn more about a
     specific failure.
@@ -10252,7 +10169,7 @@ class OutputFile(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class OutputFileBlobContainerDestination(_model_base.Model):
+class OutputFileBlobContainerDestination(_Model):
     """Specifies a file upload destination within an Azure blob storage container.
 
     :ivar path: The destination blob or virtual directory within the Azure Storage container. If
@@ -10324,7 +10241,7 @@ class OutputFileBlobContainerDestination(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class OutputFileDestination(_model_base.Model):
+class OutputFileDestination(_Model):
     """The destination to which a file should be uploaded.
 
     :ivar container: A location in Azure blob storage to which files are uploaded.
@@ -10354,7 +10271,7 @@ class OutputFileDestination(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class OutputFileUploadConfig(_model_base.Model):
+class OutputFileUploadConfig(_Model):
     """Options for an output file upload operation, including under what conditions
     to perform the upload.
 
@@ -10389,7 +10306,7 @@ class OutputFileUploadConfig(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class PublicIpAddressConfiguration(_model_base.Model):
+class PublicIpAddressConfiguration(_Model):
     """The public IP Address configuration of the networking configuration of a Pool.
 
     :ivar ip_address_provisioning_type: The provisioning type for Public IP Addresses for the Pool.
@@ -10439,7 +10356,7 @@ class PublicIpAddressConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class RecentBatchJob(_model_base.Model):
+class RecentBatchJob(_Model):
     """Information about the most recent Job to run under the Job Schedule.
 
     :ivar id: The ID of the Job.
@@ -10472,7 +10389,7 @@ class RecentBatchJob(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ResizeError(_model_base.Model):
+class ResizeError(_Model):
     """An error that occurred when resizing a Pool.
 
     :ivar code: An identifier for the Pool resize error. Codes are invariant and are intended to be
@@ -10516,7 +10433,7 @@ class ResizeError(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceFile(_model_base.Model):
+class ResourceFile(_Model):
     """A single file or multiple files to be downloaded to a Compute Node.
 
     :ivar auto_storage_container_name: The storage container name in the auto storage Account. The
@@ -10636,7 +10553,7 @@ class ResourceFile(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class RollingUpgradePolicy(_model_base.Model):
+class RollingUpgradePolicy(_Model):
     """The configuration parameters used while performing a rolling upgrade.
 
     :ivar enable_cross_zone_upgrade: Allow VMSS to ignore AZ boundaries when constructing upgrade
@@ -10747,7 +10664,7 @@ class RollingUpgradePolicy(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SecurityProfile(_model_base.Model):
+class SecurityProfile(_Model):
     """Specifies the security profile settings for the virtual machine or virtual machine scale set.
 
     :ivar encryption_at_host: This property can be used by user in the request to enable or disable
@@ -10810,7 +10727,7 @@ class SecurityProfile(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ServiceArtifactReference(_model_base.Model):
+class ServiceArtifactReference(_Model):
     """Specifies the service artifact reference id used to set same image version
     for all virtual machines in the scale set when using 'latest' image version.
 
@@ -10845,7 +10762,7 @@ class ServiceArtifactReference(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class UefiSettings(_model_base.Model):
+class UefiSettings(_Model):
     """Specifies the security settings like secure boot and vTPM used while creating the virtual
     machine.
 
@@ -10884,7 +10801,7 @@ class UefiSettings(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class UpgradePolicy(_model_base.Model):
+class UpgradePolicy(_Model):
     """Describes an upgrade policy - automatic, manual, or rolling.
 
     :ivar mode: Specifies the mode of an upgrade to virtual machines in the scale set.<br /><br />
@@ -10939,7 +10856,7 @@ class UpgradePolicy(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class UploadBatchServiceLogsContent(_model_base.Model):
+class UploadBatchServiceLogsContent(_Model):
     """The Azure Batch service log files upload parameters for a Compute Node.
 
     :ivar container_url: The URL of the container within Azure Blob Storage to which to upload the
@@ -11013,7 +10930,7 @@ class UploadBatchServiceLogsContent(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class UploadBatchServiceLogsResult(_model_base.Model):
+class UploadBatchServiceLogsResult(_Model):
     """The result of uploading Batch service log files from a specific Compute Node.
 
     :ivar virtual_directory_name: The virtual directory within Azure Blob Storage container to
@@ -11055,7 +10972,7 @@ class UploadBatchServiceLogsResult(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class UserAccount(_model_base.Model):
+class UserAccount(_Model):
     """Properties used to create a user used to execute Tasks on an Azure Batch
     Compute Node.
 
@@ -11121,7 +11038,7 @@ class UserAccount(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class UserAssignedIdentity(_model_base.Model):
+class UserAssignedIdentity(_Model):
     """The user assigned Identity.
 
     :ivar resource_id: The ARM resource id of the user assigned identity. Required.
@@ -11157,7 +11074,7 @@ class UserAssignedIdentity(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class UserIdentity(_model_base.Model):
+class UserIdentity(_Model):
     """The definition of the user identity under which the Task is run. Specify either the userName or
     autoUser property, but not both.
 
@@ -11197,7 +11114,7 @@ class UserIdentity(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineConfiguration(_model_base.Model):
+class VirtualMachineConfiguration(_Model):
     """The configuration for Compute Nodes in a Pool based on the Azure Virtual
     Machines infrastructure.
 
@@ -11375,7 +11292,7 @@ class VirtualMachineConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineInfo(_model_base.Model):
+class VirtualMachineInfo(_Model):
     """Info about the current state of the virtual machine.
 
     :ivar image_reference: The reference to the Azure Virtual Machine's Marketplace Image.
@@ -11415,7 +11332,7 @@ class VirtualMachineInfo(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class VMDiskSecurityProfile(_model_base.Model):
+class VMDiskSecurityProfile(_Model):
     """Specifies the security profile settings for the managed disk. **Note**: It can only be set for
     Confidential VMs and required when using Confidential VMs.
 
@@ -11453,7 +11370,7 @@ class VMDiskSecurityProfile(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class VMExtension(_model_base.Model):
+class VMExtension(_Model):
     """The configuration for virtual machine extensions.
 
     :ivar name: The name of the virtual machine extension. Required.
@@ -11541,7 +11458,7 @@ class VMExtension(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class VMExtensionInstanceView(_model_base.Model):
+class VMExtensionInstanceView(_Model):
     """The vm extension instance view.
 
     :ivar name: The name of the vm extension instance view.
@@ -11583,7 +11500,7 @@ class VMExtensionInstanceView(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class WindowsConfiguration(_model_base.Model):
+class WindowsConfiguration(_Model):
     """Windows operating system settings to apply to the virtual machine.
 
     :ivar enable_automatic_updates: Whether automatic updates are enabled on the virtual machine.
@@ -11615,7 +11532,7 @@ class WindowsConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class WindowsUserConfiguration(_model_base.Model):
+class WindowsUserConfiguration(_Model):
     """Properties used to create a user Account on a Windows Compute Node.
 
     :ivar login_mode: The login mode for the user. The default is 'batch'. Known values are:

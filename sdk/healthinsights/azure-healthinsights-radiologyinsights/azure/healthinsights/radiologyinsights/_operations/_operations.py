@@ -73,7 +73,7 @@ def build_radiology_insights_infer_radiology_insights_request(  # pylint: disabl
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class RadiologyInsightsClientOperationsMixin(
+class _RadiologyInsightsClientOperationsMixin(
     ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], RadiologyInsightsClientConfiguration]
 ):
 
@@ -133,7 +133,7 @@ class RadiologyInsightsClientOperationsMixin(
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.HealthInsightsErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.HealthInsightsErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}

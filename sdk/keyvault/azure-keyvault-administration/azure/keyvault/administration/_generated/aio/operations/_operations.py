@@ -9,7 +9,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, List, Optional, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterator, Callable, Dict, IO, List, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -136,7 +136,7 @@ class RoleDefinitionsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -310,7 +310,7 @@ class RoleDefinitionsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -376,7 +376,7 @@ class RoleDefinitionsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -392,7 +392,7 @@ class RoleDefinitionsOperations:
     @distributed_trace
     def list(
         self, scope: str, *, filter: Optional[str] = None, **kwargs: Any
-    ) -> AsyncIterable["_models.RoleDefinition"]:
+    ) -> AsyncItemPaged["_models.RoleDefinition"]:
         """Get all role definitions that are applicable at scope and above.
 
         :param scope: The scope of the role definition. Required.
@@ -475,7 +475,7 @@ class RoleDefinitionsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+                error = _failsafe_deserialize(_models.KeyVaultError, response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -553,7 +553,7 @@ class RoleAssignmentsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -723,7 +723,7 @@ class RoleAssignmentsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -789,7 +789,7 @@ class RoleAssignmentsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -805,7 +805,7 @@ class RoleAssignmentsOperations:
     @distributed_trace
     def list_for_scope(
         self, scope: str, *, filter: Optional[str] = None, **kwargs: Any
-    ) -> AsyncIterable["_models.RoleAssignment"]:
+    ) -> AsyncItemPaged["_models.RoleAssignment"]:
         """Gets role assignments for a scope.
 
         :param scope: The scope of the role assignments. Required.
@@ -889,7 +889,7 @@ class RoleAssignmentsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+                error = _failsafe_deserialize(_models.KeyVaultError, response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -897,7 +897,7 @@ class RoleAssignmentsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class KeyVaultClientOperationsMixin(
+class _KeyVaultClientOperationsMixin(
     ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], KeyVaultClientConfiguration]
 ):
 
@@ -951,7 +951,7 @@ class KeyVaultClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -1015,7 +1015,7 @@ class KeyVaultClientOperationsMixin(
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1174,8 +1174,9 @@ class KeyVaultClientOperationsMixin(
         )
 
     @api_version_validation(
-        method_added_on="7.6",
-        params_added_on={"7.6": ["api_version", "content_type", "accept"]},
+        method_added_on="7.6-preview.2",
+        params_added_on={"7.6-preview.2": ["api_version", "content_type", "accept"]},
+        api_versions_list=["7.6-preview.2", "7.6"],
     )
     async def _pre_full_backup_initial(
         self,
@@ -1230,7 +1231,7 @@ class KeyVaultClientOperationsMixin(
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1310,8 +1311,9 @@ class KeyVaultClientOperationsMixin(
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="7.6",
-        params_added_on={"7.6": ["api_version", "content_type", "accept"]},
+        method_added_on="7.6-preview.2",
+        params_added_on={"7.6-preview.2": ["api_version", "content_type", "accept"]},
+        api_versions_list=["7.6-preview.2", "7.6"],
     )
     async def begin_pre_full_backup(
         self,
@@ -1441,7 +1443,7 @@ class KeyVaultClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -1505,7 +1507,7 @@ class KeyVaultClientOperationsMixin(
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1665,8 +1667,9 @@ class KeyVaultClientOperationsMixin(
         )
 
     @api_version_validation(
-        method_added_on="7.6",
-        params_added_on={"7.6": ["api_version", "content_type", "accept"]},
+        method_added_on="7.6-preview.2",
+        params_added_on={"7.6-preview.2": ["api_version", "content_type", "accept"]},
+        api_versions_list=["7.6-preview.2", "7.6"],
     )
     async def _pre_full_restore_operation_initial(
         self,
@@ -1721,7 +1724,7 @@ class KeyVaultClientOperationsMixin(
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1801,8 +1804,9 @@ class KeyVaultClientOperationsMixin(
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="7.6",
-        params_added_on={"7.6": ["api_version", "content_type", "accept"]},
+        method_added_on="7.6-preview.2",
+        params_added_on={"7.6-preview.2": ["api_version", "content_type", "accept"]},
+        api_versions_list=["7.6-preview.2", "7.6"],
     )
     async def begin_pre_full_restore_operation(
         self,
@@ -1933,7 +1937,7 @@ class KeyVaultClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -2001,7 +2005,7 @@ class KeyVaultClientOperationsMixin(
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2314,7 +2318,7 @@ class KeyVaultClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -2380,7 +2384,7 @@ class KeyVaultClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -2442,7 +2446,7 @@ class KeyVaultClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:

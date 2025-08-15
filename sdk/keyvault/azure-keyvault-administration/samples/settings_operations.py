@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -13,7 +14,7 @@ from azure.keyvault.administration import KeyVaultSetting, KeyVaultSettingType
 # 2. azure-keyvault-administration and azure-identity libraries (pip install these)
 #
 # 3. Set environment variable MANAGED_HSM_URL with the URL of your managed HSM
-#    
+#
 # 4. Set up your environment to use azure-identity's DefaultAzureCredential. For more information about how to configure
 #    the DefaultAzureCredential, refer to https://aka.ms/azsdk/python/identity/docs#azure.identity.DefaultAzureCredential
 #
