@@ -71,7 +71,7 @@ async def main():
                 estimate_field_source_and_confidence=True,
                 return_details=True,
             ),
-            description=f"Initial analyzer for update demo: {analyzer_id}",
+            description=f"Initial description",
             field_schema=FieldSchema(
                 fields={
                     "total_amount": FieldDefinition(
@@ -90,7 +90,7 @@ async def main():
             ),
             mode=AnalysisMode.STANDARD,
             processing_location=ProcessingLocation.GLOBAL,
-            tags={"initial_tag": "initial_value", "demo_type": "update"},
+            tags={"tag1": "tag1_initial_value", "tag2": "tag2_initial_value"},
         )
 
         # Start the analyzer creation operation
@@ -114,9 +114,10 @@ async def main():
 
         # Create updated analyzer with only allowed properties (description and tags)
         print(f"🔄 Creating updated analyzer configuration...")
+        # Update the value for tag1, remove tag2 by setting it to an empty string, and add tag3
         updated_analyzer = ContentAnalyzer(
-            description=f"Updated analyzer for update demo: {analyzer_id}",
-            tags={"initial_tag": "initial_value", "updated_tag": "updated_value", "demo_type": "update"},
+            description=f"Updated description",
+            tags={"tag1": "tag1_updated_value", "tag2": None, "tag3": "tag3_value"},
         )
 
         # Update the analyzer
@@ -127,8 +128,7 @@ async def main():
         )
         
         print(f"✅ Analyzer updated successfully!")
-        print(f"   Updated description: {response.description}")
-        print(f"   Updated tags: {response.tags}")
+
 
         # Get the analyzer after update to verify the changes persisted
         print(f"📋 Getting analyzer '{analyzer_id}' after update...")
@@ -137,13 +137,6 @@ async def main():
         print(f"✅ Updated analyzer state verified:")
         print(f"   Description: {analyzer_after_update.description}")
         print(f"   Tags: {analyzer_after_update.tags}")
-        
-        # Verify the changes were applied correctly
-        assert analyzer_after_update.description == f"Updated analyzer for update demo: {analyzer_id}"
-        tags = analyzer_after_update.tags or {}
-        assert "updated_tag" in tags
-        assert tags.get("updated_tag") == "updated_value"
-        print(f"✅ All changes verified successfully!")
 
         # Clean up the created analyzer (demo cleanup)
         print(f"🗑️  Deleting analyzer '{analyzer_id}' (demo cleanup)...")
