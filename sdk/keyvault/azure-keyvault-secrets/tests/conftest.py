@@ -31,7 +31,7 @@ from devtools_testutils import (
     test_proxy,
     add_oauth_response_sanitizer,
     add_general_regex_sanitizer,
-    remove_batch_sanitizers
+    remove_batch_sanitizers,
 )
 
 
