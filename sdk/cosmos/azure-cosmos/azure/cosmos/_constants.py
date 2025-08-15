@@ -214,7 +214,8 @@ class _Constants:
         """Whether to disable response payload on write operations."""
 
         RETRY_WRITE: Literal["retry_write"] = "retry_write"
-        """Whether to retry write operations if they fail. Used either at client level or request level."""
+        """Whether to retry write operations if they fail. 
+        Used either at client level or request level."""
 
         SESSION_TOKEN: Literal["sessionToken"] = "sessionToken"
         """Session token for session consistency."""
@@ -381,7 +382,8 @@ class _Constants:
         """Whether to disable response payload on write operations kwarg."""
 
         RETRY_WRITE: Literal["retry_write"] = "retry_write"
-        """Whether to retry write operations if they fail kwarg. Used either at client level or request level."""
+        """Whether to retry write operations if they fail kwarg. 
+        Used either at client level or request level."""
 
         SESSION_TOKEN: Literal["session_token"] = "session_token"
         """Session token kwarg for session consistency."""
@@ -417,8 +419,12 @@ class _Constants:
         FEED_RANGE: Literal["feed_range"] = "feed_range"
         """Feed range kwarg for query operations."""
 
-        PREFIX_PARTITION_KEY_OBJECT: Literal["prefix_partition_key_object"] = "prefix_partition_key_object"
+        PREFIX_PARTITION_KEY_OBJECT: Literal[
+            "prefix_partition_key_object"
+        ] = "prefix_partition_key_object"
         """Prefix partition key object kwarg for queries."""
 
-        PREFIX_PARTITION_KEY_VALUE: Literal["prefix_partition_key_value"] = "prefix_partition_key_value"
+        PREFIX_PARTITION_KEY_VALUE: Literal[
+            "prefix_partition_key_value"
+        ] = "prefix_partition_key_value"
         """Prefix partition key value kwarg for queries."""
