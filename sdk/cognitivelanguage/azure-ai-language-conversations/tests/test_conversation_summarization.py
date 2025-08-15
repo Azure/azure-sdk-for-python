@@ -3,7 +3,7 @@ import functools
 import pytest
 
 from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer, recorded_by_proxy
-from azure.ai.language.conversations import ConversationAnalysisClient
+from azure.ai.language.conversations import ConversationAnalysisClient, AnalyzeConversationLROPoller
 from azure.core.paging import ItemPaged
 from azure.ai.language.conversations.models import (
     MultiLanguageConversationInput,
@@ -17,7 +17,6 @@ from azure.ai.language.conversations.models import (
     AnalyzeConversationOperationAction,
     SummarizationOperationResult,
     ConversationActions,
-    AnalyzeConversationLROPoller
 )
 from typing import cast, List
 from azure.core.credentials import AzureKeyCredential
