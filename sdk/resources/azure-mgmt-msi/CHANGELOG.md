@@ -1,5 +1,13 @@
 # Release History
 
+## 8.0.0 (2025-08-15)
+
+### Breaking Changes
+
+  - Model `Identity` deleted or renamed its instance variable `isolation_scope`
+  - Model `IdentityUpdate` deleted or renamed its instance variable `isolation_scope`
+  - Deleted or renamed model `IsolationScope`
+
 ## 7.1.0 (2025-07-21)
 
 ### Features Added
