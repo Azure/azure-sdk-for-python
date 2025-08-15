@@ -8,10 +8,6 @@ param aiSearchName string
 param aiSearchServiceResourceGroupName string
 param aiSearchServiceSubscriptionId string
 
-param cosmosDBName string
-param cosmosDBSubscriptionId string
-param cosmosDBResourceGroupName string
-
 param azureStorageName string
 param azureStorageSubscriptionId string
 param azureStorageResourceGroupName string
@@ -19,10 +15,6 @@ param azureStorageResourceGroupName string
 resource searchService 'Microsoft.Search/searchServices@2024-06-01-preview' existing = {
   name: aiSearchName
   scope: resourceGroup(aiSearchServiceSubscriptionId, aiSearchServiceResourceGroupName)
-}
-resource cosmosDBAccount 'Microsoft.DocumentDB/databaseAccounts@2024-12-01-preview' existing = {
-  name: cosmosDBName
-  scope: resourceGroup(cosmosDBSubscriptionId, cosmosDBResourceGroupName)
 }
 resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' existing = {
   name: azureStorageName
@@ -44,20 +36,6 @@ resource project 'Microsoft.CognitiveServices/accounts/projects@2025-04-01-previ
   properties: {
     description: projectDescription
     displayName: displayName
-  }
-
-  resource project_connection_cosmosdb_account 'connections@2025-04-01-preview' = {
-    name: cosmosDBName
-    properties: {
-      category: 'CosmosDB'
-      target: cosmosDBAccount.properties.documentEndpoint
-      authType: 'AAD'
-      metadata: {
-        ApiType: 'Azure'
-        ResourceId: cosmosDBAccount.id
-        location: cosmosDBAccount.location
-      }
-    }
   }
 
   resource project_connection_azure_storage 'connections@2025-04-01-preview' = {
@@ -98,6 +76,5 @@ output projectPrincipalId string = project.identity.principalId
 output projectWorkspaceId string = project.properties.internalId
 
 // BYO connection names
-output cosmosDBConnection string = cosmosDBName
 output azureStorageConnection string = azureStorageName
 output aiSearchConnection string = aiSearchName
