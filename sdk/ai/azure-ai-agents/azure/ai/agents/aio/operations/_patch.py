@@ -596,7 +596,7 @@ class RunsOperations(RunsOperationsGenerated):
                 await self.cancel(thread_id=thread_id, run_id=run.id)
 
             logger.debug("Current run ID: %s with status: %s", run.id, run.status)
-        
+
         return run
 
     @overload
