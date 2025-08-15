@@ -16,7 +16,7 @@ from azure.mgmt.netapp import NetAppManagementClient
     pip install azure-identity
     pip install azure-mgmt-netapp
 # USAGE
-    python quota_limits_get.py
+    python volumes_split_clone.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -31,13 +31,15 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.net_app_resource_quota_limits.get(
-        location="eastus",
-        quota_limit_name="totalCoolAccessVolumesPerSubscription",
-    )
+    response = client.volumes.begin_split_clone_from_parent(
+        resource_group_name="myRG",
+        account_name="account1",
+        pool_name="pool1",
+        volume_name="volume1",
+    ).result()
     print(response)
 
 
-# x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/stable/2025-06-01/examples/QuotaLimits_Get.json
+# x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/stable/2025-06-01/examples/Volumes_SplitClone.json
 if __name__ == "__main__":
     main()

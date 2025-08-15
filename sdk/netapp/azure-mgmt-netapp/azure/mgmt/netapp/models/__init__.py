@@ -137,6 +137,7 @@ from ._models_py3 import (  # type: ignore
 )
 
 from ._net_app_management_client_enums import (  # type: ignore
+    AcceptGrowCapacityPoolForShortTermCloneSplit,
     ActiveDirectoryStatus,
     ApplicationType,
     AvsDataStore,
@@ -299,6 +300,7 @@ __all__ = [
     "VolumeRevert",
     "VolumeSnapshotProperties",
     "WeeklySchedule",
+    "AcceptGrowCapacityPoolForShortTermCloneSplit",
     "ActiveDirectoryStatus",
     "ApplicationType",
     "AvsDataStore",
