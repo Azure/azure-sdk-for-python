@@ -152,7 +152,6 @@ class TestCustomerStatsbeat(unittest.TestCase):
             
     def test_default_export_interval_when_env_var_empty(self):
         """Test that the default export interval is used when the environment variable is empty."""
-       
         # Mock the environment variable as empty
         with mock.patch.dict(os.environ, {
             _APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW: "true",
