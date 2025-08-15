@@ -43,13 +43,11 @@ async def main() -> None:
     credential = get_credential()
 
     async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client, credential:
-        url = "https://github.com/Azure-Samples/azure-ai-content-understanding-python/raw/refs/heads/main/data/invoice.pdf"
-        print(f"🔍 Analyzing remote document from {url} with prebuilt-documentAnalyzer...")
+        file_url = "https://github.com/Azure-Samples/azure-ai-content-understanding-python/raw/refs/heads/main/data/invoice.pdf"
+        print(f"🔍 Analyzing remote document from {file_url} with prebuilt-documentAnalyzer...")
         poller = await client.content_analyzers.begin_analyze(
             analyzer_id="prebuilt-documentAnalyzer",
-            body={
-                "url": url,
-            },
+            url=file_url
         )
         result = await poller.result()
         save_response_to_file(result, filename_prefix="content_analyzers_analyze")
