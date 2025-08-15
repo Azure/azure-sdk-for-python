@@ -33,13 +33,13 @@ def get_credential():
     return AzureKeyCredential(key) if key else DefaultAzureCredential()
 
 
-def save_response_to_file(result, output_dir: str = "test_output", filename_prefix: str = "analysis_result") -> str:
+def save_json_to_file(result, output_dir: str = "test_output", filename_prefix: str = "analysis_result") -> str:
     """Persist the full AnalyzeResult as JSON and return the file path."""
     os.makedirs(output_dir, exist_ok=True)
     timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
     path = os.path.join(output_dir, f"{filename_prefix}_{timestamp}.json")
     with open(path, "w", encoding="utf-8") as fp:
-        json.dump(result.as_dict(), fp, indent=2, ensure_ascii=False)
+        json.dump(result, fp, indent=2, ensure_ascii=False)
     print(f"💾 Analysis result saved to: {path}")
     return path
 

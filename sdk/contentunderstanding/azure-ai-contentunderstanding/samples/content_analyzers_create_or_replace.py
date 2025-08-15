@@ -34,7 +34,7 @@ from azure.ai.contentunderstanding.models import (
     FieldType,
     GenerationMethod,
 )
-from sample_helper import get_credential, save_response_to_file
+from sample_helper import get_credential
 
 load_dotenv()
 

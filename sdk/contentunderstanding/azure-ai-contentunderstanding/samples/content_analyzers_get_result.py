@@ -25,7 +25,7 @@ from sample_helper import (
     get_credential, 
     extract_operation_id_from_poller, 
     PollerType,
-    save_response_to_file
+    save_json_to_file
 )
 
 from dotenv import load_dotenv
@@ -33,6 +33,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 """
+Async sample: get operation result using get_result API.
+
 Prerequisites:
     pip install azure-ai-contentunderstanding python-dotenv
     az login  # Used for DefaultAzureCredential(). Alternatively, set the AZURE_CONTENT_UNDERSTANDING_KEY environment variable
@@ -155,8 +157,8 @@ async def main():
         print(f"   Result contains {len(operation_result.contents)} contents")
         
         # Save the analysis result to a file
-        saved_file_path = save_response_to_file(
-            result=operation_result,
+        saved_file_path = save_json_to_file(
+            result=operation_result.as_dict(),
             filename_prefix="content_analyzers_get_result"
         )
         print(f"💾 Analysis result saved to: {saved_file_path}")

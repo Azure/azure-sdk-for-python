@@ -17,7 +17,7 @@ from sample_helper import (
     new_simple_classifier_schema,
     extract_operation_id_from_poller,
     PollerType,
-    save_response_to_file
+    save_json_to_file
 )
 
 from dotenv import load_dotenv
@@ -116,8 +116,8 @@ async def main():
             print(f"   Result contains {len(getattr(operation_result, 'contents', []))} contents")
         
         # Save the classification result to a file
-        saved_file_path = save_response_to_file(
-            result=operation_status,
+        saved_file_path = save_json_to_file(
+            result=operation_status.as_dict(),
             filename_prefix="content_classifiers_get_result"
         )
         print(f"💾 Classification result saved to: {saved_file_path}")

@@ -15,7 +15,7 @@ from sample_helper import (
     get_credential,
     generate_classifier_id,
     new_simple_classifier_schema,
-    save_response_to_file
+    save_json_to_file
 )
 
 from dotenv import load_dotenv
@@ -93,8 +93,8 @@ async def main():
             print(f"   Categories: Not available")
 
         # Save the classifier definition to a file
-        saved_file_path = save_response_to_file(
-            result=response,
+        saved_file_path = save_json_to_file(
+            result=response.as_dict(),
             filename_prefix="content_classifiers_get_classifier"
         )
         print(f"💾 Classifier definition saved to: {saved_file_path}")

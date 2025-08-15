@@ -15,7 +15,7 @@ from sample_helper import (
     get_credential,
     generate_classifier_id,
     new_simple_classifier_schema,
-    save_response_to_file
+    save_json_to_file
 )
 
 from dotenv import load_dotenv
@@ -102,8 +102,8 @@ async def main():
                     print()
 
         # Save the classification result to a file
-        saved_file_path = save_response_to_file(
-            result=classification_result,
+        saved_file_path = save_json_to_file(
+            result=classification_result.as_dict(),
             filename_prefix="content_classifiers_classify"
         )
         print(f"💾 Classification result saved to: {saved_file_path}")

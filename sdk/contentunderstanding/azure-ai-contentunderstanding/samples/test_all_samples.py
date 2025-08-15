@@ -29,59 +29,26 @@ from dotenv import load_dotenv
 # Load environment variables from .env file
 load_dotenv()
 
-# Sample files to run (excluding helper files, demos, and this script)
-SAMPLES_TO_RUN = [
-    # Content Analyzers
-    "content_analyzers_list.py",
-    "content_analyzers_analyze_binary.py", 
-    "content_analyzers_analyze.py",
-    "content_analyzers_create_or_replace.py",
-    "content_analyzers_get_analyzer.py",
-    "content_analyzers_update.py",
-    "content_analyzers_get_operation_status.py",
-    "content_analyzers_get_result.py",
-    "content_analyzers_get_result_file.py",
-    "content_analyzers_delete_analyzer.py",
+# Sample files to run (dynamically discovered from samples directory)
+def get_sample_files():
+    """Dynamically discover Python sample files in the current directory."""
+    import os
+    import glob
     
-    # Content Classifiers
-    "content_classifiers_list.py",
-    "content_classifiers_classify_binary.py",
-    "content_classifiers_classify.py", 
-    "content_classifiers_create_or_replace.py",
-    "content_classifiers_get_classifier.py",
-    "content_classifiers_update.py",
-    "content_classifiers_get_operation_status.py",
-    "content_classifiers_get_result.py",
-    "content_classifiers_delete_classifier.py",
+    # Get all .py files in the current directory
+    py_files = glob.glob("*.py")
     
-    # Face Detection
-    "faces_detect.py",
+    # Filter out this script and any non-sample files
+    excluded_files = {
+        "test_all_samples.py",  # This script
+        "sample_helper.py",      # Helper module
+        "env.sample",            # Environment sample file
+    }
     
-    # Person Directories - Basic Operations
-    "person_directories_create.py",
-    "person_directories_list.py",
-    "person_directories_get.py", 
-    "person_directories_update.py",
-    "person_directories_delete.py",
-    
-    # Person Management
-    "person_directories_add_person.py",
-    "person_directories_list_persons.py",
-    "person_directories_get_person.py",
-    "person_directories_update_person.py", 
-    "person_directories_delete_person.py",
-    
-    # Face Management
-    "person_directories_get_face.py",
-    "person_directories_list_faces.py",
-    "person_directories_update_face.py",
-    "person_directories_delete_face.py",
-    
-    # Face Recognition (Enhanced Demo)
-    "person_directories_find_similar_faces.py",
-]
+    # Return only sample files
+    return [f for f in py_files if f not in excluded_files]
 
-
+SAMPLES_TO_RUN = get_sample_files()
 
 
 class SampleRunner:

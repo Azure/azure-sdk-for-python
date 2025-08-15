@@ -34,7 +34,7 @@ from azure.ai.contentunderstanding.models import (
     FieldType,
     GenerationMethod,
 )
-from sample_helper import get_credential, save_response_to_file
+from sample_helper import get_credential
 
 load_dotenv()
 
@@ -84,13 +84,11 @@ async def main() -> None:
         
         # Now retrieve the analyzer
         print(f"📋 Retrieving analyzer '{analyzer_id}'...")
-        retrieved_analyzer = await client.content_analyzers.get(analyzer_id=analyzer_id)
+        retrieved_analyzer: ContentAnalyzer = await client.content_analyzers.get(analyzer_id=analyzer_id)
         print(f"✅ Analyzer '{analyzer_id}' retrieved successfully!")
         print(f"   Description: {retrieved_analyzer.description}")
         print(f"   Status: {retrieved_analyzer.status}")
         print(f"   Created at: {retrieved_analyzer.created_at}")
-        
-        save_response_to_file(retrieved_analyzer, filename_prefix="content_analyzers_get_analyzer")
         
         # Clean up: delete the analyzer (demo purposes only)
         # Note: You can leave the analyzer for later use if desired

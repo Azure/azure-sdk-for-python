@@ -46,6 +46,11 @@ async def main():
     """
     Get operation status using get_operation_status API.
     
+    Note: Normally you don't need to use get_operation_status API as the poller
+    automatically manages the operation status and waits for completion.
+    This sample is just to demonstrate the API usage for cases where you need
+    custom status checking logic.
+    
     High-level steps:
     1. Create a custom analyzer to get an operation ID
     2. Extract operation ID from the poller

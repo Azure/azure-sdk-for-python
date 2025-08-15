@@ -27,7 +27,7 @@ import os
 from dotenv import load_dotenv
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
 from azure.ai.contentunderstanding.models import AnalyzeResult, MediaContent, DocumentContent, MediaContentKind, DocumentTable
-from sample_helper import get_credential
+from sample_helper import get_credential, save_json_to_file
 
 load_dotenv()
 
@@ -100,6 +100,10 @@ async def main() -> None:
         else:
             print("\n📚 Document Information: Not available for this content type")
 
+        # Uncomment the following line to save the response to a file for object model inspection
+        # Note: This saves the object model, not the raw JSON response
+        # To get the full raw JSON response, see the sample: content_analyzers_analyze_binary_raw_json.py
+        # save_json_to_file(result.as_dict(), filename_prefix="content_analyzers_analyze_binary")
 
 if __name__ == "__main__":
     asyncio.run(main())
