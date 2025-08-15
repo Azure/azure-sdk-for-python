@@ -1,6 +1,6 @@
 # Release History
 
-## 1.6.0b1 (Unreleased)
+## 1.5.0b1 (Unreleased)
 
 ### Features Added
 - Added support for move participant in a call to another call.
