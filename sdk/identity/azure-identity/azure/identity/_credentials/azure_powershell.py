@@ -13,7 +13,13 @@ from azure.core.exceptions import ClientAuthenticationError
 
 from .azure_cli import get_safe_working_dir
 from .. import CredentialUnavailableError
-from .._internal import _scopes_to_resource, resolve_tenant, within_dac, validate_tenant_id, validate_scope
+from .._internal import (
+    _scopes_to_resource,
+    resolve_tenant,
+    within_dac,
+    validate_tenant_id,
+    validate_scope,
+)
 from .._internal.decorators import log_get_token
 
 
@@ -112,7 +118,7 @@ class AzurePowerShellCredential:
     def get_token(
         self,
         *scopes: str,
-        claims: Optional[str] = None,  # pylint:disable=unused-argument
+        claims: Optional[str] = None,
         tenant_id: Optional[str] = None,
         **kwargs: Any,
     ) -> AccessToken:
@@ -135,6 +141,12 @@ class AzurePowerShellCredential:
         :raises ~azure.core.exceptions.ClientAuthenticationError: the credential invoked Azure PowerShell but didn't
           receive an access token
         """
+
+        # Check if claims challenge is provided
+        if claims:
+            raise CredentialUnavailableError(
+                message=f"Failed to get token. Run Connect-AzAccount -ClaimsChallenge {claims}"
+            )
 
         options: TokenRequestOptions = {}
         if tenant_id:
@@ -169,6 +181,13 @@ class AzurePowerShellCredential:
     def _get_token_base(
         self, *scopes: str, options: Optional[TokenRequestOptions] = None, **kwargs: Any
     ) -> AccessTokenInfo:
+
+        # Check if claims challenge is provided
+        if options and options.get("claims"):
+            claims_value = options.get("claims")
+            raise CredentialUnavailableError(
+                message=f"Failed to get token. Run Connect-AzAccount -ClaimsChallenge {claims_value}"
+            )
 
         tenant_id = options.get("tenant_id") if options else None
         if tenant_id:
@@ -269,7 +288,11 @@ def raise_for_error(return_code: int, stdout: str, stderr: str) -> None:
 
     if stderr:
         # stderr is too noisy to include with an exception but may be useful for debugging
-        _LOGGER.debug('%s received an error from Azure PowerShell: "%s"', AzurePowerShellCredential.__name__, stderr)
+        _LOGGER.debug(
+            '%s received an error from Azure PowerShell: "%s"',
+            AzurePowerShellCredential.__name__,
+            stderr,
+        )
     raise CredentialUnavailableError(
         message="Failed to invoke PowerShell. Enable debug logging for additional information."
     )
