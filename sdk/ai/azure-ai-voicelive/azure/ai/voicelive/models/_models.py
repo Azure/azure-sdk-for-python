@@ -3069,11 +3069,12 @@ class ServerEvent(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-    
+
     @classmethod
     def deserialize(cls, payload: dict) -> "ServerEvent":
         # public, linter-friendly entrypoint
-        return cls._deserialize(payload, [])  # noqa: SLF001  (pylint: protected-access)
+        # pylint: disable-next=protected-access
+        return cls._deserialize(payload, [])
 
 
 class ServerEventConversationItemCreated(ServerEvent, discriminator="conversation.item.created"):
