@@ -587,7 +587,7 @@ class ContentDecodePolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
         If no content-type, will return the string version (not bytes, not stream)
 
         :param data: The data to deserialize.
-        :type data: str or bytes or file-like object
+        :type data: str or bytes or file
         :param response: The HTTP response.
         :type response: ~azure.core.pipeline.transport.HttpResponse
         :param str mime_type: The mime type. As mime type, charset is not expected.

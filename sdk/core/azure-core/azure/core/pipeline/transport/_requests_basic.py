@@ -218,7 +218,7 @@ class RequestsTransportResponse(HttpResponse, _RequestsTransportResponseBase):
 
         :param pipeline: The pipeline object
         :type pipeline: ~azure.core.pipeline.Pipeline
-        :rtype: iterator[bytes]
+        :rtype: ~typing.Iterator[bytes]
         :return: The stream of data
         """
         return StreamDownloadGenerator(pipeline, self, **kwargs)

@@ -241,7 +241,7 @@ class AzureNamedKeyCredential:
     def named_key(self) -> AzureNamedKey:
         """The value of the configured name.
 
-        :rtype: AzureNamedKey
+        :rtype: ~azure.core.credentials.AzureNamedKey
         :return: The value of the configured name.
         """
         return self._credential

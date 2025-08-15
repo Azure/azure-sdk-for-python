@@ -460,7 +460,7 @@ class AioHttpTransportResponse(AsyncHttpResponse):
     :param request: The HttpRequest object
     :type request: ~azure.core.pipeline.transport.HttpRequest
     :param aiohttp_response: Returned from ClientSession.request().
-    :type aiohttp_response: aiohttp.ClientResponse object
+    :type aiohttp_response: ~aiohttp.ClientResponse
     :param block_size: block size of data sent over connection.
     :type block_size: int
     :keyword bool decompress: If True which is default, will attempt to decode the body based

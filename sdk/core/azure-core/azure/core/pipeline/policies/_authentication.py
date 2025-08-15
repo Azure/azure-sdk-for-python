@@ -112,7 +112,7 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy[H
     """Adds a bearer token Authorization header to requests.
 
     :param credential: The credential.
-    :type credential: ~azure.core.TokenCredential
+    :type credential: ~azure.core.credentials.TokenCredential
     :param str scopes: Lets you specify the type of access needed.
     :keyword bool enable_cae: Indicates whether to enable Continuous Access Evaluation (CAE) on all requested
         tokens. Defaults to False.
