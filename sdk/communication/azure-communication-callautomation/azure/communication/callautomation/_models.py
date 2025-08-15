@@ -867,7 +867,7 @@ class RemoveParticipantResult:
         return cls(operation_context=remove_participant_result_generated.operation_context)
 
 
-class toMoveParticipantsResult:
+class MoveParticipantsResult:
     """The response payload for moving participants to the call.
     :keyword participants: List of current participants in the call.
     :paramtype participants: list[~azure.communication.callautomation.CallParticipant]
