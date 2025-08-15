@@ -220,7 +220,7 @@
 /sdk/cosmos/                                                         @Azure/azure-cosmos-python-sdk
 
 # ServiceLabel: %Cosmos %Service Attention
-#/<NotInRepo>/                                                       @pjohari-ms @simorenoh @AbhinavTrips @bambriz @pilchie
+# Service Owners:                                                       @pjohari-ms @simorenoh @AbhinavTrips @bambriz @pilchie
 
 # ServiceLabel: %Data Factory
 # PRLabel: %Data Factory
@@ -454,379 +454,379 @@
 /common/smoketest/                                                   @lmazuel @chlowell @annatisch @mccoyp @shurd @southpolesteve
 
 # ServiceLabel: %AAD %Service Attention
-#/<NotInRepo>/          @adamedx
+# Service Owners:          @adamedx
 
 # ServiceLabel: %AKS %Service Attention
-#/<NotInRepo>/          @Azure/aks-pm
+# Service Owners:          @Azure/aks-pm
 
 # ServiceLabel: %Alerts Management %Service Attention
-#/<NotInRepo>/          @liadtal @yairgil
+# Service Owners:          @liadtal @yairgil
 
 # ServiceLabel: %ARM %Service Attention
-#/<NotInRepo>/          @armleads-azure
+# Service Owners:          @armleads-azure
 
 # ServiceLabel: %ARM - Templates %Service Attention
-#/<NotInRepo>/          @armleads-azure
+# Service Owners:          @armleads-azure
 
 # ServiceLabel: %ARM - Tags %Service Attention
-#/<NotInRepo>/          @armleads-azure
+# Service Owners:          @armleads-azure
 
 # ServiceLabel: %ARM - Core %Service Attention
-#/<NotInRepo>/          @armleads-azure
+# Service Owners:          @armleads-azure
 
 # ServiceLabel: %ARM - Managed Applications %Service Attention
-#/<NotInRepo>/          @armleads-azure
+# Service Owners:          @armleads-azure
 
 # ServiceLabel: %ARM - Service Catalog %Service Attention
-#/<NotInRepo>/          @armleads-azure
+# Service Owners:          @armleads-azure
 
 # ServiceLabel: %ARM - RBAC %Service Attention
-#/<NotInRepo>/          @armleads-azure
+# Service Owners:          @armleads-azure
 
 # ServiceLabel: %Advisor %Service Attention
-#/<NotInRepo>/          @mojayara @Prasanna-Padmanabhan
+# Service Owners:          @mojayara @Prasanna-Padmanabhan
 
 # ServiceLabel: %Analysis Services %Service Attention
-#/<NotInRepo>/          @athipp @taiwu @minghan
+# Service Owners:          @athipp @taiwu @minghan
 
 # ServiceLabel: %API Management %Service Attention
-#/<NotInRepo>/          @miaojiang
+# Service Owners:          @miaojiang
 
 # ServiceLabel: %Application Insights %Service Attention
-#/<NotInRepo>/          @azmonapplicationinsights
+# Service Owners:          @azmonapplicationinsights
 
 # ServiceLabel: %App Services %Service Attention
-#/<NotInRepo>/          @antcp @AzureAppServiceCLI
+# Service Owners:          @antcp @AzureAppServiceCLI
 
 # ServiceLabel: %ARO %Service Attention
-#/<NotInRepo>/          @mjudeikis @jim-minter @julienstroheker @amanohar
+# Service Owners:          @mjudeikis @jim-minter @julienstroheker @amanohar
 
 # ServiceLabel: %Authorization %Service Attention
-#/<NotInRepo>/          @darshanhs90 @AshishGargMicrosoft
+# Service Owners:          @darshanhs90 @AshishGargMicrosoft
 
 # ServiceLabel: %Automation %Service Attention
-#/<NotInRepo>/          @jaspkaur28 @omairabdullah
+# Service Owners:          @jaspkaur28 @omairabdullah
 
 # ServiceLabel: %AVS %Service Attention
-#/<NotInRepo>/          @divka78 @amitchat @aishu
+# Service Owners:          @divka78 @amitchat @aishu
 
 # ServiceLabel: %Azure Stack %Service Attention
-#/<NotInRepo>/          @sijuman @sarathys @bganapa @rakku-ms
+# Service Owners:          @sijuman @sarathys @bganapa @rakku-ms
 
 # ServiceLabel: %BatchAI %Service Attention
-#/<NotInRepo>/          @matthchr
+# Service Owners:          @matthchr
 
 # ServiceLabel: %Billing %Service Attention
-#/<NotInRepo>/          @cabbpt
+# Service Owners:          @cabbpt
 
 # ServiceLabel: %Blueprint %Service Attention
-#/<NotInRepo>/          @alex-frankel @filizt
+# Service Owners:          @alex-frankel @filizt
 
 # ServiceLabel: %Bot Service %Service Attention
-#/<NotInRepo>/          @sgellock
+# Service Owners:          @sgellock
 
 # ServiceLabel: %Cloud Shell %Service Attention
-#/<NotInRepo>/          @mbifeld
+# Service Owners:          @mbifeld
 
 # ServiceLabel: %Cognitive - Custom Vision %Service Attention
-#/<NotInRepo>/          @areddish @tburns10
+# Service Owners:          @areddish @tburns10
 
 # ServiceLabel: %Cognitive - Computer Vision %Service Attention
-#/<NotInRepo>/          @ryogok @TFR258 @tburns10
+# Service Owners:          @ryogok @TFR258 @tburns10
 
 # ServiceLabel: %Cognitive - Face %Service Attention
-#/<NotInRepo>/          @JinyuID @dipidoo @SteveMSFT
+# Service Owners:          @JinyuID @dipidoo @SteveMSFT
 
 # ServiceLabel: %Cognitive - QnA Maker %Service Attention
-#/<NotInRepo>/          @bingisbestest @nerajput1607
+# Service Owners:          @bingisbestest @nerajput1607
 
 # ServiceLabel: %Cognitive - Speech %Service Attention
-#/<NotInRepo>/          @robch @oscholz
+# Service Owners:          @robch @oscholz
 
 # ServiceLabel: %Cognitive - LUIS %Service Attention
-#/<NotInRepo>/          @cahann @kayousef
+# Service Owners:          @cahann @kayousef
 
 # ServiceLabel: %Cognitive - Content Moderator %Service Attention
-#/<NotInRepo>/          @swiftarrow11
+# Service Owners:          @swiftarrow11
 
 # ServiceLabel: %Cognitive - Personalizer %Service Attention
-#/<NotInRepo>/          @dwaijam @sharathmalladi
+# Service Owners:          @dwaijam @sharathmalladi
 
 # ServiceLabel: %Cognitive - Immersive Reader %Service Attention
-#/<NotInRepo>/          @metanMSFT
+# Service Owners:          @metanMSFT
 
 # ServiceLabel: %Cognitive - Ink Recognizer %Service Attention
-#/<NotInRepo>/          @olduroja
+# Service Owners:          @olduroja
 
 # ServiceLabel: %Cognitive - Bing %Service Attention
-#/<NotInRepo>/          @jaggerbodas-ms @arwong
+# Service Owners:          @jaggerbodas-ms @arwong
 
 # ServiceLabel: %Cognitive - Mgmt %Service Attention
-#/<NotInRepo>/          @yangyuan
+# Service Owners:          @yangyuan
 
 # ServiceLabel: %Commerce %Service Attention
-#/<NotInRepo>/          @ms-premp @qiaozha
+# Service Owners:          @ms-premp @qiaozha
 
 # ServiceLabel: %Compute %Service Attention
-#/<NotInRepo>/          @Drewm3 @TravisCragg-MSFT @GabstaMSFT @amjads1 @sandeepraichura
+# Service Owners:          @Drewm3 @TravisCragg-MSFT @GabstaMSFT @amjads1 @sandeepraichura
 
 # ServiceLabel: %Compute - Extensions %Service Attention
-#/<NotInRepo>/          @Drewm3 @amjads1 @GabstaMSFT
+# Service Owners:          @Drewm3 @amjads1 @GabstaMSFT
 
 # ServiceLabel: %Compute - Images %Service Attention
-#/<NotInRepo>/          @Drewm3 @sandeepraichura
+# Service Owners:          @Drewm3 @sandeepraichura
 
 # ServiceLabel: %Compute - Managed Disks %Service Attention
-#/<NotInRepo>/          @Drewm3 @TravisCragg-MSFT @ushnaarshadkhan
+# Service Owners:          @Drewm3 @TravisCragg-MSFT @ushnaarshadkhan
 
 # ServiceLabel: %Compute - RDFE %Service Attention
-#/<NotInRepo>/          @Drewm3 @TravisCragg-MSFT
+# Service Owners:          @Drewm3 @TravisCragg-MSFT
 
 # ServiceLabel: %Compute - VM %Service Attention
-#/<NotInRepo>/          @Drewm3 @TravisCragg-MSFT
+# Service Owners:          @Drewm3 @TravisCragg-MSFT
 
 # ServiceLabel: %Compute - VMSS %Service Attention
-#/<NotInRepo>/          @Drewm3 @Kanik09
+# Service Owners:          @Drewm3 @Kanik09
 
 # ServiceLabel: %Connected Kubernetes %Service Attention
-#/<NotInRepo>/          @akashkeshari
+# Service Owners:          @akashkeshari
 
 # ServiceLabel: %Customer Insights %Service Attention
-#/<NotInRepo>/          @shefymk
+# Service Owners:          @shefymk
 
 # ServiceLabel: %Custom Providers %Service Attention
-#/<NotInRepo>/          @manoharp @MSEvanhi
+# Service Owners:          @manoharp @MSEvanhi
 
 # ServiceLabel: %CycleCloud %Service Attention
-#/<NotInRepo>/          @adriankjohnson
+# Service Owners:          @adriankjohnson
 
 # ServiceLabel: %Data Bricks %Service Attention
-#/<NotInRepo>/          @arindamc
+# Service Owners:          @arindamc
 
 # ServiceLabel: %DataBox %Service Attention
-#/<NotInRepo>/          @tmvishwajit @matdickson @manuaery @madhurinms
+# Service Owners:          @tmvishwajit @matdickson @manuaery @madhurinms
 
 # ServiceLabel: %DataBox Edge %Service Attention
-#/<NotInRepo>/          @a-t-mason @ganzee @manuaery
+# Service Owners:          @a-t-mason @ganzee @manuaery
 
 # ServiceLabel: %Data Catalog %Service Attention
-#/<NotInRepo>/          @ingave
+# Service Owners:          @ingave
 
 # ServiceLabel: %Data Migration %Service Attention
-#/<NotInRepo>/          @radjaram @kavitham10
+# Service Owners:          @radjaram @kavitham10
 
 # ServiceLabel: %Data Share %Service Attention
-#/<NotInRepo>/          @raedJarrar @jifems
+# Service Owners:          @raedJarrar @jifems
 
 # ServiceLabel: %DevOps %Service Attention
-#/<NotInRepo>/          @narula0781 @ashishonce @romil07
+# Service Owners:          @narula0781 @ashishonce @romil07
 
 # ServiceLabel: %Dev Spaces %Service Attention
-#/<NotInRepo>/          @yuzorMa @johnsta @greenie-msft
+# Service Owners:          @yuzorMa @johnsta @greenie-msft
 
 # ServiceLabel: %Devtestlab %Service Attention
-#/<NotInRepo>/          @Tanmayeekamath
+# Service Owners:          @Tanmayeekamath
 
 # ServiceLabel: %Device Provisioning Service %Service Attention
-#/<NotInRepo>/          @nberdy
+# Service Owners:          @nberdy
 
 # ServiceLabel: %Functions %Service Attention
-#/<NotInRepo>/          @ahmedelnably @fabiocav
+# Service Owners:          @ahmedelnably @fabiocav
 
 # ServiceLabel: %Graph.Microsoft %Service Attention
-#/<NotInRepo>/          @dkershaw10 @baywet
+# Service Owners:          @dkershaw10 @baywet
 
 # ServiceLabel: %Guest Configuration %Service Attention
-#/<NotInRepo>/          @mgreenegit @vivlingaiah
+# Service Owners:          @mgreenegit @vivlingaiah
 
 # ServiceLabel: %HDInsight %Service Attention
-#/<NotInRepo>/          @aim-for-better @idear1203 @deshriva
+# Service Owners:          @aim-for-better @idear1203 @deshriva
 
 # ServiceLabel: %HPC Cache %Service Attention
-#/<NotInRepo>/          @romahamu @omzevall
+# Service Owners:          @romahamu @omzevall
 
 # ServiceLabel: %Import Export %Service Attention
-#/<NotInRepo>/          @madhurinms
+# Service Owners:          @madhurinms
 
 # ServiceLabel: %Kubernetes Configuration %Service Attention
-#/<NotInRepo>/          @NarayanThiru
+# Service Owners:          @NarayanThiru
 
 # ServiceLabel: %Azure Data Explorer %Service Attention
-#/<NotInRepo>/          @ilayrn @orhasban @zoharHenMicrosoft
+# Service Owners:          @ilayrn @orhasban @zoharHenMicrosoft
 
 # ServiceLabel: %Lab Services %Service Attention
-#/<NotInRepo>/          @Tanmayeekamath
+# Service Owners:          @Tanmayeekamath
 
 # ServiceLabel: %Logic App %Service Attention
-#/<NotInRepo>/          @Azure/azure-logicapps-team
+# Service Owners:          @Azure/azure-logicapps-team
 
 # ServiceLabel: %LOUIS %Service Attention
-#/<NotInRepo>/          @minamnmik
+# Service Owners:          @minamnmik
 
 # ServiceLabel: %Managed Identity %Service Attention
-#/<NotInRepo>/          @varunkch
+# Service Owners:          @varunkch
 
 # ServiceLabel: %Managed Services %Service Attention
-#/<NotInRepo>/          @Lighthouse-Azure
+# Service Owners:          @Lighthouse-Azure
 
 # ServiceLabel: %MariaDB %Service Attention
-#/<NotInRepo>/          @ambhatna @savjani
+# Service Owners:          @ambhatna @savjani
 
 # ServiceLabel: %Marketplace Ordering %Service Attention
-#/<NotInRepo>/          @prbansa
+# Service Owners:          @prbansa
 
 # ServiceLabel: %Media Services %Service Attention
-#/<NotInRepo>/          @akucer
+# Service Owners:          @akucer
 
 # ServiceLabel: %Migrate %Service Attention
-#/<NotInRepo>/          @shijojoy
+# Service Owners:          @shijojoy
 
 # ServiceLabel: %Mobile Engagement %Service Attention
-#/<NotInRepo>/          @kpiteira
+# Service Owners:          @kpiteira
 
 # ServiceLabel: %MySQL %Service Attention
-#/<NotInRepo>/          @ambhatna @savjani
+# Service Owners:          @ambhatna @savjani
 
 # ServiceLabel: %Network %Service Attention
-#/<NotInRepo>/          @aznetsuppgithub
+# Service Owners:          @aznetsuppgithub
 
 # ServiceLabel: %Network - Application Gateway %Service Attention
-#/<NotInRepo>/          @appgwsuppgithub
+# Service Owners:          @appgwsuppgithub
 
 # ServiceLabel: %Network - CDN %Service Attention
-#/<NotInRepo>/          @cdnfdsuppgithub
+# Service Owners:          @cdnfdsuppgithub
 
 # ServiceLabel: %Network - DDOS Protection %Service Attention
-#/<NotInRepo>/          @ddossuppgithub
+# Service Owners:          @ddossuppgithub
 
 # ServiceLabel: %Network - ExpressRoute %Service Attention
-#/<NotInRepo>/          @exrsuppgithub
+# Service Owners:          @exrsuppgithub
 
 # ServiceLabel: %Network - Firewall %Service Attention
-#/<NotInRepo>/          @fwsuppgithub
+# Service Owners:          @fwsuppgithub
 
 # ServiceLabel: %Network - Front Door %Service Attention
-#/<NotInRepo>/          @cdnfdsuppgithub
+# Service Owners:          @cdnfdsuppgithub
 
 # ServiceLabel: %Network - Load Balancer %Service Attention
-#/<NotInRepo>/          @slbsupportgithub
+# Service Owners:          @slbsupportgithub
 
 # ServiceLabel: %Network - Virtual Network NAT %Service Attention
-#/<NotInRepo>/          @vnetsuppgithub
+# Service Owners:          @vnetsuppgithub
 
 # ServiceLabel: %Network - Network Watcher %Service Attention
-#/<NotInRepo>/          @netwatchsuppgithub
+# Service Owners:          @netwatchsuppgithub
 
 # ServiceLabel: %Network - DNS %Service Attention
-#/<NotInRepo>/          @dnssuppgithub
+# Service Owners:          @dnssuppgithub
 
 # ServiceLabel: %Network - Traffic Manager %Service Attention
-#/<NotInRepo>/          @tmsuppgithub
+# Service Owners:          @tmsuppgithub
 
 # ServiceLabel: %Network - VPN Gateway %Service Attention
-#/<NotInRepo>/          @vpngwsuppgithub
+# Service Owners:          @vpngwsuppgithub
 
 # ServiceLabel: %Notification Hub %Service Attention
-#/<NotInRepo>/          @tjsomasundaram
+# Service Owners:          @tjsomasundaram
 
 # ServiceLabel: %Operational Insights %Service Attention
-#/<NotInRepo>/          @AzmonLogA
+# Service Owners:          @AzmonLogA
 
 # ServiceLabel: %Policy %Service Attention
-#/<NotInRepo>/          @aperezcloud @kenieva
+# Service Owners:          @aperezcloud @kenieva
 
 # ServiceLabel: %Policy Insights %Service Attention
-#/<NotInRepo>/          @kenieva
+# Service Owners:          @kenieva
 
 # ServiceLabel: %PostgreSQL %Service Attention
-#/<NotInRepo>/          @sunilagarwal @lfittl-msft @sr-msft @niklarin
+# Service Owners:          @sunilagarwal @lfittl-msft @sr-msft @niklarin
 
 # ServiceLabel: %Redis Cache %Service Attention
-#/<NotInRepo>/          @yegu-ms
+# Service Owners:          @yegu-ms
 
 # ServiceLabel: %Reservations %Service Attention
-#/<NotInRepo>/          @Rkapso
+# Service Owners:          @Rkapso
 
 # ServiceLabel: %Resource Authorization %Service Attention
-#/<NotInRepo>/          @darshanhs90 @AshishGargMicrosoft
+# Service Owners:          @darshanhs90 @AshishGargMicrosoft
 
 # ServiceLabel: %Resource Graph %Service Attention
-#/<NotInRepo>/          @chiragg4u
+# Service Owners:          @chiragg4u
 
 # ServiceLabel: %Resource Health %Service Attention
-#/<NotInRepo>/          @stephbaron
+# Service Owners:          @stephbaron
 
 # ServiceLabel: %Scheduler %Service Attention
-#/<NotInRepo>/          @derek1ee
+# Service Owners:          @derek1ee
 
 # ServiceLabel: %Security %Service Attention
-#/<NotInRepo>/          @chlahav
+# Service Owners:          @chlahav
 
 # ServiceLabel: %Service Attention %SignalR
-#/<NotInRepo>/          @sffamily @chenkennt
+# Service Owners:          @sffamily @chenkennt
 
 # ServiceLabel: %Service Attention %Storsimple
-#/<NotInRepo>/          @anoobbacker @ganzee @manuaery
+# Service Owners:          @anoobbacker @ganzee @manuaery
 
 # ServiceLabel: %Service Attention %Stream Analytics
-#/<NotInRepo>/          @atpham256
+# Service Owners:          @atpham256
 
 # ServiceLabel: %Service Attention %Subscription
-#/<NotInRepo>/          @anuragdalmia @shilpigautam @ramaganesan-rg
+# Service Owners:          @anuragdalmia @shilpigautam @ramaganesan-rg
 
 # ServiceLabel: %Service Attention %Support
-#/<NotInRepo>/          @shahbj79 @mit2nil @aygoya @ganganarayanan
+# Service Owners:          @shahbj79 @mit2nil @aygoya @ganganarayanan
 
 # ServiceLabel: %Service Attention %TimeseriesInsights
-#/<NotInRepo>/          @Shipra1Mishra
+# Service Owners:          @Shipra1Mishra
 
 # ServiceLabel: %Service Attention %vFXT
-#/<NotInRepo>/          @zhusijia26
+# Service Owners:          @zhusijia26
 
 # ServiceLabel: %Service Attention %Web Apps
-#/<NotInRepo>/          @AzureAppServiceCLI @antcp
+# Service Owners:          @AzureAppServiceCLI @antcp
 
 # ServiceLabel: %Network - Virtual Network %Service Attention
-#/<NotInRepo>/          @vnetsuppgithub
+# Service Owners:          @vnetsuppgithub
 
 # ServiceLabel: %Network - Virtual WAN %Service Attention
-#/<NotInRepo>/          @vwansuppgithub
+# Service Owners:          @vwansuppgithub
 
 # ServiceLabel: %Network - Network Virtual Appliance %Service Attention
-#/<NotInRepo>/          @nvasuppgithub
+# Service Owners:          @nvasuppgithub
 
 # ServiceLabel: %Network - Bastion %Service Attention
-#/<NotInRepo>/          @bastionsuppgithub
+# Service Owners:          @bastionsuppgithub
 
 # ServiceLabel: %Network - Private Link %Service Attention
-#/<NotInRepo>/          @privlinksuppgithub
+# Service Owners:          @privlinksuppgithub
 
 # ServiceLabel: %Azure Arc enabled servers %Service Attention
-#/<NotInRepo>/          @rpsqrd @edyoung
+# Service Owners:          @rpsqrd @edyoung
 
 # ServiceLabel: %SecurityInsights %Service Attention
-#/<NotInRepo>/          @amirkeren
+# Service Owners:          @amirkeren
 
 # ServiceLabel: %IoT - CLI %Service Attention
-#/<NotInRepo>/          @Azure/azure-iot-cli-triage
+# Service Owners:          @Azure/azure-iot-cli-triage
 
 # ServiceLabel: %Cost Management - Budget %Service Attention
-#/<NotInRepo>/          @ccmaxpcrew
+# Service Owners:          @ccmaxpcrew
 
 # ServiceLabel: %Cost Management - Query %Service Attention
-#/<NotInRepo>/          @ccmixpdevs
+# Service Owners:          @ccmixpdevs
 
 # ServiceLabel: %Cost Management - Billing %Service Attention
-#/<NotInRepo>/          @ccmbpxpcrew
+# Service Owners:          @ccmbpxpcrew
 
 # ServiceLabel: %Consumption - Billing %Service Attention
-#/<NotInRepo>/          @ccmbpxpcrew
+# Service Owners:          @ccmbpxpcrew
 
 # ServiceLabel: %Cost Management - UsageDetailsAndExport %Service Attention
-#/<NotInRepo>/          @TiagoCrewGitHubIssues
+# Service Owners:          @TiagoCrewGitHubIssues
 
 # ServiceLabel: %Cost Management - RIandShowBack %Service Attention
-#/<NotInRepo>/          @ccmshowbackdevs
+# Service Owners:          @ccmshowbackdevs
 
 ####################
 # Management Libraries
