@@ -38,6 +38,7 @@ from . import documents
 from . import http_constants
 from . import _runtime_constants
 from ._constants import _Constants as Constants
+from ._constants import _Constants as InternalOptions
 from .auth import _get_authorization_header
 from .offer import ThroughputProperties
 from .partition_key import _Empty, _Undefined
@@ -50,35 +51,52 @@ if TYPE_CHECKING:
 # pylint: disable=protected-access
 
 _COMMON_OPTIONS = {
-    Constants.Kwargs.INITIAL_HEADERS: Constants.CommonOptions.INITIAL_HEADERS,
-    Constants.Kwargs.PRE_TRIGGER_INCLUDE: Constants.CommonOptions.PRE_TRIGGER_INCLUDE,
-    Constants.Kwargs.POST_TRIGGER_INCLUDE: Constants.CommonOptions.POST_TRIGGER_INCLUDE,
-    Constants.Kwargs.ACCESS_CONDITION: Constants.CommonOptions.ACCESS_CONDITION,
-    Constants.Kwargs.SESSION_TOKEN: Constants.CommonOptions.SESSION_TOKEN,
+    Constants.Kwargs.INITIAL_HEADERS: InternalOptions.InternalOptions.INITIAL_HEADERS,
+    Constants.Kwargs.PRE_TRIGGER_INCLUDE: InternalOptions.InternalOptions.PRE_TRIGGER_INCLUDE,
+    Constants.Kwargs.POST_TRIGGER_INCLUDE: InternalOptions.InternalOptions.POST_TRIGGER_INCLUDE,
+    Constants.Kwargs.ACCESS_CONDITION: InternalOptions.InternalOptions.ACCESS_CONDITION,
+    Constants.Kwargs.SESSION_TOKEN: InternalOptions.InternalOptions.SESSION_TOKEN,
     Constants.Kwargs.RESOURCE_TOKEN_EXPIRY_SECONDS: (
-        Constants.CommonOptions.RESOURCE_TOKEN_EXPIRY_SECONDS
+        InternalOptions.InternalOptions.RESOURCE_TOKEN_EXPIRY_SECONDS
     ),
     Constants.Kwargs.OFFER_ENABLE_RU_PER_MINUTE_THROUGHPUT: (
-        Constants.CommonOptions.OFFER_ENABLE_RU_PER_MINUTE_THROUGHPUT
+        InternalOptions.InternalOptions.OFFER_ENABLE_RU_PER_MINUTE_THROUGHPUT
     ),
     Constants.Kwargs.DISABLE_RU_PER_MINUTE_USAGE: (
-        Constants.CommonOptions.DISABLE_RU_PER_MINUTE_USAGE
+        InternalOptions.InternalOptions.DISABLE_RU_PER_MINUTE_USAGE
     ),
-    Constants.Kwargs.CONTINUATION: Constants.CommonOptions.CONTINUATION,
-    Constants.Kwargs.CONTENT_TYPE: Constants.CommonOptions.CONTENT_TYPE,
-    Constants.Kwargs.IS_QUERY_PLAN_REQUEST: Constants.CommonOptions.IS_QUERY_PLAN_REQUEST,
+    Constants.Kwargs.CONTINUATION: InternalOptions.InternalOptions.CONTINUATION,
+    Constants.Kwargs.CONTENT_TYPE: InternalOptions.InternalOptions.CONTENT_TYPE,
+    Constants.Kwargs.IS_QUERY_PLAN_REQUEST: InternalOptions.InternalOptions.IS_QUERY_PLAN_REQUEST,
     Constants.Kwargs.SUPPORTED_QUERY_FEATURES: (
-        Constants.CommonOptions.SUPPORTED_QUERY_FEATURES
+        InternalOptions.InternalOptions.SUPPORTED_QUERY_FEATURES
     ),
-    Constants.Kwargs.QUERY_VERSION: Constants.CommonOptions.QUERY_VERSION,
-    Constants.Kwargs.PRIORITY: Constants.CommonOptions.PRIORITY_LEVEL,
+    Constants.Kwargs.QUERY_VERSION: InternalOptions.InternalOptions.QUERY_VERSION,
+    Constants.Kwargs.PRIORITY: InternalOptions.InternalOptions.PRIORITY_LEVEL,
     Constants.Kwargs.NO_RESPONSE: (
-        Constants.CommonOptions.RESPONSE_PAYLOAD_ON_WRITE_DISABLED
+        InternalOptions.InternalOptions.RESPONSE_PAYLOAD_ON_WRITE_DISABLED
     ),
-    Constants.Kwargs.RETRY_WRITE: Constants.CommonOptions.RETRY_WRITE,
-    Constants.Kwargs.MAX_ITEM_COUNT: Constants.CommonOptions.MAX_ITEM_COUNT,
-    Constants.Kwargs.THROUGHPUT_BUCKET: Constants.CommonOptions.THROUGHPUT_BUCKET,
-    Constants.Kwargs.EXCLUDED_LOCATIONS: Constants.CommonOptions.EXCLUDED_LOCATIONS
+    Constants.Kwargs.RETRY_WRITE: InternalOptions.InternalOptions.RETRY_WRITE,
+    Constants.Kwargs.MAX_ITEM_COUNT: InternalOptions.InternalOptions.MAX_ITEM_COUNT,
+    Constants.Kwargs.THROUGHPUT_BUCKET: InternalOptions.InternalOptions.THROUGHPUT_BUCKET,
+    Constants.Kwargs.EXCLUDED_LOCATIONS: InternalOptions.InternalOptions.EXCLUDED_LOCATIONS,
+    # Additional mappings for new constants
+    Constants.Kwargs.ENABLE_DIAGNOSTICS_LOGGING: (
+        InternalOptions.InternalOptions.ENABLE_DIAGNOSTICS_LOGGING
+    ),
+    Constants.Kwargs.LOGGER: InternalOptions.InternalOptions.LOGGER,
+    Constants.Kwargs.PROXIES: InternalOptions.InternalOptions.PROXIES,
+    Constants.Kwargs.USER_AGENT_SUFFIX: InternalOptions.InternalOptions.USER_AGENT_SUFFIX,
+    Constants.Kwargs.TRANSPORT: InternalOptions.InternalOptions.TRANSPORT,
+    Constants.Kwargs.RESPONSE_HOOK: InternalOptions.InternalOptions.RESPONSE_HOOK,
+    Constants.Kwargs.RAW_RESPONSE_HOOK: InternalOptions.InternalOptions.RAW_RESPONSE_HOOK,
+    Constants.Kwargs.FEED_RANGE: InternalOptions.InternalOptions.FEED_RANGE,
+    Constants.Kwargs.PREFIX_PARTITION_KEY_OBJECT: (
+        InternalOptions.InternalOptions.PREFIX_PARTITION_KEY_OBJECT
+    ),
+    Constants.Kwargs.PREFIX_PARTITION_KEY_VALUE: (
+        InternalOptions.InternalOptions.PREFIX_PARTITION_KEY_VALUE
+    ),
 }
 
 # Cosmos resource ID validation regex breakdown:
@@ -161,116 +179,116 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     if cosmos_client_connection.UseMultipleWriteLocations:
         headers[http_constants.HttpHeaders.AllowTentativeWrites] = "true"
 
-    pre_trigger_include = options.get(Constants.CommonOptions.PRE_TRIGGER_INCLUDE)
+    pre_trigger_include = options.get(InternalOptions.InternalOptions.PRE_TRIGGER_INCLUDE)
     if pre_trigger_include:
         headers[http_constants.HttpHeaders.PreTriggerInclude] = (
             pre_trigger_include if isinstance(pre_trigger_include, str) else (",").join(pre_trigger_include)
         )
 
-    post_trigger_include = options.get(Constants.CommonOptions.POST_TRIGGER_INCLUDE)
+    post_trigger_include = options.get(InternalOptions.InternalOptions.POST_TRIGGER_INCLUDE)
     if post_trigger_include:
         headers[http_constants.HttpHeaders.PostTriggerInclude] = (
             post_trigger_include if isinstance(post_trigger_include, str) else (",").join(post_trigger_include)
         )
 
-    if options.get(Constants.CommonOptions.MAX_ITEM_COUNT):
-        headers[http_constants.HttpHeaders.PageSize] = options[Constants.CommonOptions.MAX_ITEM_COUNT]
+    if options.get(InternalOptions.InternalOptions.MAX_ITEM_COUNT):
+        headers[http_constants.HttpHeaders.PageSize] = options[InternalOptions.InternalOptions.MAX_ITEM_COUNT]
 
-    access_condition = options.get(Constants.CommonOptions.ACCESS_CONDITION)
+    access_condition = options.get(InternalOptions.InternalOptions.ACCESS_CONDITION)
     if access_condition:
         if access_condition["type"] == "IfMatch":
             headers[http_constants.HttpHeaders.IfMatch] = access_condition["condition"]
         else:
             headers[http_constants.HttpHeaders.IfNoneMatch] = access_condition["condition"]
 
-    if options.get(Constants.CommonOptions.INDEXING_DIRECTIVE):
+    if options.get(InternalOptions.InternalOptions.INDEXING_DIRECTIVE):
         headers[http_constants.HttpHeaders.IndexingDirective] = options[
-            Constants.CommonOptions.INDEXING_DIRECTIVE
+            InternalOptions.InternalOptions.INDEXING_DIRECTIVE
         ]
 
     # set request consistency level - if session consistency, the client should be setting this on its own
-    if options.get(Constants.CommonOptions.CONSISTENCY_LEVEL):
+    if options.get(InternalOptions.InternalOptions.CONSISTENCY_LEVEL):
         headers[http_constants.HttpHeaders.ConsistencyLevel] = options[
-            Constants.CommonOptions.CONSISTENCY_LEVEL
+            InternalOptions.InternalOptions.CONSISTENCY_LEVEL
         ]
 
-    if options.get(Constants.CommonOptions.ENABLE_SCAN_IN_QUERY):
+    if options.get(InternalOptions.InternalOptions.ENABLE_SCAN_IN_QUERY):
         headers[http_constants.HttpHeaders.EnableScanInQuery] = options[
-            Constants.CommonOptions.ENABLE_SCAN_IN_QUERY
+            InternalOptions.InternalOptions.ENABLE_SCAN_IN_QUERY
         ]
 
-    if options.get(Constants.CommonOptions.RESOURCE_TOKEN_EXPIRY_SECONDS):
+    if options.get(InternalOptions.InternalOptions.RESOURCE_TOKEN_EXPIRY_SECONDS):
         headers[http_constants.HttpHeaders.ResourceTokenExpiry] = options[
-            Constants.CommonOptions.RESOURCE_TOKEN_EXPIRY_SECONDS
+            InternalOptions.InternalOptions.RESOURCE_TOKEN_EXPIRY_SECONDS
         ]
 
-    if options.get(Constants.CommonOptions.OFFER_TYPE):
-        headers[http_constants.HttpHeaders.OfferType] = options[Constants.CommonOptions.OFFER_TYPE]
+    if options.get(InternalOptions.InternalOptions.OFFER_TYPE):
+        headers[http_constants.HttpHeaders.OfferType] = options[InternalOptions.InternalOptions.OFFER_TYPE]
 
-    if options.get(Constants.CommonOptions.OFFER_THROUGHPUT):
-        headers[http_constants.HttpHeaders.OfferThroughput] = options[Constants.CommonOptions.OFFER_THROUGHPUT]
+    if options.get(InternalOptions.InternalOptions.OFFER_THROUGHPUT):
+        headers[http_constants.HttpHeaders.OfferThroughput] = options[InternalOptions.InternalOptions.OFFER_THROUGHPUT]
 
-    if options.get(Constants.CommonOptions.CONTENT_TYPE):
-        headers[http_constants.HttpHeaders.ContentType] = options[Constants.CommonOptions.CONTENT_TYPE]
+    if options.get(InternalOptions.InternalOptions.CONTENT_TYPE):
+        headers[http_constants.HttpHeaders.ContentType] = options[InternalOptions.InternalOptions.CONTENT_TYPE]
 
-    if options.get(Constants.CommonOptions.IS_QUERY_PLAN_REQUEST):
+    if options.get(InternalOptions.InternalOptions.IS_QUERY_PLAN_REQUEST):
         headers[http_constants.HttpHeaders.IsQueryPlanRequest] = options[
-            Constants.CommonOptions.IS_QUERY_PLAN_REQUEST
+            InternalOptions.InternalOptions.IS_QUERY_PLAN_REQUEST
         ]
 
-    if options.get(Constants.CommonOptions.SUPPORTED_QUERY_FEATURES):
+    if options.get(InternalOptions.InternalOptions.SUPPORTED_QUERY_FEATURES):
         headers[http_constants.HttpHeaders.SupportedQueryFeatures] = options[
-            Constants.CommonOptions.SUPPORTED_QUERY_FEATURES
+            InternalOptions.InternalOptions.SUPPORTED_QUERY_FEATURES
         ]
 
-    if options.get(Constants.CommonOptions.QUERY_VERSION):
-        headers[http_constants.HttpHeaders.QueryVersion] = options[Constants.CommonOptions.QUERY_VERSION]
+    if options.get(InternalOptions.InternalOptions.QUERY_VERSION):
+        headers[http_constants.HttpHeaders.QueryVersion] = options[InternalOptions.InternalOptions.QUERY_VERSION]
 
-    if Constants.CommonOptions.PARTITION_KEY in options:
+    if InternalOptions.InternalOptions.PARTITION_KEY in options:
         # if partitionKey value is Undefined, serialize it as [{}] to be consistent with other SDKs.
-        if isinstance(options[Constants.CommonOptions.PARTITION_KEY], _Undefined):
+        if isinstance(options[InternalOptions.InternalOptions.PARTITION_KEY], _Undefined):
             headers[http_constants.HttpHeaders.PartitionKey] = [{}]
         # If partitionKey value is Empty, serialize it as [], which is the equivalent sent for migrated collections
-        elif isinstance(options[Constants.CommonOptions.PARTITION_KEY], _Empty):
+        elif isinstance(options[InternalOptions.InternalOptions.PARTITION_KEY], _Empty):
             headers[http_constants.HttpHeaders.PartitionKey] = []
         # else serialize using json dumps method which apart from regular values will serialize None into null
         else:
             # single partitioning uses a string and needs to be turned into a list
             is_sequence_not_string = (
-                isinstance(options[Constants.CommonOptions.PARTITION_KEY], Sequence) and
-                not isinstance(options[Constants.CommonOptions.PARTITION_KEY], str)
+                isinstance(options[InternalOptions.InternalOptions.PARTITION_KEY], Sequence) and
+                not isinstance(options[InternalOptions.InternalOptions.PARTITION_KEY], str)
             )
 
-            if is_sequence_not_string and options[Constants.CommonOptions.PARTITION_KEY]:
+            if is_sequence_not_string and options[InternalOptions.InternalOptions.PARTITION_KEY]:
                 pk_val = json.dumps(
-                    list(options[Constants.CommonOptions.PARTITION_KEY]), separators=(',', ':')
+                    list(options[InternalOptions.InternalOptions.PARTITION_KEY]), separators=(',', ':')
                 )
             else:
-                pk_val = json.dumps([options[Constants.CommonOptions.PARTITION_KEY]])
+                pk_val = json.dumps([options[InternalOptions.InternalOptions.PARTITION_KEY]])
             headers[http_constants.HttpHeaders.PartitionKey] = pk_val
 
-    if options.get(Constants.CommonOptions.ENABLE_CROSS_PARTITION_QUERY):
+    if options.get(InternalOptions.InternalOptions.ENABLE_CROSS_PARTITION_QUERY):
         headers[http_constants.HttpHeaders.EnableCrossPartitionQuery] = options[
-            Constants.CommonOptions.ENABLE_CROSS_PARTITION_QUERY
+            InternalOptions.InternalOptions.ENABLE_CROSS_PARTITION_QUERY
         ]
 
-    if options.get(Constants.CommonOptions.POPULATE_QUERY_METRICS):
+    if options.get(InternalOptions.InternalOptions.POPULATE_QUERY_METRICS):
         headers[http_constants.HttpHeaders.PopulateQueryMetrics] = options[
-            Constants.CommonOptions.POPULATE_QUERY_METRICS
+            InternalOptions.InternalOptions.POPULATE_QUERY_METRICS
         ]
 
-    if options.get(Constants.CommonOptions.POPULATE_INDEX_METRICS):
+    if options.get(InternalOptions.InternalOptions.POPULATE_INDEX_METRICS):
         headers[http_constants.HttpHeaders.PopulateIndexMetrics] = options[
-            Constants.CommonOptions.POPULATE_INDEX_METRICS
+            InternalOptions.InternalOptions.POPULATE_INDEX_METRICS
         ]
 
-    if options.get(Constants.CommonOptions.RESPONSE_CONTINUATION_TOKEN_LIMIT_IN_KB):
+    if options.get(InternalOptions.InternalOptions.RESPONSE_CONTINUATION_TOKEN_LIMIT_IN_KB):
         headers[http_constants.HttpHeaders.ResponseContinuationTokenLimitInKb] = options[
-            Constants.CommonOptions.RESPONSE_CONTINUATION_TOKEN_LIMIT_IN_KB
+            InternalOptions.InternalOptions.RESPONSE_CONTINUATION_TOKEN_LIMIT_IN_KB
         ]
 
-    if options.get(Constants.CommonOptions.PRIORITY_LEVEL):
-        headers[http_constants.HttpHeaders.PriorityLevel] = options[Constants.CommonOptions.PRIORITY_LEVEL]
+    if options.get(InternalOptions.InternalOptions.PRIORITY_LEVEL):
+        headers[http_constants.HttpHeaders.PriorityLevel] = options[InternalOptions.InternalOptions.PRIORITY_LEVEL]
 
     # formatdate guarantees RFC 1123 date format regardless of current locale
     headers[http_constants.HttpHeaders.XDate] = formatdate(timeval=None, localtime=False, usegmt=True)
@@ -301,52 +319,52 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     elif cosmos_client_connection and cosmos_client_connection.client_id:
         headers[http_constants.HttpHeaders.ClientId] = cosmos_client_connection.client_id
 
-    if options.get(Constants.CommonOptions.ENABLE_SCRIPT_LOGGING):
+    if options.get(InternalOptions.InternalOptions.ENABLE_SCRIPT_LOGGING):
         headers[http_constants.HttpHeaders.EnableScriptLogging] = options[
-            Constants.CommonOptions.ENABLE_SCRIPT_LOGGING
+            InternalOptions.InternalOptions.ENABLE_SCRIPT_LOGGING
         ]
 
-    if options.get(Constants.CommonOptions.OFFER_ENABLE_RU_PER_MINUTE_THROUGHPUT):
+    if options.get(InternalOptions.InternalOptions.OFFER_ENABLE_RU_PER_MINUTE_THROUGHPUT):
         headers[http_constants.HttpHeaders.OfferIsRUPerMinuteThroughputEnabled] = options[
-            Constants.CommonOptions.OFFER_ENABLE_RU_PER_MINUTE_THROUGHPUT
+            InternalOptions.InternalOptions.OFFER_ENABLE_RU_PER_MINUTE_THROUGHPUT
         ]
 
-    if options.get(Constants.CommonOptions.DISABLE_RU_PER_MINUTE_USAGE):
+    if options.get(InternalOptions.InternalOptions.DISABLE_RU_PER_MINUTE_USAGE):
         headers[http_constants.HttpHeaders.DisableRUPerMinuteUsage] = options[
-            Constants.CommonOptions.DISABLE_RU_PER_MINUTE_USAGE
+            InternalOptions.InternalOptions.DISABLE_RU_PER_MINUTE_USAGE
         ]
 
-    if options.get(Constants.CommonOptions.CONTINUATION):
-        headers[http_constants.HttpHeaders.Continuation] = options[Constants.CommonOptions.CONTINUATION]
+    if options.get(InternalOptions.InternalOptions.CONTINUATION):
+        headers[http_constants.HttpHeaders.Continuation] = options[InternalOptions.InternalOptions.CONTINUATION]
 
-    if options.get(Constants.CommonOptions.POPULATE_PARTITION_KEY_RANGE_STATISTICS):
+    if options.get(InternalOptions.InternalOptions.POPULATE_PARTITION_KEY_RANGE_STATISTICS):
         headers[http_constants.HttpHeaders.PopulatePartitionKeyRangeStatistics] = options[
-            Constants.CommonOptions.POPULATE_PARTITION_KEY_RANGE_STATISTICS
+            InternalOptions.InternalOptions.POPULATE_PARTITION_KEY_RANGE_STATISTICS
         ]
 
-    if options.get(Constants.CommonOptions.POPULATE_QUOTA_INFO):
-        headers[http_constants.HttpHeaders.PopulateQuotaInfo] = options[Constants.CommonOptions.POPULATE_QUOTA_INFO]
+    if options.get(InternalOptions.InternalOptions.POPULATE_QUOTA_INFO):
+        headers[http_constants.HttpHeaders.PopulateQuotaInfo] = options[InternalOptions.InternalOptions.POPULATE_QUOTA_INFO]
 
-    if options.get(Constants.CommonOptions.MAX_INTEGRATED_CACHE_STALENESS):
+    if options.get(InternalOptions.InternalOptions.MAX_INTEGRATED_CACHE_STALENESS):
         headers[http_constants.HttpHeaders.DedicatedGatewayCacheStaleness] = options[
-            Constants.CommonOptions.MAX_INTEGRATED_CACHE_STALENESS
+            InternalOptions.InternalOptions.MAX_INTEGRATED_CACHE_STALENESS
         ]
 
-    if options.get(Constants.CommonOptions.AUTO_UPGRADE_POLICY):
-        headers[http_constants.HttpHeaders.AutoscaleSettings] = options[Constants.CommonOptions.AUTO_UPGRADE_POLICY]
+    if options.get(InternalOptions.InternalOptions.AUTO_UPGRADE_POLICY):
+        headers[http_constants.HttpHeaders.AutoscaleSettings] = options[InternalOptions.InternalOptions.AUTO_UPGRADE_POLICY]
 
-    if options.get(Constants.CommonOptions.CORRELATED_ACTIVITY_ID):
+    if options.get(InternalOptions.InternalOptions.CORRELATED_ACTIVITY_ID):
         headers[http_constants.HttpHeaders.CorrelatedActivityId] = options[
-            Constants.CommonOptions.CORRELATED_ACTIVITY_ID
+            InternalOptions.InternalOptions.CORRELATED_ACTIVITY_ID
         ]
 
-    if options.get(Constants.CommonOptions.THROUGHPUT_BUCKET):
-        headers[http_constants.HttpHeaders.ThroughputBucket] = options[Constants.CommonOptions.THROUGHPUT_BUCKET]
+    if options.get(InternalOptions.InternalOptions.THROUGHPUT_BUCKET):
+        headers[http_constants.HttpHeaders.ThroughputBucket] = options[InternalOptions.InternalOptions.THROUGHPUT_BUCKET]
 
     if resource_type == "docs" and verb != "get":
-        if Constants.CommonOptions.RESPONSE_PAYLOAD_ON_WRITE_DISABLED in options:
+        if InternalOptions.InternalOptions.RESPONSE_PAYLOAD_ON_WRITE_DISABLED in options:
             responsePayloadOnWriteDisabled = options[
-                Constants.CommonOptions.RESPONSE_PAYLOAD_ON_WRITE_DISABLED
+                InternalOptions.InternalOptions.RESPONSE_PAYLOAD_ON_WRITE_DISABLED
             ]
         else:
             responsePayloadOnWriteDisabled = (
@@ -358,9 +376,9 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
 
     # If it is an operation at the container level, verify the rid of the container to see if the cache needs to be
     # refreshed.
-    if resource_type != 'dbs' and options.get(Constants.CommonOptions.CONTAINER_RID):
+    if resource_type != 'dbs' and options.get(InternalOptions.InternalOptions.CONTAINER_RID):
         headers[http_constants.HttpHeaders.IntendedCollectionRID] = options[
-            Constants.CommonOptions.CONTAINER_RID
+            InternalOptions.InternalOptions.CONTAINER_RID
         ]
 
     if resource_type == "":
@@ -398,9 +416,9 @@ def set_session_token_header(
     # set session token if required
     if _is_session_token_request(cosmos_client_connection, headers, request_object):
         # if there is a token set via option, then use it to override default
-        if options.get(Constants.CommonOptions.SESSION_TOKEN):
+        if options.get(InternalOptions.InternalOptions.SESSION_TOKEN):
             headers[http_constants.HttpHeaders.SessionToken] = options[
-                Constants.CommonOptions.SESSION_TOKEN
+                InternalOptions.InternalOptions.SESSION_TOKEN
             ]
         else:
             # check if the client's default consistency is session (and request consistency level is same),
@@ -410,7 +428,7 @@ def set_session_token_header(
                 # populate session token from the client's session container
                 session_token = cosmos_client_connection.session.get_session_token(
                     path,
-                    options.get(Constants.CommonOptions.PARTITION_KEY),
+                    options.get(InternalOptions.InternalOptions.PARTITION_KEY),
                     cosmos_client_connection._container_properties_cache,
                     cosmos_client_connection._routing_map_provider,
                     partition_key_range_id
@@ -428,9 +446,9 @@ async def set_session_token_header_async(
     # set session token if required
     if _is_session_token_request(cosmos_client_connection, headers, request_object):
         # if there is a token set via option, then use it to override default
-        if options.get(Constants.CommonOptions.SESSION_TOKEN):
+        if options.get(InternalOptions.InternalOptions.SESSION_TOKEN):
             headers[http_constants.HttpHeaders.SessionToken] = options[
-                Constants.CommonOptions.SESSION_TOKEN
+                InternalOptions.InternalOptions.SESSION_TOKEN
             ]
         else:
             # check if the client's default consistency is session (and request consistency level is same),
@@ -440,7 +458,7 @@ async def set_session_token_header_async(
                 # populate session token from the client's session container
                 session_token = await cosmos_client_connection.session.get_session_token_async(
                     path,
-                    options.get(Constants.CommonOptions.PARTITION_KEY),
+                    options.get(InternalOptions.InternalOptions.PARTITION_KEY),
                     cosmos_client_connection._container_properties_cache,
                     cosmos_client_connection._routing_map_provider,
                     partition_key_range_id
@@ -848,19 +866,19 @@ def _stringify_auto_scale(offer: ThroughputProperties) -> str:
 
 def _set_throughput_options(offer: Optional[Union[int, ThroughputProperties]], request_options: Dict[str, Any]) -> None:
     if isinstance(offer, int):
-        request_options[Constants.CommonOptions.OFFER_THROUGHPUT] = offer
+        request_options[InternalOptions.InternalOptions.OFFER_THROUGHPUT] = offer
     elif offer is not None:
         try:
             max_throughput = offer.auto_scale_max_throughput
             increment_percent = offer.auto_scale_increment_percent
 
             if max_throughput is not None:
-                request_options[Constants.CommonOptions.AUTO_UPGRADE_POLICY] = _stringify_auto_scale(offer=offer)
+                request_options[InternalOptions.InternalOptions.AUTO_UPGRADE_POLICY] = _stringify_auto_scale(offer=offer)
             elif increment_percent:
                 raise ValueError("auto_scale_max_throughput must be supplied in "
                                  "conjunction with auto_scale_increment_percent")
             if offer.offer_throughput:
-                request_options[Constants.CommonOptions.OFFER_THROUGHPUT] = offer.offer_throughput
+                request_options[InternalOptions.InternalOptions.OFFER_THROUGHPUT] = offer.offer_throughput
         except AttributeError as e:
             raise TypeError("offer_throughput must be int or an instance of ThroughputProperties") from e
 

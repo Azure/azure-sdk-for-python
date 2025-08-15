@@ -92,7 +92,7 @@ class _Constants:
         )
     }
 
-    class CommonOptions:
+    class InternalOptions:
         """Internal option names used in request processing
         
         These constants represent the internal option keys used in the azure-cosmos package
@@ -224,6 +224,37 @@ class _Constants:
 
         THROUGHPUT_BUCKET: Literal["throughputBucket"] = "throughputBucket"
         """Throughput bucket for the request."""
+
+        # Additional internal options
+        ENABLE_DIAGNOSTICS_LOGGING: Literal["enableDiagnosticsLogging"] = "enableDiagnosticsLogging"
+        """Whether to enable diagnostics logging."""
+
+        LOGGER: Literal["logger"] = "logger"
+        """Logger instance for diagnostics."""
+
+        PROXIES: Literal["proxies"] = "proxies"
+        """Proxy configuration for requests."""
+
+        USER_AGENT_SUFFIX: Literal["userAgentSuffix"] = "userAgentSuffix"
+        """Additional user agent suffix for requests."""
+
+        TRANSPORT: Literal["transport"] = "transport"
+        """Custom transport for requests."""
+
+        RESPONSE_HOOK: Literal["responseHook"] = "responseHook"
+        """Response hook callback function."""
+
+        RAW_RESPONSE_HOOK: Literal["rawResponseHook"] = "rawResponseHook"
+        """Raw response hook callback function."""
+
+        FEED_RANGE: Literal["feedRange"] = "feedRange"
+        """Feed range for query operations."""
+
+        PREFIX_PARTITION_KEY_OBJECT: Literal["prefixPartitionKeyObject"] = "prefixPartitionKeyObject"
+        """Prefix partition key object for queries."""
+
+        PREFIX_PARTITION_KEY_VALUE: Literal["prefixPartitionKeyValue"] = "prefixPartitionKeyValue"
+        """Prefix partition key value for queries."""
 
     class Kwargs:
         """Public-facing keyword argument names used in the azure-cosmos package
@@ -360,3 +391,34 @@ class _Constants:
 
         THROUGHPUT_BUCKET: Literal["throughput_bucket"] = "throughput_bucket"
         """Throughput bucket kwarg for the request."""
+
+        # Additional public kwargs
+        ENABLE_DIAGNOSTICS_LOGGING: Literal["enable_diagnostics_logging"] = "enable_diagnostics_logging"
+        """Whether to enable diagnostics logging kwarg."""
+
+        LOGGER: Literal["logger"] = "logger"
+        """Logger instance kwarg for diagnostics."""
+
+        PROXIES: Literal["proxies"] = "proxies"
+        """Proxy configuration kwarg for requests."""
+
+        USER_AGENT_SUFFIX: Literal["user_agent_suffix"] = "user_agent_suffix"
+        """Additional user agent suffix kwarg for requests."""
+
+        TRANSPORT: Literal["transport"] = "transport"
+        """Custom transport kwarg for requests."""
+
+        RESPONSE_HOOK: Literal["response_hook"] = "response_hook"
+        """Response hook callback function kwarg."""
+
+        RAW_RESPONSE_HOOK: Literal["raw_response_hook"] = "raw_response_hook"
+        """Raw response hook callback function kwarg."""
+
+        FEED_RANGE: Literal["feed_range"] = "feed_range"
+        """Feed range kwarg for query operations."""
+
+        PREFIX_PARTITION_KEY_OBJECT: Literal["prefix_partition_key_object"] = "prefix_partition_key_object"
+        """Prefix partition key object kwarg for queries."""
+
+        PREFIX_PARTITION_KEY_VALUE: Literal["prefix_partition_key_value"] = "prefix_partition_key_value"
+        """Prefix partition key value kwarg for queries."""
