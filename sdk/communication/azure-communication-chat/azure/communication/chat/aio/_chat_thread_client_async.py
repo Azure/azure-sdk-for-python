@@ -101,7 +101,7 @@ class ChatThreadClient(object):  # pylint: disable=client-accepts-api-version-ke
         return self._thread_id
 
     @distributed_trace_async
-    async def get_properties(self, **kwargs) -> ChatThreadProperties:
+    async def get_properties(self, **kwargs: Any) -> ChatThreadProperties:
         """Gets the properties of the chat thread.
 
         :return: ChatThreadProperties
@@ -122,7 +122,7 @@ class ChatThreadClient(object):  # pylint: disable=client-accepts-api-version-ke
         return ChatThreadProperties._from_generated(chat_thread)  # pylint:disable=protected-access
 
     @distributed_trace_async
-    async def update_topic(self, topic: str = None, **kwargs) -> None:
+    async def update_topic(self, topic: str = None, **kwargs: Any) -> None:
         """Updates a thread's properties.
 
         :param topic: Thread topic. If topic is not specified, the update will succeed but
@@ -148,7 +148,7 @@ class ChatThreadClient(object):  # pylint: disable=client-accepts-api-version-ke
         )
 
     @distributed_trace_async
-    async def send_read_receipt(self, message_id: str, **kwargs) -> None:
+    async def send_read_receipt(self, message_id: str, **kwargs: Any) -> None:
         """Posts a read receipt event to a chat thread, on behalf of a user.
 
         :param message_id: Required. Id of the latest message read by current user.
@@ -175,7 +175,7 @@ class ChatThreadClient(object):  # pylint: disable=client-accepts-api-version-ke
         )
 
     @distributed_trace
-    def list_read_receipts(self, **kwargs: Any) -> AsyncItemPaged[ChatMessageReadReceipt]:
+    def list_read_receipts(self, **kwargs: Any):
         """Gets read receipts for a thread.
 
         :keyword int results_per_page: The maximum number of chat message read receipts to be returned per page.
@@ -207,7 +207,7 @@ class ChatThreadClient(object):  # pylint: disable=client-accepts-api-version-ke
         )
 
     @distributed_trace_async
-    async def send_typing_notification(self, *, sender_display_name: Optional[str] = None, **kwargs) -> None:
+    async def send_typing_notification(self, *, sender_display_name: str = None, **kwargs: Any) -> None:
         """Posts a typing event to a thread, on behalf of a user.
 
         :keyword str sender_display_name: The display name of the typing notification sender. This property
@@ -233,7 +233,12 @@ class ChatThreadClient(object):  # pylint: disable=client-accepts-api-version-ke
         )
 
     @distributed_trace_async
-    async def send_message(self, content: str, *, metadata: Dict[str, str] = None, **kwargs) -> SendChatMessageResult:
+    async def send_message(
+        self,
+        content: str,
+        metadata: dict = None,
+        **kwargs: Any
+    ) -> SendChatMessageResult:
         """Sends a message to a thread.
 
         :param content: Required. Chat message content.
@@ -276,8 +281,6 @@ class ChatThreadClient(object):  # pylint: disable=client-accepts-api-version-ke
                 "chat_message_type: {message_type} can be only 'text' or 'html'".format(message_type=chat_message_type)
             )
 
-        sender_display_name = kwargs.pop("sender_display_name", None)
-
         create_message_request = SendChatMessageRequest(
             content=content, type=chat_message_type, sender_display_name=sender_display_name, metadata=metadata
         )
@@ -288,7 +291,7 @@ class ChatThreadClient(object):  # pylint: disable=client-accepts-api-version-ke
         return send_chat_message_result
 
     @distributed_trace_async
-    async def get_message(self, message_id: str, **kwargs) -> ChatMessage:
+    async def get_message(self, message_id: str, **kwargs: Any) -> ChatMessage:
         """Gets a message by id.
 
         :param message_id: Required. The message id.
@@ -313,7 +316,7 @@ class ChatThreadClient(object):  # pylint: disable=client-accepts-api-version-ke
         return ChatMessage._from_generated(chat_message)  # pylint:disable=protected-access
 
     @distributed_trace
-    def list_messages(self, **kwargs: Any) -> AsyncItemPaged[ChatMessage]:
+    def list_messages(self, **kwargs: Any):
         """Gets a list of messages from a thread.
 
         :keyword int results_per_page: The maximum number of messages to be returned per page.
@@ -344,7 +347,9 @@ class ChatThreadClient(object):  # pylint: disable=client-accepts-api-version-ke
 
     @distributed_trace_async
     async def update_message(
-        self, message_id: str, content: str = None, *, metadata: Dict[str, str] = None, **kwargs
+        self,
+        metadata: dict = None,
+        **kwargs: Any
     ) -> None:
         """Updates a message.
 
@@ -378,7 +383,7 @@ class ChatThreadClient(object):  # pylint: disable=client-accepts-api-version-ke
         )
 
     @distributed_trace_async
-    async def delete_message(self, message_id: str, **kwargs) -> None:
+    async def delete_message(self, message_id: str, **kwargs: Any) -> None:
         """Deletes a message.
 
         :param message_id: Required. The message id.
@@ -404,7 +409,7 @@ class ChatThreadClient(object):  # pylint: disable=client-accepts-api-version-ke
         )
 
     @distributed_trace
-    def list_participants(self, **kwargs: Any) -> AsyncItemPaged[ChatParticipant]:
+    def list_participants(self, **kwargs: Any):
         """Gets the participants of a thread.
 
         :keyword int results_per_page: The maximum number of participants to be returned per page.
@@ -435,9 +440,7 @@ class ChatThreadClient(object):  # pylint: disable=client-accepts-api-version-ke
         )
 
     @distributed_trace_async
-    async def add_participants(
-        self, thread_participants: List[ChatParticipant], **kwargs
-    ) -> List[Tuple[ChatParticipant, ChatError]]:
+    async def add_participants(self, thread_participants: list, **kwargs: Any) -> list:
         """Adds thread participants to a thread. If participants already exist, no change occurs.
 
         If all participants are added successfully, then an empty list is returned;
@@ -475,7 +478,7 @@ class ChatThreadClient(object):  # pylint: disable=client-accepts-api-version-ke
         return response
 
     @distributed_trace_async
-    async def remove_participant(self, identifier: CommunicationIdentifier, **kwargs) -> None:
+    async def remove_participant(self, identifier: CommunicationIdentifier, **kwargs: Any) -> None:
         """Remove a participant from a thread.
 
         :param identifier: Required. Identifier of the thread participant to remove from the thread.
@@ -505,9 +508,9 @@ class ChatThreadClient(object):  # pylint: disable=client-accepts-api-version-ke
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "ChatThreadClient":
+    async def __aenter__(self) -> 'ChatThreadClient':
         await self._client.__aenter__()
         return self
 
-    async def __aexit__(self, *args) -> None:
+    async def __aexit__(self, *args: Any) -> None:
         await self._client.__aexit__(*args)

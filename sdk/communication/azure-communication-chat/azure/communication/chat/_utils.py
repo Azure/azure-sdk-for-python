@@ -5,11 +5,11 @@
 # --------------------------------------------------------------------------
 
 
-def _to_utc_datetime(value):
+def _to_utc_datetime(value) -> str:
     return value.strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
-def return_response(response, deserialized, _):  # pylint: disable=unused-argument
+def return_response(response, deserialized, _) -> tuple:
     return response, deserialized
 
 
@@ -23,7 +23,7 @@ class CommunicationErrorResponseConverter(object):
     """
 
     @classmethod
-    def convert(cls, participants, chat_errors):
+    def convert(cls, participants: list, chat_errors: list) -> list:
         # type: (...) -> list[(ChatThreadParticipant, ChatError)]
         """
         Util function to convert AddChatParticipantsResult.
@@ -40,7 +40,7 @@ class CommunicationErrorResponseConverter(object):
         :rtype: list[(~azure.communication.chat.ChatParticipant, ~azure.communication.chat.ChatError)]
         """
 
-        def create_dict(participants):
+        def create_dict(participants: list) -> dict:
             # type: (...) -> Dict(str, ChatThreadParticipant)
             """
             Create dictionary of id -> ChatParticipant

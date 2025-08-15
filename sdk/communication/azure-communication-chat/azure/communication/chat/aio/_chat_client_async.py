@@ -100,7 +100,11 @@ class ChatClient(object):  # pylint: disable=client-accepts-api-version-keyword
         return ChatThreadClient(endpoint=self._endpoint, credential=self._credential, thread_id=thread_id, **kwargs)
 
     @distributed_trace_async
-    async def create_chat_thread(self, topic: str, **kwargs) -> CreateChatThreadResult:
+    async def create_chat_thread(
+        self,
+        topic: str,
+        **kwargs: Any
+    ) -> CreateChatThreadResult:
         """Creates a chat thread.
 
         :param topic: Required. The thread topic.
@@ -160,7 +164,10 @@ class ChatClient(object):  # pylint: disable=client-accepts-api-version-keyword
         return create_chat_thread_result
 
     @distributed_trace
-    def list_chat_threads(self, **kwargs: Any) -> AsyncItemPaged[ChatThreadItem]:
+    def list_chat_threads(
+        self,
+        **kwargs: Any
+    ):
         """Gets the list of chat threads of a user.
 
         :keyword int results_per_page: The maximum number of chat threads to be returned per page.
@@ -184,7 +191,7 @@ class ChatClient(object):  # pylint: disable=client-accepts-api-version-keyword
         return self._client.chat.list_chat_threads(max_page_size=results_per_page, start_time=start_time, **kwargs)
 
     @distributed_trace_async
-    async def delete_chat_thread(self, thread_id: str, **kwargs) -> None:
+    async def delete_chat_thread(self, thread_id: str, **kwargs: Any) -> None:
         """Deletes a chat thread.
 
         :param thread_id: Required. Thread id to delete.
