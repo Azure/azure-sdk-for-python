@@ -145,14 +145,12 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
             encoded_claims = get_challenge_parameter(headers, "Bearer", "claims")
             if not encoded_claims:
                 return False
-            try:
-                padding_needed = -len(encoded_claims) % 4
-                claims = base64.urlsafe_b64decode(encoded_claims + "=" * padding_needed).decode("utf-8")
-                if claims:
-                    await self.authorize_request(request, *self._scopes, claims=claims)
-                    return True
-            except Exception:  # pylint:disable=broad-except
-                return False
+            padding_needed = -len(encoded_claims) % 4
+            claims = base64.urlsafe_b64decode(encoded_claims + "=" * padding_needed).decode("utf-8")
+            if claims:
+                await self.authorize_request(request, *self._scopes, claims=claims, challenge_response=response)
+                return True
+
         return False
 
     def on_response(
@@ -200,6 +198,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
                 *scopes,
                 options=options,
             )
+        kwargs.pop("challenge_response", None)
         return await await_result(
             cast(AsyncTokenCredential, self._credential).get_token,
             *scopes,
