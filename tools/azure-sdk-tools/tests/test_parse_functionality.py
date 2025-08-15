@@ -232,7 +232,7 @@ def test_parse_pyproject():
         "isodate>=0.6.1",
         "typing-extensions>=4.0.1",
     ]
-    assert parsed_project.python_requires == ">=3.7"
+    assert parsed_project.python_requires == ">=3.8"
     assert parsed_project.is_new_sdk == True
     assert parsed_project.is_pyproject == True
     assert parsed_project.package_data == {"py.typed": ["py.typed"]}
