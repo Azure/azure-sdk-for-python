@@ -4,6 +4,7 @@ import json
 
 from ci_tools.conda.CondaConfiguration import CondaConfiguration
 
+
 def test_conda_config_retrieve():
     raw_json = """
     {
@@ -29,4 +30,3 @@ def test_conda_config_retrieve():
     """
 
     CondaConfiguration.from_json(json.loads(raw_json))
-
