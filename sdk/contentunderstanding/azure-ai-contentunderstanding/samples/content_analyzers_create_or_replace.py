@@ -8,11 +8,12 @@ Async sample: create a custom analyzer using begin_create_or_replace API.
 
 Prerequisites:
     pip install azure-ai-contentunderstanding python-dotenv
-    az login  # or set AZURE_CONTENT_UNDERSTANDING_KEY
+    az login  # Used for DefaultAzureCredential(). Alternatively, set the AZURE_CONTENT_UNDERSTANDING_KEY environment variable
 
 Environment variables:
     AZURE_CONTENT_UNDERSTANDING_ENDPOINT   (required)
-    AZURE_CONTENT_UNDERSTANDING_KEY        (optional - falls back to DefaultAzureCredential)
+    AZURE_CONTENT_UNDERSTANDING_KEY        (optional - DefaultAzureCredential() will be used if not set)
+    These variables can be set in a .env file in the samples directory for repeated use. Please see env.sample for an example.
 
 Run:
     python content_analyzers_create_or_replace.py

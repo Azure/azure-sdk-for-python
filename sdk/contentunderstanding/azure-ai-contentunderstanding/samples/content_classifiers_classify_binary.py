@@ -23,9 +23,16 @@ from dotenv import load_dotenv
 load_dotenv()
 
 """
-# PREREQUISITES
-    pip install azure-ai-contentunderstanding
-# USAGE
+Prerequisites:
+    pip install azure-ai-contentunderstanding python-dotenv
+    az login  # Used for DefaultAzureCredential(). Alternatively, set the AZURE_CONTENT_UNDERSTANDING_KEY environment variable
+
+Environment variables:
+    AZURE_CONTENT_UNDERSTANDING_ENDPOINT   (required)
+    AZURE_CONTENT_UNDERSTANDING_KEY        (optional - DefaultAzureCredential() will be used if not set)
+    These variables can be set in a .env file in the samples directory for repeated use. Please see env.sample for an example.
+
+Run:
     python content_classifiers_classify_binary.py
 """
 

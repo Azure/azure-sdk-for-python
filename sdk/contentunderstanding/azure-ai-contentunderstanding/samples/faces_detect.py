@@ -17,9 +17,16 @@ from sample_helper import get_credential, read_image_to_base64
 load_dotenv()
 
 """
-# PREREQUISITES
+Prerequisites:
     pip install azure-ai-contentunderstanding python-dotenv
-# USAGE
+    az login  # Used for DefaultAzureCredential(). Alternatively, set the AZURE_CONTENT_UNDERSTANDING_KEY environment variable
+
+Environment variables:
+    AZURE_CONTENT_UNDERSTANDING_ENDPOINT   (required)
+    AZURE_CONTENT_UNDERSTANDING_KEY        (optional - DefaultAzureCredential() will be used if not set)
+    These variables can be set in a .env file in the samples directory for repeated use. Please see env.sample for an example.
+
+Run:
     python faces_detect.py
 """
 

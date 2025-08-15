@@ -8,11 +8,12 @@ Async sample: use the prebuilt-documentAnalyzer to extract content from a PDF.
 
 Prerequisites:
     pip install azure-ai-contentunderstanding python-dotenv
-    az login  # or set AZURE_CONTENT_UNDERSTANDING_KEY
+    az login  # Used for DefaultAzureCredential(). Alternatively, set the AZURE_CONTENT_UNDERSTANDING_KEY environment variable
 
 Environment variables:
     AZURE_CONTENT_UNDERSTANDING_ENDPOINT   (required)
-    AZURE_CONTENT_UNDERSTANDING_KEY        (optional - falls back to DefaultAzureCredential)
+    AZURE_CONTENT_UNDERSTANDING_KEY        (optional - DefaultAzureCredential() will be used if not set)
+    These variables can be set in a .env file in the samples directory for repeated use. Please see env.sample for an example.
 
 Run:
     python content_analyzers_analyze_binary.py
@@ -25,7 +26,8 @@ import os
 
 from dotenv import load_dotenv
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
-from sample_helper import get_credential, save_response_to_file
+from azure.ai.contentunderstanding.models import AnalyzeResult, MediaContent, DocumentContent, MediaContentKind, DocumentTable
+from sample_helper import get_credential
 
 load_dotenv()
 
@@ -37,7 +39,7 @@ load_dotenv()
 # 1. Authenticate with Azure AI Content Understanding
 # 2. Read a PDF file from disk
 # 3. Analyze the document using begin_analyze_binary with prebuilt-documentAnalyzer
-# 4. Save the full analysis result to a JSON file
+# 4. Print the markdown content from the analysis result
 
 async def main() -> None:
     endpoint = os.environ["AZURE_CONTENT_UNDERSTANDING_ENDPOINT"]
@@ -45,7 +47,7 @@ async def main() -> None:
 
     async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client, credential:
         with open("sample_files/sample_invoice.pdf", "rb") as f:
-            pdf_bytes = f.read()
+            pdf_bytes: bytes = f.read()
 
         print("🔍 Analyzing sample_files/sample_invoice.pdf with prebuilt-documentAnalyzer...")
         poller = await client.content_analyzers.begin_analyze_binary(
@@ -53,8 +55,50 @@ async def main() -> None:
             input=pdf_bytes,
             content_type="application/pdf",
         )
-        result = await poller.result()
-        save_response_to_file(result, filename_prefix="content_analyzers_analyze_binary")
+        result: AnalyzeResult = await poller.result()
+        
+        # AnalyzeResult contains the full analysis result and can be used to access various properties
+        # We are using markdown content as an example of what can be extracted
+        print("\n📄 Markdown Content:")
+        print("=" * 50)
+        # A PDF file has only one content element even if it contains multiple pages
+        content: MediaContent = result.contents[0]
+        print(content.markdown)
+        print("=" * 50)
+        
+        # Check if this is document content to access document-specific properties
+        if content.kind == MediaContentKind.DOCUMENT:
+            # Type assertion: we know this is DocumentContent for PDF files
+            document_content: DocumentContent = content  # type: ignore
+            print(f"\n📚 Document Information:")
+            print(f"Start page: {document_content.start_page_number}")
+            print(f"End page: {document_content.end_page_number}")
+            print(f"Total pages: {document_content.end_page_number - document_content.start_page_number + 1}")
+            
+            # Check for pages
+            if document_content.pages is not None:
+                print(f"\n📄 Pages ({len(document_content.pages)}):")
+                for i, page in enumerate(document_content.pages):
+                    unit = document_content.unit or 'units'
+                    print(f"  Page {i + 1}: {page.width} x {page.height} {unit}")
+            
+            # The following code shows how to access DocumentContent properties
+            # Check if there are tables in the document
+            if document_content.tables is not None:
+                print(f"\n📊 Tables ({len(document_content.tables)}):")
+                table_counter = 1
+                # Iterate through tables, each table is of type DocumentTable
+                for table in document_content.tables:
+                    # Type: table is DocumentTable
+                    # Get basic table dimensions
+                    row_count: int = table.row_count
+                    col_count: int = table.column_count
+                    print(f"  Table {table_counter}: {row_count} rows x {col_count} columns")
+                    table_counter += 1
+                    # You can use the table object model to get detailed information
+                    # such as cell content, borders, spans, etc. (not shown to keep code concise)
+        else:
+            print("\n📚 Document Information: Not available for this content type")
 
 
 if __name__ == "__main__":
