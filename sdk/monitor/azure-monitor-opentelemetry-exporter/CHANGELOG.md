@@ -7,6 +7,8 @@
   ([#42382](https://github.com/Azure/azure-sdk-for-python/pull/42382))
 - Refactored the put methods in storage.py for LocalFileBlob and LocalFileStorage
   ([#42502](https://github.com/Azure/azure-sdk-for-python/pull/42502))
+- Customer Facing SDKStats: Added the export interval env var for customer sdkstats
+  ([#42551](https://github.com/Azure/azure-sdk-for-python/pull/42551))
 
 ### Breaking Changes
 
