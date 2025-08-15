@@ -79,6 +79,7 @@ def test_set_dev_version_on_pyproject(input_folder):
     assert parsed_after.version == "0.0.1a20250813001"
     assert "Development Status :: 4 - Beta" in parsed_after.classifiers
 
+
 def test_set_dev_version_on_setup():
     # Create a temp directory from the setup template
     temp_dir = create_temp_directory_from_template(setup_folder)
