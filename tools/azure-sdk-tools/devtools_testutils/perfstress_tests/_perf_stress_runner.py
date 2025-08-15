@@ -5,6 +5,7 @@
 
 import argparse
 import inspect
+import json
 import logging
 import math
 import os
@@ -116,6 +117,11 @@ class _PerfStressRunner:
         )
         per_test_arg_parser.add_argument(
             "-l", "--latency", action="store_true", help="Track per-operation latency statistics.", default=False
+        )
+        per_test_arg_parser.add_argument(
+            "--results-file",
+            type=str,
+            help="File path location to store the results for the test run.",
         )
 
         # Per-test args
@@ -292,6 +298,10 @@ class _PerfStressRunner:
             if self.per_test_args.latency and len(latencies) > 0:
                 self.logger.info("")
                 self._print_latencies(latencies)
+                if self.per_test_args.results_file:
+                    # Not all tests will have a size argument
+                    size = self.per_test_args.size if hasattr(self.per_test_args, "size") else None
+                    self._write_results_file(self.per_test_args.results_file, latencies, size)
         else:
             self.logger.info("Completed without generating operation statistics.")
         self.logger.info("")
@@ -354,3 +364,9 @@ class _PerfStressRunner:
         for p in percentiles:
             index = math.ceil(p / 100 * len(latencies)) - 1
             self.logger.info(f"{p:5.1f}% {latencies[index]:10.2f}ms")
+
+    def _write_results_file(self, path: str, latencies: List[float], size):
+        data = [{"Time": l, "Size": size} for l in latencies]
+        output = json.dumps(data, indent=2)
+        with open(path, 'w', encoding='utf-8') as f:
+            f.write(output)

@@ -64,7 +64,7 @@ async def _start_tests(index, test_class, num_tests, args, test_stages, results,
         if args.warmup:
             # Waiting till all processes are ready to start "Warmup"
             _synchronize(test_stages["Warmup"])
-            await _run_tests(args.warmup, args, tests, results, status, with_profiler=False)
+            await _run_tests(args.warmup, args, tests, results, status, with_profiler=False, warmup=True)
 
         # Waiting till all processes are ready to start "Tests"
         _synchronize(test_stages["Tests"])
@@ -108,7 +108,7 @@ async def _start_tests(index, test_class, num_tests, args, test_stages, results,
                 print(f"Failed to close tests: {e}")
 
 
-async def _run_tests(duration: int, args, tests, results, status, *, with_profiler: bool = False) -> None:
+async def _run_tests(duration: int, args, tests, results, status, *, with_profiler: bool = False, warmup: bool = False) -> None:
     """Run the listed tests either in parallel asynchronously or in a thread pool."""
     # Kick of a status monitoring thread.
     stop_status = threading.Event()
@@ -133,7 +133,9 @@ async def _run_tests(duration: int, args, tests, results, status, *, with_profil
 
         # Add final test results to the results queue to be accumulated by the parent process.
         for test in tests:
-            results.put((test._parallel_index, test.completed_operations, test.last_completion_time, test._latencies))
+            # Don't report latencies for warmup
+            latencies = test._latencies if not warmup else []
+            results.put((test._parallel_index, test.completed_operations, test.last_completion_time, latencies))
     finally:
         # Clean up status reporting thread.
         stop_status.set()
