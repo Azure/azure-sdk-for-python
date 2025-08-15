@@ -9,6 +9,7 @@
 #### Bugs Fixed
 
 #### Other Changes
+* Added session token false progress merge logic. See [42393](https://github.com/Azure/azure-sdk-for-python/pull/42393)
 
 ### 4.14.0b2 (2025-08-12)
 
