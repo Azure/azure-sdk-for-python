@@ -92,20 +92,15 @@ class _Constants:
         )
     }
 
-    class Kwargs:
-        """Keyword arguments used in the azure-cosmos package
-
-        These constants should be used instead of hardcoded strings for request options
-        to improve maintainability, reduce errors, and provide better IDE support.
-
-        Best practices:
-        - Always use these constants instead of hardcoded strings
-        - Follow the naming convention: UPPER_SNAKE_CASE for constant names
-        - Use Literal types for type safety
-        - Document the purpose of each constant
+    class CommonOptions:
+        """Internal option names used in request processing
+        
+        These constants represent the internal option keys used in the azure-cosmos package
+        for request processing and headers. They are used internally by the SDK and should
+        not be used directly in public APIs.
         """
 
-        # Request option keys used in build_options and GetHeaders functions
+        # Internal option keys used in build_options and GetHeaders functions
         ACCESS_CONDITION: Literal["accessCondition"] = "accessCondition"
         """Access condition option for conditional operations (IfMatch, IfNoneMatch)."""
 
@@ -229,3 +224,139 @@ class _Constants:
 
         THROUGHPUT_BUCKET: Literal["throughputBucket"] = "throughputBucket"
         """Throughput bucket for the request."""
+
+    class Kwargs:
+        """Public-facing keyword argument names used in the azure-cosmos package
+
+        These constants should be used instead of hardcoded strings for kwargs in public APIs
+        to improve maintainability, reduce errors, and provide better IDE support.
+
+        Best practices:
+        - Always use these constants instead of hardcoded strings in public APIs
+        - Follow the naming convention: UPPER_SNAKE_CASE for constant names
+        - Use Literal types for type safety
+        - Document the purpose of each constant
+        """
+
+        # Public kwarg names used in public APIs
+        ACCESS_CONDITION: Literal["access_condition"] = "access_condition"
+        """Access condition kwarg for conditional operations (IfMatch, IfNoneMatch)."""
+
+        AUTO_UPGRADE_POLICY: Literal["auto_upgrade_policy"] = "auto_upgrade_policy"
+        """Auto-upgrade policy kwarg for autoscale settings."""
+
+        CONSISTENCY_LEVEL: Literal["consistency_level"] = "consistency_level"
+        """Consistency level override kwarg for the request."""
+
+        CONTAINER_RID: Literal["container_rid"] = "container_rid"
+        """Container resource ID kwarg for request routing."""
+
+        CONTENT_TYPE: Literal["content_type"] = "content_type"
+        """Content type kwarg for the request."""
+
+        CONTINUATION: Literal["continuation"] = "continuation"
+        """Continuation token kwarg for paginated queries."""
+
+        CORRELATED_ACTIVITY_ID: Literal["correlated_activity_id"] = "correlated_activity_id"
+        """Correlated activity ID kwarg for tracing and diagnostics."""
+
+        DISABLE_RU_PER_MINUTE_USAGE: Literal[
+            "disable_ru_per_minute_usage"
+        ] = "disable_ru_per_minute_usage"
+        """Whether to disable RU per minute usage kwarg."""
+
+        ENABLE_CROSS_PARTITION_QUERY: Literal[
+            "enable_cross_partition_query"
+        ] = "enable_cross_partition_query"
+        """Whether to enable cross-partition queries kwarg."""
+
+        ENABLE_SCAN_IN_QUERY: Literal["enable_scan_in_query"] = "enable_scan_in_query"
+        """Whether to enable scan in query operations kwarg."""
+
+        ENABLE_SCRIPT_LOGGING: Literal["enable_script_logging"] = "enable_script_logging"
+        """Whether to enable script logging for stored procedures kwarg."""
+
+        EXCLUDED_LOCATIONS: Literal["excluded_locations"] = "excluded_locations"
+        """List of locations to exclude for this request kwarg."""
+
+        INDEXING_DIRECTIVE: Literal["indexing_directive"] = "indexing_directive"
+        """Indexing directive kwarg for the operation."""
+
+        INITIAL_HEADERS: Literal["initial_headers"] = "initial_headers"
+        """Initial headers kwarg to include in the request."""
+
+        IS_QUERY_PLAN_REQUEST: Literal["is_query_plan_request"] = "is_query_plan_request"
+        """Whether this is a query plan request kwarg."""
+
+        MAX_INTEGRATED_CACHE_STALENESS: Literal[
+            "max_integrated_cache_staleness"
+        ] = "max_integrated_cache_staleness"
+        """Maximum integrated cache staleness kwarg in milliseconds."""
+
+        MAX_ITEM_COUNT: Literal["max_item_count"] = "max_item_count"
+        """Maximum number of items to return in the response kwarg."""
+
+        OFFER_ENABLE_RU_PER_MINUTE_THROUGHPUT: Literal[
+            "offer_enable_ru_per_minute_throughput"
+        ] = "offer_enable_ru_per_minute_throughput"
+        """Whether to enable RU per minute throughput for the offer kwarg."""
+
+        OFFER_THROUGHPUT: Literal["offer_throughput"] = "offer_throughput"
+        """Throughput value kwarg for the offer."""
+
+        OFFER_TYPE: Literal["offer_type"] = "offer_type"
+        """Type of the offer kwarg (S1, S2, S3, etc.)."""
+
+        PARTITION_KEY: Literal["partition_key"] = "partition_key"
+        """Partition key value kwarg for the request."""
+
+        POPULATE_INDEX_METRICS: Literal["populate_index_metrics"] = "populate_index_metrics"
+        """Whether to populate index metrics in the response kwarg."""
+
+        POPULATE_PARTITION_KEY_RANGE_STATISTICS: Literal[
+            "populate_partition_key_range_statistics"
+        ] = "populate_partition_key_range_statistics"
+        """Whether to populate partition key range statistics kwarg."""
+
+        POPULATE_QUERY_METRICS: Literal["populate_query_metrics"] = "populate_query_metrics"
+        """Whether to populate query metrics in the response kwarg."""
+
+        POPULATE_QUOTA_INFO: Literal["populate_quota_info"] = "populate_quota_info"
+        """Whether to populate quota information in the response kwarg."""
+
+        POST_TRIGGER_INCLUDE: Literal["post_trigger_include"] = "post_trigger_include"
+        """Post-trigger scripts kwarg to include in the operation."""
+
+        PRE_TRIGGER_INCLUDE: Literal["pre_trigger_include"] = "pre_trigger_include"
+        """Pre-trigger scripts kwarg to include in the operation."""
+
+        PRIORITY: Literal["priority"] = "priority"
+        """Priority level kwarg for the request (High, Low)."""
+
+        QUERY_VERSION: Literal["query_version"] = "query_version"
+        """Query version kwarg for the request."""
+
+        RESOURCE_TOKEN_EXPIRY_SECONDS: Literal[
+            "resource_token_expiry_seconds"
+        ] = "resource_token_expiry_seconds"
+        """Resource token expiry time kwarg in seconds."""
+
+        RESPONSE_CONTINUATION_TOKEN_LIMIT_IN_KB: Literal[
+            "response_continuation_token_limit_in_kb"
+        ] = "response_continuation_token_limit_in_kb"
+        """Continuation token size limit kwarg in KB."""
+
+        NO_RESPONSE: Literal["no_response"] = "no_response"
+        """Whether to disable response payload on write operations kwarg."""
+
+        RETRY_WRITE: Literal["retry_write"] = "retry_write"
+        """Whether to retry write operations if they fail kwarg. Used either at client level or request level."""
+
+        SESSION_TOKEN: Literal["session_token"] = "session_token"
+        """Session token kwarg for session consistency."""
+
+        SUPPORTED_QUERY_FEATURES: Literal["supported_query_features"] = "supported_query_features"
+        """Supported query features kwarg for the request."""
+
+        THROUGHPUT_BUCKET: Literal["throughput_bucket"] = "throughput_bucket"
+        """Throughput bucket kwarg for the request."""
