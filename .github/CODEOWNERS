@@ -20,6 +20,13 @@
 
 # PRLabel: %Azure.Core
 /sdk/core/                                                           @lmazuel @annatisch @johanste
+
+# PRLabel: %PureStorage
+/sdk/specification/purestorage/                                    @Shirelmr @michiisai
+
+# ServiceLabel: %PureStorage %Mgmt
+# ServiceOwners:                                                   @Shirelmr @michiisai
+
 /sdk/core/azure-core/                                                @lmazuel @annatisch @johanste @xiangyan99 @iscai-msft @kashifkhan @pvaneck
 /sdk/core/azure-mgmt-core/                                           @msyyc
 /sdk/core/azure-core-tracing-opencensus/                             @pvaneck
