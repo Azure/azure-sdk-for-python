@@ -18,6 +18,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _DEPENDENCY,
     _REQ_RETRY_NAME,
     _CUSTOMER_STATSBEAT_LANGUAGE,
+    _APPLICATIONINSIGHTS_SDKSTATS_EXPORT_INTERVAL,
     _DEFAULT_STATS_SHORT_EXPORT_INTERVAL,
     _UNKNOWN,
     _TYPE_MAP,
@@ -40,6 +41,7 @@ from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
 from azure.monitor.opentelemetry.exporter.statsbeat._state import _REQUESTS_MAP
 from azure.monitor.opentelemetry.exporter.statsbeat._utils import (
     categorize_status_code,
+    _get_customer_sdkstats_export_interval
 )
 
 def convert_envelope_names_to_base_type(envelope_name):
@@ -64,12 +66,13 @@ class TestCustomerStatsbeat(unittest.TestCase):
         CustomerStatsbeatMetrics._instance = None
         
         self.env_patcher = mock.patch.dict(os.environ, {
-            "APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW": "true"
+            "APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW": "true",
+            "APPLICATIONINSIGHTS_SDKSTATS_EXPORT_INTERVAL": ""
         })
         self.env_patcher.start()
         self.mock_options = mock.Mock()
         self.mock_options.instrumentation_key = "363331ca-f431-4119-bdcd-31a75920f958"
-        self.mock_options.network_collection_interval = _DEFAULT_STATS_SHORT_EXPORT_INTERVAL
+        self.mock_options.network_collection_interval = _get_customer_sdkstats_export_interval()
         self.mock_options.connection_string = "InstrumentationKey=363331ca-f431-4119-bdcd-31a75920f958;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/"
         self.mock_options.language = _CUSTOMER_STATSBEAT_LANGUAGE
         self.original_trace_provider = trace._TRACER_PROVIDER
@@ -80,16 +83,25 @@ class TestCustomerStatsbeat(unittest.TestCase):
     def tearDown(self):
         self.env_patcher.stop()
         # Restore trace provider
+
         trace._TRACER_PROVIDER = self.original_trace_provider
-        # Clean up singleton instances to prevent cross-test contamination
+        
         if hasattr(self.mock_options, 'metrics') and self.mock_options.metrics:
             metrics = self.mock_options.metrics
+            
             if hasattr(metrics, '_customer_statsbeat_metric_reader'):
-                try:
-                    # Shutdown to prevent additional periodic exports
-                    metrics._customer_statsbeat_metric_reader.shutdown()
-                except Exception:
-                    pass  # Ignore shutdown errors
+                reader = metrics._customer_statsbeat_metric_reader
+                if not getattr(reader, '_shutdown', False):
+                    setattr(reader, '_shutdown', True)
+                
+                metrics._customer_statsbeat_metric_reader = None
+                
+            if hasattr(metrics, '_customer_statsbeat_exporter'):
+                metrics._customer_statsbeat_exporter = None
+                
+            if hasattr(metrics, '_customer_statsbeat_meter_provider'):
+                metrics._customer_statsbeat_meter_provider = None
+
         CustomerStatsbeatMetrics._instance = None
     
     def test_customer_statsbeat_not_initialized_when_disabled(self):
@@ -108,6 +120,62 @@ class TestCustomerStatsbeat(unittest.TestCase):
             # Verify callbacks return empty lists when disabled
             self.assertEqual(metrics._item_success_callback(mock.Mock()), [])
             self.assertEqual(metrics._item_drop_callback(mock.Mock()), [])
+            
+    def test_custom_export_interval_from_env_var(self):
+        """Test that a custom export interval is picked up from the environment variable."""
+        # Use a non-default value to test
+        custom_interval = 300
+        
+        # Mock the environment variable with our custom interval
+        with mock.patch.dict(os.environ, {
+            _APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW: "true",
+            _APPLICATIONINSIGHTS_SDKSTATS_EXPORT_INTERVAL: str(custom_interval)
+        }):
+            # Get the export interval
+            actual_interval = _get_customer_sdkstats_export_interval()
+            
+            # Verify it matches our custom value
+            self.assertEqual(
+                actual_interval,
+                custom_interval,
+                f"Expected export interval to be {custom_interval}, got {actual_interval}"
+            )
+            
+            # Verify the CustomerStatsbeatMetrics instance picks up the custom interval
+            CustomerStatsbeatMetrics._instance = None
+            metrics = CustomerStatsbeatMetrics(self.mock_options.connection_string)
+            self.assertEqual(
+                metrics._customer_statsbeat_metric_reader._export_interval_millis,
+                custom_interval,
+                f"CustomerStatsbeatMetrics should use export interval {custom_interval}, got {metrics._customer_statsbeat_metric_reader._export_interval_millis}"
+            )
+            
+    def test_default_export_interval_when_env_var_empty(self):
+        """Test that the default export interval is used when the environment variable is empty."""
+       
+        # Mock the environment variable as empty
+        with mock.patch.dict(os.environ, {
+            _APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW: "true",
+            _APPLICATIONINSIGHTS_SDKSTATS_EXPORT_INTERVAL: ""
+        }):
+            # Get the export interval
+            actual_interval = _get_customer_sdkstats_export_interval()
+            
+            # Verify it matches the default value
+            self.assertEqual(
+                actual_interval,
+                _DEFAULT_STATS_SHORT_EXPORT_INTERVAL,
+                f"Expected export interval to be default {_DEFAULT_STATS_SHORT_EXPORT_INTERVAL}, got {actual_interval}"
+            )
+            
+            # Verify the CustomerStatsbeatMetrics instance picks up the default interval
+            CustomerStatsbeatMetrics._instance = None
+            metrics = CustomerStatsbeatMetrics(self.mock_options.connection_string)
+            self.assertEqual(
+                metrics._customer_statsbeat_metric_reader._export_interval_millis,
+                _DEFAULT_STATS_SHORT_EXPORT_INTERVAL,
+                f"CustomerStatsbeatMetrics should use default export interval {_DEFAULT_STATS_SHORT_EXPORT_INTERVAL}, got {metrics._customer_statsbeat_metric_reader._export_interval_millis}"
+            )
 
     def test_successful_items_count(self):
         successful_dependencies = 0

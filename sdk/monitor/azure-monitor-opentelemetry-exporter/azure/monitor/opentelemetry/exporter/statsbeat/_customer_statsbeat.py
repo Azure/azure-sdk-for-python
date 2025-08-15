@@ -16,7 +16,6 @@ from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
 
 from azure.monitor.opentelemetry.exporter._constants import (
     _APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW,
-    _DEFAULT_STATS_SHORT_EXPORT_INTERVAL,
     CustomerStatsbeatProperties,
     DropCode,
     DropCodeType,
@@ -34,6 +33,7 @@ from azure.monitor.opentelemetry.exporter._utils import (
 
 from azure.monitor.opentelemetry.exporter.statsbeat._utils import (
     categorize_status_code,
+    _get_customer_sdkstats_export_interval,
 )
 from azure.monitor.opentelemetry.exporter import VERSION
 
@@ -67,7 +67,7 @@ class CustomerStatsbeatMetrics(metaclass=Singleton): # pylint: disable=too-many-
         self._customer_statsbeat_exporter._is_customer_statsbeat = True
         metric_reader_options = {
             "exporter": self._customer_statsbeat_exporter,
-            "export_interval_millis": _DEFAULT_STATS_SHORT_EXPORT_INTERVAL
+            "export_interval_millis": _get_customer_sdkstats_export_interval()
         }
         self._customer_statsbeat_metric_reader = PeriodicExportingMetricReader(**metric_reader_options)
         self._customer_statsbeat_meter_provider = MeterProvider(
