@@ -590,6 +590,9 @@ class RunsOperations(RunsOperationsGenerated):
                     if tool_outputs:
                         run2 = self.submit_tool_outputs(thread_id=thread_id, run_id=run.id, tool_outputs=tool_outputs)
                         logger.debug("Tool outputs submitted to run: %s", run2.id)
+            elif isinstance(run.required_action, _models.SubmitToolApprovalAction):
+                logger.warning("Automatic MCP tool approval is not supported.")
+                self.cancel(thread_id=thread_id, run_id=run.id)
 
             logger.debug("Current run ID: %s with status: %s", run.id, run.status)
 
@@ -2265,7 +2268,7 @@ class VectorStoreFilesOperations(VectorStoreFilesOperationsGenerated):
 
     @distributed_trace
     def delete(self, vector_store_id: str, file_id: str, **kwargs: Any) -> None:
-        """Deletes a vector store file. This removes the file‐to‐store link (does not delete the file
+        """Deletes a vector store file. This removes the fileâ€�toâ€�store link (does not delete the file
         itself).
 
         :param vector_store_id: Identifier of the vector store.
