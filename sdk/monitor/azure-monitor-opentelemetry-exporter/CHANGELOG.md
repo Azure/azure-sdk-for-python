@@ -11,7 +11,7 @@
 ### Bugs Fixed
 
 ### Other Changes
-- Upgrade fixedint to version 0.2.0 ([#42521](https://github.com/Azure/azure-sdk-for-python/pull/42521))
+- Upgrade fixedint version from 0.1.6 to 0.2.0 ([#42521](https://github.com/Azure/azure-sdk-for-python/pull/42521))
 
 ## 1.0.0b41 (2025-07-31)
 
