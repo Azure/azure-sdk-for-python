@@ -72,7 +72,6 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
             file_path=data_file,
         )
         print(dataset)
-        dataset_id = dataset.id
         print("Create an evaluation")
         evaluation: Evaluation = Evaluation(
             display_name="Sample Evaluation Test",
@@ -102,7 +101,7 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
                     },
                     data_mapping={
                         "query": "${data.query}",
-                        "response": "${target.response}",
+                        "response": "${data.response}",
                     },
                 ),
                 "violence": EvaluatorConfiguration(
