@@ -168,8 +168,9 @@ class AsyncPrompty:
         self._outputs: Dict[str, Any] = configs.get("outputs", {})
         self._name: str = configs.get("name", path.stem)
         self._logger = logger or get_logger(__name__)
+        credential = self._model.configuration.pop("credential", None)
         self._token_credential: Union[TokenCredential, AsyncTokenCredential] = (
-            token_credential or AsyncAzureTokenProvider()
+            token_credential or credential or AsyncAzureTokenProvider()
         )
 
     @property
