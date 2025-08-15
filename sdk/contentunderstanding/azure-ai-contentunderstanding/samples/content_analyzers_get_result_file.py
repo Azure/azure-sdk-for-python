@@ -97,23 +97,15 @@ async def main():
         print(f"✅ Analyzer '{analyzer_id}' created successfully!")
 
         # Use the FlightSimulator.mp4 video file from remote location
-        asset_url = "https://github.com/Azure-Samples/azure-ai-content-understanding-assets/raw/refs/heads/main/videos/sdk_samples/FlightSimulator.mp4"
-        print(f"📹 Using video file from URL: {asset_url}")
+        video_file_url = "https://github.com/Azure-Samples/azure-ai-content-understanding-assets/raw/refs/heads/main/videos/sdk_samples/FlightSimulator.mp4"
+        print(f"📹 Using video file from URL: {video_file_url}")
         
-        # Download the video content from the URL
-        import urllib.request
-        try:
-            video_content = urllib.request.urlopen(asset_url).read()
-        except Exception as e:
-            print(f"❌ Failed to download video from URL: {e}")
-            raise
 
         # Begin video analysis operation
         print(f"🎬 Starting video analysis with analyzer '{analyzer_id}'...")
-        analysis_poller = await client.content_analyzers.begin_analyze_binary(
+        analysis_poller = await client.content_analyzers.begin_analyze(
             analyzer_id=analyzer_id,
-            input=video_content,
-            content_type="video/mp4",
+            url=video_file_url,
         )
 
         # Wait for analysis completion
