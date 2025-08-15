@@ -23,6 +23,7 @@ USAGE:
     4) AZURE_CONVERSATIONS_WORKFLOW_DEPLOYMENT_NAME  - deployment name for your CLU orchestration project.
 """
 
+
 def sample_analyze_orchestration_direct_target():
     # [START analyze_orchestration_app_qna_response]
     # import libraries
@@ -51,9 +52,9 @@ def sample_analyze_orchestration_direct_target():
                         "id": "1",
                         "modality": "text",
                         "language": "en",
-                        "text": query
+                        "text": query,
                     },
-                    "isLoggingEnabled": False
+                    "isLoggingEnabled": False,
                 },
                 "parameters": {
                     "projectName": project_name,
@@ -62,12 +63,10 @@ def sample_analyze_orchestration_direct_target():
                     "targetProjectParameters": {
                         "ChitChat-QnA": {
                             "targetProjectKind": "QuestionAnswering",
-                            "callingOptions": {
-                                "question": query
-                            }
+                            "callingOptions": {"question": query},
                         }
-                    }
-                }
+                    },
+                },
             }
         )
 
@@ -91,5 +90,6 @@ def sample_analyze_orchestration_direct_target():
 
     # [END analyze_orchestration_app_qna_response]
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     sample_analyze_orchestration_direct_target()

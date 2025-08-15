@@ -23,6 +23,7 @@ USAGE:
     4) AZURE_CONVERSATIONS_WORKFLOW_DEPLOYMENT_NAME  - deployment name for your CLU orchestration project.
 """
 
+
 def sample_analyze_orchestration_app_qna_response():
     # [START analyze_orchestration_app_qna_response]
     # import libraries
@@ -49,15 +50,11 @@ def sample_analyze_orchestration_app_qna_response():
                         "id": "1",
                         "modality": "text",
                         "language": "en",
-                        "text": query
+                        "text": query,
                     },
-                    "isLoggingEnabled": False
+                    "isLoggingEnabled": False,
                 },
-                "parameters": {
-                    "projectName": project_name,
-                    "deploymentName": deployment_name,
-                    "verbose": True
-                }
+                "parameters": {"projectName": project_name, "deploymentName": deployment_name, "verbose": True},
             }
         )
 
@@ -81,5 +78,6 @@ def sample_analyze_orchestration_app_qna_response():
 
     # [END analyze_orchestration_app_qna_response]
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     sample_analyze_orchestration_app_qna_response()
