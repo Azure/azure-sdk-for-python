@@ -63,6 +63,7 @@ tolerance for harmful responses).
 ### Features Added
 
 - Introduces `AttackStrategy.MultiTurn` and `AttackStrategy.Crescendo` to `RedTeam`. These strategies attack the target of a `RedTeam` scan over the course of multi-turn conversations. 
+- Added the support of reasoning models as judge for Azure AI evaluators.
 
 ### Bugs Fixed
 - AdversarialSimulator in `ADVERSARIAL_CONVERSATION` mode was broken. It is now fixed.

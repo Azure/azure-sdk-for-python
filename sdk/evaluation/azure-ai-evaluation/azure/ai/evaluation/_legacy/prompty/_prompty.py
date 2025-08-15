@@ -138,20 +138,16 @@ class AsyncPrompty:
         *,
         logger: Optional[Logger] = None,
         token_credential: Optional[Union[TokenCredential, AsyncTokenCredential]] = None,
-        is_reasoning_model: bool = False,
         **kwargs: Any,
     ):
         path = Path(path)
         configs, self._template = self._parse_prompty(path)
 
-        if is_reasoning_model:
+        self._is_reasoning_model = kwargs.get("is_reasoning_model", False)
+
+        if self._is_reasoning_model:
             parameters = configs.get("model", {}).get("parameters", {})
-            if "max_tokens" in parameters:
-                parameters.pop("max_tokens", None)
-                parameters["max_completion_tokens"] = DEFAULT_MAX_COMPLETION_TOKENS_REASONING_MODELS
-            # Remove unsupported parameters for reasoning models
-            for key in ["temperature", "top_p", "presence_penalty", "frequency_penalty"]:
-                parameters.pop(key, None)
+            AsyncPrompty._adapt_parameters_for_reasoning_model(parameters)
 
         configs = resolve_references(configs, base_path=path.parent)
         configs = update_dict_recursively(configs, resolve_references(kwargs, base_path=path.parent))
@@ -171,6 +167,15 @@ class AsyncPrompty:
         self._token_credential: Union[TokenCredential, AsyncTokenCredential] = (
             token_credential or AsyncAzureTokenProvider()
         )
+
+    @staticmethod
+    def _adapt_parameters_for_reasoning_model(parameters):
+        if "max_tokens" in parameters:
+            parameters.pop("max_tokens", None)
+            parameters["max_completion_tokens"] = DEFAULT_MAX_COMPLETION_TOKENS_REASONING_MODELS
+        # Remove unsupported parameters for reasoning models
+        for key in ["temperature", "top_p", "presence_penalty", "frequency_penalty"]:
+            parameters.pop(key, None)
 
     @property
     def path(self) -> Path:
@@ -198,6 +203,15 @@ class AsyncPrompty:
         :rtype: str
         """
         return self._data.get("description")
+
+    @property
+    def is_reasoning_model(self) -> bool:
+        """Whether this prompty is configured for reasoning models.
+
+        :return: True if configured for reasoning models, False otherwise.
+        :rtype: bool
+        """
+        return self._is_reasoning_model
 
     @classmethod
     def load(
@@ -373,15 +387,40 @@ class AsyncPrompty:
         should_retry: bool = True
         retry: int = 0
         delay: Optional[float] = None
+        # Make a mutable copy of the parameters
+        mutable_params = dict(params)
 
         while should_retry:
             try:
                 if delay:
                     await asyncio.sleep(delay)
 
-                response = await client.chat.completions.create(**params)
+                response = await client.chat.completions.create(**mutable_params)
                 return response
             except OpenAIError as error:
+                error_message = str(error)
+                BAD_REQUEST_ERROR_CODE = "400"
+
+                # Check for BadRequestError with unsupported parameter message
+                if (not self._is_reasoning_model and
+                        'Unsupported parameter' in error_message and
+                        BAD_REQUEST_ERROR_CODE in error_message):
+                    # Apply reasoning model parameter modifications
+                    self._logger.debug(
+                        "Detected BadRequestError with unsupported parameters. Adapting parameters for reasoning model."
+                    )
+                    # Remove unsupported parameters for reasoning models
+                    AsyncPrompty._adapt_parameters_for_reasoning_model(mutable_params)
+                    # Also update the model configuration to persist changes
+                    if hasattr(self._model, 'parameters') and isinstance(self._model.parameters, dict):
+                        AsyncPrompty._adapt_parameters_for_reasoning_model(self._model.parameters)
+
+                    self._is_reasoning_model = True
+                    retry = 0
+                    delay = 0
+                    should_retry = True
+                    continue
+
                 if retry >= max_retries:
                     should_retry = False
                 else:
