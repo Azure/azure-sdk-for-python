@@ -175,7 +175,7 @@ function Get-AllPackageInfoFromRepo ($serviceDirectory)
 
     $scriptLoc = Join-path $RepoRoot eng scripts get_package_properties.py
     Write-Host "Running '$scriptLoc' to retrieve package properties"
-    $allPkgPropLines = python $scriptLoc -s (Join-Path $RepoRoot $searchPath)
+    $allPkgPropLines = python "$scriptLoc" -s "$(Join-Path $RepoRoot $searchPath)"
   }
   catch
   {
