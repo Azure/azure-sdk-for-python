@@ -7,6 +7,7 @@
   ([#42382](https://github.com/Azure/azure-sdk-for-python/pull/42382))
 - Refactored the put methods in storage.py for LocalFileBlob and LocalFileStorage
   ([#42502](https://github.com/Azure/azure-sdk-for-python/pull/42502))
+- Customer Facing Statsbeat: Refactored logic for tracking dropped items from storage
 
 ### Breaking Changes
 
