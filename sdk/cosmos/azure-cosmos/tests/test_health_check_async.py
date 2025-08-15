@@ -197,6 +197,19 @@ class TestHealthCheckAsync:
         num_unavailable_endpoints = len(REGIONS)
         unavailable_endpoint_info = setup[COLLECTION].client_connection._global_endpoint_manager.location_cache.location_unavailability_info_by_endpoint
         assert len(unavailable_endpoint_info) == num_unavailable_endpoints
+        # Allow both global and regional endpoint to be considered write endpoints when global write is enabled
+        write_endpoints = {
+            _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_1)
+        }
+        if use_write_global_endpoint:
+            write_endpoints.add(self.host)
+
+        for endpoint, info in unavailable_endpoint_info.items():
+            assert _location_cache.EndpointOperationType.ReadType in info["operationType"]
+            if endpoint in write_endpoints:
+                assert _location_cache.EndpointOperationType.WriteType in info["operationType"]
+            else:
+                assert _location_cache.EndpointOperationType.WriteType not in info["operationType"]
 
     async def mock_health_check(self, **kwargs):
         await asyncio.sleep(100)
