@@ -1,8 +1,14 @@
 # Release History
 
-## 0.0.0 (2025-08-18)
+## 30.0.0 (2025-08-18)
 
-change log generation was timeout!!! You need to write it manually!!!
+### Features Added
+
+  - Added operation group NetworkSecurityPerimeterServiceTagsOperations
+
+### Breaking Changes
+
+  - Removed operation group NetworkManagementClientOperationsMixin
 
 ## 29.0.0 (2025-05-22)
 
