@@ -12,7 +12,7 @@ from unittest import mock
 from azure.identity import CredentialUnavailableError
 from azure.identity.aio import AzureDeveloperCliCredential
 from azure.identity._constants import EnvironmentVariables
-from azure.identity._credentials.azd_cli import CLI_NOT_FOUND, NOT_LOGGED_IN
+from azure.identity._credentials.azd_cli import CLI_NOT_FOUND, NOT_LOGGED_IN, COMMAND_LINE
 from azure.core.exceptions import ClientAuthenticationError
 import pytest
 
@@ -122,6 +122,36 @@ async def test_get_token(get_token_method):
 
     assert token.token == access_token
     assert type(token.expires_on) == int
+    assert token.expires_on == expected_expires_on
+
+
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_command_list(get_token_method):
+    """The credential should formulate the command arg list correctly"""
+    access_token = "access token"
+    expected_expires_on = 1602015811
+    successful_output = json.dumps(
+        {
+            "expiresOn": datetime.fromtimestamp(expected_expires_on).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "token": access_token,
+            "subscription": "some-guid",
+            "tenant": "some-guid",
+            "tokenType": "Bearer",
+        }
+    )
+
+    def mock_exec_impl(*args, **_):
+        # args[0] is the executable, args[1:] are the command line arguments
+        command_line = list(args)
+        assert command_line == ["azd"] + COMMAND_LINE + ["--scope", "scope"]
+        return mock_exec(successful_output)()
+
+    with mock.patch("shutil.which", return_value="azd"):
+        with mock.patch(SUBPROCESS_EXEC, mock_exec_impl):
+            credential = AzureDeveloperCliCredential()
+            token = await getattr(credential, get_token_method)("scope")
+
+    assert token.token == access_token
     assert token.expires_on == expected_expires_on
 
 
