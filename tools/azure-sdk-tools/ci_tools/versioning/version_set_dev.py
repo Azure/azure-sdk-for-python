@@ -89,7 +89,7 @@ def version_set_dev_main() -> None:
 
     set_dev_version(target_packages, build_id)
 
-def set_dev_version(target_packages: List[ParsedSetup], build_id):
+def set_dev_version(target_packages: List[ParsedSetup], build_id: str):
     if not target_packages:
         print("No packages found")
 
