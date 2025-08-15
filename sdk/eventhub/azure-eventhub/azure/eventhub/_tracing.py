@@ -14,6 +14,20 @@ from azure.core.tracing import SpanKind, Link
 
 from .amqp import AmqpAnnotatedMessage
 from ._constants import PROP_TIMESTAMP
+from ._version import VERSION
+
+try:
+    from azure.core.instrumentation import get_tracer
+    TRACER = get_tracer(
+        library_name="azure-eventhub",
+        library_version=VERSION,
+        schema_url="https://opentelemetry.io/schemas/1.23.1",
+        attributes={
+            "az.namespace": "Microsoft.EventHub",
+        }
+    )
+except ImportError:
+    TRACER = None
 
 if TYPE_CHECKING:
     from ._transport._base import AmqpTransport
@@ -49,9 +63,6 @@ class TraceAttributes:
     TRACE_MESSAGING_OPERATION_ATTRIBUTE = "messaging.operation"
     TRACE_MESSAGING_BATCH_COUNT_ATTRIBUTE = "messaging.batch.message_count"
 
-    LEGACY_TRACE_MESSAGE_BUS_DESTINATION_ATTRIBUTE = "message_bus.destination"
-    LEGACY_TRACE_PEER_ADDRESS_ATTRIBUTE = "peer.address"
-
 
 class TraceOperationTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PUBLISH = "publish"
@@ -60,8 +71,13 @@ class TraceOperationTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 def is_tracing_enabled():
-    span_impl_type = settings.tracing_implementation()
-    return span_impl_type is not None
+    if TRACER is None:
+        # The version of azure-core installed does not support native tracing. Just check
+        # for the plugin.
+        span_impl_type = settings.tracing_implementation()
+        return span_impl_type is not None
+    # Otherwise, can just check the tracing setting.
+    return settings.tracing_enabled()
 
 
 @contextmanager
@@ -74,10 +90,21 @@ def send_context_manager(client: Optional[ClientBase], links: Optional[List[Link
     :rtype: iterator[None]
     """
     span_impl_type: Optional[Type[AbstractSpan]] = settings.tracing_implementation()
+    links = links or []
     if span_impl_type is not None:
-        links = links or []
         with span_impl_type(name="EventHubs.send", kind=SpanKind.CLIENT, links=links) as span:
-            add_span_attributes(span, TraceOperationTypes.PUBLISH, client, message_count=len(links))
+            add_plugin_span_attributes(span, TraceOperationTypes.PUBLISH, client, message_count=len(links))
+            yield
+    elif TRACER is not None:
+        if settings.tracing_enabled():
+            with TRACER.start_as_current_span(
+                name="EventHubs.send",
+                kind=SpanKind.CLIENT,
+                links=links,
+                attributes=get_span_attributes(TraceOperationTypes.PUBLISH, client, message_count=len(links)),
+            ) as span:
+                yield
+        else:
             yield
     else:
         yield
@@ -96,10 +123,35 @@ def receive_context_manager(
     :rtype: iterator[None]
     """
     span_impl_type: Optional[Type[AbstractSpan]] = settings.tracing_implementation()
+    links = links or []
     if span_impl_type is not None:
-        links = links or []
         with span_impl_type(name="EventHubs.receive", kind=SpanKind.CLIENT, links=links, start_time=start_time) as span:
-            add_span_attributes(span, TraceOperationTypes.RECEIVE, client, message_count=len(links))
+            add_plugin_span_attributes(span, TraceOperationTypes.RECEIVE, client, message_count=len(links))
+            yield
+    elif TRACER is not None:
+        if settings.tracing_enabled():
+            # Depending on the azure-core version, start_as_current_span may or may not support start_time as a
+            # keyword argument. Handle both cases.
+            attributes = get_span_attributes(TraceOperationTypes.RECEIVE, client, message_count=len(links))
+            try:
+                with TRACER.start_as_current_span(  # type: ignore[call-arg]  # pylint: disable=unexpected-keyword-arg
+                    name="EventHubs.receive",
+                    kind=SpanKind.CLIENT,
+                    links=links,
+                    attributes=attributes,
+                    start_time=start_time,
+                ) as span:
+                    yield
+            except TypeError:
+                # If start_time is not supported, just call without it.
+                with TRACER.start_as_current_span(
+                    name="EventHubs.receive",
+                    kind=SpanKind.CLIENT,
+                    links=links,
+                    attributes=attributes,
+                ) as span:
+                    yield
+        else:
             yield
     else:
         yield
@@ -118,20 +170,58 @@ def process_context_manager(
     :rtype: iterator[None]
     """
     span_impl_type: Optional[Type[AbstractSpan]] = settings.tracing_implementation()
-    if span_impl_type is not None:
-        context = None
-        links = links or []
+    span_links = links or []
+    context = None
 
-        # If the processing callback is called per single message, the processing span should be a child of the
-        # context of the message (as opposed to messages being links in the processing span).
-        if not is_batch and links:
-            context = links[0].headers
-            links = []
-        with span_impl_type(name="EventHubs.process", kind=SpanKind.CONSUMER, links=links, context=context) as span:
-            add_span_attributes(span, TraceOperationTypes.PROCESS, client, message_count=len(links))
+    # If the processing callback is called per single message, the processing span should be a child of the
+    # context of the message (as opposed to messages being links in the processing span).
+    if not is_batch and span_links:
+        context = span_links[0].headers
+        span_links = []
+    if span_impl_type is not None:
+        with span_impl_type(
+            name="EventHubs.process", kind=SpanKind.CONSUMER, links=span_links, context=context
+        ) as span:
+            add_plugin_span_attributes(span, TraceOperationTypes.PROCESS, client, message_count=len(span_links))
+            yield
+    elif TRACER is not None:
+        if settings.tracing_enabled():
+            # Depending on the azure-core version, start_as_current_span may or may not support context as a keyword
+            # argument. Handle both cases.
+            attributes = get_span_attributes(TraceOperationTypes.PROCESS, client, message_count=len(span_links))
+            try:
+                with TRACER.start_as_current_span(  # type: ignore[call-arg]  # pylint: disable=unexpected-keyword-arg
+                    name="EventHubs.process",
+                    kind=SpanKind.CONSUMER,
+                    links=span_links,
+                    attributes=attributes,
+                    context=context
+                ) as span:
+                    yield
+            except TypeError:
+                # If context is not supported, just call without it and use the links as usual.
+                with TRACER.start_as_current_span(
+                    name="EventHubs.process",
+                    kind=SpanKind.CONSUMER,
+                    links=links,
+                    attributes=attributes,
+                ) as span:
+                    yield
+        else:
             yield
     else:
         yield
+
+
+def _update_message_with_trace_context(message, amqp_transport, context):
+    if "traceparent" in context:
+        message = amqp_transport.update_message_app_properties(
+            message, TRACE_DIAGNOSTIC_ID_PROPERTY, context["traceparent"]
+        )
+        message = amqp_transport.update_message_app_properties(message, TRACE_PARENT_PROPERTY, context["traceparent"])
+    if "tracestate" in context:
+        message = amqp_transport.update_message_app_properties(message, TRACE_STATE_PROPERTY, context["tracestate"])
+    return message
 
 
 def trace_message(
@@ -153,19 +243,8 @@ def trace_message(
         span_impl_type: Optional[Type[AbstractSpan]] = settings.tracing_implementation()
         if span_impl_type is not None:
             with span_impl_type(name="EventHubs.message", kind=SpanKind.PRODUCER) as message_span:
-                headers = message_span.to_header()
-
-                if "traceparent" in headers:
-                    message = amqp_transport.update_message_app_properties(
-                        message, TRACE_DIAGNOSTIC_ID_PROPERTY, headers["traceparent"]
-                    )
-                    message = amqp_transport.update_message_app_properties(
-                        message, TRACE_PARENT_PROPERTY, headers["traceparent"]
-                    )
-                if "tracestate" in headers:
-                    message = amqp_transport.update_message_app_properties(
-                        message, TRACE_STATE_PROPERTY, headers["tracestate"]
-                    )
+                context = message_span.to_header()
+                message = _update_message_with_trace_context(message, amqp_transport, context)
 
                 message_span.add_attribute(TraceAttributes.TRACE_NAMESPACE_ATTRIBUTE, TraceAttributes.TRACE_NAMESPACE)
                 message_span.add_attribute(
@@ -176,6 +255,17 @@ def trace_message(
                     for key, value in additional_attributes.items():
                         if value is not None:
                             message_span.add_attribute(key, value)
+        elif TRACER is not None:
+            if settings.tracing_enabled():
+                with TRACER.start_as_current_span(name="EventHubs.message", kind=SpanKind.PRODUCER) as message_span:
+                    trace_context = TRACER.get_trace_context()
+                    message = _update_message_with_trace_context(message, amqp_transport, trace_context)
+                    attributes = {
+                        TraceAttributes.TRACE_NAMESPACE_ATTRIBUTE: TraceAttributes.TRACE_NAMESPACE,
+                        TraceAttributes.TRACE_MESSAGING_SYSTEM_ATTRIBUTE: TraceAttributes.TRACE_MESSAGING_SYSTEM,
+                        **(additional_attributes or {}),
+                    }
+                    message_span.set_attributes(attributes)
 
     except Exception as exp:  # pylint:disable=broad-except
         _LOGGER.warning("trace_message had an exception %r", exp)
@@ -274,7 +364,7 @@ def get_span_link_from_message(message: Union[AmqpAnnotatedMessage, Message]) ->
     return Link(headers)
 
 
-def add_span_attributes(
+def add_plugin_span_attributes(
     span: AbstractSpan, operation_type: TraceOperationTypes, client: Optional[ClientBase], message_count: int = 0
 ) -> None:
     """Add attributes to span based on the operation type.
@@ -284,21 +374,35 @@ def add_span_attributes(
     :param ~azure.eventhub._client_base.ClientBase or None client: The client that is performing the operation.
     :param int message_count: The number of messages being processed.
     """
-    # pylint: disable=protected-access
-    span.add_attribute(TraceAttributes.TRACE_NAMESPACE_ATTRIBUTE, TraceAttributes.TRACE_NAMESPACE)
-    span.add_attribute(TraceAttributes.TRACE_MESSAGING_SYSTEM_ATTRIBUTE, TraceAttributes.TRACE_MESSAGING_SYSTEM)
-    span.add_attribute(TraceAttributes.TRACE_MESSAGING_OPERATION_ATTRIBUTE, operation_type)
+    attributes = get_span_attributes(operation_type, client, message_count)
+    for key, value in attributes.items():
+        if value is not None:
+            span.add_attribute(key, value)
+
+
+def get_span_attributes(
+    operation_type: TraceOperationTypes,
+    client: Optional[ClientBase],
+    message_count: int = 0,
+) -> Dict[str, Any]:
+    """Get span attributes based on the operation type and client.
+
+    :param TraceOperationTypes operation_type: The type of operation to get attributes for.
+    :param ~azure.eventhub._client_base.ClientBase or None client: The client that is performing the operation.
+    :param int message_count: The number of messages being processed.
+    :rtype: dict[str, any]
+    :return: A dictionary of span attributes.
+    """
+    attributes: Dict[str, Any] = {
+        TraceAttributes.TRACE_NAMESPACE_ATTRIBUTE: TraceAttributes.TRACE_NAMESPACE,
+        TraceAttributes.TRACE_MESSAGING_SYSTEM_ATTRIBUTE: TraceAttributes.TRACE_MESSAGING_SYSTEM,
+        TraceAttributes.TRACE_MESSAGING_OPERATION_ATTRIBUTE: operation_type,
+    }
 
     if message_count > 1:
-        span.add_attribute(TraceAttributes.TRACE_MESSAGING_BATCH_COUNT_ATTRIBUTE, message_count)
+        attributes[TraceAttributes.TRACE_MESSAGING_BATCH_COUNT_ATTRIBUTE] = message_count
 
-    if operation_type in (TraceOperationTypes.PUBLISH, TraceOperationTypes.PROCESS):
-        # Maintain legacy attributes for backwards compatibility.
-        if client:
-            span.add_attribute(TraceAttributes.LEGACY_TRACE_MESSAGE_BUS_DESTINATION_ATTRIBUTE, client._address.path)
-            span.add_attribute(TraceAttributes.LEGACY_TRACE_PEER_ADDRESS_ATTRIBUTE, client._address.hostname)
-
-    elif operation_type == TraceOperationTypes.RECEIVE:
-        if client:
-            span.add_attribute(TraceAttributes.TRACE_NET_PEER_NAME_ATTRIBUTE, client._address.hostname)
-            span.add_attribute(TraceAttributes.TRACE_MESSAGING_DESTINATION_ATTRIBUTE, client._address.path)
+    if client:
+        attributes[TraceAttributes.TRACE_NET_PEER_NAME_ATTRIBUTE] = client._address.hostname  # pylint: disable=protected-access
+        attributes[TraceAttributes.TRACE_MESSAGING_DESTINATION_ATTRIBUTE] = client._address.path  # pylint: disable=protected-access
+    return attributes
