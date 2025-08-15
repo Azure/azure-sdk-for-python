@@ -173,8 +173,9 @@ function Get-AllPackageInfoFromRepo ($serviceDirectory)
       $null = python -m pip install "$pathToBuild" -q -I
     }
 
-    Write-Host "Running get_package_properties.py to retrieve package properties"
-    $allPkgPropLines = python (Join-path $RepoRoot eng scripts get_package_properties.py) -s $searchPath
+    $scriptLoc = Join-path $RepoRoot eng scripts get_package_properties.py
+    Write-Host "Running '$scriptLoc' to retrieve package properties"
+    $allPkgPropLines = python $scriptLoc -s $searchPath
   }
   catch
   {
@@ -189,6 +190,7 @@ function Get-AllPackageInfoFromRepo ($serviceDirectory)
 
   foreach ($line in $allPkgPropLines)
   {
+    Write-Host "Parsing: '$line'"
     $pkgInfo = ($line -Split " ")
     $packageName = $pkgInfo[0]
     $packageVersion = $pkgInfo[1]
