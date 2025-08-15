@@ -384,6 +384,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         **kwargs,
     ) -> MoveParticipantsResult:
         """Move participants from another call to this call.
+
         :param target_participants: The participants to move to this call.
         :type target_participants: list[~azure.communication.callautomation.CommunicationIdentifier]
         :param from_call: The CallConnectionId for the call you want to move the participant from.

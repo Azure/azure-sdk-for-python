@@ -869,6 +869,7 @@ class RemoveParticipantResult:
 
 class MoveParticipantsResult:
     """The response payload for moving participants to the call.
+
     :keyword participants: List of current participants in the call.
     :paramtype participants: list[~azure.communication.callautomation.CallParticipant]
     :keyword operation_context: The operation context provided by client.
