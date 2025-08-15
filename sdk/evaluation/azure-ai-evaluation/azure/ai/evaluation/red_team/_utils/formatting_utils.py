@@ -3,27 +3,29 @@ Utility functions for formatting, conversion, and processing in Red Team Agent.
 """
 
 import json
-import pandas as pd
 import math
-from datetime import datetime
-from typing import Dict, List, Union, Any, Optional, cast
+import itertools
+import os
+import logging
+from typing import Dict, List, Union, Any
+from pathlib import Path
+from pyrit.models import ChatMessage
+from pyrit.memory import CentralMemory
 from .._attack_strategy import AttackStrategy
 from .._red_team_result import RedTeamResult
-from pyrit.models import ChatMessage
 
 
-def message_to_dict(message: ChatMessage) -> Dict[str, str]:
-    """Convert a ChatMessage to dictionary format.
+def message_to_dict(message: ChatMessage, context: str = None) -> Dict[str, str]:
+    """Convert a ChatMessage and context to dictionary format.
 
     :param message: The chat message to convert
     :type message: ChatMessage
+    :param context: Additional context to include in the dictionary
+    :type context: str
     :return: Dictionary representation with role and content
     :rtype: Dict[str, str]
     """
-    return {
-        "role": message.role,
-        "content": message.content,
-    }
+    return {"role": message.role, "content": message.content, "context": context}
 
 
 def get_strategy_name(attack_strategy: Union[AttackStrategy, List[AttackStrategy]]) -> str:
@@ -117,7 +119,7 @@ def format_scorecard(redteam_result: RedTeamResult) -> str:
     separator = "-" * 132
     output.append(separator)
     output.append(
-        f"{'Risk Category':<18}| {'Baseline ASR':<14} | {'Easy-Complexity Attacks ASR':<28} | {'Moderate-Complexity Attacks ASR':<30} | {'Difficult-Complexity Attacks ASR':<30}"
+        f"{'Risk Category':<21}| {'Baseline ASR':<14} | {'Easy-Complexity Attacks ASR':<28} | {'Moderate-Complexity Attacks ASR':<30} | {'Difficult-Complexity Attacks ASR':<30}"
     )
     output.append(separator)
 
@@ -134,7 +136,7 @@ def format_scorecard(redteam_result: RedTeamResult) -> str:
         moderate = "N/A" if is_none_or_nan(moderate_val) else f"{moderate_val}%"
         difficult = "N/A" if is_none_or_nan(difficult_val) else f"{difficult_val}%"
 
-        output.append(f"{risk_category:<18}| {baseline:<14} | {easy:<28} | {moderate:<31} | {difficult:<30}")
+        output.append(f"{risk_category:<21}| {baseline:<14} | {easy:<28} | {moderate:<31} | {difficult:<30}")
 
     return "\n".join(output)
 
@@ -163,35 +165,25 @@ def list_mean_nan_safe(data_list: List[Any]) -> float:
 
 
 def write_pyrit_outputs_to_file(
-    orchestrator,
-    strategy_name: str,
-    risk_category: str,
+    *,
     output_path: str,
-    logger,
-    batch_idx: Optional[int] = None,
+    logger: logging.Logger,
+    prompt_to_context: Dict[str, str],
 ) -> str:
     """Write PyRIT outputs to a file with a name based on orchestrator, strategy, and risk category.
 
-    :param orchestrator: The orchestrator that generated the outputs
-    :param strategy_name: The name of the strategy used to generate the outputs
-    :type strategy_name: str
-    :param risk_category: The risk category being evaluated
-    :type risk_category: str
     :param output_path: Path to write the output file
     :type output_path: str
     :param logger: Logger instance for logging
-    :param batch_idx: Optional batch index for multi-batch processing, used to distinguish between different batches of the same strategy
-    :type batch_idx: Optional[int]
+    :type logger: logging.Logger
+    :param prompt_to_context: Mapping of prompts to their context
+    :type prompt_to_context: Dict[str, str]
     :return: Path to the output file
     :rtype: str
     :raises IOError: If the output file cannot be read or written
     :raises PermissionError: If there are insufficient permissions to access the output file
     :raises Exception: For other unexpected errors during file operations or memory retrieval
     """
-    import itertools
-    import os
-    from pathlib import Path
-    from pyrit.memory import CentralMemory
 
     logger.debug(f"Writing PyRIT outputs to file: {output_path}")
     memory = CentralMemory.get_memory_instance()
@@ -201,7 +193,10 @@ def write_pyrit_outputs_to_file(
     prompts_request_pieces = memory.get_prompt_request_pieces(labels=memory_label)
 
     conversations = [
-        [item.to_chat_message() for item in group]
+        [
+            (item.to_chat_message(), prompt_to_context.get(item.original_value, "") or item.labels.get("context", ""))
+            for item in group
+        ]
         for conv_id, group in itertools.groupby(prompts_request_pieces, key=lambda x: x.conversation_id)
     ]
 
@@ -219,12 +214,16 @@ def write_pyrit_outputs_to_file(
                 # Convert to json lines
                 json_lines = ""
                 for conversation in conversations:
-                    if conversation[0].role == "system":
+                    if conversation[0][0].role == "system":
                         # Skip system messages in the output
                         continue
                     json_lines += (
                         json.dumps(
-                            {"conversation": {"messages": [message_to_dict(message) for message in conversation]}}
+                            {
+                                "conversation": {
+                                    "messages": [message_to_dict(message[0], message[1]) for message in conversation]
+                                }
+                            }
                         )
                         + "\n"
                     )
@@ -246,11 +245,17 @@ def write_pyrit_outputs_to_file(
         json_lines = ""
 
         for conversation in conversations:
-            if conversation[0].role == "system":
+            if conversation[0][0].role == "system":
                 # Skip system messages in the output
                 continue
             json_lines += (
-                json.dumps({"conversation": {"messages": [message_to_dict(message) for message in conversation]}})
+                json.dumps(
+                    {
+                        "conversation": {
+                            "messages": [message_to_dict(message[0], message[1]) for message in conversation]
+                        }
+                    }
+                )
                 + "\n"
             )
         with Path(output_path).open("w") as f:
