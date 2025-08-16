@@ -12,9 +12,10 @@ from datetime import datetime
 import uuid
 
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
+from azure.ai.contentunderstanding.models import ContentClassifier, ClassifierCategory
+from typing import Optional, Dict
 
 from sample_helper import (
-    new_simple_classifier_schema,
     save_json_to_file,
 )
 from azure.core.credentials import AzureKeyCredential
@@ -37,6 +38,44 @@ Environment variables:
 Run:
     python content_classifiers_classify_binary.py
 """
+
+
+def new_simple_classifier_schema(
+    classifier_id: str,
+    description: Optional[str] = None,
+    tags: Optional[Dict[str, str]] = None,
+) -> ContentClassifier:
+    """Create a simple ContentClassifier object with default configuration.
+
+    Args:
+        classifier_id: The classifier ID
+        description: Optional description for the classifier
+        tags: Optional tags for the classifier
+
+    Returns:
+        ContentClassifier: A configured ContentClassifier object
+    """
+    if description is None:
+        description = f"test classifier: {classifier_id}"
+    if tags is None:
+        tags = {"test_type": "simple"}
+
+    return ContentClassifier(
+        categories={
+            "Loan application": ClassifierCategory(
+                description="Documents submitted by individuals or businesses to request funding, typically including personal or business details, financial history, loan amount, purpose, and supporting documentation."
+            ),
+            "Invoice": ClassifierCategory(
+                description="Billing documents issued by sellers or service providers to request payment for goods or services, detailing items, prices, taxes, totals, and payment terms."
+            ),
+            "Bank_Statement": ClassifierCategory(
+                description="Official statements issued by banks that summarize account activity over a period, including deposits, withdrawals, fees, and balances."
+            ),
+        },
+        split_mode="auto",
+        description=description,
+        tags=tags,
+    )
 
 
 async def main():
