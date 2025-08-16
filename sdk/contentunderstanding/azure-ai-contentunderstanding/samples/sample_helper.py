@@ -138,19 +138,7 @@ def save_keyframe_image_to_file(
     return saved_file_path
 
 
-def generate_classifier_id() -> str:
-    """Generate a unique classifier ID with current date, time, and GUID."""
-    now = datetime.now()
-    date_str = now.strftime("%Y%m%d")
-    time_str = now.strftime("%H%M%S")
-    guid = str(uuid.uuid4()).replace("-", "")[:8]
-    return f"sdk-sample-classifier-{date_str}-{time_str}-{guid}"
 
-
-def generate_person_directory_id() -> str:
-    """Generate a unique person directory ID with current date, time, and GUID."""
-    now = datetime.now(timezone.utc)
-    return f"sdk-sample-directory-{now:%Y%m%d-%H%M%S}-{uuid.uuid4().hex[:8]}"
 
 
 def read_image_to_base64(image_path: str) -> str:

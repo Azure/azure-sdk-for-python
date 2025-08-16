@@ -25,12 +25,13 @@ import asyncio
 import os
 from datetime import datetime, timezone
 from typing import Optional
+import uuid
 
 from dotenv import load_dotenv
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
 from azure.ai.contentunderstanding.models import PersonDirectory
 
-from sample_helper import get_credential, generate_person_directory_id
+from sample_helper import get_credential
 
 # Load environment variables from .env file, if present
 load_dotenv()
@@ -41,8 +42,8 @@ async def main() -> None:  # noqa: D401 - simple function signature is fine for 
     credential = get_credential()
 
     # Create a temporary directory first so we have something to delete
-    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client, credential:
-        directory_id = generate_person_directory_id()
+    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
+        directory_id = f"sdk-sample-dir-{datetime.now(timezone.utc):%Y%m%d-%H%M%S}-{uuid.uuid4().hex[:8]}"
         print(f"🔧 Creating temporary directory '{directory_id}'...")
         await client.person_directories.create(
             person_directory_id=directory_id,

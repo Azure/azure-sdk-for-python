@@ -8,6 +8,8 @@
 
 import asyncio
 import os
+from datetime import datetime
+import uuid
 
 from typing import Any
 
@@ -66,8 +68,8 @@ async def main():
     endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT") or ""
     credential = get_credential()
 
-    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client, credential:
-        analyzer_id = f"sdk-sample-video-analyzer-{int(asyncio.get_event_loop().time())}"
+    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
+        analyzer_id = f"sdk-sample-video-{datetime.now().strftime('%Y%m%d')}-{datetime.now().strftime('%H%M%S')}-{uuid.uuid4().hex[:8]}"
         
         # Create a marketing video analyzer using object model
         print(f"🔧 Creating marketing video analyzer '{analyzer_id}'...")

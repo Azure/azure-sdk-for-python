@@ -27,12 +27,13 @@ import asyncio
 import os
 from datetime import datetime, timezone
 from typing import Optional
+import uuid
 
 from dotenv import load_dotenv
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
 from azure.ai.contentunderstanding.models import PersonDirectory
 
-from sample_helper import get_credential, generate_person_directory_id, read_image_to_base64
+from sample_helper import get_credential, read_image_to_base64
 
 load_dotenv()
 
@@ -49,8 +50,8 @@ async def main():
     endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT") or ""
     credential = get_credential()
 
-    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client, credential:
-        directory_id = generate_person_directory_id()
+    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
+        directory_id = f"sdk-sample-dir-{datetime.now(timezone.utc):%Y%m%d-%H%M%S}-{uuid.uuid4().hex[:8]}"
         
         # Create person directory
         print(f"🔧 Creating directory '{directory_id}'...")

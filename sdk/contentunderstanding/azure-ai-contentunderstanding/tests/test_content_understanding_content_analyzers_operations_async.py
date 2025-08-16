@@ -785,19 +785,19 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
             poller, operation_id = await create_analyzer_and_assert_async(client, analyzer_id, video_analyzer)
             created_analyzer = True
 
-            # Read the FlightSimulator.mp4 video file using absolute path based on this test file's location
+            # Use the FlightSimulator.mp4 video file from remote location
+            video_file_url = "https://github.com/Azure-Samples/azure-ai-content-understanding-assets/raw/refs/heads/main/videos/sdk_samples/FlightSimulator.mp4"
+            print(f"Using video file from URL: {video_file_url}")
+
+            # Get test file directory for saving output
             test_file_dir = os.path.dirname(os.path.abspath(__file__))
-            video_path = os.path.join(test_file_dir, "test_data", "FlightSimulator.mp4")
-            with open(video_path, "rb") as video_file:
-                video_content = video_file.read()
 
             print(f"Starting video analysis to get operation ID")
             
-            # Begin video analysis operation
-            analysis_poller = await client.content_analyzers.begin_analyze_binary(
+            # Begin video analysis operation using URL
+            analysis_poller = await client.content_analyzers.begin_analyze(
                 analyzer_id=analyzer_id,
-                input=video_content,
-                content_type="video/mp4",
+                url=video_file_url,
             )
 
             # Wait for analysis completion first

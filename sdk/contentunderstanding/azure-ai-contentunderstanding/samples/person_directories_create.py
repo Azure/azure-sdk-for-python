@@ -10,19 +10,27 @@ import asyncio
 import os
 from datetime import datetime, timezone
 from typing import Optional, Dict
+import uuid
 from dotenv import load_dotenv
 
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
 from azure.ai.contentunderstanding.models import PersonDirectory
 
-from sample_helper import get_credential, generate_person_directory_id
+from sample_helper import get_credential
 
 load_dotenv()
 
 """
-# PREREQUISITES
-    pip install azure-ai-contentunderstanding
-# USAGE
+Prerequisites:
+    pip install azure-ai-contentunderstanding python-dotenv
+    az login  # Used for DefaultAzureCredential(). Alternatively, set the AZURE_CONTENT_UNDERSTANDING_KEY environment variable
+
+Environment variables:
+    AZURE_CONTENT_UNDERSTANDING_ENDPOINT   (required)
+    AZURE_CONTENT_UNDERSTANDING_KEY        (optional - DefaultAzureCredential() will be used if not set)
+    These variables can be set in a .env file in the samples directory for repeated use. Please see env.sample for an example.
+
+Run:
     python person_directories_create.py
 """
 
@@ -40,7 +48,7 @@ async def main():
     credential = get_credential()
 
     async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client, credential:
-        person_directory_id = generate_person_directory_id()
+        person_directory_id = f"sdk-sample-dir-{datetime.now(timezone.utc):%Y%m%d-%H%M%S}-{uuid.uuid4().hex[:8]}"
         
         # Create person directory configuration
         print(f"🔧 Creating person directory '{person_directory_id}'...")

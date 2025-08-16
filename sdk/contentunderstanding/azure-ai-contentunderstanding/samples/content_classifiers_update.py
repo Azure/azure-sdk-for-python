@@ -8,13 +8,14 @@
 
 import asyncio
 import os
+from datetime import datetime
+import uuid
 
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
 from azure.ai.contentunderstanding.models import ContentClassifier
 
 from sample_helper import (
     get_credential,
-    generate_classifier_id,
     new_simple_classifier_schema
 )
 
@@ -52,7 +53,7 @@ async def main():
     credential = get_credential()
 
     async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client, credential:
-        classifier_id = generate_classifier_id()
+        classifier_id = f"sdk-sample-clf-{datetime.now().strftime('%Y%m%d')}-{datetime.now().strftime('%H%M%S')}-{uuid.uuid4().hex[:8]}"
         
         # Create initial classifier using object model
         print(f"🔧 Creating initial classifier '{classifier_id}'...")
