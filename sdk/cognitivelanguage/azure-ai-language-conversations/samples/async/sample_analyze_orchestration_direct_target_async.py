@@ -25,6 +25,7 @@ USAGE:
 
 import asyncio
 
+
 async def sample_analyze_orchestration_direct_target_async():
     # [START analyze_orchestration_app_qna_response]
     # import libraries
@@ -53,9 +54,9 @@ async def sample_analyze_orchestration_direct_target_async():
                         "id": "1",
                         "modality": "text",
                         "language": "en",
-                        "text": query
+                        "text": query,
                     },
-                    "isLoggingEnabled": False
+                    "isLoggingEnabled": False,
                 },
                 "parameters": {
                     "projectName": project_name,
@@ -64,12 +65,10 @@ async def sample_analyze_orchestration_direct_target_async():
                     "targetProjectParameters": {
                         "ChitChat-QnA": {
                             "targetProjectKind": "QuestionAnswering",
-                            "callingOptions": {
-                                "question": query
-                            }
+                            "callingOptions": {"question": query},
                         }
-                    }
-                }
+                    },
+                },
             }
         )
 
@@ -78,16 +77,16 @@ async def sample_analyze_orchestration_direct_target_async():
     print(f"project kind: {result['result']['prediction']['projectKind']}\n")
 
     # top intent
-    top_intent = result['result']['prediction']['topIntent']
+    top_intent = result["result"]["prediction"]["topIntent"]
     print(f"top intent: {top_intent}")
-    top_intent_object = result['result']['prediction']['intents'][top_intent]
+    top_intent_object = result["result"]["prediction"]["intents"][top_intent]
     print(f"confidence score: {top_intent_object['confidenceScore']}")
     print(f"project kind: {top_intent_object['targetProjectKind']}")
 
-    if top_intent_object['targetProjectKind'] == "QuestionAnswering":
+    if top_intent_object["targetProjectKind"] == "QuestionAnswering":
         print("\nview qna result:")
-        qna_result = top_intent_object['result']
-        for answer in qna_result['answers']:
+        qna_result = top_intent_object["result"]
+        for answer in qna_result["answers"]:
             print(f"\nanswer: {answer['answer']}")
             print(f"answer: {answer['confidenceScore']}")
 
@@ -97,5 +96,6 @@ async def sample_analyze_orchestration_direct_target_async():
 async def main():
     await sample_analyze_orchestration_direct_target_async()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(main())
