@@ -159,7 +159,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             http_constants.HttpHeaders.IsContinuationExpected: False,
         }
 
-        throughput_bucket = kwargs.pop('throughput_bucket', None)
+        throughput_bucket = kwargs.pop(Constants.Kwargs.THROUGHPUT_BUCKET, None)
         if throughput_bucket:
             self.default_headers[http_constants.HttpHeaders.ThroughputBucket] = throughput_bucket
 
@@ -189,14 +189,14 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             raise TypeError(
                 "Unsupported retry policy. Must be an azure.cosmos.ConnectionRetryPolicy, int, or urllib3.Retry")
 
-        proxies = kwargs.pop('proxies', {})
+        proxies = kwargs.pop(Constants.Kwargs.PROXIES, {})
         if self.connection_policy.ProxyConfiguration and self.connection_policy.ProxyConfiguration.Host:
             host = self.connection_policy.ProxyConfiguration.Host
             url = urllib.parse.urlparse(host)
             proxy = host if url.port else host + ":" + str(self.connection_policy.ProxyConfiguration.Port)
             proxies.update({url.scheme: proxy})
 
-        suffix = kwargs.pop('user_agent_suffix', None)
+        suffix = kwargs.pop(Constants.Kwargs.USER_AGENT_SUFFIX, None)
         self._user_agent: str = _utils.get_user_agent(suffix)
 
         credentials_policy = None
@@ -207,7 +207,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             else:
                 scope = base.create_scope_from_url(self.url_connection)
             credentials_policy = CosmosBearerTokenCredentialPolicy(self.aad_credentials, scope)
-        self._enable_diagnostics_logging = kwargs.pop("enable_diagnostics_logging", False)
+        self._enable_diagnostics_logging = kwargs.pop(Constants.Kwargs.ENABLE_DIAGNOSTICS_LOGGING, False)
         policies = [
             HeadersPolicy(**kwargs),
             ProxyPolicy(proxies=proxies),
@@ -219,14 +219,14 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             NetworkTraceLoggingPolicy(**kwargs),
             DistributedTracingPolicy(**kwargs),
             CosmosHttpLoggingPolicy(
-                logger=kwargs.pop("logger", None),
+                logger=kwargs.pop(Constants.Kwargs.LOGGER, None),
                 enable_diagnostics_logging=self._enable_diagnostics_logging,
                 global_endpoint_manager=self._global_endpoint_manager,
                 **kwargs
             ),
         ]
 
-        transport = kwargs.pop("transport", None)
+        transport = kwargs.pop(Constants.Kwargs.TRANSPORT, None)
         self.pipeline_client: PipelineClient[HttpRequest, HttpResponse] = PipelineClient(
             base_url=url_connection,
             transport=transport,
@@ -1123,7 +1123,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             collection_link=database_or_container_link,
             page_iterator_class=query_iterable.QueryIterable,
             response_hook=response_hook,
-            raw_response_hook=kwargs.get('raw_response_hook'),
+            raw_response_hook=kwargs.get(Constants.Kwargs.RAW_RESPONSE_HOOK),
             resource_type=http_constants.ResourceType.Document
         )
 
@@ -2064,7 +2064,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             CosmosDict
 
         """
-        response_hook = kwargs.pop("response_hook", None)
+        response_hook = kwargs.pop(Constants.Kwargs.RESPONSE_HOOK, None)
         path = base.GetPathFromLink(document_link)
         document_id = base.GetResourceIdOrFullNameFromLink(document_link)
         resource_type = http_constants.ResourceType.Document
@@ -2112,7 +2112,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             CosmosList
 
         """
-        response_hook = kwargs.pop("response_hook", None)
+        response_hook = kwargs.pop(Constants.Kwargs.RESPONSE_HOOK, None)
         if options is None:
             options = {}
 
@@ -2222,7 +2222,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :rtype:
             None
         """
-        response_hook = kwargs.pop("response_hook", None)
+        response_hook = kwargs.pop(Constants.Kwargs.RESPONSE_HOOK, None)
         if options is None:
             options = {}
 
@@ -2599,7 +2599,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :return: The Database Account.
         :rtype: documents.DatabaseAccount
         """
-        response_hook = kwargs.pop("response_hook", None)
+        response_hook = kwargs.pop(Constants.Kwargs.RESPONSE_HOOK, None)
         if url_connection is None:
             url_connection = self.url_connection
 
@@ -2690,7 +2690,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             CosmosDict
 
         """
-        response_hook = kwargs.pop('response_hook', None)
+        response_hook = kwargs.pop(Constants.Kwargs.RESPONSE_HOOK, None)
         if options is None:
             options = {}
 
@@ -2737,7 +2737,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             CosmosDict
 
         """
-        response_hook = kwargs.pop('response_hook', None)
+        response_hook = kwargs.pop(Constants.Kwargs.RESPONSE_HOOK, None)
         if options is None:
             options = {}
 
@@ -2784,7 +2784,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             CosmosDict
 
         """
-        response_hook = kwargs.pop('response_hook', None)
+        response_hook = kwargs.pop(Constants.Kwargs.RESPONSE_HOOK, None)
         if options is None:
             options = {}
 
@@ -2829,7 +2829,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             CosmosDict
 
         """
-        response_hook = kwargs.pop('response_hook', None)
+        response_hook = kwargs.pop(Constants.Kwargs.RESPONSE_HOOK, None)
         if options is None:
             options = {}
 
@@ -2873,7 +2873,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             dict
 
         """
-        response_hook = kwargs.pop('response_hook', None)
+        response_hook = kwargs.pop(Constants.Kwargs.RESPONSE_HOOK, None)
         if options is None:
             options = {}
 
@@ -3181,12 +3181,15 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         # Check if the over lapping ranges can be populated
         feed_range_epk = None
-        if "feed_range" in kwargs:
-            feed_range = kwargs.pop("feed_range")
+        if Constants.Kwargs.FEED_RANGE in kwargs:
+            feed_range = kwargs.pop(Constants.Kwargs.FEED_RANGE)
             feed_range_epk = FeedRangeInternalEpk.from_json(feed_range).get_normalized_range()
-        elif "prefix_partition_key_object" in kwargs and "prefix_partition_key_value" in kwargs:
-            prefix_partition_key_obj = kwargs.pop("prefix_partition_key_object")
-            prefix_partition_key_value: _SequentialPartitionKeyType = kwargs.pop("prefix_partition_key_value")
+        elif (Constants.Kwargs.PREFIX_PARTITION_KEY_OBJECT in kwargs and 
+              Constants.Kwargs.PREFIX_PARTITION_KEY_VALUE in kwargs):
+            prefix_partition_key_obj = kwargs.pop(Constants.Kwargs.PREFIX_PARTITION_KEY_OBJECT)
+            prefix_partition_key_value: _SequentialPartitionKeyType = kwargs.pop(
+                Constants.Kwargs.PREFIX_PARTITION_KEY_VALUE
+            )
             feed_range_epk = (
                 prefix_partition_key_obj._get_epk_range_for_prefix_partition_key(prefix_partition_key_value))
 

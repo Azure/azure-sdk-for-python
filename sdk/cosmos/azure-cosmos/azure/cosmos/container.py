@@ -109,7 +109,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     def _get_properties_with_options(self, options: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         kwargs = {}
         if options and "excludedLocations" in options:
-            kwargs['excluded_locations'] = options['excludedLocations']
+            kwargs[Constants.Kwargs.EXCLUDED_LOCATIONS] = options['excludedLocations']
         return self._get_properties(**kwargs)
 
     def _get_properties(self, **kwargs: Any) -> Dict[str, Any]:
@@ -184,16 +184,16 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :returns: Dict representing the retrieved container.
         :rtype: dict[str, Any]
         """
-        session_token = kwargs.get('session_token')
+        session_token = kwargs.get(Constants.Kwargs.SESSION_TOKEN)
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
         if priority is not None:
-            kwargs['priority'] = priority
+            kwargs[Constants.Kwargs.PRIORITY] = priority
         if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
+            kwargs[Constants.Kwargs.INITIAL_HEADERS] = initial_headers
         if response_hook is not None:
             kwargs['response_hook'] = response_hook
         request_options = build_options(kwargs)
@@ -265,13 +265,13 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         """
         doc_link = self._get_document_link(item)
         if session_token is not None:
-            kwargs['session_token'] = session_token
+            kwargs[Constants.Kwargs.SESSION_TOKEN] = session_token
         if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
+            kwargs[Constants.Kwargs.INITIAL_HEADERS] = initial_headers
         if priority is not None:
-            kwargs['priority'] = priority
+            kwargs[Constants.Kwargs.PRIORITY] = priority
         if throughput_bucket is not None:
-            kwargs["throughput_bucket"] = throughput_bucket
+            kwargs[Constants.Kwargs.THROUGHPUT_BUCKET] = throughput_bucket
         if response_hook is not None:
             kwargs['response_hook'] = response_hook
         request_options = build_options(kwargs)
@@ -327,13 +327,13 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :rtype: Iterable[Dict[str, Any]]
         """
         if session_token is not None:
-            kwargs['session_token'] = session_token
+            kwargs[Constants.Kwargs.SESSION_TOKEN] = session_token
         if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
+            kwargs[Constants.Kwargs.INITIAL_HEADERS] = initial_headers
         if priority is not None:
-            kwargs['priority'] = priority
+            kwargs[Constants.Kwargs.PRIORITY] = priority
         if throughput_bucket is not None:
-            kwargs["throughput_bucket"] = throughput_bucket
+            kwargs[Constants.Kwargs.THROUGHPUT_BUCKET] = throughput_bucket
         if response_hook is not None:
             kwargs['response_hook'] = response_hook
         feed_options = build_options(kwargs)
@@ -953,25 +953,25 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         """
         item_link = self._get_document_link(item)
         if pre_trigger_include is not None:
-            kwargs['pre_trigger_include'] = pre_trigger_include
+            kwargs[Constants.Kwargs.PRE_TRIGGER_INCLUDE] = pre_trigger_include
         if post_trigger_include is not None:
-            kwargs['post_trigger_include'] = post_trigger_include
+            kwargs[Constants.Kwargs.POST_TRIGGER_INCLUDE] = post_trigger_include
         if session_token is not None:
-            kwargs['session_token'] = session_token
+            kwargs[Constants.Kwargs.SESSION_TOKEN] = session_token
         if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
+            kwargs[Constants.Kwargs.INITIAL_HEADERS] = initial_headers
         if priority is not None:
-            kwargs['priority'] = priority
+            kwargs[Constants.Kwargs.PRIORITY] = priority
         if etag is not None:
             kwargs['etag'] = etag
         if match_condition is not None:
             kwargs['match_condition'] = match_condition
         if no_response is not None:
-            kwargs['no_response'] = no_response
+            kwargs[Constants.Kwargs.NO_RESPONSE] = no_response
         if retry_write is not None:
             kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
         if throughput_bucket is not None:
-            kwargs["throughput_bucket"] = throughput_bucket
+            kwargs[Constants.Kwargs.THROUGHPUT_BUCKET] = throughput_bucket
         if response_hook is not None:
             kwargs['response_hook'] = response_hook
         request_options = build_options(kwargs)
@@ -1046,23 +1046,23 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
         if pre_trigger_include is not None:
-            kwargs['pre_trigger_include'] = pre_trigger_include
+            kwargs[Constants.Kwargs.PRE_TRIGGER_INCLUDE] = pre_trigger_include
         if post_trigger_include is not None:
-            kwargs['post_trigger_include'] = post_trigger_include
+            kwargs[Constants.Kwargs.POST_TRIGGER_INCLUDE] = post_trigger_include
         if session_token is not None:
-            kwargs['session_token'] = session_token
+            kwargs[Constants.Kwargs.SESSION_TOKEN] = session_token
         if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
+            kwargs[Constants.Kwargs.INITIAL_HEADERS] = initial_headers
         if priority is not None:
-            kwargs['priority'] = priority
+            kwargs[Constants.Kwargs.PRIORITY] = priority
         if etag is not None:
             kwargs['etag'] = etag
         if match_condition is not None:
             kwargs['match_condition'] = match_condition
         if no_response is not None:
-            kwargs['no_response'] = no_response
+            kwargs[Constants.Kwargs.NO_RESPONSE] = no_response
         if throughput_bucket is not None:
-            kwargs["throughput_bucket"] = throughput_bucket
+            kwargs[Constants.Kwargs.THROUGHPUT_BUCKET] = throughput_bucket
         if response_hook is not None:
             kwargs['response_hook'] = response_hook
         if retry_write is not None:
@@ -1154,21 +1154,21 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 DeprecationWarning)
 
         if pre_trigger_include is not None:
-            kwargs['pre_trigger_include'] = pre_trigger_include
+            kwargs[Constants.Kwargs.PRE_TRIGGER_INCLUDE] = pre_trigger_include
         if post_trigger_include is not None:
-            kwargs['post_trigger_include'] = post_trigger_include
+            kwargs[Constants.Kwargs.POST_TRIGGER_INCLUDE] = post_trigger_include
         if session_token is not None:
-            kwargs['session_token'] = session_token
+            kwargs[Constants.Kwargs.SESSION_TOKEN] = session_token
         if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
+            kwargs[Constants.Kwargs.INITIAL_HEADERS] = initial_headers
         if priority is not None:
-            kwargs['priority'] = priority
+            kwargs[Constants.Kwargs.PRIORITY] = priority
         if no_response is not None:
-            kwargs['no_response'] = no_response
+            kwargs[Constants.Kwargs.NO_RESPONSE] = no_response
         if retry_write is not None:
             kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
         if throughput_bucket is not None:
-            kwargs["throughput_bucket"] = throughput_bucket
+            kwargs[Constants.Kwargs.THROUGHPUT_BUCKET] = throughput_bucket
         if response_hook is not None:
             kwargs['response_hook'] = response_hook
         request_options = build_options(kwargs)
@@ -1248,23 +1248,23 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
         if pre_trigger_include is not None:
-            kwargs['pre_trigger_include'] = pre_trigger_include
+            kwargs[Constants.Kwargs.PRE_TRIGGER_INCLUDE] = pre_trigger_include
         if post_trigger_include is not None:
-            kwargs['post_trigger_include'] = post_trigger_include
+            kwargs[Constants.Kwargs.POST_TRIGGER_INCLUDE] = post_trigger_include
         if session_token is not None:
-            kwargs['session_token'] = session_token
+            kwargs[Constants.Kwargs.SESSION_TOKEN] = session_token
         if priority is not None:
-            kwargs['priority'] = priority
+            kwargs[Constants.Kwargs.PRIORITY] = priority
         if etag is not None:
             kwargs['etag'] = etag
         if match_condition is not None:
             kwargs['match_condition'] = match_condition
         if no_response is not None:
-            kwargs['no_response'] = no_response
+            kwargs[Constants.Kwargs.NO_RESPONSE] = no_response
         if retry_write is not None:
             kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
         if throughput_bucket is not None:
-            kwargs["throughput_bucket"] = throughput_bucket
+            kwargs[Constants.Kwargs.THROUGHPUT_BUCKET] = throughput_bucket
         if response_hook is not None:
             kwargs['response_hook'] = response_hook
         request_options = build_options(kwargs)
@@ -1334,15 +1334,15 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 DeprecationWarning)
 
         if pre_trigger_include is not None:
-            kwargs['pre_trigger_include'] = pre_trigger_include
+            kwargs[Constants.Kwargs.PRE_TRIGGER_INCLUDE] = pre_trigger_include
         if post_trigger_include is not None:
-            kwargs['post_trigger_include'] = post_trigger_include
+            kwargs[Constants.Kwargs.POST_TRIGGER_INCLUDE] = post_trigger_include
         if session_token is not None:
-            kwargs['session_token'] = session_token
+            kwargs[Constants.Kwargs.SESSION_TOKEN] = session_token
         if priority is not None:
-            kwargs['priority'] = priority
+            kwargs[Constants.Kwargs.PRIORITY] = priority
         if throughput_bucket is not None:
-            kwargs["throughput_bucket"] = throughput_bucket
+            kwargs[Constants.Kwargs.THROUGHPUT_BUCKET] = throughput_bucket
         if response_hook is not None:
             kwargs['response_hook'] = response_hook
         request_options = build_options(kwargs)
@@ -1406,19 +1406,19 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :rtype: None
         """
         if session_token is not None:
-            kwargs['session_token'] = session_token
+            kwargs[Constants.Kwargs.SESSION_TOKEN] = session_token
         if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
+            kwargs[Constants.Kwargs.INITIAL_HEADERS] = initial_headers
         if etag is not None:
             kwargs['etag'] = etag
         if match_condition is not None:
             kwargs['match_condition'] = match_condition
         if priority is not None:
-            kwargs['priority'] = priority
+            kwargs[Constants.Kwargs.PRIORITY] = priority
         if retry_write is not None:
             kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
         if throughput_bucket is not None:
-            kwargs["throughput_bucket"] = throughput_bucket
+            kwargs[Constants.Kwargs.THROUGHPUT_BUCKET] = throughput_bucket
         if response_hook is not None:
             kwargs['response_hook'] = response_hook
         request_options = build_options(kwargs)
@@ -1702,13 +1702,13 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 DeprecationWarning)
 
         if pre_trigger_include is not None:
-            kwargs['pre_trigger_include'] = pre_trigger_include
+            kwargs[Constants.Kwargs.PRE_TRIGGER_INCLUDE] = pre_trigger_include
         if post_trigger_include is not None:
-            kwargs['post_trigger_include'] = post_trigger_include
+            kwargs[Constants.Kwargs.POST_TRIGGER_INCLUDE] = post_trigger_include
         if session_token is not None:
-            kwargs['session_token'] = session_token
+            kwargs[Constants.Kwargs.SESSION_TOKEN] = session_token
         if throughput_bucket is not None:
-            kwargs["throughput_bucket"] = throughput_bucket
+            kwargs[Constants.Kwargs.THROUGHPUT_BUCKET] = throughput_bucket
         if response_hook is not None:
             kwargs['response_hook'] = response_hook
         request_options = build_options(kwargs)
