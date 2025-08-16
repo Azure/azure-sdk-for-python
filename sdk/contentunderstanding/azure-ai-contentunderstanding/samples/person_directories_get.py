@@ -24,10 +24,11 @@ load_dotenv()
     python person_directories_get.py
 """
 
+
 async def main():
     """
     Get person directory using get API.
-    
+
     High-level steps:
     1. Create a temporary person directory (for demo purposes)
     2. Retrieve the directory using get API
@@ -38,16 +39,18 @@ async def main():
     endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT") or ""
     credential = get_credential()
 
-    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
+    async with ContentUnderstandingClient(
+        endpoint=endpoint, credential=credential
+    ) as client:
         directory_id = f"sdk-sample-dir-{datetime.now(timezone.utc):%Y%m%d-%H%M%S}-{uuid.uuid4().hex[:8]}"
-        
+
         # Create person directory for retrieval demo
         print(f"🔧 Creating directory '{directory_id}' for retrieval demo...")
         await client.person_directories.create(
             person_directory_id=directory_id,
             resource=PersonDirectory(
                 description=f"Sample directory for get demo: {directory_id}",
-                tags={"demo_type": "get", "created_by": "SDK Sample"}
+                tags={"demo_type": "get", "created_by": "SDK Sample"},
             ),
         )
         print("✅ Directory created successfully!")
@@ -57,7 +60,7 @@ async def main():
         response = await client.person_directories.get(
             person_directory_id=directory_id,
         )
-        
+
         print(f"✅ Directory retrieved successfully!")
         print(f"   ID: {getattr(response, 'person_directory_id', 'N/A')}")
         print(f"   Description: {getattr(response, 'description', 'N/A')}")
@@ -68,6 +71,7 @@ async def main():
         print(f"🗑️  Deleting directory '{directory_id}' (demo cleanup)...")
         await client.person_directories.delete(person_directory_id=directory_id)
         print(f"✅ Directory '{directory_id}' deleted successfully!")
+
 
 # x-ms-original-file: 2025-05-01-preview/PersonDirectories_Get.json
 if __name__ == "__main__":

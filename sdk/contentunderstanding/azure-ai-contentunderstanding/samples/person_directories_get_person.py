@@ -27,10 +27,11 @@ load_dotenv()
     python person_directories_get_person.py
 """
 
+
 async def main():
     """
     Get person from directory using get_person API.
-    
+
     High-level steps:
     1. Create a person directory
     2. Add a person to the directory
@@ -42,15 +43,17 @@ async def main():
     endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT") or ""
     credential = get_credential()
 
-    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
+    async with ContentUnderstandingClient(
+        endpoint=endpoint, credential=credential
+    ) as client:
         person_directory_id = f"sdk-sample-dir-{datetime.now(timezone.utc):%Y%m%d-%H%M%S}-{uuid.uuid4().hex[:8]}"
-        
+
         # Create a person directory first
         print(f"🔧 Creating person directory '{person_directory_id}'...")
-        
+
         person_directory = PersonDirectory(
             description=f"Sample person directory for get person demo: {person_directory_id}",
-            tags={"demo_type": "get_person"}
+            tags={"demo_type": "get_person"},
         )
 
         # Create the person directory
@@ -62,7 +65,7 @@ async def main():
 
         # Add a person to the directory
         print(f"👤 Adding person to directory '{person_directory_id}'...")
-        
+
         add_response = await client.person_directories.add_person(
             person_directory_id=person_directory_id,
             body={
@@ -71,22 +74,21 @@ async def main():
                     "role": "test_subject",
                     "department": "engineering",
                     "access_level": "standard",
-                    "location": "Building A"
+                    "location": "Building A",
                 }
-            }
+            },
         )
-        
+
         person_id = add_response.person_id
         print(f"✅ Person added successfully! (ID: {person_id})")
 
         # Get the person details
         print(f"🔍 Getting person details for '{person_id}'...")
-        
+
         response = await client.person_directories.get_person(
-            person_directory_id=person_directory_id,
-            person_id=person_id
+            person_directory_id=person_directory_id, person_id=person_id
         )
-        
+
         print(f"✅ Person details retrieved successfully!")
         print(f"   Person ID: {getattr(response, 'person_id', 'N/A')}")
         print(f"   Tags: {getattr(response, 'tags', 'N/A')}")
@@ -97,6 +99,7 @@ async def main():
         print(f"🗑️  Deleting person directory '{person_directory_id}' (demo cleanup)...")
         await client.person_directories.delete(person_directory_id=person_directory_id)
         print(f"✅ Person directory '{person_directory_id}' deleted successfully!")
+
 
 # x-ms-original-file: 2025-05-01-preview/PersonDirectories_GetPerson.json
 if __name__ == "__main__":

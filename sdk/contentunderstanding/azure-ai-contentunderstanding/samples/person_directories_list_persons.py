@@ -27,10 +27,11 @@ load_dotenv()
     python person_directories_list_persons.py
 """
 
+
 async def main():
     """
     List persons in directory using list_persons API.
-    
+
     High-level steps:
     1. Create a person directory
     2. Add multiple persons to the directory
@@ -41,15 +42,17 @@ async def main():
     endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT") or ""
     credential = get_credential()
 
-    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
+    async with ContentUnderstandingClient(
+        endpoint=endpoint, credential=credential
+    ) as client:
         person_directory_id = f"sdk-sample-dir-{datetime.now(timezone.utc):%Y%m%d-%H%M%S}-{uuid.uuid4().hex[:8]}"
-        
+
         # Create a person directory first
         print(f"🔧 Creating person directory '{person_directory_id}'...")
-        
+
         person_directory = PersonDirectory(
             description=f"Sample person directory for list persons demo: {person_directory_id}",
-            tags={"demo_type": "list_persons"}
+            tags={"demo_type": "list_persons"},
         )
 
         # Create the person directory
@@ -61,7 +64,7 @@ async def main():
 
         # Add multiple persons to the directory
         print(f"👥 Adding multiple persons to directory...")
-        
+
         person_ids = []
         for i, name in enumerate(["Alice Johnson", "Bob Smith", "Carol Davis"], 1):
             response = await client.person_directories.add_person(
@@ -71,24 +74,26 @@ async def main():
                         "name": name,
                         "role": f"test_subject_{i}",
                         "department": "engineering",
-                        "access_level": "standard"
+                        "access_level": "standard",
                     }
-                }
+                },
             )
             person_ids.append(response.person_id)
             print(f"   ✅ Added {name} (ID: {response.person_id})")
-        
+
         print(f"✅ Added {len(person_ids)} persons to directory")
 
         # List all persons in the directory
         print(f"📋 Listing all persons in directory '{person_directory_id}'...")
-        
-        list_response = client.person_directories.list_persons(person_directory_id=person_directory_id)
+
+        list_response = client.person_directories.list_persons(
+            person_directory_id=person_directory_id
+        )
         persons = [person async for person in list_response]
-        
+
         print(f"✅ Found {len(persons)} persons in directory")
         print()
-        
+
         # Display detailed information about each person
         for i, person in enumerate(persons, 1):
             print(f"👤 Person {i}:")
@@ -101,6 +106,7 @@ async def main():
         print(f"🗑️  Deleting person directory '{person_directory_id}' (demo cleanup)...")
         await client.person_directories.delete(person_directory_id=person_directory_id)
         print(f"✅ Person directory '{person_directory_id}' deleted successfully!")
+
 
 # x-ms-original-file: 2025-05-01-preview/PersonDirectories_ListPersons.json
 if __name__ == "__main__":

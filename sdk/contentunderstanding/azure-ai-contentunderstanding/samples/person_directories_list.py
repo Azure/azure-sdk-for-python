@@ -31,10 +31,11 @@ Run:
     python person_directories_list.py
 """
 
+
 async def main():
     """
     List person directories using list API.
-    
+
     High-level steps:
     1. Create a few temporary person directories (for demo purposes)
     2. List all directories using list API
@@ -44,9 +45,11 @@ async def main():
     endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT") or ""
     credential = get_credential()
 
-    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client, credential:
+    async with ContentUnderstandingClient(
+        endpoint=endpoint, credential=credential
+    ) as client, credential:
         created_directories = []
-        
+
         # Create a few directories for the list demo
         print("🔧 Creating sample directories for list demo...")
         for i in range(3):
@@ -55,7 +58,7 @@ async def main():
                 person_directory_id=directory_id,
                 resource=PersonDirectory(
                     description=f"Sample directory {i+1} for list demo",
-                    tags={"demo_type": "list", "index": str(i+1)}
+                    tags={"demo_type": "list", "index": str(i + 1)},
                 ),
             )
             created_directories.append(directory_id)
@@ -65,7 +68,7 @@ async def main():
         print(f"📋 Listing all person directories...")
         response = client.person_directories.list()
         directories = [directory async for directory in response]
-        
+
         print(f"✅ Found {len(directories)} directories:")
         for i, directory in enumerate(directories, 1):
             print(f"   Directory {i}:")
@@ -81,6 +84,7 @@ async def main():
             await client.person_directories.delete(person_directory_id=directory_id)
             print(f"   ✅ Deleted directory: {directory_id}")
         print("✅ All demo directories deleted successfully!")
+
 
 # x-ms-original-file: 2025-05-01-preview/PersonDirectories_List.json
 if __name__ == "__main__":

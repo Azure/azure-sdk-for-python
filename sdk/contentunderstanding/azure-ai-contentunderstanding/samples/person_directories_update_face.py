@@ -24,10 +24,11 @@ load_dotenv()
     python person_directories_update_face.py
 """
 
+
 async def main():
     """
     Update face in person directory using update_face API.
-    
+
     High-level steps:
     1. Create a temporary person directory and add two persons
     2. Add a face to the first person from a local image file
@@ -39,9 +40,11 @@ async def main():
     endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT") or ""
     credential = get_credential()
 
-    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
+    async with ContentUnderstandingClient(
+        endpoint=endpoint, credential=credential
+    ) as client:
         directory_id = f"sdk-sample-dir-{datetime.now(timezone.utc):%Y%m%d-%H%M%S}-{uuid.uuid4().hex[:8]}"
-        
+
         # Create person directory
         print(f"🔧 Creating directory '{directory_id}'...")
         await client.person_directories.create(
@@ -66,7 +69,14 @@ async def main():
 
         # Add face to person 1
         sample_file_dir = os.path.dirname(os.path.abspath(__file__))
-        image_path = os.path.join(sample_file_dir, "sample_files", "face", "enrollment_data", "Alex", "Family1-Son1.jpg")
+        image_path = os.path.join(
+            sample_file_dir,
+            "sample_files",
+            "face",
+            "enrollment_data",
+            "Alex",
+            "Family1-Son1.jpg",
+        )
         image_b64 = read_image_to_base64(image_path)
 
         face_add_response = await client.person_directories.add_face(
@@ -84,7 +94,9 @@ async def main():
             person_directory_id=directory_id,
             face_id=face_id,
         )
-        print(f"📋 Initial face assignment: person_id={getattr(initial_face, 'person_id', 'N/A')}")
+        print(
+            f"📋 Initial face assignment: person_id={getattr(initial_face, 'person_id', 'N/A')}"
+        )
 
         # Update the face to associate it with person 2
         print(f"🔄 Updating face to associate with person 2...")
@@ -92,9 +104,9 @@ async def main():
             person_directory_id=directory_id,
             face_id=face_id,
             resource={"personId": person2_id},
-            content_type="application/json"
+            content_type="application/json",
         )
-        
+
         print(f"✅ Face updated successfully!")
         print(f"   Face ID: {getattr(response, 'face_id', 'N/A')}")
         print(f"   New Person ID: {getattr(response, 'person_id', 'N/A')}")
@@ -103,6 +115,7 @@ async def main():
         print(f"🗑️  Deleting directory '{directory_id}' (demo cleanup)...")
         await client.person_directories.delete(person_directory_id=directory_id)
         print("✅ Directory deleted - sample complete")
+
 
 # x-ms-original-file: 2025-05-01-preview/PersonDirectories_UpdateFace.json
 if __name__ == "__main__":

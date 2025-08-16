@@ -34,7 +34,7 @@ Run:
 async def main():
     """
     Detect faces in an image using the faces detect API.
-    
+
     High-level steps:
     1. Load a test image from local file
     2. Convert image to base64 format
@@ -46,53 +46,54 @@ async def main():
 
     # Handle credential context manager conditionally
     if isinstance(credential, AzureKeyCredential):
-        async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
+        async with ContentUnderstandingClient(
+            endpoint=endpoint, credential=credential
+        ) as client:
             await detect_faces_in_image(client)
     else:
-        async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client, credential:
+        async with ContentUnderstandingClient(
+            endpoint=endpoint, credential=credential
+        ) as client, credential:
             await detect_faces_in_image(client)
 
 
 async def detect_faces_in_image(client: ContentUnderstandingClient):
     """Detect faces in a test image and display results."""
-    
+
     # Load test image from sample files
     sample_file_dir = os.path.dirname(os.path.abspath(__file__))
     image_path = os.path.join(sample_file_dir, "sample_files", "face", "family.jpg")
-    
+
     print(f"🔍 Detecting faces in image: {image_path}")
-    
+
     # Convert image to base64
     image_data = read_image_to_base64(image_path)
-    
+
     # Detect faces in the image
     response = await client.faces.detect(
-        body={
-            "data": image_data,
-            "maxDetectedFaces": 10
-        }
+        body={"data": image_data, "maxDetectedFaces": 10}
     )
-    
+
     # Display detection results
     print(f"✅ Face detection completed!")
-    
-    if hasattr(response, 'detected_faces') and response.detected_faces:
+
+    if hasattr(response, "detected_faces") and response.detected_faces:
         face_count = len(response.detected_faces)
         print(f"👤 Detected {face_count} face{'s' if face_count != 1 else ''}")
-        
+
         # Display details for each detected face
         for i, face in enumerate(response.detected_faces, 1):
             print(f"\n   Face {i}:")
-            
+
             # Display bounding box information
-            if hasattr(face, 'bounding_box') and face.bounding_box:
+            if hasattr(face, "bounding_box") and face.bounding_box:
                 bbox = face.bounding_box
                 print(f"      Bounding Box:")
                 print(f"         Left: {bbox.left}, Top: {bbox.top}")
                 print(f"         Width: {bbox.width}, Height: {bbox.height}")
     else:
         print("👤 No faces detected in the image")
-    
+
     print("\n🎉 Face detection sample completed successfully!")
 
 

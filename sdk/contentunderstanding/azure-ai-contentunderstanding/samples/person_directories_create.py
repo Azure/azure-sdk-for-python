@@ -34,10 +34,11 @@ Run:
     python person_directories_create.py
 """
 
+
 async def main():
     """
     Create person directory using create API.
-    
+
     High-level steps:
     1. Create a person directory with description and tags
     2. Verify the directory was created successfully
@@ -47,19 +48,21 @@ async def main():
     endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT") or ""
     credential = get_credential()
 
-    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client, credential:
+    async with ContentUnderstandingClient(
+        endpoint=endpoint, credential=credential
+    ) as client, credential:
         person_directory_id = f"sdk-sample-dir-{datetime.now(timezone.utc):%Y%m%d-%H%M%S}-{uuid.uuid4().hex[:8]}"
-        
+
         # Create person directory configuration
         print(f"🔧 Creating person directory '{person_directory_id}'...")
-        
+
         person_directory = PersonDirectory(
             description=f"Sample person directory for access control: {person_directory_id}",
             tags={
                 "location": "Building A",
                 "type": "Access Control",
-                "demo_type": "create"
-            }
+                "demo_type": "create",
+            },
         )
 
         # Create the person directory
@@ -68,18 +71,18 @@ async def main():
             person_directory_id=person_directory_id,
             resource=person_directory,
         )
-        
+
         print(f"✅ Person directory created successfully!")
         print(f"   ID: {getattr(response, 'person_directory_id', 'N/A')}")
         print(f"   Description: {getattr(response, 'description', 'N/A')}")
         print(f"   Created at: {getattr(response, 'created_at', 'N/A')}")
         print(f"   Tags: {getattr(response, 'tags', 'N/A')}")
 
-
         # Clean up the created directory (demo cleanup)
         print(f"🗑️  Deleting person directory '{person_directory_id}' (demo cleanup)...")
         await client.person_directories.delete(person_directory_id=person_directory_id)
         print(f"✅ Person directory '{person_directory_id}' deleted successfully!")
+
 
 # x-ms-original-file: 2025-05-01-preview/PersonDirectories_Create.json
 if __name__ == "__main__":

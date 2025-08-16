@@ -37,10 +37,11 @@ from sample_helper import get_credential, read_image_to_base64
 
 load_dotenv()
 
+
 async def main():
     """
     Delete face from person directory using delete_face API.
-    
+
     High-level steps:
     1. Create a temporary person directory and add one person
     2. Add a face to that person from a local image file
@@ -50,9 +51,11 @@ async def main():
     endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT") or ""
     credential = get_credential()
 
-    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
+    async with ContentUnderstandingClient(
+        endpoint=endpoint, credential=credential
+    ) as client:
         directory_id = f"sdk-sample-dir-{datetime.now(timezone.utc):%Y%m%d-%H%M%S}-{uuid.uuid4().hex[:8]}"
-        
+
         # Create person directory
         print(f"🔧 Creating directory '{directory_id}'...")
         await client.person_directories.create(
@@ -70,7 +73,14 @@ async def main():
 
         # Load image and convert to base64 (same pattern used in tests)
         sample_file_dir = os.path.dirname(os.path.abspath(__file__))
-        image_path = os.path.join(sample_file_dir, "sample_files", "face", "enrollment_data", "Alex", "Family1-Son1.jpg")
+        image_path = os.path.join(
+            sample_file_dir,
+            "sample_files",
+            "face",
+            "enrollment_data",
+            "Alex",
+            "Family1-Son1.jpg",
+        )
         image_b64 = read_image_to_base64(image_path)
 
         face_add_response = await client.person_directories.add_face(
@@ -93,6 +103,7 @@ async def main():
         # Clean up the created directory (demo cleanup)
         await client.person_directories.delete(person_directory_id=directory_id)
         print("✅ Directory deleted - sample complete")
+
 
 if __name__ == "__main__":
     asyncio.run(main())

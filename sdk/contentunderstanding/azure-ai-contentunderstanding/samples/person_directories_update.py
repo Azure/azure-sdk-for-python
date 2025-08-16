@@ -24,10 +24,11 @@ load_dotenv()
     python person_directories_update.py
 """
 
+
 async def main():
     """
     Update person directory using update API.
-    
+
     High-level steps:
     1. Create a person directory with initial description and tags
     2. Display initial directory state
@@ -39,9 +40,11 @@ async def main():
     endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT") or ""
     credential = get_credential()
 
-    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
+    async with ContentUnderstandingClient(
+        endpoint=endpoint, credential=credential
+    ) as client:
         directory_id = f"sdk-sample-dir-{datetime.now(timezone.utc):%Y%m%d-%H%M%S}-{uuid.uuid4().hex[:8]}"
-        
+
         # Create person directory with initial data
         print(f"🔧 Creating directory '{directory_id}' with initial data...")
         await client.person_directories.create(
@@ -51,14 +54,16 @@ async def main():
                 tags={
                     "created_by": "SDK Sample",
                     "demo_type": "update",
-                    "version": "1.0"
-                }
+                    "version": "1.0",
+                },
             ),
         )
         print("✅ Directory created successfully!")
 
         # Get initial state
-        initial_state = await client.person_directories.get(person_directory_id=directory_id)
+        initial_state = await client.person_directories.get(
+            person_directory_id=directory_id
+        )
         print(f"📋 Initial directory state:")
         print(f"   Description: {getattr(initial_state, 'description', 'N/A')}")
         print(f"   Tags: {getattr(initial_state, 'tags', 'N/A')}")
@@ -73,21 +78,21 @@ async def main():
                     "updated_by": "SDK Sample",
                     "demo_type": "update",
                     "version": "2.0",
-                    "last_modified": datetime.now(timezone.utc).isoformat()
-                }
+                    "last_modified": datetime.now(timezone.utc).isoformat(),
+                },
             },
-            content_type="application/json"
+            content_type="application/json",
         )
-        
+
         print(f"✅ Directory updated successfully!")
         print(f"   Updated Description: {getattr(response, 'description', 'N/A')}")
         print(f"   Updated Tags: {getattr(response, 'tags', 'N/A')}")
-
 
         # Clean up the created directory (demo cleanup)
         print(f"🗑️  Deleting directory '{directory_id}' (demo cleanup)...")
         await client.person_directories.delete(person_directory_id=directory_id)
         print(f"✅ Directory '{directory_id}' deleted successfully!")
+
 
 # x-ms-original-file: 2025-05-01-preview/PersonDirectories_Update.json
 if __name__ == "__main__":
