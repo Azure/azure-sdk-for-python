@@ -28,7 +28,6 @@ from azure.ai.agents.models import (
     VectorStoreDataSource,
     VectorStoreDataSourceAssetType,
     ListSortOrder,
-    MessageTextContent,
 )
 from azure.identity.aio import DefaultAzureCredential
 
@@ -47,6 +46,10 @@ async def main():
         ds = VectorStoreDataSource(asset_identifier=asset_uri, asset_type=VectorStoreDataSourceAssetType.URI_ASSET)
         vector_store = await agents_client.vector_stores.create_and_poll(data_sources=[ds], name="sample_vector_store")
         print(f"Created vector store, vector store ID: {vector_store.id}")
+        vector_store_files = {}
+        async for fle in agents_client.vector_store_files.list(vector_store.id):
+            uploaded_file = await agents_client.files.get(fle.id)
+            vector_store_files[fle.id] = uploaded_file.filename
 
         # Create a file search tool
         file_search_tool = FileSearchTool(vector_store_ids=[vector_store.id])
@@ -80,9 +83,15 @@ async def main():
 
         messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
         async for msg in messages:
-            last_part = msg.content[-1]
-            if isinstance(last_part, MessageTextContent):
-                print(f"{msg.role}: {last_part.text.value}")
+            if msg.text_messages:
+                last_text = msg.text_messages[-1].text.value
+                for annotation in msg.text_messages[-1].text.annotations:
+
+                    citation = vector_store_files.get(
+                        annotation.file_citation.file_id, annotation.file_citation.file_id
+                    )
+                    last_text = last_text.replace(annotation.text, f" [{citation}]")
+                print(f"{msg.role}: {last_text}")
 
 
 if __name__ == "__main__":

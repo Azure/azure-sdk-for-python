@@ -1,20 +1,32 @@
 ## Release History
 
-### 4.14.0b2 (Unreleased)
+### 4.14.0b3 (Unreleased)
+
+#### Features Added
+
+#### Breaking Changes
+
+#### Bugs Fixed
+* Fixed bug where `excluded_locations` was not being honored for some metadata calls. See [PR 42266](https://github.com/Azure/azure-sdk-for-python/pull/42266).
+
+#### Other Changes
+* Added session token false progress merge logic. See [42393](https://github.com/Azure/azure-sdk-for-python/pull/42393)
+
+### 4.14.0b2 (2025-08-12)
 
 #### Features Added
 * Added feed range support in `query_items`. See [PR 41722](https://github.com/Azure/azure-sdk-for-python/pull/41722).
-
-#### Breaking Changes
 
 #### Bugs Fixed
 * Fixed session container session token logic. The SDK will now only send the relevant partition-local session tokens for read document requests and write requests when multi-region writes are enabled, as opposed to the entire compound session token for the container for every document request. See [PR 41678](https://github.com/Azure/azure-sdk-for-python/pull/41678).
 * Write requests for single-write region accounts will no longer send session tokens when using session consistency. See [PR 41678](https://github.com/Azure/azure-sdk-for-python/pull/41678).
 * Fixed bug where container cache was not being properly updated resulting in unnecessary extra requests. See [PR 42143](https://github.com/Azure/azure-sdk-for-python/pull/42143).
-* Fixed bug where `excluded_locations` was not being honored for some metadata calls. See [PR 42266](https://github.com/Azure/azure-sdk-for-python/pull/42266).
+* Fixed bug where the Filters on Parent loggers or handlers of Cosmos Diagnostics loggers were not being applied. See [PR 41012](https://github.com/Azure/azure-sdk-for-python/pull/41012)
 
 #### Other Changes
 * Changed to include client id in headers for all requests. See [PR 42104](https://github.com/Azure/azure-sdk-for-python/pull/42104).
+* Added an option to override AAD audience scope through environment variable. See [PR 42228](https://github.com/Azure/azure-sdk-for-python/pull/42228).
+* Diagnostics logging will now log ServiceRequestError Exceptions, ServiceResponseError Exceptions, and Cosmos exceptions with a status code of 500 or greater. See [PR 41012](https://github.com/Azure/azure-sdk-for-python/pull/41012)
 
 ### 4.14.0b1 (2025-07-14)
 

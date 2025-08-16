@@ -24,6 +24,7 @@
 import asyncio  # pylint: disable=do-not-import-asyncio
 import json
 import time
+import logging
 
 from azure.core.exceptions import AzureError, ClientAuthenticationError, ServiceRequestError, ServiceResponseError
 from azure.core.pipeline.policies import AsyncRetryPolicy
@@ -42,6 +43,7 @@ from .._retry_utility import (_configure_timeout, _has_read_retryable_headers,
                               _has_database_account_header)
 from ..exceptions import CosmosHttpResponseError
 from ..http_constants import HttpHeaders, StatusCodes, SubStatusCodes
+from .._cosmos_http_logging_policy import _log_diagnostics_error
 
 
 # pylint: disable=protected-access, disable=too-many-lines, disable=too-many-statements, disable=too-many-branches
@@ -93,6 +95,8 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
     service_request_retry_policy = _service_request_retry_policy.ServiceRequestRetryPolicy(
         client.connection_policy, global_endpoint_manager, pk_range_wrapper, *args,
     )
+    # Get Logger
+    logger = kwargs.get("logger", logging.getLogger("azure.cosmos._retry_utility_async"))
     # HttpRequest we would need to modify for Container Recreate Retry Policy
     request = None
     if args and len(args) > 3:
@@ -135,10 +139,22 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                 response = exceptions.InternalException(status_code=StatusCodes.NOT_FOUND,
                                                         headers={HttpHeaders.SubStatus:
                                                                      SubStatusCodes.THROUGHPUT_OFFER_NOT_FOUND})
-                raise exceptions.CosmosResourceNotFoundError(
+                e_offer = exceptions.CosmosResourceNotFoundError(
                     status_code=StatusCodes.NOT_FOUND,
                     message="Could not find ThroughputProperties for container " + link,
                     response=response)
+
+                response_headers = result[1] if len(result) > 1 else {}
+                logger_attributes = {
+                    "duration": time.time() - start_time,
+                    "verb": request.method,
+                    "status_code": e_offer.status_code,
+                    "sub_status_code": e_offer.sub_status,
+                }
+                _log_diagnostics_error(client._enable_diagnostics_logging, request, response_headers, e_offer,
+                                       logger_attributes, global_endpoint_manager, logger=logger)
+                raise e_offer
+
             return result
         except exceptions.CosmosHttpResponseError as e:
             if request:

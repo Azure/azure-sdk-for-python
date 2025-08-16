@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 # pylint: disable=docstring-keyword-should-match-keyword-only
-from typing import List, Optional, Union, Any
+from typing import List, Optional, Union, Any, cast, Dict
 import uuid
 
 from azure.core.credentials import TokenCredential, AzureKeyCredential
@@ -96,7 +96,7 @@ class PhoneNumbersClient:
         """
         endpoint, access_key = parse_connection_str(conn_str)
 
-        return cls(endpoint, access_key, **kwargs)
+        return cls(endpoint, AzureKeyCredential(access_key), **kwargs)
 
     @distributed_trace
     def begin_purchase_phone_numbers(
@@ -240,7 +240,9 @@ class PhoneNumbersClient:
         )
 
         result_properties = poller.result().additional_properties
-        if "status" in result_properties and result_properties["status"].lower() == "failed":
+        if (result_properties is not None and
+            "status" in result_properties and
+            result_properties["status"].lower() == "failed"):
             raise HttpResponseError(
                 message=result_properties["error"]["message"])
 
@@ -271,7 +273,8 @@ class PhoneNumbersClient:
         :returns: An iterator of purchased phone numbers.
         :rtype: ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.PurchasedPhoneNumber]
         """
-        return self._phone_number_client.phone_numbers.list_phone_numbers(**kwargs)
+        return cast(ItemPaged[PurchasedPhoneNumber],
+                   self._phone_number_client.phone_numbers.list_phone_numbers(**kwargs))
 
     @distributed_trace
     def list_available_countries(self, **kwargs: Any) -> ItemPaged[PhoneNumberCountry]:
@@ -287,9 +290,10 @@ class PhoneNumbersClient:
          ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.PhoneNumberCountry]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return self._phone_number_client.phone_numbers.list_available_countries(
-            accept_language=self._accepted_language, **kwargs
-        )
+        return cast(ItemPaged[PhoneNumberCountry],
+                   self._phone_number_client.phone_numbers.list_available_countries(
+                       accept_language=self._accepted_language, **kwargs
+                   ))
 
     @distributed_trace
     def list_available_localities(self, country_code: str, **kwargs: Any) -> ItemPaged[PhoneNumberLocality]:
@@ -310,13 +314,14 @@ class PhoneNumbersClient:
          ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.PhoneNumberLocality]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return self._phone_number_client.phone_numbers.list_available_localities(
-            country_code,
-            administrative_division=kwargs.pop(
-                "administrative_division", None),
-            accept_language=self._accepted_language,
-            **kwargs
-        )
+        return cast(ItemPaged[PhoneNumberLocality],
+                   self._phone_number_client.phone_numbers.list_available_localities(
+                       country_code,
+                       administrative_division=kwargs.pop(
+                           "administrative_division", None),
+                       accept_language=self._accepted_language,
+                       **kwargs
+                   ))
 
     @distributed_trace
     def list_available_offerings(self, country_code: str, **kwargs: Any) -> ItemPaged[PhoneNumberOffering]:
@@ -340,12 +345,13 @@ class PhoneNumbersClient:
          ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.PhoneNumberOffering]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return self._phone_number_client.phone_numbers.list_offerings(
-            country_code,
-            phone_number_type=kwargs.pop("phone_number_type", None),
-            assignment_type=kwargs.pop("assignment_type", None),
-            **kwargs
-        )
+        return cast(ItemPaged[PhoneNumberOffering],
+                   self._phone_number_client.phone_numbers.list_offerings(
+                       country_code,
+                       phone_number_type=kwargs.pop("phone_number_type", None),
+                       assignment_type=kwargs.pop("assignment_type", None),
+                       **kwargs
+                   ))
 
     @distributed_trace
     def list_available_area_codes(
@@ -374,15 +380,16 @@ class PhoneNumbersClient:
         :rtype: ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.PhoneNumberAreaCode]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return self._phone_number_client.phone_numbers.list_area_codes(
-            country_code,
-            phone_number_type=phone_number_type,
-            assignment_type=kwargs.pop("assignment_type", None),
-            locality=kwargs.pop("locality", None),
-            administrative_division=kwargs.pop(
-                "administrative_division", None),
-            **kwargs
-        )
+        return cast(ItemPaged[PhoneNumberAreaCode],
+                   self._phone_number_client.phone_numbers.list_area_codes(
+                       country_code,
+                       phone_number_type=phone_number_type,
+                       assignment_type=kwargs.pop("assignment_type", None),
+                       locality=kwargs.pop("locality", None),
+                       administrative_division=kwargs.pop(
+                           "administrative_division", None),
+                       **kwargs
+                   ))
 
     @distributed_trace
     def search_operator_information(
@@ -443,9 +450,10 @@ class PhoneNumbersClient:
         # This allows mapping the generated model to the public model.
         # Internally, the generated client will create an instance of this iterator with each fetched page.
 
-        return self._phone_number_client.phone_numbers.list_reservations(
-            max_page_size=max_page_size,
-            **kwargs)
+        return cast(ItemPaged[PhoneNumbersReservation],
+                   self._phone_number_client.phone_numbers.list_reservations(
+                       max_page_size=max_page_size,
+                       **kwargs))
 
     @distributed_trace
     def create_or_update_reservation(
@@ -481,15 +489,18 @@ class PhoneNumbersClient:
         except ValueError as exc:
             raise ValueError("reservation_id must be in valid UUID format") from exc
 
-        phone_numbers = {}
+        phone_numbers: Dict[str, Optional[AvailablePhoneNumber]] = {}
         if numbers_to_add:
             for number in numbers_to_add:
-                phone_numbers[number.id] = number
+                if number.id is not None:
+                    phone_numbers[number.id] = number
         if numbers_to_remove:
-            for number in numbers_to_remove:
-                phone_numbers[number] = None
+            for number_id in numbers_to_remove:
+                phone_numbers[number_id] = None
 
-        reservation = PhoneNumbersReservation(phone_numbers=phone_numbers)
+        # Cast to satisfy type checker - merge-patch operations allow None values
+        reservation = PhoneNumbersReservation(
+            phone_numbers=cast(Optional[Dict[str, AvailablePhoneNumber]], phone_numbers))
 
         return self._phone_number_client.phone_numbers.create_or_update_reservation(
             reservation_id, reservation, **kwargs)

@@ -26,7 +26,7 @@ class TestSqlManagementWorkloadGroupsOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             server_name="str",
             database_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -40,7 +40,7 @@ class TestSqlManagementWorkloadGroupsOperationsAsync(AzureMgmtRecordedTestCase):
             server_name="str",
             database_name="str",
             workload_group_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -66,7 +66,7 @@ class TestSqlManagementWorkloadGroupsOperationsAsync(AzureMgmtRecordedTestCase):
                     "queryExecutionTimeout": 0,
                     "type": "str",
                 },
-                api_version="2024-05-01-preview",
+                api_version="2024-11-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -82,7 +82,7 @@ class TestSqlManagementWorkloadGroupsOperationsAsync(AzureMgmtRecordedTestCase):
                 server_name="str",
                 database_name="str",
                 workload_group_name="str",
-                api_version="2024-05-01-preview",
+                api_version="2024-11-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
