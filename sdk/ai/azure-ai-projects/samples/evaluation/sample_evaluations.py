@@ -52,13 +52,13 @@ connection_name = os.environ["CONNECTION_NAME"]
 model_endpoint = os.environ["MODEL_ENDPOINT"]  # Sample: https://<account_name>.openai.azure.com.
 model_api_key = os.environ["MODEL_API_KEY"]
 model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]  # Sample : gpt-4o-mini
-dataset_name = os.environ.get("DATASET_NAME", "dataset-test-no-response2")
+dataset_name = os.environ.get("DATASET_NAME", "dataset-test")
 dataset_version = os.environ.get("DATASET_VERSION", "1.0")
 
 # Construct the paths to the data folder and data file used in this sample
 script_dir = os.path.dirname(os.path.abspath(__file__))
 data_folder = os.environ.get("DATA_FOLDER", os.path.join(script_dir, "data_folder"))
-data_file = os.path.join(data_folder, "sample_data_evaluation_no_response.jsonl")
+data_file = os.path.join(data_folder, "sample_data_evaluation.jsonl")
 
 with DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential:
 
