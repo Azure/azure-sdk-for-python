@@ -8,12 +8,15 @@ GitHub repository, but this isn't necessary to read for Python testing.
 ## Table of contents
 
 - [Debugging tip](#debugging-tip)
+- [ServiceRequestError: Cannot connect to host](#servicerequesterror-cannot-connect-to-host)
+- [ResourceNotFoundError: Playback failure](#resourcenotfounderror-playback-failure)
 - [Test collection failure](#test-collection-failure)
 - [Errors in tests using resource preparers](#errors-in-tests-using-resource-preparers)
 - [Test failure during `record/start` or `playback/start` requests](#test-failure-during-recordstart-or-playbackstart-requests)
 - [Playback failures from body matching errors](#playback-failures-from-body-matching-errors)
 - [Playback failures from inconsistent line breaks](#playback-failures-from-inconsistent-line-breaks)
 - [Playback failures from URL mismatches](#playback-failures-from-url-mismatches)
+- [Playback failures from inconsistent test values](#playback-failures-from-inconsistent-test-values)
 - [Recordings not being produced](#recordings-not-being-produced)
 - [ConnectionError during tests](#connectionerror-during-tests)
 - [Different error than expected when using proxy](#different-error-than-expected-when-using-proxy)
@@ -36,6 +39,48 @@ Additionally, the `-k` flag can be used to collect and run tests that have a spe
 containing the strings `test_delete` or `test_upload`.
 
 For more information about `pytest` invocations, refer to [Usage and Invocations][pytest_commands].
+
+## ServiceRequestError: Cannot connect to host
+
+Async tests may occasionally fail during startup with the following exception:
+
+```text
+azure.core.exceptions.ServiceRequestError: Cannot connect to host localhost:5001
+ssl:True [SSLCertVerificationError: (1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate
+verify failed: self signed certificate (_ssl.c:1123)')]
+```
+
+This is caused by the test proxy's certificate being incorrectly configured. The certificate is
+[automatically configured][cert_setup] during proxy startup, but async environments can still nondeterministically fail.
+
+To work around this issue, set the following environment variable in your `.env` file:
+
+```text
+PROXY_URL='http://localhost:5000'
+```
+
+This will target an HTTP endpoint for the test proxy that doesn't require certificates. Service requests will still be
+sent securely from your client; this change only affects test proxy interactions.
+
+## ResourceNotFoundError: Playback failure
+
+Test playback errors typically raise with a message similar to the following:
+
+```text
+FAILED test_client.py::TestClient::test_client_method - azure.core.exceptions.ResourceNotFoundError:
+Playback failure -- for help resolving, see https://aka.ms/azsdk/python/test-proxy/troubleshoot. Error details:
+Unable to find a record for the request POST https://fake_resource.service.azure.net?api-version=2025-09-01
+```
+
+This means that the test recording didn't contain a match for the incoming playback request. This usually just means
+that the test needs to be re-recorded to pick up library updates (e.g. a new service API version).
+
+If playback errors persist after re-recording, you may need to modify session sanitizers or matchers. The following
+sections of this guide describe common scenarios:
+
+- [Playback failures from body matching errors](#playback-failures-from-body-matching-errors)
+- [Playback failures from inconsistent line breaks](#playback-failures-from-inconsistent-line-breaks)
+- [Playback failures from URL mismatches](#playback-failures-from-url-mismatches)
 
 ## Test collection failure
 
@@ -245,6 +290,48 @@ from devtools_testutils import add_uri_regex_sanitizer
 add_uri_regex_sanitizer(regex="(?<=https://.+/foo/bar/)(?<id>[^/?\\.]+)", group_for_replace="id", value="Sanitized")
 ```
 
+## Playback failures from inconsistent test values
+
+To run recorded tests successfully when recorded values are inconsistent or random and can't be sanitized, the test
+proxy provides a `variables` API. This makes it possible for a test to record the values of variables that were used
+during recording and use the same values in playback mode without a sanitizer.
+
+For example, imagine that a test uses a randomized `table_uuid` variable when creating resources. The same random value
+for `table_uuid` can be used in playback mode by using this `variables` API.
+
+There are two requirements for a test to use recorded variables. First, the test method should accept `**kwargs`.
+Second, the test method should `return` a dictionary with any test variables that it wants to record. This dictionary
+will be stored in the recording when the test is run live, and will be passed to the test as a `variables` keyword
+argument when the test is run in playback.
+
+Below is a code example of how a test method could use recorded variables:
+
+```python
+from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
+
+class TestExample(AzureRecordedTestCase):
+
+    @recorded_by_proxy
+    def test_example(self, **kwargs):
+        # In live mode, variables is an empty dictionary
+        # In playback mode, the value of variables is {"table_uuid": "random-value"}
+        variables = kwargs.pop("variables", {})
+
+        # To fetch variable values, use the `setdefault` method to look for a key ("table_uuid")
+        # and set a real value for that key if it's not present ("random-value")
+        table_uuid = variables.setdefault("table_uuid", "random-value")
+
+        # use variables["table_uuid"] when using the table UUID throughout the test
+        ...
+
+        # return the variables at the end of the test to record them
+        return variables
+```
+
+> **Note:** `variables` will be passed as a named argument to any test that accepts `kwargs` by the test proxy. In
+> environments that don't use the test proxy, though -- like live test pipelines -- `variables` won't be provided.
+> To avoid a KeyError, providing an empty dictionary as the default value to `kwargs.pop` is recommended.
+
 ## Recordings not being produced
 
 Ensure the environment variable `AZURE_SKIP_LIVE_RECORDING` **isn't** set to "true", and that `AZURE_TEST_RUN_LIVE`
@@ -369,7 +456,8 @@ Alternatively, you can delete the installed tool and re-run your tests to automa
 
 <!-- Links -->
 
-[custom_default_matcher]: https://github.com/Azure/azure-sdk-for-python/blob/497f5f3435162c4f2086d1429fc1bba4f31a4354/eng/tools/azure-sdk-tools/devtools_testutils/sanitizers.py#L85
+[cert_setup]: https://github.com/Azure/azure-sdk-for-python/blob/9958caf6269247f940c697a3f982bbbf0a47a19b/eng/tools/azure-sdk-tools/devtools_testutils/proxy_startup.py#L210
+[custom_default_matcher]: https://github.com/Azure/azure-sdk-for-python/blob/9958caf6269247f940c697a3f982bbbf0a47a19b/eng/tools/azure-sdk-tools/devtools_testutils/sanitizers.py#L90
 [detailed_docs]: https://github.com/Azure/azure-sdk-tools/tree/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy/README.md
 [env_var_loader]: https://github.com/Azure/azure-sdk-for-python/blob/main/eng/tools/azure-sdk-tools/devtools_testutils/envvariable_loader.py
 [gitattributes]: https://git-scm.com/docs/gitattributes
