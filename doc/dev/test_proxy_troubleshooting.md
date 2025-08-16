@@ -7,21 +7,19 @@ GitHub repository, but this isn't necessary to read for Python testing.
 
 ## Table of contents
 
-- [Guide for test proxy troubleshooting](#guide-for-test-proxy-troubleshooting)
-  - [Table of contents](#table-of-contents)
-  - [Debugging tip](#debugging-tip)
-  - [Test collection failure](#test-collection-failure)
-  - [Errors in tests using resource preparers](#errors-in-tests-using-resource-preparers)
-  - [Test failure during `record/start` or `playback/start` requests](#test-failure-during-recordstart-or-playbackstart-requests)
-  - [Playback failures from body matching errors](#playback-failures-from-body-matching-errors)
-  - [Playback failures from inconsistent line breaks](#playback-failures-from-inconsistent-line-breaks)
-  - [Playback failures from URL mismatches](#playback-failures-from-url-mismatches)
-  - [Recordings not being produced](#recordings-not-being-produced)
-  - [ConnectionError during tests](#connectionerror-during-tests)
-  - [Different error than expected when using proxy](#different-error-than-expected-when-using-proxy)
-  - [Test setup failure in test pipeline](#test-setup-failure-in-test-pipeline)
-  - [Fixture not found error](#fixture-not-found-error)
-  - [PermissionError during startup](#permissionerror-during-startup)
+- [Debugging tip](#debugging-tip)
+- [Test collection failure](#test-collection-failure)
+- [Errors in tests using resource preparers](#errors-in-tests-using-resource-preparers)
+- [Test failure during `record/start` or `playback/start` requests](#test-failure-during-recordstart-or-playbackstart-requests)
+- [Playback failures from body matching errors](#playback-failures-from-body-matching-errors)
+- [Playback failures from inconsistent line breaks](#playback-failures-from-inconsistent-line-breaks)
+- [Playback failures from URL mismatches](#playback-failures-from-url-mismatches)
+- [Recordings not being produced](#recordings-not-being-produced)
+- [ConnectionError during tests](#connectionerror-during-tests)
+- [Different error than expected when using proxy](#different-error-than-expected-when-using-proxy)
+- [Test setup failure in test pipeline](#test-setup-failure-in-test-pipeline)
+- [Fixture not found error](#fixture-not-found-error)
+- [PermissionError during startup](#permissionerror-during-startup)
 
 ## Debugging tip
 
@@ -111,9 +109,9 @@ Resource preparers need a management client to function, so test classes that us
 
 ## Test failure during `record/start` or `playback/start` requests
 
-If your library uses out-of-repo recordings and tests fail during startup, logs might indicate that POST requests to
-`record/start` or `playback/start` endpoints are returning 500 responses. In a stack trace, these errors might be raised
-[here][record_request_failure] or [here][playback_request_failure], respectively.
+If tests fail during startup, logs might indicate that POST requests to `record/start` or `playback/start` endpoints
+are returning 500 responses. In a stack trace, these errors might be raised [here][record_request_failure] or
+[here][playback_request_failure], respectively.
 
 This suggests that the test proxy failed to fetch recordings from the assets repository. This likely comes from a
 corrupted `git` configuration in `azure-sdk-for-python/.assets`. To resolve this:
@@ -139,11 +137,9 @@ These folders will be freshly recreated the next time you run tests.
 
 ## Playback failures from body matching errors
 
-In the old, `vcrpy`-based testing system, request and response bodies weren't compared in playback mode by default in
-most packages. The test proxy system enables body matching by default, which can introduce failures for tests that
-passed in the old system. For example, if a test sends a request that includes the current Unix time in its body, the
-body will contain a new value when run in playback mode at a later time. This request might still match the recording if
-body matching is disabled, but not if it's enabled.
+The test proxy system enables body matching by default. For example, if a test sends a request that includes the
+current Unix time in its body, the body will contain a new value when run in playback mode at a later time -- this
+request won't match the recording if body matching is enabled.
 
 Body matching can be turned off with the test proxy by calling the `set_bodiless_matcher` method from
 [devtools_testutils/sanitizers.py][py_sanitizers] at the very start of a test method. This matcher applies only to the
@@ -152,13 +148,12 @@ matching enabled by default.
 
 ## Playback failures from inconsistent line breaks
 
-Some tests require recording content to completely match, including line breaks (for example, when sending the content of
-a test file in a request body). Line breaks can vary between OSes and cause tests to fail on certain platforms, in which
-case it can help to specify a particular format for test files by using [`.gitattributes`][gitattributes].
+Line breaks can vary between OSes and cause tests to fail on certain platforms, in which case it can help to specify a
+particular format for test files by using [`.gitattributes`][gitattributes].
 
-A `.gitattributes` file can be placed at the root of a directory to apply git settings to each file under that directory.
-If a test directory contains files that need to have consistent line breaks, for example LF breaks instead of CRLF ones,
-you can create a `.gitattributes` file in the directory with the following content:
+A `.gitattributes` file can be placed at the root of a directory to apply git settings to each file under that
+directory. If a test directory contains files that need to have consistent line breaks, for example LF breaks instead
+of CRLF ones, you can create a `.gitattributes` file in the directory with the following content:
 
 ```text
 # Force git to checkout text files with LF (line feed) as the ending (vs CRLF)
@@ -209,11 +204,16 @@ that test, which is recommended.
 
 ### Sanitization impacting request URL/body/headers
 
-In some cases, a value in a response body is used in the following request as part of the URL, body, or headers. If this value is sanitized, the recorded request might differ than what is expected during playback. Common culprits include sanitization of "name", "id", and "Location" fields. To resolve this, you can either opt out of specific sanitization or add another sanitizer to align with the sanitized value.
+In some cases, a value in a response body is used in the following request as part of the URL, body, or headers. If
+this value is sanitized, the recorded request might differ than what is expected during playback. Common culprits
+include sanitization of "name", "id", and "Location" fields. To resolve this, you can either opt out of specific
+sanitization or add another sanitizer to align with the sanitized value.
 
 #### Opt out
 
-You can opt out of sanitization for the fields that are used for your requests by calling the `remove_batch_sanitizer` method from `devtools_testutils` with the [sanitizer IDs][test_proxy_sanitizers] to exclude. Generally, this is done in the `conftest.py` file, in the one of the session-scoped fixtures. Example:
+You can opt out of sanitization for the fields that are used for your requests by calling the `remove_batch_sanitizer`
+method from `devtools_testutils` with the [sanitizer IDs][test_proxy_sanitizers] to exclude. Generally, this is done in
+the `conftest.py` file, in the one of the session-scoped fixtures. Example:
 
 ```python
 from devtools_testutils import remove_batch_sanitizers, test_proxy
@@ -321,8 +321,8 @@ skipped, so the `TestProxy` parameter doesn't need to be set in `tests.yml`.
 
 Tests that aren't recorded should omit the `recorded_by_proxy` decorator. However, if these unrecorded tests accept
 parameters that are provided by a preparer like the `devtools_testutils` [EnvironmentVariableLoader][env_var_loader],
-you may see a new test setup error after migrating to the test proxy. For example, imagine a test is decorated with a
-preparer that provides a Key Vault URL as a `azure_keyvault_url` parameter:
+you may see a test setup error. For example, imagine a test is decorated with a preparer that provides a Key Vault URL
+as a `azure_keyvault_url` parameter:
 
 ```python
 class TestExample(AzureRecordedTestCase):
