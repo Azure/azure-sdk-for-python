@@ -13,6 +13,8 @@ import test_config
 from azure.cosmos import CosmosClient
 
 
+
+@pytest.mark.cosmosEmulator
 class TestsUtils(unittest.TestCase):
     """Utils Tests
     """
@@ -83,16 +85,14 @@ class TestsUtils(unittest.TestCase):
 
         ## Test invalid cases
         kwargs = {"key1": "test_value", "key2": "test_value"}
-        expected_error_message = "key1, key2 are exclusive parameters, please only set one of them"
+        expected_error_message = "'key1' and 'key2' are exclusive parameters, please only set one of them."
         with pytest.raises(ValueError) as e:
             _utils.verify_exclusive_arguments(exclusive_keys, **kwargs)
         assert str(e.value) == expected_error_message
 
         kwargs = {"key1": "test_value", "key2": "test_value", "key3": "test_value"}
-        expected_error_message = "key1, key2, key3 are exclusive parameters, please only set one of them"
+        expected_error_message = "'key1', 'key2', and 'key3' are exclusive parameters, please only set one of them."
         with pytest.raises(ValueError) as e:
             _utils.verify_exclusive_arguments(exclusive_keys, **kwargs)
         assert str(e.value) == expected_error_message
 
-if __name__ == "__main__":
-    unittest.main()

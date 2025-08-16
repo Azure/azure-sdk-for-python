@@ -74,6 +74,7 @@ async def setup_and_teardown_async():
     # Code to run after tests
     print("Teardown: This runs after all tests")
 
+@pytest.mark.cosmosCircuitBreaker
 @pytest.mark.cosmosMultiRegion
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("setup_and_teardown_async")

@@ -15,8 +15,8 @@ from azure.cosmos._partition_health_tracker import HEALTH_STATUS, UNHEALTHY_TENT
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from _fault_injection_transport import FaultInjectionTransport
 
-REGION_1 = "West US 3"
-REGION_2 = "West US"
+REGION_1 = test_config.TestConfig.WRITE_LOCATION
+REGION_2 = test_config.TestConfig.READ_LOCATION
 CHANGE_FEED = "changefeed"
 CHANGE_FEED_PK = "changefeed_pk"
 CHANGE_FEED_EPK = "changefeed_epk"
