@@ -205,9 +205,9 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
 
     def get_all_write_endpoints(self) -> Set[str]:
         return {
-            ep
+            endpoint
             for context in self.get_write_regional_routing_contexts()
-            for ep in (context.get_primary(), context.get_alternate())
+            for endpoint in (context.get_primary(), context.get_alternate())
         }
 
     def get_ordered_write_locations(self):

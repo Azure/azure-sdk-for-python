@@ -186,10 +186,14 @@ class TestHealthCheckAsync:
         try:
             setup[COLLECTION].client_connection._global_endpoint_manager.startup = False
             setup[COLLECTION].client_connection._global_endpoint_manager.refresh_needed = True
-            for i in range(2):
-                await setup[COLLECTION].create_item(body={'id': 'item' + str(uuid.uuid4()), 'pk': 'pk'})
-                # wait for background task to finish
-                await asyncio.sleep(2)
+            # Trigger the background health check
+            await setup[COLLECTION].create_item(body={'id': 'item' + str(uuid.uuid4()), 'pk': 'pk'})
+
+            # Poll until the background task marks the endpoints as unavailable
+            start_time = time.time()
+            while (len(setup[COLLECTION].client_connection._global_endpoint_manager.location_cache.location_unavailability_info_by_endpoint) < len(
+                    REGIONS) and time.time() - start_time < 10):
+                await asyncio.sleep(0.1)
         finally:
             _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
             setup[COLLECTION].client_connection.connection_policy.PreferredLocations = self.original_preferred_locations

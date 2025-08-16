@@ -9,6 +9,7 @@
 #### Bugs Fixed
 * Improved the resilience of Database Account Read metadata operation against short-lived network issues by increasing number of retries.
 * Fixed bug where during health checks read regions were marked as unavailable for write operations.
+
 #### Other Changes
 
 ### 4.14.0b2 (2025-08-12)

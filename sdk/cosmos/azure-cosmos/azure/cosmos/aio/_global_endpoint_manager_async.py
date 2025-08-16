@@ -101,7 +101,9 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         self.location_cache.update_location_cache()
 
     def _mark_endpoint_unavailable(self, endpoint: str):
-        """Marks an endpoint as unavailable for the appropriate operations."""
+        """Marks an endpoint as unavailable for the appropriate operations.
+        :param str endpoint: The endpoint to mark as unavailable.
+        """
         write_endpoints = self.location_cache.get_all_write_endpoints()
         self.mark_endpoint_unavailable_for_read(endpoint, False)
         if endpoint in write_endpoints:
