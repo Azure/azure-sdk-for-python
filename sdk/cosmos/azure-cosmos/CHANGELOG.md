@@ -3,6 +3,7 @@
 ### 4.14.0b3 (Unreleased)
 
 #### Features Added
+* Added read_items API to provide an efficient method for retrieving multiple items in a single request. See [PR 42167](https://github.com/Azure/azure-sdk-for-python/pull/42167).
 
 #### Breaking Changes
 
