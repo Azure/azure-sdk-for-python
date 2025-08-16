@@ -8,7 +8,7 @@
 
 import asyncio
 import os
-import re
+
 from typing import Any
 
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
@@ -21,13 +21,15 @@ from azure.ai.contentunderstanding.models import (
     GenerationMethod,
     AnalysisMode,
     ProcessingLocation,
+    AudioVisualContent,
 )
 
 from sample_helper import (
     get_credential, 
     extract_operation_id_from_poller, 
     PollerType,
-    save_keyframe_image_to_file
+    save_keyframe_image_to_file,
+    save_json_to_file
 )
 
 from dotenv import load_dotenv
@@ -124,36 +126,42 @@ async def main():
         )
         
         # The actual analysis result is in operation_status.result
-        operation_result = operation_status.result
+        operation_result: Any = operation_status.result
         if operation_result is None:
             print("⚠️  No analysis result available")
             return
         print(f"✅ Analysis result contains {len(operation_result.contents)} contents")
 
-        # Look for keyframe files in the analysis result markdown
-        keyframe_files = set()
+        # Look for keyframe times in the analysis result
+        keyframe_times_ms: list[int] = []
         for content in operation_result.contents:
-            # Extract keyframe IDs from "markdown" if it exists and is a string
-            markdown_content = getattr(content, 'markdown', '')
-            if isinstance(markdown_content, str):
-                # Use regex pattern to find keyframe references: (keyFrame\.d+)\.jpg
-                keyframe_files.update(re.findall(r"(keyFrame\.\d+)\.jpg", markdown_content))
+            if isinstance(content, AudioVisualContent):
+                video_content: AudioVisualContent = content
+                print(f"KeyFrameTimesMs: {video_content.key_frame_times_ms}")
+                print(video_content)
+                keyframe_times_ms.extend(video_content.key_frame_times_ms or [])
+                print(f"📹 Found {len(keyframe_times_ms)} keyframes in video content")
+                break
+            else:
+                print(f"Content is not an AudioVisualContent: {content}")
 
-        if not keyframe_files:
-            print("⚠️  No keyframe files found in the analysis result markdown")
+        if not keyframe_times_ms:
+            print("⚠️  No keyframe times found in the analysis result")
             return
 
-        print(f"🖼️  Found {len(keyframe_files)} keyframe files in markdown")
+        print(f"🖼️  Found {len(keyframe_times_ms)} keyframe times in milliseconds")
 
-        # Download and save a few keyframe images (first, middle, last)
-        sorted_keyframes = sorted(keyframe_files, key=lambda x: int(x.replace('keyFrame.', '')))
-        if len(sorted_keyframes) >= 3:
-            frames_to_download = {sorted_keyframes[0], sorted_keyframes[-1], sorted_keyframes[len(sorted_keyframes) // 2]}
+        # Build keyframe filenames using the time values
+        keyframe_files = [f"keyFrame.{time_ms}" for time_ms in keyframe_times_ms]
+        
+        # Download and save a few keyframe images as examples (first, middle, last)
+        if len(keyframe_files) >= 3:
+            frames_to_download = {keyframe_files[0], keyframe_files[-1], keyframe_files[len(keyframe_files) // 2]}
         else:
-            frames_to_download = set(sorted_keyframes)
+            frames_to_download = set(keyframe_files)
         
         files_to_download = list(frames_to_download)
-        print(f"📥 Downloading {len(files_to_download)} keyframe images: {files_to_download}")
+        print(f"📥 Downloading {len(files_to_download)} keyframe images as examples: {files_to_download}")
 
         for keyframe_id in files_to_download:
             print(f"📥 Getting result file: {keyframe_id}")
