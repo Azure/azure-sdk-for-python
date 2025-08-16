@@ -334,7 +334,7 @@ class AudioVisualContent(MediaContent, discriminator="audioVisual"):
     """List of camera shot changes in the video, represented by its timestamp in milliseconds.  Only
      if returnDetails is true."""
     key_frame_times_ms: Optional[List[int]] = rest_field(
-        name="keyFrameTimesMs", visibility=["read", "create", "update", "delete", "query"]
+        name="KeyFrameTimesMs", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of key frames in the video, represented by its timestamp in milliseconds.  Only if
      returnDetails is true."""
