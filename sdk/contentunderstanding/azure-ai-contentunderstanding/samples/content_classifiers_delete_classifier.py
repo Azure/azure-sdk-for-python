@@ -13,10 +13,7 @@ import uuid
 
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
 
-from sample_helper import (
-    get_credential,
-    new_simple_classifier_schema
-)
+from sample_helper import get_credential, new_simple_classifier_schema
 
 from dotenv import load_dotenv
 
@@ -40,7 +37,7 @@ Run:
 async def main():
     """
     Delete classifier using delete API.
-    
+
     High-level steps:
     1. Create a custom classifier to demonstrate deletion
     2. Verify the classifier exists
@@ -50,16 +47,18 @@ async def main():
     endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT") or ""
     credential = get_credential()
 
-    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client, credential:
+    async with ContentUnderstandingClient(
+        endpoint=endpoint, credential=credential
+    ) as client, credential:
         classifier_id = f"sdk-sample-clf-{datetime.now().strftime('%Y%m%d')}-{datetime.now().strftime('%H%M%S')}-{uuid.uuid4().hex[:8]}"
-        
+
         # First, create a classifier to delete (for demo purposes)
         print(f"🔧 Creating classifier '{classifier_id}' for deletion demo...")
-        
+
         classifier_schema = new_simple_classifier_schema(
             classifier_id=classifier_id,
             description=f"Custom classifier for deletion demo: {classifier_id}",
-            tags={"demo_type": "deletion"}
+            tags={"demo_type": "deletion"},
         )
 
         # Start the classifier creation operation

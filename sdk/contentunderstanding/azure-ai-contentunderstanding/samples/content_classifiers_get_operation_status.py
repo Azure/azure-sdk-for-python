@@ -17,7 +17,7 @@ from sample_helper import (
     get_credential,
     new_simple_classifier_schema,
     extract_operation_id_from_poller,
-    PollerType
+    PollerType,
 )
 
 from dotenv import load_dotenv
@@ -42,7 +42,7 @@ Run:
 async def main():
     """
     Get operation status using get_operation_status API.
-    
+
     High-level steps:
     1. Create a custom classifier to get an operation ID
     2. Extract operation ID from the poller
@@ -52,16 +52,20 @@ async def main():
     endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT") or ""
     credential = get_credential()
 
-    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client, credential:
+    async with ContentUnderstandingClient(
+        endpoint=endpoint, credential=credential
+    ) as client, credential:
         classifier_id = f"sdk-sample-clf-{datetime.now().strftime('%Y%m%d')}-{datetime.now().strftime('%H%M%S')}-{uuid.uuid4().hex[:8]}"
-        
+
         # First, create a classifier to get an operation ID (for demo purposes)
-        print(f"🔧 Creating classifier '{classifier_id}' to demonstrate operation status...")
-        
+        print(
+            f"🔧 Creating classifier '{classifier_id}' to demonstrate operation status..."
+        )
+
         classifier_schema = new_simple_classifier_schema(
             classifier_id=classifier_id,
             description=f"Custom classifier for operation status demo: {classifier_id}",
-            tags={"demo_type": "operation_status"}
+            tags={"demo_type": "operation_status"},
         )
 
         # Start the classifier creation operation
@@ -71,7 +75,9 @@ async def main():
         )
 
         # Extract operation ID from the poller
-        operation_id = extract_operation_id_from_poller(poller, PollerType.CLASSIFIER_CREATION)
+        operation_id = extract_operation_id_from_poller(
+            poller, PollerType.CLASSIFIER_CREATION
+        )
         print(f"📋 Extracted creation operation ID: {operation_id}")
 
         # Get operation status
@@ -80,16 +86,16 @@ async def main():
             classifier_id=classifier_id,
             operation_id=operation_id,
         )
-        
+
         print(f"✅ Operation status retrieved successfully!")
         print(f"   Operation ID: {getattr(response, 'id', 'N/A')}")
         print(f"   Status: {getattr(response, 'status', 'N/A')}")
-        
+
         # Wait for the operation to complete
         print(f"⏳ Waiting for classifier creation to complete...")
         await poller.result()
         print(f"✅ Classifier '{classifier_id}' created successfully!")
-        
+
         # Get final operation status after completion
         print(f"🔍 Getting final operation status...")
         final_response = await client.content_classifiers.get_operation_status(
@@ -97,7 +103,7 @@ async def main():
             operation_id=operation_id,
         )
         print(f"✅ Final operation status: {getattr(final_response, 'status', 'N/A')}")
-        
+
         # Clean up the created classifier (demo cleanup)
         print(f"🗑️  Deleting classifier '{classifier_id}' (demo cleanup)...")
         await client.content_classifiers.delete(classifier_id=classifier_id)

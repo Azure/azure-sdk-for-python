@@ -16,7 +16,7 @@ from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
 from sample_helper import (
     get_credential,
     new_simple_classifier_schema,
-    save_json_to_file
+    save_json_to_file,
 )
 
 from dotenv import load_dotenv
@@ -41,7 +41,7 @@ Run:
 async def main():
     """
     Classify document from URL using begin_classify API.
-    
+
     High-level steps:
     1. Create a custom classifier
     2. Classify a document from a remote URL
@@ -51,16 +51,18 @@ async def main():
     endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT") or ""
     credential = get_credential()
 
-    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client, credential:
+    async with ContentUnderstandingClient(
+        endpoint=endpoint, credential=credential
+    ) as client, credential:
         classifier_id = f"sdk-sample-clf-{datetime.now().strftime('%Y%m%d')}-{datetime.now().strftime('%H%M%S')}-{uuid.uuid4().hex[:8]}"
-        
+
         # Create a custom classifier using object model
         print(f"🔧 Creating custom classifier '{classifier_id}'...")
-        
+
         classifier_schema = new_simple_classifier_schema(
             classifier_id=classifier_id,
             description=f"Custom classifier for URL classification demo: {classifier_id}",
-            tags={"demo_type": "url_classification"}
+            tags={"demo_type": "url_classification"},
         )
 
         # Start the classifier creation operation
@@ -95,7 +97,7 @@ async def main():
         # Display classification results
         print(f"📊 Classification Results:")
         for content in classification_result.contents:
-            if hasattr(content, 'classifications') and content.classifications:
+            if hasattr(content, "classifications") and content.classifications:
                 for classification in content.classifications:
                     print(f"   Category: {classification.category}")
                     print(f"   Confidence: {classification.confidence}")
@@ -105,7 +107,7 @@ async def main():
         # Save the classification result to a file
         saved_file_path = save_json_to_file(
             result=classification_result.as_dict(),
-            filename_prefix="content_classifiers_classify"
+            filename_prefix="content_classifiers_classify",
         )
         print(f"💾 Classification result saved to: {saved_file_path}")
 

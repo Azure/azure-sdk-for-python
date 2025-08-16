@@ -16,7 +16,7 @@ from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
 from sample_helper import (
     get_credential,
     new_simple_classifier_schema,
-    save_json_to_file
+    save_json_to_file,
 )
 
 from dotenv import load_dotenv
@@ -41,7 +41,7 @@ Run:
 async def main():
     """
     Get classifier using get API.
-    
+
     High-level steps:
     1. Create a custom classifier to demonstrate retrieval
     2. Get the classifier details
@@ -51,16 +51,18 @@ async def main():
     endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT") or ""
     credential = get_credential()
 
-    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client, credential:
+    async with ContentUnderstandingClient(
+        endpoint=endpoint, credential=credential
+    ) as client, credential:
         classifier_id = f"sdk-sample-clf-{datetime.now().strftime('%Y%m%d')}-{datetime.now().strftime('%H%M%S')}-{uuid.uuid4().hex[:8]}"
-        
+
         # First, create a classifier to retrieve (for demo purposes)
         print(f"🔧 Creating classifier '{classifier_id}' for retrieval demo...")
-        
+
         classifier_schema = new_simple_classifier_schema(
             classifier_id=classifier_id,
             description=f"Custom classifier for retrieval demo: {classifier_id}",
-            tags={"demo_type": "retrieval"}
+            tags={"demo_type": "retrieval"},
         )
 
         # Start the classifier creation operation
@@ -77,18 +79,18 @@ async def main():
         # Get the classifier
         print(f"📋 Getting classifier '{classifier_id}'...")
         response = await client.content_classifiers.get(classifier_id=classifier_id)
-        
+
         print(f"✅ Classifier '{classifier_id}' retrieved successfully!")
         print(f"   Description: {getattr(response, 'description', 'N/A')}")
         print(f"   Status: {getattr(response, 'status', 'N/A')}")
         print(f"   Created at: {getattr(response, 'created_at', 'N/A')}")
-        
+
         # Check if categories exist
-        categories = getattr(response, 'categories', None)
+        categories = getattr(response, "categories", None)
         if categories:
             print(f"   Categories: {len(categories)} categories")
             for category_name, category in categories.items():
-                description = getattr(category, 'description', 'No description')
+                description = getattr(category, "description", "No description")
                 print(f"     - {category_name}: {description}")
         else:
             print(f"   Categories: Not available")
@@ -96,7 +98,7 @@ async def main():
         # Save the classifier definition to a file
         saved_file_path = save_json_to_file(
             result=response.as_dict(),
-            filename_prefix="content_classifiers_get_classifier"
+            filename_prefix="content_classifiers_get_classifier",
         )
         print(f"💾 Classifier definition saved to: {saved_file_path}")
 

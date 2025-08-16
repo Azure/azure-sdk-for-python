@@ -18,7 +18,7 @@ from sample_helper import (
     new_simple_classifier_schema,
     extract_operation_id_from_poller,
     PollerType,
-    save_json_to_file
+    save_json_to_file,
 )
 
 from dotenv import load_dotenv
@@ -43,7 +43,7 @@ Run:
 async def main():
     """
     Get classification result using get_result API.
-    
+
     High-level steps:
     1. Create a custom classifier
     2. Classify a document to get an operation ID
@@ -55,16 +55,18 @@ async def main():
     endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT") or ""
     credential = get_credential()
 
-    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client, credential:
+    async with ContentUnderstandingClient(
+        endpoint=endpoint, credential=credential
+    ) as client, credential:
         classifier_id = f"sdk-sample-clf-{datetime.now().strftime('%Y%m%d')}-{datetime.now().strftime('%H%M%S')}-{uuid.uuid4().hex[:8]}"
-        
+
         # Create a custom classifier using object model
         print(f"🔧 Creating custom classifier '{classifier_id}'...")
-        
+
         classifier_schema = new_simple_classifier_schema(
             classifier_id=classifier_id,
             description=f"Custom classifier for get result demo: {classifier_id}",
-            tags={"demo_type": "get_result"}
+            tags={"demo_type": "get_result"},
         )
 
         # Start the classifier creation operation
@@ -98,28 +100,36 @@ async def main():
         print(f"✅ Classification completed successfully!")
 
         # Extract operation ID for get_result
-        classification_operation_id = extract_operation_id_from_poller(classification_poller, PollerType.CLASSIFY_CALL)
-        print(f"📋 Extracted classification operation ID: {classification_operation_id}")
+        classification_operation_id = extract_operation_id_from_poller(
+            classification_poller, PollerType.CLASSIFY_CALL
+        )
+        print(
+            f"📋 Extracted classification operation ID: {classification_operation_id}"
+        )
 
         # Get the classification result using the operation ID
-        print(f"🔍 Getting classification result using operation ID '{classification_operation_id}'...")
+        print(
+            f"🔍 Getting classification result using operation ID '{classification_operation_id}'..."
+        )
         operation_status = await client.content_classifiers.get_result(
             operation_id=classification_operation_id,
         )
-        
+
         print(f"✅ Classification result retrieved successfully!")
         print(f"   Operation ID: {getattr(operation_status, 'id', 'N/A')}")
         print(f"   Status: {getattr(operation_status, 'status', 'N/A')}")
-        
+
         # The actual classification result is in operation_status.result
-        operation_result = getattr(operation_status, 'result', None)
+        operation_result = getattr(operation_status, "result", None)
         if operation_result is not None:
-            print(f"   Result contains {len(getattr(operation_result, 'contents', []))} contents")
-        
+            print(
+                f"   Result contains {len(getattr(operation_result, 'contents', []))} contents"
+            )
+
         # Save the classification result to a file
         saved_file_path = save_json_to_file(
             result=operation_status.as_dict(),
-            filename_prefix="content_classifiers_get_result"
+            filename_prefix="content_classifiers_get_result",
         )
         print(f"💾 Classification result saved to: {saved_file_path}")
 

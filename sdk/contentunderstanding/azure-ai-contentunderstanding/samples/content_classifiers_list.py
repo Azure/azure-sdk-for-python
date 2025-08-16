@@ -35,7 +35,7 @@ Run:
 async def main():
     """
     List all available classifiers using list API.
-    
+
     High-level steps:
     1. Connect to Azure AI Content Understanding
     2. List all available classifiers
@@ -45,16 +45,18 @@ async def main():
     endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT") or ""
     credential = get_credential()
 
-    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client, credential:
+    async with ContentUnderstandingClient(
+        endpoint=endpoint, credential=credential
+    ) as client, credential:
         print(f"📋 Listing all available classifiers...")
-        
+
         # List all classifiers
         response = client.content_classifiers.list()
         classifiers = [classifier async for classifier in response]
-        
+
         print(f"✅ Found {len(classifiers)} classifiers")
         print()
-        
+
         # Display detailed information about each classifier
         for i, classifier in enumerate(classifiers, 1):
             print(f"🔍 Classifier {i}:")
@@ -62,25 +64,25 @@ async def main():
             print(f"   Description: {getattr(classifier, 'description', 'N/A')}")
             print(f"   Status: {getattr(classifier, 'status', 'N/A')}")
             print(f"   Created at: {getattr(classifier, 'created_at', 'N/A')}")
-            
+
             # All classifiers are custom classifiers
             print(f"   Type: Custom classifier")
-            
+
             # Show tags if available
-            tags = getattr(classifier, 'tags', None)
+            tags = getattr(classifier, "tags", None)
             if tags:
                 print(f"   Tags: {tags}")
-            
+
             # Show categories if available
-            categories = getattr(classifier, 'categories', None)
+            categories = getattr(classifier, "categories", None)
             if categories:
                 print(f"   Categories: {len(categories)} categories")
                 for category_name, category in categories.items():
-                    description = getattr(category, 'description', 'No description')
+                    description = getattr(category, "description", "No description")
                     print(f"     - {category_name}: {description}")
-            
+
             print()
-        
+
         # Show summary statistics
         print(f"📊 Summary:")
         print(f"   Total classifiers: {len(classifiers)}")
