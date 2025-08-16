@@ -51,16 +51,21 @@ load_dotenv()
 #   - content_analyzers_analyze_binary.py
 #   - content_analyzers_analyze_url.py
 
+
 async def main() -> None:
     endpoint = os.environ["AZURE_CONTENT_UNDERSTANDING_ENDPOINT"]
     credential = get_credential()
 
-    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client, credential:
+    async with ContentUnderstandingClient(
+        endpoint=endpoint, credential=credential
+    ) as client, credential:
         with open("sample_files/sample_invoice.pdf", "rb") as f:
             pdf_bytes: bytes = f.read()
 
-        print("🔍 Analyzing sample_files/sample_invoice.pdf with prebuilt-documentAnalyzer...")
-        
+        print(
+            "🔍 Analyzing sample_files/sample_invoice.pdf with prebuilt-documentAnalyzer..."
+        )
+
         # Use poller callback to save raw JSON response
         # The 'cls' parameter allows us to intercept the response before it gets deserialized as an object model
         # We return a tuple: (deserialized_object, raw_http_response)
@@ -68,15 +73,20 @@ async def main() -> None:
             analyzer_id="prebuilt-documentAnalyzer",
             input=pdf_bytes,
             content_type="application/pdf",
-            cls=lambda pipeline_response, deserialized_obj, response_headers: (deserialized_obj, pipeline_response.http_response)
+            cls=lambda pipeline_response, deserialized_obj, response_headers: (
+                deserialized_obj,
+                pipeline_response.http_response,
+            ),
         )
-        
+
         # Wait for completion and get both model and raw HTTP response
         _, raw_http_response = await poller.result()
-        
+
         # Save the raw JSON response
-        save_json_to_file(raw_http_response.json(), filename_prefix="content_analyzers_analyze_binary")
-        # Note: For easier data access, see object model samples: 
+        save_json_to_file(
+            raw_http_response.json(), filename_prefix="content_analyzers_analyze_binary"
+        )
+        # Note: For easier data access, see object model samples:
         #    content_analyzers_analyze_binary.py
         #    content_analyzers_analyze_url.py
 

@@ -49,13 +49,18 @@ load_dotenv()
 # 4. Save the analyzer definition to a JSON file
 # 5. Clean up by deleting the analyzer (demo purposes)
 
+
 async def main() -> None:
     endpoint = os.environ["AZURE_CONTENT_UNDERSTANDING_ENDPOINT"]
     credential = get_credential()
 
-    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client, credential:
-        analyzer_id = f"sdk-sample-analyzer-to-retrieve-{int(asyncio.get_event_loop().time())}"
-        
+    async with ContentUnderstandingClient(
+        endpoint=endpoint, credential=credential
+    ) as client, credential:
+        analyzer_id = (
+            f"sdk-sample-analyzer-to-retrieve-{int(asyncio.get_event_loop().time())}"
+        )
+
         # First, create an analyzer to retrieve (for demo purposes)
         print(f"🔧 Creating analyzer '{analyzer_id}' for retrieval demo...")
         custom_analyzer = ContentAnalyzer(
@@ -74,22 +79,24 @@ async def main() -> None:
                 },
             ),
         )
-        
+
         poller = await client.content_analyzers.begin_create_or_replace(
             analyzer_id=analyzer_id,
             resource=custom_analyzer,
         )
         await poller.result()
         print(f"✅ Analyzer '{analyzer_id}' created successfully!")
-        
+
         # Now retrieve the analyzer
         print(f"📋 Retrieving analyzer '{analyzer_id}'...")
-        retrieved_analyzer: ContentAnalyzer = await client.content_analyzers.get(analyzer_id=analyzer_id)
+        retrieved_analyzer: ContentAnalyzer = await client.content_analyzers.get(
+            analyzer_id=analyzer_id
+        )
         print(f"✅ Analyzer '{analyzer_id}' retrieved successfully!")
         print(f"   Description: {retrieved_analyzer.description}")
         print(f"   Status: {retrieved_analyzer.status}")
         print(f"   Created at: {retrieved_analyzer.created_at}")
-        
+
         # Clean up: delete the analyzer (demo purposes only)
         # Note: You can leave the analyzer for later use if desired
         print(f"🗑️  Deleting analyzer '{analyzer_id}' (demo cleanup)...")

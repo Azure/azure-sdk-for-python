@@ -48,13 +48,18 @@ load_dotenv()
 # 3. Delete the analyzer using the delete API
 # 4. Verify the analyzer is no longer available
 
+
 async def main() -> None:
     endpoint = os.environ["AZURE_CONTENT_UNDERSTANDING_ENDPOINT"]
     credential = get_credential()
 
-    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client, credential:
-        analyzer_id = f"sdk-sample-analyzer-to-delete-{int(asyncio.get_event_loop().time())}"
-        
+    async with ContentUnderstandingClient(
+        endpoint=endpoint, credential=credential
+    ) as client, credential:
+        analyzer_id = (
+            f"sdk-sample-analyzer-to-delete-{int(asyncio.get_event_loop().time())}"
+        )
+
         # First, create an analyzer to delete (for demo purposes)
         print(f"🔧 Creating analyzer '{analyzer_id}' for deletion demo...")
         custom_analyzer = ContentAnalyzer(
@@ -73,14 +78,14 @@ async def main() -> None:
                 },
             ),
         )
-        
+
         poller = await client.content_analyzers.begin_create_or_replace(
             analyzer_id=analyzer_id,
             resource=custom_analyzer,
         )
         await poller.result()
         print(f"✅ Analyzer '{analyzer_id}' created successfully!")
-        
+
         # Now delete the analyzer
         print(f"🗑️  Deleting analyzer '{analyzer_id}'...")
         await client.content_analyzers.delete(analyzer_id=analyzer_id)

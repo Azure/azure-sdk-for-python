@@ -48,13 +48,18 @@ load_dotenv()
 # 3. Wait for analyzer creation to complete
 # 4. Save the analyzer definition to a JSON file
 
+
 async def main() -> None:
     endpoint = os.environ["AZURE_CONTENT_UNDERSTANDING_ENDPOINT"]
     credential = get_credential()
 
-    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client, credential:
-        analyzer_id = f"sdk-sample-custom-analyzer-{int(asyncio.get_event_loop().time())}"
-        
+    async with ContentUnderstandingClient(
+        endpoint=endpoint, credential=credential
+    ) as client, credential:
+        analyzer_id = (
+            f"sdk-sample-custom-analyzer-{int(asyncio.get_event_loop().time())}"
+        )
+
         # Create a custom analyzer using object model
         custom_analyzer = ContentAnalyzer(
             base_analyzer_id="prebuilt-documentAnalyzer",
@@ -91,12 +96,12 @@ async def main() -> None:
         )
         result = await poller.result()
         print(f"✅ Analyzer '{analyzer_id}' created successfully!")
-        
+
         # Clean up the created analyzer (demo cleanup)
         print(f"🗑️  Deleting analyzer '{analyzer_id}' (demo cleanup)...")
         await client.content_analyzers.delete(analyzer_id=analyzer_id)
         print(f"✅ Analyzer '{analyzer_id}' deleted successfully!")
-        
+
         # Next steps:
         # - To retrieve the analyzer: see content_analyzers_get_analyzer.py
         # - To use the analyzer for analysis: see content_analyzers_analyze_binary.py

@@ -45,12 +45,12 @@ Run:
 async def main():
     """
     Get operation status using get_operation_status API.
-    
+
     Note: Normally you don't need to use get_operation_status API as the poller
     automatically manages the operation status and waits for completion.
     This sample is just to demonstrate the API usage for cases where you need
     custom status checking logic.
-    
+
     High-level steps:
     1. Create a custom analyzer to get an operation ID
     2. Extract operation ID from the poller
@@ -60,12 +60,18 @@ async def main():
     endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT") or ""
     credential = get_credential()
 
-    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client, credential:
-        analyzer_id = f"sdk-sample-analyzer-for-status-{int(asyncio.get_event_loop().time())}"
-        
+    async with ContentUnderstandingClient(
+        endpoint=endpoint, credential=credential
+    ) as client, credential:
+        analyzer_id = (
+            f"sdk-sample-analyzer-for-status-{int(asyncio.get_event_loop().time())}"
+        )
+
         # First, create an analyzer to get an operation ID (for demo purposes)
-        print(f"🔧 Creating analyzer '{analyzer_id}' to demonstrate operation status...")
-        
+        print(
+            f"🔧 Creating analyzer '{analyzer_id}' to demonstrate operation status..."
+        )
+
         # Create a custom analyzer using object model
         content_analyzer = ContentAnalyzer(
             base_analyzer_id="prebuilt-documentAnalyzer",
@@ -100,7 +106,9 @@ async def main():
         )
 
         # Extract operation ID from the poller
-        operation_id = extract_operation_id_from_poller(poller, PollerType.ANALYZER_CREATION)
+        operation_id = extract_operation_id_from_poller(
+            poller, PollerType.ANALYZER_CREATION
+        )
         print(f"📋 Extracted operation ID: {operation_id}")
 
         # Get operation status
@@ -109,16 +117,16 @@ async def main():
             analyzer_id=analyzer_id,
             operation_id=operation_id,
         )
-        
+
         print(f"✅ Operation status retrieved successfully!")
         print(f"   Operation ID: {response.id}")
         print(f"   Status: {response.status}")
-        
+
         # Wait for the operation to complete
         print(f"⏳ Waiting for analyzer creation to complete...")
         await poller.result()
         print(f"✅ Analyzer '{analyzer_id}' created successfully!")
-        
+
         # Get final operation status after completion
         print(f"🔍 Getting final operation status...")
         final_response = await client.content_analyzers.get_operation_status(
@@ -126,7 +134,7 @@ async def main():
             operation_id=operation_id,
         )
         print(f"✅ Final operation status: {final_response.status}")
-        
+
         # Clean up the created analyzer (demo cleanup)
         print(f"🗑️  Deleting analyzer '{analyzer_id}' (demo cleanup)...")
         await client.content_analyzers.delete(analyzer_id=analyzer_id)
