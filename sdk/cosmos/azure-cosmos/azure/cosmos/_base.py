@@ -38,7 +38,7 @@ from . import documents
 from . import http_constants
 from . import _runtime_constants
 from ._constants import _Constants as Constants
-from ._constants import _Constants.InternalOptions as InternalOptions
+InternalOptions = Constants.InternalOptions
 from .auth import _get_authorization_header
 from .offer import ThroughputProperties
 from .partition_key import _Empty, _Undefined
