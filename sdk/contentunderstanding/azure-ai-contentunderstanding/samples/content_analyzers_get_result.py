@@ -22,10 +22,10 @@ from azure.ai.contentunderstanding.models import (
 )
 
 from sample_helper import (
-    get_credential, 
-    extract_operation_id_from_poller, 
+    get_credential,
+    extract_operation_id_from_poller,
     PollerType,
-    save_json_to_file
+    save_json_to_file,
 )
 
 from dotenv import load_dotenv
@@ -52,7 +52,7 @@ Run:
 async def main():
     """
     Get analysis result using get_result API.
-    
+
     High-level steps:
     1. Create a custom analyzer
     2. Analyze a document to get an operation ID
@@ -64,12 +64,16 @@ async def main():
     endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT") or ""
     credential = get_credential()
 
-    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client, credential:
-        analyzer_id = f"sdk-sample-analyzer-for-result-{int(asyncio.get_event_loop().time())}"
-        
+    async with ContentUnderstandingClient(
+        endpoint=endpoint, credential=credential
+    ) as client, credential:
+        analyzer_id = (
+            f"sdk-sample-analyzer-for-result-{int(asyncio.get_event_loop().time())}"
+        )
+
         # Create a custom analyzer using object model
         print(f"🔧 Creating custom analyzer '{analyzer_id}'...")
-        
+
         content_analyzer = ContentAnalyzer(
             base_analyzer_id="prebuilt-documentAnalyzer",
             config=ContentAnalyzerConfig(
@@ -91,7 +95,7 @@ async def main():
                         description="Name of the company",
                         method=GenerationMethod.EXTRACT,
                         type=FieldType.STRING,
-                    )
+                    ),
                 },
                 description="Schema for get result demo",
                 name="demo_schema",
@@ -108,7 +112,9 @@ async def main():
         )
 
         # Extract operation ID from the poller
-        operation_id = extract_operation_id_from_poller(poller, PollerType.ANALYZER_CREATION)
+        operation_id = extract_operation_id_from_poller(
+            poller, PollerType.ANALYZER_CREATION
+        )
         print(f"📋 Extracted creation operation ID: {operation_id}")
 
         # Wait for the analyzer to be created
@@ -136,33 +142,37 @@ async def main():
         print(f"✅ Document analysis completed successfully!")
 
         # Extract operation ID for get_result
-        analysis_operation_id = extract_operation_id_from_poller(analysis_poller, PollerType.ANALYZE_CALL)
+        analysis_operation_id = extract_operation_id_from_poller(
+            analysis_poller, PollerType.ANALYZE_CALL
+        )
         print(f"📋 Extracted analysis operation ID: {analysis_operation_id}")
 
         # Get the analysis result using the operation ID
-        print(f"🔍 Getting analysis result using operation ID '{analysis_operation_id}'...")
+        print(
+            f"🔍 Getting analysis result using operation ID '{analysis_operation_id}'..."
+        )
         operation_status = await client.content_analyzers.get_result(
             operation_id=analysis_operation_id,
         )
-        
+
         print(f"✅ Analysis result retrieved successfully!")
         print(f"   Operation ID: {operation_status.id}")
         print(f"   Status: {operation_status.status}")
-        
+
         # The actual analysis result is in operation_status.result
         operation_result = operation_status.result
         if operation_result is None:
             print("⚠️  No analysis result available")
             return
         print(f"   Result contains {len(operation_result.contents)} contents")
-        
+
         # Save the analysis result to a file
         saved_file_path = save_json_to_file(
             result=operation_result.as_dict(),
-            filename_prefix="content_analyzers_get_result"
+            filename_prefix="content_analyzers_get_result",
         )
         print(f"💾 Analysis result saved to: {saved_file_path}")
-        
+
         # Clean up the created analyzer (demo cleanup)
         print(f"🗑️  Deleting analyzer '{analyzer_id}' (demo cleanup)...")
         await client.content_analyzers.delete(analyzer_id=analyzer_id)

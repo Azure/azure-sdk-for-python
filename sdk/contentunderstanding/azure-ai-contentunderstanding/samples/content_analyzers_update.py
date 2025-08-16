@@ -45,7 +45,7 @@ Run:
 async def main():
     """
     Update analyzer using update API.
-    
+
     High-level steps:
     1. Create an initial analyzer
     2. Get the analyzer to verify initial state
@@ -56,12 +56,16 @@ async def main():
     endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT") or ""
     credential = get_credential()
 
-    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client, credential:
-        analyzer_id = f"sdk-sample-analyzer-for-update-{int(asyncio.get_event_loop().time())}"
-        
+    async with ContentUnderstandingClient(
+        endpoint=endpoint, credential=credential
+    ) as client, credential:
+        analyzer_id = (
+            f"sdk-sample-analyzer-for-update-{int(asyncio.get_event_loop().time())}"
+        )
+
         # Create initial analyzer using object model
         print(f"🔧 Creating initial analyzer '{analyzer_id}'...")
-        
+
         initial_analyzer = ContentAnalyzer(
             base_analyzer_id="prebuilt-documentAnalyzer",
             config=ContentAnalyzerConfig(
@@ -83,7 +87,7 @@ async def main():
                         description="Name of the company",
                         method=GenerationMethod.EXTRACT,
                         type=FieldType.STRING,
-                    )
+                    ),
                 },
                 description="Schema for update demo",
                 name="update_demo_schema",
@@ -106,8 +110,10 @@ async def main():
 
         # Get the analyzer before update to verify initial state
         print(f"📋 Getting analyzer '{analyzer_id}' before update...")
-        analyzer_before_update = await client.content_analyzers.get(analyzer_id=analyzer_id)
-        
+        analyzer_before_update = await client.content_analyzers.get(
+            analyzer_id=analyzer_id
+        )
+
         print(f"✅ Initial analyzer state verified:")
         print(f"   Description: {analyzer_before_update.description}")
         print(f"   Tags: {analyzer_before_update.tags}")
@@ -126,14 +132,15 @@ async def main():
             analyzer_id=analyzer_id,
             resource=updated_analyzer,
         )
-        
-        print(f"✅ Analyzer updated successfully!")
 
+        print(f"✅ Analyzer updated successfully!")
 
         # Get the analyzer after update to verify the changes persisted
         print(f"📋 Getting analyzer '{analyzer_id}' after update...")
-        analyzer_after_update = await client.content_analyzers.get(analyzer_id=analyzer_id)
-        
+        analyzer_after_update = await client.content_analyzers.get(
+            analyzer_id=analyzer_id
+        )
+
         print(f"✅ Updated analyzer state verified:")
         print(f"   Description: {analyzer_after_update.description}")
         print(f"   Tags: {analyzer_after_update.tags}")

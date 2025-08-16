@@ -27,11 +27,11 @@ from azure.ai.contentunderstanding.models import (
 )
 
 from sample_helper import (
-    get_credential, 
-    extract_operation_id_from_poller, 
+    get_credential,
+    extract_operation_id_from_poller,
     PollerType,
     save_keyframe_image_to_file,
-    save_json_to_file
+    save_json_to_file,
 )
 
 from dotenv import load_dotenv
@@ -56,7 +56,7 @@ Run:
 async def main():
     """
     Get result files using get_result_file API.
-    
+
     High-level steps:
     1. Create a marketing video analyzer
     2. Analyze a video file to generate keyframes
@@ -68,12 +68,14 @@ async def main():
     endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT") or ""
     credential = get_credential()
 
-    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
+    async with ContentUnderstandingClient(
+        endpoint=endpoint, credential=credential
+    ) as client:
         analyzer_id = f"sdk-sample-video-{datetime.now().strftime('%Y%m%d')}-{datetime.now().strftime('%H%M%S')}-{uuid.uuid4().hex[:8]}"
-        
+
         # Create a marketing video analyzer using object model
         print(f"🔧 Creating marketing video analyzer '{analyzer_id}'...")
-        
+
         video_analyzer = ContentAnalyzer(
             base_analyzer_id="prebuilt-videoAnalyzer",
             config=ContentAnalyzerConfig(
@@ -92,7 +94,9 @@ async def main():
         )
 
         # Extract operation ID from the poller
-        operation_id = extract_operation_id_from_poller(poller, PollerType.ANALYZER_CREATION)
+        operation_id = extract_operation_id_from_poller(
+            poller, PollerType.ANALYZER_CREATION
+        )
         print(f"📋 Extracted creation operation ID: {operation_id}")
 
         # Wait for the analyzer to be created
@@ -103,7 +107,6 @@ async def main():
         # Use the FlightSimulator.mp4 video file from remote location
         video_file_url = "https://github.com/Azure-Samples/azure-ai-content-understanding-assets/raw/refs/heads/main/videos/sdk_samples/FlightSimulator.mp4"
         print(f"📹 Using video file from URL: {video_file_url}")
-        
 
         # Begin video analysis operation
         print(f"🎬 Starting video analysis with analyzer '{analyzer_id}'...")
@@ -118,7 +121,9 @@ async def main():
         print(f"✅ Video analysis completed successfully!")
 
         # Extract operation ID for get_result_file
-        analysis_operation_id = extract_operation_id_from_poller(analysis_poller, PollerType.ANALYZE_CALL)
+        analysis_operation_id = extract_operation_id_from_poller(
+            analysis_poller, PollerType.ANALYZE_CALL
+        )
         print(f"📋 Extracted analysis operation ID: {analysis_operation_id}")
 
         # Get the result to see what files are available
@@ -126,7 +131,7 @@ async def main():
         operation_status = await client.content_analyzers.get_result(
             operation_id=analysis_operation_id,
         )
-        
+
         # The actual analysis result is in operation_status.result
         operation_result: Any = operation_status.result
         if operation_result is None:
@@ -155,25 +160,31 @@ async def main():
 
         # Build keyframe filenames using the time values
         keyframe_files = [f"keyFrame.{time_ms}" for time_ms in keyframe_times_ms]
-        
+
         # Download and save a few keyframe images as examples (first, middle, last)
         if len(keyframe_files) >= 3:
-            frames_to_download = {keyframe_files[0], keyframe_files[-1], keyframe_files[len(keyframe_files) // 2]}
+            frames_to_download = {
+                keyframe_files[0],
+                keyframe_files[-1],
+                keyframe_files[len(keyframe_files) // 2],
+            }
         else:
             frames_to_download = set(keyframe_files)
-        
+
         files_to_download = list(frames_to_download)
-        print(f"📥 Downloading {len(files_to_download)} keyframe images as examples: {files_to_download}")
+        print(
+            f"📥 Downloading {len(files_to_download)} keyframe images as examples: {files_to_download}"
+        )
 
         for keyframe_id in files_to_download:
             print(f"📥 Getting result file: {keyframe_id}")
-            
+
             # Get the result file (keyframe image)
             response: Any = await client.content_analyzers.get_result_file(
                 operation_id=analysis_operation_id,
                 path=keyframe_id,
             )
-            
+
             # Handle the response which may be bytes or an async iterator of bytes
             if isinstance(response, (bytes, bytearray)):
                 image_content = bytes(response)
@@ -183,15 +194,17 @@ async def main():
                     chunks.append(chunk)
                 image_content = b"".join(chunks)
 
-            print(f"✅ Retrieved image file for {keyframe_id} ({len(image_content)} bytes)")
-            
+            print(
+                f"✅ Retrieved image file for {keyframe_id} ({len(image_content)} bytes)"
+            )
+
             # Save the image file
             saved_file_path = save_keyframe_image_to_file(
                 image_content=image_content,
                 keyframe_id=keyframe_id,
                 test_name="content_analyzers_get_result_file",
                 test_py_file_dir=os.path.dirname(os.path.abspath(__file__)),
-                identifier=analyzer_id
+                identifier=analyzer_id,
             )
             print(f"💾 Keyframe image saved to: {saved_file_path}")
 
