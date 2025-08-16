@@ -52,7 +52,7 @@ connection_name = os.environ["CONNECTION_NAME"]
 model_endpoint = os.environ["MODEL_ENDPOINT"]  # Sample: https://<account_name>.openai.azure.com.
 model_api_key = os.environ["MODEL_API_KEY"]
 model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]  # Sample : gpt-4o-mini
-dataset_name = os.environ.get("DATASET_NAME", "dataset-test")
+dataset_name = os.environ.get("DATASET_NAME", "dataset-test-no-response2")
 dataset_version = os.environ.get("DATASET_VERSION", "1.0")
 
 # Construct the paths to the data folder and data file used in this sample
@@ -132,5 +132,12 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
         print("List evaluations")
         for evaluation in project_client.evaluations.list():
             print(evaluation)
-
+            
+        print("Canceling the evaluation")
+        # project_client.evaluations.cancel(get_evaluation_response.name)
+        print(evaluation_response)
+        
+        print("deleting the evaluation")
+        project_client.evaluations.delete(get_evaluation_response.name)
+        
         # [END evaluations_sample]
