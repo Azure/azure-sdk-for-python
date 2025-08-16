@@ -12,7 +12,9 @@ from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
 from azure.core.credentials import AzureKeyCredential
 from dotenv import load_dotenv
 
-from sample_helper import get_credential, read_image_to_base64
+from sample_helper import read_image_to_base64
+from azure.core.credentials import AzureKeyCredential
+from azure.identity.aio import DefaultAzureCredential
 
 load_dotenv()
 
@@ -42,13 +44,15 @@ async def main():
     4. Display detection results with face details
     """
     endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT") or ""
-    credential = get_credential()
+    # Return AzureKeyCredential if AZURE_CONTENT_UNDERSTANDING_KEY is set, otherwise DefaultAzureCredential
+    key = os.getenv("AZURE_CONTENT_UNDERSTANDING_KEY")
+    credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
 
     # Handle credential context manager conditionally
     if isinstance(credential, AzureKeyCredential):
         async with ContentUnderstandingClient(
             endpoint=endpoint, credential=credential
-        ) as client:
+        ) as client, credential:
             await detect_faces_in_image(client)
     else:
         async with ContentUnderstandingClient(

@@ -27,12 +27,13 @@ from azure.ai.contentunderstanding.models import (
 )
 
 from sample_helper import (
-    get_credential,
     extract_operation_id_from_poller,
     PollerType,
     save_keyframe_image_to_file,
     save_json_to_file,
 )
+from azure.core.credentials import AzureKeyCredential
+from azure.identity.aio import DefaultAzureCredential
 
 from dotenv import load_dotenv
 
@@ -66,11 +67,13 @@ async def main():
     6. Clean up the created analyzer
     """
     endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT") or ""
-    credential = get_credential()
+    # Return AzureKeyCredential if AZURE_CONTENT_UNDERSTANDING_KEY is set, otherwise DefaultAzureCredential
+    key = os.getenv("AZURE_CONTENT_UNDERSTANDING_KEY")
+    credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
 
     async with ContentUnderstandingClient(
         endpoint=endpoint, credential=credential
-    ) as client:
+    ) as client, credential:
         analyzer_id = f"sdk-sample-video-{datetime.now().strftime('%Y%m%d')}-{datetime.now().strftime('%H%M%S')}-{uuid.uuid4().hex[:8]}"
 
         # Create a marketing video analyzer using object model

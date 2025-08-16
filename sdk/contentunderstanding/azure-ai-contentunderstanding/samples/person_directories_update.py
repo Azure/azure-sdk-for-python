@@ -13,7 +13,8 @@ from dotenv import load_dotenv
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
 from azure.ai.contentunderstanding.models import PersonDirectory
 
-from sample_helper import get_credential
+from azure.core.credentials import AzureKeyCredential
+from azure.identity.aio import DefaultAzureCredential
 
 load_dotenv()
 
@@ -38,11 +39,13 @@ async def main():
     6. Clean up the created directory
     """
     endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT") or ""
-    credential = get_credential()
+    # Return AzureKeyCredential if AZURE_CONTENT_UNDERSTANDING_KEY is set, otherwise DefaultAzureCredential
+    key = os.getenv("AZURE_CONTENT_UNDERSTANDING_KEY")
+    credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
 
     async with ContentUnderstandingClient(
         endpoint=endpoint, credential=credential
-    ) as client:
+    ) as client, credential:
         directory_id = f"sdk-sample-dir-{datetime.now(timezone.utc):%Y%m%d-%H%M%S}-{uuid.uuid4().hex[:8]}"
 
         # Create person directory with initial data

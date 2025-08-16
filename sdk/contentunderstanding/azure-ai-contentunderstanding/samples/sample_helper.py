@@ -14,8 +14,7 @@ from datetime import datetime, timezone
 from typing import Any, Optional, Dict
 from enum import Enum
 
-from azure.core.credentials import AzureKeyCredential
-from azure.identity.aio import DefaultAzureCredential
+
 from azure.ai.contentunderstanding.models import ContentClassifier, ClassifierCategory
 
 
@@ -26,12 +25,6 @@ class PollerType(Enum):
     ANALYZE_CALL = "analyze_call"
     CLASSIFIER_CREATION = "classifier_creation"
     CLASSIFY_CALL = "classify_call"
-
-
-def get_credential():
-    """Return AzureKeyCredential if AZURE_CONTENT_UNDERSTANDING_KEY is set, otherwise DefaultAzureCredential."""
-    key = os.getenv("AZURE_CONTENT_UNDERSTANDING_KEY")
-    return AzureKeyCredential(key) if key else DefaultAzureCredential()
 
 
 def save_json_to_file(

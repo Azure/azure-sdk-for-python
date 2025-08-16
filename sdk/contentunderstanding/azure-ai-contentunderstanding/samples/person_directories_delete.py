@@ -31,7 +31,8 @@ from dotenv import load_dotenv
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
 from azure.ai.contentunderstanding.models import PersonDirectory
 
-from sample_helper import get_credential
+from azure.core.credentials import AzureKeyCredential
+from azure.identity.aio import DefaultAzureCredential
 
 # Load environment variables from .env file, if present
 load_dotenv()
@@ -40,12 +41,14 @@ load_dotenv()
 async def main() -> None:  # noqa: D401 - simple function signature is fine for sample
     """Run the delete person directory sample."""
     endpoint: str = os.environ["AZURE_CONTENT_UNDERSTANDING_ENDPOINT"]
-    credential = get_credential()
+    # Return AzureKeyCredential if AZURE_CONTENT_UNDERSTANDING_KEY is set, otherwise DefaultAzureCredential
+    key = os.getenv("AZURE_CONTENT_UNDERSTANDING_KEY")
+    credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
 
     # Create a temporary directory first so we have something to delete
     async with ContentUnderstandingClient(
         endpoint=endpoint, credential=credential
-    ) as client:
+    ) as client, credential:
         directory_id = f"sdk-sample-dir-{datetime.now(timezone.utc):%Y%m%d-%H%M%S}-{uuid.uuid4().hex[:8]}"
         print(f"🔧 Creating temporary directory '{directory_id}'...")
         await client.person_directories.create(

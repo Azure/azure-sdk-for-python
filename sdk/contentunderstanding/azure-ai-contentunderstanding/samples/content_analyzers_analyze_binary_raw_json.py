@@ -29,7 +29,9 @@ from typing import Any
 from dotenv import load_dotenv
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
 from azure.ai.contentunderstanding.models import AnalyzeResult
-from sample_helper import get_credential, save_json_to_file
+from sample_helper import save_json_to_file
+from azure.core.credentials import AzureKeyCredential
+from azure.identity.aio import DefaultAzureCredential
 
 load_dotenv()
 
@@ -54,7 +56,9 @@ load_dotenv()
 
 async def main() -> None:
     endpoint = os.environ["AZURE_CONTENT_UNDERSTANDING_ENDPOINT"]
-    credential = get_credential()
+    # Return AzureKeyCredential if AZURE_CONTENT_UNDERSTANDING_KEY is set, otherwise DefaultAzureCredential
+    key = os.getenv("AZURE_CONTENT_UNDERSTANDING_KEY")
+    credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
 
     async with ContentUnderstandingClient(
         endpoint=endpoint, credential=credential

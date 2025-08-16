@@ -14,11 +14,12 @@ import uuid
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
 
 from sample_helper import (
-    get_credential,
     new_simple_classifier_schema,
     extract_operation_id_from_poller,
     PollerType,
 )
+from azure.core.credentials import AzureKeyCredential
+from azure.identity.aio import DefaultAzureCredential
 
 from dotenv import load_dotenv
 
@@ -50,7 +51,9 @@ async def main():
     4. Clean up the created classifier
     """
     endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT") or ""
-    credential = get_credential()
+    # Return AzureKeyCredential if AZURE_CONTENT_UNDERSTANDING_KEY is set, otherwise DefaultAzureCredential
+    key = os.getenv("AZURE_CONTENT_UNDERSTANDING_KEY")
+    credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
 
     async with ContentUnderstandingClient(
         endpoint=endpoint, credential=credential

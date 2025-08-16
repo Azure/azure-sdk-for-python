@@ -21,7 +21,8 @@ from azure.ai.contentunderstanding.models import (
     ProcessingLocation,
 )
 
-from sample_helper import get_credential
+from azure.core.credentials import AzureKeyCredential
+from azure.identity.aio import DefaultAzureCredential
 
 from dotenv import load_dotenv
 
@@ -54,7 +55,9 @@ async def main():
     5. Clean up the created analyzer
     """
     endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT") or ""
-    credential = get_credential()
+    # Return AzureKeyCredential if AZURE_CONTENT_UNDERSTANDING_KEY is set, otherwise DefaultAzureCredential
+    key = os.getenv("AZURE_CONTENT_UNDERSTANDING_KEY")
+    credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
 
     async with ContentUnderstandingClient(
         endpoint=endpoint, credential=credential
