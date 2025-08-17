@@ -24,9 +24,9 @@ from azure.core.credentials import AzureKeyCredential
 
 ConversationsPreparer = functools.partial(
     PowerShellPreparer,
-    "authoring",
-    authoring_endpoint="fake_resource.servicebus.windows.net/",
-    authoring_key="fake_key",
+    "conversations",
+    conversations_endpoint="fake_resource.servicebus.windows.net/",
+    conversations_key="fake_key",
 )
 
 
@@ -45,8 +45,8 @@ class TestConversationsCase(TestConversations):
     @ConversationsPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_create_project(self, authoring_endpoint, authoring_key):
-        client = await self.create_client(authoring_endpoint, authoring_key)
+    async def test_create_project(self, conversations_endpoint, conversations_key):
+        client = await self.create_client(conversations_endpoint, conversations_key)
 
         # Build conversation input (same as sync)
         conversation_items = [
