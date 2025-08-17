@@ -1870,17 +1870,22 @@ class TestStorageShare(StorageRecordedTestCase):
 
         self._setup(storage_account_name, storage_account_key)
 
-        share1 = self.fsc.get_share_client(self.get_resource_name(TEST_SHARE_PREFIX) + "1")
+        share1 = self.fsc.get_share_client(self.get_resource_name(TEST_SHARE_PREFIX) + "s1")
         share1.create_share(enable_smb_directory_lease=True)
         assert share1.get_share_properties().enable_smb_directory_lease == True
         share1.set_share_properties(access_tier="Hot", enable_smb_directory_lease=False)
         assert share1.get_share_properties().enable_smb_directory_lease == False
 
-        share2 = self.fsc.get_share_client(self.get_resource_name(TEST_SHARE_PREFIX) + "2")
+        share2 = self.fsc.get_share_client(self.get_resource_name(TEST_SHARE_PREFIX) + "s2")
         share2.create_share(enable_smb_directory_lease=False)
         assert share2.get_share_properties().enable_smb_directory_lease == False
         share2.set_share_properties(access_tier="Hot", enable_smb_directory_lease=True)
         assert share2.get_share_properties().enable_smb_directory_lease == True
+
+        shares = list(self.fsc.list_shares(name_starts_with=self.get_resource_name(TEST_SHARE_PREFIX)))
+        assert shares is not None
+        assert shares[0].enable_smb_directory_lease == False
+        assert shares[1].enable_smb_directory_lease == True
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
