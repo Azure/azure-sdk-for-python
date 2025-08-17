@@ -122,7 +122,6 @@ __all__ = [
     "RougeScoreEvaluator",
     "RougeType",
     "PathEfficiencyEvaluator",
-    "PathMatchingType",
     "ProtectedMaterialEvaluator",
     "AzureAIProject",
     "AzureOpenAIModelConfiguration",
