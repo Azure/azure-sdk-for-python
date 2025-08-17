@@ -49,7 +49,9 @@ async def main():
     key = os.getenv("AZURE_CONTENT_UNDERSTANDING_KEY")
     credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
 
-    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client, credential:        
+    async with ContentUnderstandingClient(
+        endpoint=endpoint, credential=credential
+    ) as client, credential:
         """Detect faces in a test image and display results."""
 
         # Load test image from sample files
