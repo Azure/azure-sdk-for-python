@@ -70,9 +70,11 @@ OUTPUT FORMAT
 Output a JSON object with these keys:
 {
   "explanation": "<15-60 words explaining the completion status>",
-  "task_requirements": "<15-60 words on what the user specifically requested>",
-  "delivered_outcome": "<15-60 words on what the agent actually provided>",
-  "completion_gaps": "<50-60 words on missing elements if task is incomplete>",
+  "details": {
+    "task_requirements": "<15-60 words on what the user specifically requested>",
+    "delivered_outcome": "<15-60 words on what the agent actually provided>",
+    "completion_gaps": "<50-60 words on missing elements if task is incomplete>"
+  },
   "success": <TRUE or FALSE>
 }
 

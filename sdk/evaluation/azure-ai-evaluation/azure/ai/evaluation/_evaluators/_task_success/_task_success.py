@@ -155,9 +155,7 @@ class TaskSuccessEvaluator(PromptyEvaluatorBase[Union[str, bool]]):
                 f"{self._result_key}": success,
                 f"{self._result_key}_result": success_result,
                 f"{self._result_key}_reason": reason,
-                f"{self._result_key}_task_requirements": llm_output.get("task_requirements", ""),
-                f"{self._result_key}_delivered_outcome": llm_output.get("delivered_outcome", ""),
-                f"{self._result_key}_completion_gaps": llm_output.get("completion_gaps", ""),
+                f"{self._result_key}_details": llm_output.get("details", ""),
             }
         if logger:
             logger.warning("LLM output is not a dictionary, returning False for the success.")
