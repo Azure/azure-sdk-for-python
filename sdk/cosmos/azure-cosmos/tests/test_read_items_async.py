@@ -474,7 +474,7 @@ class TestReadItemsAsync(unittest.IsolatedAsyncioTestCase):
         self.container = await self.database.create_container(
             id=container_id,
             partition_key=PartitionKey(path="/pk"),
-            offer_throughput=400
+            offer_throughput=10100
         )
 
         # Create new items with the new partition key structure

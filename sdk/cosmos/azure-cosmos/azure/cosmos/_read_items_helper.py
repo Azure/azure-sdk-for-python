@@ -22,7 +22,7 @@
 import logging
 from collections.abc import Sequence
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from typing import Dict, List, Tuple, Any, Optional, TYPE_CHECKING
+from typing import Dict, List, Tuple, Any, Optional, TYPE_CHECKING,Mapping
 
 from azure.core.utils import CaseInsensitiveDict
 
@@ -44,7 +44,7 @@ class ReadItemsHelperSync:
             client: 'CosmosClientConnection',
             collection_link: str,
             items: Sequence[Tuple[str, "_PartitionKeyType"]],
-            options: Optional[Dict[str, Any]],
+            options: Optional[Mapping[str, Any]],
             partition_key_definition: Dict[str, Any],
             *,
             executor: Optional[ThreadPoolExecutor] = None,
@@ -198,7 +198,7 @@ class ReadItemsHelperSync:
         return query_chunks
 
     def _execute_query_chunk_worker(
-            self, partition_id: str, chunk_partition_items: List[Tuple[int, str, "_PartitionKeyType"]]
+            self, partition_id: str, chunk_partition_items: Sequence[Tuple[int, str, "_PartitionKeyType"]]
     ) -> Tuple[List[Tuple[int, Dict[str, Any]]], float]:
         """Synchronous worker to build and execute a query for a chunk of items.
 
@@ -231,7 +231,7 @@ class ReadItemsHelperSync:
     def _execute_query(
             self,
             partition_id: str,
-            items_for_query: List[Tuple[str, "_PartitionKeyType"]],
+            items_for_query: Sequence[Tuple[str, "_PartitionKeyType"]],
             id_to_idx: Dict[str, int],
             request_kwargs: Dict[str, Any]
     ) -> Tuple[List[Tuple[int, Any]], CaseInsensitiveDict]:
