@@ -143,12 +143,10 @@ async def main():
         print(f"📊 Classification Results:")
         for content in classification_result.contents:
             document_content: DocumentContent = content
-            if hasattr(content, "category") and document_content.category:
-                print(f"   Category: {document_content.category}")
-                print(f"   Start Page Number: {document_content.start_page_number}")
-                print(f"   End Page Number: {document_content.end_page_number}")
-            else:
-                print("No category found")
+            print(f"   Category: {document_content.category}")
+            print(f"       Start Page Number: {document_content.start_page_number}")
+            print(f"       End Page Number: {document_content.end_page_number}")
+
 
         # Save the classification result to a file
         saved_file_path = save_json_to_file(
