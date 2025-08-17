@@ -13,9 +13,52 @@ import uuid
 from datetime import datetime, timezone
 from typing import Any, Optional, Dict
 from enum import Enum
+from azure.ai.contentunderstanding.models import ContentClassifier, ClassifierCategory, ContentField, FieldType
 
 
-from azure.ai.contentunderstanding.models import ContentClassifier, ClassifierCategory
+# Dictionary mapping FieldType values to their corresponding attribute names
+FIELD_TYPE_TO_ATTRIBUTE = {
+    FieldType.STRING: "value_string",
+    FieldType.NUMBER: "value_number",
+    FieldType.INTEGER: "value_integer",
+    FieldType.DATE: "value_date",
+    FieldType.TIME: "value_time",
+    FieldType.BOOLEAN: "value_boolean",
+    FieldType.ARRAY: "value_array",
+    FieldType.OBJECT: "value_object",
+}
+
+
+def get_field_value(fields: Dict[str, ContentField], field_name: str) -> Any:
+    """
+    Extract the actual value from a ContentField based on its type.
+
+    Args:
+        fields: A dictionary of field names to ContentField objects.
+        field_name: The name of the field to extract.
+
+    Returns:
+        The extracted value or None if not found.
+    """
+    if not fields or field_name not in fields:
+        return None
+    field_data = fields[field_name]
+
+    # If this is a ContentField object, extract the value based on its type
+    if hasattr(field_data, "type"):
+        field_type = field_data.type
+        
+        # Use dictionary lookup to get the appropriate attribute name
+        attribute_name = FIELD_TYPE_TO_ATTRIBUTE.get(FieldType(field_type))
+        if attribute_name:
+            return getattr(field_data, attribute_name, None)
+        else:
+            return None
+    else:
+        # This case should ideally not be reached if `fields` always contains ContentField objects
+        # but included for robustness if `get_field_value` is called with raw dicts.
+        # For this specific sample, it's expected to always receive ContentField objects from `content.fields`.
+        raise ValueError(f"type is expected for ContentField object, got {type(field_data)}")
 
 
 class PollerType(Enum):
