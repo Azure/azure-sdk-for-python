@@ -26,7 +26,7 @@ from ._evaluators._task_adherence import TaskAdherenceEvaluator
 from ._evaluators._relevance import RelevanceEvaluator
 from ._evaluators._retrieval import RetrievalEvaluator
 from ._evaluators._rouge import RougeScoreEvaluator, RougeType
-from ._evaluators._path_efficiency import PathEfficiencyEvaluator, PathMatchingType
+from ._evaluators._path_efficiency import PathEfficiencyEvaluator
 from ._evaluators._similarity import SimilarityEvaluator
 from ._evaluators._xpia import IndirectAttackEvaluator
 from ._evaluators._code_vulnerability import CodeVulnerabilityEvaluator
