@@ -9,6 +9,7 @@
 import asyncio
 import os
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
+from azure.ai.contentunderstanding.models import DetectFacesResult
 from azure.core.credentials import AzureKeyCredential
 from dotenv import load_dotenv
 
@@ -48,57 +49,41 @@ async def main():
     key = os.getenv("AZURE_CONTENT_UNDERSTANDING_KEY")
     credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
 
-    # Handle credential context manager conditionally
-    if isinstance(credential, AzureKeyCredential):
-        async with ContentUnderstandingClient(
-            endpoint=endpoint, credential=credential
-        ) as client, credential:
-            await detect_faces_in_image(client)
-    else:
-        async with ContentUnderstandingClient(
-            endpoint=endpoint, credential=credential
-        ) as client, credential:
-            await detect_faces_in_image(client)
+    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client, credential:        
+        """Detect faces in a test image and display results."""
 
+        # Load test image from sample files
+        sample_file_dir = os.path.dirname(os.path.abspath(__file__))
+        image_path = os.path.join(sample_file_dir, "sample_files", "face", "family.jpg")
 
-async def detect_faces_in_image(client: ContentUnderstandingClient):
-    """Detect faces in a test image and display results."""
+        print(f"🔍 Detecting faces in image: {image_path}")
 
-    # Load test image from sample files
-    sample_file_dir = os.path.dirname(os.path.abspath(__file__))
-    image_path = os.path.join(sample_file_dir, "sample_files", "face", "family.jpg")
+        # Convert image to base64
+        image_data = read_image_to_base64(image_path)
 
-    print(f"🔍 Detecting faces in image: {image_path}")
+        # Detect faces in the image
+        response: DetectFacesResult = await client.faces.detect(
+            data=image_data, max_detected_faces=10
+        )
 
-    # Convert image to base64
-    image_data = read_image_to_base64(image_path)
+        if hasattr(response, "detected_faces") and response.detected_faces:
+            face_count = len(response.detected_faces)
+            print(f"👤 Detected {face_count} face{'s' if face_count != 1 else ''}")
 
-    # Detect faces in the image
-    response = await client.faces.detect(
-        body={"data": image_data, "maxDetectedFaces": 10}
-    )
+            # Display details for each detected face
+            for i, face in enumerate(response.detected_faces, 1):
+                print(f"\n   Face {i}:")
 
-    # Display detection results
-    print(f"✅ Face detection completed!")
+                # Display bounding box information
+                if hasattr(face, "bounding_box") and face.bounding_box:
+                    bbox = face.bounding_box
+                    print(f"      Bounding Box:")
+                    print(f"         Left: {bbox.left}, Top: {bbox.top}")
+                    print(f"         Width: {bbox.width}, Height: {bbox.height}")
+        else:
+            print("👤 No faces detected in the image")
 
-    if hasattr(response, "detected_faces") and response.detected_faces:
-        face_count = len(response.detected_faces)
-        print(f"👤 Detected {face_count} face{'s' if face_count != 1 else ''}")
-
-        # Display details for each detected face
-        for i, face in enumerate(response.detected_faces, 1):
-            print(f"\n   Face {i}:")
-
-            # Display bounding box information
-            if hasattr(face, "bounding_box") and face.bounding_box:
-                bbox = face.bounding_box
-                print(f"      Bounding Box:")
-                print(f"         Left: {bbox.left}, Top: {bbox.top}")
-                print(f"         Width: {bbox.width}, Height: {bbox.height}")
-    else:
-        print("👤 No faces detected in the image")
-
-    print("\n🎉 Face detection sample completed successfully!")
+        print("\n🎉 Face detection sample completed successfully!")
 
 
 # x-ms-original-file: 2025-05-01-preview/Faces_Detect.json
