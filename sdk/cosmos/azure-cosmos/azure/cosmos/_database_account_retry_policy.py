@@ -39,12 +39,12 @@ class DatabaseAccountRetryPolicy(object):
     def __init__(self, connection_policy):
         self.retry_count = 0
         self.retry_after_in_milliseconds = int(os.getenv(
-            _constants._Constants.DB_ACCOUNT_RETRY_AFTER_MS_CONFIG,
-            str(_constants._Constants.DB_ACCOUNT_RETRY_AFTER_MS_CONFIG_DEFAULT)
+            _constants._Constants.AZURE_COSMOS_HEALTH_CHECK_RETRY_AFTER_MS,
+            str(_constants._Constants.AZURE_COSMOS_HEALTH_CHECK_RETRY_AFTER_MS_DEFAULT)
         ))
         self.max_retry_attempt_count = int(os.getenv(
-            _constants._Constants.DB_ACCOUNT_RETRY_ATTEMPTS_CONFIG,
-            str(_constants._Constants.DB_ACCOUNT_RETRY_ATTEMPTS_CONFIG_DEFAULT)
+            _constants._Constants.AZURE_COSMOS_HEALTH_CHECK_MAX_RETRIES,
+            str(_constants._Constants.AZURE_COSMOS_HEALTH_CHECK_MAX_RETRIES_DEFAULT)
         ))
         self.connection_policy = connection_policy
 
