@@ -13,7 +13,11 @@ from datetime import datetime
 import uuid
 
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
-from azure.ai.contentunderstanding.models import ContentClassifier, ClassifierCategory
+from azure.ai.contentunderstanding.models import (
+    ContentClassifier,
+    ClassifierCategory,
+    DocumentContent,
+)
 from typing import Optional, Dict
 
 from sample_helper import (
@@ -127,9 +131,7 @@ async def main():
         print(f"🔍 Starting URL classification with classifier '{classifier_id}'...")
         classification_poller = await client.content_classifiers.begin_classify(
             classifier_id=classifier_id,
-            body={
-                "url": mixed_docs_url,
-            },
+            url=mixed_docs_url,
         )
 
         # Wait for classification completion
@@ -140,12 +142,13 @@ async def main():
         # Display classification results
         print(f"📊 Classification Results:")
         for content in classification_result.contents:
-            if hasattr(content, "classifications") and content.classifications:
-                for classification in content.classifications:
-                    print(f"   Category: {classification.category}")
-                    print(f"   Confidence: {classification.confidence}")
-                    print(f"   Score: {classification.score}")
-                    print()
+            document_content: DocumentContent = content
+            if hasattr(content, "category") and document_content.category:
+                print(f"   Category: {document_content.category}")
+                print(f"   Start Page Number: {document_content.start_page_number}")
+                print(f"   End Page Number: {document_content.end_page_number}")
+            else:
+                print("No category found")
 
         # Save the classification result to a file
         saved_file_path = save_json_to_file(
