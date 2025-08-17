@@ -73,7 +73,7 @@ Output a JSON object with these keys:
   "details": {
     "task_requirements": "<15-60 words on what the user specifically requested>",
     "delivered_outcome": "<15-60 words on what the agent actually provided>",
-    "completion_gaps": "<50-60 words on missing elements if task is incomplete>"
+    "completion_gaps": "<15-60 words on missing elements if task is incomplete>"
   },
   "success": <TRUE or FALSE>
 }
@@ -110,9 +110,11 @@ Transportation: Metro Day Pass recommended. Book Louvre tickets online in advanc
 EXPECTED OUTPUT:
 {
   "explanation": "Complete 3-day Paris itinerary delivered with cultural landmarks and local cuisine for each day, including practical transportation advice.",
-  "task_requirements": "3-day Paris itinerary with cultural landmarks and local cuisine",
-  "delivered_outcome": "Detailed 3-day schedule with specific landmarks, restaurants, and practical tips",
-  "completion_gaps": "None",
+  "details": {
+    "task_requirements": "3-day Paris itinerary with cultural landmarks and local cuisine",
+    "delivered_outcome": "Detailed 3-day schedule with specific landmarks, restaurants, and practical tips",
+    "completion_gaps": "None"
+  },
   "success": TRUE
 }
 
@@ -141,9 +143,11 @@ Your internet issues are resolved - update firmware and change DNS as instructed
 EXPECTED OUTPUT:
 {
   "explanation": "Both issues resolved: specific troubleshooting steps provided for internet drops, and unlimited data plan successfully activated.",
-  "task_requirements": "Fix internet connection issues and upgrade to unlimited data plan",
-  "delivered_outcome": "Diagnostic completed with specific fix instructions, data plan upgrade confirmed active",
-  "completion_gaps": "None",
+  "details": {
+    "task_requirements": "Fix internet connection issues and upgrade to unlimited data plan",
+    "delivered_outcome": "Diagnostic completed with specific fix instructions, data plan upgrade confirmed active",
+    "completion_gaps": "None"
+  },
   "success": TRUE
 }
 
@@ -158,9 +162,11 @@ I'd recommend visiting the Louvre and Eiffel Tower. Paris has great food - try F
 EXPECTED OUTPUT:
 {
   "explanation": "Vague suggestions provided but no actual day-by-day itinerary created. Missing specific landmarks, restaurants, and detailed schedule.",
-  "task_requirements": "3-day Paris itinerary with cultural landmarks and local cuisine",
-  "delivered_outcome": "General recommendations without structured itinerary",
-  "completion_gaps": "No day-by-day schedule, no specific restaurant recommendations, no detailed cultural landmarks",
+  "details": {
+    "task_requirements": "3-day Paris itinerary with cultural landmarks and local cuisine",
+    "delivered_outcome": "General recommendations without structured itinerary",
+    "completion_gaps": "No day-by-day schedule, no specific restaurant recommendations, no detailed cultural landmarks"
+  },
   "success": FALSE
 }
 
@@ -178,9 +184,11 @@ I found that your router firmware needs updating. You can usually do this throug
 EXPECTED OUTPUT:
 {
   "explanation": "Internet troubleshooting started but not completed with specific steps. Data plan upgrade not attempted. User cannot proceed without more help.",
-  "task_requirements": "Fix internet connection issues and upgrade to unlimited data plan",
-  "delivered_outcome": "Identified router firmware issue but no specific fix instructions, data upgrade not completed",
-  "completion_gaps": "No specific firmware update steps, data plan upgrade not processed",
+  "details": {
+    "task_requirements": "Fix internet connection issues and upgrade to unlimited data plan",
+    "delivered_outcome": "Identified router firmware issue but no specific fix instructions, data upgrade not completed",
+    "completion_gaps": "No specific firmware update steps, data plan upgrade not processed"
+  },
   "success": FALSE
 }
 
@@ -195,9 +203,11 @@ I can help you analyze sales data! Sales analysis is important for business grow
 EXPECTED OUTPUT:
 {
   "explanation": "No actual analysis performed and no report generated. Agent provided general information about sales analysis instead of completing the requested task.",
-  "task_requirements": "Analyze Q3 sales data and generate summary report",
-  "delivered_outcome": "General information about sales analysis concepts",
-  "completion_gaps": "No data analysis performed, no summary report created",
+  "details": {
+    "task_requirements": "Analyze Q3 sales data and generate summary report",
+    "delivered_outcome": "General information about sales analysis concepts",
+    "completion_gaps": "No data analysis performed, no summary report created"
+  },
   "success": FALSE
 }
 
