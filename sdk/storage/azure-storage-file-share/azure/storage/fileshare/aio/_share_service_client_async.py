@@ -306,9 +306,6 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin
         :keyword bool include_deleted:
             Specifies that deleted shares be returned in the response.
             This is only for share soft delete enabled account.
-        :keyword bool enable_smb_directory_lease:
-            SMB only. Specifies whether granting new directory leases for directories
-            present in a share are allowed (True) or blocked (False). Enabled by default.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
