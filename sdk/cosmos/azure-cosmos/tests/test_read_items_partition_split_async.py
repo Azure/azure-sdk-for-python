@@ -1,7 +1,5 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-import asyncio
-import time
 import unittest
 import uuid
 import pytest
@@ -34,13 +32,14 @@ class TestReadItemsPartitionSplitScenarios(unittest.IsolatedAsyncioTestCase):
             "read_items_split_test_async" + str(uuid.uuid4()),
             PartitionKey(path="/pk"),
             offer_throughput=400)
-        # 1. Create 100 items to read
+        # 1. Create 5 items to read
         items_to_read = []
         item_ids = []
         for i in range(5):
             doc_id = f"item_split_{i}_{uuid.uuid4()}"
             item_ids.append(doc_id)
-            await container.create_item({'id': doc_id, 'data': i})
+            # Add the partition key field 'pk' to the item body
+            await container.create_item({'id': doc_id, 'pk': doc_id, 'data': i})
             items_to_read.append((doc_id, doc_id))
 
         # 2. Initial read_items call before the split
