@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 
 import asyncio
+import jwt
 import os
 import tempfile
 import uuid
@@ -3523,5 +3524,49 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         # Assert
         result = await (await blob.download_blob()).readall()
         assert result == data[:length]
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_blob_user_delegation_oid(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        variables = kwargs.pop("variables", {})
+        token_credential = self.get_credential(BlobClient, is_async=True)
+        data = b"abc123"
+
+        service = BlobServiceClient(
+            account_url=self.account_url(storage_account_name, "blob"),
+            credential=token_credential
+        )
+        start = self.get_datetime_variable(variables, 'start', datetime.utcnow())
+        expiry = self.get_datetime_variable(variables, 'expiry', datetime.utcnow() + timedelta(hours=1))
+        user_delegation_key = await service.get_user_delegation_key(key_start_time=start, key_expiry_time=expiry)
+        token = await token_credential.get_token("https://storage.azure.com/.default")
+        user_delegation_oid = jwt.decode(token.token, options={"verify_signature": False}).get("oid")
+
+        container_client = await service.create_container(self.get_resource_name('oauthcontainer'))
+        blob_client = container_client.get_blob_client(self.get_resource_name('oauthblob'))
+        await blob_client.upload_blob(BytesIO(data), length=len(data))
+
+        sas_token = self.generate_sas(
+            generate_blob_sas,
+            blob_client.account_name,
+            blob_client.container_name,
+            blob_client.blob_name,
+            snapshot=blob_client.snapshot,
+            permission=BlobSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            user_delegation_key=user_delegation_key,
+            user_delegation_oid=user_delegation_oid
+        )
+        assert "sduoid=" + user_delegation_oid in sas_token
+
+        blob_client_sas = BlobClient.from_blob_url(
+            f"{blob_client.url}?{sas_token}",
+            credential=token_credential
+        )
+        content = await (await blob_client_sas.download_blob()).readall()
+        assert content == data
+
+        return variables
 
 # ------------------------------------------------------------------------------
