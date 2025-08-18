@@ -592,7 +592,7 @@ class ShareProperties(DictMixin):
     """Possible values include: 'NoRootSquash', 'RootSquash', 'AllSquash'."""
     enable_snapshot_virtual_directory_access: Optional[bool] = None
     """Specifies whether the snapshot virtual directory should be accessible at the root of the share
-        mount point when NFS is enabled. if not specified, the default is True."""
+        mount point when NFS is enabled. If not specified, the default is True."""
     paid_bursting_enabled: Optional[int] = None
     """This property enables paid bursting."""
     paid_bursting_bandwidth_mibps: Optional[int] = None
@@ -603,6 +603,8 @@ class ShareProperties(DictMixin):
     """The share's next allowed provisioned throughput downgrade time."""
     next_provisioned_bandwidth_downgrade: Optional["datetime"]
     """The share's next allowed provisioned bandwidth downgrade time."""
+    enable_smb_directory_lease: Optional[bool] = None
+    """Specifies whether granting new directory leases for directories present in a SMB share are allowed."""
 
     def __init__(self, **kwargs: Any) -> None:
         self.name = None  # type: ignore [assignment]
@@ -636,6 +638,7 @@ class ShareProperties(DictMixin):
             kwargs.get('x-ms-share-next-allowed-provisioned-iops-downgrade-time'))
         self.next_provisioned_bandwidth_downgrade = (  # pylint: disable=name-too-long
             kwargs.get('x-ms-share-next-allowed-provisioned-bandwidth-downgrade-time'))
+        self.enable_smb_directory_lease = kwargs.get('x-ms-enable-smb-directory-lease')
 
     @classmethod
     def _from_generated(cls, generated):
@@ -670,6 +673,7 @@ class ShareProperties(DictMixin):
             generated.properties.next_allowed_provisioned_iops_downgrade_time)
         props.next_provisioned_bandwidth_downgrade = (  # pylint: disable=name-too-long
             generated.properties.next_allowed_provisioned_bandwidth_downgrade_time)
+        props.enable_smb_directory_lease = generated.properties.enable_smb_directory_lease
         return props
 
 
