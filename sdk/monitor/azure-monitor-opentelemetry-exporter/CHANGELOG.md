@@ -9,6 +9,8 @@
   ([#42502](https://github.com/Azure/azure-sdk-for-python/pull/42502))
 - Customer Facing Statsbeat: Refactored logic for tracking dropped items from storage
   ([#42542](https://github.com/Azure/azure-sdk-for-python/pull/42542))
+- Customer Facing SDKStats: Added the export interval env var for customer sdkstats
+  ([#42551](https://github.com/Azure/azure-sdk-for-python/pull/42551))
 
 ### Breaking Changes
 
