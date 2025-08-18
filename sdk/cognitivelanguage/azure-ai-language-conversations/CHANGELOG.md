@@ -5,7 +5,7 @@
 ### Features Added
 - Added support for service version 2024-05-01, 2024-11-01, 2024-11-15-preview,2025-05-15-preview.
 - Added custom poller AnalyzeConversationLROPoller, and make begin_analyze_conversation_job return AnalyzeConversationLROPoller[ItemPaged[ConversationActions]].
-- Added three differenct type of Redaction Policy `CharacterMaskPolicyType`, `EntityMaskTypePolicyType` and `NoMaskPolicyType`.
+- Added three different type of Redaction Policy `CharacterMaskPolicyType`, `EntityMaskTypePolicyType` and `NoMaskPolicyType`.
 - Added AI Conversation Analyze(Multi-turn conversation prediction) feature.
 - Added tests and samples for new features.
 
