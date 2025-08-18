@@ -41,6 +41,7 @@ JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
+
 def _parse_operation_id(op_loc: Optional[str]) -> Optional[str]:
     """Extract the final path segment as operation id (service-agnostic)."""
     if not op_loc:
@@ -50,7 +51,9 @@ def _parse_operation_id(op_loc: Optional[str]) -> Optional[str]:
         return None
     return path.rsplit("/", 1)[-1]
 
+
 PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
+
 
 class AnalyzeConversationAsyncLROPoller(AsyncLROPoller[PollingReturnType_co]):
     """Async poller that returns PollingReturnType_co and exposes operation metadata."""
@@ -100,6 +103,7 @@ class AnalyzeConversationAsyncLROPoller(AsyncLROPoller[PollingReturnType_co]):
             continuation_token, **kwargs
         )
         return cls(client, initial_response, deserialization_callback, polling_method)
+
 
 class ConversationAnalysisClient(AnalysisClientGenerated):
 
@@ -161,7 +165,7 @@ class ConversationAnalysisClient(AnalysisClientGenerated):
         api_versions_list=["2023-04-01", "2024-05-01", "2024-11-01", "2024-11-15-preview", "2025-05-15-preview"],
     )
     async def begin_analyze_conversation_job(  # type: ignore[override]
-    self, body: Union[AnalyzeConversationOperationInput, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[AnalyzeConversationOperationInput, JSON, IO[bytes]], **kwargs: Any
     ) -> AnalyzeConversationAsyncLROPoller[AsyncItemPaged["ConversationActions"]]:
         """Analyzes the input conversation utterance.
 
@@ -260,8 +264,8 @@ class ConversationAnalysisClient(AnalysisClientGenerated):
         await raw_result.http_response.read()  # type: ignore[attr-defined]
 
         # ---- build custom async poller
-        lro: AnalyzeConversationAsyncLROPoller[AsyncItemPaged["ConversationActions"]] = AnalyzeConversationAsyncLROPoller(
-            self._client, raw_result, get_long_running_output, polling_method
+        lro: AnalyzeConversationAsyncLROPoller[AsyncItemPaged["ConversationActions"]] = (
+            AnalyzeConversationAsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
         )
         poller_holder["poller"] = lro
         return lro

@@ -67,9 +67,13 @@ class TestConversationsCase(TestConversations):
                         id="1",
                         language="en",
                         conversation_items=[
-                            TextConversationItem(id="1", participant_id="Agent_1",    text="Can you provide your name?"),
+                            TextConversationItem(id="1", participant_id="Agent_1", text="Can you provide your name?"),
                             TextConversationItem(id="2", participant_id="Customer_1", text="Hi, my name is John Doe."),
-                            TextConversationItem(id="3", participant_id="Agent_1",    text="Thank you John, that has been updated in our system."),
+                            TextConversationItem(
+                                id="3",
+                                participant_id="Agent_1",
+                                text="Thank you John, that has been updated in our system.",
+                            ),
                         ],
                     )
                 ]
@@ -87,8 +91,8 @@ class TestConversationsCase(TestConversations):
             )
 
             # ---- Begin LRO ---------------------------------------------------
-            poller: AnalyzeConversationAsyncLROPoller[AsyncItemPaged[ConversationActions]] = await client.begin_analyze_conversation_job(
-                body=operation_input
+            poller: AnalyzeConversationAsyncLROPoller[AsyncItemPaged[ConversationActions]] = (
+                await client.begin_analyze_conversation_job(body=operation_input)
             )
 
             # Operation metadata (available immediately)
@@ -126,9 +130,9 @@ class TestConversationsCase(TestConversations):
                                         detected_entities.append(ent_text)
 
                                         # Ensure the original PII text is still present
-                                        assert ent_text in returned_text, (
-                                            f"Expected entity '{ent_text}' to be present but was not found in: {returned_text}"
-                                        )
+                                        assert (
+                                            ent_text in returned_text
+                                        ), f"Expected entity '{ent_text}' to be present but was not found in: {returned_text}"
 
             # ---- Assertions --------------------------------------------------
             assert len(detected_entities) > 0, "Expected at least one detected PII entity."

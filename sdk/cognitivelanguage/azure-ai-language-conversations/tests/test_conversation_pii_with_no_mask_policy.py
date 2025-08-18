@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 import functools
 import pytest
 
@@ -52,7 +53,7 @@ class TestConversationsCase(TestConversations):
     @recorded_by_proxy
     def test_conversation_pii_with_no_mask_policy(self, conversations_endpoint, conversations_key):
         client = self.create_client(conversations_endpoint, conversations_key)
- 
+
         detected_entities: List[str] = []
 
         # ---- Redaction policy: NoMask (detect PII but do NOT redact) ----------
@@ -65,9 +66,13 @@ class TestConversationsCase(TestConversations):
                     id="1",
                     language="en",
                     conversation_items=[
-                        TextConversationItem(id="1", participant_id="Agent_1",    text="Can you provide your name?"),
+                        TextConversationItem(id="1", participant_id="Agent_1", text="Can you provide your name?"),
                         TextConversationItem(id="2", participant_id="Customer_1", text="Hi, my name is John Doe."),
-                        TextConversationItem(id="3", participant_id="Agent_1",    text="Thank you John, that has been updated in our system."),
+                        TextConversationItem(
+                            id="3",
+                            participant_id="Agent_1",
+                            text="Thank you John, that has been updated in our system.",
+                        ),
                     ],
                 )
             ]
@@ -122,9 +127,9 @@ class TestConversationsCase(TestConversations):
                                     ent_text = entity.text or ""
                                     detected_entities.append(ent_text)
                                     # Ensure the original PII text is still present
-                                    assert ent_text in returned_text, (
-                                        f"Expected entity '{ent_text}' to be present but was not found in: {returned_text}"
-                                    )
+                                    assert (
+                                        ent_text in returned_text
+                                    ), f"Expected entity '{ent_text}' to be present but was not found in: {returned_text}"
 
         # ---- Assertions -------------------------------------------------------
         assert len(detected_entities) > 0, "Expected at least one detected PII entity."

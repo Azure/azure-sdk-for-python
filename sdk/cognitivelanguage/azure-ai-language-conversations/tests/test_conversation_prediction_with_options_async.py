@@ -41,6 +41,7 @@ class TestConversations(AzureRecordedTestCase):
 
     ...
 
+
 class TestConversationsCase(TestConversations):
     @ConversationsPreparer()
     @recorded_by_proxy_async

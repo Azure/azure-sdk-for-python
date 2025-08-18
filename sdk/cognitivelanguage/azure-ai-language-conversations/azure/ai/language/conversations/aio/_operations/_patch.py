@@ -11,6 +11,7 @@ from typing import Any, Mapping, Optional, TypeVar, Dict, cast
 import json
 from urllib.parse import urlparse
 
+
 def patch_sdk():
     """Do not remove from this file.
 

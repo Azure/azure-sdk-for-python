@@ -63,7 +63,7 @@ class TestConversationsCase(TestConversations):
                         id="1",
                         language="en",
                         conversation_items=[
-                            TextConversationItem(id="1", participant_id="Agent_1",    text="Can you provide you name?"),
+                            TextConversationItem(id="1", participant_id="Agent_1", text="Can you provide you name?"),
                             TextConversationItem(id="2", participant_id="Customer_1", text="Hi, my name is John Doe."),
                             TextConversationItem(
                                 id="3",
@@ -87,8 +87,8 @@ class TestConversationsCase(TestConversations):
             )
 
             # ---- Begin LRO ----------------------------------------------------
-            poller: AnalyzeConversationAsyncLROPoller[AsyncItemPaged[ConversationActions]] = await client.begin_analyze_conversation_job(
-                body=operation_input
+            poller: AnalyzeConversationAsyncLROPoller[AsyncItemPaged[ConversationActions]] = (
+                await client.begin_analyze_conversation_job(body=operation_input)
             )
 
             # Operation metadata is available immediately

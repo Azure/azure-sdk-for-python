@@ -52,16 +52,14 @@ class TestConversationsCase(TestConversations):
         data = ConversationLanguageUnderstandingInput(
             conversation_input=ConversationAnalysisInput(
                 conversation_item=TextConversationItem(
-                    id="1",
-                    participant_id="participant1",
-                    text="Send an email to Carol about tomorrow's demo"
+                    id="1", participant_id="participant1", text="Send an email to Carol about tomorrow's demo"
                 )
             ),
             action_content=ConversationLanguageUnderstandingActionContent(
                 project_name=project_name,
                 deployment_name=deployment_name,
-                string_index_type=StringIndexType.UTF16_CODE_UNIT
-            )
+                string_index_type=StringIndexType.UTF16_CODE_UNIT,
+            ),
         )
 
         action_result = client.analyze_conversation(data)

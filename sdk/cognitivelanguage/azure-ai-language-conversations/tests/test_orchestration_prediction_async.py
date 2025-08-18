@@ -15,7 +15,7 @@ from azure.ai.language.conversations.models import (
     ConversationLanguageUnderstandingInput,
     OrchestrationPrediction,
     QuestionAnsweringTargetIntentResult,
-    ConversationActionResult
+    ConversationActionResult,
 )
 from typing import cast, List
 from azure.core.credentials import AzureKeyCredential
@@ -26,6 +26,7 @@ ConversationsPreparer = functools.partial(
     conversations_endpoint="fake_resource.servicebus.windows.net/",
     conversations_key="fake_key",
 )
+
 
 class TestConversations(AzureRecordedTestCase):
     # Async client factory
@@ -85,4 +86,3 @@ class TestConversationsCase(TestConversations):
             assert responding_project_name == "ChitChat-QnA"
         finally:
             await client.close()
-        

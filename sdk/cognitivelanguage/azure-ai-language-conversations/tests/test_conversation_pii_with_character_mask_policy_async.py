@@ -58,9 +58,7 @@ class TestConversationsCase(TestConversations):
             redacted_verified: List[str] = []
 
             # ---- Redaction policy: mask with '*' ---------------------------------
-            redaction_policy = CharacterMaskPolicyType(
-                redaction_character=RedactionCharacter.ASTERISK
-            )
+            redaction_policy = CharacterMaskPolicyType(redaction_character=RedactionCharacter.ASTERISK)
 
             # ---- Build input -----------------------------------------------------
             ml_input = MultiLanguageConversationInput(
@@ -69,9 +67,13 @@ class TestConversationsCase(TestConversations):
                         id="1",
                         language="en",
                         conversation_items=[
-                            TextConversationItem(id="1", participant_id="Agent_1",    text="Can you provide your name?"),
+                            TextConversationItem(id="1", participant_id="Agent_1", text="Can you provide your name?"),
                             TextConversationItem(id="2", participant_id="Customer_1", text="Hi, my name is John Doe."),
-                            TextConversationItem(id="3", participant_id="Agent_1",    text="Thank you John, that has been updated in our system."),
+                            TextConversationItem(
+                                id="3",
+                                participant_id="Agent_1",
+                                text="Thank you John, that has been updated in our system.",
+                            ),
                         ],
                     )
                 ]
@@ -90,8 +92,8 @@ class TestConversationsCase(TestConversations):
             )
 
             # ---- Begin LRO ------------------------------------------------------
-            poller: AnalyzeConversationAsyncLROPoller[AsyncItemPaged[ConversationActions]] = await client.begin_analyze_conversation_job(
-                body=operation_input
+            poller: AnalyzeConversationAsyncLROPoller[AsyncItemPaged[ConversationActions]] = (
+                await client.begin_analyze_conversation_job(body=operation_input)
             )
 
             # Metadata available immediately
@@ -127,9 +129,9 @@ class TestConversationsCase(TestConversations):
                                 if item.entities:
                                     for entity in item.entities or []:
                                         ent_text = cast(NamedEntity, entity).text or ""
-                                        assert ent_text not in redacted_text, (
-                                            f"Expected entity '{ent_text}' to be redacted but found in: {redacted_text}"
-                                        )
+                                        assert (
+                                            ent_text not in redacted_text
+                                        ), f"Expected entity '{ent_text}' to be redacted but found in: {redacted_text}"
                                     assert "*" in redacted_text, f"Expected '*' in redacted text, got: {redacted_text}"
                                     redacted_verified.append(redacted_text)
 

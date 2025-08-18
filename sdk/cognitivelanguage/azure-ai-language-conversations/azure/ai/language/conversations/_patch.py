@@ -39,6 +39,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dic
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
+
 def _parse_operation_id(op_loc: Optional[str]) -> Optional[str]:
     """Extract the final path segment as operation id (service-agnostic)."""
     if not op_loc:
@@ -48,7 +49,9 @@ def _parse_operation_id(op_loc: Optional[str]) -> Optional[str]:
         return None
     return path.rsplit("/", 1)[-1]
 
+
 PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
+
 
 class AnalyzeConversationLROPoller(LROPoller[PollingReturnType_co]):
     """Custom poller that returns PollingReturnType_co and exposes operation metadata."""
@@ -100,7 +103,8 @@ class AnalyzeConversationLROPoller(LROPoller[PollingReturnType_co]):
             continuation_token, **kwargs
         )
         return cls(client, initial_response, deserialization_callback, polling_method)
-    
+
+
 class ConversationAnalysisClient(AnalysisClientGenerated):
 
     @overload

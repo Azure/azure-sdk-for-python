@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 import functools
 import pytest
 
@@ -54,7 +55,7 @@ class TestConversationsCase(TestConversations):
     @recorded_by_proxy
     def test_conversation_pii_with_entity_mask_policy(self, conversations_endpoint, conversations_key):
         client = self.create_client(conversations_endpoint, conversations_key)
- 
+
         # Track redacted texts we verify
         redacted_verified: List[str] = []
 
@@ -68,9 +69,13 @@ class TestConversationsCase(TestConversations):
                     id="1",
                     language="en",
                     conversation_items=[
-                        TextConversationItem(id="1", participant_id="Agent_1",    text="Can you provide your name?"),
+                        TextConversationItem(id="1", participant_id="Agent_1", text="Can you provide your name?"),
                         TextConversationItem(id="2", participant_id="Customer_1", text="Hi, my name is John Doe."),
-                        TextConversationItem(id="3", participant_id="Agent_1",    text="Thank you John, that has been updated in our system."),
+                        TextConversationItem(
+                            id="3",
+                            participant_id="Agent_1",
+                            text="Thank you John, that has been updated in our system.",
+                        ),
                     ],
                 )
             ]
@@ -130,9 +135,9 @@ class TestConversationsCase(TestConversations):
                                     entity = cast(NamedEntity, entity)
                                     original_text = entity.text or ""
                                     # 1) original PII should not be present
-                                    assert original_text not in redacted_text, (
-                                        f"Expected entity '{original_text}' to be redacted but found in: {redacted_text}"
-                                    )
+                                    assert (
+                                        original_text not in redacted_text
+                                    ), f"Expected entity '{original_text}' to be redacted but found in: {redacted_text}"
 
                                     # 2) redaction should show an entity mask like [Person] or [Person-1]
                                     expected_mask_pattern = rf"\[{re.escape(entity.category)}-?\d*\]"

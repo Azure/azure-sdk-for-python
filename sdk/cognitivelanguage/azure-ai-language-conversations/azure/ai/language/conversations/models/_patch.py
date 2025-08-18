@@ -33,10 +33,9 @@ from ._models import (
     EntityMaskTypePolicyType,
     NoMaskPolicyType,
 )
-from ._enums import ( 
-    RedactionCharacter
-)
-    
+from ._enums import RedactionCharacter
+
+
 def patch_sdk():
     """Do not remove from this file.
 
@@ -57,5 +56,5 @@ __all__ = [
     "CharacterMaskPolicyType",
     "RedactionCharacter",
     "EntityMaskTypePolicyType",
-    "NoMaskPolicyType"
+    "NoMaskPolicyType",
 ]

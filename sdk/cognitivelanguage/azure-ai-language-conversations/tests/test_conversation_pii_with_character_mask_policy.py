@@ -22,7 +22,7 @@ from azure.ai.language.conversations.models import (
     ConversationError,
     AnalyzeConversationOperationAction,
     CharacterMaskPolicyType,
-    RedactionCharacter
+    RedactionCharacter,
 )
 from typing import cast, List
 
@@ -57,9 +57,7 @@ class TestConversationsCase(TestConversations):
         redacted_verified: List[str] = []
 
         # ---- Redaction policy: mask with '*' ---------------------------------
-        redaction_policy = CharacterMaskPolicyType(
-            redaction_character=RedactionCharacter.ASTERISK
-        )
+        redaction_policy = CharacterMaskPolicyType(redaction_character=RedactionCharacter.ASTERISK)
 
         # ---- Build input -----------------------------------------------------
         ml_input = MultiLanguageConversationInput(
@@ -68,9 +66,13 @@ class TestConversationsCase(TestConversations):
                     id="1",
                     language="en",
                     conversation_items=[
-                        TextConversationItem(id="1", participant_id="Agent_1",    text="Can you provide your name?"),
+                        TextConversationItem(id="1", participant_id="Agent_1", text="Can you provide your name?"),
                         TextConversationItem(id="2", participant_id="Customer_1", text="Hi, my name is John Doe."),
-                        TextConversationItem(id="3", participant_id="Agent_1",    text="Thank you John, that has been updated in our system."),
+                        TextConversationItem(
+                            id="3",
+                            participant_id="Agent_1",
+                            text="Thank you John, that has been updated in our system.",
+                        ),
                     ],
                 )
             ]
@@ -78,9 +80,7 @@ class TestConversationsCase(TestConversations):
 
         # Action with CharacterMaskPolicyType
         pii_action: AnalyzeConversationOperationAction = PiiOperationAction(
-            action_content=ConversationPiiActionContent(
-                redaction_policy=redaction_policy
-            ),
+            action_content=ConversationPiiActionContent(redaction_policy=redaction_policy),
             name="Conversation PII with Character Mask Policy",
         )
         actions: List[AnalyzeConversationOperationAction] = [pii_action]
@@ -121,10 +121,12 @@ class TestConversationsCase(TestConversations):
                                 # Ensure original PII text is NOT present and '*' is present
                                 for entity in item.entities:
                                     ent_text = cast(NamedEntity, entity).text or ""
-                                    assert ent_text not in redacted_text, (
-                                        f"Expected entity '{ent_text}' to be redacted but found in: {redacted_text}"
-                                    )
-                                assert "*" in redacted_text, f"Expected redacted text to contain '*', got: {redacted_text}"
+                                    assert (
+                                        ent_text not in redacted_text
+                                    ), f"Expected entity '{ent_text}' to be redacted but found in: {redacted_text}"
+                                assert (
+                                    "*" in redacted_text
+                                ), f"Expected redacted text to contain '*', got: {redacted_text}"
                                 redacted_verified.append(redacted_text)
 
         # ---- Assertions -------------------------------------------------------

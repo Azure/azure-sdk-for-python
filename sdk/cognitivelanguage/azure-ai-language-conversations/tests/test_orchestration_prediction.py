@@ -12,7 +12,7 @@ from azure.ai.language.conversations.models import (
     ConversationLanguageUnderstandingInput,
     OrchestrationPrediction,
     QuestionAnsweringTargetIntentResult,
-    ConversationActionResult
+    ConversationActionResult,
 )
 from typing import cast
 

@@ -15,6 +15,7 @@ from urllib.parse import urlparse
 
 __all__ = []
 
+
 def patch_sdk():
     """Do not remove from this file.
 
@@ -22,4 +23,3 @@ def patch_sdk():
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
-

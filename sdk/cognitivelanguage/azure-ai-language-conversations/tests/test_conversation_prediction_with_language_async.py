@@ -42,6 +42,7 @@ class TestConversations(AzureRecordedTestCase):
 
     ...
 
+
 class TestConversationsCase(TestConversations):
     @ConversationsPreparer()
     @recorded_by_proxy_async
@@ -53,21 +54,21 @@ class TestConversationsCase(TestConversations):
             deployment_name = "production"
 
             data = ConversationLanguageUnderstandingInput(
-                    conversation_input=ConversationAnalysisInput(
-                        conversation_item=TextConversationItem(
-                            id="1",
-                            participant_id="participant1",
-                            text="Enviar un email a Carol acerca de la presentación de mañana",
-                            language="es",
-                        )
-                    ),
-                    action_content=ConversationLanguageUnderstandingActionContent(
-                        project_name=project_name,
-                        deployment_name=deployment_name,
-                        string_index_type=StringIndexType.UTF16_CODE_UNIT,
-                        verbose=True,
-                    ),
-                )
+                conversation_input=ConversationAnalysisInput(
+                    conversation_item=TextConversationItem(
+                        id="1",
+                        participant_id="participant1",
+                        text="Enviar un email a Carol acerca de la presentación de mañana",
+                        language="es",
+                    )
+                ),
+                action_content=ConversationLanguageUnderstandingActionContent(
+                    project_name=project_name,
+                    deployment_name=deployment_name,
+                    string_index_type=StringIndexType.UTF16_CODE_UNIT,
+                    verbose=True,
+                ),
+            )
 
             # Async call
             response: AnalyzeConversationActionResult = await client.analyze_conversation(data)
