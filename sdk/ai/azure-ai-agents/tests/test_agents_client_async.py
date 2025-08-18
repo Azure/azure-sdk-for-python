@@ -54,6 +54,8 @@ from azure.ai.agents.models import (
     RunStepConnectedAgentToolCall,
     RunStepDeepResearchToolCall,
     RunStepAzureAISearchToolCall,
+    RunStepAzureFunctionToolCall,
+    RunStepDeltaAzureFunctionToolCall,
     RunStepDeltaBingGroundingToolCall,
     RunStepDeltaChunk,
     RunStepDeltaConnectedAgentToolCall,
@@ -2671,31 +2673,35 @@ class TestAgentClientAsync(TestAgentClientBase):
         await ai_client.delete_agent(agent.id)
         await ai_client.close()
 
+    def _get_azure_function_tool(self, storage_queue: str) -> AzureFunctionTool:
+        """Helper method to get an AzureFunctionTool."""
+        return AzureFunctionTool(
+            name="foo",
+            description="Get answers from the foo bot.",
+            parameters={
+                "type": "object",
+                "properties": {
+                    "query": {"type": "string", "description": "The question to ask."},
+                    "outputqueueuri": {"type": "string", "description": "The full output queue uri."},
+                },
+            },
+            input_queue=AzureFunctionStorageQueue(
+                queue_name="azure-function-foo-input",
+                storage_service_endpoint=storage_queue,
+            ),
+            output_queue=AzureFunctionStorageQueue(
+                queue_name="azure-function-tool-output",
+                storage_service_endpoint=storage_queue,
+            ),
+        )
+
     @agentClientPreparer()
     @recorded_by_proxy_async
     async def test_azure_function_call(self, **kwargs):
         """Test calling Azure functions."""
         storage_queue = kwargs["azure_ai_agents_tests_storage_queue"]
         async with self.create_client(by_endpoint=True, **kwargs) as client:
-            azure_function_tool = AzureFunctionTool(
-                name="foo",
-                description="Get answers from the foo bot.",
-                parameters={
-                    "type": "object",
-                    "properties": {
-                        "query": {"type": "string", "description": "The question to ask."},
-                        "outputqueueuri": {"type": "string", "description": "The full output queue uri."},
-                    },
-                },
-                input_queue=AzureFunctionStorageQueue(
-                    queue_name="azure-function-foo-input",
-                    storage_service_endpoint=storage_queue,
-                ),
-                output_queue=AzureFunctionStorageQueue(
-                    queue_name="azure-function-tool-output",
-                    storage_service_endpoint=storage_queue,
-                ),
-            )
+            azure_function_tool = self._get_azure_function_tool(storage_queue)
 
             await self._do_test_tool(
                 client=client,
@@ -2709,8 +2715,31 @@ class TestAgentClientAsync(TestAgentClientBase):
                     '. Always responds with "Foo says" and then the response from the tool.'
                 ),
                 prompt="What is the most prevalent element in the universe? What would foo say?",
-                # TODO: Implement the run step for AzureFunction.
-                expected_class=None,
+                expected_class=RunStepAzureFunctionToolCall,
+                agent_message_regex="bar",
+            )
+
+    @agentClientPreparer()
+    @recorded_by_proxy_async
+    async def test_azure_function_call_streaming(self, **kwargs):
+        """Test calling Azure functions in streaming scenarios."""
+        storage_queue = kwargs["azure_ai_agents_tests_storage_queue"]
+        async with self.create_client(by_endpoint=True, **kwargs) as client:
+            azure_function_tool = self._get_azure_function_tool(storage_queue)
+
+            await self._do_test_tool_streaming(
+                client=client,
+                model_name="gpt-4o",
+                tool_to_test=azure_function_tool,
+                instructions=(
+                    "You are a helpful support agent. Use the provided function any "
+                    "time the prompt contains the string 'What would foo say?'. When "
+                    "you invoke the function, ALWAYS specify the output queue uri parameter as "
+                    f"'{storage_queue}/azure-function-tool-output'"
+                    '. Always responds with "Foo says" and then the response from the tool.'
+                ),
+                prompt="What is the most prevalent element in the universe? What would foo say?",
+                expected_delta_class=RunStepDeltaAzureFunctionToolCall,
                 agent_message_regex="bar",
             )
 
@@ -3393,7 +3422,7 @@ class TestAgentClientAsync(TestAgentClientBase):
             # Search for the specific message when asked.
             text = "\n".join([t.text.value.lower() for t in text_messages])
             if agent_message_regex:
-                assert re.findall(agent_message_regex, text), f"{agent_message_regex} was not found in {text}."
+                assert re.findall(agent_message_regex, text.lower()), f"{agent_message_regex} was not found in {text}."
 
             # Search for the specific URL and title in the message annotation.
             if uri_annotation is not None:
@@ -3485,6 +3514,7 @@ class TestAgentClientAsync(TestAgentClientBase):
                 has_file_annotation = file_annotation is None
                 # Agent message regex
                 has_agent_message_regex = agent_message_regex is None
+                received_messages = []
                 async for event_type, event_data, _ in stream:
 
                     if isinstance(event_data, MessageDeltaChunk):
@@ -3505,7 +3535,10 @@ class TestAgentClientAsync(TestAgentClientBase):
                                 )
                             for content in event_data.content:
                                 if not has_agent_message_regex and isinstance(content, MessageTextContent):
-                                    has_agent_message_regex = re.findall(agent_message_regex, content.text.value)
+                                    has_agent_message_regex = re.findall(
+                                        agent_message_regex, content.text.value.lower()
+                                    )
+                                    received_messages.append(content.text.value.lower())
 
                     elif isinstance(event_data, RunStepDeltaChunk):
                         if expected_delta_class is not None:
@@ -3536,7 +3569,9 @@ class TestAgentClientAsync(TestAgentClientBase):
                 assert got_expected_delta, f"The delta tool call of type {expected_delta_class} was not found."
                 assert is_completed, "The stream was not completed."
                 assert is_run_step_created, "No run steps were created."
-                assert has_agent_message_regex, f"The text {agent_message_regex} was not found."
+                assert (
+                    has_agent_message_regex
+                ), f"The text {agent_message_regex} was not found in messages: {' '.join(received_messages)}."
 
                 assert (
                     has_uri_annotation
