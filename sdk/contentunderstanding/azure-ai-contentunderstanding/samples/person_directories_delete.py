@@ -11,7 +11,6 @@ This sample demonstrates the minimal workflow required to
 2. Create a temporary person directory (for demo purposes)
 3. Delete the person directory using the async delete API
 
-"""
 Prerequisites:
     pip install azure-ai-contentunderstanding python-dotenv
     az login  # Used for DefaultAzureCredential(). Alternatively, set the AZURE_CONTENT_UNDERSTANDING_KEY environment variable

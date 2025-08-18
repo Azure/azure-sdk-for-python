@@ -11,7 +11,7 @@ import uuid
 
 from dotenv import load_dotenv
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
-from azure.ai.contentunderstanding.models import PersonDirectory
+from azure.ai.contentunderstanding.models import PersonDirectory, FaceSource
 
 from sample_helper import read_image_to_base64
 from azure.core.credentials import AzureKeyCredential
@@ -96,10 +96,8 @@ async def main():
 
             face_add_response = await client.person_directories.add_face(
                 person_directory_id=directory_id,
-                body={
-                    "faceSource": {"data": image_b64},
-                    "personId": person_id,
-                },
+                face_source=FaceSource(data=image_b64),
+                person_id=person_id,
             )
             face_id = face_add_response.face_id
             face_ids.append(face_id)
@@ -119,11 +117,12 @@ async def main():
             "Bill",
             "Family1-Dad3.jpg",
         )
-        query_image_b64 = read_image_to_base64(query_image_path)
+        query_image_base64 = read_image_to_base64(query_image_path)
 
         response = await client.person_directories.find_similar_faces(
             person_directory_id=directory_id,
-            body={"faceSource": {"data": query_image_b64}, "maxSimilarFaces": 10},
+            face_source=FaceSource(data=query_image_base64),
+            max_similar_faces=10,
         )
 
         # Display results for Dad3 query
