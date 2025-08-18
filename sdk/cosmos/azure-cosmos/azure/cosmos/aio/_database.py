@@ -459,14 +459,14 @@ class DatabaseProxy(object):
                 DeprecationWarning)
         try:
             container_proxy = self.get_container_client(id)
-            headers = await container_proxy.read(
+            properties = await container_proxy.read(
                 initial_headers=initial_headers,
                 **kwargs
             )
             if not return_properties:
                 return container_proxy
             else:
-                return container_proxy, headers
+                return container_proxy, properties
         except CosmosResourceNotFoundError:
             return await self.create_container(
                 id=id,

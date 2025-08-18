@@ -461,7 +461,7 @@ class DatabaseProxy(object):
 
         try:
             container_proxy = self.get_container_client(id)
-            headers = container_proxy.read(
+            properties = container_proxy.read(
                 populate_query_metrics=populate_query_metrics,
                 initial_headers=initial_headers,
                 **kwargs
@@ -469,7 +469,7 @@ class DatabaseProxy(object):
             if not return_properties:
                 return container_proxy
             else:
-                return container_proxy, headers
+                return container_proxy, properties
         except CosmosResourceNotFoundError:
             return self.create_container(
                 id=id,
