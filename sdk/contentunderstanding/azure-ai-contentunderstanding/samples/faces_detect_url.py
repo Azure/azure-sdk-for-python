@@ -54,22 +54,17 @@ async def main():
     ) as client, credential:
         """Detect faces in a test image and display results."""
 
-        # Load test image from sample files
-        sample_file_dir = os.path.dirname(os.path.abspath(__file__))
-        image_path = os.path.join(sample_file_dir, "sample_files", "face", "family.jpg")
+        # Use URL instead of local file to test our new overloaded detect method
+        image_url = "https://media.githubusercontent.com/media/Azure-Samples/azure-ai-content-understanding-python/refs/heads/main/data/face/family.jpg"
+        print(f"🔍 Detecting faces in image URL: {image_url}")
 
-        print(f"🔍 Detecting faces in image: {image_path}")
-
-        # Convert image to base64 bytes
-        image_data = read_image_to_base64(image_path)
-
-        # Detect faces in the image using the new overloaded detect method
+        # Detect faces in the image using the new overloaded detect method with URL
         response: DetectFacesResult = await client.faces.detect(
-            image_data, max_detected_faces=10
+            image_url, max_detected_faces=10
         )
         # You can also use:
         # response: DetectFacesResult = await client.faces.detect(
-        #     data=image_data, max_detected_faces=10
+        #     url=image_url, max_detected_faces=10
         # )
 
         if hasattr(response, "detected_faces") and response.detected_faces:

@@ -504,14 +504,14 @@ async def generate_person_directory_id_async(client, test_name: str) -> str:
     return person_directory_id
 
 
-def read_image_to_base64(image_path: str) -> str:
-    """Read image file and convert to base64 string.
+def read_image_to_base64(image_path: str) -> bytes:
+    """Read image file and convert to base64 bytes.
     
     Args:
         image_path: Path to the image file
         
     Returns:
-        str: Base64 encoded string of the image
+        bytes: Base64 encoded bytes of the image
         
     Raises:
         FileNotFoundError: If the image file doesn't exist
@@ -520,7 +520,7 @@ def read_image_to_base64(image_path: str) -> str:
     import base64
     with open(image_path, "rb") as image_file:
         image_bytes = image_file.read()
-        return base64.b64encode(image_bytes).decode('utf-8')
+        return base64.b64encode(image_bytes)
 
 
 def get_test_data_path(relative_path: str) -> str:
