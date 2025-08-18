@@ -228,7 +228,7 @@ class TestPathEfficiencyEvaluator:
         assert result["path_efficiency_f1_score"] == 1.0
         assert result["path_efficiency_precision_result"] == "pass"
         assert result["path_efficiency_recall_result"] == "pass"
-        assert result["path_efficiency_f1_score_result"] == "pass"
+        assert result["path_efficiency_f1_result"] == "pass"
         assert result["path_efficiency_precision_threshold"] == 0.8
         assert result["path_efficiency_recall_threshold"] == 0.8
         assert result["path_efficiency_f1_threshold"] == 0.8
