@@ -136,6 +136,7 @@
         "azure.ai.agents.models.RunStepDeltaCodeInterpreterLogOutput": "Azure.AI.Agents.RunStepDeltaCodeInterpreterLogOutput",
         "azure.ai.agents.models.RunStepDeltaCodeInterpreterToolCall": "Azure.AI.Agents.RunStepDeltaCodeInterpreterToolCall",
         "azure.ai.agents.models.RunStepDeltaConnectedAgentToolCall": "Azure.AI.Agents.RunStepDeltaConnectedAgentToolCall",
+        "azure.ai.agents.models.RunStepDeltaCustomBingGroundingToolCall": "Azure.AI.Agents.RunStepDeltaCustomBingGroundingToolCall",
         "azure.ai.agents.models.RunStepDeltaDeepResearchToolCall": "Azure.AI.Agents.RunStepDeltaDeepResearchToolCall",
         "azure.ai.agents.models.RunStepDeltaDetail": "Azure.AI.Agents.RunStepDeltaDetail",
         "azure.ai.agents.models.RunStepDeltaFileSearchToolCall": "Azure.AI.Agents.RunStepDeltaFileSearchToolCall",

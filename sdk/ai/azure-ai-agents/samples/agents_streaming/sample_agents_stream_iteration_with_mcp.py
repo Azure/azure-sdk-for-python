@@ -93,9 +93,7 @@ with project_client:
     # Process Agent run and stream events back to the client. It may take a few minutes for the agent to complete the run.
     mcp_tool.update_headers("SuperSecret", "123456")
     # mcp_tool.set_approval_mode("never")  # Uncomment to disable approval requirement
-    with agents_client.runs.stream(
-        thread_id=thread.id, agent_id=agent.id, tool_resources=mcp_tool.resources
-    ) as stream:
+    with agents_client.runs.stream(thread_id=thread.id, agent_id=agent.id, tool_resources=mcp_tool.resources) as stream:
 
         for event_type, event_data, _ in stream:
 
@@ -201,9 +199,7 @@ with project_client:
     agents_client.delete_agent(agent.id)
     print("Deleted agent")
 
-    response_message = agents_client.messages.get_last_message_by_role(
-        thread_id=thread.id, role=MessageRole.AGENT
-    )
+    response_message = agents_client.messages.get_last_message_by_role(thread_id=thread.id, role=MessageRole.AGENT)
     if response_message:
         for text_message in response_message.text_messages:
             print(f"Agent response: {text_message.text.value}")

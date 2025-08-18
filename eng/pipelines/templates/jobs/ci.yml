@@ -77,10 +77,6 @@ jobs:
         sdl:
           componentgovernance:
             enabled: true
-          codeql:
-            binaryLanguages: python # Need to specify the language because we clone after the codeql initialize step
-            compiled:
-              enabled: true
 
     steps:
     - template: /eng/pipelines/templates/steps/build-package-artifacts.yml
