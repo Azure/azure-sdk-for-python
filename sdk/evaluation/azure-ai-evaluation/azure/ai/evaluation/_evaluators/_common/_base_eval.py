@@ -510,6 +510,29 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
 
         return tool_calls
 
+    def _extract_tool_names_from_response(self, response) -> List[str]:
+        """Extract tool names from the response.
+        :param response: The response to parse.
+        :type response: Union[str, List[dict]]
+        :return: List of tool names extracted from the response.
+        :rtype: List[str]
+        """
+        tool_calls = self._parse_tools_from_response(response)
+        tool_names = []
+        for tool_call in tool_calls:
+            assert isinstance(tool_call, dict), "Tool call must be a dictionary."
+            assert tool_call.get("type") == "tool_call", "Tool call must have 'type' set to 'tool_call'."
+            if "name" in tool_call:
+                tool_names.append(tool_call["name"])
+            else:
+                raise EvaluationException(
+                    "Tool call missing 'name' field.",
+                    internal_message=str(tool_call),
+                    target=ErrorTarget.EVALUATE,
+                    category=ErrorCategory.MISSING_FIELD,
+                )
+        return tool_names
+
     async def _real_call(self, **kwargs) -> Union[DoEvalResult[T_EvalValue], AggregateResult[T_EvalValue]]:
         """The asynchronous call where real end-to-end evaluation logic is performed.
 
@@ -532,14 +555,25 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
                         base_key = key[:-6]  # Remove "_score" suffix
                         result_key = f"{base_key}_result"
                         threshold_key = f"{base_key}_threshold"
-                        result[threshold_key] = self._threshold
+                        threshold_value = (
+                            self._threshold.get(base_key) if isinstance(self._threshold, dict) else self._threshold
+                        )
+                        if not isinstance(threshold_value, (int, float)):
+                            raise EvaluationException(
+                                "Threshold value must be a number.",
+                                internal_message=str(threshold_value),
+                                target=ErrorTarget.EVALUATE,
+                                category=ErrorCategory.INVALID_VALUE,
+                            )
+
+                        result[threshold_key] = threshold_value
                         if self._higher_is_better:
-                            if float(score_value) >= self._threshold:
+                            if float(score_value) >= threshold_value:
                                 result[result_key] = EVALUATION_PASS_FAIL_MAPPING[True]
                             else:
                                 result[result_key] = EVALUATION_PASS_FAIL_MAPPING[False]
                         else:
-                            if float(score_value) <= self._threshold:
+                            if float(score_value) <= threshold_value:
                                 result[result_key] = EVALUATION_PASS_FAIL_MAPPING[True]
                             else:
                                 result[result_key] = EVALUATION_PASS_FAIL_MAPPING[False]
