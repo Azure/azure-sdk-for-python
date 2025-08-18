@@ -21,11 +21,12 @@ import pytest
 class TestContentUnderstandingFacesOperations(ContentUnderstandingClientTestBase):
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_faces_detect(self, contentunderstanding_endpoint):
+    def test_faces_detect_original_body(self, contentunderstanding_endpoint):
         """
         Test Summary:
+        - Test original body parameter method
         - Load a test image
-        - Detect faces in the image
+        - Detect faces using JSON body
         - Verify detection results
         """
         client = self.create_client(endpoint=contentunderstanding_endpoint)
@@ -35,10 +36,10 @@ class TestContentUnderstandingFacesOperations(ContentUnderstandingClientTestBase
         image_path = os.path.join(test_file_dir, "test_data", "face", "family.jpg")
         image_data = read_image_to_base64(image_path)
         
-        print(f"Detecting faces in image: {image_path}")
+        print(f"Testing original body method with image: {image_path}")
         response = client.faces.detect(
             body={
-                "data": image_data,
+                "data": image_data.decode('utf-8'),  # Convert bytes to string for JSON body
                 "maxDetectedFaces": 10
             }
         )
@@ -46,24 +47,152 @@ class TestContentUnderstandingFacesOperations(ContentUnderstandingClientTestBase
         # Verify the response
         assert response is not None
         assert hasattr(response, 'detected_faces')
-        print(f"Detected {len(response.detected_faces) if response.detected_faces else 0} faces")
+        print(f"Original body method: Detected {len(response.detected_faces) if response.detected_faces else 0} faces")
         
         # Verify each detected face has required properties
         if response.detected_faces:
             for i, face in enumerate(response.detected_faces):
                 assert hasattr(face, 'bounding_box'), f"Detected face {i} should have bounding_box"
-                # Note: face_id and confidence may not be present in all face detection responses
-                if hasattr(face, 'face_id'):
-                    print(f"Face {i+1}: ID={face.face_id}")
-                if hasattr(face, 'confidence'):
-                    print(f"Face {i+1}: Confidence={face.confidence}")
                 
                 # Print bounding box information
                 if hasattr(face, 'bounding_box') and face.bounding_box:
                     bbox = face.bounding_box
                     print(f"Face {i+1}: BoundingBox(left={bbox.left}, top={bbox.top}, width={bbox.width}, height={bbox.height})")
         
-        print("Face detection test completed successfully")
+        print("Original body method test completed successfully")
+
+    @ContentUnderstandingPreparer()
+    @recorded_by_proxy
+    def test_faces_detect_url_keyword(self, contentunderstanding_endpoint):
+        """
+        Test Summary:
+        - Test original url keyword parameter method
+        - Use a URL to detect faces
+        - Verify detection results
+        """
+        client = self.create_client(endpoint=contentunderstanding_endpoint)
+        
+        # Use a test image URL
+        image_url = "https://media.githubusercontent.com/media/Azure-Samples/azure-ai-content-understanding-python/refs/heads/main/data/face/family.jpg"
+        
+        print(f"Testing original url keyword method with URL: {image_url}")
+        response = client.faces.detect(
+            url=image_url,
+            max_detected_faces=10
+        )
+        
+        # Verify the response
+        assert response is not None
+        assert hasattr(response, 'detected_faces')
+        print(f"URL keyword method: Detected {len(response.detected_faces) if response.detected_faces else 0} faces")
+        
+        # Verify each detected face has required properties
+        if response.detected_faces:
+            for i, face in enumerate(response.detected_faces):
+                assert hasattr(face, 'bounding_box'), f"Detected face {i} should have bounding_box"
+        
+        print("URL keyword method test completed successfully")
+
+    @ContentUnderstandingPreparer()
+    @recorded_by_proxy
+    def test_faces_detect_data_keyword(self, contentunderstanding_endpoint):
+        """
+        Test Summary:
+        - Test original data keyword parameter method with bytes conversion
+        - Load a test image as bytes
+        - Detect faces using data keyword parameter
+        - Verify detection results
+        """
+        client = self.create_client(endpoint=contentunderstanding_endpoint)
+        
+        # Load test image
+        test_file_dir = os.path.dirname(os.path.abspath(__file__))
+        image_path = os.path.join(test_file_dir, "test_data", "face", "family.jpg")
+        image_data = read_image_to_base64(image_path)  # Returns bytes
+        
+        print(f"Testing data keyword method with image: {image_path}")
+        response = client.faces.detect(
+            data=image_data,  # Our patch will convert bytes to string automatically
+            max_detected_faces=10
+        )
+        
+        # Verify the response
+        assert response is not None
+        assert hasattr(response, 'detected_faces')
+        print(f"Data keyword method: Detected {len(response.detected_faces) if response.detected_faces else 0} faces")
+        
+        # Verify each detected face has required properties
+        if response.detected_faces:
+            for i, face in enumerate(response.detected_faces):
+                assert hasattr(face, 'bounding_box'), f"Detected face {i} should have bounding_box"
+        
+        print("Data keyword method test completed successfully")
+
+    @ContentUnderstandingPreparer()
+    @recorded_by_proxy
+    def test_faces_detect_url_positional(self, contentunderstanding_endpoint):
+        """
+        Test Summary:
+        - Test new URL positional overload
+        - Use URL as positional argument
+        - Verify detection results
+        """
+        client = self.create_client(endpoint=contentunderstanding_endpoint)
+        
+        # Use a test image URL
+        image_url = "https://media.githubusercontent.com/media/Azure-Samples/azure-ai-content-understanding-python/refs/heads/main/data/face/family.jpg"
+        
+        print(f"Testing new URL positional overload with URL: {image_url}")
+        response = client.faces.detect(
+            image_url,  # URL as positional argument (new overload)
+            max_detected_faces=10
+        )
+        
+        # Verify the response
+        assert response is not None
+        assert hasattr(response, 'detected_faces')
+        print(f"URL positional overload: Detected {len(response.detected_faces) if response.detected_faces else 0} faces")
+        
+        # Verify each detected face has required properties
+        if response.detected_faces:
+            for i, face in enumerate(response.detected_faces):
+                assert hasattr(face, 'bounding_box'), f"Detected face {i} should have bounding_box"
+        
+        print("URL positional overload test completed successfully")
+
+    @ContentUnderstandingPreparer()
+    @recorded_by_proxy
+    def test_faces_detect_bytes_positional(self, contentunderstanding_endpoint):
+        """
+        Test Summary:
+        - Test new bytes positional overload
+        - Load image as bytes and use as positional argument
+        - Verify detection results
+        """
+        client = self.create_client(endpoint=contentunderstanding_endpoint)
+        
+        # Load test image
+        test_file_dir = os.path.dirname(os.path.abspath(__file__))
+        image_path = os.path.join(test_file_dir, "test_data", "face", "family.jpg")
+        image_data = read_image_to_base64(image_path)  # Returns bytes
+        
+        print(f"Testing new bytes positional overload with image: {image_path}")
+        response = client.faces.detect(
+            image_data,  # Bytes as positional argument (new overload)
+            max_detected_faces=10
+        )
+        
+        # Verify the response
+        assert response is not None
+        assert hasattr(response, 'detected_faces')
+        print(f"Bytes positional overload: Detected {len(response.detected_faces) if response.detected_faces else 0} faces")
+        
+        # Verify each detected face has required properties
+        if response.detected_faces:
+            for i, face in enumerate(response.detected_faces):
+                assert hasattr(face, 'bounding_box'), f"Detected face {i} should have bounding_box"
+        
+        print("Bytes positional overload test completed successfully")
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
@@ -91,10 +220,10 @@ class TestContentUnderstandingFacesOperations(ContentUnderstandingClientTestBase
         response = client.faces.compare(
             body={
                 "faceSource1": {
-                    "data": image1_data
+                    "data": image1_data.decode('utf-8')  # Convert bytes to string for JSON body
                 },
                 "faceSource2": {
-                    "data": image2_data
+                    "data": image2_data.decode('utf-8')  # Convert bytes to string for JSON body
                 }
             }
         )
