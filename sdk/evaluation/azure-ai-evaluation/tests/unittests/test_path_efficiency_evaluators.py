@@ -27,13 +27,21 @@ class TestPathEfficiencyEvaluator:
         result = evaluator(response=response, ground_truth=ground_truth)
 
         assert result["path_efficiency_precision_score"] == 1.0
-        assert result["path_efficiency_precision_threshold"] == PathEfficiencyEvaluator._DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD
+        assert (
+            result["path_efficiency_precision_threshold"]
+            == PathEfficiencyEvaluator._DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD
+        )
         assert result["path_efficiency_precision_result"] == "pass"
         assert result["path_efficiency_recall_score"] == 1.0
-        assert result["path_efficiency_recall_threshold"] == PathEfficiencyEvaluator._DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD
+        assert (
+            result["path_efficiency_recall_threshold"]
+            == PathEfficiencyEvaluator._DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD
+        )
         assert result["path_efficiency_recall_result"] == "pass"
         assert result["path_efficiency_f1_score"] == 1.0
-        assert result["path_efficiency_f1_threshold"] == PathEfficiencyEvaluator._DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD
+        assert (
+            result["path_efficiency_f1_threshold"] == PathEfficiencyEvaluator._DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD
+        )
         assert result["path_efficiency_f1_result"] == "pass"
         assert result["path_efficiency_exact_match_result"] == "pass"
         assert result["path_efficiency_in_order_match_result"] == "pass"
@@ -66,13 +74,21 @@ class TestPathEfficiencyEvaluator:
         result = evaluator(response=response, ground_truth=ground_truth)
 
         assert result["path_efficiency_precision_score"] == 0.75  # 3/4
-        assert result["path_efficiency_precision_threshold"] == PathEfficiencyEvaluator._DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD
+        assert (
+            result["path_efficiency_precision_threshold"]
+            == PathEfficiencyEvaluator._DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD
+        )
         assert result["path_efficiency_precision_result"] == "pass"
         assert result["path_efficiency_recall_score"] == 1.0  # 3/3
-        assert result["path_efficiency_recall_threshold"] == PathEfficiencyEvaluator._DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD
+        assert (
+            result["path_efficiency_recall_threshold"]
+            == PathEfficiencyEvaluator._DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD
+        )
         assert result["path_efficiency_recall_result"] == "pass"
         assert result["path_efficiency_f1_score"] == pytest.approx(0.857, rel=1e-2)
-        assert result["path_efficiency_f1_threshold"] == PathEfficiencyEvaluator._DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD
+        assert (
+            result["path_efficiency_f1_threshold"] == PathEfficiencyEvaluator._DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD
+        )
         assert result["path_efficiency_f1_result"] == "pass"
         assert result["path_efficiency_exact_match_result"] == "fail"
         assert result["path_efficiency_in_order_match_result"] == "pass"
@@ -101,13 +117,21 @@ class TestPathEfficiencyEvaluator:
         result = evaluator(response=response, ground_truth=ground_truth)
 
         assert result["path_efficiency_precision_score"] == 1.0
-        assert result["path_efficiency_precision_threshold"] == PathEfficiencyEvaluator._DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD
+        assert (
+            result["path_efficiency_precision_threshold"]
+            == PathEfficiencyEvaluator._DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD
+        )
         assert result["path_efficiency_precision_result"] == "pass"
         assert result["path_efficiency_recall_score"] == 1.0
-        assert result["path_efficiency_recall_threshold"] == PathEfficiencyEvaluator._DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD
+        assert (
+            result["path_efficiency_recall_threshold"]
+            == PathEfficiencyEvaluator._DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD
+        )
         assert result["path_efficiency_recall_result"] == "pass"
         assert result["path_efficiency_f1_score"] == 1.0
-        assert result["path_efficiency_f1_threshold"] == PathEfficiencyEvaluator._DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD
+        assert (
+            result["path_efficiency_f1_threshold"] == PathEfficiencyEvaluator._DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD
+        )
         assert result["path_efficiency_f1_result"] == "pass"
         assert result["path_efficiency_exact_match_result"] == "fail"
         assert result["path_efficiency_in_order_match_result"] == "fail"
@@ -136,13 +160,21 @@ class TestPathEfficiencyEvaluator:
         result = evaluator(response=response, ground_truth=ground_truth)
 
         assert result["path_efficiency_precision_score"] == pytest.approx(0.667, rel=1e-2)  # 2/3
-        assert result["path_efficiency_precision_threshold"] == PathEfficiencyEvaluator._DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD
+        assert (
+            result["path_efficiency_precision_threshold"]
+            == PathEfficiencyEvaluator._DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD
+        )
         assert result["path_efficiency_precision_result"] == "pass"
         assert result["path_efficiency_recall_score"] == pytest.approx(0.667, rel=1e-2)  # 2/3
-        assert result["path_efficiency_recall_threshold"] == PathEfficiencyEvaluator._DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD
+        assert (
+            result["path_efficiency_recall_threshold"]
+            == PathEfficiencyEvaluator._DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD
+        )
         assert result["path_efficiency_recall_result"] == "pass"
         assert result["path_efficiency_f1_score"] == pytest.approx(0.667, rel=1e-2)
-        assert result["path_efficiency_f1_threshold"] == PathEfficiencyEvaluator._DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD
+        assert (
+            result["path_efficiency_f1_threshold"] == PathEfficiencyEvaluator._DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD
+        )
         assert result["path_efficiency_f1_result"] == "pass"
         assert result["path_efficiency_exact_match_result"] == "fail"
         assert result["path_efficiency_in_order_match_result"] == "fail"
@@ -167,13 +199,20 @@ class TestPathEfficiencyEvaluator:
         result = evaluator(response=response, ground_truth=ground_truth)
 
         assert result["path_efficiency_precision_score"] == 0.0
-        assert result["path_efficiency_precision_threshold"] == PathEfficiencyEvaluator._DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD
+        assert (
+            result["path_efficiency_precision_threshold"]
+            == PathEfficiencyEvaluator._DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD
+        )
         assert result["path_efficiency_precision_result"] == "fail"
         assert result["path_efficiency_recall_score"] == 0.0
-        assert result["path_efficiency_f1_threshold"] == PathEfficiencyEvaluator._DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD
+        assert (
+            result["path_efficiency_f1_threshold"] == PathEfficiencyEvaluator._DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD
+        )
         assert result["path_efficiency_recall_result"] == "fail"
         assert result["path_efficiency_recall_score"] == 0.0
-        assert result["path_efficiency_f1_threshold"] == PathEfficiencyEvaluator._DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD
+        assert (
+            result["path_efficiency_f1_threshold"] == PathEfficiencyEvaluator._DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD
+        )
         assert result["path_efficiency_f1_result"] == "fail"
         assert result["path_efficiency_exact_match_result"] == "fail"
         assert result["path_efficiency_in_order_match_result"] == "fail"
@@ -189,13 +228,20 @@ class TestPathEfficiencyEvaluator:
         result = evaluator(response=response, ground_truth=ground_truth)
 
         assert result["path_efficiency_precision_score"] == 0.0
-        assert result["path_efficiency_precision_threshold"] == PathEfficiencyEvaluator._DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD
+        assert (
+            result["path_efficiency_precision_threshold"]
+            == PathEfficiencyEvaluator._DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD
+        )
         assert result["path_efficiency_precision_result"] == "fail"
         assert result["path_efficiency_recall_score"] == 0.0
-        assert result["path_efficiency_f1_threshold"] == PathEfficiencyEvaluator._DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD
+        assert (
+            result["path_efficiency_f1_threshold"] == PathEfficiencyEvaluator._DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD
+        )
         assert result["path_efficiency_recall_result"] == "fail"
         assert result["path_efficiency_f1_score"] == 0.0
-        assert result["path_efficiency_f1_threshold"] == PathEfficiencyEvaluator._DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD
+        assert (
+            result["path_efficiency_f1_threshold"] == PathEfficiencyEvaluator._DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD
+        )
         assert result["path_efficiency_f1_result"] == "fail"
         assert result["path_efficiency_exact_match_result"] == "fail"
         assert result["path_efficiency_in_order_match_result"] == "fail"

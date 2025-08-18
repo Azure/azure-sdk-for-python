@@ -47,12 +47,10 @@ class PathEfficiencyEvaluator(EvaluatorBase):
             )
     """
 
-
     _DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD = 0.5
 
     id = "azureai://built-in/evaluators/path_efficiency"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
-
 
     @override
     def __init__(
