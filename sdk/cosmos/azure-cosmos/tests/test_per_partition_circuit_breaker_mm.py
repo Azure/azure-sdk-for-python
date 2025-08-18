@@ -108,7 +108,7 @@ def perform_write_operation(operation, container, fault_injection_container, doc
     elif operation == UPSERT:
         resp = fault_injection_container.upsert_item(body=doc)
     elif operation == REPLACE:
-        container.create_item(body=doc)
+        container.upsert_item(body=doc)
         sleep(1)
         new_doc = {'id': doc_id,
                    'pk': pk,
@@ -116,11 +116,11 @@ def perform_write_operation(operation, container, fault_injection_container, doc
                    'key': 'value'}
         resp = fault_injection_container.replace_item(item=doc['id'], body=new_doc)
     elif operation == DELETE:
-        container.create_item(body=doc)
+        container.upsert_item(body=doc)
         sleep(1)
         resp = fault_injection_container.delete_item(item=doc['id'], partition_key=doc['pk'])
     elif operation == PATCH:
-        container.create_item(body=doc)
+        container.upsert_item(body=doc)
         sleep(1)
         operations = [{"op": "incr", "path": "/company", "value": 3}]
         resp = fault_injection_container.patch_item(item=doc['id'], partition_key=doc['pk'], patch_operations=operations)
@@ -134,7 +134,7 @@ def perform_write_operation(operation, container, fault_injection_container, doc
         resp = fault_injection_container.execute_item_batch(batch_operations, partition_key=doc['pk'])
     # this will need to be emulator only
     elif operation == DELETE_ALL_ITEMS_BY_PARTITION_KEY:
-        container.create_item(body=doc)
+        container.upsert_item(body=doc)
         resp = fault_injection_container.delete_all_items_by_partition_key(pk)
     if resp and expected_uri:
         validate_response_uri(resp, expected_uri)

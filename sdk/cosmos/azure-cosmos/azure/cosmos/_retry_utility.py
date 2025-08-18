@@ -44,7 +44,7 @@ from .http_constants import HttpHeaders, StatusCodes, SubStatusCodes, ResourceTy
 
 
 # pylint: disable=protected-access, disable=too-many-lines, disable=too-many-statements, disable=too-many-branches
-# cspell:ignore ppaf
+# cspell:ignore PPAF,ppaf
 
 # args [0] is the request object
 # args [1] is the connection policy
@@ -191,10 +191,12 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
                     retry_policy.container_rid = cached_container["_rid"]
                     request.headers[retry_policy._intended_headers] = retry_policy.container_rid
             elif e.status_code == StatusCodes.SERVICE_UNAVAILABLE:
+                if args and global_endpoint_manager.is_per_partition_automatic_failover_applicable(args[0]):
+                    global_endpoint_manager.record_failure(args[0], pk_range_wrapper)
                 retry_policy = service_unavailable_retry_policy
             elif e.status_code == StatusCodes.REQUEST_TIMEOUT or e.status_code >= StatusCodes.INTERNAL_SERVER_ERROR:
                 if args:
-                    # record the failure for circuit breaker tracking
+                    # record the failure for ppaf/circuit breaker tracking
                     global_endpoint_manager.record_failure(args[0], pk_range_wrapper)
                 retry_policy = timeout_failover_retry_policy
             else:
@@ -275,7 +277,8 @@ def _handle_service_request_retries(
         raise exception
 
 def _handle_service_response_retries(request, client, response_retry_policy, exception, *args):
-    if request and (_has_read_retryable_headers(request.headers) or (args and is_write_retryable(args[0], client))):
+    if request and (_has_read_retryable_headers(request.headers) or (args and is_write_retryable(args[0], client)) or
+                    (args and client._global_endpoint_manager.is_per_partition_automatic_failover_applicable(args[0]))):
         # we resolve the request endpoint to the next preferred region
         # once we are out of preferred regions we stop retrying
         retry_policy = response_retry_policy

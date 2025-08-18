@@ -4,8 +4,8 @@ import unittest
 import uuid
 
 import pytest
-
 import test_config
+from azure.core.exceptions import ServiceResponseError
 from azure.cosmos import CosmosClient
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from _fault_injection_transport import FaultInjectionTransport
@@ -14,19 +14,24 @@ from test_per_partition_circuit_breaker_mm import (REGION_1, REGION_2, PK_VALUE,
 
 # cspell:disable
 
-def create_errors():
+def create_failover_errors():
     errors = []
-    error_codes = [403, 408, 500, 502, 503, 504]
+    error_codes = [403]
     for error_code in error_codes:
-        if error_code == 403:
-            errors.append(CosmosHttpResponseError(
-                status_code=error_code,
-                message="Some injected error.",
-                sub_status=3))
-        else:
-            errors.append(CosmosHttpResponseError(
-                status_code=error_code,
-                message="Some injected error."))
+        errors.append(CosmosHttpResponseError(
+            status_code=error_code,
+            message="Some injected error.",
+            sub_status=3))
+    return errors
+
+def create_threshold_errors():
+    errors = []
+    error_codes = [408, 500, 502, 503, 504]
+    for error_code in error_codes:
+        errors.append(CosmosHttpResponseError(
+            status_code=error_code,
+            message="Some injected error."))
+    errors.append(ServiceResponseError(message="Injected Service Response Error."))
     return errors
 
 # These tests assume that the configured live account has one main write region and one secondary read region.
@@ -74,10 +79,10 @@ class TestPerPartitionAutomaticFailover:
         custom_setup = self.setup_method_with_custom_transport(custom_transport, default_endpoint=self.host, **kwargs)
         return setup, doc_fail_id, doc_success_id, custom_setup, custom_transport, predicate
 
-    @pytest.mark.parametrize("write_operation, error", write_operations_and_errors(create_errors()))
+    @pytest.mark.parametrize("write_operation, error", write_operations_and_errors(create_failover_errors()))
     def test_ppaf_partition_info_cache_and_routing(self, write_operation, error):
         # This test validates that the partition info cache is updated correctly upon failures, and that the
-        # per-partition automatic failover logic routes requests to the next available regional endpoint
+        # per-partition automatic failover logic routes requests to the next available regional endpoint on 403.3 errors.
         error_lambda = lambda r: FaultInjectionTransport.error_after_delay(0, error)
         setup, doc_fail_id, doc_success_id, custom_setup, custom_transport, predicate = self.setup_info(error_lambda, 1, write_operation == BATCH)
         container = setup['col']
@@ -91,7 +96,6 @@ class TestPerPartitionAutomaticFailover:
         initial_endpoint = global_endpoint_manager.partition_range_to_failover_info[pk_range_wrapper].current_regional_endpoint
 
         # Based on our configuration, we should have had one error followed by a success - marking only the previous endpoint as unavailable
-        # TODO: add logic here to deal with consecutive failures case
         perform_write_operation(
             write_operation,
             container,
@@ -119,8 +123,70 @@ class TestPerPartitionAutomaticFailover:
         assert partition_info.current_regional_endpoint is None
 
 
-    @pytest.mark.parametrize("write_operation, error", write_operations_and_errors(create_errors()))
+    @pytest.mark.parametrize("write_operation, error", write_operations_and_errors(create_threshold_errors()))
+    def test_ppaf_partition_thresholds_and_routing(self, write_operation, error):
+        # This test validates the consecutive failures logic is properly handled for per-partition automatic failover,
+        # and that the per-partition automatic failover logic routes requests to the next available regional endpoint
+        # after enough consecutive failures have occurred.
+        error_lambda = lambda r: FaultInjectionTransport.error_after_delay(0, error)
+        setup, doc_fail_id, doc_success_id, custom_setup, custom_transport, predicate = self.setup_info(error_lambda)
+        container = setup['col']
+        fault_injection_container = custom_setup['col']
+        global_endpoint_manager = fault_injection_container.client_connection._global_endpoint_manager
+
+        # Create a document to populate the per-partition GEM partition range info cache
+        fault_injection_container.create_item(body={'id': doc_success_id, 'pk': PK_VALUE,
+                                                    'name': 'sample document', 'key': 'value'})
+        pk_range_wrapper = list(global_endpoint_manager.partition_range_to_failover_info.keys())[0]
+        initial_endpoint = global_endpoint_manager.partition_range_to_failover_info[pk_range_wrapper].current_regional_endpoint
+
+
+        is_503 = hasattr(error, 'status_code') and error.status_code == 503
+        # Since 503 errors are retried by default, we each request counts as two failures
+        consecutive_failures = 3 if is_503 else 6
+
+        for i in range(consecutive_failures):
+            # We perform the write operation multiple times to check the consecutive failures logic
+            with pytest.raises((CosmosHttpResponseError, ServiceResponseError)) as exc_info:
+                perform_write_operation(write_operation,
+                                        container,
+                                        fault_injection_container,
+                                        doc_fail_id,
+                                        PK_VALUE)
+            assert exc_info.value == error
+        # Verify that the threshold for consecutive failures is updated
+        pk_range_wrappers = list(global_endpoint_manager.ppaf_thresholds_tracker.pk_range_wrapper_to_failure_count.keys())
+        assert len(pk_range_wrappers) == 1
+        failure_count = global_endpoint_manager.ppaf_thresholds_tracker.pk_range_wrapper_to_failure_count[pk_range_wrappers[0]]
+        assert failure_count == 6
+        # Run some more requests to the same partition to trigger the failover logic
+        for i in range(consecutive_failures):
+            with pytest.raises((CosmosHttpResponseError, ServiceResponseError)) as exc_info:
+                perform_write_operation(write_operation,
+                                        container,
+                                        fault_injection_container,
+                                        doc_fail_id,
+                                        PK_VALUE)
+            assert exc_info.value == error
+        # We should have marked the previous endpoint as unavailable after 10 successive failures
+        partition_info = global_endpoint_manager.partition_range_to_failover_info[pk_range_wrapper]
+        # Verify that the partition is marked as unavailable, and that the current regional endpoint is not the same
+        assert len(partition_info.unavailable_regional_endpoints) == 1
+        assert initial_endpoint in partition_info.unavailable_regional_endpoints
+        assert initial_endpoint != partition_info.current_regional_endpoint # west us 3 != west us
+
+        # Since we are failing every request, even though we retried to the next region, that retry should have failed as well
+        # This means we should have one extra failure - verify that the value makes sense
+        failure_count = global_endpoint_manager.ppaf_thresholds_tracker.pk_range_wrapper_to_failure_count[pk_range_wrappers[0]]
+        assert failure_count == 1 if is_503 else 3
+
+    @pytest.mark.parametrize("write_operation, error", write_operations_and_errors(create_failover_errors()))
     def test_ppaf_exclude_regions(self, write_operation, error):
+        # TODO: finish this test
+        return
+
+    @pytest.mark.parametrize("write_operation, error", write_operations_and_errors(create_failover_errors()))
+    def test_ppaf_invalid_configs(self, write_operation, error):
         # TODO: finish this test
         return
 

@@ -28,6 +28,7 @@ import json
 import uuid
 import re
 import binascii
+import os
 from typing import Dict, Any, List, Mapping, Optional, Sequence, Union, Tuple, TYPE_CHECKING
 
 from urllib.parse import quote as urllib_quote
@@ -45,7 +46,10 @@ from .partition_key import _Empty, _Undefined
 if TYPE_CHECKING:
     from ._cosmos_client_connection import CosmosClientConnection
     from .aio._cosmos_client_connection_async import CosmosClientConnection as AsyncClientConnection
+    from ._global_partition_endpoint_manager_per_partition_automatic_failover import (
+        _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover)
     from ._request_object import RequestObject
+    from ._routing.routing_range import PartitionKeyRangeWrapper
 
 # pylint: disable=protected-access
 
@@ -933,3 +937,20 @@ def _build_properties_cache(properties: Dict[str, Any], container_link: str) -> 
         "_self": properties.get("_self", None), "_rid": properties.get("_rid", None),
         "partitionKey": properties.get("partitionKey", None), "container_link": container_link
     }
+
+def try_ppaf_failover_threshold(
+        global_endpoint_manager: "_GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover",
+        pk_range_wrapper: "PartitionKeyRangeWrapper",
+        request: "RequestObject"):
+    """Check if the PPAF threshold is reached for the current partition range, and mark endpoint unavailable if so.
+    """
+    # If PPAF is enabled, we track consecutive failures for certain exceptions, and only fail over at a partition
+    # level after the threshold is reached
+    if request and global_endpoint_manager.is_per_partition_automatic_failover_applicable(request):
+        if (global_endpoint_manager.ppaf_thresholds_tracker.get_pk_failures(pk_range_wrapper)
+                >= int(os.environ.get(Constants.TIMEOUT_ERROR_THRESHOLD_PPAF,
+                                      Constants.TIMEOUT_ERROR_THRESHOLD_PPAF_DEFAULT))):
+            # If the PPAF threshold is reached, we reset the count and retry to the next region
+            global_endpoint_manager.ppaf_thresholds_tracker.clear_pk_failures(pk_range_wrapper)
+            partition_level_info = global_endpoint_manager.partition_range_to_failover_info[pk_range_wrapper]
+            partition_level_info.unavailable_regional_endpoints.add(request.location_endpoint_to_route)

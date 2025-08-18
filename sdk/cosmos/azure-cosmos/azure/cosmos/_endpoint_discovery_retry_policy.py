@@ -62,17 +62,6 @@ class EndpointDiscoveryRetryPolicy(object):
 
         self.failover_retry_count += 1
 
-        if self.request.location_endpoint_to_route:
-            if _OperationType.IsReadOnlyOperation(self.request.operation_type):
-                # Mark current read endpoint as unavailable
-                self.global_endpoint_manager.mark_endpoint_unavailable_for_read(
-                    self.request.location_endpoint_to_route,
-                    True)
-            else:
-                self.global_endpoint_manager.mark_endpoint_unavailable_for_write(
-                    self.request.location_endpoint_to_route,
-                    True)
-
         # set the refresh_needed flag to ensure that endpoint list is
         # refreshed with new writable and readable locations
         self.global_endpoint_manager.refresh_needed = True
@@ -84,6 +73,17 @@ class EndpointDiscoveryRetryPolicy(object):
             partition_level_info.unavailable_regional_endpoints.add(self.request.location_endpoint_to_route)
             self.global_endpoint_manager.resolve_service_endpoint_for_partition(self.request, self.pk_range_wrapper)
             return True
+
+        if self.request.location_endpoint_to_route:
+            if _OperationType.IsReadOnlyOperation(self.request.operation_type):
+                # Mark current read endpoint as unavailable
+                self.global_endpoint_manager.mark_endpoint_unavailable_for_read(
+                    self.request.location_endpoint_to_route,
+                    True)
+            else:
+                self.global_endpoint_manager.mark_endpoint_unavailable_for_write(
+                    self.request.location_endpoint_to_route,
+                    True)
 
         # clear previous location-based routing directive
         self.request.clear_route_to_location()

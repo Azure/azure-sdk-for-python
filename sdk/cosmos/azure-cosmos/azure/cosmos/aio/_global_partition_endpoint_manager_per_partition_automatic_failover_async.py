@@ -134,7 +134,10 @@ class _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailoverAsync(
         :return: A set of available regional endpoints.
         :rtype: Set[str]
         """
-        excluded_locations = request.excluded_locations + self.location_cache.connection_policy.ExcludedLocations
+        if request.excluded_locations:
+            excluded_locations = request.excluded_locations + self.location_cache.connection_policy.ExcludedLocations
+        else:
+            excluded_locations = self.location_cache.connection_policy.ExcludedLocations
         preferred_locations = self.PreferredLocations
         available_regions = [item for item in preferred_locations if item not in excluded_locations]
         available_regional_endpoints = {
