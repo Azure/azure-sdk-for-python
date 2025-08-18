@@ -1317,44 +1317,101 @@ class TestBaseExporter(unittest.TestCase):
         # Should not collect when shutdown
         self.assertFalse(exporter._should_collect_customer_sdkstats())
 
-    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._customer_sdkstats.shutdown_customer_sdkstats_metrics")
-    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.shutdown_statsbeat_metrics")
-    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
-    def test_customer_sdkstats_shutdown_on_invalid_code(self, stats_mock, stats_shutdown_mock, customer_shutdown_mock):
-        """Test that customer sdkstats shutdown is called on invalid response codes"""
+    def test_customer_sdkstats_shutdown_on_invalid_code(self):
+        """Test that customer sdkstats shutdown is called and state updated on invalid response codes"""
+        # Import needed components for verification
+        from azure.monitor.opentelemetry.exporter.statsbeat._customer_sdkstats import (
+            _CUSTOMER_SDKSTATS_STATE,
+            _CUSTOMER_SDKSTATS_STATE_LOCK,
+            CustomerSdkStatsMetrics
+        )
+        
+        # Set up test environment
         exporter = BaseExporter()
         envelope = TelemetryItem(name="test", time=datetime.now())
         
-        with mock.patch("requests.Session.request") as post:
-            post.return_value = MockResponse(400, "Invalid request")
-            result = exporter._transmit([envelope])
-            
-            # Should have called both shutdown methods
-            stats_shutdown_mock.assert_called_once()
-            customer_shutdown_mock.assert_called_once()
-            self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
-
-    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._customer_sdkstats.shutdown_customer_sdkstats_metrics")
-    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.shutdown_statsbeat_metrics")
-    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
-    def test_customer_sdkstats_shutdown_on_failure_threshold(self, stats_mock, stats_shutdown_mock, customer_shutdown_mock):
-        """Test that customer sdkstats shutdown function can be called (simplified test)"""
-        # This test verifies that the customer sdkstats shutdown integration exists
-        # rather than trying to simulate the complex failure threshold scenario
+        # Set up mocks for the actual implementations
+        with _CUSTOMER_SDKSTATS_STATE_LOCK:
+            _CUSTOMER_SDKSTATS_STATE["SHUTDOWN"] = False
         
-        # Import the shutdown function to verify it exists and is properly integrated
+        # Set up a meter provider mock to ensure we have something to shutdown
+        mock_meter_provider = mock.MagicMock()
+        
+        # Create a mock instance for CustomerSdkStatsMetrics to be used in the global variable
+        mock_instance = mock.MagicMock()
+        mock_instance._customer_sdkstats_meter_provider = mock_meter_provider
+        
+        # Set _CUSTOMER_SDKSTATS_METRICS to our mock instance
+        import sys
+        customer_sdkstats_module = sys.modules['azure.monitor.opentelemetry.exporter.statsbeat._customer_sdkstats']
+        original_metrics = getattr(customer_sdkstats_module, '_CUSTOMER_SDKSTATS_METRICS', None)
+        setattr(customer_sdkstats_module, '_CUSTOMER_SDKSTATS_METRICS', mock_instance)
+        
+        try:
+            # Execute the test scenario
+            with mock.patch("requests.Session.request") as post:
+                post.return_value = MockResponse(400, "Invalid request")
+                result = exporter._transmit([envelope])
+                
+                # Verify the result is as expected
+                self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
+                
+                # Verify the meter provider's shutdown was called
+                mock_meter_provider.shutdown.assert_called_once()
+                
+                # Verify that the state was properly updated to indicate shutdown happened
+                self.assertTrue(_CUSTOMER_SDKSTATS_STATE["SHUTDOWN"], 
+                    "The SHUTDOWN state should be set to True after invalid response code")
+        finally:
+            # Restore the original _CUSTOMER_SDKSTATS_METRICS
+            setattr(customer_sdkstats_module, '_CUSTOMER_SDKSTATS_METRICS', original_metrics)
+
+    def test_customer_sdkstats_shutdown_on_failure_threshold(self):
+        """Test that customer sdkstats shutdown function properly updates the shutdown state"""
+        # This test verifies that the shutdown_customer_sdkstats_metrics function 
+        # properly updates the SHUTDOWN state when called
+        
+        # Import needed components for verification
         from azure.monitor.opentelemetry.exporter.statsbeat._customer_sdkstats import (
             shutdown_customer_sdkstats_metrics,
+            _CUSTOMER_SDKSTATS_STATE,
+            _CUSTOMER_SDKSTATS_STATE_LOCK,
+            CustomerSdkStatsMetrics
         )
         
-        # Call shutdown directly to verify functionality
-        shutdown_customer_sdkstats_metrics()
+        # Set up a meter provider mock to ensure we have something to shutdown
+        mock_meter_provider = mock.MagicMock()
         
-        # Verify the shutdown function was called (through the patched mock)
-        customer_shutdown_mock.assert_called_once()
+        # Create a mock instance for CustomerSdkStatsMetrics to be used in the global variable
+        mock_instance = mock.MagicMock()
+        mock_instance._customer_sdkstats_meter_provider = mock_meter_provider
         
-        # The actual integration point exists in _base.py lines 397-404
-        # where both shutdown functions are called together during failure threshold
+        # Set _CUSTOMER_SDKSTATS_METRICS to our mock instance
+        import sys
+        customer_sdkstats_module = sys.modules['azure.monitor.opentelemetry.exporter.statsbeat._customer_sdkstats']
+        original_metrics = getattr(customer_sdkstats_module, '_CUSTOMER_SDKSTATS_METRICS', None)
+        setattr(customer_sdkstats_module, '_CUSTOMER_SDKSTATS_METRICS', mock_instance)
+        
+        try:
+            # Make sure state starts with SHUTDOWN as False
+            with _CUSTOMER_SDKSTATS_STATE_LOCK:
+                _CUSTOMER_SDKSTATS_STATE["SHUTDOWN"] = False
+            
+            # Call the actual shutdown function directly (no mocking)
+            shutdown_customer_sdkstats_metrics()
+            
+            # Verify the meter provider's shutdown was called
+            mock_meter_provider.shutdown.assert_called_once()
+            
+            # Verify that the state was properly updated by the function
+            self.assertTrue(_CUSTOMER_SDKSTATS_STATE["SHUTDOWN"], 
+                "The SHUTDOWN state should be set to True after shutdown_customer_sdkstats_metrics is called")
+        finally:
+            # Restore the original _CUSTOMER_SDKSTATS_METRICS
+            setattr(customer_sdkstats_module, '_CUSTOMER_SDKSTATS_METRICS', original_metrics)
+        
+        # Note: The actual integration point exists in _base.py where both shutdown 
+        # functions are called together during failure threshold
 
     @mock.patch.dict(
         os.environ,
