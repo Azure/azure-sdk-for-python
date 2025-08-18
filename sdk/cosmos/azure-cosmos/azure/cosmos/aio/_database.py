@@ -30,8 +30,14 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
 
 from ._cosmos_client_connection_async import CosmosClientConnection
-from .._base import build_options as _build_options, _set_throughput_options, _deserialize_throughput, \
+from .._base import (
+    build_options as _build_options, 
+    _set_throughput_options, 
+    _deserialize_throughput,
     _replace_throughput
+)
+from .._constants import _Constants as Constants
+InternalOptions = Constants.InternalOptions
 from ._container import ContainerProxy
 from ..offer import ThroughputProperties
 from ..http_constants import StatusCodes
@@ -45,7 +51,8 @@ __all__ = ("DatabaseProxy",)
 
 
 # pylint: disable=protected-access
-# pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
+# pylint: disable=missing-client-constructor-parameter-credential
+# pylint: disable=missing-client-constructor-parameter-kwargs
 # pylint: disable=docstring-keyword-should-match-keyword-only
 
 def _get_database_link(database_or_id: Union[str, 'DatabaseProxy', Mapping[str, Any]]) -> str:
@@ -104,14 +111,18 @@ class DatabaseProxy(object):
     def __repr__(self) -> str:
         return "<DatabaseProxy [{}]>".format(self.database_link)[:1024]
 
-    def _get_container_id(self, container_or_id: Union[str, ContainerProxy, Mapping[str, Any]]) -> str:
+    def _get_container_id(
+        self, container_or_id: Union[str, ContainerProxy, Mapping[str, Any]]
+    ) -> str:
         if isinstance(container_or_id, str):
             return container_or_id
         if isinstance(container_or_id, ContainerProxy):
             return container_or_id.id
         return str(container_or_id["id"])
 
-    def _get_container_link(self, container_or_id: Union[str, ContainerProxy, Mapping[str, Any]]) -> str:
+    def _get_container_link(
+        self, container_or_id: Union[str, ContainerProxy, Mapping[str, Any]]
+    ) -> str:
         return "{}/colls/{}".format(self.database_link, self._get_container_id(container_or_id))
 
     def _get_user_link(self, user_or_id: Union[UserProxy, str, Mapping[str, Any]]) -> str:
@@ -138,15 +149,16 @@ class DatabaseProxy(object):
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given database couldn't be retrieved.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given database 
+            couldn't be retrieved.
         :returns: A dict representing the database properties
         :rtype: Dict[str, Any]
         """
         session_token = kwargs.get(Constants.Kwargs.SESSION_TOKEN)
         if session_token is not None:
             warnings.warn(
-                "The 'session_token' flag does not apply to this method and is always ignored even if passed."
-                " It will now be removed in the future.",
+                "The 'session_token' flag does not apply to this method and is always "
+                "ignored even if passed. It will now be removed in the future.",
                 DeprecationWarning)
 
         database_link = _get_database_link(self)
@@ -386,11 +398,13 @@ class DatabaseProxy(object):
                 **kwargs
             )
 
-    def get_container_client(self, container: Union[str, ContainerProxy, Dict[str, Any]]) -> ContainerProxy:
+    def get_container_client(
+        self, container: Union[str, ContainerProxy, Dict[str, Any]]
+    ) -> ContainerProxy:
         """Get a `ContainerProxy` for a container with specified ID (name).
 
-        :param container: The ID (name), dict representing the properties, or :class:`ContainerProxy`
-            instance of the container to get.
+        :param container: The ID (name), dict representing the properties, or 
+            :class:`ContainerProxy` instance of the container to get.
         :type container: Union[str, Dict[str, Any], ~azure.cosmos.aio.ContainerProxy]
         :returns: A `ContainerProxy` instance representing the container.
         :rtype: ~azure.cosmos.aio.ContainerProxy
