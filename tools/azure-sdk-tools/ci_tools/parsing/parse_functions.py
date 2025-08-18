@@ -4,6 +4,7 @@ import textwrap
 import re
 import fnmatch
 import logging
+import pkginfo
 
 try:
     # py 311 adds this library natively
@@ -12,7 +13,7 @@ except:
     # otherwise fall back to pypi package tomli
     import tomli as toml
 
-from typing import Dict, List, Tuple, Any, Optional
+from typing import Dict, List, Tuple, Any, Optional, Union
 
 # this assumes the presence of "packaging"
 from packaging.requirements import Requirement
@@ -50,6 +51,62 @@ EXCLUDE = {
 }
 
 
+def extract_package_metadata(package_path: str) -> Dict[str, Any]:
+    """Extract package metadata from a built package (wheel or sdist file)."""
+    if not os.path.isfile(package_path):
+        logging.warning(f"Package path is not a file: {package_path}")
+        return {}
+
+    if not package_path.endswith(('.whl', '.tar.gz', '.tar')):
+        return {}
+
+    try:
+        # Use pkginfo package for proper metadata extraction with PEP support
+        pkg_info: Union[pkginfo.Wheel, pkginfo.SDist]
+        if package_path.endswith('.whl'):
+            pkg_info = pkginfo.Wheel(package_path)
+        elif package_path.endswith(('.tar.gz', '.tar')):
+            pkg_info = pkginfo.SDist(package_path)
+        else:
+            logging.warning(f"Unsupported package format: {package_path}")
+            return {}
+
+        # Convert pkginfo object to dictionary with normalized keys
+        metadata: Dict[str, Any] = {}
+        if pkg_info.name:
+            metadata['name'] = pkg_info.name
+        if pkg_info.version:
+            metadata['version'] = pkg_info.version
+        if pkg_info.summary:
+            metadata['summary'] = pkg_info.summary
+        if pkg_info.description:
+            metadata['description'] = pkg_info.description
+        if pkg_info.author:
+            metadata['author'] = pkg_info.author
+        if pkg_info.author_email:
+            metadata['author_email'] = pkg_info.author_email
+        if pkg_info.license:
+            metadata['license'] = pkg_info.license
+        if pkg_info.home_page:
+            metadata['homepage'] = pkg_info.home_page
+        if pkg_info.keywords:
+            metadata['keywords'] = pkg_info.keywords
+        if pkg_info.classifiers:
+            metadata['classifiers'] = pkg_info.classifiers
+        if pkg_info.requires_dist:
+            metadata['requires_dist'] = pkg_info.requires_dist
+        if pkg_info.requires_python:
+            metadata['requires_python'] = pkg_info.requires_python
+        if pkg_info.project_urls:
+            metadata['project_urls'] = pkg_info.project_urls
+
+        return metadata
+
+    except Exception as e:
+        logging.warning(f"Error extracting metadata from {package_path}: {e}")
+        return {}
+
+
 def discover_namespace(package_root_path: str) -> Optional[str]:
     """
     Discover the true namespace of a package by walking through its directory structure
@@ -61,9 +118,9 @@ def discover_namespace(package_root_path: str) -> Optional[str]:
     """
     if not os.path.exists(package_root_path):
         return None
-        
+
     namespace = None
-    
+
     for root, subdirs, files in os.walk(package_root_path):
         # Ignore any modules with name starts with "_"
         # For e.g. _generated, _shared etc
@@ -73,18 +130,18 @@ def discover_namespace(package_root_path: str) -> Optional[str]:
         for d in dirs_to_skip:
             logging.debug("Dirs to skip: {}".format(dirs_to_skip))
             subdirs.remove(d)
-            
+
         if INIT_PY_FILE in files:
             module_name = os.path.relpath(root, package_root_path).replace(
                 os.path.sep, "."
             )
-            
+
             # If namespace has not been set yet, try to find the first __init__.py that's not purely for extension.
             if not namespace:
                 namespace = _set_root_namespace(
                     os.path.join(root, INIT_PY_FILE), module_name
                 )
-    
+
     return namespace
 
 
@@ -111,16 +168,16 @@ def _set_root_namespace(init_file_path: str, module_name: str) -> Optional[str]:
                 # If comment, skip line. Otherwise, add to content.
                 if not in_docstring and not stripped_line.startswith("#"):
                     content.append(line)
-            
+
             # If there's more than one line of content, or if there's one line that's not just namespace extension
             if len(content) > 1 or (
                 len(content) == 1 and INIT_EXTENSION_SUBSTRING not in content[0]
             ):
                 return module_name
-                
+
     except Exception as e:
         logging.error(f"Error reading {init_file_path}: {e}")
-        
+
     return None
 
 
@@ -145,6 +202,7 @@ class ParsedSetup:
         ext_package: str,
         ext_modules: List[Extension],
         metapackage: bool,
+        metadata: Dict[str, Any],
     ):
         self.name: str = name
         self.version: str = version
@@ -160,6 +218,7 @@ class ParsedSetup:
         self.ext_package = ext_package
         self.ext_modules = ext_modules
         self.is_metapackage = metapackage
+        self.metadata = metadata
 
         self.is_pyproject = self.setup_filename.endswith(".toml")
 
@@ -168,7 +227,8 @@ class ParsedSetup:
     @classmethod
     def from_path(cls, parse_directory_or_file: str):
         """
-        Creates a new ParsedSetup instance from a path to a setup.py, pyproject.toml (with [project] member), or a directory containing either of those files.
+        Creates a new ParsedSetup instance from a path to a setup.py, pyproject.toml (with [project] member), 
+        a directory containing either of those files, or a built package file (.whl or .tar.gz).
         """
         (
             name,
@@ -185,6 +245,7 @@ class ParsedSetup:
             ext_package,
             ext_modules,
             metapackage,
+            metadata
         ) = parse_setup(parse_directory_or_file)
 
         return cls(
@@ -202,6 +263,7 @@ class ParsedSetup:
             ext_package,
             ext_modules,
             metapackage,
+            metadata
         )
 
     def get_build_config(self) -> Optional[Dict[str, Any]]:
@@ -323,7 +385,7 @@ def read_setup_py_content(setup_filename: str) -> str:
 def parse_setup_py(
     setup_filename: str,
 ) -> Tuple[
-    str, str, str, List[str], bool, str, str, Dict[str, Any], bool, List[str], List[str], str, List[Extension], bool
+    str, str, str, List[str], bool, str, str, Dict[str, Any], bool, List[str], List[str], str, List[Extension], bool, Dict[str, Any]
 ]:
     """
     Used to evaluate a setup.py (or a directory containing a setup.py) and return a tuple containing:
@@ -370,9 +432,9 @@ def parse_setup_py(
 
     fixed = ast.fix_missing_locations(parsed)
     codeobj = compile(fixed, setup_filename, "exec")
-    local_vars = {}
+    local_vars: Dict[str, Any] = {}
     kwargs = {}
-    global_vars = {"__setup_calls__": []}
+    global_vars: Dict[str, Any] = {"__setup_calls__": []}
     current_dir = os.getcwd()
     working_dir = os.path.dirname(setup_filename)
     os.chdir(working_dir)
@@ -390,7 +452,7 @@ def parse_setup_py(
 
     version = kwargs.get("version")
     name = kwargs.get("name")
-    name_space = name.replace("-", ".")
+    name_space = name.replace("-", ".") if name else ""
     packages = kwargs.get("packages", [])
 
     if packages:
@@ -425,7 +487,8 @@ def parse_setup_py(
         keywords,               # List[str] ADJUSTED
         ext_package,            # str
         ext_modules,            # List[Extension],
-        metapackage             # bool
+        metapackage,            # bool
+        {}                      # Dict[str, Any] - placeholder metadata
     )
     # fmt: on
 
@@ -433,7 +496,7 @@ def parse_setup_py(
 def parse_pyproject(
     pyproject_filename: str,
 ) -> Tuple[
-    str, str, str, List[str], bool, str, str, Dict[str, Any], bool, List[str], List[str], str, List[Extension], bool
+    str, str, str, List[str], bool, str, str, Dict[str, Any], bool, List[str], List[str], str, List[Extension], bool, Dict[str, Any]
 ]:
     """
     Used to evaluate a pyproject (or a directory containing a pyproject.toml) with a [project] configuration within.
@@ -520,7 +583,8 @@ def parse_pyproject(
         keywords,               # List[str] ADJUSTED
         ext_package,            # str
         ext_modules,            # List[Extension]
-        metapackage             # bool
+        metapackage,            # bool
+        {}                      # Dict[str, Any] - placeholder metadata
     )
     # fmt: on
 
@@ -588,7 +652,8 @@ def parse_setup(
         <keywords>,
         <ext_packages>,
         <ext_modules>,
-        <is_metapackage>
+        <is_metapackage>,
+        <metadata>
     )
 
     If a pyproject.toml (containing [project]) or a setup.py is NOT found, a ValueError will be raised.
@@ -596,6 +661,10 @@ def parse_setup(
     targeted_path = setup_filename_or_folder
     if os.path.isfile(setup_filename_or_folder):
         targeted_path = os.path.dirname(setup_filename_or_folder)
+
+    # If this is a built package file, extract metadata for whl/sdist validation
+    metadata = {}
+    metadata.update(extract_package_metadata(setup_filename_or_folder))
 
     resolved_filename = get_pyproject(targeted_path) or get_setup_py(targeted_path)
     if not resolved_filename:
