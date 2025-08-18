@@ -151,16 +151,16 @@ class AzureCliCredential(AsyncContextManager):
         claims_value = options.get("claims") if options else None
         if claims_value and claims_value.strip():
             login_cmd = f"az login --claims-challenge {claims_value}"
-            
+
             # Add tenant if provided in options
             tenant_id_from_options = options.get("tenant_id") if options else None
             if tenant_id_from_options:
                 login_cmd += f" --tenant {tenant_id_from_options}"
-            
+
             # Add scope if provided
             if scopes:
                 login_cmd += f" --scope {scopes[0]}"
-            
+
             raise CredentialUnavailableError(f"Failed to get token. Run {login_cmd}")
 
         tenant_id = options.get("tenant_id") if options else None

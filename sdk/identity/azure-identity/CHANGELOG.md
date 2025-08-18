@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added MFA (Multi-Factor Authentication) support for developer credentials. `AzureCliCredential`, `AzurePowerShellCredential`, and `AzureDeveloperCliCredential` now provide improved error messaging when MFA is required, guiding users to authenticate with claims challenges.
+
 ### Breaking Changes
 
 ### Bugs Fixed
