@@ -11,16 +11,20 @@ import logging
 import os
 import glob
 import shutil
+import tempfile
+import subprocess
 from unicodedata import name
 from xmlrpc.client import Boolean
+from packaging.version import Version
 from tox_helper_tasks import (
     unzip_file_to_directory,
 )
 from verify_whl import cleanup, should_verify_package
-from typing import List, Mapping, Any
+from typing import List, Mapping, Any, Dict, Optional
 
 from ci_tools.parsing import ParsedSetup
 from ci_tools.functions import verify_package_classifiers
+from pypi_tools.pypi import retrieve_versions_from_pypi
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -54,10 +58,48 @@ def get_root_directories_in_sdist(dist_dir: str, version: str) -> List[str]:
     return sdist_folders
 
 
-def verify_sdist(package_dir: str, dist_dir: str, version: str) -> bool:
+def get_prior_stable_version(package_name: str, current_version: str) -> Optional[str]:
+    """Get the latest stable version from PyPI that is prior to the current version."""
+    try:
+        all_versions = retrieve_versions_from_pypi(package_name)
+        current_ver = Version(current_version)
+        stable_versions = [Version(v) for v in all_versions
+                          if not Version(v).is_prerelease and Version(v) < current_ver]
+        return str(max(stable_versions)) if stable_versions else None
+    except Exception:
+        return None
+
+
+def download_and_parse_prior_version(package_name: str, prior_version: str) -> Optional[ParsedSetup]:
+    """Download the prior version sdist and parse it with ParsedSetup."""
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        try:
+            subprocess.run([
+                "pip", "download", "--no-deps", "--no-binary=:all:",
+                f"{package_name}=={prior_version}", "--dest", tmp_dir
+            ], check=True, capture_output=True)
+            sdist_files = glob.glob(os.path.join(tmp_dir, "*.tar.gz"))
+            return ParsedSetup.from_path(sdist_files[0]) if sdist_files else None
+        except Exception:
+            return None
+
+
+def verify_metadata_compatibility(current_metadata: Dict[str, Any], prior_metadata: Dict[str, Any]) -> bool:
+    """Verify that all keys from prior version metadata are present in current version."""
+    if not prior_metadata:
+        return True
+    if not current_metadata:
+        return False
+    return set(prior_metadata.keys()).issubset(set(current_metadata.keys()))
+
+
+def verify_sdist(package_dir: str, dist_dir: str, parsed_pkg: ParsedSetup) -> bool:
     """
     Compares the root directories in source against root directories present within a sdist.
+    Also verifies metadata compatibility with prior stable version.
     """
+    version = parsed_pkg.version
+    metadata: Dict[str, Any] = parsed_pkg.metadata
 
     source_folders = get_root_directories_in_source(package_dir)
     sdist_folders = get_root_directories_in_sdist(dist_dir, version)
@@ -71,8 +113,17 @@ def verify_sdist(package_dir: str, dist_dir: str, version: str) -> bool:
         logging.info("Directories in source: %s", source_folders)
         logging.info("Directories in sdist: %s", sdist_folders)
         return False
-    else:
-        return True
+
+    # Verify metadata compatibility with prior version
+    prior_version = get_prior_stable_version(parsed_pkg.name, version)
+    if prior_version:
+        prior_parsed_pkg = download_and_parse_prior_version(parsed_pkg.name, prior_version)
+        if prior_parsed_pkg:
+            prior_metadata: Dict[str, Any] = prior_parsed_pkg.metadata
+            if not verify_metadata_compatibility(metadata, prior_metadata):
+                return False
+
+    return True
 
 
 def verify_sdist_pytyped(
@@ -145,7 +196,7 @@ if __name__ == "__main__":
 
     if should_verify_package(pkg_details.name):
         logging.info(f"Verifying sdist for package {pkg_details.name}")
-        if verify_sdist(pkg_dir, args.dist_dir, pkg_details.version):
+        if verify_sdist(pkg_dir, args.dist_dir, pkg_details):
             logging.info(f"Verified sdist for package {pkg_details.name}")
         else:
             logging.error(f"Failed to verify sdist for package {pkg_details.name}")
