@@ -294,6 +294,10 @@ else:
 ds = VectorStoreDataSource(asset_identifier=asset_uri, asset_type=VectorStoreDataSourceAssetType.URI_ASSET)
 vector_store = agents_client.vector_stores.create_and_poll(data_sources=[ds], name="sample_vector_store")
 print(f"Created vector store, vector store ID: {vector_store.id}")
+vector_store_files = {}
+for fle in agents_client.vector_store_files.list(vector_store.id):
+    uploaded_file = agents_client.files.get(fle.id)
+    vector_store_files[fle.id] = uploaded_file.filename
 
 # Create a file search tool
 file_search_tool = FileSearchTool(vector_store_ids=[vector_store.id])
@@ -365,7 +369,7 @@ Here is an example:
 <!-- SNIPPET:sample_agents_bing_grounding.create_agent_with_bing_grounding_tool -->
 
 ```python
-conn_id = os.environ["AZURE_BING_CONNECTION_ID"]
+conn_id = project_client.connections.get(os.environ["BING_CONNECTION_NAME"]).id
 
 # Initialize agent bing tool and add the connection id
 bing = BingGroundingTool(connection_id=conn_id)
@@ -1077,11 +1081,11 @@ To understand what calls were made by the main agent to the connected ones, we w
 for run_step in agents_client.run_steps.list(thread_id=thread.id, run_id=run.id, order=ListSortOrder.ASCENDING):
     if isinstance(run_step.step_details, RunStepToolCallDetails):
         for tool_call in run_step.step_details.tool_calls:
-            print(
-                f"\tAgent: {tool_call._data['connected_agent']['name']} "
-                f"query: {tool_call._data['connected_agent']['arguments']} ",
-                f"output: {tool_call._data['connected_agent']['output']}",
-            )
+            if isinstance(tool_call, RunStepConnectedAgentToolCall):
+                print(
+                    f"\tAgent: {tool_call.connected_agent.name} " f"query: {tool_call.connected_agent.arguments} ",
+                    f"output: {tool_call.connected_agent.output}",
+                )
 ```
 
 <!-- END SNIPPET -->
@@ -1611,11 +1615,15 @@ enable_telemetry(destination=sys.stdout)
 ```
 
 ### Enabling content recording
-Content recording controles whether message contents and tool call related details, such as parameters and return values, are captured with the traces.
-To enable content recording set the `AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED` environment variable value to `true`. If the environment variable is not set, then the value will default to `false`.
 
+Content recording controls whether message contents and tool call related details, such as parameters and return values, are captured with the traces. This data may include sensitive user information.
 
-**Important:** The `AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED` environment variable only controls content recording for built-in agent traces. When you use the `@trace_function` decorator on your own functions, all parameters and return values are always traced.
+To enable content recording set the `OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT` environment variable to `true`. This environment variable is defined
+by [OpenTelemetry](https://opentelemetry.io/), and all new applications are encouraged to use it when content recording is required. For legacy reasons, content recordings will also be enabled if `AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED` environment variable is set to `true`.
+
+If neither environment variable is set, content recording defaults to `false`. If either variable is set to `false`, content recording will be disabled, regardless of the other's value.
+
+**Important:** The environment variables only control content recording for built-in agent traces. When you use the `@trace_function` decorator on your own functions, all parameters and return values are always traced.
 
 ### How to trace your own functions
 

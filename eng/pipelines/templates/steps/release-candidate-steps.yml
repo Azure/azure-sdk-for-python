@@ -4,16 +4,13 @@ steps:
       versionSpec: $(PythonVersion)
 
   - template: /eng/pipelines/templates/steps/use-venv.yml
-    parameters:
-      Activate: false
 
   - pwsh: |
-      $(VENV_ACTIVATION_SCRIPT)
+      Write-Host (Get-Command python).Source
       $ErrorActionPreference = 'Stop'
       $PSNativeCommandUseErrorActionPreference = $true
-      python -m pip install -r $(Build.SourcesDirectory)/eng/ci_tools.txt
-      python -m pip freeze --all
-      Write-Host (Get-Command python).Source
+      $(PIP_EXE) install -r $(Build.SourcesDirectory)/eng/ci_tools.txt
+      $(PIP_EXE) freeze
     displayName: 'Install Dependencies'
 
   - template: /eng/common/testproxy/test-proxy-tool.yml
@@ -21,7 +18,6 @@ steps:
       runProxy: false
 
   - pwsh: |
-      $(VENV_ACTIVATION_SCRIPT)
       python ./scripts/devops_tasks/dispatch_tox.py "$(TargetedPackages)" --junitxml="junit/test_results.xml" --toxenv="whl" --filter-type="Build"
     displayName: 'Setup - Run Filtered Tests For Python $(PythonVersion)'
     env:
