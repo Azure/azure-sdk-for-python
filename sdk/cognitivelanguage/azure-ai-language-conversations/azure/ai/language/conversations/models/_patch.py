@@ -27,6 +27,8 @@ from ._models import (
     ConversationSummarizationActionContent,
     AnalyzeConversationOperationAction,
     AnalyzeConversationOperationState,
+    ConversationPiiActionContent,
+    PiiOperationAction,
 )
     
 def patch_sdk():
@@ -44,4 +46,6 @@ __all__ = [
     "SummarizationOperationAction",
     "ConversationSummarizationActionContent",
     "AnalyzeConversationOperationAction",
+    "ConversationPiiActionContent",
+    "PiiOperationAction",
 ]
