@@ -81,6 +81,7 @@ sections of this guide describe common scenarios:
 - [Playback failures from body matching errors](#playback-failures-from-body-matching-errors)
 - [Playback failures from inconsistent line breaks](#playback-failures-from-inconsistent-line-breaks)
 - [Playback failures from URL mismatches](#playback-failures-from-url-mismatches)
+- [Playback failures from inconsistent test values](#playback-failures-from-inconsistent-test-values)
 
 ## Test collection failure
 
