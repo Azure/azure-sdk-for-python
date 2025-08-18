@@ -3543,16 +3543,37 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         token = await token_credential.get_token("https://storage.azure.com/.default")
         user_delegation_oid = jwt.decode(token.token, options={"verify_signature": False}).get("oid")
 
-        container_client = await service.create_container(self.get_resource_name('oauthcontainer'))
-        blob_client = container_client.get_blob_client(self.get_resource_name('oauthblob'))
-        await blob_client.upload_blob(BytesIO(data), length=len(data))
+        container_name = self.get_resource_name('oauthcontainer')
+        container = await service.create_container(container_name)
+        blob = container.get_blob_client(self.get_resource_name('oauthblob'))
+        await blob.upload_blob(BytesIO(data), length=len(data))
+
+        container_token = self.generate_sas(
+            generate_container_sas,
+            container.account_name,
+            container.container_name,
+            permission=ContainerSasPermissions(read=True, list=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            user_delegation_key=user_delegation_key,
+            user_delegation_oid=user_delegation_oid
+        )
+        assert "sduoid=" + user_delegation_oid in container_token
+
+        container_client = ContainerClient.from_container_url(
+            f"{container.url}?{container_token}",
+            credential=token_credential
+        )
+
+        blobs_list = []
+        async for b in container_client.list_blobs():
+            blobs_list.append(b)
+        assert blobs_list is not None
 
         sas_token = self.generate_sas(
             generate_blob_sas,
-            blob_client.account_name,
-            blob_client.container_name,
-            blob_client.blob_name,
-            snapshot=blob_client.snapshot,
+            blob.account_name,
+            blob.container_name,
+            blob.blob_name,
             permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
             user_delegation_key=user_delegation_key,
@@ -3560,11 +3581,11 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         )
         assert "sduoid=" + user_delegation_oid in sas_token
 
-        blob_client_sas = BlobClient.from_blob_url(
-            f"{blob_client.url}?{sas_token}",
+        blob_client = BlobClient.from_blob_url(
+            f"{blob.url}?{sas_token}",
             credential=token_credential
         )
-        content = await (await blob_client_sas.download_blob()).readall()
+        content = await (await blob_client.download_blob()).readall()
         assert content == data
 
         return variables
