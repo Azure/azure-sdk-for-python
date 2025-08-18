@@ -357,5 +357,5 @@ class TestMgmtSearch(AzureMgmtRecordedTestCase):
 [dev_setup]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/dev_setup.md
 [devtools_testutils]: https://github.com/Azure/azure-sdk-for-python/tree/main/tools/azure-sdk-tools/devtools_testutils
 [mgmt_settings_fake]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/mgmt_settings_fake.py
-[testproxy]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md
+[testproxy]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#write-or-run-tests
 [pytest]: https://docs.pytest.org/en/latest/
