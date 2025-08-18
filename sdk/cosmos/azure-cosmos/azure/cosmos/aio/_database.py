@@ -295,9 +295,17 @@ class DatabaseProxy(object):
         _set_throughput_options(offer=offer_throughput, request_options=request_options)
 
         data = await self.client_connection.CreateContainer(
-            database_link=self.database_link, collection=definition, options=request_options, **kwargs
+            database_link=self.database_link, 
+            collection=definition, 
+            options=request_options, 
+            **kwargs
         )
-        return ContainerProxy(self.client_connection, self.database_link, data["id"], properties=data)
+        return ContainerProxy(
+            self.client_connection, 
+            self.database_link, 
+            data["id"], 
+            properties=data
+        )
 
     @distributed_trace_async
     async def create_container_if_not_exists(
@@ -433,7 +441,9 @@ class DatabaseProxy(object):
         *,
         max_item_count: Optional[int] = None,
         initial_headers: Optional[Dict[str, str]] = None,
-        response_hook: Optional[Callable[[Mapping[str, Any], AsyncItemPaged[Dict[str, Any]]], None]] = None,
+        response_hook: Optional[
+            Callable[[Mapping[str, Any], AsyncItemPaged[Dict[str, Any]]], None]
+        ] = None,
         **kwargs
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """List the containers in the database.
@@ -482,7 +492,9 @@ class DatabaseProxy(object):
         parameters: Optional[List[Dict[str, Any]]] = None,
         max_item_count: Optional[int] = None,
         initial_headers: Optional[Dict[str, str]] = None,
-        response_hook: Optional[Callable[[Mapping[str, Any], AsyncItemPaged[Dict[str, Any]]], None]] = None,
+        response_hook: Optional[
+            Callable[[Mapping[str, Any], AsyncItemPaged[Dict[str, Any]]], None]
+        ] = None,
         **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """List the properties for containers in the current database.
@@ -619,7 +631,10 @@ class DatabaseProxy(object):
             container_link, collection=parameters, options=request_options, **kwargs
         )
         return ContainerProxy(
-            self.client_connection, self.database_link, container_properties["id"], properties=container_properties
+            self.client_connection, 
+            self.database_link, 
+            container_properties["id"], 
+            properties=container_properties
         )
 
     @distributed_trace_async
@@ -665,7 +680,9 @@ class DatabaseProxy(object):
         request_options = _build_options(kwargs)
 
         collection_link = self._get_container_link(container)
-        await self.client_connection.DeleteContainer(collection_link, options=request_options, **kwargs)
+        await self.client_connection.DeleteContainer(
+            collection_link, options=request_options, **kwargs
+        )
 
     @distributed_trace_async
     async def create_user(
@@ -702,7 +719,10 @@ class DatabaseProxy(object):
             database_link=self.database_link, user=body, options=request_options, **kwargs)
 
         return UserProxy(
-            client_connection=self.client_connection, id=user["id"], database_link=self.database_link, properties=user
+            client_connection=self.client_connection, 
+            id=user["id"], 
+            database_link=self.database_link, 
+            properties=user
         )
 
     def get_user_client(
@@ -723,14 +743,20 @@ class DatabaseProxy(object):
             id_value = user.id
         else:
             id_value = str(user['id'])
-        return UserProxy(client_connection=self.client_connection, id=id_value, database_link=self.database_link)
+        return UserProxy(
+            client_connection=self.client_connection, 
+            id=id_value, 
+            database_link=self.database_link
+        )
 
     @distributed_trace
     def list_users(
         self,
         *,
         max_item_count: Optional[int] = None,
-        response_hook: Optional[Callable[[Mapping[str, Any], AsyncItemPaged[Dict[str, Any]]], None]] = None,
+        response_hook: Optional[
+            Callable[[Mapping[str, Any], AsyncItemPaged[Dict[str, Any]]], None]
+        ] = None,
         **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """List all the users in the container.
@@ -759,7 +785,9 @@ class DatabaseProxy(object):
         *,
         parameters: Optional[List[Dict[str, Any]]] = None,
         max_item_count: Optional[int] = None,
-        response_hook: Optional[Callable[[Mapping[str, Any], AsyncItemPaged[Dict[str, Any]]], None]] = None,
+        response_hook: Optional[
+            Callable[[Mapping[str, Any], AsyncItemPaged[Dict[str, Any]]], None]
+        ] = None,
         **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Return all users matching the given `query`.
@@ -813,7 +841,10 @@ class DatabaseProxy(object):
             database_link=self.database_link, user=body, options=request_options, **kwargs
         )
         return UserProxy(
-            client_connection=self.client_connection, id=user["id"], database_link=self.database_link, properties=user
+            client_connection=self.client_connection, 
+            id=user["id"], 
+            database_link=self.database_link, 
+            properties=user
         )
 
     @distributed_trace_async
@@ -875,7 +906,9 @@ class DatabaseProxy(object):
     async def get_throughput(
             self,
             *,
-            response_hook: Optional[Callable[[Mapping[str, Any], List[Dict[str, Any]]], None]] = None,
+            response_hook: Optional[
+                Callable[[Mapping[str, Any], List[Dict[str, Any]]], None]
+            ] = None,
             **kwargs: Any) -> ThroughputProperties:
         """Get the ThroughputProperties object for this database.
 
@@ -940,7 +973,13 @@ class DatabaseProxy(object):
 
         new_offer = throughput_properties[0].copy()
         _replace_throughput(throughput=throughput, new_throughput_properties=new_offer)
-        data = await self.client_connection.ReplaceOffer(offer_link=throughput_properties[0]["_self"],
-                                                         offer=throughput_properties[0], **kwargs)
+        data = await self.client_connection.ReplaceOffer(
+            offer_link=throughput_properties[0]["_self"],
+            offer=throughput_properties[0], 
+            **kwargs
+        )
 
-        return ThroughputProperties(offer_throughput=data["content"]["offerThroughput"], properties=data)
+        return ThroughputProperties(
+            offer_throughput=data["content"]["offerThroughput"], 
+            properties=data
+        )
