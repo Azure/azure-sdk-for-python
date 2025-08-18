@@ -30,7 +30,12 @@ from azure.core.paging import ItemPaged
 from azure.cosmos.partition_key import PartitionKey
 
 from ._cosmos_client_connection import CosmosClientConnection
-from ._base import build_options, _set_throughput_options, _deserialize_throughput, _replace_throughput
+from ._base import (
+    build_options, 
+    _set_throughput_options, 
+    _deserialize_throughput, 
+    _replace_throughput
+)
 from ._constants import _Constants as Constants
 InternalOptions = Constants.InternalOptions
 from .container import ContainerProxy
@@ -44,7 +49,8 @@ __all__ = ("DatabaseProxy",)
 
 
 # pylint: disable=protected-access
-# pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
+# pylint: disable=missing-client-constructor-parameter-credential
+# pylint: disable=missing-client-constructor-parameter-kwargs
 # pylint: disable=docstring-keyword-should-match-keyword-only
 
 def _get_database_link(database_or_id: Union[str, 'DatabaseProxy', Mapping[str, Any]]) -> str:
@@ -100,14 +106,18 @@ class DatabaseProxy(object):
     def __repr__(self) -> str:
         return "<DatabaseProxy [{}]>".format(self.database_link)[:1024]
 
-    def _get_container_id(self, container_or_id: Union[str, ContainerProxy, Mapping[str, Any]]) -> str:
+    def _get_container_id(
+        self, container_or_id: Union[str, ContainerProxy, Mapping[str, Any]]
+    ) -> str:
         if isinstance(container_or_id, str):
             return container_or_id
         if isinstance(container_or_id, ContainerProxy):
             return container_or_id.id
         return container_or_id["id"]
 
-    def _get_container_link(self, container_or_id: Union[str, ContainerProxy, Mapping[str, Any]]) -> str:
+    def _get_container_link(
+        self, container_or_id: Union[str, ContainerProxy, Mapping[str, Any]]
+    ) -> str:
         return "{}/colls/{}".format(self.database_link, self._get_container_id(container_or_id))
 
     def _get_user_link(self, user_or_id: Union[UserProxy, str, Mapping[str, Any]]) -> str:
@@ -283,10 +293,18 @@ class DatabaseProxy(object):
         request_options = build_options(kwargs)
         _set_throughput_options(offer=offer_throughput, request_options=request_options)
         result = self.client_connection.CreateContainer(
-            database_link=self.database_link, collection=definition, options=request_options, **kwargs
+            database_link=self.database_link, 
+            collection=definition, 
+            options=request_options, 
+            **kwargs
         )
 
-        return ContainerProxy(self.client_connection, self.database_link, result["id"], properties=result)
+        return ContainerProxy(
+            self.client_connection, 
+            self.database_link, 
+            result["id"], 
+            properties=result
+        )
 
     @distributed_trace
     def create_container_if_not_exists(  # pylint:disable=docstring-missing-param
