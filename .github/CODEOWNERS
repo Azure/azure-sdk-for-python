@@ -9,6 +9,13 @@
 /sdk/ @lmazuel @lirenhe
 
 # Core
+
+# PRLabel: %Contoso Widget Manager
+/sdk/contosowidgetmanager/                                         @Shirelmr @michiisai
+
+# ServiceLabel: %Contoso Widget Manager
+# ServiceOwners:                                                   @Shirelmr @michiisai
+
 # PRLabel: %Core.Http
 /sdk/core/corehttp/                                                  @pvaneck @lmazuel @annatisch @johanste @xiangyan99 @iscai-msft @kashifkhan
 
