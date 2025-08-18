@@ -985,7 +985,7 @@ class TestEvaluate:
         assert len(result) == 1
 
     def test_target_optional_param_isnt_required(self, evaluate_test_data_jsonl_file):
-        """Validates that"""
+        """Validates that optional parameters use default values when not provided in input data."""
         from ..e2etests.custom_evaluators.echo import EchoEvaluator
 
         result = evaluate(
@@ -1006,7 +1006,7 @@ class TestEvaluate:
         assert all(row["outputs.echo.response"] == "Default Value" for row in result["rows"])
 
     def test_target_optional_param_overriden_when_available(self, evaluate_test_data_jsonl_file):
-        """Validates that a target function's optional parameters are used"""
+        """Validates that optional parameters use values from data when present."""
         from ..e2etests.custom_evaluators.echo import EchoEvaluator
 
         result = evaluate(
