@@ -257,6 +257,18 @@ class _Constants:
         PREFIX_PARTITION_KEY_VALUE: Literal["prefixPartitionKeyValue"] = "prefixPartitionKeyValue"
         """Prefix partition key value for queries."""
 
+        DISABLE_AUTOMATIC_ID_GENERATION: Literal["disableAutomaticIdGeneration"] = "disableAutomaticIdGeneration"
+        """Whether to disable automatic ID generation for documents."""
+
+        FILTER_PREDICATE: Literal["filterPredicate"] = "filterPredicate"
+        """Filter predicate for query operations."""
+
+        CHANGE_FEED_STATE_CONTEXT: Literal["changeFeedStateContext"] = "changeFeedStateContext"
+        """Change feed state context for change feed operations."""
+
+        CONTAINER_PROPERTIES: Literal["containerProperties"] = "containerProperties"
+        """Container properties for requests."""
+
     class Kwargs:
         """Public-facing keyword argument names used in the azure-cosmos package
 
