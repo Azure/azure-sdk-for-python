@@ -266,8 +266,8 @@ def shutdown_customer_sdkstats_metrics() -> None:
     if _CUSTOMER_SDKSTATS_METRICS is not None:
         with _CUSTOMER_SDKSTATS_LOCK:
             try:
-                if _CUSTOMER_SDKSTATS_METRICS._meter_provider is not None:
-                    _CUSTOMER_SDKSTATS_METRICS._meter_provider.shutdown()
+                if _CUSTOMER_SDKSTATS_METRICS._customer_sdkstats_meter_provider is not None:
+                    _CUSTOMER_SDKSTATS_METRICS._customer_sdkstats_meter_provider.shutdown()
                     _CUSTOMER_SDKSTATS_METRICS = None
                     shutdown_success = True
             except:  # pylint: disable=bare-except
