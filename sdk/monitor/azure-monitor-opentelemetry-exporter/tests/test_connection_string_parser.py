@@ -211,3 +211,139 @@ class TestConnectionStringParser(unittest.TestCase):
             + self._valid_instrumentation_key,
         )
         self.assertEqual(parser.endpoint, "https://dc.123")
+
+    # Region extraction tests
+    def test_region_extraction_from_endpoint_with_number(self):
+        """Test region extraction from endpoint URL with number suffix."""
+        parser = ConnectionStringParser(
+            connection_string="InstrumentationKey=" + self._valid_instrumentation_key +
+            ";IngestionEndpoint=https://westeurope-5.in.applicationinsights.azure.com/"
+        )
+        self.assertEqual(parser.region, "westeurope")
+
+    def test_region_extraction_from_endpoint_without_number(self):
+        """Test region extraction from endpoint URL without number suffix."""
+        parser = ConnectionStringParser(
+            connection_string="InstrumentationKey=" + self._valid_instrumentation_key +
+            ";IngestionEndpoint=https://westeurope.in.applicationinsights.azure.com/"
+        )
+        self.assertEqual(parser.region, "westeurope")
+
+    def test_region_extraction_from_endpoint_two_digit_number(self):
+        """Test region extraction from endpoint URL with two-digit number."""
+        parser = ConnectionStringParser(
+            connection_string="InstrumentationKey=" + self._valid_instrumentation_key +
+            ";IngestionEndpoint=https://eastus-12.in.applicationinsights.azure.com/"
+        )
+        self.assertEqual(parser.region, "eastus")
+
+    def test_region_extraction_from_endpoint_three_digit_number(self):
+        """Test region extraction from endpoint URL with three-digit number."""
+        parser = ConnectionStringParser(
+            connection_string="InstrumentationKey=" + self._valid_instrumentation_key +
+            ";IngestionEndpoint=https://northeurope-999.in.applicationinsights.azure.com/"
+        )
+        self.assertEqual(parser.region, "northeurope")
+
+    def test_region_extraction_various_regions(self):
+        """Test region extraction for various Azure regions."""
+        test_cases = [
+            ("westeurope-1.in.applicationinsights.azure.com", "westeurope"),
+            ("eastus-2.in.applicationinsights.azure.com", "eastus"),
+            ("southeastasia-5.in.applicationinsights.azure.com", "southeastasia"),
+            ("australiaeast-3.in.applicationinsights.azure.com", "australiaeast"),
+            ("westus2-7.in.applicationinsights.azure.com", "westus2"),
+            ("francecentral.in.applicationinsights.azure.com", "francecentral"),
+        ]
+        
+        for endpoint_suffix, expected_region in test_cases:
+            with self.subTest(endpoint=endpoint_suffix):
+                parser = ConnectionStringParser(
+                    connection_string="InstrumentationKey=" + self._valid_instrumentation_key +
+                    f";IngestionEndpoint=https://{endpoint_suffix}/"
+                )
+                self.assertEqual(parser.region, expected_region)
+
+    def test_region_extraction_no_region_global_endpoint(self):
+        """Test that no region is extracted from global endpoints."""
+        parser = ConnectionStringParser(
+            connection_string="InstrumentationKey=" + self._valid_instrumentation_key +
+            ";IngestionEndpoint=https://dc.services.visualstudio.com"
+        )
+        self.assertIsNone(parser.region)
+
+    def test_region_extraction_no_region_default_endpoint(self):
+        """Test that no region is extracted when using default endpoint."""
+        parser = ConnectionStringParser(
+            connection_string="InstrumentationKey=" + self._valid_instrumentation_key
+        )
+        self.assertIsNone(parser.region)
+
+    def test_region_extraction_invalid_endpoint_format(self):
+        """Test that no region is extracted from invalid endpoint formats."""
+        invalid_endpoints = [
+            "https://invalid.endpoint.com",
+            "https://westeurope.wrong.domain.com",
+            "https://not-a-region.in.applicationinsights.azure.com",
+            "ftp://westeurope-5.in.applicationinsights.azure.com",
+        ]
+        
+        for endpoint in invalid_endpoints:
+            with self.subTest(endpoint=endpoint):
+                parser = ConnectionStringParser(
+                    connection_string="InstrumentationKey=" + self._valid_instrumentation_key +
+                    f";IngestionEndpoint={endpoint}"
+                )
+                self.assertIsNone(parser.region)
+
+    def test_region_extraction_from_environment_endpoint(self):
+        """Test region extraction from endpoint set via environment variable."""
+        os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"] = (
+            "InstrumentationKey=" + self._valid_instrumentation_key +
+            ";IngestionEndpoint=https://westeurope-5.in.applicationinsights.azure.com/"
+        )
+        parser = ConnectionStringParser(connection_string=None)
+        self.assertEqual(parser.region, "westeurope")
+
+    def test_region_extraction_code_endpoint_takes_priority(self):
+        """Test that endpoint from code connection string takes priority over environment."""
+        os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"] = (
+            "InstrumentationKey=" + self._valid_instrumentation_key +
+            ";IngestionEndpoint=https://eastus-1.in.applicationinsights.azure.com/"
+        )
+        parser = ConnectionStringParser(
+            connection_string="InstrumentationKey=" + self._valid_instrumentation_key +
+            ";IngestionEndpoint=https://westeurope-5.in.applicationinsights.azure.com/"
+        )
+        self.assertEqual(parser.region, "westeurope")
+
+    def test_region_extraction_with_trailing_slash(self):
+        """Test region extraction works with and without trailing slash."""
+        test_cases = [
+            "https://westeurope-5.in.applicationinsights.azure.com/",
+            "https://westeurope-5.in.applicationinsights.azure.com",
+        ]
+        
+        for endpoint in test_cases:
+            with self.subTest(endpoint=endpoint):
+                parser = ConnectionStringParser(
+                    connection_string="InstrumentationKey=" + self._valid_instrumentation_key +
+                    f";IngestionEndpoint={endpoint}"
+                )
+                self.assertEqual(parser.region, "westeurope")
+
+    def test_region_extraction_alphanumeric_regions(self):
+        """Test region extraction for regions with numbers in the name."""
+        test_cases = [
+            ("westus2-1.in.applicationinsights.azure.com", "westus2"),
+            ("eastus2-5.in.applicationinsights.azure.com", "eastus2"),
+            ("southcentralus-3.in.applicationinsights.azure.com", "southcentralus"),
+        ]
+        
+        for endpoint_suffix, expected_region in test_cases:
+            with self.subTest(endpoint=endpoint_suffix):
+                parser = ConnectionStringParser(
+                    connection_string="InstrumentationKey=" + self._valid_instrumentation_key +
+                    f";IngestionEndpoint=https://{endpoint_suffix}"
+                )
+                self.assertEqual(parser.region, expected_region)
