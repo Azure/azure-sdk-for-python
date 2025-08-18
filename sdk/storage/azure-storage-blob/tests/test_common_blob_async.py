@@ -3525,8 +3525,8 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         result = await (await blob.download_blob()).readall()
         assert result == data[:length]
 
+    @pytest.mark.live_test_only
     @BlobPreparer()
-    @recorded_by_proxy_async
     async def test_blob_user_delegation_oid(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         variables = kwargs.pop("variables", {})
