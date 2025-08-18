@@ -32,6 +32,7 @@ from azure.cosmos.partition_key import PartitionKey
 from ._cosmos_client_connection import CosmosClientConnection
 from ._base import build_options, _set_throughput_options, _deserialize_throughput, _replace_throughput
 from ._constants import _Constants as Constants
+InternalOptions = Constants.InternalOptions
 from .container import ContainerProxy
 from .offer import Offer, ThroughputProperties
 from .http_constants import StatusCodes as _StatusCodes
