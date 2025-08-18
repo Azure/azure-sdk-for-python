@@ -29,6 +29,10 @@ from ._models import (
     AnalyzeConversationOperationState,
     ConversationPiiActionContent,
     PiiOperationAction,
+    CharacterMaskPolicyType,
+)
+from ._enums import ( 
+    RedactionCharacter
 )
     
 def patch_sdk():
@@ -48,4 +52,6 @@ __all__ = [
     "AnalyzeConversationOperationAction",
     "ConversationPiiActionContent",
     "PiiOperationAction",
+    "CharacterMaskPolicyType",
+    "RedactionCharacter"
 ]

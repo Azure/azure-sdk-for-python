@@ -48,55 +48,58 @@ class TestConversationsCase(TestConversations):
     async def test_conversation_prediction_with_options_async(self, conversations_endpoint, conversations_key):
         client = await self.create_client(conversations_endpoint, conversations_key)
 
-        project_name = "EmailApp"
-        deployment_name = "production"
+        try:
+            project_name = "EmailApp"
+            deployment_name = "production"
 
-        data = ConversationLanguageUnderstandingInput(
-            conversation_input=ConversationAnalysisInput(
-                conversation_item=TextConversationItem(
-                    id="1",
-                    participant_id="participant1",
-                    text="Send an email to Carol about tomorrow's demo",
-                )
-            ),
-            action_content=ConversationLanguageUnderstandingActionContent(
-                project_name=project_name,
-                deployment_name=deployment_name,
-                string_index_type=StringIndexType.UTF16_CODE_UNIT,
-                verbose=True,
-            ),
-        )
+            data = ConversationLanguageUnderstandingInput(
+                conversation_input=ConversationAnalysisInput(
+                    conversation_item=TextConversationItem(
+                        id="1",
+                        participant_id="participant1",
+                        text="Send an email to Carol about tomorrow's demo",
+                    )
+                ),
+                action_content=ConversationLanguageUnderstandingActionContent(
+                    project_name=project_name,
+                    deployment_name=deployment_name,
+                    string_index_type=StringIndexType.UTF16_CODE_UNIT,
+                    verbose=True,
+                ),
+            )
 
-        action_result = await client.analyze_conversation(data)
-        action_result = cast(ConversationActionResult, action_result)
+            action_result = await client.analyze_conversation(data)
+            action_result = cast(ConversationActionResult, action_result)
 
-        prediction = action_result.result.prediction
-        prediction = cast(ConversationPrediction, prediction)
+            prediction = action_result.result.prediction
+            prediction = cast(ConversationPrediction, prediction)
 
-        print(f"Top intent: {prediction.top_intent}")
+            print(f"Top intent: {prediction.top_intent}")
 
-        print("Intents:")
-        for intent in prediction.intents:
-            print(f"Category: {intent.category}")
-            print(f"Confidence: {intent.confidence}")
-            print()
+            print("Intents:")
+            for intent in prediction.intents:
+                print(f"Category: {intent.category}")
+                print(f"Confidence: {intent.confidence}")
+                print()
 
-        print("Entities:")
-        for entity in prediction.entities:
-            print(f"Category: {entity.category}")
-            print(f"Text: {entity.text}")
-            print(f"Offset: {entity.offset}")
-            print(f"Length: {entity.length}")
-            print(f"Confidence: {entity.confidence}")
-            print()
+            print("Entities:")
+            for entity in prediction.entities:
+                print(f"Category: {entity.category}")
+                print(f"Text: {entity.text}")
+                print(f"Offset: {entity.offset}")
+                print(f"Length: {entity.length}")
+                print(f"Confidence: {entity.confidence}")
+                print()
 
-            if entity.resolutions:
-                for res in entity.resolutions:
-                    # type-safe: only access attrs if it's a DateTimeResolution
-                    if isinstance(res, DateTimeResolution):
-                        print(f"Datetime Sub Kind: {res.date_time_sub_kind}")
-                        print(f"Timex: {res.timex}")
-                        print(f"Value: {res.value}")
-                        print()
+                if entity.resolutions:
+                    for res in entity.resolutions:
+                        # type-safe: only access attrs if it's a DateTimeResolution
+                        if isinstance(res, DateTimeResolution):
+                            print(f"Datetime Sub Kind: {res.date_time_sub_kind}")
+                            print(f"Timex: {res.timex}")
+                            print(f"Value: {res.value}")
+                            print()
 
-        assert prediction.top_intent == "SendEmail"
+            assert prediction.top_intent == "SendEmail"
+        finally:
+            await client.close()

@@ -48,61 +48,63 @@ class TestConversationsCase(TestConversations):
     @pytest.mark.asyncio
     async def test_conversation_prediction_with_language_async(self, conversations_endpoint, conversations_key):
         client = await self.create_client(conversations_endpoint, conversations_key)
+        try:
+            project_name = "EmailApp"
+            deployment_name = "production"
 
-        project_name = "EmailApp"
-        deployment_name = "production"
+            data = ConversationLanguageUnderstandingInput(
+                    conversation_input=ConversationAnalysisInput(
+                        conversation_item=TextConversationItem(
+                            id="1",
+                            participant_id="participant1",
+                            text="Enviar un email a Carol acerca de la presentación de mañana",
+                            language="es",
+                        )
+                    ),
+                    action_content=ConversationLanguageUnderstandingActionContent(
+                        project_name=project_name,
+                        deployment_name=deployment_name,
+                        string_index_type=StringIndexType.UTF16_CODE_UNIT,
+                        verbose=True,
+                    ),
+                )
 
-        data = ConversationLanguageUnderstandingInput(
-                conversation_input=ConversationAnalysisInput(
-                    conversation_item=TextConversationItem(
-                        id="1",
-                        participant_id="participant1",
-                        text="Enviar un email a Carol acerca de la presentación de mañana",
-                        language="es",
-                    )
-                ),
-                action_content=ConversationLanguageUnderstandingActionContent(
-                    project_name=project_name,
-                    deployment_name=deployment_name,
-                    string_index_type=StringIndexType.UTF16_CODE_UNIT,
-                    verbose=True,
-                ),
-            )
+            # Async call
+            response: AnalyzeConversationActionResult = await client.analyze_conversation(data)
 
-        # Async call
-        response: AnalyzeConversationActionResult = await client.analyze_conversation(data)
+            # Narrow to the discriminator subtype (C#-style cast)
+            conversation_result = cast(ConversationActionResult, response)
+            prediction = conversation_result.result.prediction
+            assert isinstance(prediction, ConversationPrediction)
 
-        # Narrow to the discriminator subtype (C#-style cast)
-        conversation_result = cast(ConversationActionResult, response)
-        prediction = conversation_result.result.prediction
-        assert isinstance(prediction, ConversationPrediction)
+            print(f"Top intent: {prediction.top_intent}")
 
-        print(f"Top intent: {prediction.top_intent}")
+            # Intents
+            print("Intents:")
+            for intent in prediction.intents or []:
+                print(f"Category: {intent.category}")
+                print(f"Confidence: {intent.confidence}")
+                print()
 
-        # Intents
-        print("Intents:")
-        for intent in prediction.intents or []:
-            print(f"Category: {intent.category}")
-            print(f"Confidence: {intent.confidence}")
-            print()
+            # Entities
+            print("Entities:")
+            for entity in prediction.entities or []:
+                print(f"Category: {entity.category}")
+                print(f"Text: {entity.text}")
+                print(f"Offset: {entity.offset}")
+                print(f"Length: {entity.length}")
+                print(f"Confidence: {entity.confidence}")
+                print()
 
-        # Entities
-        print("Entities:")
-        for entity in prediction.entities or []:
-            print(f"Category: {entity.category}")
-            print(f"Text: {entity.text}")
-            print(f"Offset: {entity.offset}")
-            print(f"Length: {entity.length}")
-            print(f"Confidence: {entity.confidence}")
-            print()
+                if entity.resolutions:
+                    for res in entity.resolutions:
+                        if isinstance(res, DateTimeResolution):
+                            print(f"Datetime Sub Kind: {getattr(res, 'date_time_sub_kind', None)}")
+                            print(f"Timex: {res.timex}")
+                            print(f"Value: {res.value}")
+                            print()
 
-            if entity.resolutions:
-                for res in entity.resolutions:
-                    if isinstance(res, DateTimeResolution):
-                        print(f"Datetime Sub Kind: {getattr(res, 'date_time_sub_kind', None)}")
-                        print(f"Timex: {res.timex}")
-                        print(f"Value: {res.value}")
-                        print()
-
-        # Final assertion (mirror C#)
-        assert prediction.top_intent == "SendEmail"
+            # Final assertion (mirror C#)
+            assert prediction.top_intent == "SendEmail"
+        finally:
+            await client.close()
