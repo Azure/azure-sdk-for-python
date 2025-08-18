@@ -302,7 +302,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosResourceExistsError: Database with the given ID already exists.
         :returns: A DatabaseProxy instance representing the database or a tuple of DatabaseProxy and CosmosDict with the response headers
-        :rtype: ~azure.cosmos.DatabaseProxy or tuple [DatabaseProxy, CosmosDict]
+        :rtype: ~azure.cosmos.aio.DatabaseProxy or tuple [DatabaseProxy, CosmosDict]
 
         .. admonition:: Example:
 
