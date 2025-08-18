@@ -40,7 +40,7 @@ class TestConversations(AzureRecordedTestCase):
 class TestConversationsCase(TestConversations):
     @ConversationsPreparer()
     @recorded_by_proxy
-    def test_conversation_prediction(self, conversations_endpoint, conversations_key):
+    def test_orchestration_prediction(self, conversations_endpoint, conversations_key):
         client = self.create_client(conversations_endpoint, conversations_key)
 
         project_name = "TestWorkflow"

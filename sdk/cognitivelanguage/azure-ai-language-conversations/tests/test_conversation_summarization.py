@@ -43,7 +43,7 @@ class TestConversations(AzureRecordedTestCase):
 class TestConversationsCase(TestConversations):
     @ConversationsPreparer()
     @recorded_by_proxy
-    def test_create_project(self, conversations_endpoint, conversations_key):
+    def test_conversation_summarization(self, conversations_endpoint, conversations_key):
         conversation_client = self.create_client(conversations_endpoint, conversations_key)
 
         # Construct conversation input

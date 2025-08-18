@@ -38,7 +38,7 @@ class TestConversationsCase(TestConversations):
     @ConversationsPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_conversation_prediction_async(self, conversations_endpoint, conversations_key):
+    async def test_orchestration_prediction_async(self, conversations_endpoint, conversations_key):
         client = await self.create_async_client(conversations_endpoint, conversations_key)
 
         project_name = "TestWorkflow"
