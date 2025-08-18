@@ -509,6 +509,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
                 tool_call["tool_result"] = tool_results_map[tool_call_id]["tool_result"]
 
         return tool_calls
+
     def _extract_tool_names_from_response(self, response) -> List[str]:
         """Extract tool names from the response.
         :param response: The response to parse.
@@ -526,10 +527,10 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
             else:
                 raise EvaluationException(
                     "Tool call missing 'name' field.",
-                        internal_message=str(tool_call),
-                        target=ErrorTarget.EVALUATE,
-                        category=ErrorCategory.MISSING_FIELD
-                    )
+                    internal_message=str(tool_call),
+                    target=ErrorTarget.EVALUATE,
+                    category=ErrorCategory.MISSING_FIELD,
+                )
         return tool_names
 
     async def _real_call(self, **kwargs) -> Union[DoEvalResult[T_EvalValue], AggregateResult[T_EvalValue]]:
@@ -554,15 +555,17 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
                         base_key = key[:-6]  # Remove "_score" suffix
                         result_key = f"{base_key}_result"
                         threshold_key = f"{base_key}_threshold"
-                        threshold_value = self._threshold.get(base_key) if isinstance(self._threshold, dict) else self._threshold
+                        threshold_value = (
+                            self._threshold.get(base_key) if isinstance(self._threshold, dict) else self._threshold
+                        )
                         if not isinstance(threshold_value, (int, float)):
                             raise EvaluationException(
                                 "Threshold value must be a number.",
                                 internal_message=str(threshold_value),
                                 target=ErrorTarget.EVALUATE,
-                                category=ErrorCategory.INVALID_VALUE
+                                category=ErrorCategory.INVALID_VALUE,
                             )
-                        
+
                         result[threshold_key] = threshold_value
                         if self._higher_is_better:
                             if float(score_value) >= threshold_value:

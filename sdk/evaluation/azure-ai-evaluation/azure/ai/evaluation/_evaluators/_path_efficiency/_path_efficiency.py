@@ -76,7 +76,9 @@ class PathEfficiencyEvaluator(EvaluatorBase):
             "path_efficiency_f1": f1_score_threshold,
         }
 
-    def _calculate_precision_recall_f1_scores(self, agent_steps: List[str], ground_truth: List[str]) -> Dict[str, float]:
+    def _calculate_precision_recall_f1_scores(
+        self, agent_steps: List[str], ground_truth: List[str]
+    ) -> Dict[str, float]:
         """Calculate precision, recall, and F1 scores."""
         if not agent_steps:
             return {"precision_score": 0.0, "recall_score": 0.0, "f1_score": 0.0}
@@ -87,27 +89,40 @@ class PathEfficiencyEvaluator(EvaluatorBase):
 
         # Calculate true positives by taking the minimum count for each common element
         # For each step, count the intersection (min count) of agent and ground truth steps
-        true_positives = sum(min(agent_steps_counts[step], ground_truth_counts[step]) 
-                           for step in agent_steps_counts if step in ground_truth_counts)
-        
+        true_positives = sum(
+            min(agent_steps_counts[step], ground_truth_counts[step])
+            for step in agent_steps_counts
+            if step in ground_truth_counts
+        )
+
         # Calculate false positives (agent steps not in ground truth or excess occurrences)
         # For each step, count the excess occurrences of agent steps not in (minus) ground truth
         # or zero (agent steps minus agent steps) if agent steps is less than ground truth
-        false_positives = sum(agent_steps_counts[step] - min(agent_steps_counts[step], ground_truth_counts.get(step, 0))
-                            for step in agent_steps_counts)
+        false_positives = sum(
+            agent_steps_counts[step] - min(agent_steps_counts[step], ground_truth_counts.get(step, 0))
+            for step in agent_steps_counts
+        )
 
         # Calculate false negatives (ground truth steps not in agent or missing occurrences)
         # For each step, count the excess occurrences of ground truth steps not in (minus) agent steps
         # or zero (ground truth steps minus ground truth steps) if ground truth steps is less than agent steps
-        false_negatives = sum(ground_truth_counts[step] - min(ground_truth_counts[step], agent_steps_counts.get(step, 0))
-                            for step in ground_truth_counts)
+        false_negatives = sum(
+            ground_truth_counts[step] - min(ground_truth_counts[step], agent_steps_counts.get(step, 0))
+            for step in ground_truth_counts
+        )
 
         # Calculate precision, recall, F1
-        precision = true_positives / (true_positives + false_positives) if (true_positives + false_positives) > 0 else 0.0
+        precision = (
+            true_positives / (true_positives + false_positives) if (true_positives + false_positives) > 0 else 0.0
+        )
         recall = true_positives / (true_positives + false_negatives) if (true_positives + false_negatives) > 0 else 0.0
         f1_score = (2 * precision * recall) / (precision + recall) if (precision + recall) > 0 else 0.0
 
-        return {"precision_score": precision, "recall_score": recall, "f1_score": f1_score}
+        return {
+            "precision_score": precision,
+            "recall_score": recall,
+            "f1_score": f1_score,
+        }
 
     def _calculate_exact_match(self, agent_steps: List[str], ground_truth: List[str]) -> bool:
         """Check if agent steps exactly match ground truth (order and content)."""
@@ -130,7 +145,7 @@ class PathEfficiencyEvaluator(EvaluatorBase):
         # Count occurrences of each step in both lists to handle duplicates
         agent_counts = Counter(agent_steps)
         ground_truth_counts = Counter(ground_truth)
-        
+
         # Check if agent has at least as many occurrences of each ground truth step
         return all(agent_counts[step] >= ground_truth_counts[step] for step in ground_truth_counts)
 
@@ -149,26 +164,28 @@ class PathEfficiencyEvaluator(EvaluatorBase):
         # Value and type checking for ground truth steps
         if not ground_truth:
             raise ValueError("ground_truth cannot be empty")
-        
+
         if not isinstance(ground_truth, list) or not all(isinstance(step, str) for step in ground_truth):
             raise TypeError("ground_truth must be a list of strings")
 
         # Extract tool names from the response
         agent_steps = self._extract_tool_names_from_response(response)
-        
+
         agent_steps = [step.strip().casefold() for step in agent_steps]
         ground_truth = [step.strip().casefold() for step in ground_truth]
-        
+
         # Calculate precision, recall, and F1 scores
         metrics = self._calculate_precision_recall_f1_scores(agent_steps, ground_truth)
-        
+
         # Calculate binary match metrics
         exact_match = self._calculate_exact_match(agent_steps, ground_truth)
         in_order_match = self._calculate_in_order_match(agent_steps, ground_truth)
         any_order_match = self._calculate_any_order_match(agent_steps, ground_truth)
 
         # Convert metrics to floats, using nan for None or non-convertible values
-        path_efficiency_precision = float(metrics["precision_score"]) if metrics["precision_score"] is not None else float("nan")
+        path_efficiency_precision = (
+            float(metrics["precision_score"]) if metrics["precision_score"] is not None else float("nan")
+        )
         path_efficiency_recall = float(metrics["recall_score"]) if metrics["recall_score"] is not None else float("nan")
         path_efficiency_f1_score = float(metrics["f1_score"]) if metrics["f1_score"] is not None else float("nan")
 
@@ -183,9 +200,7 @@ class PathEfficiencyEvaluator(EvaluatorBase):
 
     @overload
     def __call__(  # type: ignore
-        self, *,
-        response: Union[str, List[Dict[str, Any]]],
-        ground_truth: List[str]
+        self, *, response: Union[str, List[Dict[str, Any]]], ground_truth: List[str]
     ) -> Dict[str, Union[float, str]]:
         """
         Evaluate the path efficiency of an agent's action sequence.
@@ -206,7 +221,7 @@ class PathEfficiencyEvaluator(EvaluatorBase):
     ):
         """
         Evaluate path efficiency.
-        
+
         :keyword response: The agent's response containing tool calls.
         :paramtype response: Union[str, List[Dict[str, Any]]]
         :keyword ground_truth: List of expected tool/action steps.

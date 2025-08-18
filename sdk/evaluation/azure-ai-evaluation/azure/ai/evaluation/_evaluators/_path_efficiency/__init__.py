@@ -4,6 +4,4 @@
 
 from ._path_efficiency import PathEfficiencyEvaluator
 
-__all__ = [
-    "PathEfficiencyEvaluator"
-]
+__all__ = ["PathEfficiencyEvaluator"]
