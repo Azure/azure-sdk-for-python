@@ -13,7 +13,7 @@ from azure.ai.contentunderstanding.models import DetectFacesResult
 from azure.core.credentials import AzureKeyCredential
 from dotenv import load_dotenv
 
-from sample_helper import read_image_to_base64
+from sample_helper import read_image_to_base64_bytes
 from azure.core.credentials import AzureKeyCredential
 from azure.identity.aio import DefaultAzureCredential
 
@@ -61,7 +61,7 @@ async def main():
         print(f"🔍 Detecting faces in image: {image_path}")
 
         # Convert image to base64 bytes
-        image_data = read_image_to_base64(image_path)
+        image_data = read_image_to_base64_bytes(image_path)
 
         # Detect faces in the image using the new overloaded detect method
         response: DetectFacesResult = await client.faces.detect(

@@ -188,7 +188,16 @@ def save_keyframe_image_to_file(
     return saved_file_path
 
 
-def read_image_to_base64(image_path: str) -> bytes:
+def read_image_to_base64(image_path: str) -> str:
+    """Read image file and return base64-encoded string."""
+    import base64
+
+    with open(image_path, "rb") as image_file:
+        image_bytes = image_file.read()
+        return base64.b64encode(image_bytes).decode('utf-8')
+
+
+def read_image_to_base64_bytes(image_path: str) -> bytes:
     """Read image file and return base64-encoded bytes."""
     import base64
 

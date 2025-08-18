@@ -14,7 +14,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from testpreparer import ContentUnderstandingPreparer
 from testpreparer_async import ContentUnderstandingClientTestBaseAsync
 from azure.core.exceptions import ResourceNotFoundError
-from test_helpers import read_image_to_base64
+from test_helpers import read_image_to_base64, read_image_to_base64_bytes
 
 
 def generate_test_id() -> str:
@@ -49,7 +49,7 @@ class TestContentUnderstandingFacesOperationsAsync(ContentUnderstandingClientTes
         print(f"Testing original body method with image: {image_path}")
         response = await client.faces.detect(
             body={
-                "data": image_data.decode('utf-8'),  # Convert bytes to string for JSON body
+                "data": image_data,  # image_data is already a string
                 "maxDetectedFaces": 10
             }
         )
@@ -118,7 +118,7 @@ class TestContentUnderstandingFacesOperationsAsync(ContentUnderstandingClientTes
         # Load test image
         test_file_dir = os.path.dirname(os.path.abspath(__file__))
         image_path = os.path.join(test_file_dir, "test_data", "face", "family.jpg")
-        image_data = read_image_to_base64(image_path)  # Returns bytes
+        image_data = read_image_to_base64_bytes(image_path)  # Returns bytes
         
         print(f"Testing data keyword method with image: {image_path}")
         response = await client.faces.detect(
@@ -184,7 +184,7 @@ class TestContentUnderstandingFacesOperationsAsync(ContentUnderstandingClientTes
         # Load test image
         test_file_dir = os.path.dirname(os.path.abspath(__file__))
         image_path = os.path.join(test_file_dir, "test_data", "face", "family.jpg")
-        image_data = read_image_to_base64(image_path)  # Returns bytes
+        image_data = read_image_to_base64_bytes(image_path)  # Returns bytes
         
         print(f"Testing new bytes positional overload with image: {image_path}")
         response = await client.faces.detect(
@@ -230,10 +230,10 @@ class TestContentUnderstandingFacesOperationsAsync(ContentUnderstandingClientTes
         response = await client.faces.compare(
             body={
                 "faceSource1": {
-                    "data": image1_data.decode('utf-8')  # Convert bytes to string for JSON body
+                    "data": image1_data  # image_data is already a string
                 },
                 "faceSource2": {
-                    "data": image2_data.decode('utf-8')  # Convert bytes to string for JSON body
+                    "data": image2_data  # image_data is already a string
                 }
             }
         )
