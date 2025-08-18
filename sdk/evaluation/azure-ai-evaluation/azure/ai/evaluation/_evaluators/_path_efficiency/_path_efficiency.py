@@ -47,16 +47,20 @@ class PathEfficiencyEvaluator(EvaluatorBase):
             )
     """
 
+
+    _DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD = 0.5
+
     id = "azureai://built-in/evaluators/path_efficiency"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
+
 
     @override
     def __init__(
         self,
         *,
-        precision_threshold: float = 0.5,
-        recall_threshold: float = 0.5,
-        f1_score_threshold: float = 0.5,
+        precision_threshold: float = _DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD,
+        recall_threshold: float = _DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD,
+        f1_score_threshold: float = _DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD,
     ):
         self._higher_is_better = True
         super().__init__()
@@ -193,9 +197,9 @@ class PathEfficiencyEvaluator(EvaluatorBase):
             "path_efficiency_precision_score": path_efficiency_precision,
             "path_efficiency_recall_score": path_efficiency_recall,
             "path_efficiency_f1_score": path_efficiency_f1_score,
-            "path_efficiency_exact_match_result": exact_match,
-            "path_efficiency_in_order_match_result": in_order_match,
-            "path_efficiency_any_order_match_result": any_order_match,
+            "path_efficiency_exact_match_result": EVALUATION_PASS_FAIL_MAPPING[exact_match],
+            "path_efficiency_in_order_match_result": EVALUATION_PASS_FAIL_MAPPING[in_order_match],
+            "path_efficiency_any_order_match_result": EVALUATION_PASS_FAIL_MAPPING[any_order_match],
         }
 
     @overload

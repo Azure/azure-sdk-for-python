@@ -2,6 +2,7 @@ import pytest
 from azure.ai.evaluation._evaluators._path_efficiency import PathEfficiencyEvaluator
 
 
+@pytest.mark.unittest
 class TestPathEfficiencyEvaluator:
     def test_exact_match_scenario(self):
         """Test when agent steps exactly match ground truth."""
@@ -25,12 +26,18 @@ class TestPathEfficiencyEvaluator:
 
         result = evaluator(response=response, ground_truth=ground_truth)
 
-        assert result["path_efficiency_precision"] == 1.0
-        assert result["path_efficiency_recall"] == 1.0
+        assert result["path_efficiency_precision_score"] == 1.0
+        assert result["path_efficiency_precision_threshold"] == PathEfficiencyEvaluator._DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD
+        assert result["path_efficiency_precision_result"] == "pass"
+        assert result["path_efficiency_recall_score"] == 1.0
+        assert result["path_efficiency_recall_threshold"] == PathEfficiencyEvaluator._DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD
+        assert result["path_efficiency_recall_result"] == "pass"
         assert result["path_efficiency_f1_score"] == 1.0
-        assert result["path_efficiency_exact_match"] is True
-        assert result["path_efficiency_in_order_match"] is True
-        assert result["path_efficiency_any_order_match"] is True
+        assert result["path_efficiency_f1_threshold"] == PathEfficiencyEvaluator._DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD
+        assert result["path_efficiency_f1_result"] == "pass"
+        assert result["path_efficiency_exact_match_result"] == "pass"
+        assert result["path_efficiency_in_order_match_result"] == "pass"
+        assert result["path_efficiency_any_order_match_result"] == "pass"
 
     def test_in_order_match_with_extra_steps(self):
         """Test when agent has extra steps but maintains order."""
@@ -58,12 +65,18 @@ class TestPathEfficiencyEvaluator:
 
         result = evaluator(response=response, ground_truth=ground_truth)
 
-        assert result["path_efficiency_precision"] == 0.75  # 3/4
-        assert result["path_efficiency_recall"] == 1.0  # 3/3
+        assert result["path_efficiency_precision_score"] == 0.75  # 3/4
+        assert result["path_efficiency_precision_threshold"] == PathEfficiencyEvaluator._DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD
+        assert result["path_efficiency_precision_result"] == "pass"
+        assert result["path_efficiency_recall_score"] == 1.0  # 3/3
+        assert result["path_efficiency_recall_threshold"] == PathEfficiencyEvaluator._DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD
+        assert result["path_efficiency_recall_result"] == "pass"
         assert result["path_efficiency_f1_score"] == pytest.approx(0.857, rel=1e-2)
-        assert result["path_efficiency_exact_match"] is False
-        assert result["path_efficiency_in_order_match"] is True
-        assert result["path_efficiency_any_order_match"] is True
+        assert result["path_efficiency_f1_threshold"] == PathEfficiencyEvaluator._DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD
+        assert result["path_efficiency_f1_result"] == "pass"
+        assert result["path_efficiency_exact_match_result"] == "fail"
+        assert result["path_efficiency_in_order_match_result"] == "pass"
+        assert result["path_efficiency_any_order_match_result"] == "pass"
 
     def test_any_order_match(self):
         """Test when agent has all steps but in wrong order."""
@@ -87,12 +100,18 @@ class TestPathEfficiencyEvaluator:
 
         result = evaluator(response=response, ground_truth=ground_truth)
 
-        assert result["path_efficiency_precision"] == 1.0
-        assert result["path_efficiency_recall"] == 1.0
+        assert result["path_efficiency_precision_score"] == 1.0
+        assert result["path_efficiency_precision_threshold"] == PathEfficiencyEvaluator._DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD
+        assert result["path_efficiency_precision_result"] == "pass"
+        assert result["path_efficiency_recall_score"] == 1.0
+        assert result["path_efficiency_recall_threshold"] == PathEfficiencyEvaluator._DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD
+        assert result["path_efficiency_recall_result"] == "pass"
         assert result["path_efficiency_f1_score"] == 1.0
-        assert result["path_efficiency_exact_match"] is False
-        assert result["path_efficiency_in_order_match"] is False
-        assert result["path_efficiency_any_order_match"] is True
+        assert result["path_efficiency_f1_threshold"] == PathEfficiencyEvaluator._DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD
+        assert result["path_efficiency_f1_result"] == "pass"
+        assert result["path_efficiency_exact_match_result"] == "fail"
+        assert result["path_efficiency_in_order_match_result"] == "fail"
+        assert result["path_efficiency_any_order_match_result"] == "pass"
 
     def test_partial_match(self):
         """Test when agent misses some steps and has extra steps."""
@@ -116,12 +135,18 @@ class TestPathEfficiencyEvaluator:
 
         result = evaluator(response=response, ground_truth=ground_truth)
 
-        assert result["path_efficiency_precision"] == pytest.approx(0.667, rel=1e-2)  # 2/3
-        assert result["path_efficiency_recall"] == pytest.approx(0.667, rel=1e-2)  # 2/3
+        assert result["path_efficiency_precision_score"] == pytest.approx(0.667, rel=1e-2)  # 2/3
+        assert result["path_efficiency_precision_threshold"] == PathEfficiencyEvaluator._DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD
+        assert result["path_efficiency_precision_result"] == "pass"
+        assert result["path_efficiency_recall_score"] == pytest.approx(0.667, rel=1e-2)  # 2/3
+        assert result["path_efficiency_recall_threshold"] == PathEfficiencyEvaluator._DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD
+        assert result["path_efficiency_recall_result"] == "pass"
         assert result["path_efficiency_f1_score"] == pytest.approx(0.667, rel=1e-2)
-        assert result["path_efficiency_exact_match"] is False
-        assert result["path_efficiency_in_order_match"] is False
-        assert result["path_efficiency_any_order_match"] is False
+        assert result["path_efficiency_f1_threshold"] == PathEfficiencyEvaluator._DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD
+        assert result["path_efficiency_f1_result"] == "pass"
+        assert result["path_efficiency_exact_match_result"] == "fail"
+        assert result["path_efficiency_in_order_match_result"] == "fail"
+        assert result["path_efficiency_any_order_match_result"] == "fail"
 
     def test_no_matching_steps(self):
         """Test when agent has no matching steps."""
@@ -141,12 +166,18 @@ class TestPathEfficiencyEvaluator:
 
         result = evaluator(response=response, ground_truth=ground_truth)
 
-        assert result["path_efficiency_precision"] == 0.0
-        assert result["path_efficiency_recall"] == 0.0
-        assert result["path_efficiency_f1_score"] == 0.0
-        assert result["path_efficiency_exact_match"] is False
-        assert result["path_efficiency_in_order_match"] is False
-        assert result["path_efficiency_any_order_match"] is False
+        assert result["path_efficiency_precision_score"] == 0.0
+        assert result["path_efficiency_precision_threshold"] == PathEfficiencyEvaluator._DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD
+        assert result["path_efficiency_precision_result"] == "fail"
+        assert result["path_efficiency_recall_score"] == 0.0
+        assert result["path_efficiency_f1_threshold"] == PathEfficiencyEvaluator._DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD
+        assert result["path_efficiency_recall_result"] == "fail"
+        assert result["path_efficiency_recall_score"] == 0.0
+        assert result["path_efficiency_f1_threshold"] == PathEfficiencyEvaluator._DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD
+        assert result["path_efficiency_f1_result"] == "fail"
+        assert result["path_efficiency_exact_match_result"] == "fail"
+        assert result["path_efficiency_in_order_match_result"] == "fail"
+        assert result["path_efficiency_any_order_match_result"] == "fail"
 
     def test_empty_agent_steps(self):
         """Test when agent has no tool calls."""
@@ -157,12 +188,18 @@ class TestPathEfficiencyEvaluator:
 
         result = evaluator(response=response, ground_truth=ground_truth)
 
-        assert result["path_efficiency_precision"] == 0.0
-        assert result["path_efficiency_recall"] == 0.0
+        assert result["path_efficiency_precision_score"] == 0.0
+        assert result["path_efficiency_precision_threshold"] == PathEfficiencyEvaluator._DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD
+        assert result["path_efficiency_precision_result"] == "fail"
+        assert result["path_efficiency_recall_score"] == 0.0
+        assert result["path_efficiency_f1_threshold"] == PathEfficiencyEvaluator._DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD
+        assert result["path_efficiency_recall_result"] == "fail"
         assert result["path_efficiency_f1_score"] == 0.0
-        assert result["path_efficiency_exact_match"] is False
-        assert result["path_efficiency_in_order_match"] is True  # Empty sequence is technically in order
-        assert result["path_efficiency_any_order_match"] is False
+        assert result["path_efficiency_f1_threshold"] == PathEfficiencyEvaluator._DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD
+        assert result["path_efficiency_f1_result"] == "fail"
+        assert result["path_efficiency_exact_match_result"] == "fail"
+        assert result["path_efficiency_in_order_match_result"] == "fail"
+        assert result["path_efficiency_any_order_match_result"] == "fail"
 
     def test_call_method(self):
         """Test using the __call__ method."""
@@ -186,15 +223,18 @@ class TestPathEfficiencyEvaluator:
 
         result = evaluator(response=response, ground_truth=ground_truth)
 
-        assert result["path_efficiency_precision"] == 1.0
-        assert result["path_efficiency_recall"] == 1.0
+        assert result["path_efficiency_precision_score"] == 1.0
+        assert result["path_efficiency_recall_score"] == 1.0
         assert result["path_efficiency_f1_score"] == 1.0
-        assert result["path_efficiency_precision_result"] == "Pass"
-        assert result["path_efficiency_recall_result"] == "Pass"
-        assert result["path_efficiency_f1_score_result"] == "Pass"
-        assert result["path_efficiency_exact_match"] is True
-        assert result["path_efficiency_in_order_match"] is True
-        assert result["path_efficiency_any_order_match"] is True
+        assert result["path_efficiency_precision_result"] == "pass"
+        assert result["path_efficiency_recall_result"] == "pass"
+        assert result["path_efficiency_f1_score_result"] == "pass"
+        assert result["path_efficiency_precision_threshold"] == 0.8
+        assert result["path_efficiency_recall_threshold"] == 0.8
+        assert result["path_efficiency_f1_threshold"] == 0.8
+        assert result["path_efficiency_exact_match_result"] == "pass"
+        assert result["path_efficiency_in_order_match_result"] == "pass"
+        assert result["path_efficiency_any_order_match_result"] == "pass"
 
     def test_invalid_ground_truth(self):
         """Test with invalid ground truth steps."""
