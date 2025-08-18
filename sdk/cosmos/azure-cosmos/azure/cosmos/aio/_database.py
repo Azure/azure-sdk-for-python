@@ -259,7 +259,7 @@ class DatabaseProxy(object):
             assign a language to each full text index path.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container creation failed.
         :returns: A `ContainerProxy` instance representing the new container or a tuple of the ContainerProxy and CosmosDict with the response headers.
-        :rtype: ~azure.cosmos.ContainerProxy or tuple[ContainerProxy, CosmosDict]
+        :rtype: ~azure.cosmos.aio.ContainerProxy or tuple[ContainerProxy, CosmosDict]
 
         .. admonition:: Example:
 
