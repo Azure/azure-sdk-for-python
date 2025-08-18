@@ -148,7 +148,6 @@ class BatchEngine:
         }
         resolved_mapping: Dict[str, str] = default_column_mapping.copy()
 
-
         resolved_mapping.update(column_mapping or {})
         return resolved_mapping
 
