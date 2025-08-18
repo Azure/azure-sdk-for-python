@@ -3598,7 +3598,6 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
     @BlobPreparer()
     def test_blob_user_delegation_oid(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
-        variables = kwargs.pop("variables", {})
         token_credential = self.get_credential(BlobClient)
         data = b"abc123"
 
@@ -3635,7 +3634,5 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         )
         content = blob_client_sas.download_blob().readall()
         assert content == data
-
-        return variables
 
     # ------------------------------------------------------------------------------

@@ -3529,7 +3529,6 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
     @BlobPreparer()
     async def test_blob_user_delegation_oid(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
-        variables = kwargs.pop("variables", {})
         token_credential = self.get_credential(BlobClient, is_async=True)
         data = b"abc123"
 
@@ -3566,7 +3565,5 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         )
         content = await (await blob_client_sas.download_blob()).readall()
         assert content == data
-
-        return variables
 
 # ------------------------------------------------------------------------------
