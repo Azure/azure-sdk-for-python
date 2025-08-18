@@ -31,6 +31,7 @@ from ._models import (
     PiiOperationAction,
     CharacterMaskPolicyType,
     EntityMaskTypePolicyType,
+    NoMaskPolicyType,
 )
 from ._enums import ( 
     RedactionCharacter
@@ -55,5 +56,6 @@ __all__ = [
     "PiiOperationAction",
     "CharacterMaskPolicyType",
     "RedactionCharacter",
-    "EntityMaskTypePolicyType"
+    "EntityMaskTypePolicyType",
+    "NoMaskPolicyType"
 ]
