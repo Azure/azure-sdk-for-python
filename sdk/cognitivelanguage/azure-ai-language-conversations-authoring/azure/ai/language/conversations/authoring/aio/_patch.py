@@ -28,13 +28,13 @@ class ConversationAuthoringProjectClient(AuthoringProjectClientGenerated):
     """
 
     #: Deployment operations group
-    deployment_operations: DeploymentOperations
+    deployment: DeploymentOperations
     #: Exported model operations group
-    exported_model_operations: ExportedModelOperations
+    exported_model: ExportedModelOperations
     #: Project operations group
-    project_operations: ProjectOperations
+    project: ProjectOperations
     #: Trained model operations group
-    trained_model_operations: TrainedModelOperations
+    trained_model: TrainedModelOperations
 
     def __init__(
         self,
@@ -72,16 +72,16 @@ class ConversationAuthoringProjectClient(AuthoringProjectClientGenerated):
         self._serialize.client_side_validation = False
 
         # Assign patched operation groups with project_name
-        self.deployment_operations = DeploymentOperations(
+        self.deployment = DeploymentOperations(
             self._client, self._config, self._serialize, self._deserialize, project_name=project_name
         )
-        self.project_operations = ProjectOperations(
+        self.project = ProjectOperations(
             self._client, self._config, self._serialize, self._deserialize, project_name=project_name
         )
-        self.exported_model_operations = ExportedModelOperations(
+        self.exported_model = ExportedModelOperations(
             self._client, self._config, self._serialize, self._deserialize, project_name=project_name
         )
-        self.trained_model_operations = TrainedModelOperations(
+        self.trained_model = TrainedModelOperations(
             self._client, self._config, self._serialize, self._deserialize, project_name=project_name
         )
 
