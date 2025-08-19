@@ -852,7 +852,7 @@ class _ConversationAuthoringClientOperationsMixin(
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def begin_delete_project(self, project_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
+    async def _begin_delete_project(self, project_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
         """Deletes a project.
 
         :param project_name: The name of the project to use. Required.
@@ -969,7 +969,9 @@ class _ConversationAuthoringClientOperationsMixin(
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def _get_import_status(self, project_name: str, job_id: str, **kwargs: Any) -> _models.ImportProjectState:
+    async def _get_import_status(
+        self, project_name: str, job_id: str, **kwargs: Any
+    ) -> _models._models.ImportProjectState:
         """Gets the status for an import.
 
         :param project_name: The new project name. Required.
@@ -977,7 +979,7 @@ class _ConversationAuthoringClientOperationsMixin(
         :param job_id: The job ID. Required.
         :type job_id: str
         :return: ImportProjectState. The ImportProjectState is compatible with MutableMapping
-        :rtype: ~azure.ai.language.conversations.authoring.models.ImportProjectState
+        :rtype: ~azure.ai.language.conversations.authoring.models._models.ImportProjectState
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -991,7 +993,7 @@ class _ConversationAuthoringClientOperationsMixin(
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.ImportProjectState] = kwargs.pop("cls", None)
+        cls: ClsType[_models._models.ImportProjectState] = kwargs.pop("cls", None)
 
         _request = build_conversation_authoring_get_import_status_request(
             project_name=project_name,
@@ -1024,7 +1026,9 @@ class _ConversationAuthoringClientOperationsMixin(
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.ImportProjectState, response.json())
+            deserialized = _deserialize(
+                _models._models.ImportProjectState, response.json()  # pylint: disable=protected-access
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2971,13 +2975,13 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def _get_project_deletion_status(self, job_id: str, **kwargs: Any) -> _models.ProjectDeletionState:
+    async def _get_project_deletion_status(self, job_id: str, **kwargs: Any) -> _models._models.ProjectDeletionState:
         """Gets the status for a project deletion job.
 
         :param job_id: The job ID. Required.
         :type job_id: str
         :return: ProjectDeletionState. The ProjectDeletionState is compatible with MutableMapping
-        :rtype: ~azure.ai.language.conversations.authoring.models.ProjectDeletionState
+        :rtype: ~azure.ai.language.conversations.authoring.models._models.ProjectDeletionState
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2991,7 +2995,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.ProjectDeletionState] = kwargs.pop("cls", None)
+        cls: ClsType[_models._models.ProjectDeletionState] = kwargs.pop("cls", None)
 
         _request = build_project_get_project_deletion_status_request(
             job_id=job_id,
@@ -3023,7 +3027,9 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.ProjectDeletionState, response.json())
+            deserialized = _deserialize(
+                _models._models.ProjectDeletionState, response.json()  # pylint: disable=protected-access
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3033,9 +3039,9 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
     async def _import_method_initial(
         self,
         project_name: str,
-        body: Union[_models.ExportedProject, JSON, IO[bytes]],
+        body: Union[_models._models.ExportedProject, JSON, IO[bytes]],
         *,
-        exported_project_format: Optional[Union[str, _models.ExportedProjectFormat]] = None,
+        exported_project_format: Optional[Union[str, _models._enums.ExportedProjectFormat]] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -3099,99 +3105,43 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    async def begin_import_method(
+    async def _begin_import_method(
         self,
         project_name: str,
-        body: _models.ExportedProject,
+        body: _models._models.ExportedProject,
         *,
-        exported_project_format: Optional[Union[str, _models.ExportedProjectFormat]] = None,
+        exported_project_format: Optional[Union[str, _models._enums.ExportedProjectFormat]] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[None]:
-        """Triggers a job to import a project. If a project with the same name already exists, the data of
-        that project is replaced.
-
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
-        :param body: The project data to import. Required.
-        :type body: ~azure.ai.language.conversations.authoring.models.ExportedProject
-        :keyword exported_project_format: The format of the exported project file to use. Known values
-         are: "Conversation" and "Luis". Default value is None.
-        :paramtype exported_project_format: str or
-         ~azure.ai.language.conversations.authoring.models.ExportedProjectFormat
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> AsyncLROPoller[None]: ...
     @overload
-    async def begin_import_method(
+    async def _begin_import_method(
         self,
         project_name: str,
         body: JSON,
         *,
-        exported_project_format: Optional[Union[str, _models.ExportedProjectFormat]] = None,
+        exported_project_format: Optional[Union[str, _models._enums.ExportedProjectFormat]] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[None]:
-        """Triggers a job to import a project. If a project with the same name already exists, the data of
-        that project is replaced.
-
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
-        :param body: The project data to import. Required.
-        :type body: JSON
-        :keyword exported_project_format: The format of the exported project file to use. Known values
-         are: "Conversation" and "Luis". Default value is None.
-        :paramtype exported_project_format: str or
-         ~azure.ai.language.conversations.authoring.models.ExportedProjectFormat
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> AsyncLROPoller[None]: ...
     @overload
-    async def begin_import_method(
+    async def _begin_import_method(
         self,
         project_name: str,
         body: IO[bytes],
         *,
-        exported_project_format: Optional[Union[str, _models.ExportedProjectFormat]] = None,
+        exported_project_format: Optional[Union[str, _models._enums.ExportedProjectFormat]] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[None]:
-        """Triggers a job to import a project. If a project with the same name already exists, the data of
-        that project is replaced.
-
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
-        :param body: The project data to import. Required.
-        :type body: IO[bytes]
-        :keyword exported_project_format: The format of the exported project file to use. Known values
-         are: "Conversation" and "Luis". Default value is None.
-        :paramtype exported_project_format: str or
-         ~azure.ai.language.conversations.authoring.models.ExportedProjectFormat
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> AsyncLROPoller[None]: ...
 
     @distributed_trace_async
-    async def begin_import_method(
+    async def _begin_import_method(
         self,
         project_name: str,
-        body: Union[_models.ExportedProject, JSON, IO[bytes]],
+        body: Union[_models._models.ExportedProject, JSON, IO[bytes]],
         *,
-        exported_project_format: Optional[Union[str, _models.ExportedProjectFormat]] = None,
+        exported_project_format: Optional[Union[str, _models._enums.ExportedProjectFormat]] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Triggers a job to import a project. If a project with the same name already exists, the data of
@@ -3201,8 +3151,8 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         :type project_name: str
         :param body: The project data to import. Is one of the following types: ExportedProject, JSON,
          IO[bytes] Required.
-        :type body: ~azure.ai.language.conversations.authoring.models.ExportedProject or JSON or
-         IO[bytes]
+        :type body: ~azure.ai.language.conversations.authoring.models._models.ExportedProject or JSON
+         or IO[bytes]
         :keyword exported_project_format: The format of the exported project file to use. Known values
          are: "Conversation" and "Luis". Default value is None.
         :paramtype exported_project_format: str or
@@ -3264,7 +3214,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         project_name: str,
         *,
         string_index_type: Union[str, _models.StringIndexType],
-        exported_project_format: Optional[Union[str, _models.ExportedProjectFormat]] = None,
+        exported_project_format: Optional[Union[str, _models._enums.ExportedProjectFormat]] = None,
         asset_kind: Optional[str] = None,
         trained_model_label: Optional[str] = None,
         **kwargs: Any
@@ -3328,7 +3278,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         project_name: str,
         *,
         string_index_type: Union[str, _models.StringIndexType],
-        exported_project_format: Optional[Union[str, _models.ExportedProjectFormat]] = None,
+        exported_project_format: Optional[Union[str, _models._enums.ExportedProjectFormat]] = None,
         asset_kind: Optional[str] = None,
         trained_model_label: Optional[str] = None,
         **kwargs: Any

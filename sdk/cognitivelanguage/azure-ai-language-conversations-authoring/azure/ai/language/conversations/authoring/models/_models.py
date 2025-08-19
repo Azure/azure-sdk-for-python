@@ -240,12 +240,12 @@ class ConversationExportedEntity(_Model):
     :vartype composition_mode: str or
      ~azure.ai.language.conversations.authoring.models.CompositionMode
     :ivar entities: The list component of the entity.
-    :vartype entities: ~azure.ai.language.conversations.authoring.models.ExportedEntityList
+    :vartype entities: ~azure.ai.language.conversations.authoring.models._models.ExportedEntityList
     :ivar prebuilts: The prebuilt entities components.
     :vartype prebuilts:
-     list[~azure.ai.language.conversations.authoring.models.ExportedPrebuiltEntity]
+     list[~azure.ai.language.conversations.authoring.models._models.ExportedPrebuiltEntity]
     :ivar regex: The regex component of the entity.
-    :vartype regex: ~azure.ai.language.conversations.authoring.models.ExportedEntityRegex
+    :vartype regex: ~azure.ai.language.conversations.authoring.models._models.ExportedEntityRegex
     :ivar required_components: The required components. Allowed values are 'learned', 'list',
      'prebuilts' and 'regex'.
     :vartype required_components: list[str]
@@ -255,21 +255,21 @@ class ConversationExportedEntity(_Model):
     """The category of the entity. Required."""
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The entity description."""
-    composition_mode: Optional[Union[str, "_models.CompositionMode"]] = rest_field(
+    composition_mode: Optional[Union[str, "_models._enums.CompositionMode"]] = rest_field(
         name="compositionSetting", visibility=["read", "create", "update", "delete", "query"]
     )
     """The behavior to follow when the entity's components overlap with each other. Known values are:
      \"returnLongestOverlap\", \"requireExactOverlap\", \"separateComponents\", and
      \"combineComponents\"."""
-    entities: Optional["_models.ExportedEntityList"] = rest_field(
+    entities: Optional["_models._models.ExportedEntityList"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The list component of the entity."""
-    prebuilts: Optional[List["_models.ExportedPrebuiltEntity"]] = rest_field(
+    prebuilts: Optional[List["_models._models.ExportedPrebuiltEntity"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The prebuilt entities components."""
-    regex: Optional["_models.ExportedEntityRegex"] = rest_field(
+    regex: Optional["_models._models.ExportedEntityRegex"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The regex component of the entity."""
@@ -284,10 +284,10 @@ class ConversationExportedEntity(_Model):
         *,
         category: str,
         description: Optional[str] = None,
-        composition_mode: Optional[Union[str, "_models.CompositionMode"]] = None,
-        entities: Optional["_models.ExportedEntityList"] = None,
-        prebuilts: Optional[List["_models.ExportedPrebuiltEntity"]] = None,
-        regex: Optional["_models.ExportedEntityRegex"] = None,
+        composition_mode: Optional[Union[str, "_models._enums.CompositionMode"]] = None,
+        entities: Optional["_models._models.ExportedEntityList"] = None,
+        prebuilts: Optional[List["_models._models.ExportedPrebuiltEntity"]] = None,
+        regex: Optional["_models._models.ExportedEntityRegex"] = None,
         required_components: Optional[List[str]] = None,
     ) -> None: ...
 
@@ -311,14 +311,14 @@ class ConversationExportedIntent(_Model):
     :vartype description: str
     :ivar associated_entities: The list of associated entities.
     :vartype associated_entities:
-     list[~azure.ai.language.conversations.authoring.models.ConversationExportedAssociatedEntityLabel]
+     list[~azure.ai.language.conversations.authoring.models._models.ConversationExportedAssociatedEntityLabel]
     """
 
     category: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The intent category. Required."""
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The intent description."""
-    associated_entities: Optional[List["_models.ConversationExportedAssociatedEntityLabel"]] = rest_field(
+    associated_entities: Optional[List["_models._models.ConversationExportedAssociatedEntityLabel"]] = rest_field(
         name="associatedEntities", visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of associated entities."""
@@ -329,7 +329,7 @@ class ConversationExportedIntent(_Model):
         *,
         category: str,
         description: Optional[str] = None,
-        associated_entities: Optional[List["_models.ConversationExportedAssociatedEntityLabel"]] = None,
+        associated_entities: Optional[List["_models._models.ConversationExportedAssociatedEntityLabel"]] = None,
     ) -> None: ...
 
     @overload
@@ -384,27 +384,27 @@ class ConversationExportedProjectAsset(ExportedProjectAsset, discriminator="Conv
 
     :ivar intents: The intents defined in the project.
     :vartype intents:
-     list[~azure.ai.language.conversations.authoring.models.ConversationExportedIntent]
+     list[~azure.ai.language.conversations.authoring.models._models.ConversationExportedIntent]
     :ivar entities: The entities defined in the project.
     :vartype entities:
-     list[~azure.ai.language.conversations.authoring.models.ConversationExportedEntity]
+     list[~azure.ai.language.conversations.authoring.models._models.ConversationExportedEntity]
     :ivar utterances: The utterances defined in the project.
     :vartype utterances:
-     list[~azure.ai.language.conversations.authoring.models.ConversationExportedUtterance]
+     list[~azure.ai.language.conversations.authoring.models._models.ConversationExportedUtterance]
     :ivar project_kind: The type of project containing the assets. Required. A project to build
      natural language into apps, bots, and IoT devices.
     :vartype project_kind: str or ~azure.ai.language.conversations.authoring.models.CONVERSATION
     """
 
-    intents: Optional[List["_models.ConversationExportedIntent"]] = rest_field(
+    intents: Optional[List["_models._models.ConversationExportedIntent"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The intents defined in the project."""
-    entities: Optional[List["_models.ConversationExportedEntity"]] = rest_field(
+    entities: Optional[List["_models._models.ConversationExportedEntity"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The entities defined in the project."""
-    utterances: Optional[List["_models.ConversationExportedUtterance"]] = rest_field(
+    utterances: Optional[List["_models._models.ConversationExportedUtterance"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The utterances defined in the project."""
@@ -416,9 +416,9 @@ class ConversationExportedProjectAsset(ExportedProjectAsset, discriminator="Conv
     def __init__(
         self,
         *,
-        intents: Optional[List["_models.ConversationExportedIntent"]] = None,
-        entities: Optional[List["_models.ConversationExportedEntity"]] = None,
-        utterances: Optional[List["_models.ConversationExportedUtterance"]] = None,
+        intents: Optional[List["_models._models.ConversationExportedIntent"]] = None,
+        entities: Optional[List["_models._models.ConversationExportedEntity"]] = None,
+        utterances: Optional[List["_models._models.ConversationExportedUtterance"]] = None,
     ) -> None: ...
 
     @overload
@@ -437,7 +437,7 @@ class ConversationExportedUtterance(_Model):
 
     :ivar entities: Represents the entity labels of the utterance.
     :vartype entities:
-     list[~azure.ai.language.conversations.authoring.models.ExportedUtteranceEntityLabel]
+     list[~azure.ai.language.conversations.authoring.models._models.ExportedUtteranceEntityLabel]
     :ivar text: The utterance text. Required.
     :vartype text: str
     :ivar language: Represents the utterance's language. This is BCP-47 representation of a
@@ -450,7 +450,7 @@ class ConversationExportedUtterance(_Model):
     :vartype dataset: str or ~azure.ai.language.conversations.authoring.models.DatasetType
     """
 
-    entities: Optional[List["_models.ExportedUtteranceEntityLabel"]] = rest_field(
+    entities: Optional[List["_models._models.ExportedUtteranceEntityLabel"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Represents the entity labels of the utterance."""
@@ -461,7 +461,7 @@ class ConversationExportedUtterance(_Model):
      use \"en\" for English, \"en-gb\" for English (UK), \"es\" for Spanish etc."""
     intent: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The intent of the utterance. Required."""
-    dataset: Optional[Union[str, "_models.DatasetType"]] = rest_field(
+    dataset: Optional[Union[str, "_models._enums.DatasetType"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The dataset for this utterance. Allowed values are 'Train' and 'Test'. Known values are:
@@ -473,9 +473,9 @@ class ConversationExportedUtterance(_Model):
         *,
         text: str,
         intent: str,
-        entities: Optional[List["_models.ExportedUtteranceEntityLabel"]] = None,
+        entities: Optional[List["_models._models.ExportedUtteranceEntityLabel"]] = None,
         language: Optional[str] = None,
-        dataset: Optional[Union[str, "_models.DatasetType"]] = None,
+        dataset: Optional[Union[str, "_models._enums.DatasetType"]] = None,
     ) -> None: ...
 
     @overload
@@ -1539,13 +1539,13 @@ class ExportedConversationOrchestrationDetails(ExportedOrchestrationDetails, dis
 
     :ivar conversation_orchestration: The Conversational project target details. Required.
     :vartype conversation_orchestration:
-     ~azure.ai.language.conversations.authoring.models.ExportedConversationOrchestration
+     ~azure.ai.language.conversations.authoring.models._models.ExportedConversationOrchestration
     :ivar target_project_kind: The kind of the target used in the orchestration flow. Required.
     :vartype target_project_kind: str or
      ~azure.ai.language.conversations.authoring.models.CONVERSATION
     """
 
-    conversation_orchestration: "_models.ExportedConversationOrchestration" = rest_field(
+    conversation_orchestration: "_models._models.ExportedConversationOrchestration" = rest_field(
         name="conversationOrchestration", visibility=["read", "create", "update", "delete", "query"]
     )
     """The Conversational project target details. Required."""
@@ -1556,7 +1556,7 @@ class ExportedConversationOrchestrationDetails(ExportedOrchestrationDetails, dis
     def __init__(
         self,
         *,
-        conversation_orchestration: "_models.ExportedConversationOrchestration",
+        conversation_orchestration: "_models._models.ExportedConversationOrchestration",
     ) -> None: ...
 
     @overload
@@ -1575,10 +1575,10 @@ class ExportedEntityList(_Model):
 
     :ivar sublists: The sub-lists of the list component.
     :vartype sublists:
-     list[~azure.ai.language.conversations.authoring.models.ExportedEntitySublist]
+     list[~azure.ai.language.conversations.authoring.models._models.ExportedEntitySublist]
     """
 
-    sublists: Optional[List["_models.ExportedEntitySublist"]] = rest_field(
+    sublists: Optional[List["_models._models.ExportedEntitySublist"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The sub-lists of the list component."""
@@ -1587,7 +1587,7 @@ class ExportedEntityList(_Model):
     def __init__(
         self,
         *,
-        sublists: Optional[List["_models.ExportedEntitySublist"]] = None,
+        sublists: Optional[List["_models._models.ExportedEntitySublist"]] = None,
     ) -> None: ...
 
     @overload
@@ -1646,10 +1646,10 @@ class ExportedEntityRegex(_Model):
      `https://learn.microsoft.com/dotnet/standard/base-types/regular-expressions
      <https://learn.microsoft.com/dotnet/standard/base-types/regular-expressions>`_.
     :vartype expressions:
-     list[~azure.ai.language.conversations.authoring.models.ExportedEntityRegexExpression]
+     list[~azure.ai.language.conversations.authoring.models._models.ExportedEntityRegexExpression]
     """
 
-    expressions: Optional[List["_models.ExportedEntityRegexExpression"]] = rest_field(
+    expressions: Optional[List["_models._models.ExportedEntityRegexExpression"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The regex expressions of the regex component. These expressions follow the .NET regex syntax.
@@ -1661,7 +1661,7 @@ class ExportedEntityRegex(_Model):
     def __init__(
         self,
         *,
-        expressions: Optional[List["_models.ExportedEntityRegexExpression"]] = None,
+        expressions: Optional[List["_models._models.ExportedEntityRegexExpression"]] = None,
     ) -> None: ...
 
     @overload
@@ -1728,12 +1728,12 @@ class ExportedEntitySublist(_Model):
     :vartype list_key: str
     :ivar synonyms: The phrases of that correspond to the sub-list.
     :vartype synonyms:
-     list[~azure.ai.language.conversations.authoring.models.ExportedEntityListSynonym]
+     list[~azure.ai.language.conversations.authoring.models._models.ExportedEntityListSynonym]
     """
 
     list_key: Optional[str] = rest_field(name="listKey", visibility=["read", "create", "update", "delete", "query"])
     """The key of the sub-list."""
-    synonyms: Optional[List["_models.ExportedEntityListSynonym"]] = rest_field(
+    synonyms: Optional[List["_models._models.ExportedEntityListSynonym"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The phrases of that correspond to the sub-list."""
@@ -1743,7 +1743,7 @@ class ExportedEntitySublist(_Model):
         self,
         *,
         list_key: Optional[str] = None,
-        synonyms: Optional[List["_models.ExportedEntityListSynonym"]] = None,
+        synonyms: Optional[List["_models._models.ExportedEntityListSynonym"]] = None,
     ) -> None: ...
 
     @overload
@@ -1802,12 +1802,12 @@ class ExportedLuisOrchestrationDetails(ExportedOrchestrationDetails, discriminat
 
     :ivar luis_orchestration: The LUIS application target details. Required.
     :vartype luis_orchestration:
-     ~azure.ai.language.conversations.authoring.models.ExportedLuisOrchestration
+     ~azure.ai.language.conversations.authoring.models._models.ExportedLuisOrchestration
     :ivar target_project_kind: The kind of the target used in the orchestration flow. Required.
     :vartype target_project_kind: str or ~azure.ai.language.conversations.authoring.models.LUIS
     """
 
-    luis_orchestration: "_models.ExportedLuisOrchestration" = rest_field(
+    luis_orchestration: "_models._models.ExportedLuisOrchestration" = rest_field(
         name="luisOrchestration", visibility=["read", "create", "update", "delete", "query"]
     )
     """The LUIS application target details. Required."""
@@ -1818,7 +1818,7 @@ class ExportedLuisOrchestrationDetails(ExportedOrchestrationDetails, discriminat
     def __init__(
         self,
         *,
-        luis_orchestration: "_models.ExportedLuisOrchestration",
+        luis_orchestration: "_models._models.ExportedLuisOrchestration",
     ) -> None: ...
 
     @overload
@@ -1971,7 +1971,7 @@ class ExportedProject(_Model):
     :ivar metadata: Represents the project metadata. Required.
     :vartype metadata: ~azure.ai.language.conversations.authoring.models.CreateProjectOptions
     :ivar assets: Represents the project assets.
-    :vartype assets: ~azure.ai.language.conversations.authoring.models.ExportedProjectAsset
+    :vartype assets: ~azure.ai.language.conversations.authoring.models._models.ExportedProjectAsset
     """
 
     project_file_version: str = rest_field(
@@ -1986,7 +1986,7 @@ class ExportedProject(_Model):
      Known values are: \"Utf16CodeUnit\", \"Utf8CodeUnit\", and \"Utf32CodeUnit\"."""
     metadata: "_models.CreateProjectOptions" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Represents the project metadata. Required."""
-    assets: Optional["_models.ExportedProjectAsset"] = rest_field(
+    assets: Optional["_models._models.ExportedProjectAsset"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Represents the project assets."""
@@ -1998,7 +1998,7 @@ class ExportedProject(_Model):
         project_file_version: str,
         string_index_type: Union[str, "_models.StringIndexType"],
         metadata: "_models.CreateProjectOptions",
-        assets: Optional["_models.ExportedProjectAsset"] = None,
+        assets: Optional["_models._models.ExportedProjectAsset"] = None,
     ) -> None: ...
 
     @overload
@@ -2047,13 +2047,13 @@ class ExportedQuestionAnsweringOrchestrationDetails(
 
     :ivar question_answering_orchestration: The Question Answering project details. Required.
     :vartype question_answering_orchestration:
-     ~azure.ai.language.conversations.authoring.models.ExportedQuestionAnsweringOrchestration
+     ~azure.ai.language.conversations.authoring.models._models.ExportedQuestionAnsweringOrchestration
     :ivar target_project_kind: The kind of the target used in the orchestration flow. Required.
     :vartype target_project_kind: str or
      ~azure.ai.language.conversations.authoring.models.QUESTION_ANSWERING
     """
 
-    question_answering_orchestration: "_models.ExportedQuestionAnsweringOrchestration" = rest_field(
+    question_answering_orchestration: "_models._models.ExportedQuestionAnsweringOrchestration" = rest_field(
         name="questionAnsweringOrchestration", visibility=["read", "create", "update", "delete", "query"]
     )
     """The Question Answering project details. Required."""
@@ -2064,7 +2064,7 @@ class ExportedQuestionAnsweringOrchestrationDetails(
     def __init__(
         self,
         *,
-        question_answering_orchestration: "_models.ExportedQuestionAnsweringOrchestration",
+        question_answering_orchestration: "_models._models.ExportedQuestionAnsweringOrchestration",
     ) -> None: ...
 
     @overload
@@ -2535,14 +2535,14 @@ class OrchestrationExportedIntent(_Model):
 
     :ivar orchestration: Specifies the behavior of this intent in the orchestration flow.
     :vartype orchestration:
-     ~azure.ai.language.conversations.authoring.models.ExportedOrchestrationDetails
+     ~azure.ai.language.conversations.authoring.models._models.ExportedOrchestrationDetails
     :ivar category: The intent category. Required.
     :vartype category: str
     :ivar description: The intent description.
     :vartype description: str
     """
 
-    orchestration: Optional["_models.ExportedOrchestrationDetails"] = rest_field(
+    orchestration: Optional["_models._models.ExportedOrchestrationDetails"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies the behavior of this intent in the orchestration flow."""
@@ -2556,7 +2556,7 @@ class OrchestrationExportedIntent(_Model):
         self,
         *,
         category: str,
-        orchestration: Optional["_models.ExportedOrchestrationDetails"] = None,
+        orchestration: Optional["_models._models.ExportedOrchestrationDetails"] = None,
         description: Optional[str] = None,
     ) -> None: ...
 
@@ -2576,21 +2576,21 @@ class OrchestrationExportedProjectAsset(ExportedProjectAsset, discriminator="Orc
 
     :ivar intents: Represents the intents of the project.
     :vartype intents:
-     list[~azure.ai.language.conversations.authoring.models.OrchestrationExportedIntent]
+     list[~azure.ai.language.conversations.authoring.models._models.OrchestrationExportedIntent]
     :ivar utterances: Represents the utterances of the project.
     :vartype utterances:
-     list[~azure.ai.language.conversations.authoring.models.OrchestrationExportedUtterance]
+     list[~azure.ai.language.conversations.authoring.models._models.OrchestrationExportedUtterance]
     :ivar project_kind: The type of project containing the assets. Required. A project to connect
      and orchestrate Conversation, Custom question answering and LUIS projects together in one
      single project.
     :vartype project_kind: str or ~azure.ai.language.conversations.authoring.models.ORCHESTRATION
     """
 
-    intents: Optional[List["_models.OrchestrationExportedIntent"]] = rest_field(
+    intents: Optional[List["_models._models.OrchestrationExportedIntent"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Represents the intents of the project."""
-    utterances: Optional[List["_models.OrchestrationExportedUtterance"]] = rest_field(
+    utterances: Optional[List["_models._models.OrchestrationExportedUtterance"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Represents the utterances of the project."""
@@ -2602,8 +2602,8 @@ class OrchestrationExportedProjectAsset(ExportedProjectAsset, discriminator="Orc
     def __init__(
         self,
         *,
-        intents: Optional[List["_models.OrchestrationExportedIntent"]] = None,
-        utterances: Optional[List["_models.OrchestrationExportedUtterance"]] = None,
+        intents: Optional[List["_models._models.OrchestrationExportedIntent"]] = None,
+        utterances: Optional[List["_models._models.OrchestrationExportedUtterance"]] = None,
     ) -> None: ...
 
     @overload

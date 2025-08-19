@@ -92,16 +92,3 @@ class TestConversationAuthoringAsync(ConversationAuthoringClientTestBaseAsync):
 
         # please add some check logic here by yourself
         # ...
-
-    @ConversationAuthoringPreparer()
-    @recorded_by_proxy_async
-    async def test_begin_delete_project(self, conversationauthoring_endpoint):
-        client = self.create_async_client(endpoint=conversationauthoring_endpoint)
-        response = await (
-            await client.begin_delete_project(
-                project_name="str",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...

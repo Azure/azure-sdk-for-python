@@ -37,7 +37,11 @@ from ._models import (
     ExportedModelState,
     LoadSnapshotState,
     DeploymentResourcesState,
+    ProjectDeletionState,
+    ExportedProject,
+    ImportProjectState,
 )
+from ._enums import ExportedProjectFormat
 
 JSON = MutableMapping[str, Any]
 
@@ -211,4 +215,8 @@ __all__ = [
     "ExportedModelState",
     "LoadSnapshotState",
     "DeploymentResourcesState",
+    "ProjectDeletionState",
+    "ExportedProjectFormat",
+    "ExportedProject",
+    "ImportProjectState",
 ]

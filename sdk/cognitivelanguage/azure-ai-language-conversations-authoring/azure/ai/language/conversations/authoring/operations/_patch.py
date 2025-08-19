@@ -62,7 +62,7 @@ from ..models import (
     JobsPollingMethod,
     DeploymentResourcesState,
     ExportedProject,
-    ImportProjectState
+    ImportProjectState,
 )
 from azure.core.paging import ItemPaged
 from collections.abc import MutableMapping
@@ -199,7 +199,7 @@ class ProjectOperations(ProjectOperationsGenerated):
                 cls=lambda x, y, z: x,  # return PipelineResponse
                 headers=_headers,
                 params=_params,
-                **kwargs
+                **kwargs,
             )
             initial.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)

@@ -34,9 +34,11 @@ from collections.abc import MutableMapping
 from azure.core.pipeline import PipelineResponse
 from azure.core.rest import HttpRequest, HttpResponse
 from ._utils.model_base import SdkJSONEncoder, _deserialize
+
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+
 
 class ConversationAuthoringProjectClient(AuthoringProjectClientGenerated):
     """Custom ConversationAuthoringProjectClient that bypasses generated __init__
@@ -104,6 +106,7 @@ class ConversationAuthoringProjectClient(AuthoringProjectClientGenerated):
             self._client, self._config, self._serialize, self._deserialize, project_name=project_name
         )
 
+
 class ConversationAuthoringClient(AuthoringClientGenerated):
     def get_project_client(self, project_name: str) -> ConversationAuthoringProjectClient:
         return ConversationAuthoringProjectClient(
@@ -111,13 +114,9 @@ class ConversationAuthoringClient(AuthoringClientGenerated):
             credential=self._config.credential,
             project_name=project_name,
         )
-    
+
     @distributed_trace
-    def begin_delete_project(
-        self,
-        project_name: str,
-        **kwargs: Any
-    ) -> LROPoller[ProjectDeletionState]:
+    def begin_delete_project(self, project_name: str, **kwargs: Any) -> LROPoller[ProjectDeletionState]:
         """Deletes a project.
 
         :return: An instance of LROPoller that returns ProjectDeletionState.
@@ -134,11 +133,11 @@ class ConversationAuthoringClient(AuthoringClientGenerated):
 
         if cont_token is None:
             initial = self._delete_project_initial(
-                project_name=project_name,        # ← use instance-scoped project name
-                cls=lambda x, y, z: x,                  # return PipelineResponse
+                project_name=project_name,  # ← use instance-scoped project name
+                cls=lambda x, y, z: x,  # return PipelineResponse
                 headers=_headers,
                 params=_params,
-                **kwargs
+                **kwargs,
             )
             initial.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
@@ -179,6 +178,7 @@ class ConversationAuthoringClient(AuthoringClientGenerated):
         return LROPoller[ProjectDeletionState](
             self._client, initial, get_long_running_output, polling_method  # type: ignore
         )
+
 
 def patch_sdk():
     """Do not remove from this file.

@@ -91,14 +91,3 @@ class TestConversationAuthoring(ConversationAuthoringClientTestBase):
 
         # please add some check logic here by yourself
         # ...
-
-    @ConversationAuthoringPreparer()
-    @recorded_by_proxy
-    def test_begin_delete_project(self, conversationauthoring_endpoint):
-        client = self.create_client(endpoint=conversationauthoring_endpoint)
-        response = client.begin_delete_project(
-            project_name="str",
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
