@@ -171,7 +171,7 @@ def _is_availability_strategy_applicable(request_params):
     :rtype: bool
     """
     return (request_params.availability_strategy and
-            not request_params.is_hedging_request and
+            not request_params.get_is_hedging_request and
             request_params.resource_type == ResourceType.Document and
             (not _OperationType.IsWriteOperation(request_params.operation_type) or
              request_params.retry_write))

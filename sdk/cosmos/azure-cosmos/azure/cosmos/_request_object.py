@@ -22,11 +22,12 @@
 """Represents a request object.
 """
 from types import SimpleNamespace
-from typing import Optional, Mapping, Any, Dict, List, TYPE_CHECKING
+from typing import Optional, Mapping, Any, Dict, List
 
 from ._constants import _Constants as Constants
 from .documents import _OperationType
 from .http_constants import ResourceType
+
 
 class RequestObject(object): # pylint: disable=too-many-instance-attributes
     def __init__(
@@ -139,7 +140,7 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
         """
         return self.completion_status
 
-    def is_hedging_request(self) -> bool:
+    def get_is_hedging_request(self) -> bool:
         """Check if this is a hedged request
         
         :return: True if this is a hedged request, False otherwise

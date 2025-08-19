@@ -265,14 +265,16 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
 async def _record_success_if_request_not_cancelled(
         request_params: RequestObject,
         global_endpoint_manager: [_GlobalPartitionEndpointManagerForCircuitBreakerAsync]) -> None:
+
     if not request_params.should_cancel_request():
         await global_endpoint_manager.record_success(request_params)
 
 async def _record_failure_if_request_not_cancelled(
         request_params: RequestObject,
         global_endpoint_manager: [_GlobalPartitionEndpointManagerForCircuitBreakerAsync]) -> None:
+
     if not request_params.should_cancel_request():
-       await global_endpoint_manager.record_failure(request_params)
+        await global_endpoint_manager.record_failure(request_params)
 
 async def ExecuteFunctionAsync(function, *args, **kwargs):
     """Stub method so that it can be used for mocking purposes as well.

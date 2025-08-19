@@ -387,31 +387,8 @@ class TestAsyncAvailabilityStrategy:
                 availability_strategy=strategy if availability_strategy_level == "request" else None)
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("operation, availability_strategy_level, succeeded",
-                             [
-                                 (READ, "client", True),
-                                 (READ, "request", True),
-                                 (QUERY, "client", False),
-                                 (QUERY, "request", True),
-                                 (QUERY_PK, "client", False),
-                                 (QUERY_PK, "request", True),
-                                 (READ_ALL, "client", False),
-                                 (READ_ALL, "request", True),
-                                 (CHANGE_FEED, "client", False),
-                                 (CHANGE_FEED, "request", True),
-                                 (CREATE, "client", True),
-                                 (CREATE, "request", True),
-                                 (UPSERT, "client", True),
-                                 (UPSERT, "request", True),
-                                 (REPLACE, "client", True),
-                                 (REPLACE, "request", True),
-                                 (DELETE, "client", True),
-                                 (DELETE, "request", True),
-                                 (PATCH, "client", True),
-                                 (PATCH, "request", True),
-                                 (BATCH, "client", False),
-                                 (BATCH, "request", True)
-                             ])
+    @pytest.mark.parametrize("operation",[READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED, CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
+    @pytest.mark.parametrize("availability_strategy_level", ["client", "request"])
     async def test_client_availability_strategy_failover(self, operation, availability_strategy_level, succeeded, setup):
         """Test operations failover to second preferred location on errors"""
         uri_down = _location_cache.LocationCache.GetLocationalEndpoint(self.host, setup['region_1'])
@@ -449,45 +426,22 @@ class TestAsyncAvailabilityStrategy:
 
         # Test operation with fault injection
         if operation in [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED]:
-            if succeeded:
-                await perform_read_operation(
-                    operation,
-                    setup_with_transport['col'],
-                    doc,
-                    [uri_down, failed_over_uri],
-                    [],
-                    availability_strategy=strategy if availability_strategy_level == "request" else None)
-            else:
-                with pytest.raises(CosmosHttpResponseError) as exc_info:
-                    await perform_read_operation(
-                        operation,
-                        setup_with_transport['col'],
-                        doc,
-                        [uri_down],
-                        [failed_over_uri],
-                        availability_strategy=strategy if availability_strategy_level == "request" else None)
-                assert exc_info.value.status_code == 400
-
+            await perform_read_operation(
+                operation,
+                setup_with_transport['col'],
+                doc,
+                [uri_down, failed_over_uri],
+                [],
+                availability_strategy=strategy if availability_strategy_level == "request" else None)
         else:
-            if succeeded:
-                await perform_write_operation(
-                    operation,
-                    setup_with_transport['col'],
-                    doc,
-                    [uri_down, failed_over_uri],
-                    [],
-                    retry_write=True,
-                    availability_strategy=strategy if availability_strategy_level == "request" else None)
-            else:
-                with pytest.raises(CosmosHttpResponseError) as exc_info:
-                    await perform_read_operation(
-                        operation,
-                        setup_with_transport['col'],
-                        doc,
-                        [uri_down],
-                        [failed_over_uri],
-                        availability_strategy=strategy if availability_strategy_level == "request" else None)
-                assert exc_info.value.status_code == 400
+            await perform_write_operation(
+                operation,
+                setup_with_transport['col'],
+                doc,
+                [uri_down, failed_over_uri],
+                [],
+                retry_write=True,
+                availability_strategy=strategy if availability_strategy_level == "request" else None)
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("operation", [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED, CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
@@ -587,7 +541,7 @@ class TestAsyncAvailabilityStrategy:
                                 FaultInjectionTransportAsync.predicate_targets_region(r, uri_down))
         error_lambda_first_region = lambda r: FaultInjectionTransportAsync.error_after_delay(
             500,
-            CosmosHttpResponseError(status_code=400, message="Injected Error") # using a non-retriable exception here
+            CosmosHttpResponseError(status_code=400, message="Injected Error") # using a non retryable exception here
         )
         custom_transport.add_fault(predicate_first_region, error_lambda_first_region)
 
@@ -654,7 +608,7 @@ class TestAsyncAvailabilityStrategy:
         error_lambda = lambda r: FaultInjectionTransportAsync.error_after_delay(
             500,  # Add delay to trigger hedging
             CosmosHttpResponseError(status_code=400, message="Injected Error")
-            # using non-retriable errors to verify the request will only go to the first region
+            # using none retryable errors to verify the request will only go to the first region
         )
         custom_transport = self.get_custom_transport_with_fault_injection(predicate, error_lambda)
         setup_with_transport = await self.setup_method_with_custom_transport(
@@ -852,14 +806,14 @@ class TestAsyncAvailabilityStrategy:
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("operation", [READ, QUERY_PK, CHANGE_FEED, CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
-    async def test_ppcb_failover_with_cancelled_first_future(self, operation, setup):
+    async def test_per_partition_circular_breaker_with_cancelled_first_future(self, operation, setup):
         # QUERY, READ_ALL are not included because currently they are not targeting to a specific pkRange
         os.environ["AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"] = "True"
         os.environ["AZURE_COSMOS_CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_WRITE"] = "5"
         os.environ["AZURE_COSMOS_CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_READ"] = "5"
 
         try:
-            """Test that when PPCB is enabled and after hitting the threshold, subsequent requests go directly to second region.
+            """Test that when per partition circular breaker is enabled and after hitting the threshold, subsequent requests go directly to second region.
             This test verifies the logic of recording failure of cancelled first_future."""
 
             # Setup fault injection for first region
@@ -919,7 +873,7 @@ class TestAsyncAvailabilityStrategy:
                         retry_write=True,
                         availability_strategy=strategy)
 
-            # Subsequent operations should go directly to second region due to PPCB
+            # Subsequent operations should go directly to second region due to per partition circular breaker
             expected_uris = [failed_over_uri]
             excluded_uris = [uri_down]
             doc = create_doc()
