@@ -62,6 +62,7 @@ T = TypeVar("T")
 _Unset: Any = object()
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
+
 class ProjectOperations(ProjectOperationsGenerated):
     """Patched ProjectOperationsOperations that auto-injects project_name."""
 

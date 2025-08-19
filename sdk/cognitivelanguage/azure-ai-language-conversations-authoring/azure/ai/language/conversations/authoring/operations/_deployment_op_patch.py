@@ -44,6 +44,7 @@ T = TypeVar("T")
 _Unset: Any = object()
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
+
 class DeploymentOperations(DeploymentOperationsGenerated):
 
     def __init__(self, *args, project_name: str, **kwargs: Any) -> None:

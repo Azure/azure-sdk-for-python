@@ -17,6 +17,7 @@ from ._trained_model_op_patch import TrainedModelOperations
 from ._deployment_op_patch import DeploymentOperations
 from ._exported_model_op_patch import ExportedModelOperations
 
+
 def patch_sdk():
     """Do not remove from this file.
 
@@ -24,5 +25,6 @@ def patch_sdk():
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
+
 
 __all__ = ["ProjectOperations", "DeploymentOperations", "ExportedModelOperations", "TrainedModelOperations"]
