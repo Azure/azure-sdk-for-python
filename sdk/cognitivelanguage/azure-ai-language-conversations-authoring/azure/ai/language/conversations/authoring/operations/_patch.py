@@ -78,6 +78,78 @@ class ProjectOperations(ProjectOperationsGenerated):
         super().__init__(*args, **kwargs)
         self._project_name = project_name
 
+    @overload
+    def begin_assign_deployment_resources(
+        self,
+        body: AssignDeploymentResourcesDetails,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[DeploymentResourcesState]:
+        """Assign new Azure resources to a project to allow deploying new deployments to them. This API is
+        available only via AAD authentication and not supported via subscription key authentication.
+        For more details about AAD authentication, check here:
+        `https://learn.microsoft.com/en-us/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-azure-active-directory
+        <https://learn.microsoft.com/en-us/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-azure-active-directory>`_.
+
+        :param body: The new project resources info. Required.
+        :type body: ~azure.ai.language.conversations.authoring.models.AssignDeploymentResourcesDetails
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+        Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns DeploymentResourcesState.
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.language.conversations.authoring.models.DeploymentResourcesState]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_assign_deployment_resources(
+        self,
+        body: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[DeploymentResourcesState]:
+        """Assign new Azure resources to a project to allow deploying new deployments to them. This API is
+        available only via AAD authentication and not supported via subscription key authentication.
+        For more details about AAD authentication, check here:
+        `https://learn.microsoft.com/en-us/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-azure-active-directory
+        <https://learn.microsoft.com/en-us/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-azure-active-directory>`_.
+
+        :param body: The new project resources info. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+        Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns DeploymentResourcesState.
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.language.conversations.authoring.models.DeploymentResourcesState]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_assign_deployment_resources(
+        self,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[DeploymentResourcesState]:
+        """Assign new Azure resources to a project to allow deploying new deployments to them. This API is
+        available only via AAD authentication and not supported via subscription key authentication.
+        For more details about AAD authentication, check here:
+        `https://learn.microsoft.com/en-us/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-azure-active-directory
+        <https://learn.microsoft.com/en-us/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-azure-active-directory>`_.
+
+        :param body: The new project resources info. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+        Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns DeploymentResourcesState.
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.language.conversations.authoring.models.DeploymentResourcesState]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
     @distributed_trace
     def begin_assign_deployment_resources(
         self,
@@ -162,6 +234,66 @@ class ProjectOperations(ProjectOperationsGenerated):
     ) -> LROPoller[TrainingJobResult]:
         """Cancel a training job without requiring project_name explicitly."""
         return super().begin_cancel_training_job(project_name=self._project_name, job_id=job_id, **kwargs)
+
+    @overload
+    def begin_copy_project(
+        self,
+        body: CopyProjectDetails,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[CopyProjectState]:
+        """Copies an existing project to another Azure resource.
+
+        :param body: The copy project info. Required.
+        :type body: ~azure.ai.language.conversations.authoring.models.CopyProjectDetails
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+        Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns CopyProjectState.
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.language.conversations.authoring.models.CopyProjectState]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_copy_project(
+        self,
+        body: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[CopyProjectState]:
+        """Copies an existing project to another Azure resource.
+
+        :param body: The copy project info. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+        Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns CopyProjectState.
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.language.conversations.authoring.models.CopyProjectState]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_copy_project(
+        self,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[CopyProjectState]:
+        """Copies an existing project to another Azure resource.
+
+        :param body: The copy project info. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+        Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns CopyProjectState.
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.language.conversations.authoring.models.CopyProjectState]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
 
     @distributed_trace
     def begin_copy_project(
@@ -328,6 +460,66 @@ class ProjectOperations(ProjectOperationsGenerated):
             self._client, initial, get_long_running_output, polling_method  # type: ignore
         )
 
+    @overload
+    def begin_swap_deployments(
+        self,
+        body: SwapDeploymentsDetails,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[SwapDeploymentsState]:
+        """Swaps two existing deployments with each other.
+
+        :param body: The job object to swap two deployments. Required.
+        :type body: ~azure.ai.language.conversations.authoring.models.SwapDeploymentsDetails
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+        Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns SwapDeploymentsState.
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.language.conversations.authoring.models.SwapDeploymentsState]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_swap_deployments(
+        self,
+        body: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[SwapDeploymentsState]:
+        """Swaps two existing deployments with each other.
+
+        :param body: The job object to swap two deployments. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+        Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns SwapDeploymentsState.
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.language.conversations.authoring.models.SwapDeploymentsState]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_swap_deployments(
+        self,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[SwapDeploymentsState]:
+        """Swaps two existing deployments with each other.
+
+        :param body: The job object to swap two deployments. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+        Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns SwapDeploymentsState.
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.language.conversations.authoring.models.SwapDeploymentsState]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
     @distributed_trace
     def begin_swap_deployments(
         self,
@@ -400,6 +592,69 @@ class ProjectOperations(ProjectOperationsGenerated):
         return LROPoller[SwapDeploymentsState](
             self._client, initial, get_long_running_output, polling_method  # type: ignore
         )
+    
+    @overload
+    def begin_unassign_deployment_resources(
+        self,
+        body: UnassignDeploymentResourcesDetails,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[DeploymentResourcesState]:
+        """Unassign resources from a project. This disallows deploying new deployments to these resources,
+        and deletes existing deployments assigned to them.
+
+        :param body: The info for the deployment resources to be deleted. Required.
+        :type body: ~azure.ai.language.conversations.authoring.models.UnassignDeploymentResourcesDetails
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+        Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns DeploymentResourcesState.
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.language.conversations.authoring.models.DeploymentResourcesState]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_unassign_deployment_resources(
+        self,
+        body: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[DeploymentResourcesState]:
+        """Unassign resources from a project. This disallows deploying new deployments to these resources,
+        and deletes existing deployments assigned to them.
+
+        :param body: The info for the deployment resources to be deleted. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+        Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns DeploymentResourcesState.
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.language.conversations.authoring.models.DeploymentResourcesState]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_unassign_deployment_resources(
+        self,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[DeploymentResourcesState]:
+        """Unassign resources from a project. This disallows deploying new deployments to these resources,
+        and deletes existing deployments assigned to them.
+
+        :param body: The info for the deployment resources to be deleted. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+        Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns DeploymentResourcesState.
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.language.conversations.authoring.models.DeploymentResourcesState]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
 
     @distributed_trace
     def begin_unassign_deployment_resources(
@@ -641,6 +896,75 @@ class DeploymentOperations(DeploymentOperationsGenerated):
         return LROPoller[DeploymentState](
             self._client, initial, get_long_running_output, polling_method  # type: ignore
         )
+
+    @overload
+    def begin_delete_deployment_from_resources(
+        self,
+        deployment_name: str,
+        body: DeleteDeploymentDetails,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[DeploymentDeleteFromResourcesState]:
+        """Deletes a project deployment from the specified assigned resources.
+
+        :param deployment_name: The name of the specific deployment of the project to use. Required.
+        :type deployment_name: str
+        :param body: The options for deleting the deployment. Required.
+        :type body: ~azure.ai.language.conversations.authoring.models.DeleteDeploymentDetails
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+        Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns DeploymentDeleteFromResourcesState.
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.language.conversations.authoring.models.DeploymentDeleteFromResourcesState]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_delete_deployment_from_resources(
+        self,
+        deployment_name: str,
+        body: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[DeploymentDeleteFromResourcesState]:
+        """Deletes a project deployment from the specified assigned resources.
+
+        :param deployment_name: The name of the specific deployment of the project to use. Required.
+        :type deployment_name: str
+        :param body: The options for deleting the deployment. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+        Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns DeploymentDeleteFromResourcesState.
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.language.conversations.authoring.models.DeploymentDeleteFromResourcesState]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_delete_deployment_from_resources(
+        self,
+        deployment_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[DeploymentDeleteFromResourcesState]:
+        """Deletes a project deployment from the specified assigned resources.
+
+        :param deployment_name: The name of the specific deployment of the project to use. Required.
+        :type deployment_name: str
+        :param body: The options for deleting the deployment. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+        Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns DeploymentDeleteFromResourcesState.
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.language.conversations.authoring.models.DeploymentDeleteFromResourcesState]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
 
     @distributed_trace
     def begin_delete_deployment_from_resources(
@@ -893,6 +1217,75 @@ class ExportedModelOperations(ExportedModelOperationsGenerated):
     def __init__(self, *args, project_name: str, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self._project_name = project_name
+
+    @overload
+    def begin_create_or_update_exported_model(
+        self,
+        exported_model_name: str,
+        body: ExportedModelDetails,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[ExportedModelState]:
+        """Creates a new exported model or replaces an existing one.
+
+        :param exported_model_name: The exported model name. Required.
+        :type exported_model_name: str
+        :param body: The exported model info. Required.
+        :type body: ~azure.ai.language.conversations.authoring.models.ExportedModelDetails
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+        Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ExportedModelState.
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.language.conversations.authoring.models.ExportedModelState]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_or_update_exported_model(
+        self,
+        exported_model_name: str,
+        body: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[ExportedModelState]:
+        """Creates a new exported model or replaces an existing one.
+
+        :param exported_model_name: The exported model name. Required.
+        :type exported_model_name: str
+        :param body: The exported model info. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+        Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ExportedModelState.
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.language.conversations.authoring.models.ExportedModelState]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_or_update_exported_model(
+        self,
+        exported_model_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[ExportedModelState]:
+        """Creates a new exported model or replaces an existing one.
+
+        :param exported_model_name: The exported model name. Required.
+        :type exported_model_name: str
+        :param body: The exported model info. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+        Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ExportedModelState.
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.language.conversations.authoring.models.ExportedModelState]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
 
     @distributed_trace
     def begin_create_or_update_exported_model(
