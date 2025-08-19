@@ -148,7 +148,12 @@ class _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover(_GlobalPar
     def record_failure(self,
                        request: RequestObject,
                        pk_range_wrapper: Optional[PartitionKeyRangeWrapper] = None) -> None:
-        """Records a failure for the given partition key range and request."""
+        """Records a failure for the given partition key range and request.
+        :param RequestObject request: The request object containing the routing context.
+        :param PartitionKeyRangeWrapper pk_range_wrapper: The wrapper containing the partition key range information
+            for the request.
+        :return: None
+        """
         if self.is_per_partition_automatic_failover_applicable(request):
             if pk_range_wrapper is None:
                 pk_range_wrapper = self.create_pk_range_wrapper(request)
@@ -160,7 +165,12 @@ class _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover(_GlobalPar
     def record_success(self,
                        request: RequestObject,
                        pk_range_wrapper: Optional[PartitionKeyRangeWrapper] = None) -> None:
-        """Records a failure for the given partition key range and request."""
+        """Records a success for the given partition key range and request, effectively clearing the failure count.
+        :param RequestObject request: The request object containing the routing context.
+        :param PartitionKeyRangeWrapper pk_range_wrapper: The wrapper containing the partition key range information
+            for the request.
+        :return: None
+        """
         if self.is_per_partition_automatic_failover_applicable(request):
             if pk_range_wrapper is None:
                 pk_range_wrapper = self.create_pk_range_wrapper(request)

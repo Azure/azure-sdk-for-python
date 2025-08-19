@@ -943,8 +943,6 @@ def try_ppaf_failover_threshold(
         global_endpoint_manager: "_GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover",
         pk_range_wrapper: "PartitionKeyRangeWrapper",
         request: "RequestObject"):
-    """Check if the PPAF threshold is reached for the current partition range, and mark endpoint unavailable if so.
-    """
     # If PPAF is enabled, we track consecutive failures for certain exceptions, and only fail over at a partition
     # level after the threshold is reached
     if request and global_endpoint_manager.is_per_partition_automatic_failover_applicable(request):

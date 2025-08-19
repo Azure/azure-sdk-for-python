@@ -294,8 +294,8 @@ def _handle_service_request_retries(
         raise exception
 
 def _handle_service_response_retries(request, client, response_retry_policy, exception, *args):
-    if request and (_has_read_retryable_headers(request.headers) or (args and is_write_retryable(args[0], client)) or
-                    (args and client._global_endpoint_manager.is_per_partition_automatic_failover_applicable(args[0]))):
+    if request and (_has_read_retryable_headers(request.headers) or (args and (is_write_retryable(args[0], client) or
+                            client._global_endpoint_manager.is_per_partition_automatic_failover_applicable(args[0])))):
         # we resolve the request endpoint to the next preferred region
         # once we are out of preferred regions we stop retrying
         retry_policy = response_retry_policy

@@ -25,15 +25,16 @@ import copy
 import json
 import time
 
+from typing import Any
 from urllib.parse import urlparse
 from azure.core.exceptions import DecodeError  # type: ignore
 from azure.core import PipelineClient
-from typing import Any
 
 from . import exceptions, http_constants, _retry_utility
 from .documents import ConnectionPolicy
 from ._request_object import RequestObject
-from ._global_partition_endpoint_manager_per_partition_automatic_failover import _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover
+from ._global_partition_endpoint_manager_per_partition_automatic_failover import (
+    _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover)
 
 
 def _is_readable_stream(obj):

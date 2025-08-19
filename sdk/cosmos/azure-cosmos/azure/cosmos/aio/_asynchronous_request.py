@@ -35,7 +35,8 @@ from .. import http_constants
 from . import _retry_utility_async
 from ..documents import ConnectionPolicy
 from .._request_object import RequestObject
-from ._global_partition_endpoint_manager_per_partition_automatic_failover_async import _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailoverAsync
+from ._global_partition_endpoint_manager_per_partition_automatic_failover_async import (
+    _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailoverAsync)
 from .._synchronized_request import _request_body_from_data, _replace_url_prefix
 
 
