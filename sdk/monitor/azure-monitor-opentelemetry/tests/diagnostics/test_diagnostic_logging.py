@@ -226,3 +226,27 @@ class TestDiagnosticLogger:
             assert diagnostic_logger.AzureDiagnosticLogging._initialized is False
             # Verify that the error was logged
             mock_logger.error.assert_called_once()
+
+    def test_singleton_pattern(self, temp_file_path):
+        """Test that AzureDiagnosticLogging follows the singleton pattern."""
+        set_up(temp_file_path, is_diagnostics_enabled=True)
+        
+        # Create multiple instances
+        instance1 = diagnostic_logger.AzureDiagnosticLogging()
+        instance2 = diagnostic_logger.AzureDiagnosticLogging()
+        instance3 = diagnostic_logger.AzureDiagnosticLogging()
+        
+        # Verify all instances are the same object
+        assert instance1 is instance2
+        assert instance2 is instance3
+        assert instance1 is instance3
+        
+        # Verify they all have the same id (memory address)
+        assert id(instance1) == id(instance2) == id(instance3)
+        
+        # Verify class-level access still works
+        diagnostic_logger.AzureDiagnosticLogging.info(MESSAGE1, "4200")
+        assert diagnostic_logger.AzureDiagnosticLogging._initialized is True
+        
+        # Verify instance methods work (if they exist)
+        # Since this is primarily a class-based API, we just verify the singleton behavior

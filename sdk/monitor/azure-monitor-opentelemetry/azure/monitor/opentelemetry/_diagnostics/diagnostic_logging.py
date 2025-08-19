@@ -48,13 +48,21 @@ _INSTRUMENTATION_FAILED = "4403"
 
 
 class AzureDiagnosticLogging:
+    _instance = None
     _initialized = False
     _lock = threading.Lock()
 
+    def __new__(cls):
+        if cls._instance is None:
+            with cls._lock:
+                if cls._instance is None:
+                    cls._instance = super(AzureDiagnosticLogging, cls).__new__(cls)
+        return cls._instance
+
     @classmethod
     def _initialize(cls):
-        with AzureDiagnosticLogging._lock:
-            if not AzureDiagnosticLogging._initialized:
+        with cls._lock:
+            if not cls._initialized:
                 if _is_diagnostics_enabled() and _DIAGNOSTIC_LOG_PATH:
                     log_format = (
                         "{"
@@ -85,31 +93,31 @@ class AzureDiagnosticLogging:
                         formatter = logging.Formatter(fmt=log_format, datefmt="%Y-%m-%dT%H:%M:%S")
                         f_handler.setFormatter(formatter)
                         _diagnostic_file_logger.addHandler(f_handler)
-                        AzureDiagnosticLogging._initialized = True
+                        cls._initialized = True
                     except Exception as e:  # pylint: disable=broad-except
                         _logger.error("Failed to initialize Azure Monitor diagnostic logging: %s", e)
-                        AzureDiagnosticLogging._initialized = False
+                        cls._initialized = False
 
     @classmethod
     def debug(cls, message: str, message_id: str):
-        AzureDiagnosticLogging._initialize()
-        if AzureDiagnosticLogging._initialized:
+        cls._initialize()
+        if cls._initialized:
             _diagnostic_file_logger.debug(message, extra={"msgId": message_id})
 
     @classmethod
     def info(cls, message: str, message_id: str):
-        AzureDiagnosticLogging._initialize()
-        if AzureDiagnosticLogging._initialized:
+        cls._initialize()
+        if cls._initialized:
             _diagnostic_file_logger.info(message, extra={"msgId": message_id})
 
     @classmethod
     def warning(cls, message: str, message_id: str):
-        AzureDiagnosticLogging._initialize()
-        if AzureDiagnosticLogging._initialized:
+        cls._initialize()
+        if cls._initialized:
             _diagnostic_file_logger.warning(message, extra={"msgId": message_id})
 
     @classmethod
     def error(cls, message: str, message_id: str):
-        AzureDiagnosticLogging._initialize()
-        if AzureDiagnosticLogging._initialized:
+        cls._initialize()
+        if cls._initialized:
             _diagnostic_file_logger.error(message, extra={"msgId": message_id})
