@@ -51,7 +51,7 @@ from ..models import (
     DeploymentResourcesState,
     ExportedProject,
     ImportProjectState,
-    ProjectKind
+    ProjectKind,
 )
 from azure.core.paging import ItemPaged
 from collections.abc import MutableMapping
@@ -358,11 +358,7 @@ class ProjectOperations(_ProjectOperationsDeploymentsRelated):
 
     @overload
     def begin_train(
-        self,
-        body: TrainingJobDetails,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: TrainingJobDetails, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[TrainingJobResult]:
         """Triggers a training job for a project.
 
@@ -413,7 +409,7 @@ class ProjectOperations(_ProjectOperationsDeploymentsRelated):
          ~azure.core.polling.LROPoller[~azure.ai.language.conversations.authoring.models.TrainingJobResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-    
+
     @distributed_trace
     def begin_train(  # type: ignore[override]
         self, body: Union[TrainingJobDetails, JSON, IO[bytes]], *, content_type: str = "application/json", **kwargs: Any

@@ -60,8 +60,9 @@ T = TypeVar("T")
 _Unset: Any = object()
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
+
 class _ProjectOperationsDeploymentsRelated(ProjectOperationsGenerated):
-    
+
     def __init__(self, *args, project_name: str, **kwargs: Any):
         super().__init__(*args, **kwargs)
         self._project_name = project_name
@@ -201,7 +202,7 @@ class _ProjectOperationsDeploymentsRelated(ProjectOperationsGenerated):
         return LROPoller[DeploymentResourcesState](
             self._client, initial, get_long_running_output, polling_method  # type: ignore
         )
-    
+
     @overload
     def begin_swap_deployments(
         self, body: SwapDeploymentsDetails, *, content_type: str = "application/json", **kwargs: Any
@@ -320,7 +321,7 @@ class _ProjectOperationsDeploymentsRelated(ProjectOperationsGenerated):
         return LROPoller[SwapDeploymentsState](
             self._client, initial, get_long_running_output, polling_method  # type: ignore
         )
-    
+
     @overload
     def begin_unassign_deployment_resources(
         self, body: UnassignDeploymentResourcesDetails, *, content_type: str = "application/json", **kwargs: Any
