@@ -13,25 +13,16 @@ import uuid
 from datetime import datetime, timezone
 from typing import Any, Optional, Dict
 from enum import Enum
-from azure.ai.contentunderstanding.models import ContentClassifier, ClassifierCategory, ContentField, FieldType
-
-
-# Dictionary mapping FieldType values to their corresponding attribute names
-FIELD_TYPE_TO_ATTRIBUTE = {
-    FieldType.STRING: "value_string",
-    FieldType.NUMBER: "value_number",
-    FieldType.INTEGER: "value_integer",
-    FieldType.DATE: "value_date",
-    FieldType.TIME: "value_time",
-    FieldType.BOOLEAN: "value_boolean",
-    FieldType.ARRAY: "value_array",
-    FieldType.OBJECT: "value_object",
-}
+from azure.ai.contentunderstanding.models import (
+    ContentClassifier,
+    ClassifierCategory,
+    ContentField,
+)
 
 
 def get_field_value(fields: Dict[str, ContentField], field_name: str) -> Any:
     """
-    Extract the actual value from a ContentField based on its type.
+    Extract the actual value from a ContentField using the unified .value property.
 
     Args:
         fields: A dictionary of field names to ContentField objects.
@@ -42,23 +33,11 @@ def get_field_value(fields: Dict[str, ContentField], field_name: str) -> Any:
     """
     if not fields or field_name not in fields:
         return None
+
     field_data = fields[field_name]
 
-    # If this is a ContentField object, extract the value based on its type
-    if hasattr(field_data, "type"):
-        field_type = field_data.type
-        
-        # Use dictionary lookup to get the appropriate attribute name
-        attribute_name = FIELD_TYPE_TO_ATTRIBUTE.get(FieldType(field_type))
-        if attribute_name:
-            return getattr(field_data, attribute_name, None)
-        else:
-            return None
-    else:
-        # This case should ideally not be reached if `fields` always contains ContentField objects
-        # but included for robustness if `get_field_value` is called with raw dicts.
-        # For this specific sample, it's expected to always receive ContentField objects from `content.fields`.
-        raise ValueError(f"type is expected for ContentField object, got {type(field_data)}")
+    # Simply use the .value property which works for all ContentField types
+    return field_data.value
 
 
 class PollerType(Enum):
@@ -194,7 +173,7 @@ def read_image_to_base64(image_path: str) -> str:
 
     with open(image_path, "rb") as image_file:
         image_bytes = image_file.read()
-        return base64.b64encode(image_bytes).decode('utf-8')
+        return base64.b64encode(image_bytes).decode("utf-8")
 
 
 def read_image_to_base64_bytes(image_path: str) -> bytes:
@@ -204,6 +183,3 @@ def read_image_to_base64_bytes(image_path: str) -> bytes:
     with open(image_path, "rb") as image_file:
         image_bytes = image_file.read()
         return base64.b64encode(image_bytes)
-
-
-
