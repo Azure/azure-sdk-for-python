@@ -69,51 +69,6 @@ class TestConversationAuthoringProjectProjectOperations(ConversationAuthoringPro
 
     @ConversationAuthoringProjectPreparer()
     @recorded_by_proxy
-    def test_project_get_project(self, conversationauthoringproject_endpoint):
-        client = self.create_client(endpoint=conversationauthoringproject_endpoint)
-        response = client.project.get_project(
-            project_name="str",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @ConversationAuthoringProjectPreparer()
-    @recorded_by_proxy
-    def test_project_copy_project_authorization(self, conversationauthoringproject_endpoint):
-        client = self.create_client(endpoint=conversationauthoringproject_endpoint)
-        response = client.project.copy_project_authorization(
-            project_name="str",
-            body={"projectKind": "str", "allowOverwrite": bool, "storageInputContainerName": "str"},
-            project_kind="str",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @ConversationAuthoringProjectPreparer()
-    @recorded_by_proxy
-    def test_project_begin_train(self, conversationauthoringproject_endpoint):
-        client = self.create_client(endpoint=conversationauthoringproject_endpoint)
-        response = client.project.begin_train(
-            project_name="str",
-            body={
-                "modelLabel": "str",
-                "trainingMode": "str",
-                "dataGenerationSettings": {
-                    "dataGenerationConnectionInfo": {"deploymentName": "str", "kind": "str", "resourceId": "str"},
-                    "enableDataGeneration": bool,
-                },
-                "evaluationOptions": {"kind": "str", "testingSplitPercentage": 0, "trainingSplitPercentage": 0},
-                "trainingConfigVersion": "str",
-            },
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @ConversationAuthoringProjectPreparer()
-    @recorded_by_proxy
     def test_project_begin_cancel_training_job(self, conversationauthoringproject_endpoint):
         client = self.create_client(endpoint=conversationauthoringproject_endpoint)
         response = client.project.begin_cancel_training_job(

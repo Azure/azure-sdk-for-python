@@ -40,6 +40,11 @@ from ._models import (
     ProjectDeletionState,
     ExportedProject,
     ImportProjectState,
+    CopyProjectDetails,
+    TrainingJobDetails,
+    CopyProjectDetails,
+    EvaluationJobResult,
+    EvaluationState,
 )
 from ._enums import ExportedProjectFormat
 
@@ -219,4 +224,9 @@ __all__ = [
     "ExportedProjectFormat",
     "ExportedProject",
     "ImportProjectState",
+    "CopyProjectDetails",
+    "TrainingJobDetails",
+    "CopyProjectDetails",
+    "EvaluationJobResult",
+    "EvaluationState",
 ]

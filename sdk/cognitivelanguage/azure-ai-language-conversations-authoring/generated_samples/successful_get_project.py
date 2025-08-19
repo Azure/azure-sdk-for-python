@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from azure.ai.language.conversations.authoring import ConversationAuthoringProjectClient
+from azure.ai.language.conversations.authoring import ConversationAuthoringClient
 
 """
 # PREREQUISITES
@@ -17,13 +17,12 @@ from azure.ai.language.conversations.authoring import ConversationAuthoringProje
 
 
 def main():
-    client = ConversationAuthoringProjectClient(
+    client = ConversationAuthoringClient(
         endpoint="{Endpoint}",
         credential="CREDENTIAL",
-        project_name="PROJECT_NAME",
     )
 
-    response = client.project.get_project(
+    response = client.get_project(
         project_name="myproject",
     )
     print(response)

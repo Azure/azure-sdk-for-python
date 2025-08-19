@@ -79,12 +79,7 @@ class TrainedModelOperations(TrainedModelOperationsGenerated):
 
     @overload
     def begin_evaluate_model(
-        self,
-        trained_model_label: str,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, trained_model_label: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[EvaluationJobResult]:
         """Triggers evaluation operation on a trained model.
 
@@ -104,12 +99,7 @@ class TrainedModelOperations(TrainedModelOperationsGenerated):
 
     @overload
     def begin_evaluate_model(
-        self,
-        trained_model_label: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, trained_model_label: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[EvaluationJobResult]:
         """Triggers evaluation operation on a trained model.
 
@@ -136,7 +126,7 @@ class TrainedModelOperations(TrainedModelOperationsGenerated):
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[EvaluationJobResult]:
-        return super().begin_evaluate_model(
+        return super()._begin_evaluate_model(
             project_name=self._project_name,
             trained_model_label=trained_model_label,
             body=body,

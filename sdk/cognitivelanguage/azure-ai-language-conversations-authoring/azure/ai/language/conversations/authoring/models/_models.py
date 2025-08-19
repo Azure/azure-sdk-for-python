@@ -1411,7 +1411,7 @@ class EvaluationState(_Model):
     :ivar errors: The errors encountered while executing the job.
     :vartype errors: list[~azure.core.ODataV4Format]
     :ivar result: Represents evaluation task detailed result. Required.
-    :vartype result: ~azure.ai.language.conversations.authoring.models.EvaluationJobResult
+    :vartype result: ~azure.ai.language.conversations.authoring.models._models.EvaluationJobResult
     """
 
     job_id: str = rest_field(name="jobId", visibility=["read"])
@@ -1437,7 +1437,9 @@ class EvaluationState(_Model):
     """The warnings that were encountered while executing the job."""
     errors: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The errors encountered while executing the job."""
-    result: "_models.EvaluationJobResult" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    result: "_models._models.EvaluationJobResult" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Represents evaluation task detailed result. Required."""
 
     @overload
@@ -1447,7 +1449,7 @@ class EvaluationState(_Model):
         created_on: datetime.datetime,
         last_updated_on: datetime.datetime,
         status: Union[str, "_models.OperationStatus"],
-        result: "_models.EvaluationJobResult",
+        result: "_models._models.EvaluationJobResult",
         expires_on: Optional[datetime.datetime] = None,
         warnings: Optional[List[ODataV4Format]] = None,
         errors: Optional[List[ODataV4Format]] = None,
@@ -3312,7 +3314,7 @@ class TrainingJobDetails(_Model):
     :ivar data_generation_settings: For customers to populate if they wish to use data generation
      for their model training job.
     :vartype data_generation_settings:
-     ~azure.ai.language.conversations.authoring.models.DataGenerationSettings
+     ~azure.ai.language.conversations.authoring.models._models.DataGenerationSettings
     """
 
     model_label: str = rest_field(name="modelLabel", visibility=["read", "create", "update", "delete", "query"])
@@ -3332,7 +3334,7 @@ class TrainingJobDetails(_Model):
     )
     """Represents the evaluation options. By default, the evaluation kind is percentage, with training
      split percentage as 80, and testing split percentage as 20."""
-    data_generation_settings: Optional["_models.DataGenerationSettings"] = rest_field(
+    data_generation_settings: Optional["_models._models.DataGenerationSettings"] = rest_field(
         name="dataGenerationSettings", visibility=["read", "create", "update", "delete", "query"]
     )
     """For customers to populate if they wish to use data generation for their model training job."""
@@ -3345,7 +3347,7 @@ class TrainingJobDetails(_Model):
         training_mode: Union[str, "_models.TrainingMode"],
         training_config_version: Optional[str] = None,
         evaluation_options: Optional["_models.EvaluationDetails"] = None,
-        data_generation_settings: Optional["_models.DataGenerationSettings"] = None,
+        data_generation_settings: Optional["_models._models.DataGenerationSettings"] = None,
     ) -> None: ...
 
     @overload
