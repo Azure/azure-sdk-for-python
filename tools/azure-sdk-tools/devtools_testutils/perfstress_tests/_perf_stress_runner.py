@@ -300,7 +300,7 @@ class _PerfStressRunner:
                 self._print_latencies(latencies)
                 if self.per_test_args.results_file:
                     # Not all tests will have a size argument
-                    size = self.per_test_args.size if hasattr(self.per_test_args, "size") else None
+                    size = getattr(self.per_test_args, "size", None)
                     self._write_results_file(self.per_test_args.results_file, latencies, size)
         else:
             self.logger.info("Completed without generating operation statistics.")
