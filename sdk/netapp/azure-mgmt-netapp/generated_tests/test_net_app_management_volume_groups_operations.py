@@ -24,7 +24,7 @@ class TestNetAppManagementVolumeGroupsOperations(AzureMgmtRecordedTestCase):
         response = self.client.volume_groups.list_by_net_app_account(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-03-01",
+            api_version="2025-06-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestNetAppManagementVolumeGroupsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             account_name="str",
             volume_group_name="str",
-            api_version="2025-03-01",
+            api_version="2025-06-01",
         )
 
         # please add some check logic here by yourself
@@ -68,6 +68,7 @@ class TestNetAppManagementVolumeGroupsOperations(AzureMgmtRecordedTestCase):
                         "creationToken": "str",
                         "subnetId": "str",
                         "usageThreshold": 107374182400,
+                        "acceptGrowCapacityPoolForShortTermCloneSplit": "str",
                         "actualThroughputMibps": 0.0,
                         "avsDataStore": "Disabled",
                         "backupId": "str",
@@ -126,6 +127,7 @@ class TestNetAppManagementVolumeGroupsOperations(AzureMgmtRecordedTestCase):
                         "fileAccessLogs": "Disabled",
                         "fileSystemId": "str",
                         "id": "str",
+                        "inheritedSizeInBytes": 0,
                         "isDefaultQuotaEnabled": False,
                         "isLargeVolume": False,
                         "isRestoring": bool,
@@ -166,7 +168,7 @@ class TestNetAppManagementVolumeGroupsOperations(AzureMgmtRecordedTestCase):
                     }
                 ],
             },
-            api_version="2025-03-01",
+            api_version="2025-06-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -179,7 +181,7 @@ class TestNetAppManagementVolumeGroupsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             account_name="str",
             volume_group_name="str",
-            api_version="2025-03-01",
+            api_version="2025-06-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
