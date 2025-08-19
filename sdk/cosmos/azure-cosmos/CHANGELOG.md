@@ -7,8 +7,8 @@
 #### Breaking Changes
 
 #### Bugs Fixed
-* Improved the resilience of Database Account Read metadata operation against short-lived network issues by increasing number of retries.
-* Fixed bug where during health checks read regions were marked as unavailable for write operations.
+* Improved the resilience of Database Account Read metadata operation against short-lived network issues by increasing number of retries. See [PR 42525](https://github.com/Azure/azure-sdk-for-python/pull/42525).
+* Fixed bug where during health checks read regions were marked as unavailable for write operations. See [PR 42525](https://github.com/Azure/azure-sdk-for-python/pull/42525).
 
 #### Other Changes
 
