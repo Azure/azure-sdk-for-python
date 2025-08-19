@@ -1961,12 +1961,16 @@ class Message(_Model):
     :vartype role: str
     :ivar content: The content.
     :vartype content: str
+    :ivar context: The context.
+    :vartype context: str
     """
 
     role: Optional[str] = rest_field(name="Role", visibility=["read", "create", "update", "delete", "query"])
     """The role."""
     content: Optional[str] = rest_field(name="Content", visibility=["read", "create", "update", "delete", "query"])
     """The content."""
+    context: Optional[str] = rest_field(name="Context", visibility=["read", "create", "update", "delete", "query"])
+    """The context."""
 
     @overload
     def __init__(
@@ -1974,6 +1978,7 @@ class Message(_Model):
         *,
         role: Optional[str] = None,
         content: Optional[str] = None,
+        context: Optional[str] = None,
     ) -> None: ...
 
     @overload

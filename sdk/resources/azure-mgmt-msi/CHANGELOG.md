@@ -1,5 +1,21 @@
 # Release History
 
+## 8.0.0b1 (2025-08-15)
+
+### Breaking Changes
+
+  - This package now only targets the latest Api-Version available on Azure and removes APIs of other Api-Version. After this change, the package can have much smaller size. If your application requires a specific and non-latest Api-Version, it's recommended to pin this package to the previous released version; If your application always only use latest Api-Version, please ignore this change.
+  - Model `Identity` deleted or renamed its instance variable `isolation_scope`
+  - Model `IdentityUpdate` deleted or renamed its instance variable `isolation_scope`
+  - Deleted or renamed model `IsolationScope`
+
+## 7.1.0 (2025-07-21)
+
+### Features Added
+
+  - Model Identity has a new parameter isolation_scope
+  - Model IdentityUpdate has a new parameter isolation_scope
+
 ## 7.1.0b1 (2023-02-16)
 
 ### Other Changes

@@ -1,3 +1,46 @@
+[build-system]
+requires = ["setuptools>=77.0.3", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "azure-identity-broker"
+authors = [
+    {name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com"},
+]
+description = "Microsoft Azure Identity Broker plugin for Python"
+keywords = ["azure", "azure sdk"]
+requires-python = ">=3.9"
+license = "MIT"
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+dependencies = [
+    "azure-identity<2.0.0,>=1.18.0",
+    "msal[broker]>=1.33.0,<2",
+]
+dynamic = ["version", "readme"]
+
+[project.urls]
+repository = "https://github.com/Azure/azure-sdk-for-python"
+
+[tool.setuptools.dynamic]
+version = {attr = "azure.identity.broker._version.VERSION"}
+readme = {file = ["README.md", "CHANGELOG.md"], content-type = "text/markdown"}
+
+[tool.setuptools.packages.find]
+include = ["azure.identity.broker"]
+
+[tool.setuptools.package-data]
+pytyped = ["py.typed"]
+
 [tool.azure-sdk-build]
 pyright = false
 black = true

@@ -28,7 +28,7 @@ CLI_NOT_FOUND = (
     "Please visit https://aka.ms/azure-dev for installation instructions and then,"
     "once installed, authenticate to your Azure account using 'azd auth login'."
 )
-COMMAND_LINE = ["auth", "token", "--output", "json"]
+COMMAND_LINE = ["auth", "token", "--output", "json", "--no-prompt"]
 EXECUTABLE_NAME = "azd"
 NOT_LOGGED_IN = "Please run 'azd auth login' from a command prompt to authenticate before using this credential."
 

@@ -194,11 +194,11 @@ class RunsOperations(RunsOperationsGenerated):
         :paramtype tool_choice: str or str or ~azure.ai.agents.models.AgentsToolChoiceOptionMode or
          ~azure.ai.agents.models.AgentsNamedToolChoice
         :keyword response_format: Specifies the format that the model must output. Is one of the
-         following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-         AgentsApiResponseFormat Default value is None.
+         following types: str, Union[str, "_models.AgentsResponseFormatMode"],
+         AgentsResponseFormat Default value is None.
         :paramtype response_format: Optional[Union[str,
-                               ~azure.ai.agents.models.AgentsApiResponseFormatMode,
-                               ~azure.ai.agents.models.AgentsApiResponseFormat,
+                               ~azure.ai.agents.models.AgentsResponseFormatMode,
+                               ~azure.ai.agents.models.AgentsResponseFormat,
                                ~azure.ai.agents.models.ResponseFormatJsonSchemaType]]
         :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
          Default value is None.
@@ -363,11 +363,11 @@ class RunsOperations(RunsOperationsGenerated):
         :paramtype tool_choice: str or str or ~azure.ai.agents.models.AgentsToolChoiceOptionMode or
          ~azure.ai.agents.models.AgentsNamedToolChoice
         :keyword response_format: Specifies the format that the model must output. Is one of the
-         following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-         AgentsApiResponseFormat Default value is None.
+         following types: str, Union[str, "_models.AgentsResponseFormatMode"],
+         AgentsResponseFormat Default value is None.
         :paramtype response_format: Optional[Union[str,
-                               ~azure.ai.agents.models.AgentsApiResponseFormatMode,
-                               ~azure.ai.agents.models.AgentsApiResponseFormat,
+                               ~azure.ai.agents.models.AgentsResponseFormatMode,
+                               ~azure.ai.agents.models.AgentsResponseFormat,
                                ~azure.ai.agents.models.ResponseFormatJsonSchemaType]]
         :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
          Default value is None.
@@ -507,11 +507,11 @@ class RunsOperations(RunsOperationsGenerated):
          ~azure.ai.agents.models.AgentsToolChoiceOptionMode or
          ~azure.ai.agents.models.AgentsNamedToolChoice
         :keyword response_format: Specifies the format that the model must output. Is one of the
-         following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-         AgentsApiResponseFormat Default value is None.
+         following types: str, Union[str, "_models.AgentsResponseFormatMode"],
+         AgentsResponseFormat Default value is None.
         :paramtype response_format: Optional[Union[str,
-                               ~azure.ai.agents.models.AgentsApiResponseFormatMode,
-                               ~azure.ai.agents.models.AgentsApiResponseFormat,
+                               ~azure.ai.agents.models.AgentsResponseFormatMode,
+                               ~azure.ai.agents.models.AgentsResponseFormat,
                                ~azure.ai.agents.models.ResponseFormatJsonSchemaType]]
         :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
          Default value is None.
@@ -590,6 +590,9 @@ class RunsOperations(RunsOperationsGenerated):
                     if tool_outputs:
                         run2 = self.submit_tool_outputs(thread_id=thread_id, run_id=run.id, tool_outputs=tool_outputs)
                         logger.debug("Tool outputs submitted to run: %s", run2.id)
+            elif isinstance(run.required_action, _models.SubmitToolApprovalAction):
+                logger.warning("Automatic MCP tool approval is not supported.")
+                self.cancel(thread_id=thread_id, run_id=run.id)
 
             logger.debug("Current run ID: %s with status: %s", run.id, run.status)
 
@@ -689,11 +692,11 @@ class RunsOperations(RunsOperationsGenerated):
         :paramtype tool_choice: str or str or ~azure.ai.agents.models.AgentsToolChoiceOptionMode or
          ~azure.ai.agents.models.AgentsNamedToolChoice
         :keyword response_format: Specifies the format that the model must output. Is one of the
-         following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-         AgentsApiResponseFormat Default value is None.
+         following types: str, Union[str, "_models.AgentsResponseFormatMode"],
+         AgentsResponseFormat Default value is None.
         :paramtype response_format: Optional[Union[str,
-                               ~azure.ai.agents.models.AgentsApiResponseFormatMode,
-                               ~azure.ai.agents.models.AgentsApiResponseFormat,
+                               ~azure.ai.agents.models.AgentsResponseFormatMode,
+                               ~azure.ai.agents.models.AgentsResponseFormat,
                                ~azure.ai.agents.models.ResponseFormatJsonSchemaType]]
         :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
          Default value is None.
@@ -804,11 +807,11 @@ class RunsOperations(RunsOperationsGenerated):
         :paramtype tool_choice: str or str or ~azure.ai.agents.models.AgentsToolChoiceOptionMode or
          ~azure.ai.agents.models.AgentsNamedToolChoice
         :keyword response_format: Specifies the format that the model must output. Is one of the
-         following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-         AgentsApiResponseFormat Default value is None.
+         following types: str, Union[str, "_models.AgentsResponseFormatMode"],
+         AgentsResponseFormat Default value is None.
         :paramtype response_format: Optional[Union[str,
-                               ~azure.ai.agents.models.AgentsApiResponseFormatMode,
-                               ~azure.ai.agents.models.AgentsApiResponseFormat,
+                               ~azure.ai.agents.models.AgentsResponseFormatMode,
+                               ~azure.ai.agents.models.AgentsResponseFormat,
                                ~azure.ai.agents.models.ResponseFormatJsonSchemaType]]
         :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
          Default value is None.
@@ -990,11 +993,11 @@ class RunsOperations(RunsOperationsGenerated):
         :paramtype tool_choice: str or str or ~azure.ai.agents.models.AgentsToolChoiceOptionMode or
          ~azure.ai.agents.models.AgentsNamedToolChoice
         :keyword response_format: Specifies the format that the model must output. Is one of the
-         following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-         AgentsApiResponseFormat Default value is None.
+         following types: str, Union[str, "_models.AgentsResponseFormatMode"],
+         AgentsResponseFormat Default value is None.
         :paramtype response_format: Optional[Union[str,
-                               ~azure.ai.agents.models.AgentsApiResponseFormatMode,
-                               ~azure.ai.agents.models.AgentsApiResponseFormat,
+                               ~azure.ai.agents.models.AgentsResponseFormatMode,
+                               ~azure.ai.agents.models.AgentsResponseFormat,
                                ~azure.ai.agents.models.ResponseFormatJsonSchemaType]]
         :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
          Default value is None.
@@ -2265,7 +2268,7 @@ class VectorStoreFilesOperations(VectorStoreFilesOperationsGenerated):
 
     @distributed_trace
     def delete(self, vector_store_id: str, file_id: str, **kwargs: Any) -> None:
-        """Deletes a vector store file. This removes the file‐to‐store link (does not delete the file
+        """Deletes a vector store file. This removes the file-to-store link (does not delete the file
         itself).
 
         :param vector_store_id: Identifier of the vector store.
