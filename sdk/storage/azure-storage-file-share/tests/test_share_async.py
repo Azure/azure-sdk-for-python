@@ -1900,3 +1900,31 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
             assert shares[0].next_provisioned_bandwidth_downgrade is not None
         finally:
             await self._delete_shares()
+
+    @FileSharePreparer()
+    @recorded_by_proxy_async
+    async def test_smb_directory_lease(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+
+        share1 = self.fsc.get_share_client(self.get_resource_name(TEST_SHARE_PREFIX) + "as1")
+        await share1.create_share(enable_smb_directory_lease=True)
+        assert (await share1.get_share_properties()).enable_smb_directory_lease == True
+        await share1.set_share_properties(access_tier="Hot", enable_smb_directory_lease=False)
+        assert (await share1.get_share_properties()).enable_smb_directory_lease == False
+
+        share2 = self.fsc.get_share_client(self.get_resource_name(TEST_SHARE_PREFIX) + "as2")
+        await share2.create_share(enable_smb_directory_lease=False)
+        assert (await share2.get_share_properties()).enable_smb_directory_lease == False
+        await share2.set_share_properties(access_tier="Hot", enable_smb_directory_lease=True)
+        assert (await share2.get_share_properties()).enable_smb_directory_lease == True
+
+        shares = []
+        async for s in self.fsc.list_shares(name_starts_with=self.get_resource_name(TEST_SHARE_PREFIX)):
+            shares.append(s)
+
+        assert shares is not None
+        assert shares[0].enable_smb_directory_lease == False
+        assert shares[1].enable_smb_directory_lease == True
