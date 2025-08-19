@@ -336,7 +336,7 @@ class TestAsyncAvailabilityStrategy:
         container = db.get_container_client(container_id)
         return {"client": client, "db": db, "col": container}
 
-    def get_custome_transport_with_fault_injection(
+    def get_custom_transport_with_fault_injection(
             self,
             predicate,
             error_lambda):
@@ -425,7 +425,7 @@ class TestAsyncAvailabilityStrategy:
             500,  # Add delay to trigger hedging
             CosmosHttpResponseError(status_code=400, message="Injected Error")
         )
-        custom_transport = self.get_custome_transport_with_fault_injection(predicate, error_lambda)
+        custom_transport = self.get_custom_transport_with_fault_injection(predicate, error_lambda)
 
         strategy = CrossRegionHedgingStrategy(
             threshold=timedelta(milliseconds=100),
@@ -454,7 +454,7 @@ class TestAsyncAvailabilityStrategy:
                     operation,
                     setup_with_transport['col'],
                     doc,
-                    expected_uris,
+                    [uri_down, failed_over_uri],
                     [],
                     availability_strategy=strategy if availability_strategy_level == "request" else None)
             else:
@@ -463,8 +463,8 @@ class TestAsyncAvailabilityStrategy:
                         operation,
                         setup_with_transport['col'],
                         doc,
-                        expected_uris,
-                        [],
+                        [uri_down],
+                        [failed_over_uri],
                         availability_strategy=strategy if availability_strategy_level == "request" else None)
                 assert exc_info.value.status_code == 400
 
@@ -474,7 +474,7 @@ class TestAsyncAvailabilityStrategy:
                     operation,
                     setup_with_transport['col'],
                     doc,
-                    expected_uris,
+                    [uri_down, failed_over_uri],
                     [],
                     retry_write=True,
                     availability_strategy=strategy if availability_strategy_level == "request" else None)
@@ -484,8 +484,8 @@ class TestAsyncAvailabilityStrategy:
                         operation,
                         setup_with_transport['col'],
                         doc,
-                        expected_uris,
-                        [],
+                        [uri_down],
+                        [failed_over_uri],
                         availability_strategy=strategy if availability_strategy_level == "request" else None)
                 assert exc_info.value.status_code == 400
 
@@ -506,7 +506,7 @@ class TestAsyncAvailabilityStrategy:
             CosmosHttpResponseError(status_code=status_code, message=f"Injected {status_code} Error", sub_status_code=sub_status_code)
         )
 
-        custom_transport = self.get_custome_transport_with_fault_injection(predicate, error_lambda)
+        custom_transport = self.get_custom_transport_with_fault_injection(predicate, error_lambda)
 
         # setup fault injection in first preferred region
         predicate_first_region = lambda r: (FaultInjectionTransportAsync.predicate_is_document_operation(r) and
@@ -579,7 +579,7 @@ class TestAsyncAvailabilityStrategy:
             ServiceResponseError(message="Generic Service Error")
         )
 
-        custom_transport = self.get_custome_transport_with_fault_injection(predicate, error_lambda)
+        custom_transport = self.get_custom_transport_with_fault_injection(predicate, error_lambda)
 
         # setup fault injection in first preferred region
         predicate_first_region = lambda r: (FaultInjectionTransportAsync.predicate_is_document_operation(r) and
@@ -656,7 +656,7 @@ class TestAsyncAvailabilityStrategy:
             CosmosHttpResponseError(status_code=400, message="Injected Error")
             # using non-retriable errors to verify the request will only go to the first region
         )
-        custom_transport = self.get_custome_transport_with_fault_injection(predicate, error_lambda)
+        custom_transport = self.get_custom_transport_with_fault_injection(predicate, error_lambda)
         setup_with_transport = await self.setup_method_with_custom_transport(
             setup['write_locations'],
             setup['read_locations'],
@@ -704,7 +704,7 @@ class TestAsyncAvailabilityStrategy:
             500,  # Add delay to trigger hedging
             CosmosHttpResponseError(status_code=400, message="Injected Error")
         )
-        custom_transport = self.get_custome_transport_with_fault_injection(predicate, error_lambda)
+        custom_transport = self.get_custom_transport_with_fault_injection(predicate, error_lambda)
         setup_with_transport = await self.setup_method_with_custom_transport(
             setup['write_locations'],
             setup['read_locations'],
@@ -750,7 +750,7 @@ class TestAsyncAvailabilityStrategy:
             500,  # Add delay to trigger hedging
             CosmosHttpResponseError(status_code=400, message="Injected Error")
         )
-        custom_transport = self.get_custome_transport_with_fault_injection(predicate, error_lambda)
+        custom_transport = self.get_custom_transport_with_fault_injection(predicate, error_lambda)
         setup_with_transport = await self.setup_method_with_custom_transport(
             setup['write_locations'],
             setup['read_locations'],
@@ -802,7 +802,7 @@ class TestAsyncAvailabilityStrategy:
             500,  # Add delay to trigger hedging
             CosmosHttpResponseError(status_code=400, message="Injected Error")
         )
-        custom_transport = self.get_custome_transport_with_fault_injection(predicate, error_lambda)
+        custom_transport = self.get_custom_transport_with_fault_injection(predicate, error_lambda)
         setup_with_transport = await self.setup_method_with_custom_transport(
             setup['write_locations'],
             setup['read_locations'],
@@ -875,7 +875,7 @@ class TestAsyncAvailabilityStrategy:
                 CosmosHttpResponseError(status_code=503, message="Injected Error")
             )
 
-            custom_transport = self.get_custome_transport_with_fault_injection(predicate, error_lambda)
+            custom_transport = self.get_custom_transport_with_fault_injection(predicate, error_lambda)
 
             strategy = CrossRegionHedgingStrategy(
                 threshold=timedelta(milliseconds=100),

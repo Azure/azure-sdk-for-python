@@ -86,10 +86,6 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
     if not request.url.startswith(base_url):
         request.url = _replace_url_prefix(request.url, base_url)
 
-    # For each retry, check if request should be cancelled due to sibling requests already completed - used for when hedging enabled
-    if request_params.should_cancel_request():
-        raise CancelledError("The request has been cancelled")
-
     parse_result = urlparse(request.url)
 
     # The requests library now expects header values to be strings only starting 2.11,
