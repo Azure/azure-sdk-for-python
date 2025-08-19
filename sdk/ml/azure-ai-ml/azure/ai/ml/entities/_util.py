@@ -600,6 +600,9 @@ def get_type_from_spec(data: dict, *, valid_keys: Iterable[str]) -> str:
     """
     _type, _ = extract_label(data.get(CommonYamlFields.TYPE, None))
 
+    # Normalize type to lowercase for case-insensitive comparison
+    _type = _type.lower() if _type else _type
+
     # we should keep at least 1 place outside _internal to enable internal components
     # and this is the only place
     try_enable_internal_components()

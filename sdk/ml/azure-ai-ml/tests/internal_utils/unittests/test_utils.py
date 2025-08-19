@@ -8,13 +8,15 @@ from azure.ai.ml._utils.utils import (
     _get_mfe_base_url_from_batch_endpoint,
     dict_eq,
     get_all_data_binding_expressions,
+    get_valid_dot_keys_with_wildcard,
     is_data_binding_expression,
     map_single_brackets_and_warn,
     write_to_shared_file,
-    get_valid_dot_keys_with_wildcard,
 )
+from azure.ai.ml.constants._component import NodeType
 from azure.ai.ml.entities import BatchEndpoint
-from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
+from azure.ai.ml.entities._util import convert_ordered_dict_to_dict, get_type_from_spec
+from azure.ai.ml.exceptions import ValidationException
 
 
 @pytest.mark.unittest
@@ -120,3 +122,22 @@ class TestUtils:
             "deep.*.*",
             validate_func=lambda _root, _parts: _parts[1] == "l1_2",
         ) == ["deep.l1_2.l2"]
+
+    def test_get_type_from_spec_case_insensitive(self):
+        """Test that get_type_from_spec normalizes type to lowercase for case-insensitive validation."""
+        valid_keys = [NodeType.COMMAND, NodeType.PARALLEL]
+
+        # Test various cases all normalize to lowercase
+        test_cases = [
+            ({"type": "command"}, "command"),  # lowercase
+            ({"type": "Command"}, "command"),  # uppercase
+            ({"type": "PARALLEL"}, "parallel"),  # all caps
+        ]
+
+        for data, expected in test_cases:
+            result = get_type_from_spec(data, valid_keys=valid_keys)
+            assert result == expected
+
+        # Test invalid type still raises exception
+        with pytest.raises(ValidationException):
+            get_type_from_spec({"type": "InvalidType"}, valid_keys=valid_keys)
