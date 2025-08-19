@@ -8,8 +8,11 @@
 FILE: sample_orchestration_prediction_async.py
 
 DESCRIPTION:
-    This sample demonstrates how to analyze an utterance using an Orchestration project (async).
+    This sample demonstrates how to analyze user query using an orchestration project.
+    In this sample, orchestration project's top intent will map to a Qna project.
 
+    For more info about how to setup a CLU orchestration project, see the README.
+    
 USAGE:
     python sample_orchestration_prediction_async.py
 

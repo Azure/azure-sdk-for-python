@@ -4,23 +4,17 @@ import pytest
 from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer, recorded_by_proxy
 from azure.ai.language.conversations.aio import ConversationAnalysisClient
 from azure.ai.language.conversations.models import (
-    ConversationalAITask,
-    ConversationalAIAnalysisInput,
-    TextConversation,
+    ConversationLanguageUnderstandingInput,
+    ConversationAnalysisInput,
     TextConversationItem,
-    ConversationalAILanguageUnderstandingActionContent,
+    ConversationLanguageUnderstandingActionContent,
     AnalyzeConversationActionResult,
     StringIndexType,
-    ConversationalAITaskResult,
-    ConversationalAIResult,
-    ConversationalAIAnalysis,
-    ConversationalAIIntent,
-    ConversationalAIEntity,
-    ConversationItemRange,
+    ConversationActionResult,
+    ConversationPrediction,
     DateTimeResolution,
-    EntitySubtype,
-    EntityTag,
 )
+
 from typing import cast
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.core.async_paging import AsyncItemPaged
