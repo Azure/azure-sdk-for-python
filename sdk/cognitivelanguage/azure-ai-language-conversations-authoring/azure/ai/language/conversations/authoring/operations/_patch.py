@@ -58,6 +58,7 @@ from ..models import (
     StringIndexType,
     UtteranceEvaluationResult,
     ExportedProjectFormat,
+    JobsPollingMethod
 )
 from azure.core.paging import ItemPaged
 from collections.abc import MutableMapping
@@ -252,6 +253,7 @@ class DeploymentOperations(DeploymentOperationsGenerated):
         super().__init__(*args, **kwargs)
         self._project_name = project_name
 
+    
     @distributed_trace
     def begin_delete_deployment(self, deployment_name: str, **kwargs: Any) -> LROPoller[None]:  # type: ignore[override]
         return super().begin_delete_deployment(
@@ -377,24 +379,22 @@ class DeploymentOperations(DeploymentOperationsGenerated):
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
 
         if cont_token is None:
-            raw_result = self._deploy_project_initial(
-                project_name=self._project_name,   # <── use instance project name
+            initial = self._deploy_project_initial(
+                project_name=self._project_name,
                 deployment_name=deployment_name,
                 body=body,
                 content_type=content_type,
-                cls=lambda x, y, z: x,
+                cls=lambda x, y, z: x,  # return PipelineResponse
                 headers=_headers,
                 params=_params,
                 **kwargs
             )
-            raw_result.http_response.read()  # type: ignore
-
+            initial.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response = pipeline_response.http_response
-            deserialized = _deserialize(DeploymentState, response.json())
-
+            # Final payload is at the root; deserialize into typed model
+            deserialized = _deserialize(DeploymentState, pipeline_response.http_response.json())
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -405,7 +405,8 @@ class DeploymentOperations(DeploymentOperationsGenerated):
 
         if polling is True:
             polling_method: PollingMethod = cast(
-                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+                PollingMethod,
+                JobsPollingMethod(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
             )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
@@ -421,8 +422,8 @@ class DeploymentOperations(DeploymentOperationsGenerated):
             )
 
         return LROPoller[DeploymentState](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-    )
+            self._client, initial, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace
     def get_deployment(self, deployment_name: str, **kwargs: Any) -> ProjectDeployment:  # type: ignore[override]
