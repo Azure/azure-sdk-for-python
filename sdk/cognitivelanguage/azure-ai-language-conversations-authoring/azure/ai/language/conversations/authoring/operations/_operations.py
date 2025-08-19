@@ -3010,7 +3010,7 @@ class DeploymentOperations:
         return deserialized  # type: ignore
 
     @overload
-    def begin_deploy_project(
+    def _begin_deploy_project(
         self,
         project_name: str,
         deployment_name: str,
@@ -3036,7 +3036,7 @@ class DeploymentOperations:
         """
 
     @overload
-    def begin_deploy_project(
+    def _begin_deploy_project(
         self,
         project_name: str,
         deployment_name: str,
@@ -3062,7 +3062,7 @@ class DeploymentOperations:
         """
 
     @overload
-    def begin_deploy_project(
+    def _begin_deploy_project(
         self,
         project_name: str,
         deployment_name: str,
@@ -3088,7 +3088,7 @@ class DeploymentOperations:
         """
 
     @distributed_trace
-    def begin_deploy_project(
+    def _begin_deploy_project(
         self,
         project_name: str,
         deployment_name: str,
