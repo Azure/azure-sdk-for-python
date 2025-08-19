@@ -21,7 +21,7 @@ class _ServiceUnavailableRetryPolicy(object):
         # If an account only has 1 region, then we still want to retry once on the same region
         self._max_retry_attempt_count = max(2, len(self.global_endpoint_manager.location_cache
                                                    .read_regional_routing_contexts))
-        if _OperationType.IsWriteOperation(self.request.operation_type):
+        if self.request and _OperationType.IsWriteOperation(self.request.operation_type):
             self._max_retry_attempt_count = max(2, len(
                 self.global_endpoint_manager.location_cache.write_regional_routing_contexts))
 
