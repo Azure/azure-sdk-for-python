@@ -13,9 +13,6 @@ from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
 
-if TYPE_CHECKING:
-    from azure.core.polling import PollingMethod
-
 from ._generated._client import PhoneNumbersClient as PhoneNumbersClientGen
 from ._generated.models import (
     PhoneNumberSearchRequest,
@@ -45,6 +42,9 @@ from ._shared.auth_policy_utils import get_authentication_policy
 from ._shared.utils import parse_connection_str
 from ._version import SDK_MONIKER
 from ._api_versions import DEFAULT_VERSION
+
+if TYPE_CHECKING:
+    from azure.core.polling import PollingMethod
 
 _DEFAULT_POLLING_INTERVAL_IN_SECONDS = 2
 
@@ -132,7 +132,7 @@ class PhoneNumbersClient:
             search_id=search_id, agree_to_not_resell=agree_to_not_resell)
 
         return self._phone_number_client.phone_numbers.begin_purchase_phone_numbers(
-            body=purchase_request, 
+            body=purchase_request,
             polling_interval=polling_interval,
             continuation_token=continuation_token,
             polling=polling,
@@ -141,8 +141,8 @@ class PhoneNumbersClient:
 
     @distributed_trace
     def begin_release_phone_number(
-        self, 
-        phone_number: str, 
+        self,
+        phone_number: str,
         *,
         continuation_token: Optional[str] = None,
         polling: Union[bool, "PollingMethod"] = True,
@@ -164,7 +164,7 @@ class PhoneNumbersClient:
         :rtype: ~azure.core.polling.LROPoller[None]
         """
         return self._phone_number_client.phone_numbers.begin_release_phone_number(
-            phone_number, 
+            phone_number,
             polling_interval=polling_interval,
             continuation_token=continuation_token,
             polling=polling,
@@ -224,8 +224,8 @@ class PhoneNumbersClient:
             area_code=area_code,
         )
         return self._phone_number_client.phone_numbers.begin_search_available_phone_numbers(
-            country_code, 
-            search_request, 
+            country_code,
+            search_request,
             polling_interval=polling_interval,
             continuation_token=continuation_token,
             polling=polling,
@@ -272,8 +272,8 @@ class PhoneNumbersClient:
             raise ValueError("phone_number can't be empty")
 
         poller = self._phone_number_client.phone_numbers.begin_update_capabilities(
-            phone_number, 
-            body=capabilities_request, 
+            phone_number,
+            body=capabilities_request,
             polling_interval=polling_interval,
             continuation_token=continuation_token,
             polling=polling,
@@ -287,7 +287,8 @@ class PhoneNumbersClient:
             isinstance(result_properties.get("status"), str) and
             result_properties["status"].lower() == "failed"):
             error_info = result_properties.get("error", {})
-            error_message = error_info.get("message", "Operation failed") if isinstance(error_info, dict) else "Operation failed"
+            error_message = (error_info.get("message", "Operation failed") 
+                           if isinstance(error_info, dict) else "Operation failed")
             raise HttpResponseError(message=error_message)
 
         return poller
@@ -306,7 +307,7 @@ class PhoneNumbersClient:
 
     @distributed_trace
     def list_purchased_phone_numbers(
-        self, 
+        self,
         *,
         skip: int = 0,
         top: int = 100,
@@ -328,7 +329,7 @@ class PhoneNumbersClient:
 
     @distributed_trace
     def list_available_countries(
-        self, 
+        self,
         *,
         skip: int = 0,
         **kwargs: Any
@@ -352,8 +353,8 @@ class PhoneNumbersClient:
 
     @distributed_trace
     def list_available_localities(
-        self, 
-        country_code: str, 
+        self,
+        country_code: str,
         *,
         administrative_division: Optional[str] = None,
         skip: int = 0,
@@ -387,8 +388,8 @@ class PhoneNumbersClient:
 
     @distributed_trace
     def list_available_offerings(
-        self, 
-        country_code: str, 
+        self,
+        country_code: str,
         *,
         phone_number_type: Optional[PhoneNumberType] = None,
         assignment_type: Optional[PhoneNumberAssignmentType] = None,
@@ -426,9 +427,9 @@ class PhoneNumbersClient:
 
     @distributed_trace
     def list_available_area_codes(
-        self, 
-        country_code: str, 
-        phone_number_type: PhoneNumberType, 
+        self,
+        country_code: str,
+        phone_number_type: PhoneNumberType,
         *,
         assignment_type: Optional[PhoneNumberAssignmentType] = None,
         locality: Optional[str] = None,
@@ -544,14 +545,14 @@ class PhoneNumbersClient:
     ) -> PhoneNumbersReservation:
         """Creates or updates a reservation by its ID.
 
-        Updates the reservation with the given ID if it exists; or creates a new one otherwise. 
-        The response will be the updated state of the reservation. 
-        Updating a reservation will extend the expiration time of the reservation to 15 minutes 
-        after the last change, up to a maximum of 2 hours from creation time. 
+        Updates the reservation with the given ID if it exists; or creates a new one otherwise.
+        The response will be the updated state of the reservation.
+        Updating a reservation will extend the expiration time of the reservation to 15 minutes
+        after the last change, up to a maximum of 2 hours from creation time.
         Partial success is possible, in which case the result will contain phone numbers with error status.
 
-        
-        :keyword reservation_id: The ID of the reservation. It must be a valid UUID. If a reservation, 
+
+        :keyword reservation_id: The ID of the reservation. It must be a valid UUID. If a reservation,
          with that ID exists it will be updated; otherwise a new reservation will be created.
         :paramtype reservation_id: str
         :keyword numbers_to_add: List of phone numbers to add to the reservation.
@@ -615,7 +616,7 @@ class PhoneNumbersClient:
         """Starts the purchase of all phone numbers in the reservation.
 
         Starts a long running operation to purchase all of the phone numbers in the reservation.
-        Purchase can only be started for active reservations that have at least one phone number. 
+        Purchase can only be started for active reservations that have at least one phone number.
         If any number requires a do-not-resell agreement, that agreement must be provided.
 
         The agreement to not resell is a legal requirement in some countries in order to purchase phone numbers.
@@ -674,7 +675,7 @@ class PhoneNumbersClient:
         :keyword phone_number_type: Required. The type of phone numbers to search for, e.g. geographic,
             or tollFree. Possible values include: "geographic", "tollFree".
         :paramtype phone_number_type: str or ~azure.communication.phonenumbers.PhoneNumberType
-        :keyword sms_capability: The SMS capability to search for. Known values are: "inbound", 
+        :keyword sms_capability: The SMS capability to search for. Known values are: "inbound",
             "outbound", "inbound_outbound", "none".
         :paramtype sms_capability: str or ~azure.communication.phonenumbers.PhoneNumberCapabilityType
         :keyword calling_capability: The calling capability to search for. Known values are: "inbound",
