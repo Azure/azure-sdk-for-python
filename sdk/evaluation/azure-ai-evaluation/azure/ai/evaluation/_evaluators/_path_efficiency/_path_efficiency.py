@@ -173,8 +173,8 @@ class PathEfficiencyEvaluator(EvaluatorBase):
         # Extract tool names from the response
         agent_steps = self._extract_tool_names_from_response(response)
 
-        agent_steps = [step.strip().casefold() for step in agent_steps]
-        ground_truth = [step.strip().casefold() for step in ground_truth]
+        agent_steps = [step.strip() for step in agent_steps]
+        ground_truth = [step.strip() for step in ground_truth]
 
         # Calculate precision, recall, and F1 scores
         metrics = self._calculate_precision_recall_f1_scores(agent_steps, ground_truth)
