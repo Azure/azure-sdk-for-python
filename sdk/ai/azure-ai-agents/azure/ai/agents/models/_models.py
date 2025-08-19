@@ -806,6 +806,46 @@ class AzureFunctionStorageQueue(_Model):
         super().__init__(*args, **kwargs)
 
 
+class AzureFunctionToolCallDetails(_Model):
+    """The Azure function call description. All the fields are present in the completed run step,
+    however
+    only some fields are present in the RunStepDeltaAzureFunctionToolCall.
+
+    :ivar name: The Azure function name.
+    :vartype name: str
+    :ivar arguments: JSON serialized function arguments.
+    :vartype arguments: str
+    :ivar output: The function output.
+    :vartype output: str
+    """
+
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The Azure function name."""
+    arguments: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """JSON serialized function arguments."""
+    output: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The function output."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        arguments: Optional[str] = None,
+        output: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class AzureFunctionToolDefinition(ToolDefinition, discriminator="azure_function"):
     """The input definition information for a azure function tool as used to configure an agent.
 
@@ -4336,8 +4376,8 @@ class RunStepToolCall(_Model):
     existing run.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    RunStepAzureAISearchToolCall, RunStepBingCustomSearchToolCall, RunStepBingGroundingToolCall,
-    RunStepBrowserAutomationToolCall, RunStepCodeInterpreterToolCall,
+    RunStepAzureAISearchToolCall, RunStepAzureFunctionToolCall, RunStepBingCustomSearchToolCall,
+    RunStepBingGroundingToolCall, RunStepBrowserAutomationToolCall, RunStepCodeInterpreterToolCall,
     RunStepConnectedAgentToolCall, RunStepDeepResearchToolCall, RunStepMicrosoftFabricToolCall,
     RunStepFileSearchToolCall, RunStepFunctionToolCall, RunStepMcpToolCall, RunStepOpenAPIToolCall,
     RunStepSharepointToolCall
@@ -4414,10 +4454,50 @@ class RunStepAzureAISearchToolCall(RunStepToolCall, discriminator="azure_ai_sear
         super().__init__(*args, type="azure_ai_search", **kwargs)
 
 
+class RunStepAzureFunctionToolCall(RunStepToolCall, discriminator="azure_function"):
+    """A record of a call to an Azure Function tool.
+
+    :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
+     Required.
+    :vartype id: str
+    :ivar type: The object type, which is always 'azure_function'. Required. Default value is
+     "azure_function".
+    :vartype type: str
+    :ivar azure_function: The description of an Azure function call. Required.
+    :vartype azure_function: ~azure.ai.agents.models.AzureFunctionToolCallDetails
+    """
+
+    type: Literal["azure_function"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always 'azure_function'. Required. Default value is
+     \"azure_function\"."""
+    azure_function: "_models.AzureFunctionToolCallDetails" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The description of an Azure function call. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        azure_function: "_models.AzureFunctionToolCallDetails",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="azure_function", **kwargs)
+
+
 class RunStepBingCustomSearchToolCall(RunStepToolCall, discriminator="bing_custom_search"):
-    """A record of a call to a bing custom search tool, issued by the model in evaluation of a defined
+    """A record of a call to a Bing Custom Search tool, issued by the model in evaluation of a defined
     tool, that represents
-    executed search with bing custom search.
+    executed search with Bing Custom Search.
 
     :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
      Required.
@@ -4425,7 +4505,8 @@ class RunStepBingCustomSearchToolCall(RunStepToolCall, discriminator="bing_custo
     :ivar type: The object type, which is always 'bing_custom_search'. Required. Default value is
      "bing_custom_search".
     :vartype type: str
-    :ivar bing_custom_search: Reserved for future use. Required.
+    :ivar bing_custom_search: The dictionary with request and response from Bing Custom Search
+     tool. Required.
     :vartype bing_custom_search: dict[str, str]
     """
 
@@ -4433,7 +4514,7 @@ class RunStepBingCustomSearchToolCall(RunStepToolCall, discriminator="bing_custo
     """The object type, which is always 'bing_custom_search'. Required. Default value is
      \"bing_custom_search\"."""
     bing_custom_search: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Reserved for future use. Required."""
+    """The dictionary with request and response from Bing Custom Search tool. Required."""
 
     @overload
     def __init__(
@@ -4465,7 +4546,8 @@ class RunStepBingGroundingToolCall(RunStepToolCall, discriminator="bing_groundin
     :ivar type: The object type, which is always 'bing_grounding'. Required. Default value is
      "bing_grounding".
     :vartype type: str
-    :ivar bing_grounding: Reserved for future use. Required.
+    :ivar bing_grounding: The dictionary with request and response from Bing Grounding search tool.
+     Required.
     :vartype bing_grounding: dict[str, str]
     """
 
@@ -4473,7 +4555,7 @@ class RunStepBingGroundingToolCall(RunStepToolCall, discriminator="bing_groundin
     """The object type, which is always 'bing_grounding'. Required. Default value is
      \"bing_grounding\"."""
     bing_grounding: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Reserved for future use. Required."""
+    """The dictionary with request and response from Bing Grounding search tool. Required."""
 
     @overload
     def __init__(
@@ -4985,7 +5067,8 @@ class RunStepDeltaToolCall(_Model):
     call details.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    RunStepDeltaAzureAISearchToolCall, RunStepDeltaBingGroundingToolCall,
+    RunStepDeltaAzureAISearchToolCall, RunStepDeltaAzureFunctionToolCall,
+    RunStepDeltaCustomBingGroundingToolCall, RunStepDeltaBingGroundingToolCall,
     RunStepDeltaCodeInterpreterToolCall, RunStepDeltaConnectedAgentToolCall,
     RunStepDeltaDeepResearchToolCall, RunStepDeltaFileSearchToolCall, RunStepDeltaFunctionToolCall,
     RunStepDeltaMcpToolCall, RunStepDeltaOpenAPIToolCall
@@ -5068,6 +5151,48 @@ class RunStepDeltaAzureAISearchToolCall(RunStepDeltaToolCall, discriminator="azu
         super().__init__(*args, type="azure_ai_search", **kwargs)
 
 
+class RunStepDeltaAzureFunctionToolCall(RunStepDeltaToolCall, discriminator="azure_function"):
+    """Represents the Azure Function tool call in a streaming run step.
+
+    :ivar index: The index of the tool call detail in the run step's tool_calls array. Required.
+    :vartype index: int
+    :ivar id: The ID of the tool call, used when submitting outputs to the run. Required.
+    :vartype id: str
+    :ivar type: The object type, which is always 'azure_function'. Required. Default value is
+     "azure_function".
+    :vartype type: str
+    :ivar azure_function: Partial description of an Azure function call. Required.
+    :vartype azure_function: ~azure.ai.agents.models.AzureFunctionToolCallDetails
+    """
+
+    type: Literal["azure_function"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always 'azure_function'. Required. Default value is
+     \"azure_function\"."""
+    azure_function: "_models.AzureFunctionToolCallDetails" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Partial description of an Azure function call. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        index: int,
+        id: str,  # pylint: disable=redefined-builtin
+        azure_function: "_models.AzureFunctionToolCallDetails",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="azure_function", **kwargs)
+
+
 class RunStepDeltaBingGroundingToolCall(RunStepDeltaToolCall, discriminator="bing_grounding"):
     """Represents the bing grounding tool call in a streaming run step.
 
@@ -5078,7 +5203,8 @@ class RunStepDeltaBingGroundingToolCall(RunStepDeltaToolCall, discriminator="bin
     :ivar type: The object type, which is always "bing_grounding". Required. Default value is
      "bing_grounding".
     :vartype type: str
-    :ivar bing_grounding: Reserved for future use. Required.
+    :ivar bing_grounding: The dictionary with request and response from Bing Grounding search tool.
+     Required.
     :vartype bing_grounding: dict[str, str]
     """
 
@@ -5086,7 +5212,7 @@ class RunStepDeltaBingGroundingToolCall(RunStepDeltaToolCall, discriminator="bin
     """The object type, which is always \"bing_grounding\". Required. Default value is
      \"bing_grounding\"."""
     bing_grounding: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Reserved for future use. Required."""
+    """The dictionary with request and response from Bing Grounding search tool. Required."""
 
     @overload
     def __init__(
@@ -5416,6 +5542,47 @@ class RunStepDeltaConnectedAgentToolCall(RunStepDeltaToolCall, discriminator="co
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, type="connected_agent", **kwargs)
+
+
+class RunStepDeltaCustomBingGroundingToolCall(RunStepDeltaToolCall, discriminator="bing_custom_search"):
+    """Represents the Bing Custom Search tool call in a streaming run step.
+
+    :ivar index: The index of the tool call detail in the run step's tool_calls array. Required.
+    :vartype index: int
+    :ivar id: The ID of the tool call, used when submitting outputs to the run. Required.
+    :vartype id: str
+    :ivar type: The object type, which is always 'bing_custom_search'. Required. Default value is
+     "bing_custom_search".
+    :vartype type: str
+    :ivar bing_custom_search: The dictionary with request and response from Bing Custom Search
+     tool. Required.
+    :vartype bing_custom_search: dict[str, str]
+    """
+
+    type: Literal["bing_custom_search"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always 'bing_custom_search'. Required. Default value is
+     \"bing_custom_search\"."""
+    bing_custom_search: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The dictionary with request and response from Bing Custom Search tool. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        index: int,
+        id: str,  # pylint: disable=redefined-builtin
+        bing_custom_search: Dict[str, str],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="bing_custom_search", **kwargs)
 
 
 class RunStepDeltaDeepResearchToolCall(RunStepDeltaToolCall, discriminator="deep_research"):

@@ -8,8 +8,8 @@ from typing import Any
 
 import json
 import jsonref
-import logging
 import os
+import re
 import pytest
 import io
 import time
@@ -22,6 +22,7 @@ from azure.ai.agents.models import (
     AzureFunctionStorageQueue,
     AgentStreamEvent,
     AgentThread,
+    BingCustomSearchTool,
     BingGroundingTool,
     BrowserAutomationTool,
     CodeInterpreterTool,
@@ -46,11 +47,15 @@ from azure.ai.agents.models import (
     ResponseFormatJsonSchemaType,
     RunAdditionalFieldList,
     RunStepDeltaAzureAISearchToolCall,
+    RunStepDeltaCustomBingGroundingToolCall,
+    RunStepBingCustomSearchToolCall,
     RunStepBingGroundingToolCall,
     RunStepBrowserAutomationToolCall,
     RunStepConnectedAgentToolCall,
     RunStepDeepResearchToolCall,
     RunStepAzureAISearchToolCall,
+    RunStepAzureFunctionToolCall,
+    RunStepDeltaAzureFunctionToolCall,
     RunStepDeltaBingGroundingToolCall,
     RunStepDeltaChunk,
     RunStepDeltaConnectedAgentToolCall,
@@ -2668,31 +2673,35 @@ class TestAgentClientAsync(TestAgentClientBase):
         await ai_client.delete_agent(agent.id)
         await ai_client.close()
 
+    def _get_azure_function_tool(self, storage_queue: str) -> AzureFunctionTool:
+        """Helper method to get an AzureFunctionTool."""
+        return AzureFunctionTool(
+            name="foo",
+            description="Get answers from the foo bot.",
+            parameters={
+                "type": "object",
+                "properties": {
+                    "query": {"type": "string", "description": "The question to ask."},
+                    "outputqueueuri": {"type": "string", "description": "The full output queue uri."},
+                },
+            },
+            input_queue=AzureFunctionStorageQueue(
+                queue_name="azure-function-foo-input",
+                storage_service_endpoint=storage_queue,
+            ),
+            output_queue=AzureFunctionStorageQueue(
+                queue_name="azure-function-tool-output",
+                storage_service_endpoint=storage_queue,
+            ),
+        )
+
     @agentClientPreparer()
     @recorded_by_proxy_async
     async def test_azure_function_call(self, **kwargs):
         """Test calling Azure functions."""
         storage_queue = kwargs["azure_ai_agents_tests_storage_queue"]
         async with self.create_client(by_endpoint=True, **kwargs) as client:
-            azure_function_tool = AzureFunctionTool(
-                name="foo",
-                description="Get answers from the foo bot.",
-                parameters={
-                    "type": "object",
-                    "properties": {
-                        "query": {"type": "string", "description": "The question to ask."},
-                        "outputqueueuri": {"type": "string", "description": "The full output queue uri."},
-                    },
-                },
-                input_queue=AzureFunctionStorageQueue(
-                    queue_name="azure-function-foo-input",
-                    storage_service_endpoint=storage_queue,
-                ),
-                output_queue=AzureFunctionStorageQueue(
-                    queue_name="azure-function-tool-output",
-                    storage_service_endpoint=storage_queue,
-                ),
-            )
+            azure_function_tool = self._get_azure_function_tool(storage_queue)
 
             await self._do_test_tool(
                 client=client,
@@ -2706,9 +2715,32 @@ class TestAgentClientAsync(TestAgentClientBase):
                     '. Always responds with "Foo says" and then the response from the tool.'
                 ),
                 prompt="What is the most prevalent element in the universe? What would foo say?",
-                # TODO: Implement the run step for AzureFunction.
-                expected_class=None,
-                specific_message_text="bar",
+                expected_class=RunStepAzureFunctionToolCall,
+                agent_message_regex="bar",
+            )
+
+    @agentClientPreparer()
+    @recorded_by_proxy_async
+    async def test_azure_function_call_streaming(self, **kwargs):
+        """Test calling Azure functions in streaming scenarios."""
+        storage_queue = kwargs["azure_ai_agents_tests_storage_queue"]
+        async with self.create_client(by_endpoint=True, **kwargs) as client:
+            azure_function_tool = self._get_azure_function_tool(storage_queue)
+
+            await self._do_test_tool_streaming(
+                client=client,
+                model_name="gpt-4o",
+                tool_to_test=azure_function_tool,
+                instructions=(
+                    "You are a helpful support agent. Use the provided function any "
+                    "time the prompt contains the string 'What would foo say?'. When "
+                    "you invoke the function, ALWAYS specify the output queue uri parameter as "
+                    f"'{storage_queue}/azure-function-tool-output'"
+                    '. Always responds with "Foo says" and then the response from the tool.'
+                ),
+                prompt="What is the most prevalent element in the universe? What would foo say?",
+                expected_delta_class=RunStepDeltaAzureFunctionToolCall,
+                agent_message_regex="bar",
             )
 
     @agentClientPreparer()
@@ -2965,7 +2997,7 @@ class TestAgentClientAsync(TestAgentClientBase):
                 instructions="You are a helpful agent that can search for information using Azure AI Search.",
                 prompt="What is the temperature rating of the cozynights sleeping bag?",
                 expected_class=RunStepAzureAISearchToolCall,
-                specific_message_text="60",
+                agent_message_regex="60",
                 uri_annotation=MessageTextUrlCitationDetails(
                     url="www.microsoft.com",
                     title="product_info_7.md",
@@ -3021,7 +3053,7 @@ class TestAgentClientAsync(TestAgentClientBase):
                 # load a VM and open a browser. Use a large polling interval to avoid tons of REST API calls in test recordings.
                 polling_interval=60,
                 expected_class=RunStepBrowserAutomationToolCall,
-                specific_message_text="the year-to-date (ytd) stock price change for microsoft (msft) is",
+                agent_message_regex="the year-to-date [(]ytd[)] stock price change for microsoft [(]msft[)] is",
             )
 
     @agentClientPreparer()
@@ -3220,12 +3252,14 @@ class TestAgentClientAsync(TestAgentClientBase):
         """Test Bing grounding tool call in non-streaming Scenario."""
         async with self.create_client(by_endpoint=True, **kwargs) as client:
             model_name = "gpt-4o"
-            openapi_tool = BingGroundingTool(connection_id=kwargs.get("azure_ai_agents_tests_bing_connection_id"))
+            bing_grounding_tool = BingGroundingTool(
+                connection_id=kwargs.get("azure_ai_agents_tests_bing_connection_id")
+            )
 
             await self._do_test_tool(
                 client=client,
                 model_name=model_name,
-                tool_to_test=openapi_tool,
+                tool_to_test=bing_grounding_tool,
                 instructions="You are helpful agent",
                 prompt="How does wikipedia explain Euler's Identity?",
                 expected_class=RunStepBingGroundingToolCall,
@@ -3241,15 +3275,67 @@ class TestAgentClientAsync(TestAgentClientBase):
         """Test Bing grounding tool call in streaming Scenario."""
         async with self.create_client(by_endpoint=True, **kwargs) as client:
             model_name = "gpt-4o"
-            openapi_tool = BingGroundingTool(connection_id=kwargs.get("azure_ai_agents_tests_bing_connection_id"))
+            bing_grounding_tool = BingGroundingTool(
+                connection_id=kwargs.get("azure_ai_agents_tests_bing_connection_id")
+            )
 
             await self._do_test_tool_streaming(
                 client=client,
                 model_name=model_name,
-                tool_to_test=openapi_tool,
+                tool_to_test=bing_grounding_tool,
                 instructions="You are helpful agent",
                 prompt="How does wikipedia explain Euler's Identity?",
                 expected_delta_class=RunStepDeltaBingGroundingToolCall,
+                uri_annotation=MessageTextUrlCitationDetails(
+                    url="*",
+                    title="*",
+                ),
+            )
+
+    @agentClientPreparer()
+    @recorded_by_proxy_async
+    async def test_custom_bing_grounding_tool(self, **kwargs):
+        """Test Bing grounding tool call in non-streaming Scenario."""
+        async with self.create_client(by_endpoint=True, **kwargs) as client:
+            model_name = "gpt-4o"
+            bing_custom_tool = BingCustomSearchTool(
+                connection_id=kwargs.get("azure_ai_agents_tests_bing_custom_connection_id"),
+                instance_name=kwargs.get("azure_ai_agents_tests_bing_configuration_name"),
+            )
+
+            await self._do_test_tool(
+                client=client,
+                model_name=model_name,
+                tool_to_test=bing_custom_tool,
+                instructions="You are helpful agent",
+                prompt="How many medals did the USA win in the 2024 summer olympics?",
+                expected_class=RunStepBingCustomSearchToolCall,
+                agent_message_regex="40.+gold.+44 silver.+42.+bronze",
+                uri_annotation=MessageTextUrlCitationDetails(
+                    url="*",
+                    title="*",
+                ),
+            )
+
+    @agentClientPreparer()
+    @recorded_by_proxy_async
+    async def test_custom_bing_grounding_tool_streaming(self, **kwargs):
+        """Test Bing grounding tool call in streaming Scenario."""
+        async with self.create_client(by_endpoint=True, **kwargs) as client:
+            model_name = "gpt-4o"
+            bing_custom_tool = BingCustomSearchTool(
+                connection_id=kwargs.get("azure_ai_agents_tests_bing_custom_connection_id"),
+                instance_name=kwargs.get("azure_ai_agents_tests_bing_configuration_name"),
+            )
+
+            await self._do_test_tool_streaming(
+                client=client,
+                model_name=model_name,
+                tool_to_test=bing_custom_tool,
+                instructions="You are helpful agent",
+                prompt="How many medals did the USA win in the 2024 summer olympics?",
+                expected_delta_class=RunStepDeltaCustomBingGroundingToolCall,
+                agent_message_regex="40.+gold.+44 silver.+42.+bronze",
                 uri_annotation=MessageTextUrlCitationDetails(
                     url="*",
                     title="*",
@@ -3266,7 +3352,7 @@ class TestAgentClientAsync(TestAgentClientBase):
         expected_class,
         headers=None,
         polling_interval=1,
-        specific_message_text=None,
+        agent_message_regex=None,
         minimal_text_length=1,
         uri_annotation=None,
         file_annotation=None,
@@ -3287,7 +3373,7 @@ class TestAgentClientAsync(TestAgentClientBase):
         :param headers: The headers used to call the agents.
                For example: {"x-ms-enable-preview": "true"}
         :param polling_interval: The polling interval (useful, when we need to wait longer times).
-        :param specific_message_text: The specific text to search in the messages.  Must be all lower-case.
+        :param agent_message_regex: The regular expression to search in the messages. Must be all lower-case.
         :param minimal_text_length: The minimal length of a text.
         :param uri_annotation: The URI annotation, which have to present in response.
         :param file_annotation: The file annotation, which have to present in response.
@@ -3335,8 +3421,8 @@ class TestAgentClientAsync(TestAgentClientBase):
 
             # Search for the specific message when asked.
             text = "\n".join([t.text.value.lower() for t in text_messages])
-            if specific_message_text:
-                assert specific_message_text in text, f"{specific_message_text} was not found in {text}."
+            if agent_message_regex:
+                assert re.findall(agent_message_regex, text.lower()), f"{agent_message_regex} was not found in {text}."
 
             # Search for the specific URL and title in the message annotation.
             if uri_annotation is not None:
@@ -3383,6 +3469,7 @@ class TestAgentClientAsync(TestAgentClientBase):
         headers=None,
         uri_annotation=None,
         file_annotation=None,
+        agent_message_regex=None,
     ):
         """
         The helper method to test the non-interactive tools in the streaming scenarios.
@@ -3396,6 +3483,7 @@ class TestAgentClientAsync(TestAgentClientBase):
                For example: {"x-ms-enable-preview": "true"}
         :param uri_annotation: The URI annotation, which have to present in response.
         :param file_annotation: The file annotation, which have to present in response.
+        :param agent_message_regex: The regular expression to search in the messages. Must be all lower-case.
         """
         if headers is None:
             headers = {}
@@ -3424,6 +3512,9 @@ class TestAgentClientAsync(TestAgentClientBase):
                 # Annotation checks
                 has_uri_annotation = uri_annotation is None
                 has_file_annotation = file_annotation is None
+                # Agent message regex
+                has_agent_message_regex = agent_message_regex is None
+                received_messages = []
                 async for event_type, event_data, _ in stream:
 
                     if isinstance(event_data, MessageDeltaChunk):
@@ -3442,6 +3533,12 @@ class TestAgentClientAsync(TestAgentClientBase):
                                 has_file_annotation = has_file_annotation or self._has_file_annotation(
                                     event_data, file_annotation
                                 )
+                            for content in event_data.content:
+                                if not has_agent_message_regex and isinstance(content, MessageTextContent):
+                                    has_agent_message_regex = re.findall(
+                                        agent_message_regex, content.text.value.lower()
+                                    )
+                                    received_messages.append(content.text.value.lower())
 
                     elif isinstance(event_data, RunStepDeltaChunk):
                         if expected_delta_class is not None:
@@ -3472,6 +3569,9 @@ class TestAgentClientAsync(TestAgentClientBase):
                 assert got_expected_delta, f"The delta tool call of type {expected_delta_class} was not found."
                 assert is_completed, "The stream was not completed."
                 assert is_run_step_created, "No run steps were created."
+                assert (
+                    has_agent_message_regex
+                ), f"The text {agent_message_regex} was not found in messages: {' '.join(received_messages)}."
 
                 assert (
                     has_uri_annotation

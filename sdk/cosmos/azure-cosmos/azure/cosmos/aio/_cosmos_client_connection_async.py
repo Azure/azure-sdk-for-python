@@ -50,6 +50,7 @@ from azure.core.pipeline.policies import (
 from azure.core.utils import CaseInsensitiveDict
 from azure.cosmos.aio._global_partition_endpoint_manager_circuit_breaker_async import (
     _GlobalPartitionEndpointManagerForCircuitBreakerAsync)
+from ._read_items_helper_async import ReadItemsHelperAsync
 
 from .. import _base as base
 from .._availability_strategy import AvailabilityStrategy
@@ -2245,6 +2246,47 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         return AsyncItemPaged(
             self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable
         )
+
+
+
+    async def read_items(
+            self,
+            collection_link: str,
+            items: Sequence[Tuple[str, PartitionKeyType]],
+            options: Optional[Mapping[str, Any]] = None,
+            **kwargs: Any
+     ) -> CosmosList:
+        """Reads many items.
+
+        :param str collection_link: The link to the document collection.
+        :param items: A list of tuples, where each tuple contains an item's ID and partition key.
+        :type items: Sequence[Tuple[str, PartitionKeyType]]
+        :param dict options: The request options for the request.
+        :return: The list of read items.
+        :rtype: CosmosList
+        """
+        if options is None:
+            options = {}
+        if not items:
+            return CosmosList([], response_headers=CaseInsensitiveDict())
+
+        partition_key_definition = await self._get_partition_key_definition(collection_link, options)
+        if not partition_key_definition:
+            raise ValueError("Could not find partition key definition for collection.")
+
+        # Extract and remove max_concurrency from kwargs
+        max_concurrency = kwargs.pop('max_concurrency', 10)
+        helper = ReadItemsHelperAsync(
+            client=self,
+            collection_link=collection_link,
+            items=items,
+            options=options,
+            partition_key_definition=partition_key_definition,
+            max_concurrency=max_concurrency,
+            **kwargs)
+        return await helper.read_items()
+
+
 
     def ReadItems(
         self,
