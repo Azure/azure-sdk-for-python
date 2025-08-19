@@ -423,6 +423,8 @@ class CallAutomationClient:
         source_display_name: Optional[str] = None,
         operation_context: Optional[str] = None,
         cognitive_services_endpoint: Optional[str] = None,
+        media_streaming: Optional['MediaStreamingOptions'] = None,
+        transcription: Optional['TranscriptionOptions'] = None,
         teams_app_source: Optional["MicrosoftTeamsAppIdentifier"] = None,
         enable_loopback_audio: Optional[bool] = None,
         **kwargs,
@@ -445,6 +447,12 @@ class CallAutomationClient:
         :keyword cognitive_services_endpoint:
          The identifier of the Cognitive Service resource assigned to this call.
         :paramtype cognitive_services_endpoint: str
+        :keyword media_streaming: Media Streaming Options.
+        :paramtype media_streaming: ~azure.communication.callautomation.MediaStreamingOptions
+         or None
+        :keyword transcription: Configuration of live transcription.
+        :paramtype transcription: ~azure.communication.callautomation.TranscriptionOptions
+         or None
         :keyword teams_app_source: The Microsoft Teams App Identifier.
         :paramtype teams_app_source: ~azure.communication.callautomation.MicrosoftTeamsAppIdentifier
         :keyword enable_loopback_audio: Enables loopback audio functionality for the call.
@@ -464,6 +472,8 @@ class CallAutomationClient:
             source_display_name=source_display_name,
             operation_context=operation_context,
             cognitive_services_endpoint=cognitive_services_endpoint,
+            media_streaming=media_streaming,
+            transcription=transcription,
             teams_app_source=teams_app_source,
             enable_loopback_audio=enable_loopback_audio,
             **kwargs,

@@ -1026,9 +1026,9 @@ class PiiRedactionOptions:
     :paramtype redaction_type: str or ~azure.communication.callautomation.models.RedactionType
     """
 
-    enable: Optional[bool]
+    enable: Optional[bool] = False
     """Gets or sets a value indicating whether PII redaction is enabled."""
-    redaction_type: Optional[Union[str, "RedactionType"]]
+    redaction_type: Optional[Union[str, "RedactionType"]] = "maskWithCharacter"
     """Gets or sets the type of PII redaction to be used."""
 
     def __init__(self, *, enable: bool = None, redaction_type: Optional[Union[str, "RedactionType"]] = None):
