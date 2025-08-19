@@ -304,4 +304,4 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             logger.debug(f"Error extracting context from agent response : {str(ex)}")
             context = ""
 
-        return context
+        return context if context else None
