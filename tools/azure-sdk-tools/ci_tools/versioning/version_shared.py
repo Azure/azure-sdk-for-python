@@ -26,7 +26,7 @@ from subprocess import run
 
 VERSION_STRING = 'VERSION = "%s"'
 
-DEV_STATUS_REGEX = r'(classifiers=\[(\s)*)(["\']Development Status :: .*["\'])'
+DEV_STATUS_REGEX = r'(classifiers\s*=\s*\[(\s)*)(["\']Development Status :: .*["\'])'
 
 logging.getLogger().setLevel(logging.INFO)
 

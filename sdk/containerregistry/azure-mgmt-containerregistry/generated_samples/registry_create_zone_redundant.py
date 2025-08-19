@@ -44,6 +44,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/containerregistry/resource-manager/Microsoft.ContainerRegistry/stable/2025-04-01/examples/RegistryCreateZoneRedundant.json
+# x-ms-original-file: specification/containerregistry/resource-manager/Microsoft.ContainerRegistry/preview/2025-05-01-preview/examples/RegistryCreateZoneRedundant.json
 if __name__ == "__main__":
     main()
