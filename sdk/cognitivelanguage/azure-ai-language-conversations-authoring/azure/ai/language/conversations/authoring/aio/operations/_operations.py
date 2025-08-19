@@ -1771,9 +1771,7 @@ class DeploymentOperations:
 
     @api_version_validation(
         method_added_on="2023-04-15-preview",
-        params_added_on={
-            "2023-04-15-preview": ["api_version", "project_name", "deployment_name", "content_type", "accept"]
-        },
+        params_added_on={"2023-04-15-preview": ["api_version", "project_name", "deployment_name", "content_type"]},
         api_versions_list=["2023-04-15-preview", "2024-11-15-preview", "2025-05-15-preview"],
     )
     async def _delete_deployment_from_resources_initial(  # pylint: disable=name-too-long
@@ -1877,9 +1875,7 @@ class DeploymentOperations:
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2023-04-15-preview",
-        params_added_on={
-            "2023-04-15-preview": ["api_version", "project_name", "deployment_name", "content_type", "accept"]
-        },
+        params_added_on={"2023-04-15-preview": ["api_version", "project_name", "deployment_name", "content_type"]},
         api_versions_list=["2023-04-15-preview", "2024-11-15-preview", "2025-05-15-preview"],
     )
     async def _begin_delete_deployment_from_resources(
@@ -2610,7 +2606,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
 
     @api_version_validation(
         method_added_on="2023-04-15-preview",
-        params_added_on={"2023-04-15-preview": ["api_version", "project_name", "content_type", "accept"]},
+        params_added_on={"2023-04-15-preview": ["api_version", "project_name", "content_type"]},
         api_versions_list=["2023-04-15-preview", "2024-11-15-preview", "2025-05-15-preview"],
     )
     async def _assign_deployment_resources_initial(
@@ -2699,7 +2695,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2023-04-15-preview",
-        params_added_on={"2023-04-15-preview": ["api_version", "project_name", "content_type", "accept"]},
+        params_added_on={"2023-04-15-preview": ["api_version", "project_name", "content_type"]},
         api_versions_list=["2023-04-15-preview", "2024-11-15-preview", "2025-05-15-preview"],
     )
     async def _begin_assign_deployment_resources(
@@ -2774,7 +2770,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
 
     @api_version_validation(
         method_added_on="2023-04-15-preview",
-        params_added_on={"2023-04-15-preview": ["api_version", "project_name", "content_type", "accept"]},
+        params_added_on={"2023-04-15-preview": ["api_version", "project_name", "content_type"]},
         api_versions_list=["2023-04-15-preview", "2024-11-15-preview", "2025-05-15-preview"],
     )
     async def _unassign_deployment_resources_initial(
@@ -2863,7 +2859,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2023-04-15-preview",
-        params_added_on={"2023-04-15-preview": ["api_version", "project_name", "content_type", "accept"]},
+        params_added_on={"2023-04-15-preview": ["api_version", "project_name", "content_type"]},
         api_versions_list=["2023-04-15-preview", "2024-11-15-preview", "2025-05-15-preview"],
     )
     async def _begin_unassign_deployment_resources(
@@ -3795,7 +3791,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
 
     @api_version_validation(
         method_added_on="2023-04-15-preview",
-        params_added_on={"2023-04-15-preview": ["api_version", "project_name", "content_type", "accept"]},
+        params_added_on={"2023-04-15-preview": ["api_version", "project_name", "content_type"]},
         api_versions_list=["2023-04-15-preview", "2024-11-15-preview", "2025-05-15-preview"],
     )
     async def _copy_project_initial(
@@ -3881,7 +3877,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2023-04-15-preview",
-        params_added_on={"2023-04-15-preview": ["api_version", "project_name", "content_type", "accept"]},
+        params_added_on={"2023-04-15-preview": ["api_version", "project_name", "content_type"]},
         api_versions_list=["2023-04-15-preview", "2024-11-15-preview", "2025-05-15-preview"],
     )
     async def _begin_copy_project(
@@ -4497,7 +4493,7 @@ class ExportedModelOperations:
 
     @api_version_validation(
         method_added_on="2024-11-15-preview",
-        params_added_on={"2024-11-15-preview": ["api_version", "project_name", "exported_model_name", "accept"]},
+        params_added_on={"2024-11-15-preview": ["api_version", "project_name", "exported_model_name"]},
         api_versions_list=["2024-11-15-preview", "2025-05-15-preview"],
     )
     async def _delete_exported_model_initial(
@@ -4556,7 +4552,7 @@ class ExportedModelOperations:
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2024-11-15-preview",
-        params_added_on={"2024-11-15-preview": ["api_version", "project_name", "exported_model_name", "accept"]},
+        params_added_on={"2024-11-15-preview": ["api_version", "project_name", "exported_model_name"]},
         api_versions_list=["2024-11-15-preview", "2025-05-15-preview"],
     )
     async def _begin_delete_exported_model(
@@ -4619,9 +4615,7 @@ class ExportedModelOperations:
 
     @api_version_validation(
         method_added_on="2024-11-15-preview",
-        params_added_on={
-            "2024-11-15-preview": ["api_version", "project_name", "exported_model_name", "content_type", "accept"]
-        },
+        params_added_on={"2024-11-15-preview": ["api_version", "project_name", "exported_model_name", "content_type"]},
         api_versions_list=["2024-11-15-preview", "2025-05-15-preview"],
     )
     async def _create_or_update_exported_model_initial(
@@ -4725,9 +4719,7 @@ class ExportedModelOperations:
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2024-11-15-preview",
-        params_added_on={
-            "2024-11-15-preview": ["api_version", "project_name", "exported_model_name", "content_type", "accept"]
-        },
+        params_added_on={"2024-11-15-preview": ["api_version", "project_name", "exported_model_name", "content_type"]},
         api_versions_list=["2024-11-15-preview", "2025-05-15-preview"],
     )
     async def _begin_create_or_update_exported_model(
@@ -5014,9 +5006,7 @@ class TrainedModelOperations:
 
     @api_version_validation(
         method_added_on="2023-04-15-preview",
-        params_added_on={
-            "2023-04-15-preview": ["api_version", "project_name", "trained_model_label", "content_type", "accept"]
-        },
+        params_added_on={"2023-04-15-preview": ["api_version", "project_name", "trained_model_label", "content_type"]},
         api_versions_list=["2023-04-15-preview", "2024-11-15-preview", "2025-05-15-preview"],
     )
     async def _evaluate_model_initial(
@@ -5173,9 +5163,7 @@ class TrainedModelOperations:
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2023-04-15-preview",
-        params_added_on={
-            "2023-04-15-preview": ["api_version", "project_name", "trained_model_label", "content_type", "accept"]
-        },
+        params_added_on={"2023-04-15-preview": ["api_version", "project_name", "trained_model_label", "content_type"]},
         api_versions_list=["2023-04-15-preview", "2024-11-15-preview", "2025-05-15-preview"],
     )
     async def begin_evaluate_model(

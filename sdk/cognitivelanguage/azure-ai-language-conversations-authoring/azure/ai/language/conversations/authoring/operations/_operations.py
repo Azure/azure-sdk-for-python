@@ -262,12 +262,9 @@ def build_conversation_authoring_get_project_request(  # pylint: disable=name-to
 def build_conversation_authoring_delete_project_request(  # pylint: disable=name-too-long
     project_name: str, **kwargs: Any
 ) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/authoring/analyze-conversations/projects/{projectName}"
     path_format_arguments = {
@@ -279,10 +276,7 @@ def build_conversation_authoring_delete_project_request(  # pylint: disable=name
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
 def build_conversation_authoring_export_request(  # pylint: disable=name-too-long
@@ -294,12 +288,9 @@ def build_conversation_authoring_export_request(  # pylint: disable=name-too-lon
     trained_model_label: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/authoring/analyze-conversations/projects/{projectName}/:export"
     path_format_arguments = {
@@ -318,10 +309,7 @@ def build_conversation_authoring_export_request(  # pylint: disable=name-too-lon
     if trained_model_label is not None:
         _params["trainedModelLabel"] = _SERIALIZER.query("trained_model_label", trained_model_label, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="POST", url=_url, params=_params, **kwargs)
 
 
 def build_conversation_authoring_import_method_request(  # pylint: disable=name-too-long
@@ -335,8 +323,6 @@ def build_conversation_authoring_import_method_request(  # pylint: disable=name-
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/authoring/analyze-conversations/projects/{projectName}/:import"
     path_format_arguments = {
@@ -353,7 +339,6 @@ def build_conversation_authoring_import_method_request(  # pylint: disable=name-
     # Construct headers
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -443,8 +428,6 @@ def build_deployment_deploy_project_request(project_name: str, deployment_name: 
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/authoring/analyze-conversations/projects/{projectName}/deployments/{deploymentName}"
     path_format_arguments = {
@@ -460,7 +443,6 @@ def build_deployment_deploy_project_request(project_name: str, deployment_name: 
     # Construct headers
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -468,12 +450,9 @@ def build_deployment_deploy_project_request(project_name: str, deployment_name: 
 def build_deployment_delete_deployment_request(  # pylint: disable=name-too-long
     project_name: str, deployment_name: str, **kwargs: Any
 ) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/authoring/analyze-conversations/projects/{projectName}/deployments/{deploymentName}"
     path_format_arguments = {
@@ -486,10 +465,7 @@ def build_deployment_delete_deployment_request(  # pylint: disable=name-too-long
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
 def build_deployment_delete_deployment_from_resources_request(  # pylint: disable=name-too-long
@@ -500,8 +476,6 @@ def build_deployment_delete_deployment_from_resources_request(  # pylint: disabl
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/authoring/analyze-conversations/projects/{projectName}/deployments/{deploymentName}/:delete-from-resources"
     path_format_arguments = {
@@ -517,7 +491,6 @@ def build_deployment_delete_deployment_from_resources_request(  # pylint: disabl
     # Construct headers
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -771,8 +744,6 @@ def build_project_assign_deployment_resources_request(  # pylint: disable=name-t
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/authoring/analyze-conversations/projects/{projectName}/resources/:assign"
     path_format_arguments = {
@@ -787,7 +758,6 @@ def build_project_assign_deployment_resources_request(  # pylint: disable=name-t
     # Construct headers
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -800,8 +770,6 @@ def build_project_unassign_deployment_resources_request(  # pylint: disable=name
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/authoring/analyze-conversations/projects/{projectName}/resources/:unassign"
     path_format_arguments = {
@@ -816,7 +784,6 @@ def build_project_unassign_deployment_resources_request(  # pylint: disable=name
     # Construct headers
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -881,8 +848,6 @@ def build_project_swap_deployments_request(project_name: str, **kwargs: Any) -> 
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/authoring/analyze-conversations/projects/{projectName}/deployments/:swap"
     path_format_arguments = {
@@ -897,7 +862,6 @@ def build_project_swap_deployments_request(project_name: str, **kwargs: Any) -> 
     # Construct headers
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -988,12 +952,9 @@ def build_project_export_request(
     trained_model_label: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/authoring/analyze-conversations/projects/{projectName}/:export"
     path_format_arguments = {
@@ -1012,10 +973,7 @@ def build_project_export_request(
     if trained_model_label is not None:
         _params["trainedModelLabel"] = _SERIALIZER.query("trained_model_label", trained_model_label, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="POST", url=_url, params=_params, **kwargs)
 
 
 def build_project_get_export_status_request(project_name: str, job_id: str, **kwargs: Any) -> HttpRequest:
@@ -1078,8 +1036,6 @@ def build_project_copy_project_request(project_name: str, **kwargs: Any) -> Http
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/authoring/analyze-conversations/projects/{projectName}/:copy"
     path_format_arguments = {
@@ -1094,7 +1050,6 @@ def build_project_copy_project_request(project_name: str, **kwargs: Any) -> Http
     # Construct headers
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -1132,8 +1087,6 @@ def build_project_train_request(project_name: str, **kwargs: Any) -> HttpRequest
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/authoring/analyze-conversations/projects/{projectName}/:train"
     path_format_arguments = {
@@ -1148,7 +1101,6 @@ def build_project_train_request(project_name: str, **kwargs: Any) -> HttpRequest
     # Construct headers
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -1183,12 +1135,9 @@ def build_project_get_training_status_request(  # pylint: disable=name-too-long
 def build_project_cancel_training_job_request(  # pylint: disable=name-too-long
     project_name: str, job_id: str, **kwargs: Any
 ) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/authoring/analyze-conversations/projects/{projectName}/train/jobs/{jobId}/:cancel"
     path_format_arguments = {
@@ -1201,10 +1150,7 @@ def build_project_cancel_training_job_request(  # pylint: disable=name-too-long
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="POST", url=_url, params=_params, **kwargs)
 
 
 def build_exported_model_get_exported_model_request(  # pylint: disable=name-too-long
@@ -1237,12 +1183,9 @@ def build_exported_model_get_exported_model_request(  # pylint: disable=name-too
 def build_exported_model_delete_exported_model_request(  # pylint: disable=name-too-long
     project_name: str, exported_model_name: str, **kwargs: Any
 ) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/authoring/analyze-conversations/projects/{projectName}/exported-models/{exportedModelName}"
     path_format_arguments = {
@@ -1255,10 +1198,7 @@ def build_exported_model_delete_exported_model_request(  # pylint: disable=name-
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
 def build_exported_model_create_or_update_exported_model_request(  # pylint: disable=name-too-long
@@ -1269,8 +1209,6 @@ def build_exported_model_create_or_update_exported_model_request(  # pylint: dis
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/authoring/analyze-conversations/projects/{projectName}/exported-models/{exportedModelName}"
     path_format_arguments = {
@@ -1286,7 +1224,6 @@ def build_exported_model_create_or_update_exported_model_request(  # pylint: dis
     # Construct headers
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -1349,12 +1286,9 @@ def build_trained_model_get_trained_model_request(  # pylint: disable=name-too-l
 def build_trained_model_delete_trained_model_request(  # pylint: disable=name-too-long
     project_name: str, trained_model_label: str, **kwargs: Any
 ) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/authoring/analyze-conversations/projects/{projectName}/models/{trainedModelLabel}"
     path_format_arguments = {
@@ -1367,10 +1301,7 @@ def build_trained_model_delete_trained_model_request(  # pylint: disable=name-to
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
 def build_trained_model_evaluate_model_request(  # pylint: disable=name-too-long
@@ -1381,8 +1312,6 @@ def build_trained_model_evaluate_model_request(  # pylint: disable=name-too-long
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/authoring/analyze-conversations/projects/{projectName}/models/{trainedModelLabel}/:evaluate"
     path_format_arguments = {
@@ -1398,7 +1327,6 @@ def build_trained_model_evaluate_model_request(  # pylint: disable=name-too-long
     # Construct headers
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -1406,12 +1334,9 @@ def build_trained_model_evaluate_model_request(  # pylint: disable=name-too-long
 def build_trained_model_load_snapshot_request(  # pylint: disable=name-too-long
     project_name: str, trained_model_label: str, **kwargs: Any
 ) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/authoring/analyze-conversations/projects/{projectName}/models/{trainedModelLabel}/:load-snapshot"
     path_format_arguments = {
@@ -1424,10 +1349,7 @@ def build_trained_model_load_snapshot_request(  # pylint: disable=name-too-long
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="POST", url=_url, params=_params, **kwargs)
 
 
 def build_trained_model_get_evaluation_status_request(  # pylint: disable=name-too-long
@@ -3220,9 +3142,7 @@ class DeploymentOperations:
 
     @api_version_validation(
         method_added_on="2023-04-15-preview",
-        params_added_on={
-            "2023-04-15-preview": ["api_version", "project_name", "deployment_name", "content_type", "accept"]
-        },
+        params_added_on={"2023-04-15-preview": ["api_version", "project_name", "deployment_name", "content_type"]},
         api_versions_list=["2023-04-15-preview", "2024-11-15-preview", "2025-05-15-preview"],
     )
     def _delete_deployment_from_resources_initial(  # pylint: disable=name-too-long
@@ -3326,9 +3246,7 @@ class DeploymentOperations:
     @distributed_trace
     @api_version_validation(
         method_added_on="2023-04-15-preview",
-        params_added_on={
-            "2023-04-15-preview": ["api_version", "project_name", "deployment_name", "content_type", "accept"]
-        },
+        params_added_on={"2023-04-15-preview": ["api_version", "project_name", "deployment_name", "content_type"]},
         api_versions_list=["2023-04-15-preview", "2024-11-15-preview", "2025-05-15-preview"],
     )
     def _begin_delete_deployment_from_resources(
@@ -4058,7 +3976,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
 
     @api_version_validation(
         method_added_on="2023-04-15-preview",
-        params_added_on={"2023-04-15-preview": ["api_version", "project_name", "content_type", "accept"]},
+        params_added_on={"2023-04-15-preview": ["api_version", "project_name", "content_type"]},
         api_versions_list=["2023-04-15-preview", "2024-11-15-preview", "2025-05-15-preview"],
     )
     def _assign_deployment_resources_initial(
@@ -4147,7 +4065,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace
     @api_version_validation(
         method_added_on="2023-04-15-preview",
-        params_added_on={"2023-04-15-preview": ["api_version", "project_name", "content_type", "accept"]},
+        params_added_on={"2023-04-15-preview": ["api_version", "project_name", "content_type"]},
         api_versions_list=["2023-04-15-preview", "2024-11-15-preview", "2025-05-15-preview"],
     )
     def _begin_assign_deployment_resources(
@@ -4221,7 +4139,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
 
     @api_version_validation(
         method_added_on="2023-04-15-preview",
-        params_added_on={"2023-04-15-preview": ["api_version", "project_name", "content_type", "accept"]},
+        params_added_on={"2023-04-15-preview": ["api_version", "project_name", "content_type"]},
         api_versions_list=["2023-04-15-preview", "2024-11-15-preview", "2025-05-15-preview"],
     )
     def _unassign_deployment_resources_initial(
@@ -4310,7 +4228,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace
     @api_version_validation(
         method_added_on="2023-04-15-preview",
-        params_added_on={"2023-04-15-preview": ["api_version", "project_name", "content_type", "accept"]},
+        params_added_on={"2023-04-15-preview": ["api_version", "project_name", "content_type"]},
         api_versions_list=["2023-04-15-preview", "2024-11-15-preview", "2025-05-15-preview"],
     )
     def _begin_unassign_deployment_resources(
@@ -5237,7 +5155,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
 
     @api_version_validation(
         method_added_on="2023-04-15-preview",
-        params_added_on={"2023-04-15-preview": ["api_version", "project_name", "content_type", "accept"]},
+        params_added_on={"2023-04-15-preview": ["api_version", "project_name", "content_type"]},
         api_versions_list=["2023-04-15-preview", "2024-11-15-preview", "2025-05-15-preview"],
     )
     def _copy_project_initial(
@@ -5323,7 +5241,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace
     @api_version_validation(
         method_added_on="2023-04-15-preview",
-        params_added_on={"2023-04-15-preview": ["api_version", "project_name", "content_type", "accept"]},
+        params_added_on={"2023-04-15-preview": ["api_version", "project_name", "content_type"]},
         api_versions_list=["2023-04-15-preview", "2024-11-15-preview", "2025-05-15-preview"],
     )
     def _begin_copy_project(
@@ -5936,7 +5854,7 @@ class ExportedModelOperations:
 
     @api_version_validation(
         method_added_on="2024-11-15-preview",
-        params_added_on={"2024-11-15-preview": ["api_version", "project_name", "exported_model_name", "accept"]},
+        params_added_on={"2024-11-15-preview": ["api_version", "project_name", "exported_model_name"]},
         api_versions_list=["2024-11-15-preview", "2025-05-15-preview"],
     )
     def _delete_exported_model_initial(
@@ -5995,7 +5913,7 @@ class ExportedModelOperations:
     @distributed_trace
     @api_version_validation(
         method_added_on="2024-11-15-preview",
-        params_added_on={"2024-11-15-preview": ["api_version", "project_name", "exported_model_name", "accept"]},
+        params_added_on={"2024-11-15-preview": ["api_version", "project_name", "exported_model_name"]},
         api_versions_list=["2024-11-15-preview", "2025-05-15-preview"],
     )
     def _begin_delete_exported_model(
@@ -6057,9 +5975,7 @@ class ExportedModelOperations:
 
     @api_version_validation(
         method_added_on="2024-11-15-preview",
-        params_added_on={
-            "2024-11-15-preview": ["api_version", "project_name", "exported_model_name", "content_type", "accept"]
-        },
+        params_added_on={"2024-11-15-preview": ["api_version", "project_name", "exported_model_name", "content_type"]},
         api_versions_list=["2024-11-15-preview", "2025-05-15-preview"],
     )
     def _create_or_update_exported_model_initial(
@@ -6163,9 +6079,7 @@ class ExportedModelOperations:
     @distributed_trace
     @api_version_validation(
         method_added_on="2024-11-15-preview",
-        params_added_on={
-            "2024-11-15-preview": ["api_version", "project_name", "exported_model_name", "content_type", "accept"]
-        },
+        params_added_on={"2024-11-15-preview": ["api_version", "project_name", "exported_model_name", "content_type"]},
         api_versions_list=["2024-11-15-preview", "2025-05-15-preview"],
     )
     def _begin_create_or_update_exported_model(
@@ -6453,9 +6367,7 @@ class TrainedModelOperations:
 
     @api_version_validation(
         method_added_on="2023-04-15-preview",
-        params_added_on={
-            "2023-04-15-preview": ["api_version", "project_name", "trained_model_label", "content_type", "accept"]
-        },
+        params_added_on={"2023-04-15-preview": ["api_version", "project_name", "trained_model_label", "content_type"]},
         api_versions_list=["2023-04-15-preview", "2024-11-15-preview", "2025-05-15-preview"],
     )
     def _evaluate_model_initial(
@@ -6612,9 +6524,7 @@ class TrainedModelOperations:
     @distributed_trace
     @api_version_validation(
         method_added_on="2023-04-15-preview",
-        params_added_on={
-            "2023-04-15-preview": ["api_version", "project_name", "trained_model_label", "content_type", "accept"]
-        },
+        params_added_on={"2023-04-15-preview": ["api_version", "project_name", "trained_model_label", "content_type"]},
         api_versions_list=["2023-04-15-preview", "2024-11-15-preview", "2025-05-15-preview"],
     )
     def begin_evaluate_model(

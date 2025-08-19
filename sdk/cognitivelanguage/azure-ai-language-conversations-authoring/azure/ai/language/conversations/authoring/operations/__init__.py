@@ -12,6 +12,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from ._patch import *  # pylint: disable=unused-wildcard-import
 
+from ._operations import _ConversationAuthoringClientOperationsMixin  # type: ignore # pylint: disable=unused-import
 from ._operations import DeploymentOperations  # type: ignore
 from ._operations import ProjectOperations  # type: ignore
 from ._operations import ExportedModelOperations  # type: ignore

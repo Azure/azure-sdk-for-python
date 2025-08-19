@@ -17,8 +17,13 @@ from azure.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import ConversationAuthoringClientConfiguration, ConversationAuthoringProjectClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
-from .operations import DeploymentOperations, ExportedModelOperations, ProjectOperations, TrainedModelOperations
-from .operations._operations import _ConversationAuthoringClientOperationsMixin
+from .operations import (
+    DeploymentOperations,
+    ExportedModelOperations,
+    ProjectOperations,
+    TrainedModelOperations,
+    _ConversationAuthoringClientOperationsMixin,
+)
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential

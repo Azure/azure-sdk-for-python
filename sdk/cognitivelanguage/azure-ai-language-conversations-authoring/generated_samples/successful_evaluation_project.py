@@ -17,9 +17,10 @@ from azure.ai.language.conversations.authoring import ConversationAuthoringProje
 
 
 def main():
-    client = ConversationAuthoringClient(
+    client = ConversationAuthoringProjectClient(
         endpoint="{Endpoint}",
         credential="CREDENTIAL",
+        project_name="PROJECT_NAME",
     )
 
     response = client.trained_model.begin_evaluate_model(
