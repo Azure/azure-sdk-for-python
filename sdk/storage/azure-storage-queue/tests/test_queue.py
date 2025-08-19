@@ -1429,6 +1429,41 @@ class TestStorageQueue(StorageRecordedTestCase):
         # Will not raise ClientAuthenticationError despite bad audience due to Bearer Challenge
         queue.get_queue_properties()
 
+    @pytest.mark.live_test_only
+    @QueuePreparer()
+    def test_get_user_delegation_sas(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        variables = kwargs.pop("variables", {})
+
+        token_credential = self.get_credential(QueueServiceClient)
+        service = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"),
+            credential=token_credential
+        )
+        start = self.get_datetime_variable(variables, 'start', datetime.utcnow())
+        expiry = self.get_datetime_variable(variables, 'expiry', datetime.utcnow() + timedelta(hours=1))
+        user_delegation_key_1 = service.get_user_delegation_key(key_start_time=start, key_expiry_time=expiry)
+        user_delegation_key_2 = service.get_user_delegation_key(key_start_time=start, key_expiry_time=expiry)
+
+        # Assert key1 is valid
+        assert user_delegation_key_1.signed_oid is not None
+        assert user_delegation_key_1.signed_tid is not None
+        assert user_delegation_key_1.signed_start is not None
+        assert user_delegation_key_1.signed_expiry is not None
+        assert user_delegation_key_1.signed_version is not None
+        assert user_delegation_key_1.signed_service is not None
+        assert user_delegation_key_1.value is not None
+
+        # Assert key1 and key2 are equal, since they have the exact same start and end times
+        assert user_delegation_key_1.signed_oid == user_delegation_key_2.signed_oid
+        assert user_delegation_key_1.signed_tid == user_delegation_key_2.signed_tid
+        assert user_delegation_key_1.signed_start == user_delegation_key_2.signed_start
+        assert user_delegation_key_1.signed_expiry == user_delegation_key_2.signed_expiry
+        assert user_delegation_key_1.signed_version == user_delegation_key_2.signed_version
+        assert user_delegation_key_1.signed_service == user_delegation_key_2.signed_service
+        assert user_delegation_key_1.value == user_delegation_key_2.value
+
+        return variables
 
 # ------------------------------------------------------------------------------
 if __name__ == "__main__":
