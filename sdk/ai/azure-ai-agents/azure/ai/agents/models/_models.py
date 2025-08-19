@@ -5070,8 +5070,9 @@ class RunStepDeltaToolCall(_Model):
     RunStepDeltaAzureAISearchToolCall, RunStepDeltaAzureFunctionToolCall,
     RunStepDeltaCustomBingGroundingToolCall, RunStepDeltaBingGroundingToolCall,
     RunStepDeltaCodeInterpreterToolCall, RunStepDeltaConnectedAgentToolCall,
-    RunStepDeltaDeepResearchToolCall, RunStepDeltaFileSearchToolCall, RunStepDeltaFunctionToolCall,
-    RunStepDeltaMcpToolCall, RunStepDeltaOpenAPIToolCall
+    RunStepDeltaDeepResearchToolCall, RunStepDeltaMicrosoftFabricToolCall,
+    RunStepDeltaFileSearchToolCall, RunStepDeltaFunctionToolCall, RunStepDeltaMcpToolCall,
+    RunStepDeltaOpenAPIToolCall
 
     :ivar index: The index of the tool call detail in the run step's tool_calls array. Required.
     :vartype index: int
@@ -5916,6 +5917,48 @@ class RunStepDeltaMessageCreationObject(_Model):
         super().__init__(*args, **kwargs)
 
 
+class RunStepDeltaMicrosoftFabricToolCall(RunStepDeltaToolCall, discriminator="fabric_dataagent"):
+    """Represents the Microsoft Fabric tool call in a streaming run step.
+
+    :ivar index: The index of the tool call detail in the run step's tool_calls array. Required.
+    :vartype index: int
+    :ivar id: The ID of the tool call, used when submitting outputs to the run. Required.
+    :vartype id: str
+    :ivar type: The object type, which is always 'fabric_dataagent'. Required. Default value is
+     "fabric_dataagent".
+    :vartype type: str
+    :ivar microsoft_fabric: Fabric input and output. Required.
+    :vartype microsoft_fabric: dict[str, str]
+    """
+
+    type: Literal["fabric_dataagent"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always 'fabric_dataagent'. Required. Default value is
+     \"fabric_dataagent\"."""
+    microsoft_fabric: Dict[str, str] = rest_field(
+        name="fabric_dataagent", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Fabric input and output. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        index: int,
+        id: str,  # pylint: disable=redefined-builtin
+        microsoft_fabric: Dict[str, str],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="fabric_dataagent", **kwargs)
+
+
 class RunStepDeltaOpenAPIObject(RunStepDeltaDetail, discriminator="openapi"):
     """Represents an invocation of openapi as part of a streaming run step.
 
@@ -6438,7 +6481,7 @@ class RunStepMicrosoftFabricToolCall(RunStepToolCall, discriminator="fabric_data
     :ivar type: The object type, which is always 'fabric_dataagent'. Required. Default value is
      "fabric_dataagent".
     :vartype type: str
-    :ivar microsoft_fabric: Reserved for future use. Required.
+    :ivar microsoft_fabric: Fabric input and output. Required.
     :vartype microsoft_fabric: dict[str, str]
     """
 
@@ -6448,7 +6491,7 @@ class RunStepMicrosoftFabricToolCall(RunStepToolCall, discriminator="fabric_data
     microsoft_fabric: Dict[str, str] = rest_field(
         name="fabric_dataagent", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Reserved for future use. Required."""
+    """Fabric input and output. Required."""
 
     @overload
     def __init__(
