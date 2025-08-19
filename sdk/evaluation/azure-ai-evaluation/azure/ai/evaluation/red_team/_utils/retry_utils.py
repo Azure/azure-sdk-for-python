@@ -31,7 +31,7 @@ try:
 except ImportError:
     AZURE_EXCEPTIONS = ()
 
-# Import red team exceptions 
+# Import red team exceptions
 try:
     from .exception_utils import NonRetryableError, ExceptionHandler
 except ImportError:
@@ -96,13 +96,13 @@ class RetryManager:
 
     def is_non_retryable_error(self, exception: Exception) -> bool:
         """Determine if an exception represents a non-retryable error.
-        
+
         :param exception: The exception to check
         :return: True if the error should not be retried
         """
         if self._exception_handler:
             return self._exception_handler.is_non_retryable_error(exception)
-        
+
         # Fallback logic if exception handler is not available
         # HTTP status code specific non-retryable errors
         if hasattr(exception, "response") and hasattr(exception.response, "status_code"):
@@ -110,13 +110,13 @@ class RetryManager:
             # 4xx errors (except 429 rate limiting) are generally non-retryable
             if 400 <= status_code < 500 and status_code != 429:
                 return True
-        
-        # Specific HTTP status errors that are non-retryable  
+
+        # Specific HTTP status errors that are non-retryable
         if isinstance(exception, httpx.HTTPStatusError):
             status_code = exception.response.status_code
             if 400 <= status_code < 500 and status_code != 429:
                 return True
-        
+
         return False
 
     def should_retry_exception(self, exception: Exception) -> bool:
@@ -132,17 +132,15 @@ class RetryManager:
             if NonRetryableError and self._exception_handler:
                 # Use the exception handler to create a proper NonRetryableError
                 non_retryable_error = self._exception_handler.handle_exception(
-                    exception, 
-                    task_name="retry_check",
-                    reraise=False
+                    exception, task_name="retry_check", reraise=False
                 )
                 if isinstance(non_retryable_error, NonRetryableError):
                     raise non_retryable_error
-            
+
             # Fallback if NonRetryableError is not available
             self.logger.error(f"Non-retryable error encountered: {exception.__class__.__name__}: {str(exception)}")
             raise exception
-        
+
         # Check for retryable exceptions
         if isinstance(exception, self.NETWORK_EXCEPTIONS):
             return True
