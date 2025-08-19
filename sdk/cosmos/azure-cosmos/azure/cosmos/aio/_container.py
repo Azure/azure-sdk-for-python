@@ -58,9 +58,6 @@ from ..partition_key import (
     _get_partition_key_from_partition_key_definition
 )
 
-# InternalOptions alias for cleaner access to internal option constants
-InternalOptions = Constants.InternalOptions
-
 __all__ = ("ContainerProxy",)
 
 # pylint: disable=protected-access, too-many-lines
@@ -110,8 +107,8 @@ class ContainerProxy:
 
     async def _get_properties_with_options(self, options: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         kwargs = {}
-        if options and InternalOptions.EXCLUDED_LOCATIONS in options:
-            kwargs[Constants.Kwargs.EXCLUDED_LOCATIONS] = options[InternalOptions.EXCLUDED_LOCATIONS]
+        if options and Constants.InternalOptions.EXCLUDED_LOCATIONS in options:
+            kwargs[Constants.Kwargs.EXCLUDED_LOCATIONS] = options[Constants.InternalOptions.EXCLUDED_LOCATIONS]
         return await self._get_properties(**kwargs)
 
     async def _get_properties(self, **kwargs: Any) -> Dict[str, Any]:
@@ -206,9 +203,11 @@ class ContainerProxy:
             kwargs[Constants.Kwargs.INITIAL_HEADERS] = initial_headers
         request_options = _build_options(kwargs)
         if populate_partition_key_range_statistics is not None:
-            request_options[InternalOptions.POPULATE_PARTITION_KEY_RANGE_STATISTICS] = populate_partition_key_range_statistics
+            request_options[
+                Constants.InternalOptions.POPULATE_PARTITION_KEY_RANGE_STATISTICS
+            ] = populate_partition_key_range_statistics
         if populate_quota_info is not None:
-            request_options[InternalOptions.POPULATE_QUOTA_INFO] = populate_quota_info
+            request_options[Constants.InternalOptions.POPULATE_QUOTA_INFO] = populate_quota_info
         container = await self.client_connection.ReadContainer(self.container_link, options=request_options, **kwargs)
         # Only cache Container Properties that will not change in the lifetime of the container
         self.client_connection._set_container_properties_cache(self.container_link,  # pylint: disable=protected-access
@@ -296,11 +295,13 @@ class ContainerProxy:
         if throughput_bucket is not None:
             kwargs[Constants.Kwargs.THROUGHPUT_BUCKET] = throughput_bucket
         request_options = _build_options(kwargs)
-        request_options[InternalOptions.DISABLE_AUTOMATIC_ID_GENERATION] = not enable_automatic_id_generation
+        request_options[Constants.InternalOptions.DISABLE_AUTOMATIC_ID_GENERATION] = not enable_automatic_id_generation
         if indexing_directive is not None:
-            request_options[InternalOptions.INDEXING_DIRECTIVE] = indexing_directive
+            request_options[Constants.InternalOptions.INDEXING_DIRECTIVE] = indexing_directive
         await self._get_properties_with_options(request_options)
-        request_options[InternalOptions.CONTAINER_RID] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        request_options[
+            Constants.InternalOptions.CONTAINER_RID
+        ] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         result = await self.client_connection.CreateItem(
             database_or_container_link=self.container_link, document=body, options=request_options, **kwargs
@@ -370,12 +371,16 @@ class ContainerProxy:
             kwargs[Constants.Kwargs.THROUGHPUT_BUCKET] = throughput_bucket
         request_options = _build_options(kwargs)
 
-        request_options[InternalOptions.PARTITION_KEY] = await self._set_partition_key(partition_key)
+        request_options[Constants.InternalOptions.PARTITION_KEY] = await self._set_partition_key(partition_key)
         if max_integrated_cache_staleness_in_ms is not None:
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
-            request_options[InternalOptions.MAX_INTEGRATED_CACHE_STALENESS] = max_integrated_cache_staleness_in_ms
+            request_options[
+                Constants.InternalOptions.MAX_INTEGRATED_CACHE_STALENESS
+            ] = max_integrated_cache_staleness_in_ms
         await self._get_properties_with_options(request_options)
-        request_options[InternalOptions.CONTAINER_RID] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        request_options[
+            Constants.InternalOptions.CONTAINER_RID
+        ] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         return await self.client_connection.ReadItem(document_link=doc_link, options=request_options, **kwargs)
 
@@ -422,15 +427,19 @@ class ContainerProxy:
             kwargs[Constants.Kwargs.THROUGHPUT_BUCKET] = throughput_bucket
         feed_options = _build_options(kwargs)
         if max_item_count is not None:
-            feed_options[InternalOptions.MAX_ITEM_COUNT] = max_item_count
+            feed_options[Constants.InternalOptions.MAX_ITEM_COUNT] = max_item_count
         if max_integrated_cache_staleness_in_ms:
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
-            feed_options[InternalOptions.MAX_INTEGRATED_CACHE_STALENESS] = max_integrated_cache_staleness_in_ms
+            feed_options[
+                Constants.InternalOptions.MAX_INTEGRATED_CACHE_STALENESS
+            ] = max_integrated_cache_staleness_in_ms
         response_hook = kwargs.pop("response_hook", None)
         if response_hook and hasattr(response_hook, "clear"):
             response_hook.clear()
         if self.container_link in self.__get_client_container_caches():
-            feed_options[InternalOptions.CONTAINER_RID] = self.__get_client_container_caches()[self.container_link]["_rid"]
+            feed_options[
+            Constants.InternalOptions.CONTAINER_RID
+        ] = self.__get_client_container_caches()[self.container_link]["_rid"]
         kwargs["containerProperties"] = self._get_properties_with_options
 
         items = self.client_connection.ReadItems(
@@ -672,20 +681,30 @@ class ContainerProxy:
 
         # Update 'feed_options' from 'kwargs'
         if utils.valid_key_value_exist(kwargs, "max_item_count"):
-            feed_options[InternalOptions.MAX_ITEM_COUNT] = kwargs.pop(Constants.Kwargs.MAX_ITEM_COUNT)
+            feed_options[Constants.InternalOptions.MAX_ITEM_COUNT] = kwargs.pop(Constants.Kwargs.MAX_ITEM_COUNT)
         if utils.valid_key_value_exist(kwargs, "populate_query_metrics"):
-            feed_options[InternalOptions.POPULATE_QUERY_METRICS] = kwargs.pop(Constants.Kwargs.POPULATE_QUERY_METRICS)
+            feed_options[
+                Constants.InternalOptions.POPULATE_QUERY_METRICS
+            ] = kwargs.pop(Constants.Kwargs.POPULATE_QUERY_METRICS)
         if utils.valid_key_value_exist(kwargs, "populate_index_metrics"):
-            feed_options[InternalOptions.POPULATE_INDEX_METRICS] = kwargs.pop(Constants.Kwargs.POPULATE_INDEX_METRICS)
+            feed_options[
+                Constants.InternalOptions.POPULATE_INDEX_METRICS
+            ] = kwargs.pop(Constants.Kwargs.POPULATE_INDEX_METRICS)
         if utils.valid_key_value_exist(kwargs, "enable_scan_in_query"):
-            feed_options[InternalOptions.ENABLE_SCAN_IN_QUERY] = kwargs.pop(Constants.Kwargs.ENABLE_SCAN_IN_QUERY)
+            feed_options[
+                Constants.InternalOptions.ENABLE_SCAN_IN_QUERY
+            ] = kwargs.pop(Constants.Kwargs.ENABLE_SCAN_IN_QUERY)
         if utils.valid_key_value_exist(kwargs, "max_integrated_cache_staleness_in_ms"):
             max_integrated_cache_staleness_in_ms = kwargs.pop(Constants.Kwargs.MAX_INTEGRATED_CACHE_STALENESS)
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
-            feed_options[InternalOptions.MAX_INTEGRATED_CACHE_STALENESS] = max_integrated_cache_staleness_in_ms
+            feed_options[
+                Constants.InternalOptions.MAX_INTEGRATED_CACHE_STALENESS
+            ] = max_integrated_cache_staleness_in_ms
         if utils.valid_key_value_exist(kwargs, "continuation_token_limit"):
-            feed_options[InternalOptions.RESPONSE_CONTINUATION_TOKEN_LIMIT_IN_KB] = kwargs.pop(Constants.Kwargs.RESPONSE_CONTINUATION_TOKEN_LIMIT_IN_KB)
-        feed_options[InternalOptions.CORRELATED_ACTIVITY_ID] = GenerateGuidId()
+            feed_options[
+                Constants.InternalOptions.RESPONSE_CONTINUATION_TOKEN_LIMIT_IN_KB
+            ] = kwargs.pop(Constants.Kwargs.RESPONSE_CONTINUATION_TOKEN_LIMIT_IN_KB)
+        feed_options[Constants.InternalOptions.CORRELATED_ACTIVITY_ID] = GenerateGuidId()
 
         # Set query with 'query' and 'parameters' from kwargs
         if utils.valid_key_value_exist(kwargs, "parameters"):
@@ -701,10 +720,10 @@ class ContainerProxy:
         # If 'partition_key' is provided, set 'partitionKey' in 'feed_options'
         if utils.valid_key_value_exist(kwargs, "partition_key"):
             partition_key = kwargs.pop("partition_key")
-            feed_options[InternalOptions.PARTITION_KEY] = self._set_partition_key(partition_key)
+            feed_options[Constants.InternalOptions.PARTITION_KEY] = self._set_partition_key(partition_key)
         # If 'partition_key' or 'feed_range' is not provided, set 'enableCrossPartitionQuery' to True
         elif not utils.valid_key_value_exist(kwargs, "feed_range"):
-            feed_options[InternalOptions.ENABLE_CROSS_PARTITION_QUERY] = True
+            feed_options[Constants.InternalOptions.ENABLE_CROSS_PARTITION_QUERY] = True
 
         # Set 'response_hook'
         response_hook = kwargs.pop("response_hook", None)
@@ -941,15 +960,17 @@ class ContainerProxy:
         if "continuation" in feed_options:
             change_feed_state_context["continuation"] = feed_options.pop("continuation")
 
-        feed_options[InternalOptions.CHANGE_FEED_STATE_CONTEXT] = change_feed_state_context
-        feed_options[InternalOptions.CONTAINER_PROPERTIES] = self._get_properties_with_options(feed_options)
+        feed_options[Constants.InternalOptions.CHANGE_FEED_STATE_CONTEXT] = change_feed_state_context
+        feed_options[Constants.InternalOptions.CONTAINER_PROPERTIES] = self._get_properties_with_options(feed_options)
 
         response_hook = kwargs.pop("response_hook", None)
         if hasattr(response_hook, "clear"):
             response_hook.clear()
 
         if self.container_link in self.__get_client_container_caches():
-            feed_options[InternalOptions.CONTAINER_RID] = self.__get_client_container_caches()[self.container_link]["_rid"]
+            feed_options[
+            Constants.InternalOptions.CONTAINER_RID
+        ] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         result = self.client_connection.QueryItemsChangeFeed(
             self.container_link, options=feed_options, response_hook=response_hook, **kwargs
@@ -1029,9 +1050,11 @@ class ContainerProxy:
         if throughput_bucket is not None:
             kwargs[Constants.Kwargs.THROUGHPUT_BUCKET] = throughput_bucket
         request_options = _build_options(kwargs)
-        request_options[InternalOptions.DISABLE_AUTOMATIC_ID_GENERATION] = True
+        request_options[Constants.InternalOptions.DISABLE_AUTOMATIC_ID_GENERATION] = True
         await self._get_properties_with_options(request_options)
-        request_options[InternalOptions.CONTAINER_RID] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        request_options[
+            Constants.InternalOptions.CONTAINER_RID
+        ] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         result = await self.client_connection.UpsertItem(
             database_or_container_link=self.container_link,
@@ -1118,9 +1141,11 @@ class ContainerProxy:
         if throughput_bucket is not None:
             kwargs[Constants.Kwargs.THROUGHPUT_BUCKET] = throughput_bucket
         request_options = _build_options(kwargs)
-        request_options[InternalOptions.DISABLE_AUTOMATIC_ID_GENERATION] = True
+        request_options[Constants.InternalOptions.DISABLE_AUTOMATIC_ID_GENERATION] = True
         await self._get_properties_with_options(request_options)
-        request_options[InternalOptions.CONTAINER_RID] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        request_options[
+            Constants.InternalOptions.CONTAINER_RID
+        ] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         result = await self.client_connection.ReplaceItem(
             document_link=item_link, new_document=body, options=request_options, **kwargs
@@ -1205,12 +1230,14 @@ class ContainerProxy:
         if throughput_bucket is not None:
             kwargs[Constants.Kwargs.THROUGHPUT_BUCKET] = throughput_bucket
         request_options = _build_options(kwargs)
-        request_options[InternalOptions.DISABLE_AUTOMATIC_ID_GENERATION] = True
-        request_options[InternalOptions.PARTITION_KEY] = await self._set_partition_key(partition_key)
+        request_options[Constants.InternalOptions.DISABLE_AUTOMATIC_ID_GENERATION] = True
+        request_options[Constants.InternalOptions.PARTITION_KEY] = await self._set_partition_key(partition_key)
         if filter_predicate is not None:
-            request_options[InternalOptions.FILTER_PREDICATE] = filter_predicate
+            request_options[Constants.InternalOptions.FILTER_PREDICATE] = filter_predicate
         await self._get_properties_with_options(request_options)
-        request_options[InternalOptions.CONTAINER_RID] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        request_options[
+            Constants.InternalOptions.CONTAINER_RID
+        ] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         item_link = self._get_document_link(item)
         result = await self.client_connection.PatchItem(
@@ -1286,9 +1313,11 @@ class ContainerProxy:
         if throughput_bucket is not None:
             kwargs[Constants.Kwargs.THROUGHPUT_BUCKET] = throughput_bucket
         request_options = _build_options(kwargs)
-        request_options[InternalOptions.PARTITION_KEY] = await self._set_partition_key(partition_key)
+        request_options[Constants.InternalOptions.PARTITION_KEY] = await self._set_partition_key(partition_key)
         await self._get_properties_with_options(request_options)
-        request_options[InternalOptions.CONTAINER_RID] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        request_options[
+            Constants.InternalOptions.CONTAINER_RID
+        ] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         document_link = self._get_document_link(item)
         await self.client_connection.DeleteItem(document_link=document_link, options=request_options, **kwargs)
@@ -1382,9 +1411,11 @@ class ContainerProxy:
         """
         feed_options = _build_options(kwargs)
         if max_item_count is not None:
-            feed_options[InternalOptions.MAX_ITEM_COUNT] = max_item_count
+            feed_options[Constants.InternalOptions.MAX_ITEM_COUNT] = max_item_count
         if self.container_link in self.__get_client_container_caches():
-            feed_options[InternalOptions.CONTAINER_RID] = self.__get_client_container_caches()[self.container_link]["_rid"]
+            feed_options[
+            Constants.InternalOptions.CONTAINER_RID
+        ] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         result = self.client_connection.ReadConflicts(
             collection_link=self.container_link, feed_options=feed_options, **kwargs
@@ -1420,13 +1451,15 @@ class ContainerProxy:
         """
         feed_options = _build_options(kwargs)
         if max_item_count is not None:
-            feed_options[InternalOptions.MAX_ITEM_COUNT] = max_item_count
+            feed_options[Constants.InternalOptions.MAX_ITEM_COUNT] = max_item_count
         if partition_key is not None:
-            feed_options[InternalOptions.PARTITION_KEY] = self._set_partition_key(partition_key)
+            feed_options[Constants.InternalOptions.PARTITION_KEY] = self._set_partition_key(partition_key)
         else:
-            feed_options[InternalOptions.ENABLE_CROSS_PARTITION_QUERY] = True
+            feed_options[Constants.InternalOptions.ENABLE_CROSS_PARTITION_QUERY] = True
         if self.container_link in self.__get_client_container_caches():
-            feed_options[InternalOptions.CONTAINER_RID] = self.__get_client_container_caches()[self.container_link]["_rid"]
+            feed_options[
+            Constants.InternalOptions.CONTAINER_RID
+        ] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         result = self.client_connection.QueryConflicts(
             collection_link=self.container_link,
@@ -1458,9 +1491,11 @@ class ContainerProxy:
         :rtype: Dict[str, Any]
         """
         request_options = _build_options(kwargs)
-        request_options[InternalOptions.PARTITION_KEY] = await self._set_partition_key(partition_key)
+        request_options[Constants.InternalOptions.PARTITION_KEY] = await self._set_partition_key(partition_key)
         if self.container_link in self.__get_client_container_caches():
-            request_options[InternalOptions.CONTAINER_RID] = self.__get_client_container_caches()[self.container_link]["_rid"]
+            request_options[
+            Constants.InternalOptions.CONTAINER_RID
+        ] = self.__get_client_container_caches()[self.container_link]["_rid"]
         result = await self.client_connection.ReadConflict(
             conflict_link=self._get_conflict_link(conflict), options=request_options, **kwargs
         )
@@ -1488,7 +1523,7 @@ class ContainerProxy:
         :rtype: None
         """
         request_options = _build_options(kwargs)
-        request_options[InternalOptions.PARTITION_KEY] = await self._set_partition_key(partition_key)
+        request_options[Constants.InternalOptions.PARTITION_KEY] = await self._set_partition_key(partition_key)
 
         await self.client_connection.DeleteConflict(
             conflict_link=self._get_conflict_link(conflict), options=request_options, **kwargs
@@ -1547,9 +1582,11 @@ class ContainerProxy:
             kwargs[Constants.Kwargs.THROUGHPUT_BUCKET] = throughput_bucket
         request_options = _build_options(kwargs)
         # regardless if partition key is valid we set it as invalid partition keys are set to a default empty value
-        request_options[InternalOptions.PARTITION_KEY] = await self._set_partition_key(partition_key)
+        request_options[Constants.InternalOptions.PARTITION_KEY] = await self._set_partition_key(partition_key)
         await self._get_properties_with_options(request_options)
-        request_options[InternalOptions.CONTAINER_RID] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        request_options[
+            Constants.InternalOptions.CONTAINER_RID
+        ] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         await self.client_connection.DeleteAllItemsByPartitionKey(collection_link=self.container_link,
                                                                   options=request_options, **kwargs)
@@ -1614,10 +1651,12 @@ class ContainerProxy:
         if throughput_bucket is not None:
             kwargs[Constants.Kwargs.THROUGHPUT_BUCKET] = throughput_bucket
         request_options = _build_options(kwargs)
-        request_options[InternalOptions.PARTITION_KEY] = await self._set_partition_key(partition_key)
-        request_options[InternalOptions.DISABLE_AUTOMATIC_ID_GENERATION] = True
+        request_options[Constants.InternalOptions.PARTITION_KEY] = await self._set_partition_key(partition_key)
+        request_options[Constants.InternalOptions.DISABLE_AUTOMATIC_ID_GENERATION] = True
         await self._get_properties_with_options(request_options)
-        request_options[InternalOptions.CONTAINER_RID] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        request_options[
+            Constants.InternalOptions.CONTAINER_RID
+        ] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         return await self.client_connection.Batch(
             collection_link=self.container_link, batch_operations=batch_operations, options=request_options, **kwargs)

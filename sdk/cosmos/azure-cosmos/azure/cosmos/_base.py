@@ -194,7 +194,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
         )
 
     if options.get(InternalOptions.MAX_ITEM_COUNT):
-        headers[http_constants.HttpHeaders.PageSize] = options[InternalOptions.MAX_ITEM_COUNT]
+        headers[http_constants.HttpHeaders.PageSize] = options[Constants.InternalOptions.MAX_ITEM_COUNT]
 
     access_condition = options.get(InternalOptions.ACCESS_CONDITION)
     if access_condition:
@@ -225,7 +225,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
         ]
 
     if options.get(InternalOptions.OFFER_TYPE):
-        headers[http_constants.HttpHeaders.OfferType] = options[InternalOptions.OFFER_TYPE]
+        headers[http_constants.HttpHeaders.OfferType] = options[Constants.InternalOptions.OFFER_TYPE]
 
     if options.get(InternalOptions.OFFER_THROUGHPUT):
         headers[http_constants.HttpHeaders.OfferThroughput] = options[
@@ -233,7 +233,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
         ]
 
     if options.get(InternalOptions.CONTENT_TYPE):
-        headers[http_constants.HttpHeaders.ContentType] = options[InternalOptions.CONTENT_TYPE]
+        headers[http_constants.HttpHeaders.ContentType] = options[Constants.InternalOptions.CONTENT_TYPE]
 
     if options.get(InternalOptions.IS_QUERY_PLAN_REQUEST):
         headers[http_constants.HttpHeaders.IsQueryPlanRequest] = options[
@@ -246,29 +246,29 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
         ]
 
     if options.get(InternalOptions.QUERY_VERSION):
-        headers[http_constants.HttpHeaders.QueryVersion] = options[InternalOptions.QUERY_VERSION]
+        headers[http_constants.HttpHeaders.QueryVersion] = options[Constants.InternalOptions.QUERY_VERSION]
 
     if InternalOptions.PARTITION_KEY in options:
         # if partitionKey value is Undefined, serialize it as [{}] to be consistent with other SDKs.
-        if isinstance(options[InternalOptions.PARTITION_KEY], _Undefined):
+        if isinstance(options[Constants.InternalOptions.PARTITION_KEY], _Undefined):
             headers[http_constants.HttpHeaders.PartitionKey] = [{}]
         # If partitionKey value is Empty, serialize it as [], which is the equivalent sent for migrated collections
-        elif isinstance(options[InternalOptions.PARTITION_KEY], _Empty):
+        elif isinstance(options[Constants.InternalOptions.PARTITION_KEY], _Empty):
             headers[http_constants.HttpHeaders.PartitionKey] = []
         # else serialize using json dumps method which apart from regular values will serialize None into null
         else:
             # single partitioning uses a string and needs to be turned into a list
             is_sequence_not_string = (
-                isinstance(options[InternalOptions.PARTITION_KEY], Sequence) and
-                not isinstance(options[InternalOptions.PARTITION_KEY], str)
+                isinstance(options[Constants.InternalOptions.PARTITION_KEY], Sequence) and
+                not isinstance(options[Constants.InternalOptions.PARTITION_KEY], str)
             )
 
-            if is_sequence_not_string and options[InternalOptions.PARTITION_KEY]:
+            if is_sequence_not_string and options[Constants.InternalOptions.PARTITION_KEY]:
                 pk_val = json.dumps(
-                    list(options[InternalOptions.PARTITION_KEY]), separators=(',', ':')
+                    list(options[Constants.InternalOptions.PARTITION_KEY]), separators=(',', ':')
                 )
             else:
-                pk_val = json.dumps([options[InternalOptions.PARTITION_KEY]])
+                pk_val = json.dumps([options[Constants.InternalOptions.PARTITION_KEY]])
             headers[http_constants.HttpHeaders.PartitionKey] = pk_val
 
     if options.get(InternalOptions.ENABLE_CROSS_PARTITION_QUERY):
@@ -292,7 +292,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
         ]
 
     if options.get(InternalOptions.PRIORITY_LEVEL):
-        headers[http_constants.HttpHeaders.PriorityLevel] = options[InternalOptions.PRIORITY_LEVEL]
+        headers[http_constants.HttpHeaders.PriorityLevel] = options[Constants.InternalOptions.PRIORITY_LEVEL]
 
     # formatdate guarantees RFC 1123 date format regardless of current locale
     headers[http_constants.HttpHeaders.XDate] = formatdate(timeval=None, localtime=False, usegmt=True)
@@ -300,7 +300,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     if cosmos_client_connection.master_key or cosmos_client_connection.resource_tokens:
         resource_type = _internal_resourcetype(resource_type)
         authorization = _get_authorization_header(
-            cosmos_client_connection, verb, path, resource_id, 
+            cosmos_client_connection, verb, path, resource_id,
             IsNameBased(resource_id), resource_type, headers
         )
         # urllib.quote throws when the input parameter is None
@@ -340,7 +340,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
         ]
 
     if options.get(InternalOptions.CONTINUATION):
-        headers[http_constants.HttpHeaders.Continuation] = options[InternalOptions.CONTINUATION]
+        headers[http_constants.HttpHeaders.Continuation] = options[Constants.InternalOptions.CONTINUATION]
 
     if options.get(InternalOptions.POPULATE_PARTITION_KEY_RANGE_STATISTICS):
         headers[http_constants.HttpHeaders.PopulatePartitionKeyRangeStatistics] = options[
@@ -368,7 +368,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
         ]
 
     if options.get(InternalOptions.THROUGHPUT_BUCKET):
-        headers[http_constants.HttpHeaders.ThroughputBucket] = options[InternalOptions.THROUGHPUT_BUCKET]
+        headers[http_constants.HttpHeaders.ThroughputBucket] = options[Constants.InternalOptions.THROUGHPUT_BUCKET]
 
     if resource_type == "docs" and verb != "get":
         if InternalOptions.RESPONSE_PAYLOAD_ON_WRITE_DISABLED in options:
@@ -875,19 +875,19 @@ def _stringify_auto_scale(offer: ThroughputProperties) -> str:
 
 def _set_throughput_options(offer: Optional[Union[int, ThroughputProperties]], request_options: Dict[str, Any]) -> None:
     if isinstance(offer, int):
-        request_options[InternalOptions.OFFER_THROUGHPUT] = offer
+        request_options[Constants.InternalOptions.OFFER_THROUGHPUT] = offer
     elif offer is not None:
         try:
             max_throughput = offer.auto_scale_max_throughput
             increment_percent = offer.auto_scale_increment_percent
 
             if max_throughput is not None:
-                request_options[InternalOptions.AUTO_UPGRADE_POLICY] = _stringify_auto_scale(offer=offer)
+                request_options[Constants.InternalOptions.AUTO_UPGRADE_POLICY] = _stringify_auto_scale(offer=offer)
             elif increment_percent:
                 raise ValueError("auto_scale_max_throughput must be supplied in "
                                  "conjunction with auto_scale_increment_percent")
             if offer.offer_throughput:
-                request_options[InternalOptions.OFFER_THROUGHPUT] = offer.offer_throughput
+                request_options[Constants.InternalOptions.OFFER_THROUGHPUT] = offer.offer_throughput
         except AttributeError as e:
             raise TypeError("offer_throughput must be int or an instance of ThroughputProperties") from e
 

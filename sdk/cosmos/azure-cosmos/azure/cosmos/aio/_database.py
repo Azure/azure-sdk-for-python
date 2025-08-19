@@ -31,8 +31,8 @@ from azure.core.tracing.decorator import distributed_trace
 
 from ._cosmos_client_connection_async import CosmosClientConnection
 from .._base import (
-    build_options as _build_options, 
-    _set_throughput_options, 
+    build_options as _build_options,
+    _set_throughput_options,
     _deserialize_throughput,
     _replace_throughput
 )
@@ -44,9 +44,6 @@ from ..exceptions import CosmosResourceNotFoundError
 from ._user import UserProxy
 from ..documents import IndexingMode
 from ..partition_key import PartitionKey
-
-# InternalOptions alias for cleaner access to internal option constants
-InternalOptions = Constants.InternalOptions
 
 
 __all__ = ("DatabaseProxy",)
@@ -151,7 +148,7 @@ class DatabaseProxy(object):
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given database 
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given database
             couldn't be retrieved.
         :returns: A dict representing the database properties
         :rtype: Dict[str, Any]
@@ -297,15 +294,15 @@ class DatabaseProxy(object):
         _set_throughput_options(offer=offer_throughput, request_options=request_options)
 
         data = await self.client_connection.CreateContainer(
-            database_link=self.database_link, 
-            collection=definition, 
-            options=request_options, 
+            database_link=self.database_link,
+            collection=definition,
+            options=request_options,
             **kwargs
         )
         return ContainerProxy(
-            self.client_connection, 
-            self.database_link, 
-            data["id"], 
+            self.client_connection,
+            self.database_link,
+            data["id"],
             properties=data
         )
 
@@ -413,7 +410,7 @@ class DatabaseProxy(object):
     ) -> ContainerProxy:
         """Get a `ContainerProxy` for a container with specified ID (name).
 
-        :param container: The ID (name), dict representing the properties, or 
+        :param container: The ID (name), dict representing the properties, or
             :class:`ContainerProxy` instance of the container to get.
         :type container: Union[str, Dict[str, Any], ~azure.cosmos.aio.ContainerProxy]
         :returns: A `ContainerProxy` instance representing the container.
@@ -633,9 +630,9 @@ class DatabaseProxy(object):
             container_link, collection=parameters, options=request_options, **kwargs
         )
         return ContainerProxy(
-            self.client_connection, 
-            self.database_link, 
-            container_properties["id"], 
+            self.client_connection,
+            self.database_link,
+            container_properties["id"],
             properties=container_properties
         )
 
@@ -721,9 +718,9 @@ class DatabaseProxy(object):
             database_link=self.database_link, user=body, options=request_options, **kwargs)
 
         return UserProxy(
-            client_connection=self.client_connection, 
-            id=user["id"], 
-            database_link=self.database_link, 
+            client_connection=self.client_connection,
+            id=user["id"],
+            database_link=self.database_link,
             properties=user
         )
 
@@ -746,8 +743,8 @@ class DatabaseProxy(object):
         else:
             id_value = str(user['id'])
         return UserProxy(
-            client_connection=self.client_connection, 
-            id=id_value, 
+            client_connection=self.client_connection,
+            id=id_value,
             database_link=self.database_link
         )
 
@@ -843,9 +840,9 @@ class DatabaseProxy(object):
             database_link=self.database_link, user=body, options=request_options, **kwargs
         )
         return UserProxy(
-            client_connection=self.client_connection, 
-            id=user["id"], 
-            database_link=self.database_link, 
+            client_connection=self.client_connection,
+            id=user["id"],
+            database_link=self.database_link,
             properties=user
         )
 
@@ -977,11 +974,11 @@ class DatabaseProxy(object):
         _replace_throughput(throughput=throughput, new_throughput_properties=new_offer)
         data = await self.client_connection.ReplaceOffer(
             offer_link=throughput_properties[0]["_self"],
-            offer=throughput_properties[0], 
+            offer=throughput_properties[0],
             **kwargs
         )
 
         return ThroughputProperties(
-            offer_throughput=data["content"]["offerThroughput"], 
+            offer_throughput=data["content"]["offerThroughput"],
             properties=data
         )

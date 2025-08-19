@@ -30,12 +30,7 @@ from azure.core.paging import ItemPaged
 from azure.cosmos.partition_key import PartitionKey
 
 from ._cosmos_client_connection import CosmosClientConnection
-from ._base import (
-    build_options, 
-    _set_throughput_options, 
-    _deserialize_throughput, 
-    _replace_throughput
-)
+from ._base import build_options, _set_throughput_options, _deserialize_throughput, _replace_throughput
 from ._constants import _Constants as Constants
 from .container import ContainerProxy
 from .offer import Offer, ThroughputProperties
@@ -43,9 +38,6 @@ from .http_constants import StatusCodes as _StatusCodes
 from .exceptions import CosmosResourceNotFoundError
 from .user import UserProxy
 from .documents import IndexingMode
-
-# InternalOptions alias for cleaner access to internal option constants
-InternalOptions = Constants.InternalOptions
 
 __all__ = ("DatabaseProxy",)
 
@@ -295,16 +287,16 @@ class DatabaseProxy(object):
         request_options = build_options(kwargs)
         _set_throughput_options(offer=offer_throughput, request_options=request_options)
         result = self.client_connection.CreateContainer(
-            database_link=self.database_link, 
-            collection=definition, 
-            options=request_options, 
+            database_link=self.database_link,
+            collection=definition,
+            options=request_options,
             **kwargs
         )
 
         return ContainerProxy(
-            self.client_connection, 
-            self.database_link, 
-            result["id"], 
+            self.client_connection,
+            self.database_link,
+            result["id"],
             properties=result
         )
 

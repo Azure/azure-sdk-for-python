@@ -3184,7 +3184,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if Constants.Kwargs.FEED_RANGE in kwargs:
             feed_range = kwargs.pop(Constants.Kwargs.FEED_RANGE)
             feed_range_epk = FeedRangeInternalEpk.from_json(feed_range).get_normalized_range()
-        elif (Constants.Kwargs.PREFIX_PARTITION_KEY_OBJECT in kwargs and 
+        elif (Constants.Kwargs.PREFIX_PARTITION_KEY_OBJECT in kwargs and
               Constants.Kwargs.PREFIX_PARTITION_KEY_VALUE in kwargs):
             prefix_partition_key_obj = kwargs.pop(Constants.Kwargs.PREFIX_PARTITION_KEY_OBJECT)
             prefix_partition_key_value: _SequentialPartitionKeyType = kwargs.pop(

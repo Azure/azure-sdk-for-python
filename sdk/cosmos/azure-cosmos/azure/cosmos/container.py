@@ -58,9 +58,6 @@ from .partition_key import (
 )
 from .scripts import ScriptsProxy
 
-# InternalOptions alias for cleaner access to internal option constants
-InternalOptions = Constants.InternalOptions
-
 __all__ = ("ContainerProxy",)
 
 # pylint: disable=too-many-lines,disable=protected-access
@@ -111,8 +108,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
     def _get_properties_with_options(self, options: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         kwargs = {}
-        if options and InternalOptions.EXCLUDED_LOCATIONS in options:
-            kwargs[Constants.Kwargs.EXCLUDED_LOCATIONS] = options[InternalOptions.EXCLUDED_LOCATIONS]
+        if options and Constants.InternalOptions.EXCLUDED_LOCATIONS in options:
+            kwargs[Constants.Kwargs.EXCLUDED_LOCATIONS] = options[Constants.InternalOptions.EXCLUDED_LOCATIONS]
         return self._get_properties(**kwargs)
 
     def _get_properties(self, **kwargs: Any) -> Dict[str, Any]:
@@ -206,9 +203,11 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 DeprecationWarning,
             )
         if populate_partition_key_range_statistics is not None:
-            request_options[InternalOptions.POPULATE_PARTITION_KEY_RANGE_STATISTICS] = populate_partition_key_range_statistics
+            request_options[
+                InternalOptions.POPULATE_PARTITION_KEY_RANGE_STATISTICS
+            ] = populate_partition_key_range_statistics
         if populate_quota_info is not None:
-            request_options[InternalOptions.POPULATE_QUOTA_INFO] = populate_quota_info
+            request_options[Constants.InternalOptions.POPULATE_QUOTA_INFO] = populate_quota_info
         container = self.client_connection.ReadContainer(self.container_link, options=request_options, **kwargs)
         # Only cache Container Properties that will not change in the lifetime of the container
         self.client_connection._set_container_properties_cache(self.container_link,  # pylint: disable=protected-access
