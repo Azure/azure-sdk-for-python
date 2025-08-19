@@ -444,6 +444,57 @@ class BlobMetadata(_serialization.Model):
         self.encrypted = encrypted
 
 
+class BlobModifiedAccessConditions(_serialization.Model):
+    """Parameter group.
+
+    :ivar if_modified_since: Specify this header value to operate only on a blob if it has been
+     modified since the specified date/time.
+    :vartype if_modified_since: ~datetime.datetime
+    :ivar if_unmodified_since: Specify this header value to operate only on a blob if it has not
+     been modified since the specified date/time.
+    :vartype if_unmodified_since: ~datetime.datetime
+    :ivar if_match: Specify an ETag value to operate only on blobs with a matching value.
+    :vartype if_match: str
+    :ivar if_none_match: Specify an ETag value to operate only on blobs without a matching value.
+    :vartype if_none_match: str
+    """
+
+    _attribute_map = {
+        "if_modified_since": {"key": "ifModifiedSince", "type": "rfc-1123"},
+        "if_unmodified_since": {"key": "ifUnmodifiedSince", "type": "rfc-1123"},
+        "if_match": {"key": "ifMatch", "type": "str"},
+        "if_none_match": {"key": "ifNoneMatch", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        if_modified_since: Optional[datetime.datetime] = None,
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        if_match: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword if_modified_since: Specify this header value to operate only on a blob if it has been
+         modified since the specified date/time.
+        :paramtype if_modified_since: ~datetime.datetime
+        :keyword if_unmodified_since: Specify this header value to operate only on a blob if it has not
+         been modified since the specified date/time.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword if_match: Specify an ETag value to operate only on blobs with a matching value.
+        :paramtype if_match: str
+        :keyword if_none_match: Specify an ETag value to operate only on blobs without a matching
+         value.
+        :paramtype if_none_match: str
+        """
+        super().__init__(**kwargs)
+        self.if_modified_since = if_modified_since
+        self.if_unmodified_since = if_unmodified_since
+        self.if_match = if_match
+        self.if_none_match = if_none_match
+
+
 class BlobName(_serialization.Model):
     """BlobName.
 
