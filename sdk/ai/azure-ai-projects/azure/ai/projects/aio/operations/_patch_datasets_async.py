@@ -18,12 +18,11 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ._operations import DatasetsOperations as DatasetsOperationsGenerated
 from ...models._models import (
-    DatasetVersion,
     FileDatasetVersion,
     FolderDatasetVersion,
     PendingUploadRequest,
-    PendingUploadType,
     PendingUploadResponse,
+    PendingUploadType,
 )
 
 logger = logging.getLogger(__name__)
@@ -51,7 +50,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         pending_upload_response: PendingUploadResponse = await self.pending_upload(
             name=name,
             version=input_version,
-            body=PendingUploadRequest(
+            pending_upload_request=PendingUploadRequest(
                 pending_upload_type=PendingUploadType.BLOB_REFERENCE,
                 connection_name=connection_name,
             ),
@@ -80,7 +79,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
     @distributed_trace_async
     async def upload_file(
         self, *, name: str, version: str, file_path: str, connection_name: Optional[str] = None, **kwargs: Any
-    ) -> DatasetVersion:
+    ) -> FileDatasetVersion:
         """Upload file to a blob storage, and create a dataset that references this file.
         This method uses the `ContainerClient.upload_blob` method from the azure-storage-blob package
         to upload the file. Any keyword arguments provided will be passed to the `upload_blob` method.
@@ -95,7 +94,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
          If not specified, the default Azure Storage Account connection will be used. Optional.
         :paramtype connection_name: str
         :return: The created dataset version.
-        :rtype: ~azure.ai.projects.models.DatasetVersion
+        :rtype: ~azure.ai.projects.models.FileDatasetVersion
         :raises ~azure.core.exceptions.HttpResponseError: If an error occurs during the HTTP request.
         """
 
@@ -133,14 +132,14 @@ class DatasetsOperations(DatasetsOperationsGenerated):
                     dataset_version = await self.create_or_update(
                         name=name,
                         version=output_version,
-                        body=FileDatasetVersion(
+                        dataset_version=FileDatasetVersion(
                             # See https://learn.microsoft.com/python/api/azure-storage-blob/azure.storage.blob.blobclient?view=azure-python#azure-storage-blob-blobclient-url
                             # Per above doc the ".url" contains SAS token... should this be stripped away?
                             data_uri=data_uri,
                         ),
                     )
 
-        return dataset_version
+        return dataset_version  # type: ignore
 
     @distributed_trace_async
     async def upload_folder(
@@ -152,7 +151,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         connection_name: Optional[str] = None,
         file_pattern: Optional[re.Pattern] = None,
         **kwargs: Any,
-    ) -> DatasetVersion:
+    ) -> FolderDatasetVersion:
         """Upload all files in a folder and its sub folders to a blob storage, while maintaining
         relative paths, and create a dataset that references this folder.
         This method uses the `ContainerClient.upload_blob` method from the azure-storage-blob package
@@ -171,7 +170,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
          will be uploaded. Optional.
         :paramtype file_pattern: re.Pattern
         :return: The created dataset version.
-        :rtype: ~azure.ai.projects.models.DatasetVersion
+        :rtype: ~azure.ai.projects.models.FolderDatasetVersion
         :raises ~azure.core.exceptions.HttpResponseError: If an error occurs during the HTTP request.
         """
         path_folder = Path(folder)
@@ -217,7 +216,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
             dataset_version = await self.create_or_update(
                 name=name,
                 version=output_version,
-                body=FolderDatasetVersion(data_uri=data_uri),
+                dataset_version=FolderDatasetVersion(data_uri=data_uri),
             )
 
-        return dataset_version
+        return dataset_version  # type: ignore

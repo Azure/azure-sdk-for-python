@@ -1,5 +1,12 @@
 # Release History
 
+## 25.0.0b1 (2025-07-16)
+
+### Breaking Changes
+
+  - This package now only targets the latest Api-Version available on Azure and removes APIs of other Api-Version. After this change, the package can have much smaller size. If your application requires a specific and non-latest Api-Version, it's recommended to pin this package to the previous released version; If your application always only use latest Api-Version, please ignore this change.
+  - Operation Group `Deployments` and `DeploymentOperations` of `ResourceManagementClient` are moved to `DeploymentsMgmtClient` of independent package `azure-mgmt-resource-deployments`. If you called `ResourceManagementClient(...).deployments.xx(...)` before, just need change to `DeploymentsMgmtClient(...).deployments.xx(...)`. And same for `DeploymentOperations`.
+
 ## 24.0.0 (2025-06-16)
 
 ### Features Added

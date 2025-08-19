@@ -18,7 +18,8 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-projects azure-ai-agents azure-identity
+    pip install azure-identity
+    pip install --pre azure-ai-projects
 
     Set this environment variables with your own values:
     1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -33,11 +34,6 @@ import os
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.agents.models import SharepointTool
-
-
-# Create an Azure AI Client from a connection string, copied from your AI Studio project.
-# At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
-# Customer needs to login to Azure subscription via Azure CLI and set the environment variables
 
 project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],

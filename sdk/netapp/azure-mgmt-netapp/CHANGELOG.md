@@ -1,5 +1,25 @@
 # Release History
 
+## 13.7.0 (2025-08-18)
+
+### Features Added
+
+  - Model `CapacityPool` added property `custom_throughput_mibps`
+  - Model `CapacityPoolPatch` added property `custom_throughput_mibps`
+  - Enum `ServiceLevel` added member `FLEXIBLE`
+  - Model `Volume` added property `accept_grow_capacity_pool_for_short_term_clone_split`
+  - Model `Volume` added property `inherited_size_in_bytes`
+  - Model `VolumeGroupVolumeProperties` added property `accept_grow_capacity_pool_for_short_term_clone_split`
+  - Model `VolumeGroupVolumeProperties` added property `inherited_size_in_bytes`
+  - Added enum `AcceptGrowCapacityPoolForShortTermCloneSplit`
+  - Model `VolumesOperations` added method `begin_split_clone_from_parent`
+
+## 13.6.0 (2025-07-21)
+
+### Features Added
+
+  - Model `SubscriptionQuotaItemList` added property `next_link`
+
 ## 14.0.0b1 (2025-05-20)
 
 ### Features Added

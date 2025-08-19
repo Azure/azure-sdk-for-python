@@ -5,7 +5,6 @@
 import base64
 from itertools import product
 import logging
-from platform import python_version
 import re
 import subprocess
 import sys
@@ -121,11 +120,10 @@ def test_get_token(stderr, get_token_method):
     decoded_script = base64.b64decode(encoded_script).decode("utf-16-le")
     assert "tenantId = ''" in decoded_script
     assert f"'ResourceUrl' = '{scope}'" in decoded_script
+    assert "-is [System.Security.SecureString]" in decoded_script
 
     assert Popen().communicate.call_count == 1
     args, kwargs = Popen().communicate.call_args
-    if python_version() >= "3.3":
-        assert "timeout" in kwargs
 
 
 @pytest.mark.parametrize("stderr,get_token_method", product(("", PREPARING_MODULES), GET_TOKEN_METHODS))

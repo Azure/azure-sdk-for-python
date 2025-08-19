@@ -4,7 +4,7 @@
 # ------------------------------------
 import socket
 import sys
-from typing import Dict, Any, Mapping, Union
+from typing import Dict, Any, Mapping, Union, cast
 import msal
 
 from azure.core.exceptions import ClientAuthenticationError
@@ -14,7 +14,7 @@ from azure.identity._credentials import (
 )  # pylint:disable=protected-access
 from azure.identity._exceptions import CredentialUnavailableError  # pylint:disable=protected-access
 from azure.identity._internal.utils import within_dac  # pylint:disable=protected-access
-from ._utils import wrap_exceptions, resolve_tenant
+from ._utils import wrap_exceptions, resolve_tenant, is_wsl
 
 
 class PopTokenRequestOptions(TokenRequestOptions):
@@ -50,13 +50,16 @@ class InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):
         unspecified, users will authenticate to an Azure development application.
     :keyword str login_hint: a username suggestion to pre-fill the login page's username/email address field. A user
         may still log in with a different username.
+    :keyword cache_persistence_options: configuration for persistent token caching. If unspecified, the credential
+        will cache tokens in memory.
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
     :keyword int timeout: seconds to wait for the user to complete authentication. Defaults to 300 (5 minutes).
     :keyword int parent_window_handle: If your app is a GUI app running on Windows 10+ or macOS, you
         are required to also provide its window handle, so that the sign in UI window will properly pop up on top
         of your window.
     :keyword bool use_default_broker_account: Enables automatically using the default broker account for
-        authentication instead of prompting the user with an account picker. Defaults to False.
+        authentication instead of prompting the user with an account picker. This is currently only supported on Windows
+        and WSL. Defaults to False.
     :keyword bool enable_msa_passthrough: Determines whether Microsoft Account (MSA) passthrough is enabled. Note, this
         is only needed for select legacy first-party applications. Defaults to False.
     :keyword bool disable_instance_discovery: Determines whether or not instance discovery is performed when attempting
@@ -76,94 +79,88 @@ class InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):
         self._parent_window_handle = kwargs.pop("parent_window_handle", None)
         self._enable_msa_passthrough = kwargs.pop("enable_msa_passthrough", False)
         self._use_default_broker_account = kwargs.pop("use_default_broker_account", False)
+        self._disable_interactive_fallback = kwargs.pop("disable_interactive_fallback", False)
         super().__init__(**kwargs)
 
     @wrap_exceptions
     def _request_token(self, *scopes: str, **kwargs: Any) -> Dict:
-        scopes = list(scopes)  # type: ignore
+        scopes_list = list(scopes)
         claims = kwargs.get("claims")
         pop = kwargs.get("pop")
-        app = self._get_app(**kwargs)
-        port = self._parsed_url.port if self._parsed_url else None
+        app = cast(msal.PublicClientApplication, self._get_app(**kwargs))
         auth_scheme = None
         if pop:
             auth_scheme = msal.PopAuthScheme(
                 http_method=pop["resource_request_method"], url=pop["resource_request_url"], nonce=pop["nonce"]
             )
-        if sys.platform.startswith("win"):
-            if self._use_default_broker_account:
-                try:
-                    result = app.acquire_token_interactive(
-                        scopes=scopes,
-                        login_hint=self._login_hint,
-                        claims_challenge=claims,
-                        timeout=self._timeout,
-                        prompt=msal.Prompt.NONE,
-                        port=port,
-                        parent_window_handle=self._parent_window_handle,
-                        enable_msa_passthrough=self._enable_msa_passthrough,
-                        auth_scheme=auth_scheme,
-                    )
-                    if "access_token" in result:
-                        return result
-                except socket.error:
-                    pass
+
+        result = {}
+
+        # Try silent authentication first if use_default_broker_account is enabled.
+        if self._use_default_broker_account:
             try:
-                result = app.acquire_token_interactive(
-                    scopes=scopes,
-                    login_hint=self._login_hint,
-                    claims_challenge=claims,
-                    timeout=self._timeout,
-                    prompt="select_account",
-                    port=port,
-                    parent_window_handle=self._parent_window_handle,
-                    enable_msa_passthrough=self._enable_msa_passthrough,
-                    auth_scheme=auth_scheme,
+                result = self._attempt_token_acquisition(app, scopes_list, claims, auth_scheme, msal.Prompt.NONE)
+                if "access_token" in result:
+                    return result
+            except Exception as ex:  # pylint: disable=broad-except
+                if self._disable_interactive_fallback:
+                    raise CredentialUnavailableError(
+                        message="Failed to authenticate user with default broker account."
+                    ) from ex
+
+            # Raise on error if interactive fallback is disabled.
+            if self._disable_interactive_fallback:
+                self._check_result(result)
+
+        # If we reach here, we need to try interactive authentication.
+        if not self._disable_interactive_fallback:
+            try:
+                result = self._attempt_token_acquisition(
+                    app, scopes_list, claims, auth_scheme, msal.Prompt.SELECT_ACCOUNT
                 )
             except socket.error as ex:
                 raise CredentialUnavailableError(message="Couldn't start an HTTP server.") from ex
-            if "access_token" not in result and "error_description" in result:
-                if within_dac.get():
-                    raise CredentialUnavailableError(message=result["error_description"])
-                raise ClientAuthenticationError(message=result.get("error_description"))
-            if "access_token" not in result:
-                if within_dac.get():
-                    raise CredentialUnavailableError(message="Failed to authenticate user")
-                raise ClientAuthenticationError(message="Failed to authenticate user")
-        else:
-            try:
-                result = app.acquire_token_interactive(
-                    scopes=scopes,
-                    login_hint=self._login_hint,
-                    claims_challenge=claims,
-                    timeout=self._timeout,
-                    prompt="select_account",
-                    port=port,
-                    parent_window_handle=self._parent_window_handle,
-                    enable_msa_passthrough=self._enable_msa_passthrough,
-                    auth_scheme=auth_scheme,
-                )
-            except Exception:  # pylint: disable=broad-except
-                app = self._disable_broker_on_app(**kwargs)
-                result = app.acquire_token_interactive(
-                    scopes=scopes,
-                    login_hint=self._login_hint,
-                    claims_challenge=claims,
-                    timeout=self._timeout,
-                    prompt="select_account",
-                    port=port,
-                    parent_window_handle=self._parent_window_handle,
-                    enable_msa_passthrough=self._enable_msa_passthrough,
-                )
-                if "access_token" in result:
-                    return result
-                if "error_description" in result:
-                    if within_dac.get():
-                        # pylint: disable=raise-missing-from
-                        raise CredentialUnavailableError(message=result["error_description"])
-                    # pylint: disable=raise-missing-from
-                    raise ClientAuthenticationError(message=result.get("error_description"))
+            except Exception as ex:  # pylint: disable=broad-except
+                # Fallback to non-broker app only on non-Windows/WSL platforms.
+                if not (sys.platform.startswith("win") or is_wsl()):
+                    app = cast(msal.PublicClientApplication, self._disable_broker_on_app(**kwargs))
+                    result = self._attempt_token_acquisition(app, scopes_list, claims, None, msal.Prompt.SELECT_ACCOUNT)
+                else:
+                    raise CredentialUnavailableError(message="Failed to authenticate user with broker account.") from ex
+            self._check_result(result)
+
         return result
+
+    def _attempt_token_acquisition(
+        self,
+        app: msal.PublicClientApplication,
+        scopes_list: list,
+        claims: Any,
+        auth_scheme: Any,
+        prompt: str,
+    ) -> Dict:
+        port = self._parsed_url.port if self._parsed_url else None
+        return app.acquire_token_interactive(
+            scopes=scopes_list,
+            login_hint=self._login_hint,
+            claims_challenge=claims,
+            timeout=self._timeout,
+            prompt=prompt,
+            port=port,
+            parent_window_handle=self._parent_window_handle,
+            enable_msa_passthrough=self._enable_msa_passthrough,
+            auth_scheme=auth_scheme,
+        )
+
+    def _check_result(self, result: Dict[str, Any]) -> None:
+        if "access_token" not in result and "error_description" in result:
+            if within_dac.get():
+                raise CredentialUnavailableError(message=result["error_description"])
+            raise ClientAuthenticationError(message=result.get("error_description"))
+        if "access_token" not in result:
+            if within_dac.get():
+                raise CredentialUnavailableError(message="Failed to authenticate user")
+            raise ClientAuthenticationError(message="Failed to authenticate user")
 
     def _get_app(self, **kwargs: Any) -> msal.ClientApplication:
         tenant_id = resolve_tenant(
@@ -196,6 +193,8 @@ class InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):
                 instance_discovery=self._instance_discovery,
                 enable_broker_on_windows=True,
                 enable_broker_on_mac=True,
+                enable_broker_on_linux=True,
+                enable_broker_on_wsl=True,
                 enable_pii_log=self._enable_support_logging,
             )
 
@@ -231,6 +230,8 @@ class InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):
             instance_discovery=self._instance_discovery,
             enable_broker_on_windows=False,
             enable_broker_on_mac=False,
+            enable_broker_on_linux=False,
+            enable_broker_on_wsl=False,
             enable_pii_log=self._enable_support_logging,
         )
 

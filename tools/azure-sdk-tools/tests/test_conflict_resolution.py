@@ -5,13 +5,15 @@ from tempfile import TemporaryDirectory
 from ci_tools.functions import resolve_compatible_package, is_package_compatible
 from typing import Optional, List
 from packaging.version import Version
-from pkg_resources import Requirement
+from packaging.requirements import Requirement
 
 
 @pytest.mark.parametrize(
     "fake_package_input_requirements, immutable_requirements, expected_result",
-    [([Requirement("sphinx==1.0.0")], [Requirement("sphinx>=1.0.0")], True),
-     ([Requirement("sphinx==1.0.0")], [Requirement("sphinx>=1.1.0")], False)],
+    [
+        ([Requirement("sphinx==1.0.0")], [Requirement("sphinx>=1.0.0")], True),
+        ([Requirement("sphinx==1.0.0")], [Requirement("sphinx>=1.1.0")], False),
+    ],
 )
 def test_incompatible_specifier(fake_package_input_requirements, immutable_requirements, expected_result):
     result = is_package_compatible("fake-package", fake_package_input_requirements, immutable_requirements)

@@ -1,0 +1,7 @@
+{
+  "apiVersion": "2025-04-01",
+  "commit": "5f272067844826380939c0b3f24ca3cc99dbe308",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/carbon/Carbon.Management",
+  "emitterVersion": "0.45.2"
+}

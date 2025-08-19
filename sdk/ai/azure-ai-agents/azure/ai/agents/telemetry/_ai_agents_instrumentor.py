@@ -127,13 +127,16 @@ class AIAgentsInstrumentor:
         :param enable_content_recording: Whether content recording is enabled as part
           of the traces or not. Content in this context refers to chat message content
           and function call tool related function names, function parameter names and
-          values. True will enable content recording, False will disable it. If no value
-          is provided, then the value read from environment variable
-          AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED is used. If the environment variable
-          is not found, then the value will default to False. Please note that successive calls
+          values. `True` will enable content recording, `False` will disable it. If no value
+          is provided, then the value read from environment variables
+          OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT and
+          AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED is used. The latter is supported
+          for legacy reasons. Applications are encouraged to use the former, which is defined by OTEL.
+          If the environment variable is not found, then the value will default to `False`.
+          Please note that successive calls
           to instrument will always apply the content recording value provided with the most
           recent call to instrument (including applying the environment variable if no value is
-          provided and defaulting to false if the environment variable is not found), even if
+          provided and defaulting to `False` if the environment variable is not found), even if
           instrument was already previously called without uninstrument being called in between
           the instrument calls.
         :type enable_content_recording: bool, optional
@@ -187,18 +190,47 @@ class _AIAgentsInstrumentorPreview:
         Enable trace instrumentation for AI Agents.
 
         :param enable_content_recording: Whether content recording is enabled as part
-        of the traces or not. Content in this context refers to chat message content
-        and function call tool related function names, function parameter names and
-        values. True will enable content recording, False will disable it. If no value
-        is provided, then the value read from environment variable
-        AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED is used. If the environment variable
-        is not found, then the value will default to False.
-
+          of the traces or not. Content in this context refers to chat message content
+          and function call tool related function names, function parameter names and
+          values. `True` will enable content recording, `False` will disable it. If no value
+          is provided, then the value read from environment variables
+          OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT and
+          AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED is used. The latter is supported
+          for legacy reasons. Applications are encouraged to use the former, which is defined by OTEL.
+          If the environment variable is not found, then the value will default to `False`.
+          Please note that successive calls
+          to instrument will always apply the content recording value provided with the most
+          recent call to instrument (including applying the environment variable if no value is
+          provided and defaulting to `False` if the environment variable is not found), even if
+          instrument was already previously called without uninstrument being called in between
+          the instrument calls.
         :type enable_content_recording: bool, optional
+
         """
         if enable_content_recording is None:
-            var_value = os.environ.get("AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED")
+
+            # AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED was introduced before the standard
+            # OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT was defined by OTEL. Support both
+            # of them moving forward, but only document the standard one.
+            var_value_new = os.environ.get("OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT")
+            var_value_old = os.environ.get("AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED")
+            var_value: Optional[str] = None
+
+            if var_value_new and var_value_old and var_value_new != var_value_old:
+                logger.error(
+                    "Environment variables OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT "
+                    "and AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED are both set, and "
+                    "their values differ. Message content recording in this run will be disabled "
+                    "as a result. Please set OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT only."
+                )
+                var_value = None
+            elif var_value_new:
+                var_value = var_value_new
+            elif var_value_old:
+                var_value = var_value_old
+
             enable_content_recording = self._str_to_bool(var_value)
+
         if not self.is_instrumented():
             self._instrument_agents(enable_content_recording)
         else:
@@ -1324,27 +1356,48 @@ class _AIAgentsInstrumentorPreview:
         server_address = self.get_server_address_from_arg(args[0])
         thread_id = kwargs.get("thread_id")
 
-        span = self.start_list_messages_span(server_address=server_address, thread_id=thread_id)
-
-        return _InstrumentedItemPaged(function(*args, **kwargs), self.add_thread_message_event, span)
+        return _InstrumentedItemPaged(
+            function(*args, **kwargs),
+            start_span_function=self.start_trace_list_messages,
+            item_instrumentation_function=self.add_thread_message_event,
+            server_address=server_address,
+            thread_id=thread_id,
+            run_id=None,
+        )
 
     def trace_list_messages_async(self, function, *args, **kwargs):
         # Note that this method is not async, but it operates on AsyncIterable.
         server_address = self.get_server_address_from_arg(args[0])
         thread_id = kwargs.get("thread_id")
 
-        span = self.start_list_messages_span(server_address=server_address, thread_id=thread_id)
+        return _AsyncInstrumentedItemPaged(
+            function(*args, **kwargs),
+            start_span_function=self.start_trace_list_messages,
+            item_instrumentation_function=self.add_thread_message_event,
+            server_address=server_address,
+            thread_id=thread_id,
+            run_id=None,
+        )
 
-        return _AsyncInstrumentedItemPaged(function(*args, **kwargs), self.add_thread_message_event, span)
+    def start_trace_list_messages(
+        self, server_address: Optional[str] = None, thread_id: Optional[str] = None, run_id: Optional[str] = None
+    ):
+        _ = run_id  # Unused parameter, but kept for compatibility.
+        return self.start_list_messages_span(server_address=server_address, thread_id=thread_id)
 
     def trace_list_run_steps(self, function, *args, **kwargs):
         server_address = self.get_server_address_from_arg(args[0])
         run_id = kwargs.get("run_id")
         thread_id = kwargs.get("thread_id")
 
-        span = self.start_list_run_steps_span(server_address=server_address, run_id=run_id, thread_id=thread_id)
-
-        return _InstrumentedItemPaged(function(*args, **kwargs), self.add_run_step_event, span)
+        return _InstrumentedItemPaged(
+            function(*args, **kwargs),
+            start_span_function=self.start_list_run_steps_span,
+            item_instrumentation_function=self.add_run_step_event,
+            server_address=server_address,
+            thread_id=thread_id,
+            run_id=run_id,
+        )
 
     def trace_list_run_steps_async(self, function, *args, **kwargs):
         # Note that this method is not async, but it operates on AsyncIterable.
@@ -1352,9 +1405,19 @@ class _AIAgentsInstrumentorPreview:
         run_id = kwargs.get("run_id")
         thread_id = kwargs.get("thread_id")
 
-        span = self.start_list_run_steps_span(server_address=server_address, run_id=run_id, thread_id=thread_id)
+        return _AsyncInstrumentedItemPaged(
+            function(*args, **kwargs),
+            start_span_function=self.start_list_run_steps_span,
+            item_instrumentation_function=self.add_run_step_event,
+            server_address=server_address,
+            thread_id=thread_id,
+            run_id=run_id,
+        )
 
-        return _AsyncInstrumentedItemPaged(function(*args, **kwargs), self.add_run_step_event, span)
+    def start_trace_list_run_steps(
+        self, server_address: Optional[str] = None, thread_id: Optional[str] = None, run_id: Optional[str] = None
+    ):
+        return self.start_list_run_steps_span(server_address=server_address, thread_id=thread_id, run_id=run_id)
 
     def handle_run_stream_exit(self, _function, *args, **kwargs):
         agent_run_stream = args[0]

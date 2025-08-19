@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Iterable, Iterator, Optional, TypeVar, Union, cast, overload
+from typing import Any, Callable, Dict, IO, Iterator, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import PipelineClient
@@ -274,7 +274,7 @@ class StorageTaskAssignmentsOperations:
 
     models = _models
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: StorageManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
@@ -499,7 +499,7 @@ class StorageTaskAssignmentsOperations:
 
         if polling is True:
             polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "azure-async-operation"}, **kwargs)
             )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
@@ -722,7 +722,7 @@ class StorageTaskAssignmentsOperations:
 
         if polling is True:
             polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "azure-async-operation"}, **kwargs)
             )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
@@ -909,7 +909,7 @@ class StorageTaskAssignmentsOperations:
 
         if polling is True:
             polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "azure-async-operation"}, **kwargs)
             )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
@@ -927,7 +927,7 @@ class StorageTaskAssignmentsOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, account_name: str, maxpagesize: Optional[int] = None, **kwargs: Any
-    ) -> Iterable["_models.StorageTaskAssignment"]:
+    ) -> ItemPaged["_models.StorageTaskAssignment"]:
         """List all the storage task assignments in an account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.

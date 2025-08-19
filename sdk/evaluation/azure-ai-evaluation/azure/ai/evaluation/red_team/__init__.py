@@ -5,10 +5,12 @@
 try:
     from ._red_team import RedTeam
     from ._attack_strategy import AttackStrategy
-    from ._attack_objective_generator import RiskCategory
+    from ._attack_objective_generator import RiskCategory, SupportedLanguages
     from ._red_team_result import RedTeamResult
 except ImportError:
-    print("[INFO] Could not import Pyrit. Please install the dependency with `pip install azure-ai-evaluation[redteam]`.")
+    raise ImportError(
+        "Could not import Pyrit. Please install the dependency with `pip install azure-ai-evaluation[redteam]`."
+    )
 
 
 __all__ = [
@@ -16,4 +18,5 @@ __all__ = [
     "AttackStrategy",
     "RiskCategory",
     "RedTeamResult",
+    "SupportedLanguages",
 ]

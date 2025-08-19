@@ -1,14 +1,20 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-
+import logging
+import math
 import os
 from typing import Dict, Union, List
 
 from typing_extensions import overload, override
 
+from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
+from ..._common.utils import reformat_conversation_history, reformat_agent_response
+
 from azure.ai.evaluation._model_configurations import Conversation
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
+
+logger = logging.getLogger(__name__)
 
 
 class RelevanceEvaluator(PromptyEvaluatorBase):
@@ -40,13 +46,13 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
             :caption: Initialize and call a RelevanceEvaluator with a query, response, and context.
 
     .. admonition:: Example using Azure AI Project URL:
-        
+
         .. literalinclude:: ../samples/evaluation_samples_evaluate_fdp.py
             :start-after: [START relevance_evaluator]
             :end-before: [END relevance_evaluator]
             :language: python
             :dedent: 8
-            :caption: Initialize and call RelevanceEvaluator using Azure AI Project URL in the following format 
+            :caption: Initialize and call RelevanceEvaluator using Azure AI Project URL in the following format
                 https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
 
     .. admonition:: Example with Threshold:
@@ -69,26 +75,21 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
     _PROMPTY_FILE = "relevance.prompty"
     _RESULT_KEY = "relevance"
 
-    id = "azureml://registries/azureml/models/Relevance-Evaluator/versions/4"
+    id = "azureai://built-in/evaluators/relevance"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(
-        self, 
-        model_config, 
-        *,
-        threshold=3
-    ):
+    def __init__(self, model_config, *, threshold=3):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         self._threshold = threshold
         self._higher_is_better = True
         super().__init__(
-            model_config=model_config, 
-            prompty_file=prompty_path, 
-            result_key=self._RESULT_KEY, 
-            threshold=threshold, 
-            _higher_is_better=self._higher_is_better
+            model_config=model_config,
+            prompty_file=prompty_path,
+            result_key=self._RESULT_KEY,
+            threshold=threshold,
+            _higher_is_better=self._higher_is_better,
         )
 
     @overload
@@ -146,3 +147,49 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
         :rtype: Union[Dict[str, Union[str, float]], Dict[str, Union[float, Dict[str, List[Union[str, float]]]]]]
         """
         return super().__call__(*args, **kwargs)
+
+    async def _do_eval(self, eval_input: Dict) -> Dict[str, Union[float, str]]:  # type: ignore[override]
+        """Do a relevance evaluation.
+
+        :param eval_input: The input to the evaluator. Expected to contain
+        whatever inputs are needed for the _flow method, including context
+        and other fields depending on the child class.
+        :type eval_input: Dict
+        :return: The evaluation result.
+        :rtype: Dict
+        """
+        if "query" not in eval_input and "response" not in eval_input:
+            raise EvaluationException(
+                message="Only text conversation inputs are supported.",
+                internal_message="Only text conversation inputs are supported.",
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.INVALID_VALUE,
+                target=ErrorTarget.CONVERSATION,
+            )
+        if not isinstance(eval_input["query"], str):
+            eval_input["query"] = reformat_conversation_history(eval_input["query"], logger)
+        if not isinstance(eval_input["response"], str):
+            eval_input["response"] = reformat_agent_response(eval_input["response"], logger)
+        llm_output = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
+        score = math.nan
+
+        if isinstance(llm_output, dict):
+            score = float(llm_output.get("score", math.nan))
+            reason = llm_output.get("explanation", "")
+            # Parse out score and reason from evaluators known to possess them.
+            binary_result = self._get_binary_result(score)
+            return {
+                self._result_key: float(score),
+                f"gpt_{self._result_key}": float(score),
+                f"{self._result_key}_reason": reason,
+                f"{self._result_key}_result": binary_result,
+                f"{self._result_key}_threshold": self._threshold,
+            }
+
+        binary_result = self._get_binary_result(score)
+        return {
+            self._result_key: float(score),
+            f"gpt_{self._result_key}": float(score),
+            f"{self._result_key}_result": binary_result,
+            f"{self._result_key}_threshold": self._threshold,
+        }

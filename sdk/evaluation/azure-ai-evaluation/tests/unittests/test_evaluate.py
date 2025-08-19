@@ -28,7 +28,7 @@ from azure.ai.evaluation import (
 from azure.ai.evaluation._constants import (
     DEFAULT_EVALUATION_RESULTS_FILE_NAME,
     _AggregationType,
-    EvaluationRunProperties
+    EvaluationRunProperties,
 )
 from azure.ai.evaluation._evaluate._evaluate import (
     _aggregate_metrics,
@@ -76,9 +76,11 @@ def evaluate_test_data_jsonl_file():
 def evaluate_test_data_conversion_jsonl_file():
     return _get_file("evaluate_test_data_conversation.jsonl")
 
+
 @pytest.fixture
 def evaluate_test_data_alphanumeric():
     return _get_file("evaluate_test_data_alphanumeric.jsonl")
+
 
 @pytest.fixture
 def questions_file():
@@ -98,6 +100,7 @@ def questions_answers_file():
 @pytest.fixture
 def questions_answers_basic_file():
     return _get_file("questions_answers_basic.jsonl")
+
 
 @pytest.fixture
 def questions_answers_korean_file():
@@ -407,7 +410,6 @@ class TestEvaluate:
             {"query": "${foo.query}"},
             {"query": "${data.query"},
             {"query": "data.query", "response": "target.response"},
-            {"query": "${data.query}", "response": "${target.response.one}"},
         ],
     )
     def test_evaluate_invalid_column_mapping(self, mock_model_config, evaluate_test_data_jsonl_file, column_mapping):
@@ -423,10 +425,10 @@ class TestEvaluate:
                 },
             )
 
-            assert (
-                "Unexpected references detected in 'column_mapping'. Ensure only ${target.} and ${data.} are used."
-                in exc_info.value.args[0]
-            )
+        assert (
+            "Unexpected references detected in 'column_mapping'. Ensure only ${target.} and ${data.} are used."
+            in exc_info.value.args[0]
+        )
 
     def test_evaluate_valid_column_mapping_with_numeric_chars(self, mock_model_config, evaluate_test_data_alphanumeric):
         # Valid column mappings that include numeric characters
@@ -437,8 +439,8 @@ class TestEvaluate:
         column_mappings_with_numbers = {
             "response": "${data.response123}",
             "query": "${data.query456}",
-            "context": "${data.context789}"
-        } # This should not raise an exception with the updated regex for column mapping format validation
+            "context": "${data.context789}",
+        }  # This should not raise an exception with the updated regex for column mapping format validation
         # The test passes if no exception about "Unexpected references" is raised
         result = evaluate(
             data=evaluate_test_data_alphanumeric,
@@ -448,9 +450,9 @@ class TestEvaluate:
                     "column_mapping": column_mappings_with_numbers,
                 }
             },
-            fail_on_evaluator_errors=False
+            fail_on_evaluator_errors=False,
         )
-        
+
         # Verify that the test completed without errors related to column mapping format
         # The test data has the fields with numeric characters, so it should work correctly
         assert result is not None
@@ -698,6 +700,7 @@ class TestEvaluate:
                 "no": NoInputEval(),
             },
             _use_pf_client=False,
+            _use_run_submitter_client=False,
         )  # type: ignore
 
         first_row = results["rows"][0]
@@ -713,6 +716,7 @@ class TestEvaluate:
                     "non": NonOptionalEval(),
                 },
                 _use_pf_client=False,
+                _use_run_submitter_client=False,
             )  # type: ignore
 
         expected_message = "Some evaluators are missing required inputs:\n" "- non: ['response']\n"
@@ -723,6 +727,7 @@ class TestEvaluate:
             data=questions_file,
             evaluators={"half": HalfOptionalEval(), "opt": OptionalEval(), "no": NoInputEval()},
             _use_pf_client=False,
+            _use_run_submitter_client=False,
         )  # type: ignore
 
         first_row_2 = only_question_results["rows"][0]
@@ -739,6 +744,7 @@ class TestEvaluate:
             target=_new_answer_target,
             evaluators={"echo": EchoEval()},
             _use_pf_client=False,
+            _use_run_submitter_client=False,
         )  # type: ignore
 
         assert target_answer_results["rows"][0]["outputs.echo.echo_query"] == "How long is flight from Earth to LV-426?"
@@ -751,6 +757,7 @@ class TestEvaluate:
             target=_question_override_target,
             evaluators={"echo": EchoEval()},
             _use_pf_client=False,
+            _use_run_submitter_client=False,
         )  # type: ignore
 
         assert question_override_results["rows"][0]["outputs.echo.echo_query"] == "new query"
@@ -762,6 +769,7 @@ class TestEvaluate:
             target=_question_answer_override_target,
             evaluators={"echo": EchoEval()},
             _use_pf_client=False,
+            _use_run_submitter_client=False,
         )  # type: ignore
         assert double_override_results["rows"][0]["outputs.echo.echo_query"] == "new query"
         assert double_override_results["rows"][0]["outputs.echo.echo_response"] == "new response"
@@ -853,20 +861,20 @@ class TestEvaluate:
             return sum(values) + 1
 
         os.environ["AI_EVALS_BATCH_USE_ASYNC"] = use_async
-        _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators)
+        _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators, _use_pf_client=True)
         counting_eval._set_conversation_aggregation_type(_AggregationType.MIN)
-        _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators)
+        _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators, _use_pf_client=True)
         counting_eval._set_conversation_aggregation_type(_AggregationType.SUM)
-        _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators)
+        _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators, _use_pf_client=True)
         counting_eval._set_conversation_aggregation_type(_AggregationType.MAX)
-        _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators)
+        _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators, _use_pf_client=True)
         if use_async == "true":
             counting_eval._set_conversation_aggregator(custom_aggregator)
-            _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators)
+            _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators, _use_pf_client=True)
         else:
             with pytest.raises(EvaluationException) as exc_info:
                 counting_eval._set_conversation_aggregator(custom_aggregator)
-                _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators)
+                _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators, _use_pf_client=True)
             assert "TestEvaluate.test_aggregation_serialization.<locals>.custom_aggregator" in exc_info.value.args[0]
 
     def test_unsupported_file_inputs(self, mock_model_config, unsupported_file_type):
@@ -906,7 +914,7 @@ class TestEvaluate:
             )
 
         assert "Evaluation target failed to produce any results. Please check the logs at " in str(exc_info.value)
-    
+
     def test_evaluate_korean_characters_result(self, questions_answers_korean_file):
         output_path = "eval_test_results_korean.jsonl"
 
@@ -942,9 +950,10 @@ class TestEvaluate:
         # Test with splits (dump of test map is 66 characters long)
         result = _convert_name_map_into_property_entries(test_map, segment_length=40)
         assert result[EvaluationRunProperties.NAME_MAP_LENGTH] == 2
-        combined_strings = (result[f"{EvaluationRunProperties.NAME_MAP}_0"] + 
-                            result[f"{EvaluationRunProperties.NAME_MAP}_1"])
-        #breakpoint()
+        combined_strings = (
+            result[f"{EvaluationRunProperties.NAME_MAP}_0"] + result[f"{EvaluationRunProperties.NAME_MAP}_1"]
+        )
+        # breakpoint()
         assert result[f"{EvaluationRunProperties.NAME_MAP}_0"] == map_dump[0:40]
         assert result[f"{EvaluationRunProperties.NAME_MAP}_1"] == map_dump[40:]
         assert combined_strings == map_dump
@@ -952,15 +961,332 @@ class TestEvaluate:
         # Test with exact split
         result = _convert_name_map_into_property_entries(test_map, segment_length=22)
         assert result[EvaluationRunProperties.NAME_MAP_LENGTH] == 3
-        combined_strings = (result[f"{EvaluationRunProperties.NAME_MAP}_0"] + 
-                            result[f"{EvaluationRunProperties.NAME_MAP}_1"] + 
-                            result[f"{EvaluationRunProperties.NAME_MAP}_2"])
+        combined_strings = (
+            result[f"{EvaluationRunProperties.NAME_MAP}_0"]
+            + result[f"{EvaluationRunProperties.NAME_MAP}_1"]
+            + result[f"{EvaluationRunProperties.NAME_MAP}_2"]
+        )
         assert result[f"{EvaluationRunProperties.NAME_MAP}_0"] == map_dump[0:22]
         assert result[f"{EvaluationRunProperties.NAME_MAP}_1"] == map_dump[22:44]
         assert result[f"{EvaluationRunProperties.NAME_MAP}_2"] == map_dump[44:]
         assert combined_strings == map_dump
 
         # Test failure case
-        result = _convert_name_map_into_property_entries(test_map, segment_length=10, max_segments = 1)
+        result = _convert_name_map_into_property_entries(test_map, segment_length=10, max_segments=1)
         assert result[EvaluationRunProperties.NAME_MAP_LENGTH] == -1
         assert len(result) == 1
+
+
+@pytest.mark.unittest
+class TestTagsInLoggingFunctions:
+    """Test tag functionality in logging utility functions."""
+
+    @patch("azure.ai.evaluation._evaluate._utils.LiteMLClient")
+    @patch("azure.ai.evaluation._evaluate._eval_run.EvalRun")
+    @patch("tempfile.TemporaryDirectory")
+    def test_log_metrics_and_instance_results_with_tags(self, mock_tempdir, mock_eval_run, mock_lite_ml_client):
+        """Test that tags are properly passed to EvalRun in MLflow logging path."""
+        from azure.ai.evaluation._evaluate._utils import _log_metrics_and_instance_results
+
+        # Mock tempfile directory
+        mock_tempdir.return_value.__enter__.return_value = "/tmp/mock_tempdir"
+        mock_tempdir.return_value.__exit__.return_value = None
+
+        # Mock the management client and workspace info
+        mock_client_instance = mock_lite_ml_client.return_value
+        mock_workspace_info = type("MockWorkspaceInfo", (), {"ml_flow_tracking_uri": "https://test-tracking-uri"})()
+        mock_client_instance.workspace_get_info.return_value = mock_workspace_info
+
+        # Mock EvalRun class attribute
+        mock_eval_run.EVALUATION_ARTIFACT = "evaluation_artifact.jsonl"
+
+        # Mock EvalRun context manager
+        mock_eval_run_instance = mock_eval_run.return_value.__enter__.return_value
+        mock_eval_run_instance.log_artifact = lambda *args, **kwargs: None
+        mock_eval_run_instance.write_properties_to_run_history = lambda *args, **kwargs: None
+        mock_eval_run_instance.log_metric = lambda *args, **kwargs: None
+        mock_eval_run_instance.info = type("MockInfo", (), {"run_id": "test-run-id"})()
+
+        # Mock the file operations
+        import builtins
+
+        original_open = builtins.open
+
+        def mock_open(*args, **kwargs):
+            if args[0].startswith("/tmp/mock_tempdir"):
+                # Return a mock file object that does nothing
+                from unittest.mock import MagicMock
+
+                mock_file = MagicMock()
+                mock_file.write = lambda x: None
+                mock_file.__enter__ = lambda self: mock_file
+                mock_file.__exit__ = lambda self, *args: None
+                return mock_file
+            return original_open(*args, **kwargs)
+
+        with patch("builtins.open", side_effect=mock_open):
+            # Test data
+            metrics = {"accuracy": 0.8, "f1_score": 0.7}
+            instance_results = pd.DataFrame([{"input": "test", "output": "result"}])
+            tags = {"experiment": "test-exp", "version": "1.0", "custom_tag": "value"}
+            trace_destination = "azureml://subscriptions/test-sub/resourceGroups/test-rg/providers/Microsoft.MachineLearningServices/workspaces/test-ws"
+
+            # Call the function
+            result = _log_metrics_and_instance_results(
+                metrics=metrics,
+                instance_results=instance_results,
+                trace_destination=trace_destination,
+                run=None,
+                evaluation_name="test-evaluation",
+                name_map={},
+                tags=tags,
+            )
+
+            # Verify that EvalRun was called with the correct tags
+            mock_eval_run.assert_called_once()
+            call_args = mock_eval_run.call_args
+            assert call_args[1]["tags"] == tags
+            assert call_args[1]["run_name"] == "test-evaluation"
+
+    @patch("azure.ai.evaluation._evaluate._utils.LiteMLClient")
+    @patch("azure.ai.evaluation._evaluate._eval_run.EvalRun")
+    @patch("tempfile.TemporaryDirectory")
+    def test_log_metrics_and_instance_results_with_none_tags(self, mock_tempdir, mock_eval_run, mock_lite_ml_client):
+        """Test that None tags are handled properly in MLflow logging path."""
+        from azure.ai.evaluation._evaluate._utils import _log_metrics_and_instance_results
+
+        # Mock tempfile directory
+        mock_tempdir.return_value.__enter__.return_value = "/tmp/mock_tempdir"
+        mock_tempdir.return_value.__exit__.return_value = None
+
+        # Mock the management client and workspace info
+        mock_client_instance = mock_lite_ml_client.return_value
+        mock_workspace_info = type("MockWorkspaceInfo", (), {"ml_flow_tracking_uri": "https://test-tracking-uri"})()
+        mock_client_instance.workspace_get_info.return_value = mock_workspace_info
+
+        # Mock EvalRun class attribute
+        mock_eval_run.EVALUATION_ARTIFACT = "evaluation_artifact.jsonl"
+
+        # Mock EvalRun context manager
+        mock_eval_run_instance = mock_eval_run.return_value.__enter__.return_value
+        mock_eval_run_instance.log_artifact = lambda *args, **kwargs: None
+        mock_eval_run_instance.write_properties_to_run_history = lambda *args, **kwargs: None
+        mock_eval_run_instance.log_metric = lambda *args, **kwargs: None
+        mock_eval_run_instance.info = type("MockInfo", (), {"run_id": "test-run-id"})()
+
+        # Mock the file operations
+        import builtins
+
+        original_open = builtins.open
+
+        def mock_open(*args, **kwargs):
+            if args[0].startswith("/tmp/mock_tempdir"):
+                # Return a mock file object that does nothing
+                from unittest.mock import MagicMock
+
+                mock_file = MagicMock()
+                mock_file.write = lambda x: None
+                mock_file.__enter__ = lambda self: mock_file
+                mock_file.__exit__ = lambda self, *args: None
+                return mock_file
+            return original_open(*args, **kwargs)
+
+        with patch("builtins.open", side_effect=mock_open):
+            # Test data
+            metrics = {"accuracy": 0.8}
+            instance_results = pd.DataFrame([{"input": "test", "output": "result"}])
+            trace_destination = "azureml://subscriptions/test-sub/resourceGroups/test-rg/providers/Microsoft.MachineLearningServices/workspaces/test-ws"
+
+            # Call the function with None tags
+            result = _log_metrics_and_instance_results(
+                metrics=metrics,
+                instance_results=instance_results,
+                trace_destination=trace_destination,
+                run=None,
+                evaluation_name="test-evaluation",
+                name_map={},
+                tags=None,
+            )
+
+            # Verify that EvalRun was called with None tags
+            mock_eval_run.assert_called_once()
+            call_args = mock_eval_run.call_args
+            assert call_args[1]["tags"] is None
+
+    def test_log_metrics_and_instance_results_no_trace_destination(self):
+        """Test that function returns None when no trace destination is provided."""
+        from azure.ai.evaluation._evaluate._utils import _log_metrics_and_instance_results
+
+        # Test data
+        metrics = {"accuracy": 0.8}
+        instance_results = pd.DataFrame([{"input": "test", "output": "result"}])
+        tags = {"test": "tag"}
+
+        # Call the function with no trace destination
+        result = _log_metrics_and_instance_results(
+            metrics=metrics,
+            instance_results=instance_results,
+            trace_destination=None,
+            run=None,
+            evaluation_name="test-evaluation",
+            name_map={},
+            tags=tags,
+        )
+
+        # Should return None and not raise any exceptions
+        assert result is None
+
+    @patch("azure.ai.evaluation._azure._token_manager.AzureMLTokenManager")
+    @patch("azure.ai.evaluation._common.EvaluationServiceOneDPClient")
+    def test_log_metrics_and_instance_results_onedp_with_tags(self, mock_client_class, mock_token_manager):
+        """Test that tags are properly passed to OneDP logging path."""
+        from azure.ai.evaluation._evaluate._utils import _log_metrics_and_instance_results_onedp
+
+        # Mock the client and its methods
+        mock_client = mock_client_class.return_value
+        mock_client.create_evaluation_result.return_value = type("MockResponse", (), {"id": "eval-result-123"})()
+        mock_client.start_evaluation_run.return_value = type("MockResponse", (), {"id": "run-123"})()
+        mock_client.update_evaluation_run.return_value = type(
+            "MockResponse", (), {"properties": {"AiStudioEvaluationUri": "https://test-uri"}}
+        )()
+
+        # Test data
+        metrics = {"accuracy": 0.8, "f1_score": 0.7}
+        instance_results = pd.DataFrame([{"input": "test", "output": "result"}])
+        tags = {"experiment": "test-exp", "version": "1.0", "model": "gpt-4"}
+        project_url = "https://test-project.cognitiveservices.azure.com/"
+
+        # Call the function
+        result = _log_metrics_and_instance_results_onedp(
+            metrics=metrics,
+            instance_results=instance_results,
+            project_url=project_url,
+            evaluation_name="test-evaluation",
+            name_map={},
+            tags=tags,
+        )
+
+        # Verify that start_evaluation_run was called with tags
+        mock_client.start_evaluation_run.assert_called_once()
+        start_call_args = mock_client.start_evaluation_run.call_args[1]["evaluation"]
+        assert start_call_args.tags == tags
+        assert start_call_args.display_name == "test-evaluation"
+
+        # Verify that update_evaluation_run was called WITHOUT tags (not redundant)
+        mock_client.update_evaluation_run.assert_called_once()
+        update_call_args = mock_client.update_evaluation_run.call_args[1]["evaluation"]
+        assert getattr(update_call_args, "tags", None) is None
+        assert update_call_args.status == "Completed"
+
+        # Verify return value
+        assert result == "https://test-uri"
+
+    @patch("azure.ai.evaluation._azure._token_manager.AzureMLTokenManager")
+    @patch("azure.ai.evaluation._common.EvaluationServiceOneDPClient")
+    def test_log_metrics_and_instance_results_onedp_with_none_tags(self, mock_client_class, mock_token_manager):
+        """Test that None tags are handled properly in OneDP logging path."""
+        from azure.ai.evaluation._evaluate._utils import _log_metrics_and_instance_results_onedp
+
+        # Mock the client and its methods
+        mock_client = mock_client_class.return_value
+        mock_client.create_evaluation_result.return_value = type("MockResponse", (), {"id": "eval-result-123"})()
+        mock_client.start_evaluation_run.return_value = type("MockResponse", (), {"id": "run-123"})()
+        mock_client.update_evaluation_run.return_value = type(
+            "MockResponse", (), {"properties": {"AiStudioEvaluationUri": "https://test-uri"}}
+        )()
+
+        # Test data
+        metrics = {"accuracy": 0.8}
+        instance_results = pd.DataFrame([{"input": "test", "output": "result"}])
+        project_url = "https://test-project.cognitiveservices.azure.com/"
+
+        # Call the function with None tags
+        result = _log_metrics_and_instance_results_onedp(
+            metrics=metrics,
+            instance_results=instance_results,
+            project_url=project_url,
+            evaluation_name="test-evaluation",
+            name_map={},
+            tags=None,
+        )
+
+        # Verify that start_evaluation_run was called with None tags
+        mock_client.start_evaluation_run.assert_called_once()
+        start_call_args = mock_client.start_evaluation_run.call_args[1]["evaluation"]
+        assert start_call_args.tags is None
+
+        # Verify that update_evaluation_run was called without tags
+        mock_client.update_evaluation_run.assert_called_once()
+        update_call_args = mock_client.update_evaluation_run.call_args[1]["evaluation"]
+        assert not hasattr(update_call_args, "tags") or update_call_args.tags is None
+
+    @patch("azure.ai.evaluation._azure._token_manager.AzureMLTokenManager")
+    @patch("azure.ai.evaluation._common.EvaluationServiceOneDPClient")
+    def test_log_metrics_and_instance_results_onedp_with_empty_tags(self, mock_client_class, mock_token_manager):
+        """Test that empty tags dictionary is handled properly in OneDP logging path."""
+        from azure.ai.evaluation._evaluate._utils import _log_metrics_and_instance_results_onedp
+
+        # Mock the client and its methods
+        mock_client = mock_client_class.return_value
+        mock_client.create_evaluation_result.return_value = type("MockResponse", (), {"id": "eval-result-123"})()
+        mock_client.start_evaluation_run.return_value = type("MockResponse", (), {"id": "run-123"})()
+        mock_client.update_evaluation_run.return_value = type(
+            "MockResponse", (), {"properties": {"AiStudioEvaluationUri": "https://test-uri"}}
+        )()
+
+        # Test data
+        metrics = {"accuracy": 0.8}
+        instance_results = pd.DataFrame([{"input": "test", "output": "result"}])
+        project_url = "https://test-project.cognitiveservices.azure.com/"
+        empty_tags = {}
+
+        # Call the function with empty tags
+        result = _log_metrics_and_instance_results_onedp(
+            metrics=metrics,
+            instance_results=instance_results,
+            project_url=project_url,
+            evaluation_name="test-evaluation",
+            name_map={},
+            tags=empty_tags,
+        )
+
+        # Verify that start_evaluation_run was called with empty tags
+        mock_client.start_evaluation_run.assert_called_once()
+        start_call_args = mock_client.start_evaluation_run.call_args[1]["evaluation"]
+        assert start_call_args.tags == {}
+
+    @patch("azure.ai.evaluation._azure._token_manager.AzureMLTokenManager")
+    @patch("azure.ai.evaluation._common.EvaluationServiceOneDPClient")
+    def test_log_metrics_and_instance_results_onedp_no_redundant_tags(self, mock_client_class, mock_token_manager):
+        """Test that tags are not redundantly set in update_evaluation_run."""
+        from azure.ai.evaluation._evaluate._utils import _log_metrics_and_instance_results_onedp
+
+        # Mock the client and its methods
+        mock_client = mock_client_class.return_value
+        mock_client.create_evaluation_result.return_value = type("MockResponse", (), {"id": "eval-result-123"})()
+        mock_client.start_evaluation_run.return_value = type("MockResponse", (), {"id": "run-123"})()
+        mock_client.update_evaluation_run.return_value = type(
+            "MockResponse", (), {"properties": {"AiStudioEvaluationUri": "https://test-uri"}}
+        )()
+
+        # Mock data for the test
+        metrics = {"accuracy": 0.95}
+        instance_results = pd.DataFrame([{"input": "test", "output": "result"}])
+        tags = {"tag1": "value1", "tag2": "value2"}
+
+        # Call the function under test
+        _log_metrics_and_instance_results_onedp(
+            metrics=metrics,
+            instance_results=instance_results,
+            project_url="https://test-project.cognitiveservices.azure.com/",
+            evaluation_name="test-evaluation",
+            name_map={},
+            tags=tags,
+        )
+
+        # Verify that update_evaluation_run was called without redundant tags
+        mock_client.update_evaluation_run.assert_called_once()
+        call_args = mock_client.update_evaluation_run.call_args[1]["evaluation"]
+        assert (
+            not hasattr(call_args, "tags") or call_args.tags is None
+        ), "Tags should not be redundantly set in update_evaluation_run"

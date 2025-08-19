@@ -11,6 +11,7 @@
     "en-gb"
   ],
   "ignorePaths": [
+    ".devcontainer/**",
     "eng/**",
     ".github/CODEOWNERS",
     "scripts/**",
@@ -557,9 +558,9 @@
       ]
     },
     {
-      "filename": "doc/dev/test_proxy_migration_guide.md",
+      "filename": "doc/dev/credscan_process.md",
       "words": [
-        "pytestmarkparametrize"
+        "CSCAN"
       ]
     },
     {
@@ -1070,7 +1071,10 @@
         "percentilesw",
         "plotly",
         "nbformat",
-        "nbconvert"
+        "nbconvert",
+        "rollupby",
+        "milli",
+        "resourceid"
       ]
     },
     {

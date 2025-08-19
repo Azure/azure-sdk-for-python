@@ -31,14 +31,15 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    client.volumes.begin_split_clone_from_parent(
+    response = client.volumes.begin_split_clone_from_parent(
         resource_group_name="myRG",
         account_name="account1",
         pool_name="pool1",
         volume_name="volume1",
     ).result()
+    print(response)
 
 
-# x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/preview/2025-01-01-preview/examples/Volumes_SplitClone.json
+# x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/stable/2025-06-01/examples/Volumes_SplitClone.json
 if __name__ == "__main__":
     main()

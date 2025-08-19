@@ -57,6 +57,7 @@ setup(
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
         "License :: OSI Approved :: MIT License",
     ],
     zip_safe=False,
@@ -84,10 +85,10 @@ setup(
         {%- endif %}
         "azure-common>=1.1",
         {%- if need_azurecore %}
-        "azure-core>=1.24.0",
+        "azure-core>=1.35.0",
         {%- endif %}
         {%- if need_azuremgmtcore %}
-        "azure-mgmt-core>=1.5.0",
+        "azure-mgmt-core>=1.6.0",
         {%- endif %}
     ],
     python_requires=">=3.9",

@@ -2,149 +2,190 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import abc
 import os
-import sys
-from typing import cast, Any, Dict, Optional
-import warnings
+import json
+from typing import Any, Optional
 
+import msal
 from azure.core.credentials import AccessToken, TokenRequestOptions, AccessTokenInfo
 from azure.core.exceptions import ClientAuthenticationError
+
+from .._auth_record import AuthenticationRecord
 from .._exceptions import CredentialUnavailableError
-from .._constants import AzureAuthorityHosts, AZURE_VSCODE_CLIENT_ID, EnvironmentVariables
-from .._internal import normalize_authority, validate_tenant_id, within_dac
-from .._internal.aad_client import AadClient, AadClientBase
-from .._internal.get_token_mixin import GetTokenMixin
+from .._constants import AZURE_VSCODE_CLIENT_ID
+from .._internal import within_dac
+
 from .._internal.decorators import log_get_token
+from .._internal.utils import get_broker_credential, validate_tenant_id
 
-if sys.platform.startswith("win"):
-    from .._internal.win_vscode_adapter import get_refresh_token, get_user_settings
-elif sys.platform.startswith("darwin"):
-    from .._internal.macos_vscode_adapter import get_refresh_token, get_user_settings
-else:
-    from .._internal.linux_vscode_adapter import get_refresh_token, get_user_settings
+MAX_AUTH_RECORD_SIZE = 10 * 1024  # 10KB - more than enough for a small auth record
+VSCODE_AUTH_RECORD_PATHS = [
+    "~/.azure/ms-azuretools.vscode-azureresourcegroups/authRecord.json",
+    "~/.Azure/ms-azuretools.vscode-azureresourcegroups/authRecord.json",
+]
 
 
-class _VSCodeCredentialBase(abc.ABC):
-    def __init__(self, **kwargs: Any) -> None:
-        warnings.warn(
-            "This credential is deprecated because the Azure Account extension for Visual Studio Code, which this "
-            "credential relies on, has been deprecated. See the Azure Account extension deprecation notice here: "
-            "https://github.com/microsoft/vscode-azure-account/issues/964. Consider using other developer credentials "
-            "such as AzureCliCredential, AzureDeveloperCliCredential, or AzurePowerShellCredential.",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        super(_VSCodeCredentialBase, self).__init__()
+def load_vscode_auth_record() -> Optional[AuthenticationRecord]:
+    """Load the authentication record corresponding to a known location.
 
-        user_settings = get_user_settings()
-        self._cloud = user_settings.get("azure.cloud", "AzureCloud")
-        self._refresh_token = None
-        self._unavailable_reason = ""
+    This will load from ~/.azure/ms-azuretools.vscode-azureresourcegroups/authRecord.json
+    or ~/.Azure/ms-azuretools.vscode-azureresourcegroups/authRecord.json
 
-        self._client = kwargs.get("_client")
-        if not self._client:
-            self._initialize(user_settings, **kwargs)
-        if not (self._client or self._unavailable_reason):
-            self._unavailable_reason = "Initialization failed"
+    :return: The authentication record if it exists, otherwise None.
+    :rtype: Optional[AuthenticationRecord]
+    :raises: ValueError if the authentication record is not in the expected format
+    """
 
-    @abc.abstractmethod
-    def _get_client(self, **kwargs: Any) -> AadClientBase:
-        pass
-
-    def _get_refresh_token(self) -> str:
-        if not self._refresh_token:
-            self._refresh_token = get_refresh_token(self._cloud)
-            if not self._refresh_token:
-                message = (
-                    "Failed to get Azure user details from Visual Studio Code. "
-                    "Currently, the VisualStudioCodeCredential only works with the Azure "
-                    "Account extension version 0.9.11 and earlier. A long-term fix is in "
-                    "progress, see https://github.com/Azure/azure-sdk-for-python/issues/25713"
+    # Try each possible auth record path
+    for auth_record_path in VSCODE_AUTH_RECORD_PATHS:
+        expanded_path = os.path.expanduser(auth_record_path)
+        if os.path.exists(expanded_path):
+            file_size = os.path.getsize(expanded_path)
+            if file_size > MAX_AUTH_RECORD_SIZE:
+                error_message = (
+                    "VS Code auth record file is unexpectedly large. "
+                    "Please check the file for corruption or unexpected content."
                 )
-                raise CredentialUnavailableError(message=message)
-        return self._refresh_token
+                raise ValueError(error_message)
+            with open(expanded_path, "r", encoding="utf-8") as f:
+                deserialized = json.load(f)
 
-    def _initialize(self, vscode_user_settings: Dict, **kwargs: Any) -> None:
-        """Build a client from kwargs merged with VS Code user settings.
+            # Validate the authentication record for security and structural integrity
+            _validate_auth_record_json(deserialized)
 
-        The first stable version of this credential defaulted to Public Cloud and the "organizations"
-        tenant when it failed to read VS Code user settings. That behavior is preserved here.
+            # Deserialize the authentication record
+            auth_record = AuthenticationRecord(
+                authority=deserialized["authority"],
+                client_id=deserialized["clientId"],
+                home_account_id=deserialized["homeAccountId"],
+                tenant_id=deserialized["tenantId"],
+                username=deserialized["username"],
+            )
 
-        :param dict vscode_user_settings: VS Code user settings
-        """
+            return auth_record
 
-        # Precedence for authority:
-        #  1) VisualStudioCodeCredential(authority=...)
-        #  2) $AZURE_AUTHORITY_HOST
-        #  3) authority matching VS Code's "azure.cloud" setting
-        #  4) default: Public Cloud
-        authority = kwargs.pop("authority", None) or os.environ.get(EnvironmentVariables.AZURE_AUTHORITY_HOST)
-        if not authority:
-            # the application didn't specify an authority, so we figure it out from VS Code settings
-            if self._cloud == "AzureCloud":
-                authority = AzureAuthorityHosts.AZURE_PUBLIC_CLOUD
-            elif self._cloud == "AzureChinaCloud":
-                authority = AzureAuthorityHosts.AZURE_CHINA
-            elif self._cloud == "AzureUSGovernment":
-                authority = AzureAuthorityHosts.AZURE_GOVERNMENT
-            else:
-                # If the value is anything else ("AzureCustomCloud" is the only other known value),
-                # we need the user to provide the authority because VS Code has no setting for it and
-                # we can't guess confidently.
-                self._unavailable_reason = (
-                    'VS Code is configured to use a custom cloud. Set keyword argument "authority"'
-                    + ' with the Microsoft Entra endpoint for cloud "{}"'.format(self._cloud)
-                )
-                return
-
-        # Precedence for tenant ID:
-        #  1) VisualStudioCodeCredential(tenant_id=...)
-        #  2) "azure.tenant" in VS Code user settings
-        #  3) default: organizations
-        tenant_id = kwargs.pop("tenant_id", None) or vscode_user_settings.get("azure.tenant", "organizations")
-        validate_tenant_id(tenant_id)
-        if tenant_id.lower() == "adfs":
-            self._unavailable_reason = "VisualStudioCodeCredential authentication unavailable. ADFS is not supported."
-            return
-
-        self._client = self._get_client(
-            authority=normalize_authority(authority), client_id=AZURE_VSCODE_CLIENT_ID, tenant_id=tenant_id, **kwargs
-        )
+    # No auth record found in any of the expected locations
+    return None
 
 
-class VisualStudioCodeCredential(_VSCodeCredentialBase, GetTokenMixin):
-    """Authenticates as the Azure user signed in to Visual Studio Code via the 'Azure Account' extension.
+def _validate_auth_record_json(data: dict) -> None:
+    """Validate the authentication record.
 
-    **Deprecated**: This credential is deprecated because the Azure Account extension for Visual Studio Code, which
-    this credential relies on, has been deprecated. See the Azure Account extension deprecation notice here:
-    https://github.com/microsoft/vscode-azure-account/issues/964. Consider using other developer credentials such as
-    AzureCliCredential, AzureDeveloperCliCredential, or AzurePowerShellCredential.
+    :param dict data: The authentication record data to validate.
+    :raises ValueError: If the authentication record fails validation checks.
+    """
+    errors = []
 
-    :keyword str authority: Authority of a Microsoft Entra endpoint, for example "login.microsoftonline.com".
-        This argument is required for a custom cloud and usually unnecessary otherwise. Defaults to the authority
-        matching the "Azure: Cloud" setting in VS Code's user settings or, when that setting has no value, the
-        authority for Azure Public Cloud.
-    :keyword str tenant_id: ID of the tenant the credential should authenticate in. Defaults to the "Azure: Tenant"
-        setting in VS Code's user settings or, when that setting has no value, the "organizations" tenant, which
-        supports only Microsoft Entra work or school accounts.
+    # Schema Validation - Required Fields
+    try:
+        tenant_id = data["tenantId"]
+        if not tenant_id or not isinstance(tenant_id, str):
+            errors.append("tenantId must be a non-empty string")
+        else:
+            try:
+                validate_tenant_id(tenant_id)
+            except ValueError as e:
+                errors.append(f"tenantId validation failed: {e}")
+    except KeyError:
+        errors.append("tenantId field is missing")
+
+    try:
+        client_id = data["clientId"]
+        if not client_id or not isinstance(client_id, str):
+            errors.append("clientId must be a non-empty string")
+        elif client_id != AZURE_VSCODE_CLIENT_ID:
+            errors.append(
+                f"clientId must match expected VS Code Azure Resources extension client ID: {AZURE_VSCODE_CLIENT_ID}"
+            )
+    except KeyError:
+        errors.append("clientId field is missing")
+
+    try:
+        username = data["username"]
+        if not username or not isinstance(username, str):
+            errors.append("username must be a non-empty string")
+    except KeyError:
+        errors.append("username field is missing")
+
+    try:
+        home_account_id = data["homeAccountId"]
+        if not home_account_id or not isinstance(home_account_id, str):
+            errors.append("homeAccountId must be a non-empty string")
+    except KeyError:
+        errors.append("homeAccountId field is missing")
+
+    try:
+        authority = data["authority"]
+        if not authority or not isinstance(authority, str):
+            errors.append("authority must be a non-empty string")
+    except KeyError:
+        errors.append("authority field is missing")
+
+    if errors:
+        error_message = "Authentication record validation failed: " + "; ".join(errors)
+        raise ValueError(error_message)
+
+
+class VisualStudioCodeCredential:
+    """Authenticates as the Azure user signed in to Visual Studio Code via the 'Azure Resources' extension.
+
+    This currently only works in Windows/WSL environments and requires the 'azure-identity-broker'
+    package to be installed.
+
+    :keyword str tenant_id: A Microsoft Entra tenant ID. Defaults to the tenant specified in the authentication
+        record file used by the Azure Resources extension.
     :keyword List[str] additionally_allowed_tenants: Specifies tenants in addition to the specified "tenant_id"
         for which the credential may acquire tokens. Add the wildcard value "*" to allow the credential to
         acquire tokens for any tenant the application can access.
     """
 
+    def __init__(self, **kwargs: Any) -> None:
+
+        self._broker_credential = None
+        self._unavailable_message = (
+            "VisualStudioCodeCredential requires the 'azure-identity-broker' package to be installed. "
+            "You must also ensure you have the Azure Resources extension installed and have "
+            "signed in to Azure via Visual Studio Code."
+        )
+
+        broker_credential_class = get_broker_credential()
+        if broker_credential_class:
+            try:
+                # Load the authentication record from the VS Code extension
+                authentication_record = load_vscode_auth_record()
+                if not authentication_record:
+                    self._unavailable_message = (
+                        "VisualStudioCodeCredential requires the user to be signed in to Azure via Visual Studio Code. "
+                        "Please ensure you have the Azure Resources extension installed and have signed in."
+                    )
+                    return
+                self._broker_credential = broker_credential_class(
+                    client_id=AZURE_VSCODE_CLIENT_ID,
+                    authentication_record=authentication_record,
+                    parent_window_handle=msal.PublicClientApplication.CONSOLE_WINDOW_HANDLE,
+                    use_default_broker_account=True,
+                    disable_interactive_fallback=True,
+                    **kwargs,
+                )
+            except ValueError as ex:
+                self._unavailable_message = (
+                    "Failed to load authentication record from Visual Studio Code: "
+                    f"{ex}. Please ensure you have the Azure Resources extension installed and signed in."
+                )
+
     def __enter__(self) -> "VisualStudioCodeCredential":
-        if self._client:
-            self._client.__enter__()
+        if self._broker_credential:
+            self._broker_credential.__enter__()
         return self
 
     def __exit__(self, *args: Any) -> None:
-        if self._client:
-            self._client.__exit__(*args)
+        if self._broker_credential:
+            self._broker_credential.__exit__(*args)
 
     def close(self) -> None:
         """Close the credential's transport session."""
-        self.__exit__()
+        if self._broker_credential:
+            self._broker_credential.close()
 
     @log_get_token
     def get_token(
@@ -166,20 +207,15 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, GetTokenMixin):
         :raises ~azure.identity.CredentialUnavailableError: the credential cannot retrieve user details from Visual
           Studio Code
         """
-        if self._unavailable_reason:
-            error_message = (
-                self._unavailable_reason + "\n"
-                "Visit https://aka.ms/azsdk/python/identity/vscodecredential/troubleshoot"
-                " to troubleshoot this issue."
-            )
-            raise CredentialUnavailableError(message=error_message)
+        if not self._broker_credential:
+            raise CredentialUnavailableError(message=self._unavailable_message)
         if within_dac.get():
             try:
-                token = super().get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
+                token = self._broker_credential.get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
                 return token
             except ClientAuthenticationError as ex:
                 raise CredentialUnavailableError(message=ex.message) from ex
-        return super().get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
+        return self._broker_credential.get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
 
     def get_token_info(self, *scopes: str, options: Optional[TokenRequestOptions] = None) -> AccessTokenInfo:
         """Request an access token for `scopes` as the user currently signed in to Visual Studio Code.
@@ -197,29 +233,12 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, GetTokenMixin):
         :raises ~azure.identity.CredentialUnavailableError: the credential cannot retrieve user details from Visual
           Studio Code.
         """
-        if self._unavailable_reason:
-            error_message = (
-                self._unavailable_reason + "\n"
-                "Visit https://aka.ms/azsdk/python/identity/vscodecredential/troubleshoot"
-                " to troubleshoot this issue."
-            )
-            raise CredentialUnavailableError(message=error_message)
+        if not self._broker_credential:
+            raise CredentialUnavailableError(message=self._unavailable_message)
         if within_dac.get():
             try:
-                token = super().get_token_info(*scopes, options=options)
+                token = self._broker_credential.get_token_info(*scopes, options=options)
                 return token
             except ClientAuthenticationError as ex:
                 raise CredentialUnavailableError(message=ex.message) from ex
-        return super().get_token_info(*scopes, options=options)
-
-    def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessTokenInfo]:
-        self._client = cast(AadClient, self._client)
-        return self._client.get_cached_access_token(scopes, **kwargs)
-
-    def _request_token(self, *scopes: str, **kwargs: Any) -> AccessTokenInfo:
-        refresh_token = self._get_refresh_token()
-        self._client = cast(AadClient, self._client)
-        return self._client.obtain_token_by_refresh_token(scopes, refresh_token, **kwargs)
-
-    def _get_client(self, **kwargs: Any) -> AadClient:
-        return AadClient(**kwargs)
+        return self._broker_credential.get_token_info(*scopes, options=options)
