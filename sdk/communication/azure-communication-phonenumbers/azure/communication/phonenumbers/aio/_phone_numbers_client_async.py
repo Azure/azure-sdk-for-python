@@ -4,8 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-# pylint: disable=docstring-keyword-should-match-keyword-only
-from typing import List, Optional, Union, Any, cast, Dict
+from typing import List, Optional, Union, Any, cast, Dict, TYPE_CHECKING
 import uuid
 
 from azure.core.credentials_async import AsyncTokenCredential
@@ -14,6 +13,9 @@ from azure.core.async_paging import AsyncItemPaged
 from azure.core.polling import AsyncLROPoller
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
+
+if TYPE_CHECKING:
+    from azure.core.polling import PollingMethod
 
 from .._generated.aio._client import PhoneNumbersClient as PhoneNumbersClientGen
 from .._generated.models import (
@@ -108,7 +110,7 @@ class PhoneNumbersClient:
             *,
             agree_to_not_resell: bool = False,
             continuation_token: Optional[str] = None,
-            polling: Union[bool, Any] = True,
+            polling: Union[bool, "PollingMethod"] = True,
             polling_interval: int = _DEFAULT_POLLING_INTERVAL_IN_SECONDS,
             **kwargs: Any) -> AsyncLROPoller[None]:
         """Purchases phone numbers.
@@ -146,7 +148,7 @@ class PhoneNumbersClient:
         phone_number: str, 
         *,
         continuation_token: Optional[str] = None,
-        polling: Union[bool, Any] = True,
+        polling: Union[bool, "PollingMethod"] = True,
         polling_interval: int = _DEFAULT_POLLING_INTERVAL_IN_SECONDS,
         **kwargs: Any) -> AsyncLROPoller[None]:
         """Releases an purchased phone number.
@@ -183,7 +185,7 @@ class PhoneNumbersClient:
         area_code: Optional[str] = None,
         quantity: Optional[int] = None,
         continuation_token: Optional[str] = None,
-        polling: Union[bool, Any] = True,
+        polling: Union[bool, "PollingMethod"] = True,
         polling_interval: int = _DEFAULT_POLLING_INTERVAL_IN_SECONDS,
         **kwargs: Any
     ) -> AsyncLROPoller[PhoneNumberSearchResult]:
@@ -241,7 +243,7 @@ class PhoneNumbersClient:
         calling: Optional[Union[str, PhoneNumberCapabilityType]] = None,
         *,
         continuation_token: Optional[str] = None,
-        polling: Union[bool, Any] = True,
+        polling: Union[bool, "PollingMethod"] = True,
         polling_interval: int = _DEFAULT_POLLING_INTERVAL_IN_SECONDS,
         **kwargs: Any
     ) -> AsyncLROPoller[PurchasedPhoneNumber]:
@@ -614,7 +616,7 @@ class PhoneNumbersClient:
         *,
         agree_to_not_resell: bool = False,
         continuation_token: Optional[str] = None,
-        polling: Union[bool, Any] = True,
+        polling: Union[bool, "PollingMethod"] = True,
         polling_interval: int = _DEFAULT_POLLING_INTERVAL_IN_SECONDS,
         **kwargs: Any
     ) -> AsyncLROPoller[None]:

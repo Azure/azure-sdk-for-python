@@ -4,8 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-# pylint: disable=docstring-keyword-should-match-keyword-only
-from typing import List, Optional, Union, Any, cast, Dict
+from typing import List, Optional, Union, Any, cast, Dict, TYPE_CHECKING
 import uuid
 
 from azure.core.credentials import TokenCredential, AzureKeyCredential
@@ -13,6 +12,9 @@ from azure.core.paging import ItemPaged
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
+
+if TYPE_CHECKING:
+    from azure.core.polling import PollingMethod
 
 from ._generated._client import PhoneNumbersClient as PhoneNumbersClientGen
 from ._generated.models import (
@@ -105,7 +107,7 @@ class PhoneNumbersClient:
             *,
             agree_to_not_resell: bool = False,
             continuation_token: Optional[str] = None,
-            polling: Union[bool, Any] = True,
+            polling: Union[bool, "PollingMethod"] = True,
             polling_interval: int = _DEFAULT_POLLING_INTERVAL_IN_SECONDS,
             **kwargs: Any) -> LROPoller[None]:
         """Purchases phone numbers.
@@ -143,7 +145,7 @@ class PhoneNumbersClient:
         phone_number: str, 
         *,
         continuation_token: Optional[str] = None,
-        polling: Union[bool, Any] = True,
+        polling: Union[bool, "PollingMethod"] = True,
         polling_interval: int = _DEFAULT_POLLING_INTERVAL_IN_SECONDS,
         **kwargs: Any) -> LROPoller[None]:
         """Releases an purchased phone number.
@@ -180,7 +182,7 @@ class PhoneNumbersClient:
         area_code: Optional[str] = None,
         quantity: Optional[int] = None,
         continuation_token: Optional[str] = None,
-        polling: Union[bool, Any] = True,
+        polling: Union[bool, "PollingMethod"] = True,
         polling_interval: int = _DEFAULT_POLLING_INTERVAL_IN_SECONDS,
         **kwargs: Any
     ) -> LROPoller[PhoneNumberSearchResult]:
@@ -238,7 +240,7 @@ class PhoneNumbersClient:
         calling: Optional[Union[str, PhoneNumberCapabilityType]] = None,
         *,
         continuation_token: Optional[str] = None,
-        polling: Union[bool, Any] = True,
+        polling: Union[bool, "PollingMethod"] = True,
         polling_interval: int = _DEFAULT_POLLING_INTERVAL_IN_SECONDS,
         **kwargs: Any
     ) -> LROPoller[PurchasedPhoneNumber]:
@@ -280,10 +282,13 @@ class PhoneNumbersClient:
 
         result_properties = poller.result().additional_properties
         if (result_properties is not None and
+            isinstance(result_properties, dict) and
             "status" in result_properties and
+            isinstance(result_properties.get("status"), str) and
             result_properties["status"].lower() == "failed"):
-            raise HttpResponseError(
-                message=result_properties["error"]["message"])
+            error_info = result_properties.get("error", {})
+            error_message = error_info.get("message", "Operation failed") if isinstance(error_info, dict) else "Operation failed"
+            raise HttpResponseError(message=error_message)
 
         return poller
 
@@ -603,7 +608,7 @@ class PhoneNumbersClient:
         *,
         agree_to_not_resell: bool = False,
         continuation_token: Optional[str] = None,
-        polling: Union[bool, Any] = True,
+        polling: Union[bool, "PollingMethod"] = True,
         polling_interval: int = _DEFAULT_POLLING_INTERVAL_IN_SECONDS,
         **kwargs: Any
     ) -> LROPoller[None]:
