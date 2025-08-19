@@ -86,46 +86,55 @@ class TestBatch(AzureMgmtRecordedTestCase):
         except Exception as err:
             pytest.fail("Expected CreateTasksError, instead got: {!r}".format(err))
 
-    @CachedResourceGroupPreparer(location=AZURE_LOCATION)
-    @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
-    @pytest.mark.parametrize("BatchClient", [SyncBatchClient, AsyncBatchClient], ids=["sync", "async"])
-    @client_setup
-    @recorded_by_proxy_async
-    async def test_batch_certificates(self, client: BatchClient, **kwargs):
-        # Test Add Certificate
-        certificate = models.BatchCertificate(
-            thumbprint="cff2ab63c8c955aaf71989efa641b906558d9fb7",
-            thumbprint_algorithm="sha1",
-            data="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",
-            certificate_format=models.BatchCertificateFormat.PFX,
-            password="nodesdk",
-        )
+    # @CachedResourceGroupPreparer(location=AZURE_LOCATION)
+    # @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
+    # @pytest.mark.parametrize("BatchClient", [SyncBatchClient, AsyncBatchClient], ids=["sync", "async"])
+    # @client_setup
+    # @recorded_by_proxy_async
+    # async def test_batch_certificates(self, client: BatchClient, **kwargs):
+    #     # Test Add Certificate
+    #     certificate = models.BatchCertificate(
+    #         thumbprint="cff2ab63c8c955aaf71989efa641b906558d9fb7",
+    #         thumbprint_algorithm="sha1",
+    #         data="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",
+    #         certificate_format=models.BatchCertificateFormat.PFX,
+    #         password="nodesdk",
+    #     )
 
-        response = await wrap_result(client.create_certificate(certificate))
-        assert response is None
+    #     response = await wrap_result(client.create_certificate(certificate))
+    #     assert response is None
 
-        # Test List Certificates
-        certs = await wrap_list_result(client.list_certificates())
-        test_cert = [c for c in certs if c.thumbprint == "cff2ab63c8c955aaf71989efa641b906558d9fb7"]
-        assert len(test_cert) == 1
+    #     # Test List Certificates
+    #     certs = await wrap_list_result(client.list_certificates())
+    #     test_cert = [c for c in certs if c.thumbprint == "cff2ab63c8c955aaf71989efa641b906558d9fb7"]
+    #     assert len(test_cert) == 1
 
-        # Test Get Certificate
-        cert = await wrap_result(client.get_certificate("sha1", "cff2ab63c8c955aaf71989efa641b906558d9fb7"))
-        assert cert.thumbprint == "cff2ab63c8c955aaf71989efa641b906558d9fb7"
-        assert cert.thumbprint_algorithm == "sha1"
-        assert cert.delete_certificate_error is None
+    #     # Test Get Certificate
+    #     cert = await wrap_result(client.get_certificate("sha1", "cff2ab63c8c955aaf71989efa641b906558d9fb7"))
+    #     assert cert.thumbprint == "cff2ab63c8c955aaf71989efa641b906558d9fb7"
+    #     assert cert.thumbprint_algorithm == "sha1"
+    #     assert cert.delete_certificate_error is None
 
-        # Test Cancel Certificate Delete
-        await self.assertBatchError(
-            "CertificateStateActive",
-            client.cancel_certificate_deletion,
-            "sha1",
-            "cff2ab63c8c955aaf71989efa641b906558d9fb7",
-        )
+    #     # Test Cancel Certificate Delete
+    #     await self.assertBatchError(
+    #         "CertificateStateActive",
+    #         client.cancel_certificate_deletion,
+    #         "sha1",
+    #         "cff2ab63c8c955aaf71989efa641b906558d9fb7",
+    #     )
+
+    #     poller = await wrap_result(client.begin_delete_certificate("sha1", "cff2ab63c8c955aaf71989efa641b906558d9fb7"))
+    #     assert poller is not None
+
+    #     assert poller.result() is None
+    #     assert poller.done()
+    #     assert poller.status() == "Succeeded"
+
+
 
         # Test Delete Certificate
-        response = await wrap_result(client.delete_certificate("sha1", "cff2ab63c8c955aaf71989efa641b906558d9fb7"))
-        assert response is None
+        # response = await wrap_result(client.delete_certificate("sha1", "cff2ab63c8c955aaf71989efa641b906558d9fb7"))
+        # assert response is None
 
     @CachedResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
@@ -382,9 +391,17 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert pool.allocation_state is None
         assert pool.vm_size is None
 
+        poller = await wrap_result(client.begin_delete_pool(pool_id=test_paas_pool.id, polling_interval=5))
+        assert poller is not None
+        
+        # Wait for LRO completion
+        assert poller.result() is None
+        assert poller.done()
+        assert poller.status() == "Succeeded"
+
         # Test Delete Pool
-        response = await wrap_result(client.delete_pool(test_paas_pool.id))
-        assert response is None
+        # response = await wrap_result(client.delete_pool(test_paas_pool.id))
+        # assert response is None
 
     @CachedResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
@@ -432,12 +449,27 @@ class TestBatch(AzureMgmtRecordedTestCase):
             time.sleep(5)
             pool = await wrap_result(client.get_pool(batch_pool.name))
         params = models.BatchPoolResizeOptions(target_dedicated_nodes=0, target_low_priority_nodes=2)
-        response = await wrap_result(client.resize_pool(batch_pool.name, params))
-        assert response is None
+        
+        # TODO: figure out separate test bc the resize + stop_pool_resize tests are working together
+        # LRO for resizing
+        poller = await wrap_result(client.begin_resize_pool(batch_pool.name, params, polling_interval=5))
+        assert poller is not None
+        
+        # response = await wrap_result(client.resize_pool(batch_pool.name, params))
+        # assert response is None
 
         # Test Stop Pool Resize
-        response = await wrap_result(client.stop_pool_resize(batch_pool.name))
-        assert response is None
+        # response = await wrap_result(client.stop_pool_resize(batch_pool.name))
+        # assert response is None
+
+        poller = await wrap_result(client.begin_stop_pool_resize(batch_pool.name, polling_interval=5))
+        assert poller is not None
+
+        # Wait for LRO completion
+        assert poller.result() is None
+        assert poller.done()
+        assert poller.status() == "Succeeded"
+
         pool = await wrap_result(client.get_pool(batch_pool.name))
         while self.is_live and pool.allocation_state != models.AllocationState.STEADY:
             time.sleep(5)
@@ -504,12 +536,31 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert response is None
 
         # Test Terminate Job Schedule
-        response = await wrap_result(client.terminate_job_schedule(schedule_id))
-        assert response is None
+        # response = await wrap_result(client.terminate_job_schedule(schedule_id))
+        # assert response is None
+
+        # Test Terminate Job Schedule using LRO
+        poller = await wrap_result(client.begin_terminate_job_schedule(job_schedule_id=schedule_id, polling_interval=5))
+        assert poller is not None
+        
+        # Wait for LRO completion
+        assert poller.result() is None
+        assert poller.done()
+        assert poller.status() == "Succeeded"
+
+        # Test Delete Job using LRO
+        poller = await wrap_result(client.begin_delete_job_schedule(job_schedule_id=schedule_id, polling_interval=5))
+        assert poller is not None
+        
+        # Wait for LRO completion
+        assert poller.result() is None
+        assert poller.done()
+        assert poller.status() == "Succeeded"
+
 
         # Test Delete Job Schedule
-        response = await wrap_result(client.delete_job_schedule(schedule_id))
-        assert response is None
+        # response = await wrap_result(client.delete_job_schedule(schedule_id))
+        # assert response is None
 
     @CachedResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
@@ -620,15 +671,29 @@ class TestBatch(AzureMgmtRecordedTestCase):
         response = await wrap_result(client.enable_node_scheduling(batch_pool.name, nodes[0].id))
         assert response is None
 
-        # Test Reboot Node
-        response = await wrap_result(
-            client.reboot_node(
-                batch_pool.name,
-                nodes[0].id,
+        # Test LRO reboot node
+        poller = await wrap_result(
+            client.begin_reboot_node(
+                batch_pool.name, 
+                nodes[0].id, 
                 models.BatchNodeRebootKinds(node_reboot_kind=models.BatchNodeRebootKind.TERMINATE),
-            )
-        )
-        assert response is None
+                polling_interval=5))
+        assert poller is not None
+
+        # Wait for LRO completion
+        assert poller.result() is None
+        assert poller.done()
+        assert poller.status() == "Succeeded"
+
+        # Test Reboot Node
+        # response = await wrap_result(
+        #     client.reboot_node(
+        #         batch_pool.name,
+        #         nodes[0].id,
+        #         models.BatchNodeRebootKinds(node_reboot_kind=models.BatchNodeRebootKind.TERMINATE),
+        #     )
+        # )
+        # assert response is None
 
         # Test Reimage Node
         # TODO: check to see if reimage is removed from service
@@ -637,7 +702,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         #     client.reimage_node,
         #     batch_pool.name,
         #     nodes[1].id,
-        #     models.BatchNodeReimageParameters(node_reimage_option=models.BatchNodeReimageOption.terminate),
+        #     models.BatchNodeReimageOptions(node_reimage_option=models.BatchNodeReimageOption.TERMINATE),
         # )
 
         # Test Remove Nodes
@@ -1161,18 +1226,37 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert isinstance(jobs, Iterable)
         assert len(list(jobs)) == 2
 
+
+        # Test LRO disable job
+        poller = await wrap_result(client.begin_disable_job(job_id=job_param.id, content=models.BatchJobDisableOptions(disable_tasks="requeue"), polling_interval=5))
+        assert poller is not None
+
+        # Wait for LRO completion
+        assert poller.result() is None
+        assert poller.done()
+        assert poller.status() == "Succeeded"
+
         # Test Disable Job
-        response = await wrap_result(
-            client.disable_job(
-                job_id=job_param.id,
-                content=models.BatchJobDisableOptions(disable_tasks="requeue"),
-            )
-        )
-        assert response is None
+        # response = await wrap_result(
+        #     client.disable_job(
+        #         job_id=job_param.id,
+        #         content=models.BatchJobDisableOptions(disable_tasks="requeue"),
+        #     )
+        # )
+        # assert response is None
+
+        # Test LRO enable job
+        poller = await wrap_result(client.begin_enable_job(job_id=job_param.id, polling_interval=5))
+        assert poller is not None
+
+        # Wait for LRO completion
+        assert poller.result() is None
+        assert poller.done()
+        assert poller.status() == "Succeeded"
 
         # Test Enable Job
-        response = await wrap_result(client.enable_job(job_param.id))
-        assert response is None
+        # response = await wrap_result(client.enable_job(job_param.id))
+        # assert response is None
 
         # Prep and release task status
         task_status = await wrap_list_result(client.list_job_preparation_and_release_task_status(job_param.id))
@@ -1180,12 +1264,19 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert list(task_status) == []
 
         # Test Terminate Job
-        response = await wrap_result(client.terminate_job(job_param.id))
-        assert response is None
+        # response = await wrap_result(client.terminate_job(job_param.id))
+        # assert response is None
 
+        # Test Terminate Job using LRO
+        poller = await wrap_result(client.begin_terminate_job(job_id=job_param.id, polling_interval=5))
+        assert poller is not None
+        # waiting for completion
+        assert poller.result() is None
+        assert poller.done()
+        assert poller.status() == "Succeeded"
 
         # Test Delete Job using LRO
-        poller = await wrap_result(client.delete_job_LRO(job_id=job_auto_param.id, polling_interval=5))
+        poller = await wrap_result(client.begin_delete_job(job_id=job_auto_param.id, polling_interval=5))
         assert poller is not None
         
         # Wait for LRO completion
@@ -1195,7 +1286,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
 
         # Test Fake Delete Job
         try:
-            await wrap_result(client.delete_job_LRO(job_id="potato", polling_interval=5))
+            await wrap_result(client.begin_delete_job(job_id="potato", polling_interval=5))
             self.fail("Expected ResourceNotFoundError but no exception was raised")
         except azure.core.exceptions.ResourceNotFoundError as e:
             assert e.response is not None

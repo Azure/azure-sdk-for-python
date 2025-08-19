@@ -42,10 +42,10 @@ __all__ = [
     "BatchClient",
 ]  # Add all objects you want publicly available to users at this package level
 
-if TYPE_CHECKING:
-    ClientType = TypeVar("ClientType", bound="BatchClient")
-    T = TypeVar("T")
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+# if TYPE_CHECKING:
+#     ClientType = TypeVar("ClientType", bound="BatchClient")
+#     T = TypeVar("T")
+#     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 
 class BatchSharedKeyAuthPolicy(SansIOHTTPPolicy):
