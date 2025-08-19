@@ -242,7 +242,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
                     raise e
             else:
                 if args:
-                    _record_success_if_request_not_cancelled(args[0], global_endpoint_manager)
+                    _record_failure_if_request_not_cancelled(args[0], global_endpoint_manager)
                 _handle_service_request_retries(client, service_request_retry_policy, e, *args)
 
         except ServiceResponseError as e:
@@ -251,7 +251,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
                     raise e
             else:
                 if args:
-                    _record_success_if_request_not_cancelled(args[0], global_endpoint_manager)
+                    _record_failure_if_request_not_cancelled(args[0], global_endpoint_manager)
                 _handle_service_response_retries(request, client, service_response_retry_policy, e, *args)
 
 def _record_success_if_request_not_cancelled(
@@ -396,7 +396,7 @@ class ConnectionRetryPolicy(RetryPolicy):
                 if retry_settings['read'] > 0:
                     # record the failure for circuit breaker tracking for retries in connection retry policy
                     # retries in the execute function will mark those failures
-                    _record_success_if_request_not_cancelled(request_params, global_endpoint_manager)
+                    _record_failure_if_request_not_cancelled(request_params, global_endpoint_manager)
                     retry_active = self.increment(retry_settings, response=request, error=err)
                     if retry_active:
                         self.sleep(retry_settings, request.context.transport)
@@ -410,7 +410,7 @@ class ConnectionRetryPolicy(RetryPolicy):
                         request_params.healthy_tentative_location):
                     raise err
                 if _has_read_retryable_headers(request.http_request.headers) and retry_settings['read'] > 0:
-                    _record_success_if_request_not_cancelled(request_params, global_endpoint_manager)
+                    _record_failure_if_request_not_cancelled(request_params, global_endpoint_manager)
                     retry_active = self.increment(retry_settings, response=request, error=err)
                     if retry_active:
                         self.sleep(retry_settings, request.context.transport)

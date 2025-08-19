@@ -59,8 +59,6 @@ Example:
 
 import abc
 from datetime import timedelta
-from typing import List, Tuple, Any, Dict, Callable
-
 
 class AvailabilityStrategy(abc.ABC):
     """Abstract base class for availability strategies.
@@ -70,28 +68,11 @@ class AvailabilityStrategy(abc.ABC):
     Strategies can be configured at the client level and overridden per request.
     """
 
-    @abc.abstractmethod
-    def execute_request(
-            self,
-            request_fn: Callable[[], Tuple[Dict[str, Any], Dict[str, Any]]],
-            pending_requests: List[Any]
-    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
-        """Execute a request with the availability strategy.
-
-        :param request_fn: Function that executes the actual request
-        :type request_fn: Callable[[], Tuple[Dict[str, Any], Dict[str, Any]]]
-        :param pending_requests: List to track pending requests for cancellation
-        :type pending_requests: List[Any]
-        :return: Tuple of (response_body, response_headers)
-        :rtype: Tuple[Dict[str, Any], Dict[str, Any]]
-        """
-        pass
-
 
 class DisabledStrategy(AvailabilityStrategy):
     """Strategy that disables request hedging.
 
-    This strategy executes requests directly without any hedging or retries.
+    This strategy executes requests directly without any hedging.
     It can be used to disable hedging for specific requests when a client
     has a default hedging strategy configured.
 
@@ -103,32 +84,6 @@ class DisabledStrategy(AvailabilityStrategy):
         )
         ```
     """
-
-    @property
-    def max_hedged_requests(self) -> int:
-        """Maximum number of concurrent hedged requests allowed.
-
-        :return: Always returns 1 as hedging is disabled
-        :rtype: int
-        """
-        return 1
-
-    def execute_request(
-            self,
-            request_fn: Callable[[], Tuple[Dict[str, Any], Dict[str, Any]]],
-            pending_requests: List[Any]
-    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
-        """Execute a request without hedging.
-
-        :param request_fn: Function that executes the actual request
-        :type request_fn: Callable[[], Tuple[Dict[str, Any], Dict[str, Any]]]
-        :param pending_requests: List to track pending requests for cancellation
-        :type pending_requests: List[Any]
-        :return: Tuple of (response_body, response_headers)
-        :rtype: Tuple[Dict[str, Any], Dict[str, Any]]
-        """
-        return request_fn()
-
 
 class CrossRegionHedgingStrategy(AvailabilityStrategy):
     """Strategy that implements cross-region request hedging.
@@ -188,24 +143,3 @@ class CrossRegionHedgingStrategy(AvailabilityStrategy):
         :rtype: timedelta
         """
         return self._threshold_steps
-
-    def execute_request(
-            self,
-            request_fn: Callable[[], Tuple[Dict[str, Any], Dict[str, Any]]],
-            pending_requests: List[Any]
-    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
-        """Execute a request with cross-region hedging.
-
-        :param request_fn: Function that executes the actual request
-        :type request_fn: Callable[[], Tuple[Dict[str, Any], Dict[str, Any]]]
-        :param pending_requests: List to track pending requests for cancellation
-        :type pending_requests: List[Any]
-        :return: Tuple of (response_body, response_headers)
-        :rtype: Tuple[Dict[str, Any], Dict[str, Any]]
-        """
-        # Request execution is handled by _synchronized_request.py which:
-        # 1. Creates copies of the request for hedging
-        # 2. Executes requests in parallel with appropriate delays
-        # 3. Cancels pending requests when first response arrives
-        # 4. Cleans up resources
-        return request_fn()

@@ -692,7 +692,6 @@ class ContainerProxy:
         """
         original_positional_arg_names = ["query"]
         utils.add_args_to_kwargs(original_positional_arg_names, args, kwargs)
-
         feed_options = _build_options(kwargs)
 
         # Update 'feed_options' from 'kwargs'

@@ -14,13 +14,14 @@ import pytest_asyncio
 from azure.core.exceptions import ServiceResponseError
 
 import test_config
-from azure.cosmos.aio import CosmosClient
 from azure.cosmos import _location_cache
 from azure.cosmos._availability_strategy import CrossRegionHedgingStrategy, DisabledStrategy
+from azure.cosmos.aio import CosmosClient
 from azure.cosmos.documents import _OperationType as OperationType
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos.http_constants import ResourceType
 from tests._fault_injection_transport_async import FaultInjectionTransportAsync
+
 
 class MockHandler(logging.Handler):
     def __init__(self):
@@ -386,9 +387,32 @@ class TestAsyncAvailabilityStrategy:
                 availability_strategy=strategy if availability_strategy_level == "request" else None)
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("operation", [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED, CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
-    @pytest.mark.parametrize("availability_strategy_level", ["client", "request"])
-    async def test_client_availability_strategy_failover(self, operation, availability_strategy_level, setup):
+    @pytest.mark.parametrize("operation, availability_strategy_level, succeeded",
+                             [
+                                 (READ, "client", True),
+                                 (READ, "request", True),
+                                 (QUERY, "client", False),
+                                 (QUERY, "request", True),
+                                 (QUERY_PK, "client", False),
+                                 (QUERY_PK, "request", True),
+                                 (READ_ALL, "client", False),
+                                 (READ_ALL, "request", True),
+                                 (CHANGE_FEED, "client", False),
+                                 (CHANGE_FEED, "request", True),
+                                 (CREATE, "client", True),
+                                 (CREATE, "request", True),
+                                 (UPSERT, "client", True),
+                                 (UPSERT, "request", True),
+                                 (REPLACE, "client", True),
+                                 (REPLACE, "request", True),
+                                 (DELETE, "client", True),
+                                 (DELETE, "request", True),
+                                 (PATCH, "client", True),
+                                 (PATCH, "request", True),
+                                 (BATCH, "client", False),
+                                 (BATCH, "request", True)
+                             ])
+    async def test_client_availability_strategy_failover(self, operation, availability_strategy_level, succeeded, setup):
         """Test operations failover to second preferred location on errors"""
         uri_down = _location_cache.LocationCache.GetLocationalEndpoint(self.host, setup['region_1'])
         failed_over_uri = _location_cache.LocationCache.GetLocationalEndpoint(self.host, setup['region_2'])
@@ -399,7 +423,7 @@ class TestAsyncAvailabilityStrategy:
 
         error_lambda = lambda r: FaultInjectionTransportAsync.error_after_delay(
             500,  # Add delay to trigger hedging
-            CosmosHttpResponseError(status_code=503, message="Injected Error")
+            CosmosHttpResponseError(status_code=400, message="Injected Error")
         )
         custom_transport = self.get_custome_transport_with_fault_injection(predicate, error_lambda)
 
@@ -425,22 +449,45 @@ class TestAsyncAvailabilityStrategy:
 
         # Test operation with fault injection
         if operation in [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED]:
-            await perform_read_operation(
-                operation,
-                setup_with_transport['col'],
-                doc,
-                expected_uris,
-                [],
-                availability_strategy=strategy if availability_strategy_level == "request" else None)
+            if succeeded:
+                await perform_read_operation(
+                    operation,
+                    setup_with_transport['col'],
+                    doc,
+                    expected_uris,
+                    [],
+                    availability_strategy=strategy if availability_strategy_level == "request" else None)
+            else:
+                with pytest.raises(CosmosHttpResponseError) as exc_info:
+                    await perform_read_operation(
+                        operation,
+                        setup_with_transport['col'],
+                        doc,
+                        expected_uris,
+                        [],
+                        availability_strategy=strategy if availability_strategy_level == "request" else None)
+                assert exc_info.value.status_code == 400
+
         else:
-            await perform_write_operation(
-                operation,
-                setup_with_transport['col'],
-                doc,
-                expected_uris,
-                [],
-                retry_write=True,
-                availability_strategy=strategy if availability_strategy_level == "request" else None)
+            if succeeded:
+                await perform_write_operation(
+                    operation,
+                    setup_with_transport['col'],
+                    doc,
+                    expected_uris,
+                    [],
+                    retry_write=True,
+                    availability_strategy=strategy if availability_strategy_level == "request" else None)
+            else:
+                with pytest.raises(CosmosHttpResponseError) as exc_info:
+                    await perform_read_operation(
+                        operation,
+                        setup_with_transport['col'],
+                        doc,
+                        expected_uris,
+                        [],
+                        availability_strategy=strategy if availability_strategy_level == "request" else None)
+                assert exc_info.value.status_code == 400
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("operation", [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED, CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
@@ -471,16 +518,11 @@ class TestAsyncAvailabilityStrategy:
         )
         custom_transport.add_fault(predicate_first_region, error_lambda_first_region)
 
-        strategy = CrossRegionHedgingStrategy(
-            threshold=timedelta(milliseconds=100),
-            threshold_steps=timedelta(milliseconds=50)
-        )
         setup_with_fault = await self.setup_method_with_custom_transport(
             setup['write_locations'],
             setup['read_locations'],
             custom_transport,
-            multiple_write_locations=True,
-            availability_strategy=strategy)
+            multiple_write_locations=True)
 
         setup_without_fault = await self.setup_method_with_custom_transport(
             setup['write_locations'],
@@ -493,11 +535,28 @@ class TestAsyncAvailabilityStrategy:
         expected_uris = [uri_down, failed_over_uri]
 
         # Test should fail with original error without failover
+        strategy = CrossRegionHedgingStrategy(
+            threshold=timedelta(milliseconds=100),
+            threshold_steps=timedelta(milliseconds=50)
+        )
         with pytest.raises(CosmosHttpResponseError) as exc_info:
             if operation in [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED]:
-                await perform_read_operation(operation, setup_with_fault['col'], doc, expected_uris, [])
+                await perform_read_operation(
+                    operation,
+                    setup_with_fault['col'],
+                    doc,
+                    expected_uris,
+                    [],
+                    availability_strategy=strategy)
             else:
-                await perform_write_operation(operation, setup_with_fault['col'], doc, expected_uris, [], retry_write=True)
+                await perform_write_operation(
+                    operation,
+                    setup_with_fault['col'],
+                    doc,
+                    expected_uris,
+                    [],
+                    retry_write=True,
+                    availability_strategy=strategy)
 
         # Verify error code
         assert exc_info.value.status_code == status_code
@@ -540,8 +599,7 @@ class TestAsyncAvailabilityStrategy:
             setup['write_locations'],
             setup['read_locations'],
             custom_transport,
-            multiple_write_locations=True,
-            availability_strategy=strategy)
+            multiple_write_locations=True)
 
         setup_without_fault = await self.setup_method_with_custom_transport(
             setup['write_locations'],
@@ -556,9 +614,22 @@ class TestAsyncAvailabilityStrategy:
         # Test should fail with error from the first region
         with pytest.raises(CosmosHttpResponseError) as exc_info:
             if operation in [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED]:
-                await perform_read_operation(operation, setup_with_transport['col'], doc, expected_uris, [])
+                await perform_read_operation(
+                    operation,
+                    setup_with_transport['col'],
+                    doc,
+                    expected_uris,
+                    [],
+                    availability_strategy=strategy)
             else:
-                await perform_write_operation(operation, setup_with_transport['col'], doc, expected_uris, [], retry_write=True)
+                await perform_write_operation(
+                    operation,
+                    setup_with_transport['col'],
+                    doc,
+                    expected_uris,
+                    [],
+                    retry_write=True,
+                    availability_strategy=strategy)
 
         # Verify error code matches first region's error
         assert exc_info.value.status_code == 400
@@ -667,10 +738,6 @@ class TestAsyncAvailabilityStrategy:
     @pytest.mark.parametrize("operation", [CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
     async def test_no_cross_region_request_with_retry_write_disabled(self, operation, setup):
         """Test that no cross region hedging occurs when retry_write is disabled for write operations"""
-        client_strategy = CrossRegionHedgingStrategy(
-            threshold=timedelta(milliseconds=100),
-            threshold_steps=timedelta(milliseconds=50)
-        )
 
         uri_down = _location_cache.LocationCache.GetLocationalEndpoint(self.host, setup['region_1'])
         failed_over_uri = _location_cache.LocationCache.GetLocationalEndpoint(self.host, setup['region_2'])
@@ -688,8 +755,7 @@ class TestAsyncAvailabilityStrategy:
             setup['write_locations'],
             setup['read_locations'],
             custom_transport,
-            multiple_write_locations=True,
-            availability_strategy=client_strategy)
+            multiple_write_locations=True)
 
         setup_without_fault = await self.setup_method_with_custom_transport(
             setup['write_locations'],
@@ -701,10 +767,21 @@ class TestAsyncAvailabilityStrategy:
 
         expected_uris = [uri_down]
         excluded_uris = [failed_over_uri]
+        strategy = CrossRegionHedgingStrategy(
+            threshold=timedelta(milliseconds=100),
+            threshold_steps=timedelta(milliseconds=50)
+        )
 
         # Test should fail with error from the first region
         with pytest.raises(CosmosHttpResponseError) as exc_info:
-            await perform_write_operation(operation, setup_with_transport['col'], doc, expected_uris, excluded_uris, retry_write=False)
+            await perform_write_operation(
+                operation,
+                setup_with_transport['col'],
+                doc,
+                expected_uris,
+                excluded_uris,
+                retry_write=False,
+                availability_strategy=strategy)
 
         # Verify error code
         assert exc_info.value.status_code == 400
@@ -713,10 +790,6 @@ class TestAsyncAvailabilityStrategy:
     @pytest.mark.parametrize("operation", [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED, CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
     async def test_no_cross_region_request_with_exclude_regions(self, operation, setup):
         """Test that even with request-level CrossRegionHedgingStrategy overrides, there will be no cross region hedging due to excluded regions"""
-        client_strategy = CrossRegionHedgingStrategy(
-            threshold=timedelta(milliseconds=100),
-            threshold_steps=timedelta(milliseconds=50)
-        )
 
         uri_down = _location_cache.LocationCache.GetLocationalEndpoint(self.host, setup['region_1'])
         failed_over_uri = _location_cache.LocationCache.GetLocationalEndpoint(self.host, setup['region_2'])
@@ -734,8 +807,7 @@ class TestAsyncAvailabilityStrategy:
             setup['write_locations'],
             setup['read_locations'],
             custom_transport,
-            multiple_write_locations=True,
-            availability_strategy=client_strategy)
+            multiple_write_locations=True)
 
         setup_without_fault = await self.setup_method_with_custom_transport(
             setup['write_locations'],
@@ -748,12 +820,32 @@ class TestAsyncAvailabilityStrategy:
         expected_uris = [uri_down]
         excluded_uris = [failed_over_uri]
 
+        strategy = CrossRegionHedgingStrategy(
+            threshold=timedelta(milliseconds=100),
+            threshold_steps=timedelta(milliseconds=50)
+        )
+
         # Test should fail with error from the first region
         with pytest.raises(CosmosHttpResponseError) as exc_info:
             if operation in [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED]:
-                await perform_read_operation(operation, setup_with_transport['col'], doc, expected_uris, excluded_uris, excluded_locations=[setup['region_2']])
+                await perform_read_operation(
+                    operation,
+                    setup_with_transport['col'],
+                    doc,
+                    expected_uris,
+                    excluded_uris,
+                    excluded_locations=[setup['region_2']],
+                    availability_strategy=strategy)
             else:
-                await perform_write_operation(operation, setup_with_transport['col'], doc, expected_uris, excluded_uris, retry_write=True, excluded_locations=[setup['region_2']])
+                await perform_write_operation(
+                    operation,
+                    setup_with_transport['col'],
+                    doc,
+                    expected_uris,
+                    excluded_uris,
+                    retry_write=True,
+                    excluded_locations=[setup['region_2']],
+                    availability_strategy=strategy)
 
         # Verify error code
         assert exc_info.value.status_code == 400
@@ -795,7 +887,6 @@ class TestAsyncAvailabilityStrategy:
                 setup['read_locations'],
                 custom_transport,
                 multiple_write_locations=True,
-                availability_strategy=strategy,
                 container_id=self.TEST_SINGLE_PARTITION_CONTAINER_ID
             )
             setup_without_fault = await self.setup_method_with_custom_transport(
@@ -811,9 +902,22 @@ class TestAsyncAvailabilityStrategy:
                 doc = create_doc()
                 await setup_without_fault['col'].create_item(body=doc)
                 if operation in [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED]:
-                    await perform_read_operation(operation, setup_with_fault_injection['col'], doc, expected_uris, [])
+                    await perform_read_operation(
+                        operation,
+                        setup_with_fault_injection['col'],
+                        doc,
+                        expected_uris,
+                        [],
+                        availability_strategy=strategy)
                 else:
-                    await perform_write_operation(operation, setup_with_fault_injection['col'], doc, expected_uris, [], retry_write=True)
+                    await perform_write_operation(
+                        operation,
+                        setup_with_fault_injection['col'],
+                        doc,
+                        expected_uris,
+                        [],
+                        retry_write=True,
+                        availability_strategy=strategy)
 
             # Subsequent operations should go directly to second region due to PPCB
             expected_uris = [failed_over_uri]
@@ -823,9 +927,22 @@ class TestAsyncAvailabilityStrategy:
             self.MOCK_HANDLER.reset()
 
             if operation in [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED]:
-                await perform_read_operation(operation, setup_with_fault_injection['col'], doc, expected_uris, excluded_uris)
+                await perform_read_operation(
+                    operation,
+                    setup_with_fault_injection['col'],
+                    doc,
+                    expected_uris,
+                    excluded_uris,
+                    availability_strategy=strategy)
             else:
-                await perform_write_operation(operation, setup_with_fault_injection['col'], doc, expected_uris, excluded_uris, retry_write=True)
+                await perform_write_operation(
+                    operation,
+                    setup_with_fault_injection['col'],
+                    doc,
+                    expected_uris,
+                    excluded_uris,
+                    retry_write=True,
+                    availability_strategy=strategy)
 
         finally:
             del os.environ["AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"]

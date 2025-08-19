@@ -2177,7 +2177,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                                        headers)
         request_params.set_excluded_location_from_options(options)
         request_params.set_retry_write(options, self.connection_policy.RetryNonIdempotentWrites)
-        request_params.set_availability_strategy_from_options(options, self.availability_strategy)
+        # for batch, ignore client level availability strategy settings as it only applies to point operations
+        request_params.set_availability_strategy_from_options(options)
         base.set_session_token_header(self, headers, path, request_params, options)
         return cast(
             Tuple[List[Dict[str, Any]], CaseInsensitiveDict],
@@ -3147,7 +3148,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 headers
             )
             request_params.set_excluded_location_from_options(options)
-            request_params.set_availability_strategy_from_options(options, self.availability_strategy)
+            # For read feed operation, ignore client level availability strategy as it only applies to point operations
+            request_params.set_availability_strategy_from_options(options)
 
             base.set_session_token_header(self, headers, path, request_params, options, partition_key_range_id)
 
@@ -3189,7 +3191,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         )
         request_params = RequestObject(resource_type, documents._OperationType.SqlQuery, req_headers)
         request_params.set_excluded_location_from_options(options)
-        request_params.set_availability_strategy_from_options(options, self.availability_strategy)
+        # For read feed operation, ignore client level availability strategy as it only applies to point operations
+        request_params.set_availability_strategy_from_options(options)
 
         if not is_query_plan:
             req_headers[http_constants.HttpHeaders.IsQuery] = "true"

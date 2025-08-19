@@ -22,17 +22,23 @@
 """Module for handling request hedging strategies in Azure Cosmos DB."""
 import abc
 import copy
-import threading
 import time
 from concurrent.futures import ThreadPoolExecutor, Future, as_completed, CancelledError
-from threading import Event
 from types import SimpleNamespace
-from typing import List, Dict, Any, Tuple, Callable, Union, Optional
+from typing import List, Dict, Any, Tuple, Callable, Union, Optional, TYPE_CHECKING
+
+from azure.core import PipelineClient
+from azure.core.pipeline.transport import HttpRequest, \
+    HttpResponse  # pylint: disable=no-legacy-azure-core-http-response-import
 
 from . import exceptions
-from ._availability_strategy import CrossRegionHedgingStrategy, DisabledStrategy
+from ._availability_strategy import CrossRegionHedgingStrategy, DisabledStrategy, AvailabilityStrategy
+from ._global_partition_endpoint_manager_circuit_breaker import _GlobalPartitionEndpointManagerForCircuitBreaker
 from ._request_object import RequestObject
-from .documents import _OperationType
+from .documents import _OperationType, ConnectionPolicy
+
+if TYPE_CHECKING:
+    from . import CosmosClient
 
 ResponseType = Tuple[Dict[str, Any], Dict[str, Any]]
 
@@ -42,13 +48,13 @@ class HedgingHandler(abc.ABC):
     @abc.abstractmethod
     def execute_request(
         self,
-        client: Any,
-        request_params: Any,
-        global_endpoint_manager: Any,
-        connection_policy: Any,
-        pipeline_client: Any,
-        request: Any,
-        execute_request_fn: Callable,
+        client: "CosmosClient",
+        request_params: RequestObject,
+        global_endpoint_manager: _GlobalPartitionEndpointManagerForCircuitBreaker,
+        connection_policy: ConnectionPolicy,
+        pipeline_client: PipelineClient[HttpRequest, HttpResponse],
+        request: HttpRequest,
+        execute_request_fn: Callable[..., ResponseType],
         **kwargs: Any
     ) -> ResponseType:
         """Execute a request with the appropriate hedging behavior."""
@@ -59,13 +65,13 @@ class DisabledHedgingHandler(HedgingHandler):
 
     def execute_request(
         self,
-        client: Any,
-        request_params: Any,
-        global_endpoint_manager: Any,
-        connection_policy: Any,
-        pipeline_client: Any,
-        request: Any,
-        execute_request_fn: Callable,
+        client: "CosmosClient",
+        request_params: RequestObject,
+        global_endpoint_manager: _GlobalPartitionEndpointManagerForCircuitBreaker,
+        connection_policy: ConnectionPolicy,
+        pipeline_client: PipelineClient[HttpRequest, HttpResponse],
+        request: HttpRequest,
+        execute_request_fn: Callable[..., ResponseType],
         **kwargs: Any
     ) -> ResponseType:
         """Execute request without hedging."""
@@ -117,7 +123,7 @@ class CrossRegionHedgingHandler(HedgingHandler):
         
         :param result: exception
         :type result: Exception
-        :returns: True if result is either successful or a non-transient error
+        :returns: True if result is a non-transient error
         :rtype: bool
         """
         if isinstance(result, exceptions.CosmosHttpResponseError):
@@ -130,13 +136,13 @@ class CrossRegionHedgingHandler(HedgingHandler):
 
     def execute_single_request_with_delay(
         self,
-        client: Any,
+        client: "CosmosClient",
         request_params: RequestObject,
-        global_endpoint_manager: Any,
-        connection_policy: Any,
-        pipeline_client: Any,
-        request: Any,
-        execute_request_fn: Callable,
+        global_endpoint_manager: _GlobalPartitionEndpointManagerForCircuitBreaker,
+        connection_policy: ConnectionPolicy,
+        pipeline_client: PipelineClient[HttpRequest, HttpResponse],
+        request: HttpRequest,
+        execute_request_fn: Callable[..., ResponseType],
         location_index: int,
         available_locations: List[str],
         complete_status: SimpleNamespace,
@@ -154,7 +160,7 @@ class CrossRegionHedgingHandler(HedgingHandler):
         :param execute_request_fn: Function to execute request
         :param location_index: Index of target location
         :param available_locations: List of available locations
-        :param complete_event: Event to signal completion
+        :param complete_status: Value holder to track completion signal
         :param first_request_params_holder: a value holder for request object for first/initial request
         :param kwargs: Additional arguments for execute_request_fn
         :returns: Response tuple, exception, or None
@@ -191,7 +197,7 @@ class CrossRegionHedgingHandler(HedgingHandler):
             time.sleep(delay)
 
         if complete_status.is_completed:
-            raise CancelledError("The hedging request has been cancelled")
+            raise CancelledError("The request has been cancelled")
 
         return execute_request_fn(
             client,
@@ -205,13 +211,13 @@ class CrossRegionHedgingHandler(HedgingHandler):
 
     def execute_request(
         self,
-        client: Any,
-        request_params: Any,
-        global_endpoint_manager: Any,
-        connection_policy: Any,
-        pipeline_client: Any,
-        request: Any,
-        execute_request_fn: Callable,
+        client: "CosmosClient",
+        request_params: RequestObject,
+        global_endpoint_manager: _GlobalPartitionEndpointManagerForCircuitBreaker,
+        connection_policy: ConnectionPolicy,
+        pipeline_client: PipelineClient[HttpRequest, HttpResponse],
+        request: HttpRequest,
+        execute_request_fn: Callable[..., ResponseType],
         **kwargs: Any
     ) -> ResponseType:
         """Execute request with cross-region hedging."""
@@ -239,17 +245,16 @@ class CrossRegionHedgingHandler(HedgingHandler):
                         available_locations=available_locations,
                         complete_status=completion_status,
                         first_request_params_holder=first_request_params_holder,
-                        ** kwargs
+                        **kwargs
                     )
                 futures.append(future)
                 if i == 0:
                     first_request_future = future
 
             for fut in as_completed(futures):
-                # if the result is from the first request, then always treat it as non-transient result
                 exception = fut.exception()
 
-                # first future: always non-transient
+                # if the result is from the first request, then always treat it as non-transient result
                 if fut is first_request_future:
                     completion_status.is_completed = True
                     if exception is None:
@@ -295,7 +300,7 @@ class CrossRegionHedgingHandler(HedgingHandler):
 
         return applicable_endpoints
 
-def create_hedging_handler(strategy: Any) -> HedgingHandler:
+def create_hedging_handler(strategy: AvailabilityStrategy) -> HedgingHandler:
     """Create appropriate hedging handler based on availability strategy type."""
     if isinstance(strategy, DisabledStrategy):
         return DisabledHedgingHandler()
@@ -305,13 +310,13 @@ def create_hedging_handler(strategy: Any) -> HedgingHandler:
         raise ValueError(f"Unsupported availability strategy type: {type(strategy)}")
 
 def execute_with_hedging(
-    client: Any,
-    request_params: Any,
-    global_endpoint_manager: Any,
-    connection_policy: Any,
-    pipeline_client: Any,
-    request: Any,
-    execute_request_fn: Callable,
+    client: "CosmosClient",
+    request_params: RequestObject,
+    global_endpoint_manager: _GlobalPartitionEndpointManagerForCircuitBreaker,
+    connection_policy: ConnectionPolicy,
+    pipeline_client: PipelineClient[HttpRequest, HttpResponse],
+    request: HttpRequest,
+    execute_request_fn: Callable[..., ResponseType],
     **kwargs: Any
 ) -> ResponseType:
     """Execute a request with hedging based on the availability strategy."""

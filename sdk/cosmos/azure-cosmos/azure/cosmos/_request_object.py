@@ -28,9 +28,6 @@ from ._constants import _Constants as Constants
 from .documents import _OperationType
 from .http_constants import ResourceType
 
-if TYPE_CHECKING:
-    pass
-
 class RequestObject(object): # pylint: disable=too-many-instance-attributes
     def __init__(
             self,
@@ -131,7 +128,7 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
         :type status: ~types.SimpleNamespace
         """
         if status is None:
-            status = SimpleNamespace(is_completed=False)
+            raise ValueError("completion status argument can not be None")
         self.completion_status = status
 
     def get_completion_status(self) -> Optional[SimpleNamespace]:
