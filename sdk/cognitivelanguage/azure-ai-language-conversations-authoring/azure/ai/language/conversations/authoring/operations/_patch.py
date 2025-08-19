@@ -58,7 +58,8 @@ from ..models import (
     StringIndexType,
     UtteranceEvaluationResult,
     ExportedProjectFormat,
-    JobsPollingMethod
+    JobsPollingMethod,
+    DeploymentResourcesState
 )
 from azure.core.paging import ItemPaged
 from collections.abc import MutableMapping
@@ -78,16 +79,81 @@ class ProjectOperations(ProjectOperationsGenerated):
         self._project_name = project_name
 
     @distributed_trace
-    def begin_assign_deployment_resources(  # type: ignore[override]
+    def begin_assign_deployment_resources(
         self,
         body: Union[AssignDeploymentResourcesDetails, JSON, IO[bytes]],
-        *,
-        content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[None]:
-        """Assign deployment resources without requiring project_name explicitly."""
-        return super().begin_assign_deployment_resources(
-            project_name=self._project_name, body=body, content_type=content_type, **kwargs
+    ) -> LROPoller[DeploymentResourcesState]:
+        """Assign new Azure resources to a project to allow deploying new deployments to them.
+        This API is available only via AAD authentication and not supported via subscription key authentication.
+        For more details about AAD authentication, see:
+        https://learn.microsoft.com/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-azure-active-directory
+
+        :param body: The new project resources info. Required.
+        :type body: ~azure.ai.language.conversations.authoring.models.AssignDeploymentResourcesDetails or JSON or IO[bytes]
+        :return: An instance of LROPoller that returns DeploymentResourcesJobState.
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.language.conversations.authoring.models.DeploymentResourcesJobState]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[DeploymentResourcesState] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+
+        if cont_token is None:
+            initial = self._assign_deployment_resources_initial(
+                project_name=self._project_name,  # <-- use instance project name
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,           # return PipelineResponse
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            initial.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            # Job payload is at the ROOT of the polling response
+            obj = _deserialize(DeploymentResourcesState, pipeline_response.http_response.json())
+            if cls:
+                return cls(pipeline_response, obj, {})  # type: ignore
+            return obj
+
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod,
+                JobsPollingMethod(
+                    polling_interval=lro_delay,
+                    header_name="Operation-Location",     # service returns jobs URL here
+                    final_via_async_url=True,             # take final body from jobs URL
+                    path_format_arguments=path_format_arguments,
+                    **kwargs,
+                ),
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+
+        if cont_token:
+            return LROPoller[DeploymentResourcesState].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+
+        return LROPoller[DeploymentResourcesState](
+            self._client, initial, get_long_running_output, polling_method  # type: ignore
         )
 
     @distributed_trace
@@ -98,12 +164,76 @@ class ProjectOperations(ProjectOperationsGenerated):
         return super().begin_cancel_training_job(project_name=self._project_name, job_id=job_id, **kwargs)
 
     @distributed_trace
-    def begin_copy_project(  # type: ignore[override]
-        self, body: Union[CopyProjectDetails, JSON, IO[bytes]], *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[None]:
-        """Copy a project without requiring project_name explicitly."""
-        return super().begin_copy_project(
-            project_name=self._project_name, body=body, content_type=content_type, **kwargs
+    def begin_copy_project(
+        self,
+        body: Union[CopyProjectDetails, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> LROPoller[CopyProjectState]:
+        """Copies an existing project to another Azure resource.
+
+        :param body: The copy project info. Required.
+        :type body: ~azure.ai.language.conversations.authoring.models.CopyProjectDetails or JSON or IO[bytes]
+        :return: An instance of LROPoller that returns CopyProjectState.
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.language.conversations.authoring.models.CopyProjectState]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[CopyProjectState] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+
+        if cont_token is None:
+            initial = self._copy_project_initial(
+                project_name=self._project_name,  # ← use instance project name
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,  # return PipelineResponse
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            initial.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            # Final payload is at the root of the jobs response
+            obj = _deserialize(CopyProjectState, pipeline_response.http_response.json())
+            if cls:
+                return cls(pipeline_response, obj, {})  # type: ignore
+            return obj
+
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod,
+                JobsPollingMethod(
+                    polling_interval=lro_delay,
+                    path_format_arguments=path_format_arguments,  # resolves {Endpoint} in Operation-Location
+                    **kwargs,
+                ),
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+
+        if cont_token:
+            return LROPoller[CopyProjectState].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+
+        return LROPoller[CopyProjectState](
+            self._client, initial, get_long_running_output, polling_method  # type: ignore
         )
 
     @distributed_trace
@@ -116,45 +246,233 @@ class ProjectOperations(ProjectOperationsGenerated):
     @distributed_trace
     def begin_export(
         self,
-        project_name: str,
         *,
         string_index_type: Union[str, StringIndexType],
         exported_project_format: Optional[Union[str, ExportedProjectFormat]] = None,
         asset_kind: Optional[str] = None,
         trained_model_label: Optional[str] = None,
         **kwargs: Any
-    ) -> LROPoller[None]:  # CHANGED: result type
-        return super().begin_export(
-            project_name=self._project_name,
-            asset_kind=asset_kind,
-            exported_project_format=exported_project_format,
-            string_index_type=string_index_type,
-            trained_model_label=trained_model_label,
-            **kwargs,
+    ) -> LROPoller[ExportProjectState]:
+        """Triggers a job to export a project's data.
+
+        :keyword string_index_type: Specifies the method used to interpret string offsets. See
+            https://aka.ms/text-analytics-offsets. Known values: "Utf16CodeUnit", "Utf8CodeUnit",
+            "Utf32CodeUnit". Required.
+        :paramtype string_index_type: str or ~azure.ai.language.conversations.authoring.models.StringIndexType
+        :keyword exported_project_format: The export format. Known values: "Conversation", "Luis".
+        :paramtype exported_project_format: str or ~azure.ai.language.conversations.authoring.models.ExportedProjectFormat
+        :keyword asset_kind: Kind of asset to export.
+        :paramtype asset_kind: str
+        :keyword trained_model_label: Trained model label to export. If None, exports the working copy.
+        :paramtype trained_model_label: str
+        :return: An instance of LROPoller that returns ExportProjectState.
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.language.conversations.authoring.models.ExportProjectState]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[ExportProjectState] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+
+        if cont_token is None:
+            initial = self._export_initial(
+                project_name=self._project_name,  # ← use instance-scoped project name
+                string_index_type=string_index_type,
+                exported_project_format=exported_project_format,
+                asset_kind=asset_kind,
+                trained_model_label=trained_model_label,
+                cls=lambda x, y, z: x,  # return PipelineResponse
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            initial.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            obj = _deserialize(ExportProjectState, pipeline_response.http_response.json())
+            if cls:
+                return cls(pipeline_response, obj, {})  # type: ignore
+            return obj
+
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod,
+                JobsPollingMethod(
+                    polling_interval=lro_delay,
+                    path_format_arguments=path_format_arguments,  # resolves {Endpoint} in Operation-Location
+                    **kwargs,
+                ),
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+
+        if cont_token:
+            return LROPoller[ExportProjectState].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+
+        return LROPoller[ExportProjectState](
+            self._client, initial, get_long_running_output, polling_method  # type: ignore
         )
 
     @distributed_trace
-    def begin_swap_deployments(  # type: ignore[override]
+    def begin_swap_deployments(
         self,
-        body: Union[SwapDeploymentsDetails, JSON, IO[bytes]] = _Unset,
-        *,
-        content_type: str = "application/json",
+        body: Union[SwapDeploymentsDetails, JSON, IO[bytes]],
         **kwargs: Any
-    ) -> LROPoller[None]:
-        return super().begin_swap_deployments(
-            project_name=self._project_name, body=body, content_type=content_type, **kwargs
+    ) -> LROPoller[SwapDeploymentsState]:
+        """Swaps two existing deployments with each other.
+
+        :param body: The job object to swap two deployments. Required.
+        :type body: ~azure.ai.language.conversations.authoring.models.SwapDeploymentsDetails or JSON or IO[bytes]
+        :return: An instance of LROPoller that returns SwapDeploymentsState.
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.language.conversations.authoring.models.SwapDeploymentsState]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[SwapDeploymentsState] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+
+        if cont_token is None:
+            initial = self._swap_deployments_initial(
+                project_name=self._project_name,  # ← use instance project name
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,  # return PipelineResponse
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            initial.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            # Job payload is at the ROOT of the polling response
+            obj = _deserialize(SwapDeploymentsState, pipeline_response.http_response.json())
+            if cls:
+                return cls(pipeline_response, obj, {})  # type: ignore
+            return obj
+
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod,
+                JobsPollingMethod(
+                    polling_interval=lro_delay,
+                    path_format_arguments=path_format_arguments,  # resolves {Endpoint} in Operation-Location
+                    **kwargs,
+                ),
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+
+        if cont_token:
+            return LROPoller[SwapDeploymentsState].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+
+        return LROPoller[SwapDeploymentsState](
+            self._client, initial, get_long_running_output, polling_method  # type: ignore
         )
 
     @distributed_trace
-    def begin_unassign_deployment_resources(  # type: ignore[override]
+    def begin_unassign_deployment_resources(
         self,
-        body: Union[UnassignDeploymentResourcesDetails, JSON, IO[bytes]] = _Unset,
-        *,
-        content_type: str = "application/json",
+        body: Union[UnassignDeploymentResourcesDetails, JSON, IO[bytes]],
         **kwargs: Any
-    ) -> LROPoller[None]:
-        return super().begin_unassign_deployment_resources(
-            project_name=self._project_name, body=body, content_type=content_type, **kwargs
+    ) -> LROPoller[DeploymentResourcesState]:
+        """Unassign resources from a project. This disallows deploying new deployments to these resources,
+        and deletes existing deployments assigned to them.
+
+        :param body: The info for the deployment resources to be deleted. Required.
+        :type body: ~azure.ai.language.conversations.authoring.models.UnassignDeploymentResourcesDetails or JSON or IO[bytes]
+        :return: An instance of LROPoller that returns DeploymentResourcesState.
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.language.conversations.authoring.models.DeploymentResourcesState]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[DeploymentResourcesState] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+
+        if cont_token is None:
+            initial = self._unassign_deployment_resources_initial(
+                project_name=self._project_name,   # ← use instance project name
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,            # return PipelineResponse
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            initial.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            # Job payload is at the ROOT of the polling response
+            obj = _deserialize(DeploymentResourcesState, pipeline_response.http_response.json())
+            if cls:
+                return cls(pipeline_response, obj, {})  # type: ignore
+            return obj
+
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod,
+                JobsPollingMethod(
+                    polling_interval=lro_delay,
+                    path_format_arguments=path_format_arguments,  # resolves {Endpoint} in Operation-Location
+                    **kwargs,
+                ),
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+
+        if cont_token:
+            return LROPoller[DeploymentResourcesState].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+
+        return LROPoller[DeploymentResourcesState](
+            self._client, initial, get_long_running_output, polling_method  # type: ignore
         )
 
     @distributed_trace
@@ -255,26 +573,150 @@ class DeploymentOperations(DeploymentOperationsGenerated):
 
     
     @distributed_trace
-    def begin_delete_deployment(self, deployment_name: str, **kwargs: Any) -> LROPoller[None]:  # type: ignore[override]
-        return super().begin_delete_deployment(
-            project_name=self._project_name, deployment_name=deployment_name, **kwargs
+    def begin_delete_deployment(
+        self,
+        deployment_name: str,
+        **kwargs: Any
+    ) -> LROPoller[DeploymentState]:
+        """Deletes a project deployment.
+
+        :param deployment_name: The name of the specific deployment of the project to use. Required.
+        :type deployment_name: str
+        :return: An instance of LROPoller that returns DeploymentState.
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.language.conversations.authoring.models.DeploymentState]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[DeploymentState] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+
+        if cont_token is None:
+            initial = self._delete_deployment_initial(
+                project_name=self._project_name,     # ← use instance-scoped project name
+                deployment_name=deployment_name,
+                cls=lambda x, y, z: x,               # return PipelineResponse
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            initial.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            obj = _deserialize(DeploymentState, pipeline_response.http_response.json())
+            if cls:
+                return cls(pipeline_response, obj, {})  # type: ignore
+            return obj
+
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod,
+                JobsPollingMethod(
+                    polling_interval=lro_delay,
+                    path_format_arguments=path_format_arguments,  # resolves {Endpoint} in Operation-Location
+                    **kwargs,
+                ),
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+
+        if cont_token:
+            return LROPoller[DeploymentState].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+
+        return LROPoller[DeploymentState](
+            self._client, initial, get_long_running_output, polling_method  # type: ignore
         )
 
     @distributed_trace
-    def begin_delete_deployment_from_resources(  # type: ignore[override]
+    def begin_delete_deployment_from_resources(
         self,
         deployment_name: str,
         body: Union[DeleteDeploymentDetails, JSON, IO[bytes]],
-        *,
-        content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[None]:
-        return super().begin_delete_deployment_from_resources(
-            project_name=self._project_name,
-            deployment_name=deployment_name,
-            body=body,
-            content_type=content_type,
-            **kwargs,
+    ) -> LROPoller[DeploymentDeleteFromResourcesState]:
+        """Deletes a project deployment from the specified assigned resources.
+
+        :param deployment_name: The name of the specific deployment of the project to use. Required.
+        :type deployment_name: str
+        :param body: The options for deleting the deployment. Required.
+        :type body: ~azure.ai.language.conversations.authoring.models.DeleteDeploymentDetails or JSON or IO[bytes]
+        :return: An instance of LROPoller that returns DeploymentDeleteFromResourcesState.
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.language.conversations.authoring.models.DeploymentDeleteFromResourcesState]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[DeploymentDeleteFromResourcesState] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+
+        if cont_token is None:
+            initial = self._delete_deployment_from_resources_initial(
+                project_name=self._project_name,        # ← use instance-scoped project name
+                deployment_name=deployment_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,                  # return PipelineResponse
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            initial.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            # Final jobs payload is at the ROOT
+            obj = _deserialize(DeploymentDeleteFromResourcesState, pipeline_response.http_response.json())
+            if cls:
+                return cls(pipeline_response, obj, {})  # type: ignore
+            return obj
+
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod,
+                JobsPollingMethod(
+                    polling_interval=lro_delay,
+                    path_format_arguments=path_format_arguments,  # resolves {Endpoint} in Operation-Location
+                    **kwargs,
+                ),
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+
+        if cont_token:
+            return LROPoller[DeploymentDeleteFromResourcesState].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+
+        return LROPoller[DeploymentDeleteFromResourcesState](
+            self._client, initial, get_long_running_output, polling_method  # type: ignore
         )
 
     @overload
@@ -453,30 +895,150 @@ class ExportedModelOperations(ExportedModelOperationsGenerated):
         self._project_name = project_name
 
     @distributed_trace
-    def begin_create_or_update_exported_model(  # type: ignore[override]
+    def begin_create_or_update_exported_model(
         self,
         exported_model_name: str,
         body: Union[ExportedModelDetails, JSON, IO[bytes]],
-        *,
-        content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[None]:
-        return super().begin_create_or_update_exported_model(
-            project_name=self._project_name,
-            exported_model_name=exported_model_name,
-            body=body,
-            content_type=content_type,
-            **kwargs,
+    ) -> LROPoller[ExportedModelState]:
+        """Creates a new exported model or replaces an existing one.
+
+        :param exported_model_name: The exported model name. Required.
+        :type exported_model_name: str
+        :param body: The exported model info. Required.
+        :type body: ~azure.ai.language.conversations.authoring.models.ExportedModelDetails or JSON or IO[bytes]
+        :return: An instance of LROPoller that returns ExportedModelState.
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.language.conversations.authoring.models.ExportedModelState]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[ExportedModelState] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+
+        if cont_token is None:
+            initial = self._create_or_update_exported_model_initial(
+                project_name=self._project_name,         # ← use instance-scoped project name
+                exported_model_name=exported_model_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,                   # return PipelineResponse
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            initial.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            # Final jobs payload is at the ROOT
+            obj = _deserialize(ExportedModelState, pipeline_response.http_response.json())
+            if cls:
+                return cls(pipeline_response, obj, {})  # type: ignore
+            return obj
+
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod,
+                JobsPollingMethod(
+                    polling_interval=lro_delay,
+                    path_format_arguments=path_format_arguments,  # resolves {Endpoint} in Operation-Location
+                    **kwargs,
+                ),
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+
+        if cont_token:
+            return LROPoller[ExportedModelState].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+
+        return LROPoller[ExportedModelState](
+            self._client, initial, get_long_running_output, polling_method  # type: ignore
         )
 
     @distributed_trace
-    def begin_delete_exported_model(  # type: ignore[override]
-        self, exported_model_name: str, **kwargs: Any
-    ) -> LROPoller[None]:
-        return super().begin_delete_exported_model(
-            project_name=self._project_name,
-            exported_model_name=exported_model_name,
-            **kwargs,
+    def begin_delete_exported_model(
+        self,
+        exported_model_name: str,
+        **kwargs: Any
+    ) -> LROPoller[ExportedModelState]:
+        """Deletes an existing exported model.
+
+        :param exported_model_name: The exported model name. Required.
+        :type exported_model_name: str
+        :return: An instance of LROPoller that returns ExportedModelState.
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.language.conversations.authoring.models.ExportedModelState]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[ExportedModelState] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+
+        if cont_token is None:
+            initial = self._delete_exported_model_initial(
+                project_name=self._project_name,        # ← use instance-scoped project name
+                exported_model_name=exported_model_name,
+                cls=lambda x, y, z: x,                  # return PipelineResponse
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            initial.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            obj = _deserialize(ExportedModelState, pipeline_response.http_response.json())
+            if cls:
+                return cls(pipeline_response, obj, {})  # type: ignore
+            return obj
+
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod,
+                JobsPollingMethod(
+                    polling_interval=lro_delay,
+                    path_format_arguments=path_format_arguments,  # resolves {Endpoint} in Operation-Location
+                    **kwargs,
+                ),
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+
+        if cont_token:
+            return LROPoller[ExportedModelState].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+
+        return LROPoller[ExportedModelState](
+            self._client, initial, get_long_running_output, polling_method  # type: ignore
         )
 
     @distributed_trace
@@ -525,11 +1087,73 @@ class TrainedModelOperations(TrainedModelOperationsGenerated):
         )
 
     @distributed_trace
-    def begin_load_snapshot(self, trained_model_label: str, **kwargs: Any) -> LROPoller[None]:  # type: ignore[override]
-        return super().begin_load_snapshot(
-            project_name=self._project_name,
-            trained_model_label=trained_model_label,
-            **kwargs,
+    def begin_load_snapshot(
+        self,
+        trained_model_label: str,
+        **kwargs: Any
+    ) -> LROPoller[LoadSnapshotState]:
+        """Restores the snapshot of this trained model to be the current working directory of the project.
+
+        :param trained_model_label: The trained model label. Required.
+        :type trained_model_label: str
+        :return: An instance of LROPoller that returns LoadSnapshotState.
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.language.conversations.authoring.models.LoadSnapshotState]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[LoadSnapshotState] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+
+        if cont_token is None:
+            initial = self._load_snapshot_initial(
+                project_name=self._project_name,          # ← use instance-scoped project name
+                trained_model_label=trained_model_label,
+                cls=lambda x, y, z: x,                    # return PipelineResponse
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            initial.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            obj = _deserialize(LoadSnapshotState, pipeline_response.http_response.json())
+            if cls:
+                return cls(pipeline_response, obj, {})  # type: ignore
+            return obj
+
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod,
+                JobsPollingMethod(
+                    polling_interval=lro_delay,
+                    path_format_arguments=path_format_arguments,  # resolves {Endpoint} in Operation-Location
+                    **kwargs,
+                ),
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+
+        if cont_token:
+            return LROPoller[LoadSnapshotState].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+
+        return LROPoller[LoadSnapshotState](
+            self._client, initial, get_long_running_output, polling_method  # type: ignore
         )
 
     @distributed_trace
