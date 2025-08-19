@@ -32,6 +32,7 @@ from azure.core.pipeline.policies import RetryMode
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
 from azure.cosmos.offer import ThroughputProperties
+from .._availability_strategy import AvailabilityStrategy
 
 from ..cosmos_client import _parse_connection_str
 from .._constants import _Constants as Constants
@@ -196,7 +197,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             credential: Union[str, Dict[str, str], AsyncTokenCredential],
             *,
             consistency_level: Optional[str] = None,
-            availability_strategy: Optional['AvailabilityStrategy'] = None,
+            availability_strategy: Optional[AvailabilityStrategy] = None,
             **kwargs: Any
     ) -> None:
         """Instantiate a new CosmosClient."""

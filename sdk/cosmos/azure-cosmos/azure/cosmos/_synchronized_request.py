@@ -248,7 +248,15 @@ def SynchronizedRequest(
     """
 
     def prepare_request(req, req_data):
-        """Helper to prepare request data and headers"""
+        """Helper to prepare request data and headers before execution.
+
+        :param req: The HTTP request to be prepared
+        :type req: azure.core.pipeline.transport.HttpRequest
+        :param req_data: The data to be sent in the request
+        :type req_data: Union[str, unicode, file-like stream object, dict, list, None]
+        :returns: The prepared request object
+        :rtype: azure.core.pipeline.transport.HttpRequest
+        """
         req.data = _request_body_from_data(req_data)
         if req.data and isinstance(req.data, str):
             req.headers[http_constants.HttpHeaders.ContentLength] = len(req.data)

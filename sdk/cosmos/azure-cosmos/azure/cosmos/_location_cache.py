@@ -231,7 +231,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                 excluded_locations.append(excluded_location)
         return excluded_locations
 
-    def get_applicable_read_regional_routing_contexts(self, request: RequestObject) -> List[RegionalRoutingContext]:
+    def get_applicable_read_regional_routing_contexts(self, request: RequestObject) -> List[RegionalRoutingContext]: # pylint: disable=name-too-long
         # Get configured excluded locations
         excluded_locations = self._get_configured_excluded_locations(request)
 
@@ -247,7 +247,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         # Else, return all regional endpoints
         return self.get_read_regional_routing_contexts()
 
-    def get_applicable_write_regional_routing_contexts(self, request: RequestObject) -> List[RegionalRoutingContext]:
+    def get_applicable_write_regional_routing_contexts(self, request: RequestObject) -> List[RegionalRoutingContext]: # pylint: disable=name-too-long
         # Get configured excluded locations
         excluded_locations = self._get_configured_excluded_locations(request)
 

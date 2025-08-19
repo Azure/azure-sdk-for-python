@@ -20,8 +20,7 @@ from azure.cosmos.aio import CosmosClient
 from azure.cosmos.documents import _OperationType as OperationType
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos.http_constants import ResourceType
-from tests._fault_injection_transport_async import FaultInjectionTransportAsync
-
+from _fault_injection_transport_async import FaultInjectionTransportAsync
 
 class MockHandler(logging.Handler):
     def __init__(self):

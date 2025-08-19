@@ -256,13 +256,13 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
 
 def _record_success_if_request_not_cancelled(
         request_params: RequestObject,
-        global_endpoint_manager: [_GlobalPartitionEndpointManagerForCircuitBreaker]) -> None:
+        global_endpoint_manager: _GlobalPartitionEndpointManagerForCircuitBreaker) -> None:
     if not request_params.should_cancel_request():
         global_endpoint_manager.record_success(request_params)
 
 def _record_failure_if_request_not_cancelled(
         request_params: RequestObject,
-        global_endpoint_manager: [_GlobalPartitionEndpointManagerForCircuitBreaker]) -> None:
+        global_endpoint_manager: _GlobalPartitionEndpointManagerForCircuitBreaker) -> None:
     if not request_params.should_cancel_request():
         global_endpoint_manager.record_failure(request_params)
 

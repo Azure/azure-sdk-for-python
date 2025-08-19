@@ -24,6 +24,7 @@
 from types import SimpleNamespace
 from typing import Optional, Mapping, Any, Dict, List
 
+from ._availability_strategy import AvailabilityStrategy
 from ._constants import _Constants as Constants
 from .documents import _OperationType
 from .http_constants import ResourceType
@@ -42,7 +43,7 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
         self.endpoint_override = endpoint_override
         self.should_clear_session_token_on_session_read_failure: bool = False  # pylint: disable=name-too-long
         self.headers = headers
-        self.availability_strategy: Optional["AvailabilityStrategy"] = None
+        self.availability_strategy: Optional[AvailabilityStrategy] = None
         self.use_preferred_locations: Optional[bool] = None
         self.location_index_to_route: Optional[int] = None
         self.location_endpoint_to_route: Optional[str] = None
@@ -89,7 +90,7 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
     def set_availability_strategy_from_options(
             self,
             options: Mapping[str, Any],
-            client_strategy: Optional["AvailabilityStrategy"] = None) -> None:
+            client_strategy: Optional[AvailabilityStrategy] = None) -> None:
         """Sets the availability strategy for this request from options.
         If not in options, uses the client's default strategy.
         :param options: The request options that may contain availabilityStrategy
@@ -122,7 +123,7 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
     def set_is_hedging_request(self, is_hedging_request: bool) -> None:
         self.is_hedging_request = is_hedging_request
 
-    def set_completion_status(self, status: SimpleNamespace = None) -> None:
+    def set_completion_status(self, status: SimpleNamespace) -> None:
         """Set the shared completion status between parallel requests
         
         :param status: Status object shared between parallel requests. If None, creates new one.

@@ -89,18 +89,22 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
     def get_ordered_read_locations(self):
         return self.location_cache.get_ordered_read_locations()
 
-    def get_applicable_read_regional_routing_contexts(self, request: RequestObject) -> List[RegionalRoutingContext]:
-        """Gets the applicable read regional routing contexts.
+    def get_applicable_read_regional_routing_contexts(self, request: RequestObject) -> List[RegionalRoutingContext]: # pylint: disable=name-too-long
+        """Gets the applicable read regional routing contexts based on request parameters.
 
-        :returns: List of applicable read regional routing contexts.
+        :param request: Request object containing operation parameters and exclusion lists
+        :type request: RequestObject
+        :returns: List of regional routing contexts available for read operations
         :rtype: list[RegionalRoutingContext]
         """
         return self.location_cache.get_applicable_read_regional_routing_contexts(request)
 
-    def get_applicable_write_regional_routing_contexts(self, request: RequestObject) -> List[RegionalRoutingContext]:
-        """Gets the applicable write regional routing contexts.
+    def get_applicable_write_regional_routing_contexts(self, request: RequestObject) -> List[RegionalRoutingContext]: # pylint: disable=name-too-long
+        """Gets the applicable write regional routing contexts based on request parameters.
 
-        :returns: List of applicable write regional routing contexts.
+        :param request: Request object containing operation parameters and exclusion lists
+        :type request: RequestObject
+        :returns: List of regional routing contexts available for write operations
         :rtype: list[RegionalRoutingContext]
         """
         return self.location_cache.get_applicable_write_regional_routing_contexts(request)
