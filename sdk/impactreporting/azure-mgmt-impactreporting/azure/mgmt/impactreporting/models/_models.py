@@ -9,16 +9,15 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, List, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Dict, List, Mapping, Optional, TYPE_CHECKING, Union, overload
 
-from .. import _model_base
-from .._model_base import rest_field
+from .._utils.model_base import Model as _Model, rest_field
 
 if TYPE_CHECKING:
     from .. import models as _models
 
 
-class ClientIncidentDetails(_model_base.Model):
+class ClientIncidentDetails(_Model):
     """Client incident details ex: incidentId , incident source.
 
     :ivar client_incident_id: Client incident id. ex : id of the incident created to investigate
@@ -59,7 +58,7 @@ class ClientIncidentDetails(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Connectivity(_model_base.Model):
+class Connectivity(_Model):
     """Details about connectivity issue. Applicable when root resource causing the issue is not
     identified. For example, when a VM is impacted due to a network issue, the impacted resource
     could be VM or the network. In such cases, the connectivity field will have the details about
@@ -109,10 +108,8 @@ class Connectivity(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Resource(_model_base.Model):
-    """Common fields that are returned in the response for all Azure Resource Manager resources.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
+class Resource(_Model):
+    """Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -140,10 +137,7 @@ class Resource(_model_base.Model):
 
 
 class ProxyResource(Resource):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
-    tags and a location.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
+    """Proxy Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -162,8 +156,6 @@ class ProxyResource(Resource):
 class Connector(ProxyResource):
     """A connector is a resource that can be used to proactively report impacts against workloads in
     Azure to Microsoft.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -203,11 +195,8 @@ class Connector(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class ConnectorProperties(_model_base.Model):
+class ConnectorProperties(_Model):
     """Details of the Connector.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar provisioning_state: Resource provisioning state. Known values are: "Succeeded", "Failed",
      and "Canceled".
@@ -255,7 +244,7 @@ class ConnectorProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ConnectorUpdate(_model_base.Model):
+class ConnectorUpdate(_Model):
     """The type used for update operations of the Connector.
 
     :ivar properties: The resource-specific properties for this resource.
@@ -285,7 +274,7 @@ class ConnectorUpdate(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ConnectorUpdateProperties(_model_base.Model):
+class ConnectorUpdateProperties(_Model):
     """The updatable properties of the Connector.
 
     :ivar connector_type: connector type. "AzureMonitor"
@@ -315,9 +304,8 @@ class ConnectorUpdateProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Content(_model_base.Model):
+class Content(_Model):
     """Article details of the insight like title, description etc.
-
 
     :ivar title: Title of the insight. Required.
     :vartype title: str
@@ -349,10 +337,8 @@ class Content(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ErrorAdditionalInfo(_model_base.Model):
+class ErrorAdditionalInfo(_Model):
     """The resource management error additional info.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar type: The additional info type.
     :vartype type: str
@@ -366,10 +352,8 @@ class ErrorAdditionalInfo(_model_base.Model):
     """The additional info."""
 
 
-class ErrorDetail(_model_base.Model):
+class ErrorDetail(_Model):
     """The error detail.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar code: The error code.
     :vartype code: str
@@ -397,7 +381,7 @@ class ErrorDetail(_model_base.Model):
     """The error additional info."""
 
 
-class ErrorDetailProperties(_model_base.Model):
+class ErrorDetailProperties(_Model):
     """ARM error code and error message associated with the impact.
 
     :ivar error_code: ARM Error code associated with the impact.
@@ -432,9 +416,8 @@ class ErrorDetailProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ErrorResponse(_model_base.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed
-    operations.
+class ErrorResponse(_Model):
+    """Error response.
 
     :ivar error: The error object.
     :vartype error: ~azure.mgmt.impactreporting.models.ErrorDetail
@@ -461,9 +444,8 @@ class ErrorResponse(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ExpectedValueRange(_model_base.Model):
+class ExpectedValueRange(_Model):
     """Max and Min Threshold values for the metric.
-
 
     :ivar min: Min threshold value for the metric. Required.
     :vartype min: float
@@ -497,8 +479,6 @@ class ExpectedValueRange(_model_base.Model):
 
 class ImpactCategory(ProxyResource):
     """ImpactCategory resource.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -538,11 +518,8 @@ class ImpactCategory(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class ImpactCategoryProperties(_model_base.Model):
+class ImpactCategoryProperties(_Model):
     """Impact category properties.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar provisioning_state: Resource provisioning state. Known values are: "Succeeded", "Failed",
      and "Canceled".
@@ -597,9 +574,8 @@ class ImpactCategoryProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ImpactDetails(_model_base.Model):
+class ImpactDetails(_Model):
     """details of of the impact for which insight has been generated.
-
 
     :ivar impacted_resource_id: List of impacted Azure resources. Required.
     :vartype impacted_resource_id: str
@@ -650,8 +626,6 @@ class ImpactDetails(_model_base.Model):
 class Insight(ProxyResource):
     """Insight resource.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
@@ -690,11 +664,8 @@ class Insight(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class InsightProperties(_model_base.Model):
+class InsightProperties(_Model):
     """Impact category properties.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar provisioning_state: Resource provisioning state. Known values are: "Succeeded", "Failed",
      and "Canceled".
@@ -776,10 +747,8 @@ class InsightProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_model_base.Model):
-    """Details of a REST API operation, returned from the Resource Provider Operations API.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
+class Operation(_Model):
+    """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
      "Microsoft.Compute/virtualMachines/write", "Microsoft.Compute/virtualMachines/capture/action".
@@ -835,10 +804,8 @@ class Operation(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationDisplay(_model_base.Model):
+class OperationDisplay(_Model):
     """Localized display information for and operation.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
      Monitoring Insights" or "Microsoft Compute".
@@ -868,7 +835,7 @@ class OperationDisplay(_model_base.Model):
      views."""
 
 
-class Performance(_model_base.Model):
+class Performance(_Model):
     """Details about impacted performance metrics. Applicable for performance related impact.
 
     :ivar metric_name: Name of the Metric examples:  Disk, IOPs, CPU, GPU, Memory, details can be
@@ -930,9 +897,8 @@ class Performance(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class RequiredImpactProperties(_model_base.Model):
+class RequiredImpactProperties(_Model):
     """Required impact properties.
-
 
     :ivar name: Name of the property. Required.
     :vartype name: str
@@ -966,7 +932,7 @@ class RequiredImpactProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SourceOrTarget(_model_base.Model):
+class SourceOrTarget(_Model):
     """Resource details.
 
     :ivar azure_resource_id: Azure resource id, example
@@ -998,7 +964,7 @@ class SourceOrTarget(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_model_base.Model):
+class SystemData(_Model):
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -1065,7 +1031,7 @@ class SystemData(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Workload(_model_base.Model):
+class Workload(_Model):
     """Information about the impacted workload.
 
     :ivar context: the scenario for the workload.
@@ -1105,8 +1071,6 @@ class Workload(_model_base.Model):
 class WorkloadImpact(ProxyResource):
     """Workload Impact properties.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
@@ -1145,11 +1109,8 @@ class WorkloadImpact(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class WorkloadImpactProperties(_model_base.Model):
+class WorkloadImpactProperties(_Model):
     """Workload impact properties.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar provisioning_state: Resource provisioning state. Known values are: "Succeeded", "Failed",
      and "Canceled".
@@ -1181,7 +1142,7 @@ class WorkloadImpactProperties(_model_base.Model):
     :vartype connectivity: ~azure.mgmt.impactreporting.models.Connectivity
     :ivar additional_properties: Additional fields related to impact, applicable fields per
      resource type are list under /impactCategories API.
-    :vartype additional_properties: any
+    :vartype additional_properties: dict[str, any]
     :ivar error_details: ARM error code and error message associated with the impact.
     :vartype error_details: ~azure.mgmt.impactreporting.models.ErrorDetailProperties
     :ivar workload: Information about the impacted workload.
@@ -1238,7 +1199,7 @@ class WorkloadImpactProperties(_model_base.Model):
      identified. For example, when a VM is impacted due to a network issue, the impacted resource is
      identified as the VM, but the root cause is the network. In such cases, the connectivity field
      will have the details about the network issue."""
-    additional_properties: Optional[Any] = rest_field(
+    additional_properties: Optional[Dict[str, Any]] = rest_field(
         name="additionalProperties", visibility=["read", "create", "update", "delete", "query"]
     )
     """Additional fields related to impact, applicable fields per resource type are list under
@@ -1275,7 +1236,7 @@ class WorkloadImpactProperties(_model_base.Model):
         arm_correlation_ids: Optional[List[str]] = None,
         performance: Optional[List["_models.Performance"]] = None,
         connectivity: Optional["_models.Connectivity"] = None,
-        additional_properties: Optional[Any] = None,
+        additional_properties: Optional[Dict[str, Any]] = None,
         error_details: Optional["_models.ErrorDetailProperties"] = None,
         workload: Optional["_models.Workload"] = None,
         impact_group_id: Optional[str] = None,
