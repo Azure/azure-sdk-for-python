@@ -1,6 +1,6 @@
 # Release History
 
-## 4.0.0b1 (2025-09-21)
+## 4.0.0b1 (2025-08-19)
 
 ### Features Added
 
@@ -216,33 +216,33 @@
   - Added model `WorkflowHealth`
   - Added enum `WorkflowHealthState`
   - Added enum `WorkflowState`
-  - Model `ConnectedEnvironmentsCertificatesOperations` added method `begin_create_or_update`
-  - Model `ConnectedEnvironmentsCertificatesOperations` added method `begin_delete`
-  - Model `ConnectedEnvironmentsCertificatesOperations` added method `begin_update`
-  - Model `ConnectedEnvironmentsDaprComponentsOperations` added method `begin_create_or_update`
-  - Model `ConnectedEnvironmentsDaprComponentsOperations` added method `begin_delete`
-  - Model `ConnectedEnvironmentsStoragesOperations` added method `begin_create_or_update`
-  - Model `ConnectedEnvironmentsStoragesOperations` added method `begin_delete`
-  - Model `JobsOperations` added method `begin_resume`
-  - Model `JobsOperations` added method `begin_suspend`
-  - Added model `AppResiliencyOperations`
-  - Added model `BuildAuthTokenOperations`
-  - Added model `BuildersOperations`
-  - Added model `BuildsByBuilderResourceOperations`
-  - Added model `BuildsOperations`
-  - Added model `ContainerAppsBuildsByContainerAppOperations`
-  - Added model `ContainerAppsBuildsOperations`
-  - Added model `ContainerAppsLabelHistoryOperations`
-  - Added model `ContainerAppsPatchesOperations`
-  - Added model `DaprComponentResiliencyPoliciesOperations`
-  - Added model `DaprSubscriptionsOperations`
-  - Added model `DotNetComponentsOperations`
-  - Added model `FunctionsExtensionOperations`
-  - Added model `HttpRouteConfigOperations`
-  - Added model `LogicAppsOperations`
-  - Added model `MaintenanceConfigurationsOperations`
-  - Added model `ManagedEnvironmentPrivateEndpointConnectionsOperations`
-  - Added model `ManagedEnvironmentPrivateLinkResourcesOperations`
+  - Operation group `ConnectedEnvironmentsCertificatesOperations` added method `begin_create_or_update`
+  - Operation group `ConnectedEnvironmentsCertificatesOperations` added method `begin_delete`
+  - Operation group `ConnectedEnvironmentsCertificatesOperations` added method `begin_update`
+  - Operation group `ConnectedEnvironmentsDaprComponentsOperations` added method `begin_create_or_update`
+  - Operation group `ConnectedEnvironmentsDaprComponentsOperations` added method `begin_delete`
+  - Operation group `ConnectedEnvironmentsStoragesOperations` added method `begin_create_or_update`
+  - Operation group `ConnectedEnvironmentsStoragesOperations` added method `begin_delete`
+  - Operation group `JobsOperations` added method `begin_resume`
+  - Operation group `JobsOperations` added method `begin_suspend`
+  - Added operation group `AppResiliencyOperations`
+  - Added operation group `BuildAuthTokenOperations`
+  - Added operation group `BuildersOperations`
+  - Added operation group `BuildsByBuilderResourceOperations`
+  - Added operation group `BuildsOperations`
+  - Added operation group `ContainerAppsBuildsByContainerAppOperations`
+  - Added operation group `ContainerAppsBuildsOperations`
+  - Added operation group `ContainerAppsLabelHistoryOperations`
+  - Added operation group `ContainerAppsPatchesOperations`
+  - Added operation group `DaprComponentResiliencyPoliciesOperations`
+  - Added operation group `DaprSubscriptionsOperations`
+  - Added operation group `DotNetComponentsOperations`
+  - Added operation group `FunctionsExtensionOperations`
+  - Added operation group `HttpRouteConfigOperations`
+  - Added operation group `LogicAppsOperations`
+  - Added operation group `MaintenanceConfigurationsOperations`
+  - Added operation group `ManagedEnvironmentPrivateEndpointConnectionsOperations`
+  - Added operation group `ManagedEnvironmentPrivateLinkResourcesOperations`
 
 ### Breaking Changes
 
