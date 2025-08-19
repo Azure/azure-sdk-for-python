@@ -1,4 +1,4 @@
-﻿# The MIT License (MIT)
+# The MIT License (MIT)
 # Copyright (c) 2014 Microsoft Corporation
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -38,7 +38,6 @@ from . import documents
 from . import http_constants
 from . import _runtime_constants
 from ._constants import _Constants as Constants
-InternalOptions = Constants.InternalOptions
 from .auth import _get_authorization_header
 from .offer import ThroughputProperties
 from .partition_key import _Empty, _Undefined
@@ -47,6 +46,9 @@ if TYPE_CHECKING:
     from ._cosmos_client_connection import CosmosClientConnection
     from .aio._cosmos_client_connection_async import CosmosClientConnection as AsyncClientConnection
     from ._request_object import RequestObject
+
+# InternalOptions alias for cleaner access to internal option constants
+InternalOptions = Constants.InternalOptions
 
 # pylint: disable=protected-access
 

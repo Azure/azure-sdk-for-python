@@ -37,13 +37,15 @@ from ._base import (
     _replace_throughput
 )
 from ._constants import _Constants as Constants
-InternalOptions = Constants.InternalOptions
 from .container import ContainerProxy
 from .offer import Offer, ThroughputProperties
 from .http_constants import StatusCodes as _StatusCodes
 from .exceptions import CosmosResourceNotFoundError
 from .user import UserProxy
 from .documents import IndexingMode
+
+# InternalOptions alias for cleaner access to internal option constants
+InternalOptions = Constants.InternalOptions
 
 __all__ = ("DatabaseProxy",)
 
