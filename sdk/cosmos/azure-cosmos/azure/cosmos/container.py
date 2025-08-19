@@ -195,7 +195,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if initial_headers is not None:
             kwargs[Constants.Kwargs.INITIAL_HEADERS] = initial_headers
         if response_hook is not None:
-            kwargs['response_hook'] = response_hook
+            kwargs[Constants.Kwargs.RESPONSE_HOOK] = response_hook
         request_options = build_options(kwargs)
         if populate_query_metrics:
             warnings.warn(
@@ -204,7 +204,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             )
         if populate_partition_key_range_statistics is not None:
             request_options[
-                InternalOptions.POPULATE_PARTITION_KEY_RANGE_STATISTICS
+                Constants.InternalOptions.POPULATE_PARTITION_KEY_RANGE_STATISTICS
             ] = populate_partition_key_range_statistics
         if populate_quota_info is not None:
             request_options[Constants.InternalOptions.POPULATE_QUOTA_INFO] = populate_quota_info
@@ -275,9 +275,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if throughput_bucket is not None:
             kwargs[Constants.Kwargs.THROUGHPUT_BUCKET] = throughput_bucket
         if response_hook is not None:
-            kwargs['response_hook'] = response_hook
+            kwargs[Constants.Kwargs.RESPONSE_HOOK] = response_hook
         request_options = build_options(kwargs)
-        request_options["partitionKey"] = self._set_partition_key(partition_key)
+        request_options[Constants.InternalOptions.PARTITION_KEY] = self._set_partition_key(partition_key)
         if populate_query_metrics is not None:
             warnings.warn(
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
@@ -965,9 +965,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if priority is not None:
             kwargs[Constants.Kwargs.PRIORITY] = priority
         if etag is not None:
-            kwargs['etag'] = etag
+            kwargs[Constants.Kwargs.ETAG] = etag
         if match_condition is not None:
-            kwargs['match_condition'] = match_condition
+            kwargs[Constants.Kwargs.MATCH_CONDITION] = match_condition
         if no_response is not None:
             kwargs[Constants.Kwargs.NO_RESPONSE] = no_response
         if retry_write is not None:
@@ -975,9 +975,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if throughput_bucket is not None:
             kwargs[Constants.Kwargs.THROUGHPUT_BUCKET] = throughput_bucket
         if response_hook is not None:
-            kwargs['response_hook'] = response_hook
+            kwargs[Constants.Kwargs.RESPONSE_HOOK] = response_hook
         request_options = build_options(kwargs)
-        request_options["disableAutomaticIdGeneration"] = True
+        request_options[Constants.InternalOptions.DISABLE_AUTOMATIC_ID_GENERATION] = True
         if populate_query_metrics is not None:
             warnings.warn(
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
@@ -1058,19 +1058,19 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if priority is not None:
             kwargs[Constants.Kwargs.PRIORITY] = priority
         if etag is not None:
-            kwargs['etag'] = etag
+            kwargs[Constants.Kwargs.ETAG] = etag
         if match_condition is not None:
-            kwargs['match_condition'] = match_condition
+            kwargs[Constants.Kwargs.MATCH_CONDITION] = match_condition
         if no_response is not None:
             kwargs[Constants.Kwargs.NO_RESPONSE] = no_response
         if throughput_bucket is not None:
             kwargs[Constants.Kwargs.THROUGHPUT_BUCKET] = throughput_bucket
         if response_hook is not None:
-            kwargs['response_hook'] = response_hook
+            kwargs[Constants.Kwargs.RESPONSE_HOOK] = response_hook
         if retry_write is not None:
             kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
         request_options = build_options(kwargs)
-        request_options["disableAutomaticIdGeneration"] = True
+        request_options[Constants.InternalOptions.DISABLE_AUTOMATIC_ID_GENERATION] = True
         if populate_query_metrics is not None:
             warnings.warn(
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
@@ -1258,9 +1258,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if priority is not None:
             kwargs[Constants.Kwargs.PRIORITY] = priority
         if etag is not None:
-            kwargs['etag'] = etag
+            kwargs[Constants.Kwargs.ETAG] = etag
         if match_condition is not None:
-            kwargs['match_condition'] = match_condition
+            kwargs[Constants.Kwargs.MATCH_CONDITION] = match_condition
         if no_response is not None:
             kwargs[Constants.Kwargs.NO_RESPONSE] = no_response
         if retry_write is not None:
@@ -1268,15 +1268,15 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if throughput_bucket is not None:
             kwargs[Constants.Kwargs.THROUGHPUT_BUCKET] = throughput_bucket
         if response_hook is not None:
-            kwargs['response_hook'] = response_hook
+            kwargs[Constants.Kwargs.RESPONSE_HOOK] = response_hook
         request_options = build_options(kwargs)
-        request_options["disableAutomaticIdGeneration"] = True
-        request_options["partitionKey"] = self._set_partition_key(partition_key)
+        request_options[Constants.InternalOptions.DISABLE_AUTOMATIC_ID_GENERATION] = True
+        request_options[Constants.InternalOptions.PARTITION_KEY] = self._set_partition_key(partition_key)
         if filter_predicate is not None:
-            request_options["filterPredicate"] = filter_predicate
+            request_options[Constants.InternalOptions.FILTER_PREDICATE] = filter_predicate
 
         self._get_properties_with_options(request_options)
-        request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        request_options[Constants.InternalOptions.CONTAINER_RID] = self.__get_client_container_caches()[self.container_link]["_rid"]
         item_link = self._get_document_link(item)
         result = self.client_connection.PatchItem(
             document_link=item_link,
@@ -1412,9 +1412,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if initial_headers is not None:
             kwargs[Constants.Kwargs.INITIAL_HEADERS] = initial_headers
         if etag is not None:
-            kwargs['etag'] = etag
+            kwargs[Constants.Kwargs.ETAG] = etag
         if match_condition is not None:
-            kwargs['match_condition'] = match_condition
+            kwargs[Constants.Kwargs.MATCH_CONDITION] = match_condition
         if priority is not None:
             kwargs[Constants.Kwargs.PRIORITY] = priority
         if retry_write is not None:
@@ -1422,10 +1422,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if throughput_bucket is not None:
             kwargs[Constants.Kwargs.THROUGHPUT_BUCKET] = throughput_bucket
         if response_hook is not None:
-            kwargs['response_hook'] = response_hook
+            kwargs[Constants.Kwargs.RESPONSE_HOOK] = response_hook
         request_options = build_options(kwargs)
         if partition_key is not None:
-            request_options["partitionKey"] = self._set_partition_key(partition_key)
+            request_options[Constants.InternalOptions.PARTITION_KEY] = self._set_partition_key(partition_key)
         if populate_query_metrics is not None:
             warnings.warn(
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",

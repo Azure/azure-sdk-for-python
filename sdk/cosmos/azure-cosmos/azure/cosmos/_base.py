@@ -99,6 +99,8 @@ _COMMON_OPTIONS = {
     Constants.Kwargs.PREFIX_PARTITION_KEY_VALUE: (
         InternalOptions.PREFIX_PARTITION_KEY_VALUE
     ),
+    Constants.Kwargs.ETAG: InternalOptions.ETAG,
+    Constants.Kwargs.MATCH_CONDITION: InternalOptions.MATCH_CONDITION,
 }
 
 # Cosmos resource ID validation regex breakdown:

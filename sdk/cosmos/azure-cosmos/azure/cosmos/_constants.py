@@ -269,6 +269,12 @@ class _Constants:
         CONTAINER_PROPERTIES: Literal["containerProperties"] = "containerProperties"
         """Container properties for requests."""
 
+        ETAG: Literal["etag"] = "etag"
+        """Entity tag for conditional operations."""
+
+        MATCH_CONDITION: Literal["matchCondition"] = "matchCondition"
+        """Match condition for conditional operations."""
+
     class Kwargs:
         """Public-facing keyword argument names used in the azure-cosmos package
 
@@ -440,3 +446,9 @@ class _Constants:
             "prefix_partition_key_value"
         ] = "prefix_partition_key_value"
         """Prefix partition key value kwarg for queries."""
+
+        ETAG: Literal["etag"] = "etag"
+        """Entity tag kwarg for conditional operations."""
+
+        MATCH_CONDITION: Literal["match_condition"] = "match_condition"
+        """Match condition kwarg for conditional operations."""
