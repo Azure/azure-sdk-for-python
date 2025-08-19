@@ -18,6 +18,7 @@ ConversationsPreparer = functools.partial(
     authoring_key="fake_key",
 )
 
+
 class TestConversations(AzureRecordedTestCase):
 
     # Start with any helper functions you might need, for example a client creation method:
@@ -64,6 +65,11 @@ class TestConversationsCase(TestConversations):
         assert state is not None
         assert state.job_id  # should be populated
         assert state.status in (
-            "notStarted", "running", "succeeded", "failed",
-            "cancelled", "cancelling", "partiallyCompleted"
+            "notStarted",
+            "running",
+            "succeeded",
+            "failed",
+            "cancelled",
+            "cancelling",
+            "partiallyCompleted",
         )

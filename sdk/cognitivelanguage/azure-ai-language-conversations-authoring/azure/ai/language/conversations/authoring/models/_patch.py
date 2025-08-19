@@ -19,8 +19,28 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.rest import HttpRequest
 from azure.core.polling.base_polling import BadResponse
 from azure.core.exceptions import ResourceNotFoundError
+from ._models import (
+    AssignDeploymentResourcesDetails,
+    AssignDeploymentResourcesDetails,
+    UnassignDeploymentResourcesDetails,
+    SwapDeploymentsDetails,
+    DeploymentResourcesState,
+    CopyProjectState,
+    ExportProjectState,
+    SwapDeploymentsState,
+    DeploymentResourcesState,
+    DeleteDeploymentDetails,
+    CreateDeploymentDetails,
+    DeploymentDeleteFromResourcesState,
+    DeploymentState,
+    ExportedModelDetails,
+    ExportedModelState,
+    LoadSnapshotState,
+    DeploymentResourcesState,
+)
 
 JSON = MutableMapping[str, Any]
+
 
 class JobsStrategy(LongRunningOperation):
     """Interprets job-status responses and tells the poller which URL to use."""
@@ -60,6 +80,7 @@ class JobsStrategy(LongRunningOperation):
     # Force the final GET to also come from operation-location (or return None to use last body)
     def get_final_get_url(self, pipeline_response: PipelineResponse) -> Optional[str]:  # noqa: D401
         return self._async_url
+
 
 class JobsPollingMethod(PollingMethod):
     def __init__(self, polling_interval: float = 30.0, *, path_format_arguments: Optional[dict] = None, **kwargs: Any):
@@ -137,23 +158,30 @@ class JobsPollingMethod(PollingMethod):
         # REST pipeline path (new core)
         if hasattr(self._client, "send_request"):
             req = HttpRequest("GET", url)
-            return cast(PipelineResponse, self._client.send_request(req, _return_pipeline_response=True, **self._kwargs))
+            return cast(
+                PipelineResponse, self._client.send_request(req, _return_pipeline_response=True, **self._kwargs)
+            )
         # Legacy pipeline fallback
         request = self._client.get(url)
-        return cast(PipelineResponse, self._client._pipeline.run(request, stream=False, **self._kwargs))  # pylint: disable=protected-access
+        return cast(
+            PipelineResponse, self._client._pipeline.run(request, stream=False, **self._kwargs)
+        )  # pylint: disable=protected-access
 
     # ---- Continuation token support (doc pattern) ----
     def get_continuation_token(self) -> str:
         import pickle
+
         return base64.b64encode(pickle.dumps(self._initial_response)).decode("ascii")
 
     @classmethod
     def from_continuation_token(cls, continuation_token: str, **kwargs: Any) -> Tuple[Any, PipelineResponse, Callable]:
         import pickle
+
         client = kwargs["client"]
         deserialization_callback = kwargs["deserialization_callback"]
         initial_response = pickle.loads(base64.b64decode(continuation_token))  # nosec
         return client, initial_response, deserialization_callback
+
 
 def patch_sdk():
     """Do not remove from this file.
@@ -163,4 +191,23 @@ def patch_sdk():
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
 
-__all__ = ["JobsStrategy", "JobsPollingMethod"]
+
+__all__ = ["JobsStrategy", 
+           "JobsPollingMethod", 
+           "AssignDeploymentResourcesDetails",
+           "UnassignDeploymentResourcesDetails",
+           "SwapDeploymentsDetails",
+           "DeploymentResourcesState",
+           "CopyProjectState",
+           "ExportProjectState",
+           "SwapDeploymentsState",
+           "DeploymentResourcesState",
+           "DeleteDeploymentDetails",
+           "CreateDeploymentDetails",
+           "DeploymentDeleteFromResourcesState",
+           "DeploymentState",
+           "ExportedModelDetails",
+           "ExportedModelState",
+           "LoadSnapshotState",
+           "DeploymentResourcesState",
+        ]

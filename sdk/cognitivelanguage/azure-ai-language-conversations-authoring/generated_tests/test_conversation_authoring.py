@@ -105,18 +105,6 @@ class TestConversationAuthoring(ConversationAuthoringClientTestBase):
 
     @ConversationAuthoringPreparer()
     @recorded_by_proxy
-    def test_begin_export(self, conversationauthoring_endpoint):
-        client = self.create_client(endpoint=conversationauthoring_endpoint)
-        response = client.begin_export(
-            project_name="str",
-            string_index_type="str",
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @ConversationAuthoringPreparer()
-    @recorded_by_proxy
     def test_begin_import_method(self, conversationauthoring_endpoint):
         client = self.create_client(endpoint=conversationauthoring_endpoint)
         response = client.begin_import_method(

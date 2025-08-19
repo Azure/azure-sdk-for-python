@@ -59,12 +59,13 @@ from ..models import (
     UtteranceEvaluationResult,
     ExportedProjectFormat,
     JobsPollingMethod,
-    DeploymentResourcesState
+    DeploymentResourcesState,
 )
 from azure.core.paging import ItemPaged
 from collections.abc import MutableMapping
 from azure.core.pipeline import PipelineResponse
 from azure.core.rest import HttpRequest, HttpResponse
+
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 _Unset: Any = object()
@@ -80,11 +81,7 @@ class ProjectOperations(ProjectOperationsGenerated):
 
     @overload
     def begin_assign_deployment_resources(
-        self,
-        body: AssignDeploymentResourcesDetails,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: AssignDeploymentResourcesDetails, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[DeploymentResourcesState]:
         """Assign new Azure resources to a project to allow deploying new deployments to them. This API is
         available only via AAD authentication and not supported via subscription key authentication.
@@ -104,11 +101,7 @@ class ProjectOperations(ProjectOperationsGenerated):
 
     @overload
     def begin_assign_deployment_resources(
-        self,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[DeploymentResourcesState]:
         """Assign new Azure resources to a project to allow deploying new deployments to them. This API is
         available only via AAD authentication and not supported via subscription key authentication.
@@ -128,11 +121,7 @@ class ProjectOperations(ProjectOperationsGenerated):
 
     @overload
     def begin_assign_deployment_resources(
-        self,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[DeploymentResourcesState]:
         """Assign new Azure resources to a project to allow deploying new deployments to them. This API is
         available only via AAD authentication and not supported via subscription key authentication.
@@ -152,9 +141,7 @@ class ProjectOperations(ProjectOperationsGenerated):
 
     @distributed_trace
     def begin_assign_deployment_resources(
-        self,
-        body: Union[AssignDeploymentResourcesDetails, JSON, IO[bytes]],
-        **kwargs: Any
+        self, body: Union[AssignDeploymentResourcesDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[DeploymentResourcesState]:
         """Assign new Azure resources to a project to allow deploying new deployments to them.
         This API is available only via AAD authentication and not supported via subscription key authentication.
@@ -181,10 +168,10 @@ class ProjectOperations(ProjectOperationsGenerated):
                 project_name=self._project_name,  # <-- use instance project name
                 body=body,
                 content_type=content_type,
-                cls=lambda x, y, z: x,           # return PipelineResponse
+                cls=lambda x, y, z: x,  # return PipelineResponse
                 headers=_headers,
                 params=_params,
-                **kwargs
+                **kwargs,
             )
             initial.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
@@ -205,8 +192,8 @@ class ProjectOperations(ProjectOperationsGenerated):
                 PollingMethod,
                 JobsPollingMethod(
                     polling_interval=lro_delay,
-                    header_name="Operation-Location",     # service returns jobs URL here
-                    final_via_async_url=True,             # take final body from jobs URL
+                    header_name="Operation-Location",  # service returns jobs URL here
+                    final_via_async_url=True,  # take final body from jobs URL
                     path_format_arguments=path_format_arguments,
                     **kwargs,
                 ),
@@ -237,11 +224,7 @@ class ProjectOperations(ProjectOperationsGenerated):
 
     @overload
     def begin_copy_project(
-        self,
-        body: CopyProjectDetails,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: CopyProjectDetails, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[CopyProjectState]:
         """Copies an existing project to another Azure resource.
 
@@ -257,11 +240,7 @@ class ProjectOperations(ProjectOperationsGenerated):
 
     @overload
     def begin_copy_project(
-        self,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[CopyProjectState]:
         """Copies an existing project to another Azure resource.
 
@@ -277,11 +256,7 @@ class ProjectOperations(ProjectOperationsGenerated):
 
     @overload
     def begin_copy_project(
-        self,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[CopyProjectState]:
         """Copies an existing project to another Azure resource.
 
@@ -297,9 +272,7 @@ class ProjectOperations(ProjectOperationsGenerated):
 
     @distributed_trace
     def begin_copy_project(
-        self,
-        body: Union[CopyProjectDetails, JSON, IO[bytes]],
-        **kwargs: Any
+        self, body: Union[CopyProjectDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[CopyProjectState]:
         """Copies an existing project to another Azure resource.
 
@@ -326,7 +299,7 @@ class ProjectOperations(ProjectOperationsGenerated):
                 cls=lambda x, y, z: x,  # return PipelineResponse
                 headers=_headers,
                 params=_params,
-                **kwargs
+                **kwargs,
             )
             initial.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
@@ -419,7 +392,7 @@ class ProjectOperations(ProjectOperationsGenerated):
                 cls=lambda x, y, z: x,  # return PipelineResponse
                 headers=_headers,
                 params=_params,
-                **kwargs
+                **kwargs,
             )
             initial.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
@@ -462,11 +435,7 @@ class ProjectOperations(ProjectOperationsGenerated):
 
     @overload
     def begin_swap_deployments(
-        self,
-        body: SwapDeploymentsDetails,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: SwapDeploymentsDetails, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[SwapDeploymentsState]:
         """Swaps two existing deployments with each other.
 
@@ -482,11 +451,7 @@ class ProjectOperations(ProjectOperationsGenerated):
 
     @overload
     def begin_swap_deployments(
-        self,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[SwapDeploymentsState]:
         """Swaps two existing deployments with each other.
 
@@ -502,11 +467,7 @@ class ProjectOperations(ProjectOperationsGenerated):
 
     @overload
     def begin_swap_deployments(
-        self,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[SwapDeploymentsState]:
         """Swaps two existing deployments with each other.
 
@@ -522,9 +483,7 @@ class ProjectOperations(ProjectOperationsGenerated):
 
     @distributed_trace
     def begin_swap_deployments(
-        self,
-        body: Union[SwapDeploymentsDetails, JSON, IO[bytes]],
-        **kwargs: Any
+        self, body: Union[SwapDeploymentsDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[SwapDeploymentsState]:
         """Swaps two existing deployments with each other.
 
@@ -551,7 +510,7 @@ class ProjectOperations(ProjectOperationsGenerated):
                 cls=lambda x, y, z: x,  # return PipelineResponse
                 headers=_headers,
                 params=_params,
-                **kwargs
+                **kwargs,
             )
             initial.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
@@ -592,14 +551,10 @@ class ProjectOperations(ProjectOperationsGenerated):
         return LROPoller[SwapDeploymentsState](
             self._client, initial, get_long_running_output, polling_method  # type: ignore
         )
-    
+
     @overload
     def begin_unassign_deployment_resources(
-        self,
-        body: UnassignDeploymentResourcesDetails,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: UnassignDeploymentResourcesDetails, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[DeploymentResourcesState]:
         """Unassign resources from a project. This disallows deploying new deployments to these resources,
         and deletes existing deployments assigned to them.
@@ -616,11 +571,7 @@ class ProjectOperations(ProjectOperationsGenerated):
 
     @overload
     def begin_unassign_deployment_resources(
-        self,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[DeploymentResourcesState]:
         """Unassign resources from a project. This disallows deploying new deployments to these resources,
         and deletes existing deployments assigned to them.
@@ -637,11 +588,7 @@ class ProjectOperations(ProjectOperationsGenerated):
 
     @overload
     def begin_unassign_deployment_resources(
-        self,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[DeploymentResourcesState]:
         """Unassign resources from a project. This disallows deploying new deployments to these resources,
         and deletes existing deployments assigned to them.
@@ -658,9 +605,7 @@ class ProjectOperations(ProjectOperationsGenerated):
 
     @distributed_trace
     def begin_unassign_deployment_resources(
-        self,
-        body: Union[UnassignDeploymentResourcesDetails, JSON, IO[bytes]],
-        **kwargs: Any
+        self, body: Union[UnassignDeploymentResourcesDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[DeploymentResourcesState]:
         """Unassign resources from a project. This disallows deploying new deployments to these resources,
         and deletes existing deployments assigned to them.
@@ -682,13 +627,13 @@ class ProjectOperations(ProjectOperationsGenerated):
 
         if cont_token is None:
             initial = self._unassign_deployment_resources_initial(
-                project_name=self._project_name,   # ← use instance project name
+                project_name=self._project_name,  # ← use instance project name
                 body=body,
                 content_type=content_type,
-                cls=lambda x, y, z: x,            # return PipelineResponse
+                cls=lambda x, y, z: x,  # return PipelineResponse
                 headers=_headers,
                 params=_params,
-                **kwargs
+                **kwargs,
             )
             initial.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
@@ -826,13 +771,8 @@ class DeploymentOperations(DeploymentOperationsGenerated):
         super().__init__(*args, **kwargs)
         self._project_name = project_name
 
-    
     @distributed_trace
-    def begin_delete_deployment(
-        self,
-        deployment_name: str,
-        **kwargs: Any
-    ) -> LROPoller[DeploymentState]:
+    def begin_delete_deployment(self, deployment_name: str, **kwargs: Any) -> LROPoller[DeploymentState]:
         """Deletes a project deployment.
 
         :param deployment_name: The name of the specific deployment of the project to use. Required.
@@ -851,12 +791,12 @@ class DeploymentOperations(DeploymentOperationsGenerated):
 
         if cont_token is None:
             initial = self._delete_deployment_initial(
-                project_name=self._project_name,     # ← use instance-scoped project name
+                project_name=self._project_name,  # ← use instance-scoped project name
                 deployment_name=deployment_name,
-                cls=lambda x, y, z: x,               # return PipelineResponse
+                cls=lambda x, y, z: x,  # return PipelineResponse
                 headers=_headers,
                 params=_params,
-                **kwargs
+                **kwargs,
             )
             initial.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
@@ -922,12 +862,7 @@ class DeploymentOperations(DeploymentOperationsGenerated):
 
     @overload
     def begin_delete_deployment_from_resources(
-        self,
-        deployment_name: str,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, deployment_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[DeploymentDeleteFromResourcesState]:
         """Deletes a project deployment from the specified assigned resources.
 
@@ -945,12 +880,7 @@ class DeploymentOperations(DeploymentOperationsGenerated):
 
     @overload
     def begin_delete_deployment_from_resources(
-        self,
-        deployment_name: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, deployment_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[DeploymentDeleteFromResourcesState]:
         """Deletes a project deployment from the specified assigned resources.
 
@@ -968,10 +898,7 @@ class DeploymentOperations(DeploymentOperationsGenerated):
 
     @distributed_trace
     def begin_delete_deployment_from_resources(
-        self,
-        deployment_name: str,
-        body: Union[DeleteDeploymentDetails, JSON, IO[bytes]],
-        **kwargs: Any
+        self, deployment_name: str, body: Union[DeleteDeploymentDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[DeploymentDeleteFromResourcesState]:
         """Deletes a project deployment from the specified assigned resources.
 
@@ -994,14 +921,14 @@ class DeploymentOperations(DeploymentOperationsGenerated):
 
         if cont_token is None:
             initial = self._delete_deployment_from_resources_initial(
-                project_name=self._project_name,        # ← use instance-scoped project name
+                project_name=self._project_name,  # ← use instance-scoped project name
                 deployment_name=deployment_name,
                 body=body,
                 content_type=content_type,
-                cls=lambda x, y, z: x,                  # return PipelineResponse
+                cls=lambda x, y, z: x,  # return PipelineResponse
                 headers=_headers,
                 params=_params,
-                **kwargs
+                **kwargs,
             )
             initial.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
@@ -1070,12 +997,7 @@ class DeploymentOperations(DeploymentOperationsGenerated):
 
     @overload
     def begin_deploy_project(
-        self,
-        deployment_name: str,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, deployment_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[DeploymentState]:
         """Creates a new deployment or replaces an existing one.
 
@@ -1095,12 +1017,7 @@ class DeploymentOperations(DeploymentOperationsGenerated):
 
     @overload
     def begin_deploy_project(
-        self,
-        deployment_name: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, deployment_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[DeploymentState]:
         """Creates a new deployment or replaces an existing one.
 
@@ -1120,10 +1037,7 @@ class DeploymentOperations(DeploymentOperationsGenerated):
 
     @distributed_trace
     def begin_deploy_project(
-        self,
-        deployment_name: str,
-        body: Union[CreateDeploymentDetails, JSON, IO[bytes]],
-        **kwargs: Any
+        self, deployment_name: str, body: Union[CreateDeploymentDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[DeploymentState]:
         """Creates a new deployment or replaces an existing one.
 
@@ -1153,7 +1067,7 @@ class DeploymentOperations(DeploymentOperationsGenerated):
                 cls=lambda x, y, z: x,  # return PipelineResponse
                 headers=_headers,
                 params=_params,
-                **kwargs
+                **kwargs,
             )
             initial.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
@@ -1243,12 +1157,7 @@ class ExportedModelOperations(ExportedModelOperationsGenerated):
 
     @overload
     def begin_create_or_update_exported_model(
-        self,
-        exported_model_name: str,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, exported_model_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[ExportedModelState]:
         """Creates a new exported model or replaces an existing one.
 
@@ -1266,12 +1175,7 @@ class ExportedModelOperations(ExportedModelOperationsGenerated):
 
     @overload
     def begin_create_or_update_exported_model(
-        self,
-        exported_model_name: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, exported_model_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[ExportedModelState]:
         """Creates a new exported model or replaces an existing one.
 
@@ -1289,10 +1193,7 @@ class ExportedModelOperations(ExportedModelOperationsGenerated):
 
     @distributed_trace
     def begin_create_or_update_exported_model(
-        self,
-        exported_model_name: str,
-        body: Union[ExportedModelDetails, JSON, IO[bytes]],
-        **kwargs: Any
+        self, exported_model_name: str, body: Union[ExportedModelDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[ExportedModelState]:
         """Creates a new exported model or replaces an existing one.
 
@@ -1315,14 +1216,14 @@ class ExportedModelOperations(ExportedModelOperationsGenerated):
 
         if cont_token is None:
             initial = self._create_or_update_exported_model_initial(
-                project_name=self._project_name,         # ← use instance-scoped project name
+                project_name=self._project_name,  # ← use instance-scoped project name
                 exported_model_name=exported_model_name,
                 body=body,
                 content_type=content_type,
-                cls=lambda x, y, z: x,                   # return PipelineResponse
+                cls=lambda x, y, z: x,  # return PipelineResponse
                 headers=_headers,
                 params=_params,
-                **kwargs
+                **kwargs,
             )
             initial.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
@@ -1365,11 +1266,7 @@ class ExportedModelOperations(ExportedModelOperationsGenerated):
         )
 
     @distributed_trace
-    def begin_delete_exported_model(
-        self,
-        exported_model_name: str,
-        **kwargs: Any
-    ) -> LROPoller[ExportedModelState]:
+    def begin_delete_exported_model(self, exported_model_name: str, **kwargs: Any) -> LROPoller[ExportedModelState]:
         """Deletes an existing exported model.
 
         :param exported_model_name: The exported model name. Required.
@@ -1388,12 +1285,12 @@ class ExportedModelOperations(ExportedModelOperationsGenerated):
 
         if cont_token is None:
             initial = self._delete_exported_model_initial(
-                project_name=self._project_name,        # ← use instance-scoped project name
+                project_name=self._project_name,  # ← use instance-scoped project name
                 exported_model_name=exported_model_name,
-                cls=lambda x, y, z: x,                  # return PipelineResponse
+                cls=lambda x, y, z: x,  # return PipelineResponse
                 headers=_headers,
                 params=_params,
-                **kwargs
+                **kwargs,
             )
             initial.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
@@ -1480,11 +1377,7 @@ class TrainedModelOperations(TrainedModelOperationsGenerated):
         )
 
     @distributed_trace
-    def begin_load_snapshot(
-        self,
-        trained_model_label: str,
-        **kwargs: Any
-    ) -> LROPoller[LoadSnapshotState]:
+    def begin_load_snapshot(self, trained_model_label: str, **kwargs: Any) -> LROPoller[LoadSnapshotState]:
         """Restores the snapshot of this trained model to be the current working directory of the project.
 
         :param trained_model_label: The trained model label. Required.
@@ -1503,12 +1396,12 @@ class TrainedModelOperations(TrainedModelOperationsGenerated):
 
         if cont_token is None:
             initial = self._load_snapshot_initial(
-                project_name=self._project_name,          # ← use instance-scoped project name
+                project_name=self._project_name,  # ← use instance-scoped project name
                 trained_model_label=trained_model_label,
-                cls=lambda x, y, z: x,                    # return PipelineResponse
+                cls=lambda x, y, z: x,  # return PipelineResponse
                 headers=_headers,
                 params=_params,
-                **kwargs
+                **kwargs,
             )
             initial.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)

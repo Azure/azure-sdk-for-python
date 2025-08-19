@@ -24,32 +24,3 @@ class TestConversationAuthoringProjectExportedModelOperationsAsync(ConversationA
 
         # please add some check logic here by yourself
         # ...
-
-    @ConversationAuthoringProjectPreparer()
-    @recorded_by_proxy_async
-    async def test_exported_model_begin_delete_exported_model(self, conversationauthoringproject_endpoint):
-        client = self.create_async_client(endpoint=conversationauthoringproject_endpoint)
-        response = await (
-            await client.exported_model.begin_delete_exported_model(
-                project_name="str",
-                exported_model_name="str",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @ConversationAuthoringProjectPreparer()
-    @recorded_by_proxy_async
-    async def test_exported_model_begin_create_or_update_exported_model(self, conversationauthoringproject_endpoint):
-        client = self.create_async_client(endpoint=conversationauthoringproject_endpoint)
-        response = await (
-            await client.exported_model.begin_create_or_update_exported_model(
-                project_name="str",
-                exported_model_name="str",
-                body={"trainedModelLabel": "str"},
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...

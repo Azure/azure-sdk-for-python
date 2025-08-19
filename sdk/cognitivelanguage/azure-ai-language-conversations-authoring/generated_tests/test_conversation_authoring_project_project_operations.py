@@ -69,59 +69,11 @@ class TestConversationAuthoringProjectProjectOperations(ConversationAuthoringPro
 
     @ConversationAuthoringProjectPreparer()
     @recorded_by_proxy
-    def test_project_begin_assign_deployment_resources(self, conversationauthoringproject_endpoint):
-        client = self.create_client(endpoint=conversationauthoringproject_endpoint)
-        response = client.project.begin_assign_deployment_resources(
-            project_name="str",
-            body={"resourcesMetadata": [{"azureResourceId": "str", "customDomain": "str", "region": "str"}]},
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @ConversationAuthoringProjectPreparer()
-    @recorded_by_proxy
-    def test_project_begin_unassign_deployment_resources(self, conversationauthoringproject_endpoint):
-        client = self.create_client(endpoint=conversationauthoringproject_endpoint)
-        response = client.project.begin_unassign_deployment_resources(
-            project_name="str",
-            body={"assignedResourceIds": ["str"]},
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @ConversationAuthoringProjectPreparer()
-    @recorded_by_proxy
-    def test_project_begin_swap_deployments(self, conversationauthoringproject_endpoint):
-        client = self.create_client(endpoint=conversationauthoringproject_endpoint)
-        response = client.project.begin_swap_deployments(
-            project_name="str",
-            body={"firstDeploymentName": "str", "secondDeploymentName": "str"},
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @ConversationAuthoringProjectPreparer()
-    @recorded_by_proxy
     def test_project_get_project(self, conversationauthoringproject_endpoint):
         client = self.create_client(endpoint=conversationauthoringproject_endpoint)
         response = client.project.get_project(
             project_name="str",
         )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @ConversationAuthoringProjectPreparer()
-    @recorded_by_proxy
-    def test_project_begin_export(self, conversationauthoringproject_endpoint):
-        client = self.create_client(endpoint=conversationauthoringproject_endpoint)
-        response = client.project.begin_export(
-            project_name="str",
-            string_index_type="str",
-        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...
@@ -135,25 +87,6 @@ class TestConversationAuthoringProjectProjectOperations(ConversationAuthoringPro
             body={"projectKind": "str", "allowOverwrite": bool, "storageInputContainerName": "str"},
             project_kind="str",
         )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @ConversationAuthoringProjectPreparer()
-    @recorded_by_proxy
-    def test_project_begin_copy_project(self, conversationauthoringproject_endpoint):
-        client = self.create_client(endpoint=conversationauthoringproject_endpoint)
-        response = client.project.begin_copy_project(
-            project_name="str",
-            body={
-                "accessToken": "str",
-                "expiresAt": "2020-02-20 00:00:00",
-                "projectKind": "str",
-                "targetProjectName": "str",
-                "targetResourceId": "str",
-                "targetResourceRegion": "str",
-            },
-        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...

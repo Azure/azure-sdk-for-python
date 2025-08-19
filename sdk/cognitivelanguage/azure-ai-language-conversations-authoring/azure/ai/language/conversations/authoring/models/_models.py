@@ -24,10 +24,11 @@ class AssignDeploymentResourcesDetails(_Model):
     """Represents the options for assigning Azure resources to a project.
 
     :ivar metadata: Represents the metadata for the resources to be assigned. Required.
-    :vartype metadata: list[~azure.ai.language.conversations.authoring.models.ResourceMetadata]
+    :vartype metadata:
+     list[~azure.ai.language.conversations.authoring.models._models.ResourceMetadata]
     """
 
-    metadata: List["_models.ResourceMetadata"] = rest_field(
+    metadata: List["_models._models.ResourceMetadata"] = rest_field(
         name="resourcesMetadata", visibility=["read", "create", "update", "delete", "query"]
     )
     """Represents the metadata for the resources to be assigned. Required."""
@@ -36,7 +37,7 @@ class AssignDeploymentResourcesDetails(_Model):
     def __init__(
         self,
         *,
-        metadata: List["_models.ResourceMetadata"],
+        metadata: List["_models._models.ResourceMetadata"],
     ) -> None: ...
 
     @overload
