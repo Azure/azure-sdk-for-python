@@ -23,7 +23,7 @@ import os
 from typing import cast, List
 
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.language.conversations import ConversationAnalysisClient
+from azure.ai.language.conversations import ConversationAnalysisClient, AnalyzeConversationLROPoller
 from azure.ai.language.conversations.models import (
     TextConversationItem,
     TextConversation,
@@ -34,7 +34,6 @@ from azure.ai.language.conversations.models import (
     SummaryAspect,
     AnalyzeConversationOperationInput,
     AnalyzeConversationOperationAction,
-    AnalyzeConversationLROPoller,
     ConversationActions,
     SummarizationOperationResult,
 )
