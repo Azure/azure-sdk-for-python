@@ -80,6 +80,31 @@ class TestConversationAuthoringProjectProjectOperations(ConversationAuthoringPro
 
     @ConversationAuthoringProjectPreparer()
     @recorded_by_proxy
+    def test_project_begin_import_method(self, conversationauthoringproject_endpoint):
+        client = self.create_client(endpoint=conversationauthoringproject_endpoint)
+        response = client.project.begin_import_method(
+            project_name="str",
+            body={
+                "metadata": {
+                    "language": "str",
+                    "projectKind": "str",
+                    "projectName": "str",
+                    "description": "str",
+                    "multilingual": bool,
+                    "settings": {"confidenceThreshold": 0.0},
+                    "storageInputContainerName": "str",
+                },
+                "projectFileVersion": "str",
+                "stringIndexType": "str",
+                "assets": "exported_project_asset",
+            },
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @ConversationAuthoringProjectPreparer()
+    @recorded_by_proxy
     def test_project_copy_project_authorization(self, conversationauthoringproject_endpoint):
         client = self.create_client(endpoint=conversationauthoringproject_endpoint)
         response = client.project.copy_project_authorization(
