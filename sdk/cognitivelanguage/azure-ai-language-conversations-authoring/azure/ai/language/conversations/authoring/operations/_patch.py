@@ -83,7 +83,7 @@ class ProjectOperations(ProjectOperationsGenerated):
         self._project_name = project_name
 
     @overload
-    def begin_import_method(
+    def begin_import(
         self,
         body: ExportedProject,
         *,
@@ -109,7 +109,7 @@ class ProjectOperations(ProjectOperationsGenerated):
         """
 
     @overload
-    def begin_import_method(
+    def begin_import(
         self,
         body: JSON,
         *,
@@ -135,7 +135,7 @@ class ProjectOperations(ProjectOperationsGenerated):
         """
 
     @overload
-    def begin_import_method(
+    def begin_import(
         self,
         body: IO[bytes],
         *,
@@ -161,7 +161,7 @@ class ProjectOperations(ProjectOperationsGenerated):
         """
 
     @distributed_trace
-    def begin_import_method(
+    def begin_import(
         self,
         body: Union[ExportedProject, JSON, IO[bytes]],
         *,
