@@ -52,6 +52,81 @@ class TrainedModelOperations(TrainedModelOperationsGenerated):
         super().__init__(*args, **kwargs)
         self._project_name = project_name
 
+    @overload
+    def begin_evaluate_model(
+        self,
+        trained_model_label: str,
+        body: EvaluationDetails,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[EvaluationJobResult]:
+        """Triggers evaluation operation on a trained model.
+
+        :param trained_model_label: The trained model label. Required.
+        :type trained_model_label: str
+        :param body: The training input parameters. Required.
+        :type body: ~azure.ai.language.conversations.authoring.models.EvaluationDetails
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns EvaluationJobResult. The EvaluationJobResult is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.ai.language.conversations.authoring.models.EvaluationJobResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_evaluate_model(
+        self,
+        trained_model_label: str,
+        body: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[EvaluationJobResult]:
+        """Triggers evaluation operation on a trained model.
+
+        :param trained_model_label: The trained model label. Required.
+        :type trained_model_label: str
+        :param body: The training input parameters. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns EvaluationJobResult. The EvaluationJobResult is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.ai.language.conversations.authoring.models.EvaluationJobResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_evaluate_model(
+        self,
+        trained_model_label: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[EvaluationJobResult]:
+        """Triggers evaluation operation on a trained model.
+
+        :param trained_model_label: The trained model label. Required.
+        :type trained_model_label: str
+        :param body: The training input parameters. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns EvaluationJobResult. The EvaluationJobResult is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.ai.language.conversations.authoring.models.EvaluationJobResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
     @distributed_trace
     def begin_evaluate_model(  # type: ignore[override]
         self,

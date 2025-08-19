@@ -51,6 +51,7 @@ from ..models import (
     DeploymentResourcesState,
     ExportedProject,
     ImportProjectState,
+    ProjectKind
 )
 from azure.core.paging import ItemPaged
 from collections.abc import MutableMapping
@@ -491,6 +492,64 @@ class ProjectOperations(ProjectOperationsGenerated):
             self._client, initial, get_long_running_output, polling_method  # type: ignore
         )
 
+    @overload
+    def begin_train(
+        self,
+        body: TrainingJobDetails,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[TrainingJobResult]:
+        """Triggers a training job for a project.
+
+        :param body: The training input parameters. Required.
+        :type body: ~azure.ai.language.conversations.authoring.models.TrainingJobDetails
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns TrainingJobResult. The TrainingJobResult is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.ai.language.conversations.authoring.models.TrainingJobResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_train(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[TrainingJobResult]:
+        """Triggers a training job for a project.
+
+        :param body: The training input parameters. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns TrainingJobResult. The TrainingJobResult is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.ai.language.conversations.authoring.models.TrainingJobResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_train(
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[TrainingJobResult]:
+        """Triggers a training job for a project.
+
+        :param body: The training input parameters. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns TrainingJobResult. The TrainingJobResult is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.ai.language.conversations.authoring.models.TrainingJobResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+    
     @distributed_trace
     def begin_train(  # type: ignore[override]
         self, body: Union[TrainingJobDetails, JSON, IO[bytes]], *, content_type: str = "application/json", **kwargs: Any
@@ -825,6 +884,67 @@ class ProjectOperations(ProjectOperationsGenerated):
             self._client, initial, get_long_running_output, polling_method  # type: ignore
         )
 
+    @overload
+    def copy_project_authorization(
+        self,
+        *,
+        project_kind: Union[str, ProjectKind],
+        content_type: str = "application/json",
+        storage_input_container_name: Optional[str] = None,
+        allow_overwrite: Optional[bool] = None,
+        **kwargs: Any
+    ) -> CopyProjectDetails:
+        """Generates a copy project operation authorization to the current target Azure resource.
+
+        :keyword project_kind: Represents the project kind. Known values are: "Conversation",
+         "Orchestration", and "CustomConversationSummarization". Required.
+        :paramtype project_kind: str or ~azure.ai.language.conversations.authoring.models.ProjectKind
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword storage_input_container_name: The name of the storage container. Default value is
+         None.
+        :paramtype storage_input_container_name: str
+        :keyword allow_overwrite: Whether to allow an existing project to be overwritten using the
+         resulting copy authorization. Default value is None.
+        :paramtype allow_overwrite: bool
+        :return: CopyProjectDetails. The CopyProjectDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.language.conversations.authoring.models.CopyProjectDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def copy_project_authorization(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> CopyProjectDetails:
+        """Generates a copy project operation authorization to the current target Azure resource.
+
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: CopyProjectDetails. The CopyProjectDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.language.conversations.authoring.models.CopyProjectDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def copy_project_authorization(
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> CopyProjectDetails:
+        """Generates a copy project operation authorization to the current target Azure resource.
+
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: CopyProjectDetails. The CopyProjectDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.language.conversations.authoring.models.CopyProjectDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
     @distributed_trace
     def copy_project_authorization(  # type: ignore[override]
         self,
@@ -861,7 +981,7 @@ class ProjectOperations(ProjectOperationsGenerated):
         return super()._get_export_status(project_name=self._project_name, job_id=job_id, **kwargs)
 
     @distributed_trace
-    def get_project(self, project_name: str = _Unset, **kwargs: Any) -> ProjectDetails:  # type: ignore[override]
+    def get_project(self, **kwargs: Any) -> ProjectDetails:  # type: ignore[override]
         return super().get_project(project_name=self._project_name, **kwargs)
 
     @distributed_trace
