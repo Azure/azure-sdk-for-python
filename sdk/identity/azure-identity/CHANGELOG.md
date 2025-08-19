@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed an issue where `AzureDeveloperCliCredential` would time out during token requests when `azd` prompts for user interaction. This issue commonly occurred in environments where the `AZD_DEBUG` environment variable was set, causing the Azure Developer CLI to display additional prompts that interfered with automated token acquisition. ([#42535](https://github.com/Azure/azure-sdk-for-python/pull/42535))
+
 ### Other Changes
 
 ## 1.24.0 (2025-08-07)

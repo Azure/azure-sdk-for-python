@@ -60,6 +60,7 @@ from azure.monitor.opentelemetry.exporter.statsbeat._utils import (
     _track_dropped_items,
     _track_retry_items,
     _track_successful_items,
+    _track_dropped_items_from_storage,
 )
 
 
@@ -196,14 +197,18 @@ class BaseExporter:
                 else:
                     blob.delete()
 
+
     def _handle_transmit_from_storage(self, envelopes: List[TelemetryItem], result: ExportResult) -> None:
         if self.storage:
             if result == ExportResult.FAILED_RETRYABLE:
                 envelopes_to_store = [x.as_dict() for x in envelopes]
-                self.storage.put(envelopes_to_store)
+                result_from_storage_put = self.storage.put(envelopes_to_store)
+                if self._customer_statsbeat_metrics and self._should_collect_customer_statsbeat():
+                    _track_dropped_items_from_storage(self._customer_statsbeat_metrics, result_from_storage_put, envelopes)
             elif result == ExportResult.SUCCESS:
                 # Try to send any cached events
                 self._transmit_from_storage()
+
         else:
             # Track items that would have been retried but are dropped since client has local storage disabled
             if self._customer_statsbeat_metrics and self._should_collect_customer_statsbeat():
@@ -270,7 +275,9 @@ class BaseExporter:
                                 )
                     if self.storage and resend_envelopes:
                         envelopes_to_store = [x.as_dict() for x in resend_envelopes]
-                        self.storage.put(envelopes_to_store, 0)
+                        result_from_storage = self.storage.put(envelopes_to_store, 0)
+                        if self._customer_statsbeat_metrics and self._should_collect_customer_statsbeat():
+                            _track_dropped_items_from_storage(self._customer_statsbeat_metrics, result_from_storage, resend_envelopes)
                         self._consecutive_redirects = 0
                     elif resend_envelopes:
                         # Track items that would have been retried but are dropped since client has local storage disabled
@@ -453,7 +460,7 @@ class BaseExporter:
     # check to see whether its the case of customer stats collection
     def _should_collect_customer_statsbeat(self):
         # Import here to avoid circular dependencies
-        from azure.monitor.opentelemetry.exporter.statsbeat._customer_statsbeat import get_customer_statsbeat_shutdown
+        from azure.monitor.opentelemetry.exporter.statsbeat._state import get_customer_statsbeat_shutdown
 
         env_value = os.environ.get("APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW", "")
         is_customer_statsbeat_enabled = env_value.lower() == "true"
