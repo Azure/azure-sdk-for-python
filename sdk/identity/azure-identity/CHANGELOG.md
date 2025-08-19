@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- Added MFA (Multi-Factor Authentication) support for developer credentials. `AzureCliCredential`, `AzurePowerShellCredential`, and `AzureDeveloperCliCredential` now provide improved error messaging when MFA is required, guiding users to authenticate with claims challenges.
+- `AzureDeveloperCliCredential` now supports `claims` in `get_token` and `get_token_info`.  ([#42568](https://github.com/Azure/azure-sdk-for-python/pull/42568))
 
 ### Breaking Changes
 
@@ -13,6 +13,8 @@
 - Fixed an issue where CAE (Continuous Access Evaluation) caches were not properly used by `AuthorizationCodeCredential` and the asynchronous `OnBehalfOfCredential`. ([#42145](https://github.com/Azure/azure-sdk-for-python/pull/42145))
 
 ### Other Changes
+
+- `AzureCliCredential` and `AzurePowerShellCredential` now raise `ClientAuthenticationError` when `claims` are provided to `get_token` or `get_token_info`, as these credentials do not support claims challenges. The error message includes instructions for handling claims authentication scenarios. ([#42568](https://github.com/Azure/azure-sdk-for-python/pull/42568))
 
 ## 1.24.0b1 (2025-07-17)
 

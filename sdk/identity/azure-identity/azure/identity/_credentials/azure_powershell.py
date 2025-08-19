@@ -30,6 +30,10 @@ BLOCKED_BY_EXECUTION_POLICY = "Execution policy prevented invoking Azure PowerSh
 NO_AZ_ACCOUNT_MODULE = "NO_AZ_ACCOUNT_MODULE"
 POWERSHELL_NOT_INSTALLED = "PowerShell is not installed"
 RUN_CONNECT_AZ_ACCOUNT = 'Please run "Connect-AzAccount" to set up account'
+CLAIMS_UNSUPPORTED_ERROR = (
+    "This credential doesn't support claims challenges. To authenticate with the required "
+    "claims, please run the following command: Connect-AzAccount -ClaimsChallenge {claims_value}"
+)
 SCRIPT = """$ErrorActionPreference = 'Stop'
 [version]$minimumVersion = '2.2.0'
 
@@ -141,16 +145,11 @@ class AzurePowerShellCredential:
         :raises ~azure.core.exceptions.ClientAuthenticationError: the credential invoked Azure PowerShell but didn't
           receive an access token
         """
-
-        # Check if claims challenge is provided
-        if claims:
-            raise CredentialUnavailableError(
-                message=f"Failed to get token. Run Connect-AzAccount -ClaimsChallenge {claims}"
-            )
-
         options: TokenRequestOptions = {}
         if tenant_id:
             options["tenant_id"] = tenant_id
+        if claims:
+            options["claims"] = claims
 
         token_info = self._get_token_base(*scopes, options=options, **kwargs)
         return AccessToken(token_info.token, token_info.expires_on)
@@ -184,10 +183,10 @@ class AzurePowerShellCredential:
 
         # Check if claims challenge is provided
         if options and options.get("claims"):
-            claims_value = options.get("claims")
-            raise CredentialUnavailableError(
-                message=f"Failed to get token. Run Connect-AzAccount -ClaimsChallenge {claims_value}"
-            )
+            error_message = CLAIMS_UNSUPPORTED_ERROR.format(claims_value=options.get("claims"))
+            if options.get("tenant_id"):
+                error_message += f" -Tenant {options.get('tenant_id')}"
+            raise CredentialUnavailableError(message=error_message)
 
         tenant_id = options.get("tenant_id") if options else None
         if tenant_id:

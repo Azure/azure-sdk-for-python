@@ -16,6 +16,7 @@ from ..._credentials.azure_powershell import (
     get_safe_working_dir,
     raise_for_error,
     parse_token,
+    CLAIMS_UNSUPPORTED_ERROR,
 )
 from ..._internal import resolve_tenant, validate_tenant_id, validate_scope
 
@@ -80,13 +81,6 @@ class AzurePowerShellCredential(AsyncContextManager):
         :raises ~azure.core.exceptions.ClientAuthenticationError: the credential invoked Azure PowerShell but didn't
           receive an access token
         """
-
-        # Check if claims challenge is provided
-        if claims:
-            raise CredentialUnavailableError(
-                message=f"Failed to get token. Run Connect-AzAccount -ClaimsChallenge {claims}"
-            )
-
         # only ProactorEventLoop supports subprocesses on Windows (and it isn't the default loop on Python < 3.8)
         if sys.platform.startswith("win") and not isinstance(asyncio.get_event_loop(), asyncio.ProactorEventLoop):
             return _SyncCredential().get_token(*scopes, tenant_id=tenant_id, **kwargs)
@@ -94,6 +88,8 @@ class AzurePowerShellCredential(AsyncContextManager):
         options: TokenRequestOptions = {}
         if tenant_id:
             options["tenant_id"] = tenant_id
+        if claims:
+            options["claims"] = claims
 
         token_info = await self._get_token_base(*scopes, options=options, **kwargs)
         return AccessToken(token_info.token, token_info.expires_on)
@@ -119,14 +115,6 @@ class AzurePowerShellCredential(AsyncContextManager):
         :raises ~azure.core.exceptions.ClientAuthenticationError: the credential invoked Azure PowerShell but didn't
           receive an access token
         """
-
-        # Check if claims challenge is provided
-        if options and options.get("claims"):
-            claims_value = options.get("claims")
-            raise CredentialUnavailableError(
-                message=f"Failed to get token. Run Connect-AzAccount -ClaimsChallenge {claims_value}"
-            )
-
         if sys.platform.startswith("win") and not isinstance(asyncio.get_event_loop(), asyncio.ProactorEventLoop):
             return _SyncCredential().get_token_info(*scopes, options=options)
         return await self._get_token_base(*scopes, options=options)
@@ -137,10 +125,10 @@ class AzurePowerShellCredential(AsyncContextManager):
 
         # Check if claims challenge is provided
         if options and options.get("claims"):
-            claims_value = options.get("claims")
-            raise CredentialUnavailableError(
-                message=f"Failed to get token. Run Connect-AzAccount -ClaimsChallenge {claims_value}"
-            )
+            error_message = CLAIMS_UNSUPPORTED_ERROR.format(claims_value=options.get("claims"))
+            if options.get("tenant_id"):
+                error_message += f" -Tenant {options.get('tenant_id')}"
+            raise CredentialUnavailableError(message=error_message)
 
         tenant_id = options.get("tenant_id") if options else None
         if tenant_id:

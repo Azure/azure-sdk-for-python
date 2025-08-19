@@ -294,9 +294,9 @@ def extract_cli_error_message(output: str) -> Optional[str]:
         if "suggestion" in msg.lower():
             return sanitize_output(msg)
 
-    # Otherwise, return the second message when available, else the first
-    if len(messages) >= 2:
-        return sanitize_output(messages[1])
+    # If more than one message exists, return the last one
+    if len(messages) > 1:
+        return sanitize_output(messages[-1])
     return sanitize_output(messages[0])
 
 

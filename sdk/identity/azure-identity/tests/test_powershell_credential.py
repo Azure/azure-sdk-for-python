@@ -395,16 +395,15 @@ def test_multitenant_authentication_not_allowed(get_token_method):
 def test_claims_challenge_error(get_token_method):
     """The credential should raise CredentialUnavailableError when claims challenge is provided"""
 
-    if get_token_method == "get_token":
-        # Test claims parameter in get_token method
-        with pytest.raises(CredentialUnavailableError) as exc_info:
-            getattr(AzurePowerShellCredential(), get_token_method)("scope", claims="some-claims")
-        assert "Failed to get token. Run Connect-AzAccount -ClaimsChallenge some-claims" in str(exc_info.value)
-    else:
-        # Test claims in options for get_token_info method
-        with pytest.raises(CredentialUnavailableError) as exc_info:
-            getattr(AzurePowerShellCredential(), get_token_method)("scope", options={"claims": "some-claims"})
-        assert "Failed to get token. Run Connect-AzAccount -ClaimsChallenge some-claims" in str(exc_info.value)
+    claims = "some-claims"
+    expected_message = f"Connect-AzAccount -ClaimsChallenge {claims}"
+
+    credential = AzurePowerShellCredential()
+    with pytest.raises(CredentialUnavailableError, match=re.escape(expected_message)):
+        kwargs = {"claims": claims}
+        if get_token_method == "get_token_info":
+            kwargs = {"options": kwargs}
+        getattr(credential, get_token_method)("scope", **kwargs)
 
 
 @pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
@@ -418,23 +417,38 @@ def test_empty_claims_no_error(get_token_method):
 
     Popen = get_mock_Popen(stdout=stdout)
     with patch(POPEN, Popen):
-        if get_token_method == "get_token":
-            # Test None claims parameter in get_token method
-            token = getattr(AzurePowerShellCredential(), get_token_method)("scope", claims=None)
-            assert token.token == expected_access_token
+        credential = AzurePowerShellCredential()
 
-            # Test empty string claims
-            token = getattr(AzurePowerShellCredential(), get_token_method)("scope", claims="")
-            assert token.token == expected_access_token
-        else:
-            # Test None claims in options for get_token_info method
-            token = getattr(AzurePowerShellCredential(), get_token_method)("scope", options={"claims": None})
-            assert token.token == expected_access_token
+        # Test None claims explicitly
+        kwargs = {"claims": None}
+        if get_token_method == "get_token_info":
+            kwargs = {"options": kwargs}
+        token = getattr(credential, get_token_method)("scope", **kwargs)
+        assert token.token == expected_access_token
 
-            # Test empty string claims in options
-            token = getattr(AzurePowerShellCredential(), get_token_method)("scope", options={"claims": ""})
-            assert token.token == expected_access_token
+        # Test empty string claims
+        kwargs = {"claims": ""}
+        if get_token_method == "get_token_info":
+            kwargs = {"options": kwargs}
+        token = getattr(credential, get_token_method)("scope", **kwargs)
+        assert token.token == expected_access_token
 
-            # Test missing claims key in options
-            token = getattr(AzurePowerShellCredential(), get_token_method)("scope", options={})
-            assert token.token == expected_access_token
+        # Test with no claims parameter (default behavior)
+        token = getattr(credential, get_token_method)("scope")
+        assert token.token == expected_access_token
+
+
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+def test_claims_challenge_with_tenant(get_token_method):
+    """The credential should include tenant in the error message when claims and tenant are provided"""
+
+    claims = "test-claims-challenge"
+    tenant_id = "test-tenant-id"
+    expected_message = f"Connect-AzAccount -ClaimsChallenge {claims} -Tenant {tenant_id}"
+
+    credential = AzurePowerShellCredential()
+    with pytest.raises(CredentialUnavailableError, match=re.escape(expected_message)):
+        kwargs = {"claims": claims, "tenant_id": tenant_id}
+        if get_token_method == "get_token_info":
+            kwargs = {"options": kwargs}
+        getattr(credential, get_token_method)("scope", **kwargs)

@@ -34,6 +34,10 @@ CLI_NOT_FOUND = "Azure CLI not found on path"
 COMMAND_LINE = ["account", "get-access-token", "--output", "json"]
 EXECUTABLE_NAME = "az"
 NOT_LOGGED_IN = "Please run 'az login' to set up an account"
+CLAIMS_UNSUPPORTED_ERROR = (
+    "This credential doesn't support claims challenges. To authenticate with the required "
+    "claims, please run the following command: az login --claims-challenge {claims_value}"
+)
 
 
 class AzureCliCredential:
@@ -149,22 +153,19 @@ class AzureCliCredential:
     def _get_token_base(
         self, *scopes: str, options: Optional[TokenRequestOptions] = None, **kwargs: Any
     ) -> AccessTokenInfo:
-
         # Check for claims challenge first
-        claims_value = options.get("claims") if options else None
-        if claims_value and claims_value.strip():
-            login_cmd = f"az login --claims-challenge {claims_value}"
+        if options and options.get("claims"):
+            error_message = CLAIMS_UNSUPPORTED_ERROR.format(claims_value=options.get("claims"))
 
             # Add tenant if provided in options
-            tenant_id_from_options = options.get("tenant_id") if options else None
-            if tenant_id_from_options:
-                login_cmd += f" --tenant {tenant_id_from_options}"
+            if options.get("tenant_id"):
+                error_message += f" --tenant {options.get('tenant_id')}"
 
             # Add scope if provided
             if scopes:
-                login_cmd += f" --scope {scopes[0]}"
+                error_message += f" --scope {scopes[0]}"
 
-            raise CredentialUnavailableError(f"Failed to get token. Run {login_cmd}")
+            raise CredentialUnavailableError(message=error_message)
 
         tenant_id = options.get("tenant_id") if options else None
         if tenant_id:
