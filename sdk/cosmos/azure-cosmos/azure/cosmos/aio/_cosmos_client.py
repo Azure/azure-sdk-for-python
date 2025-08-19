@@ -174,7 +174,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         Must be used along with a logger to work.
     :keyword ~logging.Logger logger: Logger to be used for collecting request diagnostics. Can be passed in at client
         level (to log all requests) or at a single request level. Requests will be logged at INFO level.
-    :keyword bool no_response_on_write: Indicates whether service should be instructed to skip sending 
+    :keyword bool no_response_on_write: Indicates whether service should be instructed to skip sending
         response payloads for write operations on items by default unless specified differently per operation.
     :keyword int throughput_bucket: The desired throughput bucket for the client
     :keyword str user_agent_suffix: Allows user agent suffix to be specified when creating client
@@ -295,13 +295,13 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
-        etag = kwargs.get('etag')
+        etag = kwargs.get(Constants.Kwargs.ETAG)
         if etag is not None:
             warnings.warn(
                 "The 'etag' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
-        match_condition = kwargs.get('match_condition')
+        match_condition = kwargs.get(Constants.Kwargs.MATCH_CONDITION)
         if match_condition is not None:
             warnings.warn(
                 "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
@@ -353,13 +353,13 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
-        etag = kwargs.get('etag')
+        etag = kwargs.get(Constants.Kwargs.ETAG)
         if etag is not None:
             warnings.warn(
                 "The 'etag' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
-        match_condition = kwargs.get('match_condition')
+        match_condition = kwargs.get(Constants.Kwargs.MATCH_CONDITION)
         if match_condition is not None:
             warnings.warn(
                 "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
@@ -430,7 +430,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             kwargs[Constants.Kwargs.THROUGHPUT_BUCKET] = throughput_bucket
         feed_options = _build_options(kwargs)
         if max_item_count is not None:
-            feed_options["maxItemCount"] = max_item_count
+            feed_options[Constants.InternalOptions.MAX_ITEM_COUNT] = max_item_count
 
         result = self.client_connection.ReadDatabases(options=feed_options, **kwargs)
         if response_hook:
@@ -476,7 +476,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             kwargs[Constants.Kwargs.THROUGHPUT_BUCKET] = throughput_bucket
         feed_options = _build_options(kwargs)
         if max_item_count is not None:
-            feed_options["maxItemCount"] = max_item_count
+            feed_options[Constants.InternalOptions.MAX_ITEM_COUNT] = max_item_count
 
         result = self.client_connection.QueryDatabases(
             query=query if parameters is None else {"query": query, "parameters": parameters},
@@ -514,13 +514,13 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
-        etag = kwargs.get('etag')
+        etag = kwargs.get(Constants.Kwargs.ETAG)
         if etag is not None:
             warnings.warn(
                 "The 'etag' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
-        match_condition = kwargs.get('match_condition')
+        match_condition = kwargs.get(Constants.Kwargs.MATCH_CONDITION)
         if match_condition is not None:
             warnings.warn(
                 "The 'match_condition' flag does not apply to this method and is always ignored even if passed."

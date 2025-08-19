@@ -265,13 +265,13 @@ class ContainerProxy:
         :returns: A CosmosDict representing the new item. The dict will be empty if `no_response` is specified.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
-        etag = kwargs.get('etag')
+        etag = kwargs.get(Constants.Kwargs.ETAG)
         if etag is not None:
             warnings.warn(
                 "The 'etag' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
-        match_condition = kwargs.get('match_condition')
+        match_condition = kwargs.get(Constants.Kwargs.MATCH_CONDITION)
         if match_condition is not None:
             warnings.warn(
                 "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
@@ -1040,9 +1040,9 @@ class ContainerProxy:
         if priority is not None:
             kwargs[Constants.Kwargs.PRIORITY] = priority
         if etag is not None:
-            kwargs['etag'] = etag
+            kwargs[Constants.Kwargs.ETAG] = etag
         if match_condition is not None:
-            kwargs['match_condition'] = match_condition
+            kwargs[Constants.Kwargs.MATCH_CONDITION] = match_condition
         if no_response is not None:
             kwargs[Constants.Kwargs.NO_RESPONSE] = no_response
         if retry_write is not None:
@@ -1131,9 +1131,9 @@ class ContainerProxy:
         if priority is not None:
             kwargs[Constants.Kwargs.PRIORITY] = priority
         if etag is not None:
-            kwargs['etag'] = etag
+            kwargs[Constants.Kwargs.ETAG] = etag
         if match_condition is not None:
-            kwargs['match_condition'] = match_condition
+            kwargs[Constants.Kwargs.MATCH_CONDITION] = match_condition
         if no_response is not None:
             kwargs[Constants.Kwargs.NO_RESPONSE] = no_response
         if retry_write is not None:
@@ -1220,9 +1220,9 @@ class ContainerProxy:
         if priority is not None:
             kwargs[Constants.Kwargs.PRIORITY] = priority
         if etag is not None:
-            kwargs['etag'] = etag
+            kwargs[Constants.Kwargs.ETAG] = etag
         if match_condition is not None:
-            kwargs['match_condition'] = match_condition
+            kwargs[Constants.Kwargs.MATCH_CONDITION] = match_condition
         if no_response is not None:
             kwargs[Constants.Kwargs.NO_RESPONSE] = no_response
         if retry_write is not None:
@@ -1303,9 +1303,9 @@ class ContainerProxy:
         if initial_headers is not None:
             kwargs[Constants.Kwargs.INITIAL_HEADERS] = initial_headers
         if etag is not None:
-            kwargs['etag'] = etag
+            kwargs[Constants.Kwargs.ETAG] = etag
         if match_condition is not None:
-            kwargs['match_condition'] = match_condition
+            kwargs[Constants.Kwargs.MATCH_CONDITION] = match_condition
         if priority is not None:
             kwargs[Constants.Kwargs.PRIORITY] = priority
         if retry_write is not None:
@@ -1559,13 +1559,13 @@ class ContainerProxy:
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :rtype: None
         """
-        etag = kwargs.get('etag')
+        etag = kwargs.get(Constants.Kwargs.ETAG)
         if etag is not None:
             warnings.warn(
                 "The 'etag' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
-        match_condition = kwargs.get('match_condition')
+        match_condition = kwargs.get(Constants.Kwargs.MATCH_CONDITION)
         if match_condition is not None:
             warnings.warn(
                 "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
@@ -1627,13 +1627,13 @@ class ContainerProxy:
         :raises ~azure.cosmos.exceptions.CosmosBatchOperationError: A transactional batch operation failed in the batch.
         :rtype: ~azure.cosmos.CosmosList[Dict[str, Any]]
         """
-        etag = kwargs.get('etag')
+        etag = kwargs.get(Constants.Kwargs.ETAG)
         if etag is not None:
             warnings.warn(
                 "The 'etag' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
-        match_condition = kwargs.get('match_condition')
+        match_condition = kwargs.get(Constants.Kwargs.MATCH_CONDITION)
         if match_condition is not None:
             warnings.warn(
                 "The 'match_condition' flag does not apply to this method and is always ignored even if passed."

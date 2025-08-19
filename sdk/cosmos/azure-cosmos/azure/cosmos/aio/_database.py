@@ -249,13 +249,13 @@ class DatabaseProxy(object):
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
-        etag = kwargs.get('etag')
+        etag = kwargs.get(Constants.Kwargs.ETAG)
         if etag is not None:
             warnings.warn(
                 "The 'etag' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
-        match_condition = kwargs.get('match_condition')
+        match_condition = kwargs.get(Constants.Kwargs.MATCH_CONDITION)
         if match_condition is not None:
             warnings.warn(
                 "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
@@ -368,13 +368,13 @@ class DatabaseProxy(object):
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
-        etag = kwargs.get('etag')
+        etag = kwargs.get(Constants.Kwargs.ETAG)
         if etag is not None:
             warnings.warn(
                 "The 'etag' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
-        match_condition = kwargs.get('match_condition')
+        match_condition = kwargs.get(Constants.Kwargs.MATCH_CONDITION)
         if match_condition is not None:
             warnings.warn(
                 "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
@@ -474,7 +474,7 @@ class DatabaseProxy(object):
             kwargs[Constants.Kwargs.INITIAL_HEADERS] = initial_headers
         feed_options = _build_options(kwargs)
         if max_item_count is not None:
-            feed_options["maxItemCount"] = max_item_count
+            feed_options[Constants.InternalOptions.MAX_ITEM_COUNT] = max_item_count
 
         result = self.client_connection.ReadContainers(
             database_link=self.database_link, options=feed_options, **kwargs
@@ -519,7 +519,7 @@ class DatabaseProxy(object):
             kwargs[Constants.Kwargs.INITIAL_HEADERS] = initial_headers
         feed_options = _build_options(kwargs)
         if max_item_count is not None:
-            feed_options["maxItemCount"] = max_item_count
+            feed_options[Constants.InternalOptions.MAX_ITEM_COUNT] = max_item_count
 
         result = self.client_connection.QueryContainers(
             database_link=self.database_link,
@@ -593,13 +593,13 @@ class DatabaseProxy(object):
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
-        etag = kwargs.get('etag')
+        etag = kwargs.get(Constants.Kwargs.ETAG)
         if etag is not None:
             warnings.warn(
                 "The 'etag' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
-        match_condition = kwargs.get('match_condition')
+        match_condition = kwargs.get(Constants.Kwargs.MATCH_CONDITION)
         if match_condition is not None:
             warnings.warn(
                 "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
@@ -662,13 +662,13 @@ class DatabaseProxy(object):
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
-        etag = kwargs.get('etag')
+        etag = kwargs.get(Constants.Kwargs.ETAG)
         if etag is not None:
             warnings.warn(
                 "The 'etag' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
-        match_condition = kwargs.get('match_condition')
+        match_condition = kwargs.get(Constants.Kwargs.MATCH_CONDITION)
         if match_condition is not None:
             warnings.warn(
                 "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
@@ -768,7 +768,7 @@ class DatabaseProxy(object):
         """
         feed_options = _build_options(kwargs)
         if max_item_count is not None:
-            feed_options["maxItemCount"] = max_item_count
+            feed_options[Constants.InternalOptions.MAX_ITEM_COUNT] = max_item_count
 
         result = self.client_connection.ReadUsers(
             database_link=self.database_link, options=feed_options, **kwargs
@@ -804,7 +804,7 @@ class DatabaseProxy(object):
         """
         feed_options = _build_options(kwargs)
         if max_item_count is not None:
-            feed_options["maxItemCount"] = max_item_count
+            feed_options[Constants.InternalOptions.MAX_ITEM_COUNT] = max_item_count
 
         result = self.client_connection.QueryUsers(
             database_link=self.database_link,
