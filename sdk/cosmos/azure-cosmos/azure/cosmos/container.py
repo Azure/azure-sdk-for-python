@@ -283,14 +283,22 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
                 DeprecationWarning,
             )
-            request_options["populateQueryMetrics"] = populate_query_metrics
+            request_options[Constants.InternalOptions.POPULATE_QUERY_METRICS] = populate_query_metrics
         if post_trigger_include is not None:
-            request_options["postTriggerInclude"] = post_trigger_include
+            request_options[Constants.InternalOptions.POST_TRIGGER_INCLUDE] = post_trigger_include
         if max_integrated_cache_staleness_in_ms is not None:
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
-            request_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
+            request_options[
+
+                Constants.InternalOptions.MAX_INTEGRATED_CACHE_STALENESS
+
+            ] = max_integrated_cache_staleness_in_ms
         self._get_properties_with_options(request_options)
-        request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        request_options[
+
+            Constants.InternalOptions.CONTAINER_RID
+
+        ] = self.__get_client_container_caches()[self.container_link]["_rid"]
         return self.client_connection.ReadItem(document_link=doc_link, options=request_options, **kwargs)
 
     @distributed_trace
@@ -337,24 +345,32 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if throughput_bucket is not None:
             kwargs[Constants.Kwargs.THROUGHPUT_BUCKET] = throughput_bucket
         if response_hook is not None:
-            kwargs['response_hook'] = response_hook
+            kwargs[Constants.Kwargs.RESPONSE_HOOK] = response_hook
         feed_options = build_options(kwargs)
         if max_item_count is not None:
-            feed_options["maxItemCount"] = max_item_count
+            feed_options[Constants.InternalOptions.MAX_ITEM_COUNT] = max_item_count
         if populate_query_metrics is not None:
             warnings.warn(
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
                 DeprecationWarning,
             )
-            feed_options["populateQueryMetrics"] = populate_query_metrics
+            feed_options[Constants.InternalOptions.POPULATE_QUERY_METRICS] = populate_query_metrics
         if max_integrated_cache_staleness_in_ms:
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
-            feed_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
+            feed_options[
+
+                Constants.InternalOptions.MAX_INTEGRATED_CACHE_STALENESS
+
+            ] = max_integrated_cache_staleness_in_ms
         if response_hook and hasattr(response_hook, "clear"):
             response_hook.clear()
 
         self._get_properties_with_options(feed_options)
-        feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        feed_options[
+
+            Constants.InternalOptions.CONTAINER_RID
+
+        ] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         items = self.client_connection.ReadItems(
             collection_link=self.container_link, feed_options=feed_options, response_hook=response_hook, **kwargs)
@@ -583,8 +599,12 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if "continuation" in feed_options:
             change_feed_state_context["continuation"] = feed_options.pop("continuation")
 
-        feed_options["changeFeedStateContext"] = change_feed_state_context
-        feed_options["containerRID"] = container_properties["_rid"]
+        feed_options[Constants.InternalOptions.CHANGE_FEED_STATE_CONTEXT] = change_feed_state_context
+        feed_options[
+
+            Constants.InternalOptions.CONTAINER_RID
+
+        ] = container_properties["_rid"]
 
         response_hook = kwargs.pop("response_hook", None)
         if hasattr(response_hook, "clear"):
@@ -842,23 +862,39 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
         # Update 'feed_options' from 'kwargs'
         if utils.valid_key_value_exist(kwargs, "enable_cross_partition_query"):
-            feed_options["enableCrossPartitionQuery"] = kwargs.pop("enable_cross_partition_query")
+            feed_options[
+
+                Constants.InternalOptions.ENABLE_CROSS_PARTITION_QUERY
+
+            ] = kwargs.pop("enable_cross_partition_query")
         if utils.valid_key_value_exist(kwargs, "max_item_count"):
-            feed_options["maxItemCount"] = kwargs.pop("max_item_count")
+            feed_options[Constants.InternalOptions.MAX_ITEM_COUNT] = kwargs.pop("max_item_count")
         if utils.valid_key_value_exist(kwargs, "populate_query_metrics"):
-            feed_options["populateQueryMetrics"] = kwargs.pop("populate_query_metrics")
+            feed_options[Constants.InternalOptions.POPULATE_QUERY_METRICS] = kwargs.pop("populate_query_metrics")
         if utils.valid_key_value_exist(kwargs, "populate_index_metrics"):
-            feed_options["populateIndexMetrics"] = kwargs.pop("populate_index_metrics")
+            feed_options[Constants.InternalOptions.POPULATE_INDEX_METRICS] = kwargs.pop("populate_index_metrics")
         if utils.valid_key_value_exist(kwargs, "enable_scan_in_query"):
-            feed_options["enableScanInQuery"] = kwargs.pop("enable_scan_in_query")
+            feed_options[Constants.InternalOptions.ENABLE_SCAN_IN_QUERY] = kwargs.pop("enable_scan_in_query")
         if utils.valid_key_value_exist(kwargs, "max_integrated_cache_staleness_in_ms"):
             max_integrated_cache_staleness_in_ms = kwargs.pop("max_integrated_cache_staleness_in_ms")
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
-            feed_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
+            feed_options[
+
+                Constants.InternalOptions.MAX_INTEGRATED_CACHE_STALENESS
+
+            ] = max_integrated_cache_staleness_in_ms
         if utils.valid_key_value_exist(kwargs, "continuation_token_limit"):
-            feed_options["responseContinuationTokenLimitInKb"] = kwargs.pop("continuation_token_limit")
-        feed_options["correlatedActivityId"] = GenerateGuidId()
-        feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+            feed_options[
+
+                Constants.InternalOptions.RESPONSE_CONTINUATION_TOKEN_LIMIT_IN_KB
+
+            ] = kwargs.pop("continuation_token_limit")
+        feed_options[Constants.InternalOptions.CORRELATED_ACTIVITY_ID] = GenerateGuidId()
+        feed_options[
+
+            Constants.InternalOptions.CONTAINER_RID
+
+        ] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         # Set query with 'query' and 'parameters' from kwargs
         if utils.valid_key_value_exist(kwargs, "parameters"):
@@ -876,7 +912,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 kwargs["prefix_partition_key_value"] = cast(_SequentialPartitionKeyType, partition_key_value)
             else:
                 # Add to feed_options, only when feed_range not given and partition_key was not prefixed partition_key
-                feed_options["partitionKey"] = partition_key_value
+                feed_options[Constants.InternalOptions.PARTITION_KEY] = partition_key_value
 
         # Set 'partition_key' for QueryItems method. This can be 'None' if feed range or prefix partition key was set
         partition_key = feed_options.get("partitionKey")
@@ -983,10 +1019,14 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
                 DeprecationWarning,
             )
-            request_options["populateQueryMetrics"] = populate_query_metrics
+            request_options[Constants.InternalOptions.POPULATE_QUERY_METRICS] = populate_query_metrics
 
         self._get_properties_with_options(request_options)
-        request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        request_options[
+
+            Constants.InternalOptions.CONTAINER_RID
+
+        ] = self.__get_client_container_caches()[self.container_link]["_rid"]
         result = self.client_connection.ReplaceItem(
             document_link=item_link,
             new_document=body,
@@ -1076,9 +1116,13 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
                 DeprecationWarning,
             )
-            request_options["populateQueryMetrics"] = populate_query_metrics
+            request_options[Constants.InternalOptions.POPULATE_QUERY_METRICS] = populate_query_metrics
         self._get_properties_with_options(request_options)
-        request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        request_options[
+
+            Constants.InternalOptions.CONTAINER_RID
+
+        ] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         result = self.client_connection.UpsertItem(
                 database_or_container_link=self.container_link,
@@ -1172,19 +1216,23 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if throughput_bucket is not None:
             kwargs[Constants.Kwargs.THROUGHPUT_BUCKET] = throughput_bucket
         if response_hook is not None:
-            kwargs['response_hook'] = response_hook
+            kwargs[Constants.Kwargs.RESPONSE_HOOK] = response_hook
         request_options = build_options(kwargs)
-        request_options["disableAutomaticIdGeneration"] = not enable_automatic_id_generation
+        request_options[Constants.InternalOptions.DISABLE_AUTOMATIC_ID_GENERATION] = not enable_automatic_id_generation
         if populate_query_metrics:
             warnings.warn(
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
                 DeprecationWarning,
             )
-            request_options["populateQueryMetrics"] = populate_query_metrics
+            request_options[Constants.InternalOptions.POPULATE_QUERY_METRICS] = populate_query_metrics
         if indexing_directive is not None:
-            request_options["indexingDirective"] = indexing_directive
+            request_options[Constants.InternalOptions.INDEXING_DIRECTIVE] = indexing_directive
         self._get_properties_with_options(request_options)
-        request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        request_options[
+
+            Constants.InternalOptions.CONTAINER_RID
+
+        ] = self.__get_client_container_caches()[self.container_link]["_rid"]
         result = self.client_connection.CreateItem(
                 database_or_container_link=self.container_link, document=body, options=request_options, **kwargs)
         return result
@@ -1276,7 +1324,11 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             request_options[Constants.InternalOptions.FILTER_PREDICATE] = filter_predicate
 
         self._get_properties_with_options(request_options)
-        request_options[Constants.InternalOptions.CONTAINER_RID] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        request_options[
+
+            Constants.InternalOptions.CONTAINER_RID
+
+        ] = self.__get_client_container_caches()[self.container_link]["_rid"]
         item_link = self._get_document_link(item)
         result = self.client_connection.PatchItem(
             document_link=item_link,
@@ -1346,12 +1398,16 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if throughput_bucket is not None:
             kwargs[Constants.Kwargs.THROUGHPUT_BUCKET] = throughput_bucket
         if response_hook is not None:
-            kwargs['response_hook'] = response_hook
+            kwargs[Constants.Kwargs.RESPONSE_HOOK] = response_hook
         request_options = build_options(kwargs)
-        request_options["partitionKey"] = self._set_partition_key(partition_key)
-        request_options["disableAutomaticIdGeneration"] = True
+        request_options[Constants.InternalOptions.PARTITION_KEY] = self._set_partition_key(partition_key)
+        request_options[Constants.InternalOptions.DISABLE_AUTOMATIC_ID_GENERATION] = True
         container_properties = self._get_properties_with_options(request_options)
-        request_options["containerRID"] = container_properties["_rid"]
+        request_options[
+
+            Constants.InternalOptions.CONTAINER_RID
+
+        ] = container_properties["_rid"]
 
         return self.client_connection.Batch(
             collection_link=self.container_link, batch_operations=batch_operations, options=request_options, **kwargs)
@@ -1431,13 +1487,17 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
                 DeprecationWarning,
             )
-            request_options["populateQueryMetrics"] = populate_query_metrics
+            request_options[Constants.InternalOptions.POPULATE_QUERY_METRICS] = populate_query_metrics
         if pre_trigger_include is not None:
-            request_options["preTriggerInclude"] = pre_trigger_include
+            request_options[Constants.InternalOptions.PRE_TRIGGER_INCLUDE] = pre_trigger_include
         if post_trigger_include is not None:
-            request_options["postTriggerInclude"] = post_trigger_include
+            request_options[Constants.InternalOptions.POST_TRIGGER_INCLUDE] = post_trigger_include
         self._get_properties_with_options(request_options)
-        request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        request_options[
+
+            Constants.InternalOptions.CONTAINER_RID
+
+        ] = self.__get_client_container_caches()[self.container_link]["_rid"]
         document_link = self._get_document_link(item)
         self.client_connection.DeleteItem(document_link=document_link, options=request_options, **kwargs)
 
@@ -1541,9 +1601,13 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         """
         feed_options = build_options(kwargs)
         if max_item_count is not None:
-            feed_options["maxItemCount"] = max_item_count
+            feed_options[Constants.InternalOptions.MAX_ITEM_COUNT] = max_item_count
         if self.container_link in self.__get_client_container_caches():
-            feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+            feed_options[
+
+                Constants.InternalOptions.CONTAINER_RID
+
+            ] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         result = self.client_connection.ReadConflicts(
             collection_link=self.container_link, feed_options=feed_options, **kwargs
@@ -1582,13 +1646,21 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         """
         feed_options = build_options(kwargs)
         if max_item_count is not None:
-            feed_options["maxItemCount"] = max_item_count
+            feed_options[Constants.InternalOptions.MAX_ITEM_COUNT] = max_item_count
         if enable_cross_partition_query is not None:
-            feed_options["enableCrossPartitionQuery"] = enable_cross_partition_query
+            feed_options[
+
+                Constants.InternalOptions.ENABLE_CROSS_PARTITION_QUERY
+
+            ] = enable_cross_partition_query
         if partition_key is not None:
-            feed_options["partitionKey"] = self._set_partition_key(partition_key)
+            feed_options[Constants.InternalOptions.PARTITION_KEY] = self._set_partition_key(partition_key)
         if self.container_link in self.__get_client_container_caches():
-            feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+            feed_options[
+
+                Constants.InternalOptions.CONTAINER_RID
+
+            ] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         result = self.client_connection.QueryConflicts(
             collection_link=self.container_link,
@@ -1620,9 +1692,13 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         """
         request_options = build_options(kwargs)
         if partition_key is not None:
-            request_options["partitionKey"] = self._set_partition_key(partition_key)
+            request_options[Constants.InternalOptions.PARTITION_KEY] = self._set_partition_key(partition_key)
         if self.container_link in self.__get_client_container_caches():
-            request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+            request_options[
+
+                Constants.InternalOptions.CONTAINER_RID
+
+            ] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         return self.client_connection.ReadConflict(
             conflict_link=self._get_conflict_link(conflict), options=request_options, **kwargs
@@ -1650,9 +1726,13 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         """
         request_options = build_options(kwargs)
         if partition_key is not None:
-            request_options["partitionKey"] = self._set_partition_key(partition_key)
+            request_options[Constants.InternalOptions.PARTITION_KEY] = self._set_partition_key(partition_key)
         if self.container_link in self.__get_client_container_caches():
-            request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+            request_options[
+
+                Constants.InternalOptions.CONTAINER_RID
+
+            ] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         self.client_connection.DeleteConflict(
             conflict_link=self._get_conflict_link(conflict), options=request_options, **kwargs
@@ -1712,12 +1792,16 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if throughput_bucket is not None:
             kwargs[Constants.Kwargs.THROUGHPUT_BUCKET] = throughput_bucket
         if response_hook is not None:
-            kwargs['response_hook'] = response_hook
+            kwargs[Constants.Kwargs.RESPONSE_HOOK] = response_hook
         request_options = build_options(kwargs)
         # regardless if partition key is valid we set it as invalid partition keys are set to a default empty value
-        request_options["partitionKey"] = self._set_partition_key(partition_key)
+        request_options[Constants.InternalOptions.PARTITION_KEY] = self._set_partition_key(partition_key)
         self._get_properties_with_options(request_options)
-        request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        request_options[
+
+            Constants.InternalOptions.CONTAINER_RID
+
+        ] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         self.client_connection.DeleteAllItemsByPartitionKey(
             collection_link=self.container_link, options=request_options, **kwargs)
