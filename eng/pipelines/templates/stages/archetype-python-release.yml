@@ -209,7 +209,7 @@ stages:
                 inputs:
                   filePath: /eng/common/scripts/Mark-ReleasePlanCompletion.ps1
                   arguments: >
-                    -PackageInfoFilePath '${{parameters.ConfigFileDir}}/${{parameters.PackageName}}.json'
+                    -PackageInfoFilePath '$(Pipeline.Workspace)/${{parameters.ArtifactName}}/PackageInfo/${{artifact.name}}.json'
                   pwsh: true
                 displayName: Mark package as released
                 continueOnError: true
