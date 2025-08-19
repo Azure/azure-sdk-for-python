@@ -501,6 +501,32 @@ class EvaluationEvaluateSamples(object):
         )
         # [END tool_call_accuracy_evaluator]
 
+        # [START path_efficiency_evaluator]
+        from azure.ai.evaluation import PathEfficiencyEvaluator
+
+        path_efficiency_evaluator = PathEfficiencyEvaluator(
+            precision_threshold=0.7, recall_threshold=0.8, f1_score_threshold=0.75
+        )
+
+        response = [
+            {
+                "role": "assistant",
+                "content": [{"type": "tool_call", "tool_call_id": "call_1", "name": "search", "arguments": {}}],
+            },
+            {
+                "role": "assistant",
+                "content": [{"type": "tool_call", "tool_call_id": "call_2", "name": "analyze", "arguments": {}}],
+            },
+            {
+                "role": "assistant",
+                "content": [{"type": "tool_call", "tool_call_id": "call_3", "name": "report", "arguments": {}}],
+            },
+        ]
+        ground_truth = ["search", "analyze", "report"]
+
+        path_efficiency_evaluator(response=response, ground_truth=ground_truth)
+        # [END path_efficiency_evaluator]
+
         # [START document_retrieval_evaluator]
         from azure.ai.evaluation import DocumentRetrievalEvaluator
 
