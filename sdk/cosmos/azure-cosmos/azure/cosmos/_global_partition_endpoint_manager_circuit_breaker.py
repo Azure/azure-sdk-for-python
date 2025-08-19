@@ -35,6 +35,8 @@ from azure.cosmos.http_constants import HttpHeaders
 if TYPE_CHECKING:
     from azure.cosmos._cosmos_client_connection import CosmosClientConnection
 
+#cspell:ignore ppcb
+
 class _GlobalPartitionEndpointManagerForCircuitBreaker(_GlobalEndpointManager):
     """
     This internal class implements the logic for partition endpoint management for

@@ -21,13 +21,12 @@ class _TimeoutFailoverRetryPolicy(object):
         # If an account only has 1 region, then we still want to retry once on the same region
         # We want this to be the default retry attempts as paging through a query means there are requests without
         # a request object
-        self._max_retry_attempt_count = len(self.global_endpoint_manager.location_cache
-                                            .read_regional_routing_contexts) + 1
+        self._max_retry_attempt_count = max(2, len(self.global_endpoint_manager.location_cache
+                                            .read_regional_routing_contexts))
        # If the request is a write operation, we only want to retry once if retry write is enabled
         if self.request and _OperationType.IsWriteOperation(self.request.operation_type):
-            self._max_retry_attempt_count = len(
-                self.global_endpoint_manager.location_cache.write_regional_routing_contexts
-            ) + 1
+            self._max_retry_attempt_count = max(2, len(
+                self.global_endpoint_manager.location_cache.write_regional_routing_contexts))
         self.retry_count = 0
         self.connection_policy = connection_policy
         self.request = args[0] if args else None

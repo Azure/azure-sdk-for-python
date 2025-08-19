@@ -24,6 +24,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger("azure.cosmos._GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover")
 
 # pylint: disable=name-too-long, protected-access
+#cspell:ignore PPAF, ppaf, ppcb
 
 class PartitionLevelFailoverInfo:
     """
