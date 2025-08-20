@@ -11,6 +11,6 @@ steps:
       scriptPath: $(Build.SourcesDirectory)/eng/common/scripts/Mark-ReleasePlanCompletion.ps1
       arguments: -PackageInfoFilePath '${{ parameters.ConfigFileDir }}/${{ parameters.PackageArtifactName }}.json'
       workingDirectory: $(Pipeline.Workspace)
-      displayName: Mark package as released
-      continueOnError: true
-      condition: and(succeeded(), ne(variables['Skip.MarkReleaseCompletion'], 'true'))
+    displayName: Mark package as released
+    continueOnError: true
+    condition: and(succeeded(), ne(variables['Skip.MarkReleaseCompletion'], 'true'))
