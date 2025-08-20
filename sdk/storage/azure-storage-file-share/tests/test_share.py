@@ -21,6 +21,7 @@ from azure.core.pipeline.transport import RequestsTransport
 from azure.storage.fileshare import (
     AccessPolicy,
     AccountSasPermissions,
+    FileSasPermissions,
     generate_account_sas,
     generate_file_sas,
     generate_share_sas,
@@ -1897,8 +1898,9 @@ class TestStorageShare(StorageRecordedTestCase):
 
         token_credential = self.get_credential(ShareServiceClient)
         service = ShareServiceClient(
-            self.account_url(storage_account_name, "queue"),
-            credential=token_credential
+            self.account_url(storage_account_name, "file"),
+            credential=token_credential,
+            token_intent="backup"
         )
         start = self.get_datetime_variable(variables, 'start', datetime.utcnow())
         expiry = self.get_datetime_variable(variables, 'expiry', datetime.utcnow() + timedelta(hours=1))
@@ -1934,10 +1936,11 @@ class TestStorageShare(StorageRecordedTestCase):
         data = b"abc123"
 
         self._setup(storage_account_name, storage_account_key)
-        token_credential = self.get_credential(ShareClient)
+        token_credential = self.get_credential(ShareServiceClient)
         service = ShareServiceClient(
             self.account_url(storage_account_name, "file"),
-            credential=token_credential
+            credential=token_credential,
+            token_intent="backup"
         )
         start = self.get_datetime_variable(variables, 'start', datetime.utcnow())
         expiry = self.get_datetime_variable(variables, 'expiry', datetime.utcnow() + timedelta(hours=1))
@@ -1956,7 +1959,7 @@ class TestStorageShare(StorageRecordedTestCase):
             generate_share_sas,
             share.account_name,
             share.share_name,
-            share.credential.account_key,
+            storage_account_key,
             permission=ShareSasPermissions(read=True, list=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
             user_delegation_key=user_delegation_key,
@@ -1966,10 +1969,32 @@ class TestStorageShare(StorageRecordedTestCase):
 
         share_client = ShareClient.from_share_url(
             f"{share.url}?{share_token}",
-            credential=token_credential
+            credential=token_credential,
+            token_intent="backup"
         )
         structure = list(share_client.list_directories_and_files())
         assert structure is not None
+
+        file_token = self.generate_sas(
+            generate_file_sas,
+            file.account_name,
+            file.share_name,
+            file.file_path,
+            storage_account_key,
+            permission=FileSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            user_delegation_key=user_delegation_key,
+            user_delegation_oid=user_delegation_oid
+        )
+        assert "sduoid=" + user_delegation_oid in file_token
+
+        file_client = ShareFileClient.from_file_url(
+            f"{file.url}?{file_token}",
+            credential=token_credential,
+            token_intent="backup"
+        )
+        content = file_client.download_file().readall()
+        assert content == data
 
         return variables
 
