@@ -21,11 +21,11 @@ class TestContainerAppsAPIDaprSubscriptionsOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_dapr_subscriptions_list(self, resource_group):
         response = self.client.dapr_subscriptions.list(
             resource_group_name=resource_group.name,
             environment_name="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-02-02-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -33,12 +33,12 @@ class TestContainerAppsAPIDaprSubscriptionsOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_dapr_subscriptions_get(self, resource_group):
         response = await self.client.dapr_subscriptions.get(
             resource_group_name=resource_group.name,
             environment_name="str",
             name="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-02-02-preview",
         )
 
         # please add some check logic here by yourself
@@ -46,7 +46,7 @@ class TestContainerAppsAPIDaprSubscriptionsOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create_or_update(self, resource_group):
+    async def test_dapr_subscriptions_create_or_update(self, resource_group):
         response = await self.client.dapr_subscriptions.create_or_update(
             resource_group_name=resource_group.name,
             environment_name="str",
@@ -71,7 +71,7 @@ class TestContainerAppsAPIDaprSubscriptionsOperationsAsync(AzureMgmtRecordedTest
                 "topic": "str",
                 "type": "str",
             },
-            api_version="2024-08-02-preview",
+            api_version="2025-02-02-preview",
         )
 
         # please add some check logic here by yourself
@@ -79,12 +79,12 @@ class TestContainerAppsAPIDaprSubscriptionsOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_delete(self, resource_group):
+    async def test_dapr_subscriptions_delete(self, resource_group):
         response = await self.client.dapr_subscriptions.delete(
             resource_group_name=resource_group.name,
             environment_name="str",
             name="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-02-02-preview",
         )
 
         # please add some check logic here by yourself
