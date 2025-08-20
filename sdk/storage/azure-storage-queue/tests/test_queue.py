@@ -1465,7 +1465,7 @@ class TestStorageQueue(StorageRecordedTestCase):
 
     @pytest.mark.live_test_only
     @QueuePreparer()
-    def test_user_delegation_oid_35(self, **kwargs):
+    def test_user_delegation_oid(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
         variables = kwargs.pop("variables", {})
