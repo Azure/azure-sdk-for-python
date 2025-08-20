@@ -16,7 +16,6 @@ from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
 
 from azure.monitor.opentelemetry.exporter._constants import (
     _APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW,
-    _DEFAULT_STATS_SHORT_EXPORT_INTERVAL,
     CustomerStatsbeatProperties,
     DropCode,
     DropCodeType,
@@ -34,8 +33,14 @@ from azure.monitor.opentelemetry.exporter._utils import (
 
 from azure.monitor.opentelemetry.exporter.statsbeat._utils import (
     categorize_status_code,
+    _get_customer_sdkstats_export_interval,
 )
 from azure.monitor.opentelemetry.exporter import VERSION
+
+from azure.monitor.opentelemetry.exporter.statsbeat._state import (
+    _CUSTOMER_STATSBEAT_STATE,
+    _CUSTOMER_STATSBEAT_STATE_LOCK,
+)
 
 _CUSTOMER_STATSBEAT_MAP_LOCK = threading.Lock()
 
@@ -62,7 +67,7 @@ class CustomerStatsbeatMetrics(metaclass=Singleton): # pylint: disable=too-many-
         self._customer_statsbeat_exporter._is_customer_statsbeat = True
         metric_reader_options = {
             "exporter": self._customer_statsbeat_exporter,
-            "export_interval_millis": _DEFAULT_STATS_SHORT_EXPORT_INTERVAL
+            "export_interval_millis": _get_customer_sdkstats_export_interval()
         }
         self._customer_statsbeat_metric_reader = PeriodicExportingMetricReader(**metric_reader_options)
         self._customer_statsbeat_meter_provider = MeterProvider(
@@ -256,10 +261,6 @@ def collect_customer_statsbeat(exporter):
     if hasattr(exporter, 'storage') and exporter.storage:
         exporter.storage._customer_statsbeat_metrics = _CUSTOMER_STATSBEAT_METRICS
 
-_CUSTOMER_STATSBEAT_STATE = {
-    "SHUTDOWN": False,
-}
-_CUSTOMER_STATSBEAT_STATE_LOCK = threading.Lock()
 
 def shutdown_customer_statsbeat_metrics() -> None:
     global _CUSTOMER_STATSBEAT_METRICS
@@ -276,6 +277,3 @@ def shutdown_customer_statsbeat_metrics() -> None:
         if shutdown_success:
             with _CUSTOMER_STATSBEAT_STATE_LOCK:
                 _CUSTOMER_STATSBEAT_STATE["SHUTDOWN"] = True
-
-def get_customer_statsbeat_shutdown():
-    return _CUSTOMER_STATSBEAT_STATE["SHUTDOWN"]

@@ -229,6 +229,33 @@ foo = Foo(
 )
 ```
 
+## Logging
+
+Azure libraries follow the guidance of Python's standard [logging](https://docs.python.org/3/library/logging.html) module. By following the Python documentation on logging, you should be able to configure logging for Azure libraries effectively.
+
+Azure library loggers use a dot-based separated syntax, where the first section is always `azure`, followed by the package name. For example, the Azure Core library uses logger names that start with `azure.core`.
+
+Here's an example of how to configure logging for Azure libraries:
+
+```python
+import logging
+import sys
+
+# Enable detailed console logs across Azure libraries
+azure_logger = logging.getLogger("azure")
+azure_logger.setLevel(logging.DEBUG)
+azure_logger.addHandler(logging.StreamHandler(stream=sys.stdout))
+
+# Exclude detailed logs for network calls associated with getting Entra ID token.
+identity_logger = logging.getLogger("azure.identity")
+identity_logger.setLevel(logging.ERROR)
+
+# Make sure regular (redacted) detailed azure.core logs are not shown, as we are about to
+# turn on non-redacted logs by passing 'logging_enable=True' to the client constructor 
+logger = logging.getLogger("azure.core.pipeline.policies.http_logging_policy")
+logger.setLevel(logging.ERROR)
+```
+
 ## Contributing
 
 This project welcomes contributions and suggestions. Most contributions require

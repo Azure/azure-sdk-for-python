@@ -141,7 +141,7 @@ async def recorded_test(test_proxy: None, request: "FixtureRequest") -> "Dict[st
     """Fixture that redirects network requests to target the azure-sdk-tools test proxy.
 
     Use with recorded tests. For more details and usage examples, refer to
-    https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md.
+    https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#write-or-run-tests.
 
     :param test_proxy: The fixture responsible for starting up the test proxy server.
     :type test_proxy: None

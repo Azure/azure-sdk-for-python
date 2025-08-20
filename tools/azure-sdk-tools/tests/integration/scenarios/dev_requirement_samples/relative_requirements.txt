@@ -1,8 +1,9 @@
+../../keyvault/azure-keyvault-keys # include a package that is pyproject.toml based
 tests/testserver_tests/coretestserver
 -e tests/testserver_tests/coretestserver
 -e ../../identity/azure-identity
 ../../identity/azure-identity
-
+# random comment that should be ignored
 ../azure-mgmt-core
 -e ../azure-mgmt-core
 ../../../tools/azure-sdk-tools[build]

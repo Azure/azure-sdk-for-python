@@ -1,6 +1,40 @@
 
-
 # Release History
+
+## 1.2.0b3 (Unreleased)
+
+### Breaking Changes
+
+### Features Added
+
+- Add `RunStepDetailsActivity`, describing MCP function parameters.
+- Add `RunStepDeltaCustomBingGroundingToolCall`, describing `BingCustomSearchTool` updates in streaming scenario.
+
+### Bugs Fixed
+
+- Fixed the issue when the `create_and_process` call hangs if MCP tool approval is required.
+
+### Sample updates
+
+- Bing Grounding and Bing Custom Search samples were fixed to correctly present references.
+
+## 1.2.0b2 (2025-08-12)
+
+### Features Added
+
+- Add support for Browser Automation tool.
+- Add support for environment variable `OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT` as defined by
+[OpenTelemetry](https://opentelemetry.io/), to control tracing of user and Agent messages.
+
+### Bugs Fixed
+
+- Added `RunStepConnectedAgentToolCall` and `RunStepDeltaConnectedAgentToolCall` for deserializing Connected
+Agent tool updates in non-streaming and streaming scenarios.
+
+### Sample updates
+
+- Add new Browser Automation tool samples, named `sample_agents_browser_automation.py`
+and `sample_agents_browser_automation_async.py`.
 
 ## 1.2.0b1 (2025-08-05)
 
@@ -15,6 +49,7 @@
 
 ### Bugs Fixed
 - Fixed issues where the `runs.create_and_process` API call did not correctly handle the `AzureAISearchTool`, `FileSearchTool`, and `CodeInterpreterTool` when specified in the toolset parameter.
+- Added classes for deserialization of `RunStepDeltaAzureAISearchToolCall`, `RunStepDeltaOpenAPIToolCall` and `RunStepDeltaDeepResearchToolCall`, required to get the real time updates when Azure AI Search, OpenAPI or Deep Research tools are being used during streaming scenarios.
 
 ### Sample updates
 - Updated `sample_agents_deep_research.py` and `sample_agents_deep_research_async.py` for citations.
