@@ -179,7 +179,7 @@
 /sdk/monitor/azure-monitor-ingestion/                                @pvaneck @Azure/azure-sdk-write-monitor-data-plane
 
 # PRLabel: %Monitor
-/sdk/monitor/azure-monitor-query/                                    @pvaneck @Azure/azure-sdk-write-monitor-data-plane
+/sdk/monitor/azure-monitor-query/                                    @Azure/azure-sdk-write-monitor-query-logs
 
 # PRLabel: %Monitor
 /sdk/monitor/azure-monitor-querymetrics/                             @Azure/azure-sdk-write-monitor-query-metrics

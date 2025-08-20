@@ -45,7 +45,7 @@ from ._red_team_result import RedTeamResult
 from ._attack_strategy import AttackStrategy
 from ._attack_objective_generator import (
     RiskCategory,
-    _InternalRiskCategory,
+    SupportedLanguages,
     _AttackObjectiveGenerator,
 )
 
@@ -69,6 +69,7 @@ from ._utils.formatting_utils import (
 from ._utils.strategy_utils import get_chat_target, get_converter_for_strategy
 from ._utils.retry_utils import create_standard_retry_manager
 from ._utils.file_utils import create_file_manager
+from ._utils.metric_mapping import get_attack_objective_from_risk_category
 
 from ._orchestrator_manager import OrchestratorManager
 from ._evaluation_processor import EvaluationProcessor
@@ -95,13 +96,15 @@ class RedTeam:
     :type application_scenario: Optional[str]
     :param custom_attack_seed_prompts: Path to a JSON file containing custom attack seed prompts (can be absolute or relative path)
     :type custom_attack_seed_prompts: Optional[str]
+    :param language: Language to use for attack objectives generation. Defaults to English.
+    :type language: SupportedLanguages
     :param output_dir: Directory to save output files (optional)
     :type output_dir: Optional[str]
     :param attack_success_thresholds: Threshold configuration for determining attack success.
         Should be a dictionary mapping risk categories (RiskCategory enum values) to threshold values,
         or None to use default binary evaluation (evaluation results determine success).
         When using thresholds, scores >= threshold are considered successful attacks.
-    :type attack_success_thresholds: Optional[Dict[Union[RiskCategory, _InternalRiskCategory], int]]
+    :type attack_success_thresholds: Optional[Dict[RiskCategory, int]]
     """
 
     def __init__(
@@ -113,6 +116,7 @@ class RedTeam:
         num_objectives: int = 10,
         application_scenario: Optional[str] = None,
         custom_attack_seed_prompts: Optional[str] = None,
+        language: SupportedLanguages = SupportedLanguages.English,
         output_dir=".",
         attack_success_thresholds: Optional[Dict[RiskCategory, int]] = None,
     ):
@@ -135,6 +139,8 @@ class RedTeam:
         :type application_scenario: Optional[str]
         :param custom_attack_seed_prompts: Path to a JSON file with custom attack prompts
         :type custom_attack_seed_prompts: Optional[str]
+        :param language: Language to use for attack objectives generation. Defaults to English.
+        :type language: SupportedLanguages
         :param output_dir: Directory to save evaluation outputs and logs. Defaults to current working directory.
         :type output_dir: str
         :param attack_success_thresholds: Threshold configuration for determining attack success.
@@ -147,6 +153,7 @@ class RedTeam:
         self.azure_ai_project = validate_azure_ai_project(azure_ai_project)
         self.credential = credential
         self.output_dir = output_dir
+        self.language = language
         self._one_dp_project = is_onedp_project(azure_ai_project)
 
         # Configure attack success thresholds
@@ -198,6 +205,9 @@ class RedTeam:
         # Keep track of data and eval result file names
         self.red_team_info = {}
 
+        # keep track of prompt content to context mapping for evaluation
+        self.prompt_to_context = {}
+
         # Initialize PyRIT
         initialize_pyrit(memory_db_type=DUCK_DB)
 
@@ -222,7 +232,7 @@ class RedTeam:
         self.logger.debug("RedTeam initialized successfully")
 
     def _configure_attack_success_thresholds(
-        self, attack_success_thresholds: Optional[Dict[Union[RiskCategory, _InternalRiskCategory], int]]
+        self, attack_success_thresholds: Optional[Dict[RiskCategory, int]]
     ) -> Dict[str, int]:
         """Configure attack success thresholds for different risk categories."""
         if attack_success_thresholds is None:
@@ -247,9 +257,7 @@ class RedTeam:
             if hasattr(key, "value"):
                 category_key = key.value
             else:
-                raise ValueError(
-                    f"attack_success_thresholds keys must be RiskCategory or _InternalRiskCategory instances, got: {type(key)}"
-                )
+                raise ValueError(f"attack_success_thresholds keys must be RiskCategory instance, got: {type(key)}")
 
             configured_thresholds[category_key] = value
 
@@ -325,7 +333,7 @@ class RedTeam:
         attack_objective_generator = self.attack_objective_generator
 
         # Convert risk category to lowercase for consistent caching
-        risk_cat_value = risk_category.value.lower()
+        risk_cat_value = get_attack_objective_from_risk_category(risk_category).lower()
         num_objectives = attack_objective_generator.num_objectives
 
         log_subsection_header(
@@ -392,7 +400,11 @@ class RedTeam:
             if "messages" in obj and len(obj["messages"]) > 0:
                 message = obj["messages"][0]
                 if isinstance(message, dict) and "content" in message:
-                    selected_prompts.append(message["content"])
+                    content = message["content"]
+                    context = message.get("context", "")
+                    selected_prompts.append(content)
+                    # Store mapping of content to context for later evaluation
+                    self.prompt_to_context[content] = context
 
         # Store in cache and return
         self._cache_attack_objectives(current_key, risk_cat_value, strategy, selected_prompts, selected_cat_objectives)
@@ -429,6 +441,7 @@ class RedTeam:
                     risk_category=other_risk,
                     application_scenario=application_scenario or "",
                     strategy="tense",
+                    language=self.language.value,
                     scan_session_id=self.scan_session_id,
                 )
             else:
@@ -437,6 +450,7 @@ class RedTeam:
                     risk_category=other_risk,
                     application_scenario=application_scenario or "",
                     strategy=None,
+                    language=self.language.value,
                     scan_session_id=self.scan_session_id,
                 )
 
@@ -535,7 +549,11 @@ class RedTeam:
             if "messages" in obj and len(obj["messages"]) > 0:
                 message = obj["messages"][0]
                 if isinstance(message, dict) and "content" in message:
-                    selected_prompts.append(message["content"])
+                    content = message["content"]
+                    context = message.get("context", "")
+                    selected_prompts.append(content)
+                    # Store mapping of content to context for later evaluation
+                    self.prompt_to_context[content] = context
         return selected_prompts
 
     def _cache_attack_objectives(
@@ -549,14 +567,19 @@ class RedTeam:
         """Cache attack objectives for reuse."""
         objectives_by_category = {risk_cat_value: []}
 
+        # Process list format and organize by category for caching
         for obj in selected_objectives:
             obj_id = obj.get("id", f"obj-{uuid.uuid4()}")
+            target_harms = obj.get("metadata", {}).get("target_harms", [])
             content = ""
+            context = ""
             if "messages" in obj and len(obj["messages"]) > 0:
-                content = obj["messages"][0].get("content", "")
 
+                message = obj["messages"][0]
+                content = message.get("content", "")
+                context = message.get("context", "")
             if content:
-                obj_data = {"id": obj_id, "content": content}
+                obj_data = {"id": obj_id, "content": content, "context": context}
                 objectives_by_category[risk_cat_value].append(obj_data)
 
         self.attack_objectives[current_key] = {
@@ -635,6 +658,7 @@ class RedTeam:
                     timeout=timeout,
                     red_team_info=self.red_team_info,
                     task_statuses=self.task_statuses,
+                    prompt_to_context=self.prompt_to_context,
                 )
             except Exception as e:
                 self.logger.error(f"Error calling orchestrator for {strategy_name} strategy: {str(e)}")
@@ -646,11 +670,9 @@ class RedTeam:
 
             # Write PyRIT outputs to file
             data_path = write_pyrit_outputs_to_file(
-                orchestrator=orchestrator,
-                strategy_name=strategy_name,
-                risk_category=risk_category.value,
                 output_path=self.red_team_info[strategy_name][risk_category.value]["data_file"],
                 logger=self.logger,
+                prompt_to_context=self.prompt_to_context,
             )
             orchestrator.dispose_db_engine()
 
@@ -780,10 +802,6 @@ class RedTeam:
             self.mlflow_integration.logger = self.logger
             self.result_processor.logger = self.logger
 
-            # Validate and prepare inputs
-            chat_target = get_chat_target(target)
-            self.chat_target = chat_target
-
             # Validate attack objective generator
             if not self.attack_objective_generator:
                 raise EvaluationException(
@@ -836,6 +854,9 @@ class RedTeam:
 
             # Fetch attack objectives
             all_objectives = await self._fetch_all_objectives(flattened_attack_strategies, application_scenario)
+
+            chat_target = get_chat_target(target, self.prompt_to_context)
+            self.chat_target = chat_target
 
             # Execute attacks
             await self._execute_attacks(
@@ -922,6 +943,13 @@ class RedTeam:
                 "MultiTurn and Crescendo strategies are not compatible with multiple attack strategies."
             )
             raise ValueError("MultiTurn and Crescendo strategies are not compatible with multiple attack strategies.")
+        if AttackStrategy.Tense in flattened_attack_strategies and (
+            RiskCategory.XPIA in self.risk_categories or RiskCategory.UngroundedAttributes in self.risk_categories
+        ):
+            self.logger.warning(
+                "Tense strategy is not compatible with XPIA or UngroundedAttributes risk categories. Skipping Tense strategy."
+            )
+            raise ValueError("Tense strategy is not compatible with XPIA or UngroundedAttributes risk categories.")
 
     def _initialize_tracking_dict(self, flattened_attack_strategies: List):
         """Initialize the red_team_info tracking dictionary."""

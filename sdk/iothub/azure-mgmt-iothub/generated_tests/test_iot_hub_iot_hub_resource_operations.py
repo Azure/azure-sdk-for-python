@@ -24,7 +24,7 @@ class TestIotHubIotHubResourceOperations(AzureMgmtRecordedTestCase):
         response = self.client.iot_hub_resource.get(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2023-06-30",
+            api_version="2023-06-30-preview",
         )
 
         # please add some check logic here by yourself
@@ -63,11 +63,16 @@ class TestIotHubIotHubResourceOperations(AzureMgmtRecordedTestCase):
                         "maxDeliveryCount": 0,
                     },
                     "comments": "str",
+                    "deviceStreams": {"streamingEndpoints": ["str"]},
                     "disableDeviceSAS": bool,
                     "disableLocalAuth": bool,
                     "disableModuleSAS": bool,
                     "enableDataResidency": bool,
                     "enableFileUploadNotifications": bool,
+                    "encryption": {
+                        "keySource": "str",
+                        "keyVaultProperties": [{"identity": {"userAssignedIdentity": "str"}, "keyIdentifier": "str"}],
+                    },
                     "eventHubEndpoints": {
                         "str": {
                             "endpoint": "str",
@@ -80,6 +85,7 @@ class TestIotHubIotHubResourceOperations(AzureMgmtRecordedTestCase):
                     "features": "str",
                     "hostName": "str",
                     "ipFilterRules": [{"action": "str", "filterName": "str", "ipMask": "str"}],
+                    "ipVersion": "str",
                     "locations": [{"location": "str", "role": "str"}],
                     "messagingEndpoints": {
                         "str": {
@@ -112,6 +118,7 @@ class TestIotHubIotHubResourceOperations(AzureMgmtRecordedTestCase):
                     "provisioningState": "str",
                     "publicNetworkAccess": "str",
                     "restrictOutboundNetworkAccess": bool,
+                    "rootCertificate": {"enableRootCertificateV2": bool, "lastUpdatedTimeUtc": "2020-02-20 00:00:00"},
                     "routing": {
                         "endpoints": {
                             "cosmosDBSqlContainers": [
@@ -228,7 +235,7 @@ class TestIotHubIotHubResourceOperations(AzureMgmtRecordedTestCase):
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2023-06-30",
+            api_version="2023-06-30-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -241,7 +248,7 @@ class TestIotHubIotHubResourceOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             resource_name="str",
             iot_hub_tags={"tags": {"str": "str"}},
-            api_version="2023-06-30",
+            api_version="2023-06-30-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -253,7 +260,7 @@ class TestIotHubIotHubResourceOperations(AzureMgmtRecordedTestCase):
         response = self.client.iot_hub_resource.begin_delete(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2023-06-30",
+            api_version="2023-06-30-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -263,7 +270,7 @@ class TestIotHubIotHubResourceOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_iot_hub_resource_list_by_subscription(self, resource_group):
         response = self.client.iot_hub_resource.list_by_subscription(
-            api_version="2023-06-30",
+            api_version="2023-06-30-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -274,7 +281,7 @@ class TestIotHubIotHubResourceOperations(AzureMgmtRecordedTestCase):
     def test_iot_hub_resource_list_by_resource_group(self, resource_group):
         response = self.client.iot_hub_resource.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2023-06-30",
+            api_version="2023-06-30-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -286,7 +293,7 @@ class TestIotHubIotHubResourceOperations(AzureMgmtRecordedTestCase):
         response = self.client.iot_hub_resource.get_stats(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2023-06-30",
+            api_version="2023-06-30-preview",
         )
 
         # please add some check logic here by yourself
@@ -298,7 +305,7 @@ class TestIotHubIotHubResourceOperations(AzureMgmtRecordedTestCase):
         response = self.client.iot_hub_resource.get_valid_skus(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2023-06-30",
+            api_version="2023-06-30-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -311,7 +318,7 @@ class TestIotHubIotHubResourceOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             resource_name="str",
             event_hub_endpoint_name="str",
-            api_version="2023-06-30",
+            api_version="2023-06-30-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -325,7 +332,7 @@ class TestIotHubIotHubResourceOperations(AzureMgmtRecordedTestCase):
             resource_name="str",
             event_hub_endpoint_name="str",
             name="str",
-            api_version="2023-06-30",
+            api_version="2023-06-30-preview",
         )
 
         # please add some check logic here by yourself
@@ -340,7 +347,7 @@ class TestIotHubIotHubResourceOperations(AzureMgmtRecordedTestCase):
             event_hub_endpoint_name="str",
             name="str",
             consumer_group_body={"properties": {"name": "str"}},
-            api_version="2023-06-30",
+            api_version="2023-06-30-preview",
         )
 
         # please add some check logic here by yourself
@@ -354,7 +361,7 @@ class TestIotHubIotHubResourceOperations(AzureMgmtRecordedTestCase):
             resource_name="str",
             event_hub_endpoint_name="str",
             name="str",
-            api_version="2023-06-30",
+            api_version="2023-06-30-preview",
         )
 
         # please add some check logic here by yourself
@@ -366,7 +373,7 @@ class TestIotHubIotHubResourceOperations(AzureMgmtRecordedTestCase):
         response = self.client.iot_hub_resource.list_jobs(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2023-06-30",
+            api_version="2023-06-30-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -379,7 +386,7 @@ class TestIotHubIotHubResourceOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             resource_name="str",
             job_id="str",
-            api_version="2023-06-30",
+            api_version="2023-06-30-preview",
         )
 
         # please add some check logic here by yourself
@@ -391,7 +398,7 @@ class TestIotHubIotHubResourceOperations(AzureMgmtRecordedTestCase):
         response = self.client.iot_hub_resource.get_quota_metrics(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2023-06-30",
+            api_version="2023-06-30-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -403,7 +410,7 @@ class TestIotHubIotHubResourceOperations(AzureMgmtRecordedTestCase):
         response = self.client.iot_hub_resource.get_endpoint_health(
             resource_group_name=resource_group.name,
             iot_hub_name="str",
-            api_version="2023-06-30",
+            api_version="2023-06-30-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -414,7 +421,7 @@ class TestIotHubIotHubResourceOperations(AzureMgmtRecordedTestCase):
     def test_iot_hub_resource_check_name_availability(self, resource_group):
         response = self.client.iot_hub_resource.check_name_availability(
             operation_inputs={"name": "str"},
-            api_version="2023-06-30",
+            api_version="2023-06-30-preview",
         )
 
         # please add some check logic here by yourself
@@ -431,7 +438,7 @@ class TestIotHubIotHubResourceOperations(AzureMgmtRecordedTestCase):
                 "routingSource": "str",
                 "twin": {"properties": {"desired": {}, "reported": {}}, "tags": {}},
             },
-            api_version="2023-06-30",
+            api_version="2023-06-30-preview",
         )
 
         # please add some check logic here by yourself
@@ -454,7 +461,7 @@ class TestIotHubIotHubResourceOperations(AzureMgmtRecordedTestCase):
                 "message": {"appProperties": {"str": "str"}, "body": "str", "systemProperties": {"str": "str"}},
                 "twin": {"properties": {"desired": {}, "reported": {}}, "tags": {}},
             },
-            api_version="2023-06-30",
+            api_version="2023-06-30-preview",
         )
 
         # please add some check logic here by yourself
@@ -466,7 +473,7 @@ class TestIotHubIotHubResourceOperations(AzureMgmtRecordedTestCase):
         response = self.client.iot_hub_resource.list_keys(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2023-06-30",
+            api_version="2023-06-30-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -479,7 +486,7 @@ class TestIotHubIotHubResourceOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             resource_name="str",
             key_name="str",
-            api_version="2023-06-30",
+            api_version="2023-06-30-preview",
         )
 
         # please add some check logic here by yourself
@@ -500,7 +507,7 @@ class TestIotHubIotHubResourceOperations(AzureMgmtRecordedTestCase):
                 "identity": {"userAssignedIdentity": "str"},
                 "includeConfigurations": bool,
             },
-            api_version="2023-06-30",
+            api_version="2023-06-30-preview",
         )
 
         # please add some check logic here by yourself
@@ -522,7 +529,7 @@ class TestIotHubIotHubResourceOperations(AzureMgmtRecordedTestCase):
                 "inputBlobName": "str",
                 "outputBlobName": "str",
             },
-            api_version="2023-06-30",
+            api_version="2023-06-30-preview",
         )
 
         # please add some check logic here by yourself

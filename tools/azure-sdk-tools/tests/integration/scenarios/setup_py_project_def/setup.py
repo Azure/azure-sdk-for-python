@@ -29,15 +29,12 @@ if not version:
 
 with open("README.md", encoding="utf-8") as f:
     readme = f.read()
-with open("CHANGELOG.md", encoding="utf-8") as f:
-    changelog = f.read()
-
 setup(
     name=PACKAGE_NAME,
     version=version,
     include_package_data=True,
     description="Microsoft Azure {} Library for Python".format(PACKAGE_PPRINT_NAME),
-    long_description=readme + "\n\n" + changelog,
+    long_description=readme,
     long_description_content_type="text/markdown",
     license="MIT License",
     author="Microsoft Corporation",

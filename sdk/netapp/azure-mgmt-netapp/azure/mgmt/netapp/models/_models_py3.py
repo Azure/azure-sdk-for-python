@@ -1168,7 +1168,7 @@ class CapacityPool(TrackedResource):
      must be multiple of 1099511627776).
     :vartype size: int
     :ivar service_level: The service level of the file system. Known values are: "Standard",
-     "Premium", "Ultra", and "StandardZRS".
+     "Premium", "Ultra", "StandardZRS", and "Flexible".
     :vartype service_level: str or ~azure.mgmt.netapp.models.ServiceLevel
     :ivar provisioning_state: Azure lifecycle management.
     :vartype provisioning_state: str
@@ -1176,6 +1176,9 @@ class CapacityPool(TrackedResource):
     :vartype total_throughput_mibps: float
     :ivar utilized_throughput_mibps: Utilized throughput of pool in MiB/s.
     :vartype utilized_throughput_mibps: float
+    :ivar custom_throughput_mibps: Maximum throughput in MiB/s that can be achieved by this pool
+     and this will be accepted as input only for manual qosType pool with Flexible service level.
+    :vartype custom_throughput_mibps: float
     :ivar qos_type: The qos type of the pool. Known values are: "Auto" and "Manual".
     :vartype qos_type: str or ~azure.mgmt.netapp.models.QosType
     :ivar cool_access: If enabled (true) the pool can contain cool Access enabled volumes.
@@ -1220,6 +1223,7 @@ class CapacityPool(TrackedResource):
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "total_throughput_mibps": {"key": "properties.totalThroughputMibps", "type": "float"},
         "utilized_throughput_mibps": {"key": "properties.utilizedThroughputMibps", "type": "float"},
+        "custom_throughput_mibps": {"key": "properties.customThroughputMibps", "type": "float"},
         "qos_type": {"key": "properties.qosType", "type": "str"},
         "cool_access": {"key": "properties.coolAccess", "type": "bool"},
         "encryption_type": {"key": "properties.encryptionType", "type": "str"},
@@ -1232,6 +1236,7 @@ class CapacityPool(TrackedResource):
         size: int = 4398046511104,
         service_level: Union[str, "_models.ServiceLevel"] = "Premium",
         tags: Optional[Dict[str, str]] = None,
+        custom_throughput_mibps: Optional[float] = None,
         qos_type: Optional[Union[str, "_models.QosType"]] = None,
         cool_access: bool = False,
         encryption_type: Union[str, "_models.EncryptionType"] = "Single",
@@ -1246,8 +1251,11 @@ class CapacityPool(TrackedResource):
          (value must be multiple of 1099511627776).
         :paramtype size: int
         :keyword service_level: The service level of the file system. Known values are: "Standard",
-         "Premium", "Ultra", and "StandardZRS".
+         "Premium", "Ultra", "StandardZRS", and "Flexible".
         :paramtype service_level: str or ~azure.mgmt.netapp.models.ServiceLevel
+        :keyword custom_throughput_mibps: Maximum throughput in MiB/s that can be achieved by this pool
+         and this will be accepted as input only for manual qosType pool with Flexible service level.
+        :paramtype custom_throughput_mibps: float
         :keyword qos_type: The qos type of the pool. Known values are: "Auto" and "Manual".
         :paramtype qos_type: str or ~azure.mgmt.netapp.models.QosType
         :keyword cool_access: If enabled (true) the pool can contain cool Access enabled volumes.
@@ -1265,6 +1273,7 @@ class CapacityPool(TrackedResource):
         self.provisioning_state: Optional[str] = None
         self.total_throughput_mibps: Optional[float] = None
         self.utilized_throughput_mibps: Optional[float] = None
+        self.custom_throughput_mibps = custom_throughput_mibps
         self.qos_type = qos_type
         self.cool_access = cool_access
         self.encryption_type = encryption_type
@@ -1320,6 +1329,9 @@ class CapacityPoolPatch(_serialization.Model):
     :vartype qos_type: str or ~azure.mgmt.netapp.models.QosType
     :ivar cool_access: If enabled (true) the pool can contain cool Access enabled volumes.
     :vartype cool_access: bool
+    :ivar custom_throughput_mibps: Maximum throughput in MiB/s that can be achieved by this pool
+     and this will be accepted as input only for manual qosType pool with Flexible service level.
+    :vartype custom_throughput_mibps: float
     """
 
     _validation = {
@@ -1337,6 +1349,7 @@ class CapacityPoolPatch(_serialization.Model):
         "size": {"key": "properties.size", "type": "int"},
         "qos_type": {"key": "properties.qosType", "type": "str"},
         "cool_access": {"key": "properties.coolAccess", "type": "bool"},
+        "custom_throughput_mibps": {"key": "properties.customThroughputMibps", "type": "float"},
     }
 
     def __init__(
@@ -1347,6 +1360,7 @@ class CapacityPoolPatch(_serialization.Model):
         size: int = 4398046511104,
         qos_type: Optional[Union[str, "_models.QosType"]] = None,
         cool_access: Optional[bool] = None,
+        custom_throughput_mibps: Optional[float] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1361,6 +1375,9 @@ class CapacityPoolPatch(_serialization.Model):
         :paramtype qos_type: str or ~azure.mgmt.netapp.models.QosType
         :keyword cool_access: If enabled (true) the pool can contain cool Access enabled volumes.
         :paramtype cool_access: bool
+        :keyword custom_throughput_mibps: Maximum throughput in MiB/s that can be achieved by this pool
+         and this will be accepted as input only for manual qosType pool with Flexible service level.
+        :paramtype custom_throughput_mibps: float
         """
         super().__init__(**kwargs)
         self.location = location
@@ -1371,6 +1388,7 @@ class CapacityPoolPatch(_serialization.Model):
         self.size = size
         self.qos_type = qos_type
         self.cool_access = cool_access
+        self.custom_throughput_mibps = custom_throughput_mibps
 
 
 class ChangeKeyVault(_serialization.Model):
@@ -5078,7 +5096,7 @@ class Volume(TrackedResource):
      Required.
     :vartype creation_token: str
     :ivar service_level: The service level of the file system. Known values are: "Standard",
-     "Premium", "Ultra", and "StandardZRS".
+     "Premium", "Ultra", "StandardZRS", and "Flexible".
     :vartype service_level: str or ~azure.mgmt.netapp.models.ServiceLevel
     :ivar usage_threshold: Maximum storage quota allowed for a file system in bytes. This is a soft
      quota used for alerting only. For regular volumes, valid values are in the range 50GiB to
@@ -5126,6 +5144,13 @@ class Volume(TrackedResource):
     :ivar data_protection: DataProtection type volumes include an object containing details of the
      replication.
     :vartype data_protection: ~azure.mgmt.netapp.models.VolumePropertiesDataProtection
+    :ivar accept_grow_capacity_pool_for_short_term_clone_split: While auto splitting the short term
+     clone volume, if the parent pool does not have enough space to accommodate the volume after
+     split, it will be automatically resized, which will lead to increased billing. To accept
+     capacity pool size auto grow and create a short term clone volume, set the property as
+     accepted. Known values are: "Accepted" and "Declined".
+    :vartype accept_grow_capacity_pool_for_short_term_clone_split: str or
+     ~azure.mgmt.netapp.models.AcceptGrowCapacityPoolForShortTermCloneSplit
     :ivar is_restoring: Restoring.
     :vartype is_restoring: bool
     :ivar snapshot_directory_visible: If enabled (true) the volume will contain a read-only
@@ -5250,6 +5275,9 @@ class Volume(TrackedResource):
     :vartype is_large_volume: bool
     :ivar originating_resource_id: Id of the snapshot or backup that the volume is restored from.
     :vartype originating_resource_id: str
+    :ivar inherited_size_in_bytes: Space shared by short term clone volume with parent volume in
+     bytes.
+    :vartype inherited_size_in_bytes: int
     """
 
     _validation = {
@@ -5297,6 +5325,7 @@ class Volume(TrackedResource):
         "encrypted": {"readonly": True},
         "provisioned_availability_zone": {"readonly": True},
         "originating_resource_id": {"readonly": True},
+        "inherited_size_in_bytes": {"readonly": True},
     }
 
     _attribute_map = {
@@ -5327,6 +5356,10 @@ class Volume(TrackedResource):
         "mount_targets": {"key": "properties.mountTargets", "type": "[MountTargetProperties]"},
         "volume_type": {"key": "properties.volumeType", "type": "str"},
         "data_protection": {"key": "properties.dataProtection", "type": "VolumePropertiesDataProtection"},
+        "accept_grow_capacity_pool_for_short_term_clone_split": {
+            "key": "properties.acceptGrowCapacityPoolForShortTermCloneSplit",
+            "type": "str",
+        },
         "is_restoring": {"key": "properties.isRestoring", "type": "bool"},
         "snapshot_directory_visible": {"key": "properties.snapshotDirectoryVisible", "type": "bool"},
         "kerberos_enabled": {"key": "properties.kerberosEnabled", "type": "bool"},
@@ -5367,6 +5400,7 @@ class Volume(TrackedResource):
         "provisioned_availability_zone": {"key": "properties.provisionedAvailabilityZone", "type": "str"},
         "is_large_volume": {"key": "properties.isLargeVolume", "type": "bool"},
         "originating_resource_id": {"key": "properties.originatingResourceId", "type": "str"},
+        "inherited_size_in_bytes": {"key": "properties.inheritedSizeInBytes", "type": "int"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -5387,6 +5421,9 @@ class Volume(TrackedResource):
         network_features: Union[str, "_models.NetworkFeatures"] = "Basic",
         volume_type: Optional[str] = None,
         data_protection: Optional["_models.VolumePropertiesDataProtection"] = None,
+        accept_grow_capacity_pool_for_short_term_clone_split: Optional[
+            Union[str, "_models.AcceptGrowCapacityPoolForShortTermCloneSplit"]
+        ] = None,
         snapshot_directory_visible: bool = True,
         kerberos_enabled: bool = False,
         security_style: Union[str, "_models.SecurityStyle"] = "unix",
@@ -5426,7 +5463,7 @@ class Volume(TrackedResource):
          Required.
         :paramtype creation_token: str
         :keyword service_level: The service level of the file system. Known values are: "Standard",
-         "Premium", "Ultra", and "StandardZRS".
+         "Premium", "Ultra", "StandardZRS", and "Flexible".
         :paramtype service_level: str or ~azure.mgmt.netapp.models.ServiceLevel
         :keyword usage_threshold: Maximum storage quota allowed for a file system in bytes. This is a
          soft quota used for alerting only. For regular volumes, valid values are in the range 50GiB to
@@ -5457,6 +5494,13 @@ class Volume(TrackedResource):
         :keyword data_protection: DataProtection type volumes include an object containing details of
          the replication.
         :paramtype data_protection: ~azure.mgmt.netapp.models.VolumePropertiesDataProtection
+        :keyword accept_grow_capacity_pool_for_short_term_clone_split: While auto splitting the short
+         term clone volume, if the parent pool does not have enough space to accommodate the volume
+         after split, it will be automatically resized, which will lead to increased billing. To accept
+         capacity pool size auto grow and create a short term clone volume, set the property as
+         accepted. Known values are: "Accepted" and "Declined".
+        :paramtype accept_grow_capacity_pool_for_short_term_clone_split: str or
+         ~azure.mgmt.netapp.models.AcceptGrowCapacityPoolForShortTermCloneSplit
         :keyword snapshot_directory_visible: If enabled (true) the volume will contain a read-only
          snapshot directory which provides access to each of the volume's snapshots (defaults to true).
         :paramtype snapshot_directory_visible: bool
@@ -5573,6 +5617,7 @@ class Volume(TrackedResource):
         self.mount_targets: Optional[List["_models.MountTargetProperties"]] = None
         self.volume_type = volume_type
         self.data_protection = data_protection
+        self.accept_grow_capacity_pool_for_short_term_clone_split = accept_grow_capacity_pool_for_short_term_clone_split
         self.is_restoring: Optional[bool] = None
         self.snapshot_directory_visible = snapshot_directory_visible
         self.kerberos_enabled = kerberos_enabled
@@ -5610,6 +5655,7 @@ class Volume(TrackedResource):
         self.provisioned_availability_zone: Optional[str] = None
         self.is_large_volume = is_large_volume
         self.originating_resource_id: Optional[str] = None
+        self.inherited_size_in_bytes: Optional[int] = None
 
 
 class VolumeBackupProperties(_serialization.Model):
@@ -5917,7 +5963,7 @@ class VolumeGroupVolumeProperties(_serialization.Model):
      Required.
     :vartype creation_token: str
     :ivar service_level: The service level of the file system. Known values are: "Standard",
-     "Premium", "Ultra", and "StandardZRS".
+     "Premium", "Ultra", "StandardZRS", and "Flexible".
     :vartype service_level: str or ~azure.mgmt.netapp.models.ServiceLevel
     :ivar usage_threshold: Maximum storage quota allowed for a file system in bytes. This is a soft
      quota used for alerting only. For regular volumes, valid values are in the range 50GiB to
@@ -5965,6 +6011,13 @@ class VolumeGroupVolumeProperties(_serialization.Model):
     :ivar data_protection: DataProtection type volumes include an object containing details of the
      replication.
     :vartype data_protection: ~azure.mgmt.netapp.models.VolumePropertiesDataProtection
+    :ivar accept_grow_capacity_pool_for_short_term_clone_split: While auto splitting the short term
+     clone volume, if the parent pool does not have enough space to accommodate the volume after
+     split, it will be automatically resized, which will lead to increased billing. To accept
+     capacity pool size auto grow and create a short term clone volume, set the property as
+     accepted. Known values are: "Accepted" and "Declined".
+    :vartype accept_grow_capacity_pool_for_short_term_clone_split: str or
+     ~azure.mgmt.netapp.models.AcceptGrowCapacityPoolForShortTermCloneSplit
     :ivar is_restoring: Restoring.
     :vartype is_restoring: bool
     :ivar snapshot_directory_visible: If enabled (true) the volume will contain a read-only
@@ -6089,6 +6142,9 @@ class VolumeGroupVolumeProperties(_serialization.Model):
     :vartype is_large_volume: bool
     :ivar originating_resource_id: Id of the snapshot or backup that the volume is restored from.
     :vartype originating_resource_id: str
+    :ivar inherited_size_in_bytes: Space shared by short term clone volume with parent volume in
+     bytes.
+    :vartype inherited_size_in_bytes: int
     """
 
     _validation = {
@@ -6132,6 +6188,7 @@ class VolumeGroupVolumeProperties(_serialization.Model):
         "encrypted": {"readonly": True},
         "provisioned_availability_zone": {"readonly": True},
         "originating_resource_id": {"readonly": True},
+        "inherited_size_in_bytes": {"readonly": True},
     }
 
     _attribute_map = {
@@ -6159,6 +6216,10 @@ class VolumeGroupVolumeProperties(_serialization.Model):
         "mount_targets": {"key": "properties.mountTargets", "type": "[MountTargetProperties]"},
         "volume_type": {"key": "properties.volumeType", "type": "str"},
         "data_protection": {"key": "properties.dataProtection", "type": "VolumePropertiesDataProtection"},
+        "accept_grow_capacity_pool_for_short_term_clone_split": {
+            "key": "properties.acceptGrowCapacityPoolForShortTermCloneSplit",
+            "type": "str",
+        },
         "is_restoring": {"key": "properties.isRestoring", "type": "bool"},
         "snapshot_directory_visible": {"key": "properties.snapshotDirectoryVisible", "type": "bool"},
         "kerberos_enabled": {"key": "properties.kerberosEnabled", "type": "bool"},
@@ -6199,6 +6260,7 @@ class VolumeGroupVolumeProperties(_serialization.Model):
         "provisioned_availability_zone": {"key": "properties.provisionedAvailabilityZone", "type": "str"},
         "is_large_volume": {"key": "properties.isLargeVolume", "type": "bool"},
         "originating_resource_id": {"key": "properties.originatingResourceId", "type": "str"},
+        "inherited_size_in_bytes": {"key": "properties.inheritedSizeInBytes", "type": "int"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -6219,6 +6281,9 @@ class VolumeGroupVolumeProperties(_serialization.Model):
         network_features: Union[str, "_models.NetworkFeatures"] = "Basic",
         volume_type: Optional[str] = None,
         data_protection: Optional["_models.VolumePropertiesDataProtection"] = None,
+        accept_grow_capacity_pool_for_short_term_clone_split: Optional[
+            Union[str, "_models.AcceptGrowCapacityPoolForShortTermCloneSplit"]
+        ] = None,
         snapshot_directory_visible: bool = True,
         kerberos_enabled: bool = False,
         security_style: Union[str, "_models.SecurityStyle"] = "unix",
@@ -6258,7 +6323,7 @@ class VolumeGroupVolumeProperties(_serialization.Model):
          Required.
         :paramtype creation_token: str
         :keyword service_level: The service level of the file system. Known values are: "Standard",
-         "Premium", "Ultra", and "StandardZRS".
+         "Premium", "Ultra", "StandardZRS", and "Flexible".
         :paramtype service_level: str or ~azure.mgmt.netapp.models.ServiceLevel
         :keyword usage_threshold: Maximum storage quota allowed for a file system in bytes. This is a
          soft quota used for alerting only. For regular volumes, valid values are in the range 50GiB to
@@ -6289,6 +6354,13 @@ class VolumeGroupVolumeProperties(_serialization.Model):
         :keyword data_protection: DataProtection type volumes include an object containing details of
          the replication.
         :paramtype data_protection: ~azure.mgmt.netapp.models.VolumePropertiesDataProtection
+        :keyword accept_grow_capacity_pool_for_short_term_clone_split: While auto splitting the short
+         term clone volume, if the parent pool does not have enough space to accommodate the volume
+         after split, it will be automatically resized, which will lead to increased billing. To accept
+         capacity pool size auto grow and create a short term clone volume, set the property as
+         accepted. Known values are: "Accepted" and "Declined".
+        :paramtype accept_grow_capacity_pool_for_short_term_clone_split: str or
+         ~azure.mgmt.netapp.models.AcceptGrowCapacityPoolForShortTermCloneSplit
         :keyword snapshot_directory_visible: If enabled (true) the volume will contain a read-only
          snapshot directory which provides access to each of the volume's snapshots (defaults to true).
         :paramtype snapshot_directory_visible: bool
@@ -6408,6 +6480,7 @@ class VolumeGroupVolumeProperties(_serialization.Model):
         self.mount_targets: Optional[List["_models.MountTargetProperties"]] = None
         self.volume_type = volume_type
         self.data_protection = data_protection
+        self.accept_grow_capacity_pool_for_short_term_clone_split = accept_grow_capacity_pool_for_short_term_clone_split
         self.is_restoring: Optional[bool] = None
         self.snapshot_directory_visible = snapshot_directory_visible
         self.kerberos_enabled = kerberos_enabled
@@ -6445,6 +6518,7 @@ class VolumeGroupVolumeProperties(_serialization.Model):
         self.provisioned_availability_zone: Optional[str] = None
         self.is_large_volume = is_large_volume
         self.originating_resource_id: Optional[str] = None
+        self.inherited_size_in_bytes: Optional[int] = None
 
 
 class VolumeList(_serialization.Model):
@@ -6491,7 +6565,7 @@ class VolumePatch(_serialization.Model):
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar service_level: The service level of the file system. Known values are: "Standard",
-     "Premium", "Ultra", and "StandardZRS".
+     "Premium", "Ultra", "StandardZRS", and "Flexible".
     :vartype service_level: str or ~azure.mgmt.netapp.models.ServiceLevel
     :ivar usage_threshold: Maximum storage quota allowed for a file system in bytes. This is a soft
      quota used for alerting only. For regular volumes, valid values are in the range 50GiB to
@@ -6623,7 +6697,7 @@ class VolumePatch(_serialization.Model):
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword service_level: The service level of the file system. Known values are: "Standard",
-         "Premium", "Ultra", and "StandardZRS".
+         "Premium", "Ultra", "StandardZRS", and "Flexible".
         :paramtype service_level: str or ~azure.mgmt.netapp.models.ServiceLevel
         :keyword usage_threshold: Maximum storage quota allowed for a file system in bytes. This is a
          soft quota used for alerting only. For regular volumes, valid values are in the range 50GiB to
