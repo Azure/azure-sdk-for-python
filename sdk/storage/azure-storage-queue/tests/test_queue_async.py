@@ -1455,12 +1455,9 @@ class TestAsyncStorageQueue(AsyncStorageRecordedTestCase):
         variables = kwargs.pop("variables", {})
 
         token_credential = self.get_credential(QueueServiceClient, is_async=True)
-        service = QueueServiceClient(
-            self.account_url(storage_account_name, "queue"),
-            credential=token_credential
-        )
-        start = self.get_datetime_variable(variables, 'start', datetime.utcnow())
-        expiry = self.get_datetime_variable(variables, 'expiry', datetime.utcnow() + timedelta(hours=1))
+        service = QueueServiceClient(self.account_url(storage_account_name, "queue"), credential=token_credential)
+        start = self.get_datetime_variable(variables, "start", datetime.utcnow())
+        expiry = self.get_datetime_variable(variables, "expiry", datetime.utcnow() + timedelta(hours=1))
         user_delegation_key_1 = await service.get_user_delegation_key(key_start_time=start, key_expiry_time=expiry)
         user_delegation_key_2 = await service.get_user_delegation_key(key_start_time=start, key_expiry_time=expiry)
 
@@ -1494,8 +1491,8 @@ class TestAsyncStorageQueue(AsyncStorageRecordedTestCase):
 
         token_credential = self.get_credential(QueueServiceClient, is_async=True)
         qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), credential=token_credential)
-        start = self.get_datetime_variable(variables, 'start', datetime.utcnow())
-        expiry = self.get_datetime_variable(variables, 'expiry', datetime.utcnow() + timedelta(hours=1))
+        start = self.get_datetime_variable(variables, "start", datetime.utcnow())
+        expiry = self.get_datetime_variable(variables, "expiry", datetime.utcnow() + timedelta(hours=1))
         user_delegation_key = await qsc.get_user_delegation_key(key_start_time=start, key_expiry_time=expiry)
         token = await token_credential.get_token("https://storage.azure.com/.default")
         user_delegation_oid = jwt.decode(token.token, options={"verify_signature": False}).get("oid")
@@ -1512,7 +1509,7 @@ class TestAsyncStorageQueue(AsyncStorageRecordedTestCase):
             permission=QueueSasPermissions(add=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
             user_delegation_key=user_delegation_key,
-            user_delegation_oid=user_delegation_oid
+            user_delegation_oid=user_delegation_oid,
         )
 
         queue_client = QueueClient.from_queue_url(queue_url=queue.url, credential=queue_token)
@@ -1528,6 +1525,7 @@ class TestAsyncStorageQueue(AsyncStorageRecordedTestCase):
         assert message == messages[0].content
 
         return variables
+
 
 # ------------------------------------------------------------------------------
 if __name__ == "__main__":

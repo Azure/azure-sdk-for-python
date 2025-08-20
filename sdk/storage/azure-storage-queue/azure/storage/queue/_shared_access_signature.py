@@ -115,8 +115,9 @@ class QueueSharedAccessSignature(SharedAccessSignature):
         sas.add_base(permission, expiry, start, ip, protocol, self.x_ms_version)
         sas.add_id(policy_id)
         sas.add_user_delegation_oid(user_delegation_oid)
-        sas.add_resource_signature(self.account_name, self.account_key, queue_name,
-                                   user_delegation_key=self.user_delegation_key)
+        sas.add_resource_signature(
+            self.account_name, self.account_key, queue_name, user_delegation_key=self.user_delegation_key
+        )
 
         if sts_hook is not None:
             sts_hook(sas.string_to_sign)
@@ -138,11 +139,12 @@ class _QueueSharedAccessHelper(_SharedAccessHelper):
 
         # Form the string to sign from shared_access_policy and canonicalized
         # resource. The order of values is important.
-        string_to_sign = \
-            (get_value_to_append(QueryStringConstants.SIGNED_PERMISSION) +
-             get_value_to_append(QueryStringConstants.SIGNED_START) +
-             get_value_to_append(QueryStringConstants.SIGNED_EXPIRY) +
-             canonicalized_resource)
+        string_to_sign = (
+            get_value_to_append(QueryStringConstants.SIGNED_PERMISSION)
+            + get_value_to_append(QueryStringConstants.SIGNED_START)
+            + get_value_to_append(QueryStringConstants.SIGNED_EXPIRY)
+            + canonicalized_resource
+        )
 
         if user_delegation_key is not None:
             self._add_query(QueryStringConstants.SIGNED_OID, user_delegation_key.signed_oid)
@@ -152,30 +154,33 @@ class _QueueSharedAccessHelper(_SharedAccessHelper):
             self._add_query(QueryStringConstants.SIGNED_KEY_SERVICE, user_delegation_key.signed_service)
             self._add_query(QueryStringConstants.SIGNED_KEY_VERSION, user_delegation_key.signed_version)
 
-            string_to_sign += \
-                (get_value_to_append(QueryStringConstants.SIGNED_OID) +
-                 get_value_to_append(QueryStringConstants.SIGNED_TID) +
-                 get_value_to_append(QueryStringConstants.SIGNED_KEY_START) +
-                 get_value_to_append(QueryStringConstants.SIGNED_KEY_EXPIRY) +
-                 get_value_to_append(QueryStringConstants.SIGNED_KEY_SERVICE) +
-                 get_value_to_append(QueryStringConstants.SIGNED_KEY_VERSION) +
-                 get_value_to_append(QueryStringConstants.SIGNED_KEY_DELEGATED_USER_TID) +
-                 get_value_to_append(QueryStringConstants.SIGNED_DELEGATED_USER_OID))
+            string_to_sign += (
+                get_value_to_append(QueryStringConstants.SIGNED_OID)
+                + get_value_to_append(QueryStringConstants.SIGNED_TID)
+                + get_value_to_append(QueryStringConstants.SIGNED_KEY_START)
+                + get_value_to_append(QueryStringConstants.SIGNED_KEY_EXPIRY)
+                + get_value_to_append(QueryStringConstants.SIGNED_KEY_SERVICE)
+                + get_value_to_append(QueryStringConstants.SIGNED_KEY_VERSION)
+                + get_value_to_append(QueryStringConstants.SIGNED_KEY_DELEGATED_USER_TID)
+                + get_value_to_append(QueryStringConstants.SIGNED_DELEGATED_USER_OID)
+            )
         else:
             string_to_sign += get_value_to_append(QueryStringConstants.SIGNED_IDENTIFIER)
 
-        string_to_sign += \
-            (get_value_to_append(QueryStringConstants.SIGNED_IP) +
-             get_value_to_append(QueryStringConstants.SIGNED_PROTOCOL) +
-             get_value_to_append(QueryStringConstants.SIGNED_VERSION))
+        string_to_sign += (
+            get_value_to_append(QueryStringConstants.SIGNED_IP)
+            + get_value_to_append(QueryStringConstants.SIGNED_PROTOCOL)
+            + get_value_to_append(QueryStringConstants.SIGNED_VERSION)
+        )
 
         # remove the trailing newline
         if string_to_sign[-1] == "\n":
             string_to_sign = string_to_sign[:-1]
 
-        self._add_query(QueryStringConstants.SIGNED_SIGNATURE,
-                        sign_string(account_key if user_delegation_key is None else user_delegation_key.value,
-                                    string_to_sign))
+        self._add_query(
+            QueryStringConstants.SIGNED_SIGNATURE,
+            sign_string(account_key if user_delegation_key is None else user_delegation_key.value, string_to_sign),
+        )
         self.string_to_sign = string_to_sign
 
 

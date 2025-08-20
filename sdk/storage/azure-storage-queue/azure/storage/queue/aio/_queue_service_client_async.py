@@ -208,12 +208,7 @@ class QueueServiceClient(  # type: ignore [misc]
 
     @distributed_trace_async
     async def get_user_delegation_key(
-        self,
-        key_start_time: "datetime",
-        key_expiry_time: "datetime",
-        *,
-        timeout: Optional[int] = None,
-        **kwargs: Any
+        self, key_start_time: "datetime", key_expiry_time: "datetime", *, timeout: Optional[int] = None, **kwargs: Any
     ) -> "UserDelegationKey":
         """
         Obtain a user delegation key for the purpose of signing SAS tokens.
@@ -235,9 +230,7 @@ class QueueServiceClient(  # type: ignore [misc]
         key_info = KeyInfo(start=_to_utc_datetime(key_start_time), expiry=_to_utc_datetime(key_expiry_time))
         try:
             user_delegation_key = await self._client.service.get_user_delegation_key(  # type: ignore
-                key_info=key_info,
-                timeout=timeout,
-                **kwargs
+                key_info=key_info, timeout=timeout, **kwargs
             )
         except HttpResponseError as error:
             process_storage_error(error)
