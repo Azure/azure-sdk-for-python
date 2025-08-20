@@ -43,8 +43,12 @@ class FileSharedAccessSignature(SharedAccessSignature):
         """
         :param str account_name:
             The storage account name used to generate the shared access signatures.
-        :param str account_key:
+        :param Optional[str] account_key:
             The access key to generate the shares access signatures.
+        :param Optional[~azure.storage.queue.models.UserDelegationKey] user_delegation_key:
+            Instead of an account key, the user could pass in a user delegation key.
+            A user delegation key can be obtained from the service by authenticating with an AAD identity;
+            this can be accomplished by calling get_user_delegation_key on any Queue service object.
         """
         super(FileSharedAccessSignature, self).__init__(account_name, account_key, x_ms_version=X_MS_VERSION)
         self.user_delegation_key = user_delegation_key
@@ -128,7 +132,7 @@ class FileSharedAccessSignature(SharedAccessSignature):
         :param Optional[str] content_type:
             Response header value for Content-Type when resource is accessed
             using this shared access signature.
-        :keyword str user_delegation_oid:
+        :param Optional[str] user_delegation_oid:
             Specifies the Entra ID of the user that is authorized to use the resulting SAS URL.
             The resulting SAS URL must be used in conjunction with an Entra ID token that has been
             issued to the user specified in this value.
@@ -233,7 +237,7 @@ class FileSharedAccessSignature(SharedAccessSignature):
         :param Optional[str] content_type:
             Response header value for Content-Type when resource is accessed
             using this shared access signature.
-        :keyword str user_delegation_oid:
+        :param Optional[str] user_delegation_oid:
             Specifies the Entra ID of the user that is authorized to use the resulting SAS URL.
             The resulting SAS URL must be used in conjunction with an Entra ID token that has been
             issued to the user specified in this value.
@@ -403,7 +407,7 @@ def generate_account_sas(
 def generate_share_sas(
     account_name: str,
     share_name: str,
-    account_key: str,
+    account_key: Optional[str] = None,
     user_delegation_key: Optional[UserDelegationKey] = None,
     permission: Optional[Union["ShareSasPermissions", str]] = None,
     expiry: Optional[Union["datetime", str]] = None,
@@ -424,9 +428,9 @@ def generate_share_sas(
         The storage account name used to generate the shared access signature.
     :param str share_name:
         The name of the share.
-    :param str account_key:
+    :param Optional[str] account_key:
         The account key, also called shared key or access key, to generate the shared access signature.
-    :param ~azure.storage.fileshare.UserDelegationKey user_delegation_key:
+    :param Optional[~azure.storage.fileshare.UserDelegationKey] user_delegation_key:
         Instead of an account shared key, the user could pass in a user delegation key.
         A user delegation key can be obtained from the service by authenticating with an AAD identity;
         this can be accomplished by calling :func:`~azure.storage.fileshare.ShareServiceClient.get_user_delegation_key`.
@@ -521,7 +525,7 @@ def generate_file_sas(
     account_name: str,
     share_name: str,
     file_path: List[str],
-    account_key: str,
+    account_key: Optional[str] = None,
     user_delegation_key: Optional[UserDelegationKey] = None,
     permission: Optional[Union["FileSasPermissions", str]] = None,
     expiry: Optional[Union["datetime", str]] = None,
@@ -545,9 +549,9 @@ def generate_file_sas(
     :param file_path:
         The file path represented as a list of path segments, including the file name.
     :type file_path: List[str]
-    :param str account_key:
+    :param Optional[str] account_key:
         The account key, also called shared key or access key, to generate the shared access signature.
-    :param ~azure.storage.fileshare.UserDelegationKey user_delegation_key:
+    :param Optional[~azure.storage.fileshare.UserDelegationKey] user_delegation_key:
         Instead of an account shared key, the user could pass in a user delegation key.
         A user delegation key can be obtained from the service by authenticating with an AAD identity;
         this can be accomplished by calling :func:`~azure.storage.fileshare.ShareServiceClient.get_user_delegation_key`.
