@@ -94,12 +94,7 @@ class ProjectOperations(_ProjectOperationsDeploymentsRelated):
 
     @overload
     def begin_import(
-        self,
-        body: JSON,
-        *,
-        format: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: JSON, *, format: Optional[str] = None, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[ImportProjectState]:
         """Triggers a job to import a project. If a project with the same name already exists,
         the data of that project is replaced.
@@ -116,12 +111,7 @@ class ProjectOperations(_ProjectOperationsDeploymentsRelated):
 
     @overload
     def begin_import(
-        self,
-        body: IO[bytes],
-        *,
-        format: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: IO[bytes], *, format: Optional[str] = None, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[ImportProjectState]:
         """Triggers a job to import a project. If a project with the same name already exists,
         the data of that project is replaced.
@@ -138,11 +128,7 @@ class ProjectOperations(_ProjectOperationsDeploymentsRelated):
 
     @distributed_trace
     def begin_import(
-        self,
-        body: Union[ExportedProject, JSON, IO[bytes]],
-        *,
-        format: Optional[str] = None,
-        **kwargs: Any
+        self, body: Union[ExportedProject, JSON, IO[bytes]], *, format: Optional[str] = None, **kwargs: Any
     ) -> LROPoller[ImportProjectState]:
         """Triggers a job to import a project. If a project with the same name already exists,
         the data of that project is replaced.

@@ -41,6 +41,7 @@ from collections.abc import MutableMapping
 from azure.core.pipeline import PipelineResponse
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator_async import distributed_trace_async
+
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 _Unset: Any = object()
@@ -121,7 +122,7 @@ class DeploymentOperations(DeploymentOperationsGenerated):
 
         return AsyncLROPoller[DeploymentState](
             self._client,
-            initial, # type: ignore
+            initial,  # type: ignore
             get_long_running_output,
             polling_method,
         )
@@ -133,7 +134,7 @@ class DeploymentOperations(DeploymentOperationsGenerated):
         body: DeleteDeploymentDetails,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> AsyncLROPoller[DeploymentDeleteFromResourcesState]:
         """Deletes a project deployment from the specified assigned resources.
 
@@ -151,12 +152,7 @@ class DeploymentOperations(DeploymentOperationsGenerated):
 
     @overload
     async def begin_delete_deployment_from_resources(
-        self,
-        deployment_name: str,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, deployment_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[DeploymentDeleteFromResourcesState]:
         """Deletes a project deployment from the specified assigned resources.
 
@@ -174,12 +170,7 @@ class DeploymentOperations(DeploymentOperationsGenerated):
 
     @overload
     async def begin_delete_deployment_from_resources(
-        self,
-        deployment_name: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, deployment_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[DeploymentDeleteFromResourcesState]:
         """Deletes a project deployment from the specified assigned resources.
 
@@ -197,10 +188,7 @@ class DeploymentOperations(DeploymentOperationsGenerated):
 
     @distributed_trace_async
     async def begin_delete_deployment_from_resources(
-        self,
-        deployment_name: str,
-        body: Union[DeleteDeploymentDetails, JSON, IO[bytes]],
-        **kwargs: Any
+        self, deployment_name: str, body: Union[DeleteDeploymentDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[DeploymentDeleteFromResourcesState]:
         """Deletes a project deployment from the specified assigned resources.
 
@@ -236,10 +224,7 @@ class DeploymentOperations(DeploymentOperationsGenerated):
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            obj = _deserialize(
-                DeploymentDeleteFromResourcesState,
-                pipeline_response.http_response.json()
-            )
+            obj = _deserialize(DeploymentDeleteFromResourcesState, pipeline_response.http_response.json())
             if cls:
                 return cls(pipeline_response, obj, {})  # type: ignore[misc]
             return obj
@@ -272,7 +257,7 @@ class DeploymentOperations(DeploymentOperationsGenerated):
 
         return AsyncLROPoller[DeploymentDeleteFromResourcesState](
             self._client,
-            initial, # type: ignore
+            initial,  # type: ignore
             get_long_running_output,
             polling_method,
         )
@@ -284,7 +269,7 @@ class DeploymentOperations(DeploymentOperationsGenerated):
         body: CreateDeploymentDetails,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> AsyncLROPoller[DeploymentState]:
         """Creates a new deployment or replaces an existing one.
 
@@ -304,12 +289,7 @@ class DeploymentOperations(DeploymentOperationsGenerated):
 
     @overload
     async def begin_deploy_project(
-        self,
-        deployment_name: str,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, deployment_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[DeploymentState]:
         """Creates a new deployment or replaces an existing one.
 
@@ -329,12 +309,7 @@ class DeploymentOperations(DeploymentOperationsGenerated):
 
     @overload
     async def begin_deploy_project(
-        self,
-        deployment_name: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, deployment_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[DeploymentState]:
         """Creates a new deployment or replaces an existing one.
 
@@ -354,10 +329,7 @@ class DeploymentOperations(DeploymentOperationsGenerated):
 
     @distributed_trace_async
     async def begin_deploy_project(
-        self,
-        deployment_name: str,
-        body: Union[CreateDeploymentDetails, JSON, IO[bytes]],
-        **kwargs: Any
+        self, deployment_name: str, body: Union[CreateDeploymentDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[DeploymentState]:
         """Creates a new deployment or replaces an existing one.
 
@@ -424,9 +396,9 @@ class DeploymentOperations(DeploymentOperationsGenerated):
                 deserialization_callback=get_long_running_output,
             )
 
-        return AsyncLROPoller[DeploymentState](  
+        return AsyncLROPoller[DeploymentState](
             self._client,
-            initial, # type: ignore
+            initial,  # type: ignore
             get_long_running_output,
             polling_method,
         )

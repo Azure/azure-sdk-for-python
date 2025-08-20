@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -191,6 +192,7 @@ class JobsPollingMethod(PollingMethod):
         initial_response = pickle.loads(base64.b64decode(continuation_token))  # nosec
         return client, initial_response, deserialization_callback
 
+
 class AsyncJobsPollingMethod(AsyncPollingMethod):
     def __init__(
         self,
@@ -285,15 +287,18 @@ class AsyncJobsPollingMethod(AsyncPollingMethod):
     # ---- Continuation token ----
     def get_continuation_token(self) -> str:
         import pickle
+
         return base64.b64encode(pickle.dumps(self._initial_response)).decode("ascii")
 
     @classmethod
     def from_continuation_token(cls, continuation_token: str, **kwargs: Any) -> Tuple[Any, PipelineResponse, Callable]:
         import pickle
+
         client = kwargs["client"]
         deserialization_callback = kwargs["deserialization_callback"]
         initial_response = pickle.loads(base64.b64decode(continuation_token))  # nosec
         return client, initial_response, deserialization_callback
+
 
 def patch_sdk():
     """Do not remove from this file.

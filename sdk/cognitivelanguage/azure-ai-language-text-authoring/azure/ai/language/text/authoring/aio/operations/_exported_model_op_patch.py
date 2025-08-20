@@ -71,12 +71,7 @@ class ExportedModelOperations(ExportedModelOperationsGenerated):
 
     @overload
     async def begin_create_or_update_exported_model(
-        self,
-        exported_model_name: str,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, exported_model_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[ExportedModelState]:
         """Creates a new exported model or replaces an existing one.
 
@@ -94,12 +89,7 @@ class ExportedModelOperations(ExportedModelOperationsGenerated):
 
     @overload
     async def begin_create_or_update_exported_model(
-        self,
-        exported_model_name: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, exported_model_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[ExportedModelState]:
         """Creates a new exported model or replaces an existing one.
 
@@ -117,10 +107,7 @@ class ExportedModelOperations(ExportedModelOperationsGenerated):
 
     @distributed_trace_async
     async def begin_create_or_update_exported_model(
-        self,
-        exported_model_name: str,
-        body: Union[ExportedModelDetails, JSON, IO[bytes]],
-        **kwargs: Any
+        self, exported_model_name: str, body: Union[ExportedModelDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[ExportedModelState]:
         """Creates a new exported model or replaces an existing one.
 
@@ -188,18 +175,16 @@ class ExportedModelOperations(ExportedModelOperationsGenerated):
                 deserialization_callback=get_long_running_output,
             )
 
-        return AsyncLROPoller[ExportedModelState](  
+        return AsyncLROPoller[ExportedModelState](
             self._client,
-            initial,# type: ignore
+            initial,  # type: ignore
             get_long_running_output,
             polling_method,
         )
 
     @distributed_trace_async
     async def begin_delete_exported_model(
-        self,
-        exported_model_name: str,
-        **kwargs: Any
+        self, exported_model_name: str, **kwargs: Any
     ) -> AsyncLROPoller[ExportedModelState]:
         """Deletes an existing exported model.
 
@@ -261,9 +246,9 @@ class ExportedModelOperations(ExportedModelOperationsGenerated):
                 deserialization_callback=get_long_running_output,
             )
 
-        return AsyncLROPoller[ExportedModelState](  
+        return AsyncLROPoller[ExportedModelState](
             self._client,
-            initial, # type: ignore
+            initial,  # type: ignore
             get_long_running_output,
             polling_method,
         )

@@ -58,7 +58,7 @@ class TrainedModelOperations(TrainedModelOperationsGenerated):
         body: EvaluationDetails,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> LROPoller[EvaluationJobResult]:
         """Triggers evaluation operation on a trained model.
 
@@ -123,7 +123,7 @@ class TrainedModelOperations(TrainedModelOperationsGenerated):
         body: Union[EvaluationDetails, dict, IO[bytes]],
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> LROPoller[EvaluationJobResult]:
         return super()._begin_evaluate_model(
             project_name=self._project_name,

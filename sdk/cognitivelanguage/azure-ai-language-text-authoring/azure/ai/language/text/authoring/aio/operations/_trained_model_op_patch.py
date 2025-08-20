@@ -62,7 +62,7 @@ class TrainedModelOperations(TrainedModelOperationsGenerated):
         body: EvaluationDetails,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> AsyncLROPoller[EvaluationJobResult]:
         """Triggers evaluation operation on a trained model.
 
@@ -127,7 +127,7 @@ class TrainedModelOperations(TrainedModelOperationsGenerated):
         body: Union[EvaluationDetails, dict, IO[bytes]],
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> AsyncLROPoller[EvaluationJobResult]:
         return await super()._begin_evaluate_model(
             project_name=self._project_name,
@@ -138,11 +138,7 @@ class TrainedModelOperations(TrainedModelOperationsGenerated):
         )
 
     @distributed_trace_async
-    async def begin_load_snapshot(
-        self,
-        trained_model_label: str,
-        **kwargs: Any
-    ) -> AsyncLROPoller[LoadSnapshotState]:
+    async def begin_load_snapshot(self, trained_model_label: str, **kwargs: Any) -> AsyncLROPoller[LoadSnapshotState]:
         """Restores the snapshot of this trained model to be the current working directory of the project.
 
         :param trained_model_label: The trained model label. Required.
@@ -203,9 +199,9 @@ class TrainedModelOperations(TrainedModelOperationsGenerated):
                 deserialization_callback=get_long_running_output,
             )
 
-        return AsyncLROPoller[LoadSnapshotState](  
+        return AsyncLROPoller[LoadSnapshotState](
             self._client,
-            initial, # type: ignore
+            initial,  # type: ignore
             get_long_running_output,
             polling_method,
         )

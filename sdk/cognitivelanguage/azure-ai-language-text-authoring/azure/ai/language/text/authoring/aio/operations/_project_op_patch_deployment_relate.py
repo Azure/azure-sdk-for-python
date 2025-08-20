@@ -72,11 +72,7 @@ class _ProjectOperationsDeploymentsRelated(ProjectOperationsGenerated):
 
     @overload
     async def begin_assign_deployment_resources(
-        self,
-        body: AssignDeploymentResourcesDetails,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: AssignDeploymentResourcesDetails, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[DeploymentResourcesState]:
         """Assign new Azure resources to a project to allow deploying new deployments to them. This API is
         available only via AAD authentication and not supported via subscription key authentication.
@@ -96,11 +92,7 @@ class _ProjectOperationsDeploymentsRelated(ProjectOperationsGenerated):
 
     @overload
     async def begin_assign_deployment_resources(
-        self,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[DeploymentResourcesState]:
         """Assign new Azure resources to a project to allow deploying new deployments to them. This API is
         available only via AAD authentication and not supported via subscription key authentication.
@@ -120,11 +112,7 @@ class _ProjectOperationsDeploymentsRelated(ProjectOperationsGenerated):
 
     @overload
     async def begin_assign_deployment_resources(
-        self,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[DeploymentResourcesState]:
         """Assign new Azure resources to a project to allow deploying new deployments to them. This API is
         available only via AAD authentication and not supported via subscription key authentication.
@@ -144,9 +132,7 @@ class _ProjectOperationsDeploymentsRelated(ProjectOperationsGenerated):
 
     @distributed_trace_async
     async def begin_assign_deployment_resources(
-        self,
-        body: Union[AssignDeploymentResourcesDetails, JSON, IO[bytes]],
-        **kwargs: Any
+        self, body: Union[AssignDeploymentResourcesDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[DeploymentResourcesState]:
         """Assign new Azure resources to a project to allow deploying new deployments to them.
         This API is available only via AAD authentication and not supported via subscription key authentication.
@@ -197,8 +183,8 @@ class _ProjectOperationsDeploymentsRelated(ProjectOperationsGenerated):
                 AsyncPollingMethod,
                 AsyncJobsPollingMethod(
                     polling_interval=lro_delay,
-                    header_name="Operation-Location",   # service returns jobs URL here
-                    final_via_async_url=True,           # take final body from jobs URL
+                    header_name="Operation-Location",  # service returns jobs URL here
+                    final_via_async_url=True,  # take final body from jobs URL
                     path_format_arguments=path_format_arguments,
                     **kwargs,
                 ),
@@ -216,7 +202,7 @@ class _ProjectOperationsDeploymentsRelated(ProjectOperationsGenerated):
                 deserialization_callback=get_long_running_output,
             )
 
-        return AsyncLROPoller[DeploymentResourcesState]( 
+        return AsyncLROPoller[DeploymentResourcesState](
             self._client,
             initial,  # type: ignore
             get_long_running_output,
@@ -225,11 +211,7 @@ class _ProjectOperationsDeploymentsRelated(ProjectOperationsGenerated):
 
     @overload
     async def begin_swap_deployments(
-        self,
-        body: SwapDeploymentsDetails,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: SwapDeploymentsDetails, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[SwapDeploymentsState]:
         """Swaps two existing deployments with each other.
 
@@ -245,11 +227,7 @@ class _ProjectOperationsDeploymentsRelated(ProjectOperationsGenerated):
 
     @overload
     async def begin_swap_deployments(
-        self,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[SwapDeploymentsState]:
         """Swaps two existing deployments with each other.
 
@@ -265,11 +243,7 @@ class _ProjectOperationsDeploymentsRelated(ProjectOperationsGenerated):
 
     @overload
     async def begin_swap_deployments(
-        self,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[SwapDeploymentsState]:
         """Swaps two existing deployments with each other.
 
@@ -285,9 +259,7 @@ class _ProjectOperationsDeploymentsRelated(ProjectOperationsGenerated):
 
     @distributed_trace_async
     async def begin_swap_deployments(
-        self,
-        body: Union[SwapDeploymentsDetails, JSON, IO[bytes]],
-        **kwargs: Any
+        self, body: Union[SwapDeploymentsDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[SwapDeploymentsState]:
         """Swaps two existing deployments with each other.
 
@@ -352,20 +324,16 @@ class _ProjectOperationsDeploymentsRelated(ProjectOperationsGenerated):
                 deserialization_callback=get_long_running_output,
             )
 
-        return AsyncLROPoller[SwapDeploymentsState](  
+        return AsyncLROPoller[SwapDeploymentsState](
             self._client,
-            initial, # type: ignore
+            initial,  # type: ignore
             get_long_running_output,
             polling_method,
         )
 
     @overload
     async def begin_unassign_deployment_resources(
-        self,
-        body: UnassignDeploymentResourcesDetails,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: UnassignDeploymentResourcesDetails, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[DeploymentResourcesState]:
         """Unassign resources from a project. This disallows deploying new deployments to these resources,
         and deletes existing deployments assigned to them.
@@ -382,11 +350,7 @@ class _ProjectOperationsDeploymentsRelated(ProjectOperationsGenerated):
 
     @overload
     async def begin_unassign_deployment_resources(
-        self,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[DeploymentResourcesState]:
         """Unassign resources from a project. This disallows deploying new deployments to these resources,
         and deletes existing deployments assigned to them.
@@ -403,11 +367,7 @@ class _ProjectOperationsDeploymentsRelated(ProjectOperationsGenerated):
 
     @overload
     async def begin_unassign_deployment_resources(
-        self,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[DeploymentResourcesState]:
         """Unassign resources from a project. This disallows deploying new deployments to these resources,
         and deletes existing deployments assigned to them.
@@ -424,9 +384,7 @@ class _ProjectOperationsDeploymentsRelated(ProjectOperationsGenerated):
 
     @distributed_trace_async
     async def begin_unassign_deployment_resources(
-        self,
-        body: Union[UnassignDeploymentResourcesDetails, JSON, IO[bytes]],
-        **kwargs: Any
+        self, body: Union[UnassignDeploymentResourcesDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[DeploymentResourcesState]:
         """Unassign resources from a project. This disallows deploying new deployments to these resources,
         and deletes existing deployments assigned to them.
@@ -492,9 +450,9 @@ class _ProjectOperationsDeploymentsRelated(ProjectOperationsGenerated):
                 deserialization_callback=get_long_running_output,
             )
 
-        return AsyncLROPoller[DeploymentResourcesState](  
+        return AsyncLROPoller[DeploymentResourcesState](
             self._client,
-            initial, # type: ignore
+            initial,  # type: ignore
             get_long_running_output,
             polling_method,
         )

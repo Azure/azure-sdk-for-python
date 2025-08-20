@@ -61,6 +61,7 @@ from collections.abc import MutableMapping
 from azure.core.pipeline import PipelineResponse
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator_async import distributed_trace_async
+
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 _Unset: Any = object()
@@ -101,12 +102,7 @@ class ProjectOperations(_ProjectOperationsDeploymentsRelated):
 
     @overload
     async def begin_import(
-        self,
-        body: JSON,
-        *,
-        format: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: JSON, *, format: Optional[str] = None, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[ImportProjectState]:
         """Triggers a job to import a project. If a project with the same name already exists,
         the data of that project is replaced.
@@ -126,12 +122,7 @@ class ProjectOperations(_ProjectOperationsDeploymentsRelated):
 
     @overload
     async def begin_import(
-        self,
-        body: IO[bytes],
-        *,
-        format: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: IO[bytes], *, format: Optional[str] = None, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[ImportProjectState]:
         """Triggers a job to import a project. If a project with the same name already exists,
         the data of that project is replaced.
@@ -151,11 +142,7 @@ class ProjectOperations(_ProjectOperationsDeploymentsRelated):
 
     @distributed_trace_async
     async def begin_import(
-        self,
-        body: Union[ExportedProject, JSON, IO[bytes]],
-        *,
-        format: Optional[str] = None,
-        **kwargs: Any
+        self, body: Union[ExportedProject, JSON, IO[bytes]], *, format: Optional[str] = None, **kwargs: Any
     ) -> AsyncLROPoller[ImportProjectState]:
         """Triggers a job to import a project. If a project with the same name already exists,
         the data of that project is replaced.
@@ -225,9 +212,9 @@ class ProjectOperations(_ProjectOperationsDeploymentsRelated):
                 deserialization_callback=get_long_running_output,
             )
 
-        return AsyncLROPoller[ImportProjectState](  
+        return AsyncLROPoller[ImportProjectState](
             self._client,
-            initial, # type: ignore
+            initial,  # type: ignore
             get_long_running_output,
             polling_method,
         )
@@ -241,11 +228,7 @@ class ProjectOperations(_ProjectOperationsDeploymentsRelated):
 
     @overload
     async def begin_copy_project(
-        self,
-        body: CopyProjectDetails,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: CopyProjectDetails, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[CopyProjectState]:
         """Copies an existing project to another Azure resource.
 
@@ -261,11 +244,7 @@ class ProjectOperations(_ProjectOperationsDeploymentsRelated):
 
     @overload
     async def begin_copy_project(
-        self,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[CopyProjectState]:
         """Copies an existing project to another Azure resource.
 
@@ -281,11 +260,7 @@ class ProjectOperations(_ProjectOperationsDeploymentsRelated):
 
     @overload
     async def begin_copy_project(
-        self,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[CopyProjectState]:
         """Copies an existing project to another Azure resource.
 
@@ -303,9 +278,7 @@ class ProjectOperations(_ProjectOperationsDeploymentsRelated):
 
     @distributed_trace_async
     async def begin_copy_project(
-        self,
-        body: Union[CopyProjectDetails, JSON, IO[bytes]],
-        **kwargs: Any
+        self, body: Union[CopyProjectDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[CopyProjectState]:
         """Copies an existing project to another Azure resource.
 
@@ -370,9 +343,9 @@ class ProjectOperations(_ProjectOperationsDeploymentsRelated):
                 deserialization_callback=get_long_running_output,
             )
 
-        return AsyncLROPoller[CopyProjectState](  
+        return AsyncLROPoller[CopyProjectState](
             self._client,
-            initial, # type: ignore
+            initial,  # type: ignore
             get_long_running_output,
             polling_method,
         )
@@ -436,7 +409,9 @@ class ProjectOperations(_ProjectOperationsDeploymentsRelated):
         self, body: Union[TrainingJobDetails, JSON, IO[bytes]], *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[TrainingJobResult]:
         """Begin training without requiring project_name explicitly."""
-        return await super()._begin_train(project_name=self._project_name, body=body, content_type=content_type, **kwargs)
+        return await super()._begin_train(
+            project_name=self._project_name, body=body, content_type=content_type, **kwargs
+        )
 
     @distributed_trace_async
     async def begin_export(
@@ -515,9 +490,9 @@ class ProjectOperations(_ProjectOperationsDeploymentsRelated):
                 deserialization_callback=get_long_running_output,
             )
 
-        return AsyncLROPoller[ExportProjectState](  
+        return AsyncLROPoller[ExportProjectState](
             self._client,
-            initial, # type: ignore
+            initial,  # type: ignore
             get_long_running_output,
             polling_method,
         )
@@ -609,7 +584,9 @@ class ProjectOperations(_ProjectOperationsDeploymentsRelated):
     async def _get_assign_deployment_resources_status(  # type: ignore[override]
         self, job_id: str, **kwargs: Any
     ) -> DeploymentResourcesState:
-        return await super()._get_assign_deployment_resources_status(project_name=self._project_name, job_id=job_id, **kwargs)
+        return await super()._get_assign_deployment_resources_status(
+            project_name=self._project_name, job_id=job_id, **kwargs
+        )
 
     @distributed_trace
     async def _get_copy_project_status(self, job_id: str, **kwargs: Any) -> CopyProjectState:  # type: ignore[override]
