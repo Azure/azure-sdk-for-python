@@ -1,5 +1,13 @@
 # Release History
 
+## 39.1.0 (2025-09-21)
+
+### Features Added
+
+  - Model `ManagedCluster` added property `kind`
+  - Enum `ManagedClusterSKUName` added member `AUTOMATIC`
+  - Enum `OSSKU` added member `AZURE_LINUX3`
+
 ## 39.0.0 (2025-07-21)
 
 ### Features Added
