@@ -24,24 +24,27 @@
 
 
 from typing import Dict, Final
+from typing_extensions import Literal
 
 
 class _Constants:
     """Constants used in the azure-cosmos package"""
 
-    UserConsistencyPolicy: Final[str] = "userConsistencyPolicy"
-    DefaultConsistencyLevel: Final[str] = "defaultConsistencyLevel"
+    UserConsistencyPolicy: Literal["userConsistencyPolicy"] = "userConsistencyPolicy"
+    DefaultConsistencyLevel: Literal["defaultConsistencyLevel"] = "defaultConsistencyLevel"
 
     # GlobalDB related constants
-    WritableLocations: Final[str] = "writableLocations"
-    ReadableLocations: Final[str] = "readableLocations"
-    Name: Final[str] = "name"
-    DatabaseAccountEndpoint: Final[str] = "databaseAccountEndpoint"
+    WritableLocations: Literal["writableLocations"] = "writableLocations"
+    ReadableLocations: Literal["readableLocations"] = "readableLocations"
+    Name: Literal["name"] = "name"
+    DatabaseAccountEndpoint: Literal["databaseAccountEndpoint"] = "databaseAccountEndpoint"
     DefaultEndpointsRefreshTime: int = 5 * 60 * 1000 # milliseconds
     UnavailableEndpointDBATimeouts: int = 1 # seconds
 
     # ServiceDocument Resource
-    EnableMultipleWritableLocations: Final[str] = "enableMultipleWriteLocations"
+    EnableMultipleWritableLocations: Literal[
+        "enableMultipleWriteLocations"
+    ] = "enableMultipleWriteLocations"
 
     # Environment variables
     NON_STREAMING_ORDER_BY_DISABLED_CONFIG: str = "AZURE_COSMOS_DISABLE_NON_STREAMING_ORDER_BY"
