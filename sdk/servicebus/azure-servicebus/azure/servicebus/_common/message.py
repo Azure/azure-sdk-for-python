@@ -310,6 +310,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-instance-attributes
 
         :rtype: str or None
         """
+        opt_p_key = None
         try:
             opt_p_key = self._raw_amqp_message.annotations.get(_X_OPT_PARTITION_KEY)  # type: ignore
             if opt_p_key is not None:
