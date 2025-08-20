@@ -17,14 +17,12 @@ import logging
 from subprocess import check_call, CalledProcessError, Popen
 from argparse import Namespace
 from typing import Iterable
-
-# Assumes the presence of setuptools
-from pkg_resources import parse_version, parse_requirements, Requirement, WorkingSet, working_set
+import importlib.metadata
 
 # this assumes the presence of "packaging"
 from packaging.specifiers import SpecifierSet
 
-from ci_tools.functions import MANAGEMENT_PACKAGE_IDENTIFIERS, NO_TESTS_ALLOWED, lambda_filter_azure_pkg, str_to_bool
+from ci_tools.functions import lambda_filter_azure_pkg, get_pip_list_output
 from ci_tools.parsing import parse_require, ParsedSetup
 
 DEV_REQ_FILE = "dev_requirements.txt"
@@ -112,23 +110,6 @@ def create_code_coverage_params(parsed_args: Namespace, package_path: str):
             )
         )
     return coverage_args
-
-
-# This function returns if error code 5 is allowed for a given package
-def is_error_code_5_allowed(target_pkg, pkg_name):
-    if (
-        all(
-            map(
-                lambda x: any([pkg_id in x for pkg_id in MANAGEMENT_PACKAGE_IDENTIFIERS]),
-                [target_pkg],
-            )
-        )
-        or pkg_name in MANAGEMENT_PACKAGE_IDENTIFIERS
-        or pkg_name in NO_TESTS_ALLOWED
-    ):
-        return True
-    else:
-        return False
 
 
 # This method installs package from a pre-built whl
@@ -247,9 +228,13 @@ def find_tools_packages(root_path):
 
 def get_installed_packages(paths=None):
     """Find packages in default or given lib paths"""
-    # WorkingSet returns installed packages in given path
-    # working_set returns installed packages in default path
-    # if paths is set then find installed packages from given paths
-    ws = WorkingSet(paths) if paths else working_set
-    return ["{0}=={1}".format(p.project_name, p.version) for p in ws]
+    # Use importlib.metadata.distributions, optionally searching provided paths
+    if paths:
+        dists = importlib.metadata.distributions(path=paths)
+    else:
+        dists = importlib.metadata.distributions()
+
+    newWS = [f"{k}=={v}" for k, v in get_pip_list_output(sys.executable).items()]
+
+    return newWS
 
