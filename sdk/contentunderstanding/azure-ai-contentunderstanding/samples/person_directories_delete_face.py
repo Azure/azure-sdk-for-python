@@ -70,7 +70,7 @@ async def main():
         # Add a person so we can attach a face
         person_response = await client.person_directories.add_person(
             person_directory_id=directory_id,
-            body={"tags": {"name": "Demo User"}},
+            tags={"name": "Demo User"},
         )
         person_id = person_response.person_id
         print(f"👤 Person created (id={person_id}) - adding face…")

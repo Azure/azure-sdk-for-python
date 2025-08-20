@@ -13,7 +13,6 @@ from azure.ai.contentunderstanding.models import DetectFacesResult
 from azure.core.credentials import AzureKeyCredential
 from dotenv import load_dotenv
 
-from sample_helper import read_image_to_base64_bytes
 from azure.core.credentials import AzureKeyCredential
 from azure.identity.aio import DefaultAzureCredential
 
