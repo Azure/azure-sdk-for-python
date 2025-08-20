@@ -9,7 +9,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import json
-from typing import Any, Callable, Dict, IO, Mapping, Optional, TypeVar, Union, cast, overload
+from typing import Any, Callable, Dict, IO, Mapping, Optional, TypeVar, Union, cast, Generic, overload
 from ._client import ConversationAnalysisClient as AnalysisClientGenerated
 from collections.abc import MutableMapping
 from ..models import AnalyzeConversationOperationInput, AnalyzeConversationOperationState, ConversationActions
@@ -55,7 +55,7 @@ def _parse_operation_id(op_loc: Optional[str]) -> Optional[str]:
 PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
 
 
-class AnalyzeConversationAsyncLROPoller(AsyncLROPoller[PollingReturnType_co]):
+class AnalyzeConversationAsyncLROPoller(AsyncLROPoller[PollingReturnType_co], Generic[PollingReturnType_co]):
     """Async poller that returns PollingReturnType_co and exposes operation metadata."""
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
