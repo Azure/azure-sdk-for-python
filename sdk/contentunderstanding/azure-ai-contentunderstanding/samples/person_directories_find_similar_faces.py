@@ -119,11 +119,13 @@ async def main():
             "Bill",
             "Family1-Dad3.jpg",
         )
-        query_image_base64 = read_image_to_base64(query_image_path)
+        # Read image as bytes directly
+        with open(query_image_path, "rb") as image_file:
+            query_image_bytes = image_file.read()
 
         response = await client.person_directories.find_similar_faces(
-            person_directory_id=directory_id,
-            face_source=FaceSource(data=query_image_base64),
+            directory_id,
+            query_image_bytes,
             max_similar_faces=10,
         )
 
@@ -153,11 +155,14 @@ async def main():
             "Clare",
             "Family1-Mom1.jpg",
         )
-        mom_query_b64 = read_image_to_base64(mom_query_path)
+        # Read image as bytes directly
+        with open(mom_query_path, "rb") as image_file:
+            mom_query_bytes = image_file.read()
 
         mom_response = await client.person_directories.find_similar_faces(
-            person_directory_id=directory_id,
-            body={"faceSource": {"data": mom_query_b64}, "maxSimilarFaces": 10},
+            directory_id,
+            mom_query_bytes,
+            max_similar_faces=10,
         )
 
         # Display results for Mom1 query
