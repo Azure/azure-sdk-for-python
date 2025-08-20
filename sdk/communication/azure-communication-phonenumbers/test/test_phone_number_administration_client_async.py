@@ -438,7 +438,7 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
         async with phone_number_client:
             localities = phone_number_client.list_available_localities("IE", phone_number_type=PhoneNumberType.MOBILE)
             async for first_locality in localities:
-                area_codes = phone_number_client.list_available_area_codes(
+                area_codes = self.phone_number_client.list_available_area_codes(
                     "IE",
                     PhoneNumberType.MOBILE,
                     assignment_type=PhoneNumberAssignmentType.APPLICATION,
