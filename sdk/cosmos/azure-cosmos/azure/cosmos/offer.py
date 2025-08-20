@@ -21,7 +21,7 @@
 """
 
 
-from typing import Any, Dict, Optional
+from typing import Optional
 
 from requests.structures import CaseInsensitiveDict
 from ._cosmos_responses import CosmosDict

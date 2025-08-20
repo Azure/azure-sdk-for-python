@@ -336,8 +336,7 @@ class DatabaseProxy(object):
 
         if not return_properties:
             return ContainerProxy(self.client_connection, self.database_link, result["id"], properties=result)
-        else:
-            return ContainerProxy(self.client_connection, self.database_link, result["id"], properties=result), result
+        return ContainerProxy(self.client_connection, self.database_link, result["id"], properties=result), result
 
     @overload
     def create_container_if_not_exists(  # pylint:disable=docstring-missing-param
@@ -470,8 +469,7 @@ class DatabaseProxy(object):
             )
             if not return_properties:
                 return container_proxy
-            else:
-                return container_proxy, properties
+            return container_proxy, properties
         except CosmosResourceNotFoundError:
             return self.create_container(
                 id=id,
@@ -824,11 +822,10 @@ class DatabaseProxy(object):
                 self.client_connection,
                 self.database_link, container_properties["id"],
                 properties=container_properties)
-        else:
-            return ContainerProxy(
-                self.client_connection,
-                self.database_link, container_properties["id"],
-                properties=container_properties), container_properties
+        return ContainerProxy(
+            self.client_connection,
+            self.database_link, container_properties["id"],
+            properties=container_properties), container_properties
 
     @distributed_trace
     def list_users(

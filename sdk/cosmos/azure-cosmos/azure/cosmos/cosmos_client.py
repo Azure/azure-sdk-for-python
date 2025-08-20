@@ -365,8 +365,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             response_hook(self.client_connection.last_response_headers)
         if not return_properties:
             return DatabaseProxy(self.client_connection, id=result["id"], properties=result)
-        else:
-            return DatabaseProxy(self.client_connection, id=result["id"], properties=result), result
+        return DatabaseProxy(self.client_connection, id=result["id"], properties=result), result
 
     @overload
     def create_database_if_not_exists(  # pylint:disable=docstring-missing-param
@@ -460,8 +459,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             )
             if not return_properties:
                 return database_proxy
-            else:
-                return database_proxy, result
+            return database_proxy, result
         except CosmosResourceNotFoundError:
             return self.create_database(
                 id,

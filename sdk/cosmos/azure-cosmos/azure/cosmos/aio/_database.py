@@ -232,7 +232,7 @@ class DatabaseProxy(object):
         :param str id: ID (name) of container to create.
         :param partition_key: The partition key to use for the container.
         :type partition_key: ~azure.cosmos.PartitionKey
-        :param bool return_properties: Specifies function to return either a ContainerProxy or a CosmosDict instance.
+        :keyword bool return_properties: Specifies function to return either a ContainerProxy or a CosmosDict instance.
         :keyword dict[str, str] indexing_policy: The indexing policy to apply to the container.
         :keyword int default_ttl: Default time to live (TTL) for items in the container.
             If unspecified, items do not expire.
@@ -335,8 +335,7 @@ class DatabaseProxy(object):
         )
         if not return_properties:
             return ContainerProxy(self.client_connection, self.database_link, data["id"], properties=data)
-        else:
-            return ContainerProxy(self.client_connection, self.database_link, data["id"], properties=data), data
+        return ContainerProxy(self.client_connection, self.database_link, data["id"], properties=data), data
 
     @overload
     async def create_container_if_not_exists(
@@ -411,7 +410,7 @@ class DatabaseProxy(object):
         :param str id: ID (name) of container to create.
         :param partition_key: The partition key to use for the container.
         :type partition_key: ~azure.cosmos.PartitionKey
-        :param bool return_properties: Specifies function to return either a ContainerProxy or a CosmosDict instance.
+        :keyword bool return_properties: Specifies function to return either a ContainerProxy or a CosmosDict instance.
         :keyword dict[str, str] indexing_policy: The indexing policy to apply to the container.
         :keyword int default_ttl: Default time to live (TTL) for items in the container.
             If unspecified, items do not expire.
@@ -437,7 +436,8 @@ class DatabaseProxy(object):
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container creation failed.
-        :returns: A `ContainerProxy` instance representing the new container or a tuple of the ContainerProxy and CosmosDict with the response headers.
+        :returns: A `ContainerProxy` instance representing the new container or a tuple of the ContainerProxy
+            and CosmosDict with the response headers.
         :rtype: ~azure.cosmos.ContainerProxy or tuple[ContainerProxy, CosmosDict]
         """
         session_token = kwargs.get('session_token')
@@ -466,8 +466,7 @@ class DatabaseProxy(object):
             )
             if not return_properties:
                 return container_proxy
-            else:
-                return container_proxy, properties
+            return container_proxy, properties
         except CosmosResourceNotFoundError:
             return await self.create_container(
                 id=id,
@@ -669,7 +668,7 @@ class DatabaseProxy(object):
         :type container: Union[str, Dict[str, Any], ~azure.cosmos.aio.ContainerProxy]
         :param partition_key: The partition key to use for the container.
         :type partition_key: ~azure.cosmos.PartitionKey
-        :param bool return_properties: Specifies function to return either a ContainerProxy or a CosmosDict instance.
+        :keyword bool return_properties: Specifies function to return either a ContainerProxy or a CosmosDict instance.
         :keyword dict[str, str] indexing_policy: The indexing policy to apply to the container.
         :keyword int default_ttl: Default time to live (TTL) for items in the container.
             If unspecified, items do not expire.
@@ -686,7 +685,8 @@ class DatabaseProxy(object):
         :keyword Dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
-        :returns: A `ContainerProxy` instance representing the new container or a tuple of the ContainerProxy and CosmosDict with the response headers.
+        :returns: A `ContainerProxy` instance representing the new container or a tuple of the ContainerProxy
+            and CosmosDict with the response headers.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be replaced.
             This includes if the container with given id does not exist.
         :rtype: ~azure.cosmos.ContainerProxy or tuple[ContainerProxy, CosmosDict]
@@ -747,12 +747,11 @@ class DatabaseProxy(object):
         if not return_properties:
             return ContainerProxy(
                 self.client_connection, self.database_link, container_properties["id"], properties=container_properties)
-        else:
-            return ContainerProxy(
-                self.client_connection,
-                self.database_link,
-                container_properties["id"],
-                properties=container_properties), container_properties
+        return ContainerProxy(
+            self.client_connection,
+            self.database_link,
+            container_properties["id"],
+            properties=container_properties), container_properties
 
     @distributed_trace_async
     async def delete_container(
