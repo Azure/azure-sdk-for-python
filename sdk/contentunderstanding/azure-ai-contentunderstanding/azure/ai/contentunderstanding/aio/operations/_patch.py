@@ -95,8 +95,8 @@ class FacesOperations(FacesOperationsGenerated):
         """Detect faces in an image with improved overloads.
         
         This method accepts either:
-        - A string URL as the first argument: detect("http://...")
-        - Base64-encoded image data as bytes as the first argument: detect(bytes_data)
+        - A string URL as the first argument
+        - Base64-encoded image data as bytes as the first argument
         - Original keyword arguments: detect(url="...", data="...", body={...})
         
         :return: DetectFacesResult
@@ -112,8 +112,17 @@ class FacesOperations(FacesOperationsGenerated):
                 return await super().detect(url=input_data, **kwargs)
             
             elif isinstance(input_data, bytes):
-                # Bytes as positional argument - convert to string for API
                 return await super().detect(data=input_data, **kwargs)
+        
+        # Check if face_source keyword argument is provided (needs conversion)
+        elif 'face_source' in kwargs:
+            face_source = kwargs.pop('face_source')
+            if hasattr(face_source, 'url') and face_source.url:
+                return await super().detect(url=face_source.url, **kwargs)
+            elif hasattr(face_source, 'data') and face_source.data:
+                return await super().detect(data=face_source.data, **kwargs)
+            else:
+                raise ValueError("FaceSource must have either url or data")
         
         # Check if data keyword argument is bytes (needs conversion)
         elif 'data' in kwargs and isinstance(kwargs['data'], bytes):

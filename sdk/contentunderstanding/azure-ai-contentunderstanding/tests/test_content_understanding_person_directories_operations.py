@@ -6,17 +6,30 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import os
-from typing import Optional, Dict, Any, List
-from devtools_testutils import recorded_by_proxy, is_live
-from testpreparer import ContentUnderstandingClientTestBase, ContentUnderstandingPreparer
+import uuid
+from datetime import datetime
+from typing import Dict, Optional
+
+import pytest
 from azure.core.exceptions import ResourceNotFoundError
-from azure.ai.contentunderstanding.models import PersonDirectory
+from devtools_testutils import recorded_by_proxy
+from testpreparer import ContentUnderstandingPreparer
+
+from testpreparer import ContentUnderstandingClientTestBase
 from test_helpers import (
     generate_person_directory_id_sync,
-    read_image_to_base64,
     get_enrollment_data_path
 )
 import uuid
+
+
+def generate_test_id() -> str:
+    """Generate a unique test ID with current date, time, and GUID."""
+    now = datetime.now()
+    date_str = now.strftime("%Y%m%d")
+    time_str = now.strftime("%H%M%S")
+    guid = str(uuid.uuid4()).replace("-", "")[:8]
+    return f"test_{date_str}_{time_str}_{guid}"
 
 
 def delete_person_directory_and_assert(client, person_directory_id: str, created_directory: bool) -> None:
@@ -207,8 +220,9 @@ def identify_persons_in_image(
     print(f"\nIdentifying Persons in Image...")
     print(f"Processing test image: {os.path.basename(image_path)}")
     
-    # Read image and convert to base64
-    image_data = read_image_to_base64(image_path)
+    # Read image as bytes directly - the API will handle base64 encoding internally
+    with open(image_path, "rb") as image_file:
+        image_bytes = image_file.read()
     
     # Detect faces first
     # Note: This would require a separate face detection API call
@@ -220,7 +234,7 @@ def identify_persons_in_image(
             person_directory_id=person_directory_id,
             body={
                 "faceSource": {
-                    "data": image_data
+                    "data": image_bytes
                 },
                 "maxPersonCandidates": 5
             }
@@ -1283,13 +1297,15 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
             # This should find matches since Dad3 is from the same person as Dad1 and Dad2
             print(f"\nTest 1: Finding similar faces using Family1-Dad3.jpg (same person)")
             dad3_image_path = os.path.join(test_file_dir, "test_data", "face", "enrollment_data", "Bill", "Family1-Dad3.jpg")
-            dad3_image_data = read_image_to_base64(dad3_image_path)
+            # Read image as bytes directly
+            with open(dad3_image_path, "rb") as image_file:
+                dad3_image_bytes = image_file.read()
             
             dad3_response = client.person_directories.find_similar_faces(
                 person_directory_id=person_directory_id,
                 body={
                     "faceSource": {
-                        "data": dad3_image_data
+                        "data": dad3_image_bytes
                     },
                     "maxSimilarFaces": 10
                 }
@@ -1316,13 +1332,15 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
             # This should find NO matches since Clare is a different person than Bill
             print(f"\nTest 2: Finding similar faces using Family1-Mom1.jpg (different person)")
             mom1_image_path = os.path.join(test_file_dir, "test_data", "face", "enrollment_data", "Clare", "Family1-Mom1.jpg")
-            mom1_image_data = read_image_to_base64(mom1_image_path)
+            # Read image as bytes directly
+            with open(mom1_image_path, "rb") as image_file:
+                mom1_image_bytes = image_file.read()
             
             mom1_response = client.person_directories.find_similar_faces(
                 person_directory_id=person_directory_id,
                 body={
                     "faceSource": {
-                        "data": mom1_image_data
+                        "data": mom1_image_bytes
                     },
                     "maxSimilarFaces": 10
                 }
@@ -1464,12 +1482,14 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
             
             # Test 1: Using body parameter (original method)
             print(f"Test 1: Using body parameter (original method)")
-            image_data = read_image_to_base64(test_image_path)
+            # Read image as bytes directly
+            with open(test_image_path, "rb") as image_file:
+                image_bytes = image_file.read()
             response1 = client.person_directories.identify_person(
                 person_directory_id=person_directory_id,
                 body={
                     "faceSource": {
-                        "data": image_data
+                        "data": image_bytes
                     },
                     "maxPersonCandidates": 5
                 }
@@ -1483,7 +1503,7 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
             # Test 2: Using FaceSource object (new method)
             print(f"Test 2: Using FaceSource object (new method)")
             from azure.ai.contentunderstanding.models import FaceSource
-            face_source = FaceSource(data=image_data)
+            face_source = FaceSource(data=image_bytes)
             response2 = client.person_directories.identify_person(
                 person_directory_id=person_directory_id,
                 face_source=face_source,
