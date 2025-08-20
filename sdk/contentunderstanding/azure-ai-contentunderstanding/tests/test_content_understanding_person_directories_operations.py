@@ -164,15 +164,16 @@ def build_person_directory_from_enrollment_data(
             print(f"- Adding face from {filename}... ", end="")
             
             try:
-                # Read image and convert to base64
-                image_data = read_image_to_base64(image_path)
+                # Read image as bytes directly
+                with open(image_path, "rb") as image_file:
+                    image_bytes = image_file.read()
                 
-                # Add face to person
+                # Add face to person using body parameter (testing pattern 1)
                 face_response = client.person_directories.add_face(
                     person_directory_id=person_directory_id,
                     body={
                         "faceSource": {
-                            "data": image_data
+                            "data": image_bytes
                         },
                         "personId": person_id
                     }
@@ -893,15 +894,17 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
             # Read test image and convert to base64
             test_file_dir = os.path.dirname(os.path.abspath(__file__))
             image_path = os.path.join(test_file_dir, "test_data", "face", "enrollment_data", "Alex", "Family1-Son1.jpg")
-            image_data = read_image_to_base64(image_path)
+            # Read image as bytes directly
+            with open(image_path, "rb") as image_file:
+                image_bytes = image_file.read()
 
-            # Add a face to the person
+            # Add a face to the person using positional parameters (testing pattern 2)
             print(f"Adding face to person {person_id}")
             response = client.person_directories.add_face(
                 person_directory_id=person_directory_id,
-            body={
-                "faceSource": {
-                        "data": image_data
+                body={
+                    "faceSource": {
+                        "data": image_bytes
                     },
                     "personId": person_id
                 }
@@ -987,17 +990,17 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
             # Add a face to person 1
             test_file_dir = os.path.dirname(os.path.abspath(__file__))
             image_path = os.path.join(test_file_dir, "test_data", "face", "enrollment_data", "Alex", "Family1-Son1.jpg")
-            image_data = read_image_to_base64(image_path)
+            # Read image as bytes directly
+            with open(image_path, "rb") as image_file:
+                image_bytes = image_file.read()
 
-            print(f"Adding face to person {person1_id}")
+            print(f"Adding face to person {person1_id} using FaceSource object (testing pattern 3)")
+            from azure.ai.contentunderstanding.models import FaceSource
+            face_source = FaceSource(data=image_bytes)
             add_face_response = client.person_directories.add_face(
                 person_directory_id=person_directory_id,
-                body={
-                    "faceSource": {
-                        "data": image_data
-                    },
-                    "personId": person1_id
-                }
+                face_source=face_source,
+                person_id=person1_id
             )
             
             face_id = add_face_response.face_id
@@ -1080,17 +1083,15 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
             # Add a face to the person
             test_file_dir = os.path.dirname(os.path.abspath(__file__))
             image_path = os.path.join(test_file_dir, "test_data", "face", "enrollment_data", "Alex", "Family1-Son1.jpg")
-            image_data = read_image_to_base64(image_path)
+            # Read image as bytes directly
+            with open(image_path, "rb") as image_file:
+                image_bytes = image_file.read()
 
-            print(f"Adding face to person {person_id}")
+            print(f"Adding face to person {person_id} using mixed parameters (testing pattern 4)")
             add_face_response = client.person_directories.add_face(
-                person_directory_id=person_directory_id,
-                body={
-                    "faceSource": {
-                        "data": image_data
-                    },
-                    "personId": person_id
-                }
+                person_directory_id,
+                image_bytes,
+                person_id=person_id
             )
             
             face_id = add_face_response.face_id
@@ -1161,18 +1162,19 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
             # Add a face to the person
             test_file_dir = os.path.dirname(os.path.abspath(__file__))
             image_path = os.path.join(test_file_dir, "test_data", "face", "enrollment_data", "Alex", "Family1-Son1.jpg")
-            image_data = read_image_to_base64(image_path)
+            # Read image as bytes directly
+            with open(image_path, "rb") as image_file:
+                image_bytes = image_file.read()
 
-            print(f"Adding face to person {person_id}")
+            print(f"Adding face to person {person_id} using FaceSource object (testing pattern 5)")
+            from azure.ai.contentunderstanding.models import FaceSource
+            face_source = FaceSource(data=image_bytes)
             add_face_response = client.person_directories.add_face(
                 person_directory_id=person_directory_id,
-                body={
-                    "faceSource": {
-                        "data": image_data
-                    },
-                    "personId": person_id
-                }
+                face_source=face_source,
+                person_id=person_id
             )
+            
             face_id = add_face_response.face_id
             print(f"Created face with ID: {face_id}")
 
@@ -1259,17 +1261,17 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
             face_ids = []
             for i, face_file in enumerate(face_images):
                 image_path = os.path.join(test_file_dir, face_file)
-                image_data = read_image_to_base64(image_path)
+                # Read image as bytes directly
+                with open(image_path, "rb") as image_file:
+                    image_bytes = image_file.read()
                 
-                print(f"Adding face {i+1} from {face_file} to person {person_id}")
+                print(f"Adding face {i+1} from {face_file} to person {person_id} using FaceSource object (testing pattern 6)")
+                from azure.ai.contentunderstanding.models import FaceSource
+                face_source = FaceSource(data=image_bytes)
                 add_face_response = client.person_directories.add_face(
                     person_directory_id=person_directory_id,
-                    body={
-                        "faceSource": {
-                            "data": image_data
-                        },
-                        "personId": person_id
-                    }
+                    face_source=face_source,
+                    person_id=person_id
                 )
                 
                 face_id = add_face_response.face_id
@@ -1389,17 +1391,15 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
             # Add a face to the person
             test_file_dir = os.path.dirname(os.path.abspath(__file__))
             image_path = os.path.join(test_file_dir, "test_data", "face", "enrollment_data", "Alex", "Family1-Son1.jpg")
-            image_data = read_image_to_base64(image_path)
+            # Read image as bytes directly
+            with open(image_path, "rb") as image_file:
+                image_bytes = image_file.read()
 
-            print(f"Adding face to person {person_id}")
+            print(f"Adding face to person {person_id} using positional parameters (testing pattern 7)")
             add_face_response = client.person_directories.add_face(
-                person_directory_id=person_directory_id,
-                body={
-                    "faceSource": {
-                        "data": image_data
-                    },
-                    "personId": person_id
-                }
+                person_directory_id,
+                image_bytes,
+                person_id=person_id
             )
             face_id = add_face_response.face_id
             print(f"Created face with ID: {face_id}")
@@ -1411,7 +1411,7 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
                 person_id=person_id,
                 body={
                     "faceSource": {
-                        "data": image_data
+                        "data": image_bytes
                     }
                 }
             )

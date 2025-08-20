@@ -14,7 +14,7 @@ from devtools_testutils import recorded_by_proxy
 from devtools_testutils import is_live
 from testpreparer import ContentUnderstandingClientTestBase, ContentUnderstandingPreparer
 from azure.core.exceptions import ResourceNotFoundError
-from test_helpers import read_image_to_base64, read_image_to_base64_bytes
+from test_helpers import read_image_to_base64
 
 import pytest
 
@@ -108,7 +108,10 @@ class TestContentUnderstandingFacesOperations(ContentUnderstandingClientTestBase
         # Load test image
         test_file_dir = os.path.dirname(os.path.abspath(__file__))
         image_path = os.path.join(test_file_dir, "test_data", "face", "family.jpg")
-        image_data = read_image_to_base64_bytes(image_path)  # Returns bytes
+        
+        # Read image as bytes directly
+        with open(image_path, "rb") as image_file:
+            image_data = image_file.read()
         
         print(f"Testing data keyword method with image: {image_path}")
         response = client.faces.detect(
@@ -174,7 +177,10 @@ class TestContentUnderstandingFacesOperations(ContentUnderstandingClientTestBase
         # Load test image
         test_file_dir = os.path.dirname(os.path.abspath(__file__))
         image_path = os.path.join(test_file_dir, "test_data", "face", "family.jpg")
-        image_data = read_image_to_base64_bytes(image_path)  # Returns bytes
+        
+        # Read image as bytes directly
+        with open(image_path, "rb") as image_file:
+            image_data = image_file.read()
         
         print(f"Testing new bytes positional overload with image: {image_path}")
         response = client.faces.detect(

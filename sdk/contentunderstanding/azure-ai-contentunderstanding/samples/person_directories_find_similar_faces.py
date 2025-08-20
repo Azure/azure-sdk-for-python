@@ -92,12 +92,14 @@ async def main():
             image_path = os.path.join(
                 sample_file_dir, "sample_files", "face", face_file
             )
-            image_b64 = read_image_to_base64(image_path)
+            # Read image as bytes directly
+            with open(image_path, "rb") as image_file:
+                image_bytes = image_file.read()
 
             face_add_response = await client.person_directories.add_face(
-                person_directory_id=directory_id,
-                face_source=FaceSource(data=image_b64),
-                person_id=person_id,
+                directory_id,
+                person_id,
+                image_bytes,
             )
             face_id = face_add_response.face_id
             face_ids.append(face_id)

@@ -14,7 +14,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from testpreparer import ContentUnderstandingPreparer
 from testpreparer_async import ContentUnderstandingClientTestBaseAsync
 from azure.core.exceptions import ResourceNotFoundError
-from test_helpers import read_image_to_base64, read_image_to_base64_bytes
+from test_helpers import read_image_to_base64
 
 
 def generate_test_id() -> str:
@@ -118,11 +118,13 @@ class TestContentUnderstandingFacesOperationsAsync(ContentUnderstandingClientTes
         # Load test image
         test_file_dir = os.path.dirname(os.path.abspath(__file__))
         image_path = os.path.join(test_file_dir, "test_data", "face", "family.jpg")
-        image_data = read_image_to_base64_bytes(image_path)  # Returns bytes
+        # Read image as bytes directly
+        with open(image_path, "rb") as image_file:
+            image_data = image_file.read()
         
         print(f"Testing data keyword method with image: {image_path}")
         response = await client.faces.detect(
-            data=image_data,  # Our patch will convert bytes to string automatically
+            data=image_data,  
             max_detected_faces=10
         )
         
@@ -184,7 +186,10 @@ class TestContentUnderstandingFacesOperationsAsync(ContentUnderstandingClientTes
         # Load test image
         test_file_dir = os.path.dirname(os.path.abspath(__file__))
         image_path = os.path.join(test_file_dir, "test_data", "face", "family.jpg")
-        image_data = read_image_to_base64_bytes(image_path)  # Returns bytes
+        
+        # Read image as bytes directly
+        with open(image_path, "rb") as image_file:
+            image_data = image_file.read()
         
         print(f"Testing new bytes positional overload with image: {image_path}")
         response = await client.faces.detect(

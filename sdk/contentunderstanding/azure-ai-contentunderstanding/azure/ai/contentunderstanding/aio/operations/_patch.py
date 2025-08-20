@@ -10,7 +10,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import List, Optional, Any, Union, overload
 from azure.core.tracing.decorator_async import distributed_trace_async
 
-__all__: List[str] = ["FacesOperations"]  # Add all objects you want publicly available to users at this package level
+__all__: List[str] = ["FacesOperations", "PersonDirectoriesOperations"]  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():
@@ -105,3 +105,107 @@ class FacesOperations(FacesOperationsGenerated):
         # Fall back to original method behavior (all other keyword arguments)
         else:
             return await super().detect(*args, **kwargs)
+
+
+# Make PersonDirectoriesOperations available for import
+from ._operations import PersonDirectoriesOperations as PersonDirectoriesOperationsGenerated
+from ...models import PersonDirectoryFace
+
+class PersonDirectoriesOperations(PersonDirectoriesOperationsGenerated):
+    """Extended PersonDirectoriesOperations with improved add_face method overloads."""
+    
+    @overload
+    async def add_face(
+        self,
+        person_directory_id: str,
+        url: str,
+        *,
+        max_detected_faces: Optional[int] = None,
+        **kwargs: Any
+    ) -> PersonDirectoryFace:
+        """Add a face to a person using image URL.
+        
+        :param person_directory_id: The person directory ID
+        :type person_directory_id: str
+        :param url: Image URL
+        :type url: str
+        :param max_detected_faces: Maximum number of faces to return (up to 100)
+        :type max_detected_faces: int
+        :return: PersonDirectoryFace
+        :rtype: ~azure.ai.contentunderstanding.models.PersonDirectoryFace
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        pass
+
+    @overload
+    async def add_face(
+        self,
+        person_directory_id: str,
+        data: bytes,
+        *,
+        max_detected_faces: Optional[int] = None,
+        **kwargs: Any
+    ) -> PersonDirectoryFace:
+        """Add a face to a person using image data.
+        
+        :param person_directory_id: The person directory ID
+        :type person_directory_id: str
+        :param data: Base64-encoded image data as bytes
+        :type data: bytes
+        :param max_detected_faces: Maximum number of faces to return (up to 100)
+        :type max_detected_faces: int
+        :return: PersonDirectoryFace
+        :rtype: ~azure.ai.contentunderstanding.models.PersonDirectoryFace
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        pass
+
+    @distributed_trace_async
+    async def add_face(self, person_directory_id: str, *args, **kwargs) -> PersonDirectoryFace:
+        """Add a face to a person with improved overloads.
+        
+        This method accepts either:
+        - A string URL as the second argument: add_face(dir_id, "http://...")
+        - Image data as bytes as the second argument: add_face(dir_id, bytes_data)
+        - Original keyword arguments: add_face(person_directory_id=..., body={...}, person_id=...)
+        
+        :param person_directory_id: The person directory ID
+        :type person_directory_id: str
+        :return: PersonDirectoryFace
+        :rtype: ~azure.ai.contentunderstanding.models.PersonDirectoryFace
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        # Check if we have a second positional argument (our new overloads)
+        if args and len(args) >= 1:
+            input_data = args[0]
+            
+            if isinstance(input_data, str):
+                # URL as second argument
+                return await super().add_face(
+                    person_directory_id=person_directory_id,
+                    face_source={"url": input_data},
+                    **kwargs
+                )
+            
+            elif isinstance(input_data, bytes):
+                # Bytes as second argument - use FaceSource object
+                from ...models import FaceSource
+                face_source = FaceSource(data=input_data)
+                return await super().add_face(
+                    person_directory_id=person_directory_id,
+                    face_source=face_source,
+                    **kwargs
+                )
+        
+        # Check if we have face_source in kwargs with bytes data
+        elif 'face_source' in kwargs and isinstance(kwargs['face_source'], dict):
+            face_source_dict = kwargs['face_source']
+            if 'data' in face_source_dict:
+                data_value = face_source_dict['data']
+                if isinstance(data_value, bytes):
+                    # Convert dict to FaceSource object with bytes
+                    from ...models import FaceSource
+                    kwargs['face_source'] = FaceSource(data=data_value)
+        
+        # Fall back to original method behavior
+        return await super().add_face(person_directory_id=person_directory_id, **kwargs)

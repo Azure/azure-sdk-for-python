@@ -33,7 +33,7 @@ from dotenv import load_dotenv
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
 from azure.ai.contentunderstanding.models import PersonDirectory
 
-from sample_helper import read_image_to_base64
+
 from azure.core.credentials import AzureKeyCredential
 from azure.identity.aio import DefaultAzureCredential
 
@@ -75,7 +75,7 @@ async def main():
         person_id = person_response.person_id
         print(f"👤 Person created (id={person_id}) - adding face…")
 
-        # Load image and convert to base64 (same pattern used in tests)
+        # Load image as bytes (using the new overloaded method)
         sample_file_dir = os.path.dirname(os.path.abspath(__file__))
         image_path = os.path.join(
             sample_file_dir,
@@ -85,14 +85,15 @@ async def main():
             "Alex",
             "Family1-Son1.jpg",
         )
-        image_b64 = read_image_to_base64(image_path)
+        
+        # Read image as bytes directly
+        with open(image_path, "rb") as image_file:
+            image_bytes = image_file.read()
 
         face_add_response = await client.person_directories.add_face(
-            person_directory_id=directory_id,
-            body={
-                "faceSource": {"data": image_b64},
-                "personId": person_id,
-            },
+            directory_id,
+            person_id,
+            image_bytes,
         )
         face_id = face_add_response.face_id
         print(f"😀 Face added (id={face_id}) - deleting now…")
