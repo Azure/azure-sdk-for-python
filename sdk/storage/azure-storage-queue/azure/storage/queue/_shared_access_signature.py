@@ -39,8 +39,12 @@ class QueueSharedAccessSignature(SharedAccessSignature):
         """
         :param str account_name:
             The storage account name used to generate the shared access signatures.
-        :param str account_key:
+        :param Optional[str] account_key:
             The access key to generate the shares access signatures.
+        :param Optional[~azure.storage.queue.models.UserDelegationKey] user_delegation_key:
+            Instead of an account key, the user could pass in a user delegation key.
+            A user delegation key can be obtained from the service by authenticating with an AAD identity;
+            this can be accomplished by calling get_user_delegation_key on any Queue service object.
         """
         super(QueueSharedAccessSignature, self).__init__(account_name, account_key, x_ms_version=X_MS_VERSION)
         self.user_delegation_key = user_delegation_key
