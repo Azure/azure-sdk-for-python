@@ -1230,7 +1230,7 @@ class TestBuiltInEvaluators:
         assert score["fictional_characters_reason"], "fictional_characters_reason must not be None or empty."
 
     def test_prompty_based_evaluator_custom_credentials(self, sanitized_model_config, simple_conversation, azure_cred):
-        """Validate that prompty based evaluators support passing custom credtials"""
+        """Validate that prompty based evaluators support passing custom credentials"""
         config = {"credential": azure_cred, **sanitized_model_config}
         # ensure that we aren't using an api_key for auth
         config.pop("api_key", None)
