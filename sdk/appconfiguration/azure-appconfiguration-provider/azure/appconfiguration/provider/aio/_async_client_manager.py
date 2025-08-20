@@ -8,7 +8,7 @@ import json
 import time
 import random
 from dataclasses import dataclass
-from typing import Tuple, Union, Dict, List, Any, Optional, Mapping, TYPE_CHECKING
+from typing import Tuple, Union, Dict, List, Any, Optional, Mapping, TYPE_CHECKING, Callable, Awaitable
 from typing_extensions import Self
 from azure.core import MatchConditions
 from azure.core.tracing.decorator import distributed_trace
@@ -164,6 +164,7 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         feature_flag_selectors: List[SettingSelector],
         feature_flag_refresh_enabled: bool,
         provided_endpoint: str,
+        map: Optional[Union[Callable[[Exception], Awaitable[None]], None]] = None,
         **kwargs
     ) -> Tuple[
         List[FeatureFlagConfigurationSetting],
@@ -183,6 +184,8 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
                 **kwargs
             )
             async for feature_flag in feature_flags:
+                if map:
+                    await map(feature_flag)
                 if not isinstance(feature_flag, FeatureFlagConfigurationSetting):
                     # If the feature flag is not a FeatureFlagConfigurationSetting, it means it was selected by
                     # mistake, so we should ignore it.
@@ -243,6 +246,7 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         feature_flag_selectors: List[SettingSelector],
         headers: Dict[str, str],
         provided_endpoint: str,
+        map: Optional[Union[Callable[[Exception], Awaitable[None]], None]] = None,
         **kwargs
     ) -> Tuple[bool, Optional[Mapping[Tuple[str, str], Optional[str]]], Optional[List[Any]], Dict[str, bool]]:
         """
@@ -264,7 +268,7 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
             )
             if changed:
                 feature_flags, feature_flag_sentinel_keys, filters_used = await self.load_feature_flags(
-                    feature_flag_selectors, True, provided_endpoint, headers=headers, **kwargs
+                    feature_flag_selectors, True, provided_endpoint, map=map, headers=headers, **kwargs
                 )
                 return True, feature_flag_sentinel_keys, feature_flags, filters_used
         return False, None, None, {}
