@@ -216,23 +216,18 @@ class TestContentUnderstandingFacesOperations(ContentUnderstandingClientTestBase
         image1_path = os.path.join(test_file_dir, "test_data", "face", "enrollment_data", "Bill", "Family1-Dad1.jpg")
         image2_path = os.path.join(test_file_dir, "test_data", "face", "enrollment_data", "Bill", "Family1-Dad2.jpg")
         
-        image1_data = read_image_to_base64(image1_path)
-        image2_data = read_image_to_base64(image1_path)
-        
-        print(f"Comparing faces between two images of the same person (Bill)")
-        print(f"Image 1: {image1_path}")
-        print(f"Image 2: {image2_path}")
-        
         # Test 1: Using body parameter (original method)
         print(f"\nTest 1: Using body parameter (original method)")
+        # Read images as raw bytes - the API will handle base64 encoding internally
+        with open(image1_path, "rb") as image_file:
+            image1_bytes = image_file.read()
+        with open(image2_path, "rb") as image_file:
+            image2_bytes = image_file.read()
+        
         response1 = client.faces.compare(
             body={
-                "faceSource1": {
-                    "data": image1_data  # image_data is already a string
-                },
-                "faceSource2": {
-                    "data": image2_data  # image_data is already a string
-                }
+                "faceSource1": {"data": image1_bytes},
+                "faceSource2": {"data": image2_bytes}
             }
         )
         
@@ -251,8 +246,9 @@ class TestContentUnderstandingFacesOperations(ContentUnderstandingClientTestBase
         # Test 2: Using FaceSource objects (new method)
         print(f"\nTest 2: Using FaceSource objects (new method)")
         from azure.ai.contentunderstanding.models import FaceSource
-        face_source1 = FaceSource(data=image1_data)
-        face_source2 = FaceSource(data=image2_data)
+        # FaceSource stores raw bytes - base64 conversion happens during JSON serialization
+        face_source1 = FaceSource(data=image1_bytes)
+        face_source2 = FaceSource(data=image2_bytes)
         
         response2 = client.faces.compare(
             face_source1=face_source1,

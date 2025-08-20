@@ -6,13 +6,11 @@
 
 import asyncio
 import os
-from typing import Union
 
 from dotenv import load_dotenv
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
 from azure.ai.contentunderstanding.models import FaceSource, CompareFacesResult
 
-from sample_helper import read_image_to_base64
 from azure.core.credentials import AzureKeyCredential
 from azure.identity.aio import DefaultAzureCredential
 
@@ -35,15 +33,15 @@ Run:
 
 async def main():
     """
-    Compare faces in images using the faces compare API with different calling patterns.
+    Compare two faces using the faces.compare API with various calling patterns.
 
-    High-level steps:
-    1. Load two test images
-    2. Compare faces using different calling patterns:
-       - Original body parameter method
-       - FaceSource objects method
-       - New positional parameters method
-    3. Display comparison results
+    This sample demonstrates:
+    1. Using body parameter (original method)
+    2. Using FaceSource objects (new method)
+    3. Using positional bytes parameters (new overloaded method)
+    4. Using mixed positional parameters (URL and bytes)
+
+    The FaceSource model automatically handles base64 encoding when you pass bytes data.
     """
     endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT") or ""
     # Return AzureKeyCredential if AZURE_CONTENT_UNDERSTANDING_KEY is set, otherwise DefaultAzureCredential
@@ -53,12 +51,14 @@ async def main():
     async with ContentUnderstandingClient(
         endpoint=endpoint, credential=credential
     ) as client, credential:
-        """Compare faces in test images using different calling patterns."""
-
-        # Load test images from sample files
+        # Load test images
         sample_file_dir = os.path.dirname(os.path.abspath(__file__))
-        image1_path = os.path.join(sample_file_dir, "sample_files", "face", "enrollment_data", "Bill", "Family1-Dad1.jpg")
-        image2_path = os.path.join(sample_file_dir, "sample_files", "face", "enrollment_data", "Bill", "Family1-Dad2.jpg")
+        image1_path = os.path.join(
+            sample_file_dir, "sample_files", "face", "enrollment_data", "Bill", "Family1-Dad1.jpg"
+        )
+        image2_path = os.path.join(
+            sample_file_dir, "sample_files", "face", "enrollment_data", "Bill", "Family1-Dad2.jpg"
+        )
 
         print(f"🔍 Comparing faces between two images:")
         print(f"   Image 1: {os.path.basename(image1_path)}")
@@ -66,41 +66,34 @@ async def main():
 
         # Method 1: Using body parameter (original method)
         print(f"\n📋 Method 1: Using body parameter (original method)")
-        image1_data = read_image_to_base64(image1_path)
-        image2_data = read_image_to_base64(image2_path)
+        # Read images as raw bytes - the API will handle base64 encoding internally
+        with open(image1_path, "rb") as image_file:
+            image1_bytes = image_file.read()
+        with open(image2_path, "rb") as image_file:
+            image2_bytes = image_file.read()
         
         response1: CompareFacesResult = await client.faces.compare(
             body={
-                "faceSource1": {"data": image1_data},
-                "faceSource2": {"data": image2_data}
+                "faceSource1": {"data": image1_bytes},
+                "faceSource2": {"data": image2_bytes}
             }
         )
-        
         print(f"   ✅ Comparison successful: Confidence = {response1.confidence}")
-        if hasattr(response1, 'detected_face1') and response1.detected_face1:
-            print(f"   📍 Face 1 detected with bounding box")
-        if hasattr(response1, 'detected_face2') and response1.detected_face2:
-            print(f"   📍 Face 2 detected with bounding box")
 
         # Method 2: Using FaceSource objects (new method)
         print(f"\n📋 Method 2: Using FaceSource objects (new method)")
-        face_source1 = FaceSource(data=image1_data)
-        face_source2 = FaceSource(data=image2_data)
-        
+        # FaceSource stores raw bytes - base64 conversion happens during JSON serialization
+        face_source1 = FaceSource(data=image1_bytes)
+        face_source2 = FaceSource(data=image2_bytes)
         response2: CompareFacesResult = await client.faces.compare(
             face_source1=face_source1,
             face_source2=face_source2
         )
-        
         print(f"   ✅ Comparison successful: Confidence = {response2.confidence}")
-        if hasattr(response2, 'detected_face1') and response2.detected_face1:
-            print(f"   📍 Face 1 detected with bounding box")
-        if hasattr(response2, 'detected_face2') and response2.detected_face2:
-            print(f"   📍 Face 2 detected with bounding box")
 
         # Method 3: Using positional bytes parameters (new overloaded method)
         print(f"\n📋 Method 3: Using positional bytes parameters (new overloaded method)")
-        # Read images as bytes directly
+        # Read images as raw bytes for positional test
         with open(image1_path, "rb") as image_file:
             image1_bytes = image_file.read()
         with open(image2_path, "rb") as image_file:
@@ -110,34 +103,31 @@ async def main():
             image1_bytes,
             image2_bytes
         )
-        
         print(f"   ✅ Comparison successful: Confidence = {response3.confidence}")
-        if hasattr(response3, 'detected_face1') and response3.detected_face1:
-            print(f"   📍 Face 1 detected with bounding box")
-        if hasattr(response3, 'detected_face2') and response3.detected_face2:
-            print(f"   📍 Face 2 detected with bounding box")
 
         # Method 4: Using mixed positional parameters (URL and bytes)
         print(f"\n📋 Method 4: Using mixed positional parameters (URL and bytes)")
         test_url = "https://example.com/test-image.jpg"
-        
         try:
-            # This will likely fail due to invalid URL, but demonstrates the URL parameter handling
             response4: CompareFacesResult = await client.faces.compare(
                 test_url,
                 image2_bytes
             )
             print(f"   ✅ Comparison successful: Confidence = {response4.confidence}")
         except Exception as e:
-            # Expected to fail with invalid URL, but this tests the URL parameter handling
             print(f"   ℹ️  Expected failure with invalid URL: {type(e).__name__}")
             print(f"   ✅ URL parameter handling works correctly")
 
         print(f"\n💡 Summary:")
-        print(f"   - All calling patterns work correctly")
-        print(f"   - Positional parameters provide cleaner, more intuitive API")
-        print(f"   - Full backward compatibility maintained")
-        print(f"   - Support for both bytes and URL parameters")
+        print(f"   - Method 1: Body parameter (original) - Confidence: {response1.confidence}")
+        print(f"   - Method 2: FaceSource objects - Confidence: {response2.confidence}")
+        print(f"   - Method 3: Positional bytes - Confidence: {response3.confidence}")
+        print(f"   - Method 4: Mixed URL/bytes - Handles errors gracefully")
+        print(f"\n🎯 Key Benefits:")
+        print(f"   - Pass raw image bytes directly - no manual base64 conversion needed")
+        print(f"   - FaceSource automatically handles base64 encoding during API serialization")
+        print(f"   - Multiple intuitive calling patterns for different use cases")
+        print(f"   - Full backward compatibility with existing code")
 
 
 # x-ms-original-file: 2025-05-01-preview/Faces_Compare.json
