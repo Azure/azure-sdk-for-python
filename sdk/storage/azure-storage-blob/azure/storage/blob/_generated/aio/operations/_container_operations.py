@@ -1513,6 +1513,7 @@ class ContainerOperations:
         marker: Optional[str] = None,
         maxresults: Optional[int] = None,
         include: Optional[List[Union[str, _models.ListBlobsIncludeItem]]] = None,
+        start_from: Optional[str] = None,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         **kwargs: Any
@@ -1539,6 +1540,10 @@ class ContainerOperations:
         :param include: Include this parameter to specify one or more datasets to include in the
          response. Default value is None.
         :type include: list[str or ~azure.storage.blob.models.ListBlobsIncludeItem]
+        :param start_from: Specifies the relative path to list paths from. For non-recursive list, only
+         one entity level is supported; For recursive list, multiple entity levels are supported.
+         (Inclusive). Default value is None.
+        :type start_from: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations">Setting
@@ -1573,6 +1578,7 @@ class ContainerOperations:
             marker=marker,
             maxresults=maxresults,
             include=include,
+            start_from=start_from,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             restype=restype,
@@ -1619,6 +1625,7 @@ class ContainerOperations:
         marker: Optional[str] = None,
         maxresults: Optional[int] = None,
         include: Optional[List[Union[str, _models.ListBlobsIncludeItem]]] = None,
+        start_from: Optional[str] = None,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         **kwargs: Any
@@ -1650,6 +1657,10 @@ class ContainerOperations:
         :param include: Include this parameter to specify one or more datasets to include in the
          response. Default value is None.
         :type include: list[str or ~azure.storage.blob.models.ListBlobsIncludeItem]
+        :param start_from: Specifies the relative path to list paths from. For non-recursive list, only
+         one entity level is supported; For recursive list, multiple entity levels are supported.
+         (Inclusive). Default value is None.
+        :type start_from: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations">Setting
@@ -1685,6 +1696,7 @@ class ContainerOperations:
             marker=marker,
             maxresults=maxresults,
             include=include,
+            start_from=start_from,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             restype=restype,
