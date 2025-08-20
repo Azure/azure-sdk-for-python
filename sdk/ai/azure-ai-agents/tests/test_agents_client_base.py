@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 import sys
 import logging
 import functools
@@ -31,6 +32,9 @@ agentClientPreparer = functools.partial(
     azure_ai_agents_tests_playwright_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.CognitiveServices/accounts/00000/projects/00000/connections/00000",
     azure_ai_agents_tests_deep_research_model="gpt-4o-deep-research",
     azure_ai_agents_tests_is_test_run="True",
+    azure_ai_agents_tests_bing_custom_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.CognitiveServices/accounts/00000/projects/00000/connections/00000",
+    azure_ai_agents_tests_bing_configuration_name="sample_configuration",
+    azure_ai_agents_tests_fabric_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.CognitiveServices/accounts/00000/projects/00000/connections/00000",
 )
 
 # Set to True to enable SDK logging
@@ -79,11 +83,7 @@ class TestAgentClientBase(AzureRecordedTestCase):
         return sleep if is_live() else 0
 
     @classmethod
-    def _has_url_annotation(
-        cls,
-        message: ThreadMessage,
-        uri_annotation: MessageTextUrlCitationDetails
-    ) -> bool:
+    def _has_url_annotation(cls, message: ThreadMessage, uri_annotation: MessageTextUrlCitationDetails) -> bool:
         """
         Return True if the message contains required URL annotation.
 
@@ -95,17 +95,17 @@ class TestAgentClientBase(AzureRecordedTestCase):
         url_annotations = message.url_citation_annotations
         if url_annotations:
             for url in url_annotations:
-                if ((uri_annotation.url == '*' and url.url_citation.url) or url.url_citation.url == uri_annotation.url) and\
-                  ((uri_annotation.title == '*' and url.url_citation.title) or url.url_citation.title == uri_annotation.title):
+                if (
+                    (uri_annotation.url == "*" and url.url_citation.url) or url.url_citation.url == uri_annotation.url
+                ) and (
+                    (uri_annotation.title == "*" and url.url_citation.title)
+                    or url.url_citation.title == uri_annotation.title
+                ):
                     return True
         return False
 
     @classmethod
-    def _has_file_annotation(
-        cls,
-        message: ThreadMessage,
-        file_annotation: MessageTextFileCitationDetails 
-    ) -> bool:
+    def _has_file_annotation(cls, message: ThreadMessage, file_annotation: MessageTextFileCitationDetails) -> bool:
         """
         Return True if the message contains required file annotation
 
