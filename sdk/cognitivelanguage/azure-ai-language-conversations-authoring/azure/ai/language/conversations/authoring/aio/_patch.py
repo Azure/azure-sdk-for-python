@@ -7,7 +7,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Any, TYPE_CHECKING, Union
+from typing import Any, TYPE_CHECKING, Union, Optional
 from ._client import ConversationAuthoringClient as AuthoringClientGenerated
 from ._client import ConversationAuthoringProjectClient as AuthoringProjectClientGenerated
 from .operations._patch import ProjectOperations, DeploymentOperations, ExportedModelOperations, TrainedModelOperations
@@ -18,7 +18,7 @@ from azure.core.pipeline import policies
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
-from ._configuration import ConversationAuthoringClientConfiguration, ConversationAuthoringProjectClientConfiguration
+from ._configuration import ConversationAuthoringProjectClientConfiguration
 from .._utils.serialization import Deserializer, Serializer
 
 
@@ -87,6 +87,28 @@ class ConversationAuthoringProjectClient(AuthoringProjectClientGenerated):
 
 
 class ConversationAuthoringClient(AuthoringClientGenerated):
+
+    def __init__(
+        self,
+        endpoint: str,
+        credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
+        *,
+        api_version: Optional[str] = None,
+        **kwargs: Any,
+    ) -> None:
+        """Create a ConversationAuthoringClient.
+
+        :param endpoint: Supported Cognitive Services endpoint.
+        :type endpoint: str
+        :param credential: Key or token credential.
+        :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.TokenCredential
+        :keyword api_version: API version to use (defaults to the SDK’s default).
+        :paramtype api_version: str`
+        """
+        if api_version is not None:
+            kwargs["api_version"] = api_version
+        super().__init__(endpoint=endpoint, credential=credential, **kwargs)
+
     def get_project_client(self, project_name: str) -> ConversationAuthoringProjectClient:
         return ConversationAuthoringProjectClient(
             endpoint=self._config.endpoint,
