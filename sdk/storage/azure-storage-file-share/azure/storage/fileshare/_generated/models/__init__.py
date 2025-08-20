@@ -26,6 +26,7 @@ from ._models_py3 import (  # type: ignore
     FileRange,
     FilesAndDirectoriesListSegment,
     HandleItem,
+    KeyInfo,
     LeaseAccessConditions,
     ListFilesAndDirectoriesSegmentResponse,
     ListHandlesResponse,
@@ -49,6 +50,7 @@ from ._models_py3 import (  # type: ignore
     StorageError,
     StorageServiceProperties,
     StringEncoded,
+    UserDelegationKey,
 )
 
 from ._azure_file_storage_enums import (  # type: ignore
@@ -90,6 +92,7 @@ __all__ = [
     "FileRange",
     "FilesAndDirectoriesListSegment",
     "HandleItem",
+    "KeyInfo",
     "LeaseAccessConditions",
     "ListFilesAndDirectoriesSegmentResponse",
     "ListHandlesResponse",
@@ -113,6 +116,7 @@ __all__ = [
     "StorageError",
     "StorageServiceProperties",
     "StringEncoded",
+    "UserDelegationKey",
     "AccessRight",
     "CopyStatusType",
     "DeleteSnapshotsOptionType",
