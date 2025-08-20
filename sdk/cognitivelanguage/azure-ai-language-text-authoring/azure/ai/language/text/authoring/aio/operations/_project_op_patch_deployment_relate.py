@@ -15,7 +15,7 @@ from azure.core.tracing.decorator import distributed_trace
 from ._operations import (
     ProjectOperations as ProjectOperationsGenerated,
 )
-from .._utils.model_base import SdkJSONEncoder, _deserialize
+from ..._utils.model_base import SdkJSONEncoder, _deserialize
 from azure.core.utils import case_insensitive_dict
 from azure.core.polling.base_polling import LROBasePolling
 from ...models import (
