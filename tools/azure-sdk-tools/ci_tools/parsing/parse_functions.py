@@ -4,6 +4,7 @@ import textwrap
 import re
 import fnmatch
 import logging
+from pkginfo import get_metadata
 import pkginfo
 
 try:
@@ -52,23 +53,13 @@ EXCLUDE = {
 
 
 def extract_package_metadata(package_path: str) -> Dict[str, Any]:
-    """Extract package metadata from a built package (wheel or sdist file)."""
-    if not os.path.isfile(package_path):
-        logging.warning(f"Package path is not a file: {package_path}")
-        return {}
-
-    if not package_path.endswith(('.whl', '.tar.gz', '.tar')):
-        return {}
-
+    """Extract package metadata from a built package or source directory."""
     try:
-        # Use pkginfo package for proper metadata extraction with PEP support
-        pkg_info: Union[pkginfo.Wheel, pkginfo.SDist]
-        if package_path.endswith('.whl'):
-            pkg_info = pkginfo.Wheel(package_path)
-        elif package_path.endswith(('.tar.gz', '.tar')):
-            pkg_info = pkginfo.SDist(package_path)
-        else:
-            logging.warning(f"Unsupported package format: {package_path}")
+        # Note: metadata may be different between source directory and built packages since
+        # some metadata may be normalized/transformed during build process
+        pkg_info = get_metadata(package_path)
+
+        if not pkg_info:
             return {}
 
         # Convert pkginfo object to dictionary with normalized keys
@@ -228,7 +219,7 @@ class ParsedSetup:
     def from_path(cls, parse_directory_or_file: str):
         """
         Creates a new ParsedSetup instance from a path to a setup.py, pyproject.toml (with [project] member), 
-        a directory containing either of those files, or a built package file (.whl or .tar.gz).
+        or a directory containing either of those files.
         """
         (
             name,
@@ -385,7 +376,7 @@ def read_setup_py_content(setup_filename: str) -> str:
 def parse_setup_py(
     setup_filename: str,
 ) -> Tuple[
-    str, str, str, List[str], bool, str, str, Dict[str, Any], bool, List[str], List[str], str, List[Extension], bool, Dict[str, Any]
+    str, str, str, List[str], bool, str, str, Dict[str, Any], bool, List[str], List[str], str, List[Extension], bool
 ]:
     """
     Used to evaluate a setup.py (or a directory containing a setup.py) and return a tuple containing:
@@ -474,21 +465,20 @@ def parse_setup_py(
 
     # fmt: off
     return (
-        name,                   # str
-        version,                # str
-        python_requires,        # str
-        requires,               # List[str]
-        is_new_sdk,             # bool
-        setup_filename,         # str
-        name_space,             # str,
-        package_data,           # Dict[str, Any],
-        include_package_data,   # bool,
-        classifiers,            # List[str],
-        keywords,               # List[str] ADJUSTED
-        ext_package,            # str
-        ext_modules,            # List[Extension],
-        metapackage,            # bool
-        {}                      # Dict[str, Any] - placeholder metadata
+        name,
+        version,
+        python_requires,
+        requires,
+        is_new_sdk,
+        setup_filename,
+        name_space,
+        package_data,
+        include_package_data,
+        classifiers,
+        keywords,
+        ext_package,
+        ext_modules,
+        metapackage,
     )
     # fmt: on
 
@@ -496,7 +486,7 @@ def parse_setup_py(
 def parse_pyproject(
     pyproject_filename: str,
 ) -> Tuple[
-    str, str, str, List[str], bool, str, str, Dict[str, Any], bool, List[str], List[str], str, List[Extension], bool, Dict[str, Any]
+    str, str, str, List[str], bool, str, str, Dict[str, Any], bool, List[str], List[str], str, List[Extension], bool
 ]:
     """
     Used to evaluate a pyproject (or a directory containing a pyproject.toml) with a [project] configuration within.
@@ -568,25 +558,22 @@ def parse_pyproject(
     ext_modules = get_value_from_dict(toml_dict, "tool.setuptools.ext-modules", [])
     ext_modules = [Extension(**moduleArgDict) for moduleArgDict in ext_modules]
 
-    # fmt: off
     return (
-        name,                   # str
-        version,                # str
-        python_requires,        # str
-        requires,               # List[str]
-        is_new_sdk,             # bool
-        pyproject_filename,     # str
-        name_space,             # str,
-        package_data,           # Dict[str, Any],
-        include_package_data,   # bool,
-        classifiers,            # List[str],
-        keywords,               # List[str] ADJUSTED
-        ext_package,            # str
-        ext_modules,            # List[Extension]
-        metapackage,            # bool
-        {}                      # Dict[str, Any] - placeholder metadata
+        name,
+        version,
+        python_requires,
+        requires,
+        is_new_sdk,
+        pyproject_filename,
+        name_space,
+        package_data,
+        include_package_data,
+        classifiers,
+        keywords,
+        ext_package,
+        ext_modules,
+        metapackage,
     )
-    # fmt: on
 
 
 def get_version_py(setup_path: str) -> Optional[str]:
@@ -658,22 +645,23 @@ def parse_setup(
 
     If a pyproject.toml (containing [project]) or a setup.py is NOT found, a ValueError will be raised.
     """
+    metadata = {}
+    metadata.update(extract_package_metadata(setup_filename_or_folder))
+
     targeted_path = setup_filename_or_folder
     if os.path.isfile(setup_filename_or_folder):
         targeted_path = os.path.dirname(setup_filename_or_folder)
-
-    # If this is a built package file, extract metadata for whl/sdist validation
-    metadata = {}
-    metadata.update(extract_package_metadata(setup_filename_or_folder))
 
     resolved_filename = get_pyproject(targeted_path) or get_setup_py(targeted_path)
     if not resolved_filename:
         raise ValueError(f"Unable to find a setup.py or pyproject.toml in {setup_filename_or_folder}")
 
     if resolved_filename.endswith(".toml"):
-        return parse_pyproject(resolved_filename)
+        result = parse_pyproject(resolved_filename)
     else:
-        return parse_setup_py(resolved_filename)
+        result = parse_setup_py(resolved_filename)
+
+    return result + (metadata,)
 
 
 def get_pyproject_dict(pyproject_file: str) -> Dict[str, Any]:
