@@ -52,6 +52,80 @@ async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) 
 	print(content.markdown)
 ```
 
+### Scenario: Analyze binary content (PDF, images, documents)
+
+```python
+"""Analyze binary content directly from file bytes."""
+with open("sample_files/sample_invoice.pdf", "rb") as f:
+    pdf_bytes = f.read()
+
+poller = await client.content_analyzers.begin_analyze_binary(
+    analyzer_id="prebuilt-documentAnalyzer",
+    data=pdf_bytes,
+    content_type="application/pdf",
+)
+result = await poller.result()
+content = result.contents[0]
+
+# Access extracted content
+print(f"Content type: {content.kind}")
+if hasattr(content, 'markdown') and content.markdown:
+    print(f"Markdown content: {content.markdown[:200]}...")
+
+# Access extracted fields if available
+if hasattr(content, 'fields') and content.fields:
+    print(f"Extracted fields: {list(content.fields.keys())}")
+```
+
+### Scenario: Analyze multiple inputs using AnalyzeInput list
+
+```python
+"""Analyze multiple documents using a list of AnalyzeInput objects."""
+from azure.ai.contentunderstanding.models import AnalyzeInput
+
+# Create a list of AnalyzeInput objects with fake URLs
+analyze_inputs = [
+    AnalyzeInput(
+        url="https://example.com/document1.pdf",
+        content_type="application/pdf"
+    ),
+    AnalyzeInput(
+        url="https://example.com/document2.jpg", 
+        content_type="image/jpeg"
+    ),
+    AnalyzeInput(
+        url="https://example.com/document3.docx",
+        content_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    )
+]
+
+# Analyze multiple documents in a single request
+poller = await client.content_analyzers.begin_analyze(
+    analyzer_id="prebuilt-documentAnalyzer",
+    inputs=analyze_inputs
+)
+result = await poller.result()
+
+# Process results for each input
+for i, content in enumerate(result.contents):
+    print(f"Document {i + 1}:")
+    print(f"  Content type: {content.kind}")
+    if hasattr(content, 'markdown') and content.markdown:
+        print(f"  Markdown preview: {content.markdown[:100]}...")
+    print()
+```
+
+- [ ] QUESTION: naming of begin_analyze/begin_analyze_binary
+Considering:
+begin_analyze_url/begin_analyze_binary/begin_analyze_inputs
+- [ ] QUESTION: Good idea to provide patch with positional parameters to avoid the need of url=, data=, inputs=. Patch will use instance check to prepare real parameters
+begin_analyze_url(
+    my_analyze_id,      # positional parameter
+    my_url_to_analyze,  # positional parameter
+    processing_location=ProcessingLocation.DATA_ZONE,
+)
+
+
 ### Scenario: Extracting invoice fields with the prebuilt invoice analyzer
 
 ```python
