@@ -25,7 +25,7 @@ import copy
 import time
 from concurrent.futures import ThreadPoolExecutor, Future, as_completed, CancelledError
 from types import SimpleNamespace
-from typing import List, Dict, Any, Tuple, Callable, Union, Optional, TYPE_CHECKING, cast
+from typing import List, Dict, Any, Tuple, Callable, Optional, TYPE_CHECKING, cast
 
 from azure.core import PipelineClient
 from azure.core.pipeline.transport import HttpRequest, \
@@ -35,6 +35,7 @@ from . import exceptions
 from ._availability_strategy import CrossRegionHedgingStrategy, DisabledStrategy, AvailabilityStrategy
 from ._global_partition_endpoint_manager_circuit_breaker import _GlobalPartitionEndpointManagerForCircuitBreaker
 from ._request_object import RequestObject
+from ._request_object import SyncHedgingCompletionStatus, HedgingCompletionStatus
 from .documents import _OperationType, ConnectionPolicy
 
 if TYPE_CHECKING:
@@ -190,25 +191,36 @@ class CrossRegionHedgingHandler(HedgingHandler):
         execute_request_fn: Callable[..., ResponseType],
         location_index: int,
         available_locations: List[str],
-        complete_status: SimpleNamespace,
+        complete_status: HedgingCompletionStatus,
         first_request_params_holder: SimpleNamespace,
         **kwargs: Any
-    ) -> Union[ResponseType, Exception, None]:
+    ) -> ResponseType:
         """Execute a single request.
 
         :param client: Document client instance
+        :type client: CosmosClient
         :param request_params: Request parameters
+        :type request_params: RequestObject
         :param global_endpoint_manager: Global endpoint manager
+        :type global_endpoint_manager: _GlobalPartitionEndpointManagerForCircuitBreaker
         :param connection_policy: Connection policy
+        :type connection_policy: ConnectionPolicy
         :param pipeline_client: Pipeline client
+        :type pipeline_client: PipelineClient[HttpRequest, HttpResponse]
         :param request: HTTP request
+        :type request: HttpRequest
         :param execute_request_fn: Function to execute request
+        :type execute_request_fn: Callable[..., ResponseType]
         :param location_index: Index of target location
+        :type location_index: int
         :param available_locations: List of available locations
+        :type available_locations: List[str]
         :param complete_status: Value holder to track completion signal
-        :param first_request_params_holder: a value holder for request object for first/initial request
-        :returns: Response tuple, exception, or None
-        :rtype: Union[ResponseType, Exception, None]
+        :type complete_status: SimpleNamespace
+        :param first_request_params_holder: A value holder for request object for first/initial request
+        :type first_request_params_holder: SimpleNamespace
+        :returns: Response tuple
+        :rtype: ResponseType
         """
         # Create request parameters for this location
         params = copy.deepcopy(request_params)
@@ -230,12 +242,14 @@ class CrossRegionHedgingHandler(HedgingHandler):
             first_request_params_holder.request_params = params
         elif location_index == 1:
             # First hedged request after threshold
-            delay: float = cast(CrossRegionHedgingStrategy, request_params.availability_strategy).threshold.total_seconds()
+            delay = (cast(CrossRegionHedgingStrategy, request_params.availability_strategy)
+                     .threshold
+                     .total_seconds())
         else:
             # Subsequent requests after threshold steps
             steps = location_index - 1
             cross_region_hedging_strategy = cast(CrossRegionHedgingStrategy, request_params.availability_strategy)
-            delay: float = (cross_region_hedging_strategy.threshold.total_seconds() +
+            delay = (cross_region_hedging_strategy.threshold.total_seconds() +
                      (steps * cross_region_hedging_strategy.threshold_steps.total_seconds()))
 
         if delay > 0:
@@ -293,7 +307,7 @@ class CrossRegionHedgingHandler(HedgingHandler):
             futures: List[Future] = []
             first_request_future: Optional[Future] = None
             first_request_params_holder: SimpleNamespace = SimpleNamespace(request_params=None)
-            completion_status = SimpleNamespace(is_completed=False)
+            completion_status = SyncHedgingCompletionStatus()
 
             for i in range(len(available_locations)):
                 future = executor.submit(
@@ -320,24 +334,24 @@ class CrossRegionHedgingHandler(HedgingHandler):
 
                 # if the result is from the first request, then always treat it as non-transient result
                 if fut is first_request_future:
-                    completion_status.is_completed = True
+                    completion_status.set_completed()
                     if exception is None:
                         return fut.result()
                     raise exception
 
                 # non-first futures
                 if exception is None:
-                    completion_status.is_completed = True
+                    completion_status.set_completed()
                     self._record_cancel_for_first_request(first_request_params_holder, global_endpoint_manager)
                     return fut.result()
                 if self._is_non_transient_error(exception):
-                    completion_status.is_completed = True
+                    completion_status.set_completed()
                     self._record_cancel_for_first_request(first_request_params_holder, global_endpoint_manager)
                     raise exception
 
             # if we have reached here,it means all the futures have completed but all failed with transient exceptions
             # in this case, return the result from the first futures
-            completion_status.is_completed = True
+            completion_status.set_completed()
             exc = cast(Future, first_request_future).exception()
             assert exc is not None
             raise exc

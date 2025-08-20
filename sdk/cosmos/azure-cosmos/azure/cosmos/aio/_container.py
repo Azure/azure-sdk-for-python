@@ -466,6 +466,7 @@ class ContainerProxy:
             excluded_locations: Optional[List[str]] = None,
             priority: Optional[Literal["High", "Low"]] = None,
             throughput_bucket: Optional[int] = None,
+            availability_strategy: Optional[AvailabilityStrategy] = None,
             **kwargs: Any
     ) -> CosmosList:
         """Reads multiple items from the container.
@@ -485,6 +486,9 @@ class ContainerProxy:
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :keyword int throughput_bucket: The desired throughput bucket for the client
+        :keyword availability_strategy: The availability strategy to use for this request. If not provided,
+            the client's default strategy will be used.
+        :paramtype availability_strategy: ~azure.cosmos.AvailabilityStrategy
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The read-many operation failed.
         :returns: A CosmosList containing the retrieved items. Items that were not found are omitted from the list.
         :rtype: ~azure.cosmos.CosmosList
@@ -503,6 +507,8 @@ class ContainerProxy:
             kwargs['priority'] = priority
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
+        if availability_strategy is not None:
+            kwargs[Constants.Kwargs.AVAILABILITY_STRATEGY] = availability_strategy
 
         kwargs['max_concurrency'] = max_concurrency
         kwargs["containerProperties"] = self._get_properties_with_options

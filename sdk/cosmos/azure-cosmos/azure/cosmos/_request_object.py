@@ -19,15 +19,62 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Represents a request object.
-"""
-from types import SimpleNamespace
+"""Represents a request object."""
+from abc import ABC, abstractmethod
+from threading import Event
 from typing import Optional, Mapping, Any, Dict, List
 
 from ._availability_strategy import AvailabilityStrategy
 from ._constants import _Constants as Constants
 from .documents import _OperationType
 from .http_constants import ResourceType
+
+
+class HedgingCompletionStatus(ABC):
+    """Abstract base class for tracking request completion status.
+    
+    This class defines the interface for both synchronous and asynchronous
+    implementations of completion status tracking.
+    """
+
+    @property
+    @abstractmethod
+    def is_completed(self) -> bool:
+        """Check if request is completed.
+        
+        This is a non-blocking operation that returns immediately.
+        
+        :returns: True if request is completed, False otherwise
+        :rtype: bool
+        """
+
+    @abstractmethod
+    def set_completed(self) -> None:
+        """Signal request completion.
+        
+        This is a non-blocking operation that sets completion status to True.
+        Once set, is_completed will always return True.
+        """
+
+class SyncHedgingCompletionStatus(HedgingCompletionStatus):
+    """Thread-safe implementation of completion status using Threading.Event."""
+
+    def __init__(self):
+        """Initialize completion status with a Threading.Event."""
+        self._completed = Event()
+
+    @property
+    def is_completed(self) -> bool:
+        """Check if request is completed (non-blocking).
+        
+        :returns: True if request is completed, False otherwise
+        :rtype: bool
+        """
+        return self._completed.is_set()
+
+    def set_completed(self) -> None:
+        """Signal request completion (non-blocking)."""
+        self._completed.set()
 
 
 class RequestObject(object): # pylint: disable=too-many-instance-attributes
@@ -53,7 +100,7 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
         self.healthy_tentative_location: Optional[str] = None
         self.retry_write: bool = False
         self.is_hedging_request: bool = False # Flag to track if this is a hedged request
-        self.completion_status: Optional[SimpleNamespace] = None # Status shared between parallel requests
+        self.completion_status: Optional[HedgingCompletionStatus] = None # Status shared between parallel requests
 
     def route_to_location_with_preferred_location_flag(  # pylint: disable=name-too-long
         self,
@@ -126,26 +173,27 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
     def set_is_hedging_request(self, is_hedging_request: bool) -> None:
         self.is_hedging_request = is_hedging_request
 
-    def set_completion_status(self, status: SimpleNamespace) -> None:
-        """Set the shared completion status between parallel requests
+    def set_completion_status(self, status: HedgingCompletionStatus) -> None:
+        """Set the shared completion status between parallel requests.
         
-        :param status: Status object shared between parallel requests. If None, creates new one.
-        :type status: ~types.SimpleNamespace
+        :param status: Thread-safe or async-safe completion status tracker
+        :type status: HedgingCompletionStatus
+        :raises ValueError: If status is None
         """
         if status is None:
             raise ValueError("completion status argument can not be None")
         self.completion_status = status
 
-    def get_completion_status(self) -> Optional[SimpleNamespace]:
-        """Get the shared completion status
+    def get_completion_status(self) -> Optional[HedgingCompletionStatus]:
+        """Get the shared completion status.
         
         :return: The completion status or None if not set
-        :rtype: Optional[~types.SimpleNamespace]
+        :rtype: Optional[HedgingCompletionStatus]
         """
         return self.completion_status
 
     def get_is_hedging_request(self) -> bool:
-        """Check if this is a hedged request
+        """Check if this is a hedged request.
         
         :return: True if this is a hedged request, False otherwise
         :rtype: bool
@@ -153,7 +201,7 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
         return self.is_hedging_request
 
     def should_cancel_request(self) -> bool:
-        """Check if this request should be cancelled due to parallel request completion
+        """Check if this request should be cancelled due to parallel request completion.
         
         :return: True if request should be cancelled, False otherwise
         :rtype: bool

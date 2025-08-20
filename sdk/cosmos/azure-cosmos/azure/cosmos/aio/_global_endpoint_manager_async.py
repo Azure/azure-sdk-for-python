@@ -110,11 +110,16 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         return self.location_cache.get_applicable_write_regional_routing_contexts(request)
 
     def get_region_name(self, endpoint, is_write_operation: bool) -> Optional[str]:
-        """Gets the region name for the endpoint.
+        """Get the region name associated with an endpoint.
 
-        :returns: the region name.
-        :rtype: str
+        :param endpoint: The endpoint URL to get the region name for
+        :type endpoint: str
+        :param is_write_operation: Whether the endpoint is being used for write operations
+        :type is_write_operation: bool
+        :returns: The region name associated with the endpoint, or None if not found
+        :rtype: Optional[str]
         """
+
         return self.location_cache.get_region_name(endpoint, is_write_operation)
 
     def can_use_multiple_write_locations(self, request):
