@@ -35,6 +35,7 @@ from azure.ai.agents.models import (
     CodeInterpreterToolResource,
     ConnectedAgentTool,
     DeepResearchTool,
+    FabricTool,
     FilePurpose,
     FileSearchTool,
     FileSearchToolCallContent,
@@ -66,11 +67,13 @@ from azure.ai.agents.models import (
     RunStepDeltaCustomBingGroundingToolCall,
     RunStepDeltaBingGroundingToolCall,
     RunStepDeltaFileSearchToolCall,
+    RunStepDeltaMicrosoftFabricToolCall,
     RunStepDeltaOpenAPIToolCall,
     RunStepDeltaToolCallObject,
     RunStepFileSearchToolCall,
     RunStepFileSearchToolCallResult,
     RunStepFileSearchToolCallResults,
+    RunStepMicrosoftFabricToolCall,
     RunStepOpenAPIToolCall,
     RunStepToolCallDetails,
     RunStatus,
@@ -3516,6 +3519,40 @@ class TestAgentClient(TestAgentClientBase):
                     url="*",
                     title="*",
                 ),
+            )
+
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_microsoft_fabric_tool(self, **kwargs):
+        """Test Microsoft Fabric tool call in non-streaming Scenario."""
+        with self.create_client(by_endpoint=True, **kwargs) as client:
+            model_name = "gpt-4o"
+            fabric_tool = FabricTool(connection_id=kwargs.get("azure_ai_agents_tests_fabric_connection_id"))
+
+            self._do_test_tool(
+                client=client,
+                model_name=model_name,
+                tool_to_test=fabric_tool,
+                instructions="You are helpful agent",
+                prompt="What are top 3 weather events with largest revenue loss?",
+                expected_class=RunStepMicrosoftFabricToolCall,
+            )
+
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_microsoft_fabric_tool_streaming(self, **kwargs):
+        """Test Microsoft Fabric tool call in streaming Scenario."""
+        with self.create_client(by_endpoint=True, **kwargs) as client:
+            model_name = "gpt-4o"
+            fabric_tool = FabricTool(connection_id=kwargs.get("azure_ai_agents_tests_fabric_connection_id"))
+
+            self._do_test_tool_streaming(
+                client=client,
+                model_name=model_name,
+                tool_to_test=fabric_tool,
+                instructions="You are helpful agent",
+                prompt="What are top 3 weather events with largest revenue loss?",
+                expected_delta_class=RunStepDeltaMicrosoftFabricToolCall,
             )
 
     def _do_test_tool(
