@@ -185,8 +185,8 @@ stages:
                           echo "Uploaded sdist to devops feed"
                         displayName: 'Publish package to feed: ${{parameters.DevFeedName}}'
 
-          - job: CreateApiView
-            displayName: "Create APIView"
+          - job: MarkPackageReleaseCompletion
+            displayName: "Mark package release completion"
             dependsOn: PublishPackage
 
             pool:
@@ -204,6 +204,16 @@ stages:
               - task: UsePythonVersion@0
                 inputs:
                   versionSpec: '3.9'
+
+              - task: Powershell@2
+                inputs:
+                  filePath: eng/common/scripts/Mark-ReleasePlanCompletion.ps1
+                  arguments: >
+                    -PackageInfoFilePath '$(Pipeline.Workspace)/${{parameters.ArtifactName}}/PackageInfo/${{artifact.name}}.json'
+                  pwsh: true
+                displayName: Mark package as released
+                continueOnError: true
+                condition: and(succeeded(), ne(variables['Skip.MarkReleaseCompletion'], 'true'))
 
               - template: /eng/common/pipelines/templates/steps/create-apireview.yml
                 parameters:
