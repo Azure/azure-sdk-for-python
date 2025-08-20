@@ -89,7 +89,7 @@ async def sample_orchestration_prediction_async():
 
         # Print answers from the QnA result
         qa = target_intent_result.result
-        for ans in qa.answers:
+        for ans in qa.answers: # type: ignore
             print(ans.answer or "")
 
         # Optional final assertion

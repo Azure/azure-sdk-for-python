@@ -77,7 +77,7 @@ class TestConversationsCase(TestConversations):
         assert isinstance(target_intent_result, QuestionAnsweringTargetIntentResult)
 
         qa = target_intent_result.result
-        for ans in qa.answers:
+        for ans in qa.answers: # type: ignore
             print(ans.answer or "")
 
         # Final assertions like in C#
