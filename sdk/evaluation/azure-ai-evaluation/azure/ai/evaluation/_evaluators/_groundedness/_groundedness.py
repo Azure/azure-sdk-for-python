@@ -115,11 +115,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         self._model_config = model_config
         self.threshold = threshold
 
-        # Cache whether AsyncPrompty.load supports the is_reasoning_model parameter.
-        try:
-            self._has_is_reasoning_model_param: bool = "is_reasoning_model" in signature(AsyncPrompty.load).parameters
-        except Exception:  # Very defensive: if inspect fails, assume not supported
-            self._has_is_reasoning_model_param = False
+        self._has_is_reasoning_model_param = kwargs.get("is_reasoning_model", False)
 
     @overload
     def __call__(

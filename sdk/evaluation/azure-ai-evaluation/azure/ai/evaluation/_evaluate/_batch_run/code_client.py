@@ -178,8 +178,6 @@ class CodeClient:  # pylint: disable=client-accepts-api-version-keyword
         run = self._get_result(client_run)
         try:
             aggregated_metrics = run.get_aggregated_metrics()
-            print("Aggregated metrics")
-            print(aggregated_metrics)
         except Exception as ex:  # pylint: disable=broad-exception-caught
             LOGGER.debug("Error calculating metrics for evaluator %s, failed with error %s", run.evaluator_name, ex)
             return {}
