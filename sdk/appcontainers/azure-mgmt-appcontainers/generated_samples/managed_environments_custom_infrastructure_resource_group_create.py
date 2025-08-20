@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -38,7 +37,6 @@ def main():
             "location": "East US",
             "properties": {
                 "appLogsConfiguration": {"logAnalyticsConfiguration": {"customerId": "string", "sharedKey": "string"}},
-                "availabilityZones": ["1", "2", "3"],
                 "customDomainConfiguration": {
                     "certificatePassword": "1234",
                     "certificateValue": "Y2VydA==",
@@ -51,7 +49,6 @@ def main():
                 },
                 "workloadProfiles": [
                     {
-                        "enableFips": True,
                         "maximumCount": 12,
                         "minimumCount": 3,
                         "name": "My-GP-01",
@@ -78,6 +75,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/app/resource-manager/Microsoft.App/preview/2025-02-02-preview/examples/ManagedEnvironments_CustomInfrastructureResourceGroup_Create.json
+# x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/ManagedEnvironments_CustomInfrastructureResourceGroup_Create.json
 if __name__ == "__main__":
     main()

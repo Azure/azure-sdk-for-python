@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -31,15 +30,15 @@ def main():
         subscription_id="34adfa4f-cedf-4dc0-ba29-b6d1a69ab345",
     )
 
-    response = client.connected_environments_certificates.begin_update(
+    response = client.connected_environments_certificates.update(
         resource_group_name="examplerg",
         connected_environment_name="testcontainerenv",
         certificate_name="certificate-firendly-name",
         certificate_envelope={"tags": {"tag1": "value1", "tag2": "value2"}},
-    ).result()
+    )
     print(response)
 
 
-# x-ms-original-file: specification/app/resource-manager/Microsoft.App/preview/2025-02-02-preview/examples/ConnectedEnvironmentsCertificates_Patch.json
+# x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/ConnectedEnvironmentsCertificates_Patch.json
 if __name__ == "__main__":
     main()

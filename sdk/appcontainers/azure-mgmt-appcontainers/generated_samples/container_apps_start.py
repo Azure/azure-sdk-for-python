@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -33,11 +32,11 @@ def main():
 
     response = client.container_apps.begin_start(
         resource_group_name="rg",
-        container_app_name="testWorkerApp0",
+        container_app_name="testworkerapp0",
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/app/resource-manager/Microsoft.App/preview/2025-02-02-preview/examples/ContainerApps_Start.json
+# x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/ContainerApps_Start.json
 if __name__ == "__main__":
     main()

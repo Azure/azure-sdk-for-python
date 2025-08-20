@@ -10,7 +10,7 @@ class AzureMgmtRecordedTestCase(AzureRecordedTestCase):
     """Test class for use by management-plane tests that use the azure-sdk-tools test proxy.
 
     For more details and usage examples, refer to
-    https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#write-or-run-tests
+    https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md
     """
 
     def create_mgmt_client(self, client_class, **kwargs):

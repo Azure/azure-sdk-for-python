@@ -35,6 +35,8 @@ if TYPE_CHECKING:
     from typing import Callable, Dict, Tuple
     from azure.core.pipeline.transport import HttpRequest
 
+# To learn about how to migrate SDK tests to the test proxy, please refer to the migration guide at
+# https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md
 
 # defaults
 RECORDING_START_URL = "{}/record/start".format(PROXY_URL)
@@ -170,7 +172,7 @@ def recorded_by_proxy(test_func: "Callable") -> None:
     """Decorator that redirects network requests to target the azure-sdk-tools test proxy. Use with recorded tests.
 
     For more details and usage examples, refer to
-    https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#write-or-run-tests
+    https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md
     """
 
     def record_wrap(*args, **kwargs):

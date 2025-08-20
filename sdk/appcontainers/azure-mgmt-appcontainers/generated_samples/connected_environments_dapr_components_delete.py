@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -31,13 +30,13 @@ def main():
         subscription_id="8efdecc5-919e-44eb-b179-915dca89ebf9",
     )
 
-    client.connected_environments_dapr_components.begin_delete(
+    client.connected_environments_dapr_components.delete(
         resource_group_name="examplerg",
         connected_environment_name="myenvironment",
         component_name="reddog",
-    ).result()
+    )
 
 
-# x-ms-original-file: specification/app/resource-manager/Microsoft.App/preview/2025-02-02-preview/examples/ConnectedEnvironmentsDaprComponents_Delete.json
+# x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/ConnectedEnvironmentsDaprComponents_Delete.json
 if __name__ == "__main__":
     main()

@@ -57,6 +57,7 @@ from ..partition_key import (
     _Undefined,
     _get_partition_key_from_partition_key_definition
 )
+
 __all__ = ("ContainerProxy",)
 
 # pylint: disable=protected-access, too-many-lines
@@ -433,68 +434,6 @@ class ContainerProxy:
             collection_link=self.container_link, feed_options=feed_options, response_hook=response_hook, **kwargs
         )
         return items
-
-    @distributed_trace_async
-    async def read_items(
-            self,
-            items: Sequence[Tuple[str, PartitionKeyType]],
-            *,
-            max_concurrency: int = 10,
-            consistency_level: Optional[str] = None,
-            session_token: Optional[str] = None,
-            initial_headers: Optional[Dict[str, str]] = None,
-            excluded_locations: Optional[List[str]] = None,
-            priority: Optional[Literal["High", "Low"]] = None,
-            throughput_bucket: Optional[int] = None,
-            **kwargs: Any
-    ) -> CosmosList:
-        """Reads multiple items from the container.
-
-        This method is a batched point-read operation. It is more efficient than
-        issuing multiple individual point reads.
-
-        :param items: A list of tuples, where each tuple contains an item's ID and partition key.
-        :type items: Sequence[Tuple[str, PartitionKeyType]]
-        :keyword int max_concurrency: The maximum number of concurrent operations for the read_items
-            request. Defaults to 10.
-        :keyword str consistency_level: The consistency level to use for the request.
-        :keyword str session_token: Token for use with Session consistency.
-        :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations.
-        :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
-            request. Once the user has reached their provisioned throughput, low priority requests are throttled
-            before high priority requests start getting throttled. Feature must first be enabled at the account level.
-        :keyword int throughput_bucket: The desired throughput bucket for the client
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The read-many operation failed.
-        :returns: A CosmosList containing the retrieved items. Items that were not found are omitted from the list.
-        :rtype: ~azure.cosmos.CosmosList
-        """
-
-
-        if session_token is not None:
-            kwargs['session_token'] = session_token
-        if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
-        if consistency_level is not None:
-            kwargs['consistencyLevel'] = consistency_level
-        if excluded_locations is not None:
-            kwargs['excludedLocations'] = excluded_locations
-        if priority is not None:
-            kwargs['priority'] = priority
-        if throughput_bucket is not None:
-            kwargs["throughput_bucket"] = throughput_bucket
-
-        kwargs['max_concurrency'] = max_concurrency
-        kwargs["containerProperties"] = self._get_properties_with_options
-        query_options = _build_options(kwargs)
-        await self._get_properties_with_options(query_options)
-        query_options["enableCrossPartitionQuery"] = True
-
-        return await self.client_connection.read_items(
-            collection_link=self.container_link,
-            items=items,
-            options= query_options,
-            **kwargs)
 
     @overload
     def query_items(

@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -31,13 +30,13 @@ def main():
         subscription_id="34adfa4f-cedf-4dc0-ba29-b6d1a69ab345",
     )
 
-    client.connected_environments_certificates.begin_delete(
+    client.connected_environments_certificates.delete(
         resource_group_name="examplerg",
         connected_environment_name="testcontainerenv",
         certificate_name="certificate-firendly-name",
-    ).result()
+    )
 
 
-# x-ms-original-file: specification/app/resource-manager/Microsoft.App/preview/2025-02-02-preview/examples/ConnectedEnvironmentsCertificate_Delete.json
+# x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/ConnectedEnvironmentsCertificate_Delete.json
 if __name__ == "__main__":
     main()

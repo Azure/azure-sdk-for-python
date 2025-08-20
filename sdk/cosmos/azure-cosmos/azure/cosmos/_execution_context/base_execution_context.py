@@ -114,12 +114,12 @@ class _QueryExecutionContextBase(object):
         fetched_items = []
         new_options = copy.deepcopy(self._options)
         while self._continuation or not self._has_started:
+            if not self._has_started:
+                self._has_started = True
             new_options["continuation"] = self._continuation
 
             response_headers = {}
             (fetched_items, response_headers) = fetch_function(new_options)
-            if not self._has_started:
-                self._has_started = True
 
             continuation_key = http_constants.HttpHeaders.Continuation
             self._continuation = response_headers.get(continuation_key)

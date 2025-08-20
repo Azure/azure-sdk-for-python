@@ -149,7 +149,6 @@
         "azure.ai.agents.models.RunStepDeltaMcpToolCall": "Azure.AI.Agents.RunStepDeltaMcpToolCall",
         "azure.ai.agents.models.RunStepDeltaMessageCreation": "Azure.AI.Agents.RunStepDeltaMessageCreation",
         "azure.ai.agents.models.RunStepDeltaMessageCreationObject": "Azure.AI.Agents.RunStepDeltaMessageCreationObject",
-        "azure.ai.agents.models.RunStepDeltaMicrosoftFabricToolCall": "Azure.AI.Agents.RunStepDeltaMicrosoftFabricToolCall",
         "azure.ai.agents.models.RunStepDeltaOpenAPIObject": "Azure.AI.Agents.RunStepDeltaOpenAPIObject",
         "azure.ai.agents.models.RunStepDeltaOpenAPIToolCall": "Azure.AI.Agents.RunStepDeltaOpenAPIToolCall",
         "azure.ai.agents.models.RunStepDeltaToolCallObject": "Azure.AI.Agents.RunStepDeltaToolCallObject",

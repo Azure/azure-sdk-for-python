@@ -203,13 +203,6 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
             database_account._EnableMultipleWritableLocations,
         )
 
-    def get_all_write_endpoints(self) -> Set[str]:
-        return {
-            endpoint
-            for context in self.get_write_regional_routing_contexts()
-            for endpoint in (context.get_primary(), context.get_alternate())
-        }
-
     def get_ordered_write_locations(self):
         return self.account_write_locations
 

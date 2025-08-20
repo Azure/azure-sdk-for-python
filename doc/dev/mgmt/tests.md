@@ -190,7 +190,7 @@ This simple test creates a resource group and checks that its name is assigned c
 
 Notes:
 1. This test inherits all necessary behavior for HTTP recording and playback described previously in this document from its `AzureMgmtRecordedTestCase` superclass. You don't need to do anything special to implement it.
-2. The `get_resource_name()` helper method of `AzureMgmtRecordedTestCase` creates a pseudorandom name based on the parameter and the names of the test file and method. This ensures that the name generated is the same for each run of the same test, ensuring reproducibility and preventing name collisions if the tests are run live and the same parameter is used from several different tests.
+2. The `get_resource_name()` helper method of `AzureMgmtRecordedTestCase` creates a pseudorandom name based on the parameter and the names of the test file and method. This ensures that the name generated is the same for each run of the same test, ensuring reproducability and preventing name collisions if the tests are run live and the same parameter is used from several different tests.
 3. The `create_mgmt_client()` helper method of `AzureMgmtRecordedTestCase` creates a client object using the credentials from `mgmt_settings_fake.py` or `mgmt_settings_real.py` as appropriate, with some checks to make sure it's created successfully and cause the unit test to fail if not. You should use it for any clients you create.
 4. While the test cleans up the resource group it creates, you will need to manually delete any resources you've created independent of the test framework. But if you need something like a resource group as a prerequisite for what you're actually trying to test, you should use a "preparer" as demonstrated in the following two examples. Preparers will create and clean up helper resources for you.
 
@@ -211,7 +211,7 @@ class TestMgmtSearch(AzureMgmtRecordedTestCase):
     @ResourceGroupPreparer()
     @recorded_by_proxy
     def test_search_services(self, resource_group, location):
-        account_name = self.get_resource_name('search')
+        account_name = self.get_resource_name(''ptvstestsearch')
 
         service = self.client.services.begin_create_or_update(
             resource_group.name,
@@ -327,7 +327,7 @@ class TestMgmtSearch(AzureMgmtRecordedTestCase):
     @ResourceGroupPreparer(client_kwargs={'base_url':_CUSTOM_ENDPOINT})
     @recorded_by_proxy
     def test_search_services(self, resource_group, location):
-        account_name = self.get_resource_name('search')
+        account_name = self.get_resource_name(''ptvstestsearch')
 
         service = self.client.services.begin_create_or_update(
             resource_group.name,
@@ -357,5 +357,5 @@ class TestMgmtSearch(AzureMgmtRecordedTestCase):
 [dev_setup]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/dev_setup.md
 [devtools_testutils]: https://github.com/Azure/azure-sdk-for-python/tree/main/tools/azure-sdk-tools/devtools_testutils
 [mgmt_settings_fake]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/mgmt_settings_fake.py
-[testproxy]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#write-or-run-tests
+[testproxy]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md
 [pytest]: https://docs.pytest.org/en/latest/

@@ -24,7 +24,7 @@ class TestContainerAppsAPIConnectedEnvironmentsStoragesOperations(AzureMgmtRecor
         response = self.client.connected_environments_storages.list(
             resource_group_name=resource_group.name,
             connected_environment_name="str",
-            api_version="2025-02-02-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestContainerAppsAPIConnectedEnvironmentsStoragesOperations(AzureMgmtRecor
             resource_group_name=resource_group.name,
             connected_environment_name="str",
             storage_name="str",
-            api_version="2025-02-02-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -45,8 +45,8 @@ class TestContainerAppsAPIConnectedEnvironmentsStoragesOperations(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_connected_environments_storages_begin_create_or_update(self, resource_group):
-        response = self.client.connected_environments_storages.begin_create_or_update(
+    def test_connected_environments_storages_create_or_update(self, resource_group):
+        response = self.client.connected_environments_storages.create_or_update(
             resource_group_name=resource_group.name,
             connected_environment_name="str",
             storage_name="str",
@@ -54,23 +54,7 @@ class TestContainerAppsAPIConnectedEnvironmentsStoragesOperations(AzureMgmtRecor
                 "id": "str",
                 "name": "str",
                 "properties": {
-                    "azureFile": {
-                        "accessMode": "str",
-                        "accountKey": "str",
-                        "accountKeyVaultProperties": {"identity": "str", "keyVaultUrl": "str"},
-                        "accountName": "str",
-                        "shareName": "str",
-                    },
-                    "deploymentErrors": "str",
-                    "provisioningState": "str",
-                    "smb": {
-                        "accessMode": "str",
-                        "domain": "str",
-                        "host": "str",
-                        "password": "str",
-                        "shareName": "str",
-                        "username": "str",
-                    },
+                    "azureFile": {"accessMode": "str", "accountKey": "str", "accountName": "str", "shareName": "str"}
                 },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -82,21 +66,21 @@ class TestContainerAppsAPIConnectedEnvironmentsStoragesOperations(AzureMgmtRecor
                 },
                 "type": "str",
             },
-            api_version="2025-02-02-preview",
-        ).result()  # call '.result()' to poll until service return final result
+            api_version="2025-01-01",
+        )
 
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_connected_environments_storages_begin_delete(self, resource_group):
-        response = self.client.connected_environments_storages.begin_delete(
+    def test_connected_environments_storages_delete(self, resource_group):
+        response = self.client.connected_environments_storages.delete(
             resource_group_name=resource_group.name,
             connected_environment_name="str",
             storage_name="str",
-            api_version="2025-02-02-preview",
-        ).result()  # call '.result()' to poll until service return final result
+            api_version="2025-01-01",
+        )
 
         # please add some check logic here by yourself
         # ...

@@ -100,7 +100,6 @@ jobs:
         ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
         InjectedPackages: $(InjectedPackages)
         TestProxy: ${{ parameters.TestProxy }}
-        TestPipeline: ${{ parameters.TestPipeline }}
         BeforeTestSteps:
           - ${{ each step in parameters.BeforeTestSteps }}:
             -  ${{ step }}

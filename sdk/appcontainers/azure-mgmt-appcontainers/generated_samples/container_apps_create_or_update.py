@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -33,7 +32,7 @@ def main():
 
     response = client.container_apps.begin_create_or_update(
         resource_group_name="rg",
-        container_app_name="testcontainerApp0",
+        container_app_name="testcontainerapp0",
         container_app_envelope={
             "identity": {
                 "type": "SystemAssigned,UserAssigned",
@@ -45,13 +44,6 @@ def main():
             "properties": {
                 "configuration": {
                     "dapr": {
-                        "appHealth": {
-                            "enabled": True,
-                            "path": "/health",
-                            "probeIntervalSeconds": 3,
-                            "probeTimeoutMilliseconds": 1000,
-                            "threshold": 3,
-                        },
                         "appPort": 3000,
                         "appProtocol": "http",
                         "enableApiLogging": True,
@@ -59,7 +51,6 @@ def main():
                         "httpMaxRequestSize": 10,
                         "httpReadBufferSize": 30,
                         "logLevel": "debug",
-                        "maxConcurrency": 10,
                     },
                     "identitySettings": [
                         {
@@ -111,30 +102,18 @@ def main():
                         ],
                         "stickySessions": {"affinity": "sticky"},
                         "targetPort": 3000,
-                        "traffic": [{"label": "production", "revisionName": "testcontainerApp0-ab1234", "weight": 100}],
+                        "traffic": [{"label": "production", "revisionName": "testcontainerapp0-ab1234", "weight": 100}],
                     },
                     "maxInactiveRevisions": 10,
-                    "revisionTransitionThreshold": 100,
-                    "runtime": {
-                        "dotnet": {"autoConfigureDataProtection": True},
-                        "java": {
-                            "enableMetrics": True,
-                            "javaAgent": {
-                                "enabled": True,
-                                "logging": {
-                                    "loggerSettings": [{"level": "debug", "logger": "org.springframework.boot"}]
-                                },
-                            },
-                        },
-                    },
+                    "runtime": {"java": {"enableMetrics": True}},
                     "service": {"type": "redis"},
                 },
                 "environmentId": "/subscriptions/34adfa4f-cedf-4dc0-ba29-b6d1a69ab345/resourceGroups/rg/providers/Microsoft.App/managedEnvironments/demokube",
                 "template": {
                     "containers": [
                         {
-                            "image": "repo/testcontainerApp0:v1",
-                            "name": "testcontainerApp0",
+                            "image": "repo/testcontainerapp0:v1",
+                            "name": "testcontainerapp0",
                             "probes": [
                                 {
                                     "httpGet": {
@@ -157,9 +136,9 @@ def main():
                         {
                             "args": ["-c", "while true; do echo hello; sleep 10;done"],
                             "command": ["/bin/sh"],
-                            "image": "repo/testcontainerApp0:v4",
+                            "image": "repo/testcontainerapp0:v4",
                             "name": "testinitcontainerApp0",
-                            "resources": {"cpu": 0.2, "gpu": 1, "memory": "100Mi"},
+                            "resources": {"cpu": 0.5, "memory": "1Gi"},
                         }
                     ],
                     "scale": {
@@ -197,8 +176,6 @@ def main():
                     },
                     "serviceBinds": [
                         {
-                            "clientType": "dotnet",
-                            "customizedKeys": {"DesiredKey": "defaultKey"},
                             "name": "redisService",
                             "serviceId": "/subscriptions/34adfa4f-cedf-4dc0-ba29-b6d1a69ab345/resourceGroups/rg/providers/Microsoft.App/containerApps/redisService",
                         }
@@ -215,6 +192,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/app/resource-manager/Microsoft.App/preview/2025-02-02-preview/examples/ContainerApps_CreateOrUpdate.json
+# x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/ContainerApps_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

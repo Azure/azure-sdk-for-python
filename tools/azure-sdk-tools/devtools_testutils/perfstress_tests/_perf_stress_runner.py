@@ -5,7 +5,6 @@
 
 import argparse
 import inspect
-import json
 import logging
 import math
 import os
@@ -114,14 +113,6 @@ class _PerfStressRunner:
         )
         per_test_arg_parser.add_argument(
             "--insecure", action="store_true", help="Disable SSL validation. Default is False.", default=False
-        )
-        per_test_arg_parser.add_argument(
-            "-l", "--latency", action="store_true", help="Track per-operation latency statistics.", default=False
-        )
-        per_test_arg_parser.add_argument(
-            "--results-file",
-            type=str,
-            help="File path location to store the results for the test run.",
         )
 
         # Per-test args
@@ -273,16 +264,13 @@ class _PerfStressRunner:
 
     def _report_results(self):
         """Calculate and log the test run results across all child processes"""
-        total_operations = 0
-        operations_per_second = 0.0
-        latencies = []
+        operations = []
         while not self.results.empty():
-            result: Tuple[int, int, float, List[float]] = self.results.get()
-            total_operations += result[1]
-            operations_per_second += result[1] / result[2] if result[2] else 0
-            latencies.extend(result[3])
+            operations.append(self.results.get())
 
+        total_operations = self._get_completed_operations(operations)
         self.logger.info("")
+        operations_per_second = self._get_operations_per_second(operations)
         if operations_per_second:
             seconds_per_operation = 1 / operations_per_second
             weighted_average_seconds = total_operations / operations_per_second
@@ -294,14 +282,6 @@ class _PerfStressRunner:
                     self._format_number(seconds_per_operation, 4),
                 )
             )
-
-            if self.per_test_args.latency and len(latencies) > 0:
-                self.logger.info("")
-                self._print_latencies(latencies)
-                if self.per_test_args.results_file:
-                    # Not all tests will have a size argument
-                    size = getattr(self.per_test_args, "size", None)
-                    self._write_results_file(self.per_test_args.results_file, latencies, size)
         else:
             self.logger.info("Completed without generating operation statistics.")
         self.logger.info("")
@@ -355,18 +335,3 @@ class _PerfStressRunner:
         decimals = max(0, significant_digits - math.floor(log) - 1)
 
         return ("{:,." + str(decimals) + "f}").format(rounded)
-
-    def _print_latencies(self, latencies: List[float]):
-        self.logger.info("=== Latency Distribution ===")
-        latencies.sort()
-
-        percentiles = [50.0, 75.0, 90.0, 95.0, 99.0, 99.9, 100.0]
-        for p in percentiles:
-            index = math.ceil(p / 100 * len(latencies)) - 1
-            self.logger.info(f"{p:5.1f}% {latencies[index]:10.2f}ms")
-
-    def _write_results_file(self, path: str, latencies: List[float], size):
-        data = [{"Time": l, "Size": size} for l in latencies]
-        output = json.dumps(data, indent=2)
-        with open(path, 'w', encoding='utf-8') as f:
-            f.write(output)

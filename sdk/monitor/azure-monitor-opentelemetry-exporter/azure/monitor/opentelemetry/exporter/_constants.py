@@ -146,10 +146,10 @@ _REQUEST = "REQUEST"
 _TRACE = "TRACE"
 _UNKNOWN = "UNKNOWN"
 
-# Customer Facing SDKStats
-_APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW = "APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW"
+# Customer Facing Statsbeat
+_APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW = "APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW"
 _APPLICATIONINSIGHTS_SDKSTATS_EXPORT_INTERVAL = "APPLICATIONINSIGHTS_SDKSTATS_EXPORT_INTERVAL"
-_CUSTOMER_SDKSTATS_LANGUAGE = "python"
+_CUSTOMER_STATSBEAT_LANGUAGE = "python"
 
 class DropCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CLIENT_READONLY = "CLIENT_READONLY"
@@ -167,12 +167,12 @@ class RetryCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 RetryCodeType = Union[RetryCode, int]
 
-class CustomerSdkStatsMetricName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class CustomerStatsbeatMetricName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ITEM_SUCCESS_COUNT = "preview.item.success.count"
     ITEM_DROP_COUNT = "preview.item.dropped.count"
     ITEM_RETRY_COUNT = "preview.item.retry.count"
 
-class CustomerSdkStatsProperties:
+class CustomerStatsbeatProperties:
     language: str
     version: str
     compute_type: str
