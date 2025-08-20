@@ -31,6 +31,7 @@ import binascii
 from typing import Dict, Any, List, Mapping, Optional, Sequence, Union, Tuple, TYPE_CHECKING
 
 from urllib.parse import quote as urllib_quote
+from urllib.parse import unquote as urllib_unquote
 from urllib.parse import urlsplit
 from azure.core import MatchConditions
 
@@ -358,6 +359,8 @@ def set_session_token_header(
             # then update from session container
             if headers[http_constants.HttpHeaders.ConsistencyLevel] == documents.ConsistencyLevel.Session and \
                     cosmos_client_connection.session:
+                # urllib_unquote is used to decode the path, as it may contain encoded characters
+                path = urllib_unquote(path)
                 # populate session token from the client's session container
                 session_token = (
                     cosmos_client_connection.session.get_session_token(path,
@@ -386,6 +389,8 @@ async def set_session_token_header_async(
             if headers[http_constants.HttpHeaders.ConsistencyLevel] == documents.ConsistencyLevel.Session and \
                     cosmos_client_connection.session:
                 # populate session token from the client's session container
+                # urllib_unquote is used to decode the path, as it may contain encoded characters
+                path = urllib_unquote(path)
                 session_token = \
                     await cosmos_client_connection.session.get_session_token_async(path,
                                                                 options.get('partitionKey'),
