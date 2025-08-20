@@ -13,6 +13,7 @@ from typing import Dict, Optional
 import pytest
 from azure.core.exceptions import ResourceNotFoundError
 from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils import is_live, is_live_and_not_recording
 from testpreparer import ContentUnderstandingPreparer
 
 from testpreparer_async import ContentUnderstandingClientTestBaseAsync
@@ -20,6 +21,7 @@ from test_helpers import (
     generate_person_directory_id_async,
     get_enrollment_data_path
 )
+from azure.ai.contentunderstanding.models import PersonDirectory
 
 
 async def delete_person_directory_and_assert(client, person_directory_id: str, created_directory: bool) -> None:

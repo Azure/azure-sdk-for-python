@@ -12,7 +12,7 @@ from typing import Dict, Optional
 
 import pytest
 from azure.core.exceptions import ResourceNotFoundError
-from devtools_testutils import recorded_by_proxy
+from devtools_testutils import recorded_by_proxy, is_live, is_live_and_not_recording
 from testpreparer import ContentUnderstandingPreparer
 
 from testpreparer import ContentUnderstandingClientTestBase
@@ -20,6 +20,7 @@ from test_helpers import (
     generate_person_directory_id_sync,
     get_enrollment_data_path
 )
+from azure.ai.contentunderstanding.models import PersonDirectory
 import uuid
 
 
