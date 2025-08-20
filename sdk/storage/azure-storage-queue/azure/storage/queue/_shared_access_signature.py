@@ -10,7 +10,7 @@ from urllib.parse import parse_qs
 
 from azure.storage.queue._shared import sign_string
 from azure.storage.queue._shared.constants import X_MS_VERSION
-from azure.storage.queue._shared.models import Services
+from azure.storage.queue._shared.models import Services, UserDelegationKey
 from azure.storage.queue._shared.shared_access_signature import (
     QueryStringConstants,
     SharedAccessSignature,
@@ -30,7 +30,12 @@ class QueueSharedAccessSignature(SharedAccessSignature):
     generate_*_shared_access_signature method directly.
     """
 
-    def __init__(self, account_name: str, account_key: str) -> None:
+    def __init__(
+        self,
+        account_name: str,
+        account_key: Optional[str] = None,
+        user_delegation_key: Optional[UserDelegationKey] = None,
+    ) -> None:
         """
         :param str account_name:
             The storage account name used to generate the shared access signatures.
@@ -38,6 +43,7 @@ class QueueSharedAccessSignature(SharedAccessSignature):
             The access key to generate the shares access signatures.
         """
         super(QueueSharedAccessSignature, self).__init__(account_name, account_key, x_ms_version=X_MS_VERSION)
+        self.user_delegation_key = user_delegation_key
 
     def generate_queue(
         self,
@@ -48,6 +54,7 @@ class QueueSharedAccessSignature(SharedAccessSignature):
         policy_id: Optional[str] = None,
         ip: Optional[str] = None,
         protocol: Optional[str] = None,
+        user_delegation_oid: Optional[str] = None,
         sts_hook: Optional[Callable[[str], None]] = None,
     ) -> str:
         """
@@ -89,6 +96,10 @@ class QueueSharedAccessSignature(SharedAccessSignature):
         :param str protocol:
             Specifies the protocol permitted for a request made. The default value
             is https,http. See :class:`~azure.storage.common.models.Protocol` for possible values.
+        :param str user_delegation_oid:
+            Specifies the Entra ID of the user that is authorized to use the resulting SAS URL.
+            The resulting SAS URL must be used in conjunction with an Entra ID token that has been
+            issued to the user specified in this value.
         :param sts_hook:
             For debugging purposes only. If provided, the hook is called with the string to sign
             that was used to generate the SAS.
@@ -99,6 +110,7 @@ class QueueSharedAccessSignature(SharedAccessSignature):
         sas = _QueueSharedAccessHelper()
         sas.add_base(permission, expiry, start, ip, protocol, self.x_ms_version)
         sas.add_id(policy_id)
+        sas.add_user_delegation_oid(user_delegation_oid)
         sas.add_resource_signature(self.account_name, self.account_key, queue_name)
 
         if sts_hook is not None:
@@ -211,13 +223,15 @@ def generate_account_sas(
 def generate_queue_sas(
     account_name: str,
     queue_name: str,
-    account_key: str,
+    account_key: Optional[str] = None,
+    user_delegation_key: Optional[UserDelegationKey] = None,
     permission: Optional[Union["QueueSasPermissions", str]] = None,
     expiry: Optional[Union["datetime", str]] = None,
     start: Optional[Union["datetime", str]] = None,
     policy_id: Optional[str] = None,
     ip: Optional[str] = None,
     *,
+    user_delegation_oid: Optional[str] = None,
     sts_hook: Optional[Callable[[str], None]] = None,
     **kwargs: Any
 ) -> str:
@@ -231,6 +245,11 @@ def generate_queue_sas(
         The name of the queue.
     :param str account_key:
         The account key, also called shared key or access key, to generate the shared access signature.
+    :param ~azure.storage.queue.UserDelegationKey user_delegation_key:
+        Instead of an account shared key, the user could pass in a user delegation key.
+        A user delegation key can be obtained from the service by authenticating with an AAD identity;
+        this can be accomplished by calling :func:`~azure.storage.queue.QueueServiceClient.get_user_delegation_key`.
+        When present, the SAS is signed with the user delegation key instead.
     :param permission:
         The permissions associated with the shared access signature. The
         user is restricted to operations allowed by the permissions.
@@ -264,6 +283,10 @@ def generate_queue_sas(
         restricts the request to those IP addresses.
     :keyword str protocol:
         Specifies the protocol permitted for a request made. The default value is https.
+    :keyword str user_delegation_oid:
+        Specifies the Entra ID of the user that is authorized to use the resulting SAS URL.
+        The resulting SAS URL must be used in conjunction with an Entra ID token that has been
+        issued to the user specified in this value.
     :keyword sts_hook:
         For debugging purposes only. If provided, the hook is called with the string to sign
         that was used to generate the SAS.
@@ -285,7 +308,14 @@ def generate_queue_sas(
             raise ValueError("'expiry' parameter must be provided when not using a stored access policy.")
         if not permission:
             raise ValueError("'permission' parameter must be provided when not using a stored access policy.")
-    sas = QueueSharedAccessSignature(account_name, account_key)
+    if not user_delegation_key and not account_key:
+        raise ValueError("Either user_delegation_key or account_key must be provided.")
+    if isinstance(account_key, UserDelegationKey):
+        user_delegation_key = account_key
+    if user_delegation_key:
+        sas = QueueSharedAccessSignature(account_name, user_delegation_key=user_delegation_key)
+    else:
+        sas = QueueSharedAccessSignature(account_name, account_key=account_key)
     return sas.generate_queue(
         queue_name,
         permission=permission,
@@ -294,6 +324,7 @@ def generate_queue_sas(
         policy_id=policy_id,
         ip=ip,
         sts_hook=sts_hook,
+        user_delegation_oid=user_delegation_oid,
         **kwargs
     )
 
