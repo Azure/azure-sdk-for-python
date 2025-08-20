@@ -87,7 +87,7 @@ class AzureDiagnosticLogging:
                             try:
                                 makedirs(_DIAGNOSTIC_LOG_PATH)
                             # Multi-thread can create a race condition for creating the log file
-                            except FileExistsError as e:
+                            except FileExistsError:
                                 pass
                         f_handler = logging.FileHandler(join(_DIAGNOSTIC_LOG_PATH, _DIAGNOSTIC_LOGGER_FILE_NAME))
                         formatter = logging.Formatter(fmt=log_format, datefmt="%Y-%m-%dT%H:%M:%S")
