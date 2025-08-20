@@ -60,16 +60,17 @@ async def main():
 
         print(f"🔍 Detecting faces in image: {image_path}")
 
-        # Convert image to base64 bytes
-        image_data = read_image_to_base64_bytes(image_path)
+        # read image file as bytes
+        with open(image_path, "rb") as image_file:
+            image_bytes = image_file.read()
 
-        # Detect faces in the image using the new overloaded detect method
+        # Detect faces in the image using the overloaded detect method with bytes
         response: DetectFacesResult = await client.faces.detect(
-            image_data, max_detected_faces=10
+            image_bytes, max_detected_faces=10
         )
         # You can also use:
         # response: DetectFacesResult = await client.faces.detect(
-        #     data=image_data, max_detected_faces=10
+        #     data=image_bytes, max_detected_faces=10
         # )
 
         if hasattr(response, "detected_faces") and response.detected_faces:

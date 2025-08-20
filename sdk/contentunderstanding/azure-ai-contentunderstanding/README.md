@@ -120,7 +120,7 @@ Comprehensive face recognition capabilities:
 
 2. **Install dependencies**:
    ```bash
-   pip install azure-ai-contentunderstanding python-dotenv
+   pip install azure-ai-contentunderstanding python-dotenv aiohttp
    ```
 
 3. **Run any sample**:

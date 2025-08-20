@@ -94,15 +94,13 @@ class FacesOperations(FacesOperationsGenerated):
             
             elif isinstance(input_data, bytes):
                 # Bytes as positional argument - convert to string for API
-                base64_string = input_data.decode('utf-8')
-                return await super().detect(data=base64_string, **kwargs)
+                return await super().detect(data=input_data, **kwargs)
         
         # Check if data keyword argument is bytes (needs conversion)
         elif 'data' in kwargs and isinstance(kwargs['data'], bytes):
             # Convert bytes to string for the API
             data_bytes = kwargs.pop('data')
-            base64_string = data_bytes.decode('utf-8')
-            return await super().detect(data=base64_string, *args, **kwargs)
+            return await super().detect(data=data_bytes, *args, **kwargs)
         
         # Fall back to original method behavior (all other keyword arguments)
         else:
