@@ -224,20 +224,20 @@ class DatabaseProxy(object):
         full_text_policy: Optional[Dict[str, Any]] = None,
         return_properties: bool = False,
         **kwargs: Any
-    ) -> ContainerProxy | tuple[ContainerProxy, CosmosDict]:
+    ) -> Union[ContainerProxy, tuple[ContainerProxy, CosmosDict]]:
         """Create a new container with the given ID (name).
 
         If a container with the given ID already exists, a CosmosResourceExistsError is raised.
 
         :param str id: ID (name) of container to create.
         :param ~azure.cosmos.PartitionKey partition_key: The partition key to use for the container.
-        :param Dict[str, Any] indexing_policy: The indexing policy to apply to the container.
-        :param int default_ttl: Default time to live (TTL) for items in the container. If unused, items do not expire.
-        :param offer_throughput: The provisioned throughput for this offer.
+        :keyword Dict[str, Any] indexing_policy: The indexing policy to apply to the container.
+        :keyword int default_ttl: Default time to live (TTL) for items in the container. If unused, items do not expire.
+        :keyword offer_throughput: The provisioned throughput for this offer.
         :type offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
-        :param Dict[str, Any] unique_key_policy: The unique key policy to apply to the container.
-        :param Dict[str, Any] conflict_resolution_policy: The conflict resolution policy to apply to the container.
-        :param return_properties: Specifies function to return either a ContainerProxy or a CosmosDict instance.
+        :keyword Dict[str, Any] unique_key_policy: The unique key policy to apply to the container.
+        :keyword Dict[str, Any] conflict_resolution_policy: The conflict resolution policy to apply to the container.
+        :keyword bool return_properties: Specifies function to return either a ContainerProxy or a CosmosDict instance.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
@@ -254,7 +254,8 @@ class DatabaseProxy(object):
         :keyword Dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
-        :returns: A `ContainerProxy` instance representing the new container or a tuple of the ContainerProxy and CosmosDict with the response headers.
+        :returns: A `ContainerProxy` instance representing the new container or a tuple of the ContainerProxy
+            and CosmosDict with the response headers.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container creation failed.
         :rtype: ~azure.cosmos.ContainerProxy or tuple[ContainerProxy, CosmosDict]
 
@@ -404,7 +405,7 @@ class DatabaseProxy(object):
         full_text_policy: Optional[Dict[str, Any]] = None,
         return_properties: bool = False,
         **kwargs: Any
-    ) -> ContainerProxy | tuple[ContainerProxy, CosmosDict]:
+    ) -> Union[ContainerProxy, tuple[ContainerProxy, CosmosDict]]:
         """Create a container if it does not exist already.
 
         If the container already exists, the existing settings are returned.
@@ -413,13 +414,13 @@ class DatabaseProxy(object):
 
         :param str id: ID (name) of container to create.
         :param ~azure.cosmos.PartitionKey partition_key: The partition key to use for the container.
-        :param Dict[str, Any] indexing_policy: The indexing policy to apply to the container.
-        :param int default_ttl: Default time to live (TTL) for items in the container. If unused, items do not expire.
-        :param offer_throughput: The provisioned throughput for this offer.
+        :keyword Dict[str, Any] indexing_policy: The indexing policy to apply to the container.
+        :keyword int default_ttl: Default time to live (TTL) for items in the container. If unused, items do not expire.
+        :keyword offer_throughput: The provisioned throughput for this offer.
         :type offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
-        :param Dict[str, Any] unique_key_policy: The unique key policy to apply to the container.
-        :param Dict[str, Any] conflict_resolution_policy: The conflict resolution policy to apply to the container.
-        :param return_properties: Specifies function to return either a ContainerProxy or a CosmosDict instance.
+        :keyword Dict[str, Any] unique_key_policy: The unique key policy to apply to the container.
+        :keyword Dict[str, Any] conflict_resolution_policy: The conflict resolution policy to apply to the container.
+        :keyword bool return_properties: Specifies function to return either a ContainerProxy or a CosmosDict instance.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
@@ -436,7 +437,8 @@ class DatabaseProxy(object):
         :keyword Dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
-        :returns: A `ContainerProxy` instance representing the new container or a tuple of the ContainerProxy and CosmosDict with the response headers.
+        :returns: A `ContainerProxy` instance representing the new container or a tuple of the ContainerProxy
+            and CosmosDict with the response headers.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container read or creation failed.
         :rtype: ~azure.cosmos.ContainerProxy or tuple[ContainerProxy, CosmosDict]
         """
@@ -728,7 +730,7 @@ class DatabaseProxy(object):
         full_text_policy: Optional[Dict[str, Any]] = None,
         return_properties: bool = False,
         **kwargs: Any
-    ) -> ContainerProxy | tuple[ContainerProxy, CosmosDict]:
+    ) -> Union[ContainerProxy, tuple[ContainerProxy, CosmosDict]]:
         """Reset the properties of the container.
 
         Property changes are persisted immediately. Any properties not specified
@@ -738,11 +740,11 @@ class DatabaseProxy(object):
             :class:`~azure.cosmos.ContainerProxy` instance of the container to be replaced.
         :type container: Union[str, ~azure.cosmos.ContainerProxy, Dict[str, Any]]
         :param ~azure.cosmos.PartitionKey partition_key: The partition key to use for the container.
-        :param Dict[str, Any] indexing_policy: The indexing policy to apply to the container.
-        :param int default_ttl: Default time to live (TTL) for items in the container.
+        :keyword Dict[str, Any] indexing_policy: The indexing policy to apply to the container.
+        :keyword int default_ttl: Default time to live (TTL) for items in the container.
             If unspecified, items do not expire.
-        :param Dict[str, Any] conflict_resolution_policy: The conflict resolution policy to apply to the container.
-        :param return_properties: Specifies function to return either a ContainerProxy or a CosmosDict instance.
+        :keyword Dict[str, Any] conflict_resolution_policy: The conflict resolution policy to apply to the container.
+        :keyword bool return_properties: Specifies function to return either a ContainerProxy or a CosmosDict instance.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
             None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL.  Please
@@ -754,7 +756,8 @@ class DatabaseProxy(object):
         :keyword Dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
-        :returns: A `ContainerProxy` instance representing the new container or a tuple of the ContainerProxy and CosmosDict with the response headers.
+        :returns: A `ContainerProxy` instance representing the new container or a tuple of the ContainerProxy
+            and CosmosDict with the response headers.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be replaced.
             This includes if the container with given id does not exist.
         :rtype: ~azure.cosmos.ContainerProxy or tuple[ContainerProxy, CosmosDict]

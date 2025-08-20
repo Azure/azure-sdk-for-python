@@ -47,7 +47,6 @@ from .._cosmos_responses import CosmosDict, CosmosList
 from .._routing.routing_range import Range
 from .._session_token_helpers import get_latest_session_token
 from ..offer import ThroughputProperties
-from .._cosmos_responses import CosmosDict, CosmosList
 from ..partition_key import (
     NonePartitionKeyValue,
     _return_undefined_or_empty_partition_key,

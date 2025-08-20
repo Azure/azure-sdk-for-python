@@ -224,7 +224,7 @@ class DatabaseProxy(object):
         full_text_policy: Optional[Dict[str, Any]] = None,
         return_properties: bool = False,
         **kwargs: Any
-    ) -> ContainerProxy | tuple[ContainerProxy, CosmosDict]:
+    ) -> Union[ContainerProxy, tuple[ContainerProxy, CosmosDict]]:
         """Create a new container with the given ID (name).
 
         If a container with the given ID already exists, a CosmosResourceExistsError is raised.
@@ -232,7 +232,7 @@ class DatabaseProxy(object):
         :param str id: ID (name) of container to create.
         :param partition_key: The partition key to use for the container.
         :type partition_key: ~azure.cosmos.PartitionKey
-        :param return_properties: Specifies function to return either a ContainerProxy or a CosmosDict instance.
+        :param bool return_properties: Specifies function to return either a ContainerProxy or a CosmosDict instance.
         :keyword dict[str, str] indexing_policy: The indexing policy to apply to the container.
         :keyword int default_ttl: Default time to live (TTL) for items in the container.
             If unspecified, items do not expire.
@@ -258,7 +258,8 @@ class DatabaseProxy(object):
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container creation failed.
-        :returns: A `ContainerProxy` instance representing the new container or a tuple of the ContainerProxy and CosmosDict with the response headers.
+        :returns: A `ContainerProxy` instance representing the new container or a tuple of the ContainerProxy
+            and CosmosDict with the response headers.
         :rtype: ~azure.cosmos.aio.ContainerProxy or tuple[ContainerProxy, CosmosDict]
 
         .. admonition:: Example:
@@ -400,7 +401,7 @@ class DatabaseProxy(object):
         full_text_policy: Optional[Dict[str, Any]] = None,
         return_properties: bool = False,
         **kwargs: Any
-    ) -> ContainerProxy | tuple[ContainerProxy, CosmosDict]:
+    ) -> Union[ContainerProxy, tuple[ContainerProxy, CosmosDict]]:
         """Create a container if it does not exist already.
 
         If the container already exists, the existing settings are returned.
@@ -410,7 +411,7 @@ class DatabaseProxy(object):
         :param str id: ID (name) of container to create.
         :param partition_key: The partition key to use for the container.
         :type partition_key: ~azure.cosmos.PartitionKey
-        :param return_properties: Specifies function to return either a ContainerProxy or a CosmosDict instance.
+        :param bool return_properties: Specifies function to return either a ContainerProxy or a CosmosDict instance.
         :keyword dict[str, str] indexing_policy: The indexing policy to apply to the container.
         :keyword int default_ttl: Default time to live (TTL) for items in the container.
             If unspecified, items do not expire.
@@ -657,7 +658,7 @@ class DatabaseProxy(object):
         full_text_policy: Optional[Dict[str, Any]] = None,
         return_properties: bool = False,
         **kwargs: Any
-    ) -> ContainerProxy | tuple[ContainerProxy, CosmosDict]:
+    ) -> Union[ContainerProxy, tuple[ContainerProxy, CosmosDict]]:
         """Reset the properties of the container.
 
         Property changes are persisted immediately. Any properties not specified
@@ -668,7 +669,7 @@ class DatabaseProxy(object):
         :type container: Union[str, Dict[str, Any], ~azure.cosmos.aio.ContainerProxy]
         :param partition_key: The partition key to use for the container.
         :type partition_key: ~azure.cosmos.PartitionKey
-        :param return_properties: Specifies function to return either a ContainerProxy or a CosmosDict instance.
+        :param bool return_properties: Specifies function to return either a ContainerProxy or a CosmosDict instance.
         :keyword dict[str, str] indexing_policy: The indexing policy to apply to the container.
         :keyword int default_ttl: Default time to live (TTL) for items in the container.
             If unspecified, items do not expire.
