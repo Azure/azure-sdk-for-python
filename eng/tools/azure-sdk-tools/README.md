@@ -1,0 +1,1 @@
+This is where the tooling currently located at `tools/azure-sdk-tools` should be moved.
