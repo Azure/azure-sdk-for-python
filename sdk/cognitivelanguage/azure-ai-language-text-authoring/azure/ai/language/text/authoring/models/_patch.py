@@ -324,7 +324,6 @@ __all__ = [
     "LoadSnapshotState",
     "DeploymentResourcesState",
     "ProjectDeletionState",
-    "ExportedProjectFormat",
     "ExportedProject",
     "ImportProjectState",
     "CopyProjectDetails",
