@@ -352,7 +352,7 @@ class PhoneNumbersClient:
         :keyword phone_number_type: Filter by phone number type, e.g. geographic, tollFree, mobile.
          Default value is None.
         :paramtype phone_number_type: str or ~azure.communication.phonenumbers.PhoneNumberType
-        :keyword assignment_type: Filter by assignment type, e.g. User, Application. Known values are:
+        :keyword assignment_type: Filter by assignment type, e.g. person, application. Known values are:
          "person" and "application". Default value is None.
         :paramtype assignment_type: str or ~azure.communication.phonenumbers.PhoneNumberAssignmentType
         :keyword skip: An optional parameter for how many entries to skip, for pagination purposes. The
