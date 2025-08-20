@@ -220,44 +220,6 @@ class ConnectionString(_Model):
     """Name of the connection string."""
 
 
-class CustomerManagedKeyEncryptionProperties(_Model):
-    """Customer managed key encryption settings.
-
-    :ivar key_encryption_key_identity: The identity used to access the key encryption key.
-     Required.
-    :vartype key_encryption_key_identity: ~azure.mgmt.mongocluster.models.KeyEncryptionKeyIdentity
-    :ivar key_encryption_key_url: The URI of the key vault key used for encryption. Required.
-    :vartype key_encryption_key_url: str
-    """
-
-    key_encryption_key_identity: "_models.KeyEncryptionKeyIdentity" = rest_field(
-        name="keyEncryptionKeyIdentity", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The identity used to access the key encryption key. Required."""
-    key_encryption_key_url: str = rest_field(
-        name="keyEncryptionKeyUrl", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The URI of the key vault key used for encryption. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        key_encryption_key_identity: "_models.KeyEncryptionKeyIdentity",
-        key_encryption_key_url: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class DataApiProperties(_Model):
     """Data API properties.
 
@@ -295,14 +257,14 @@ class DatabaseRole(_Model):
 
     :ivar db: Database scope that the role is assigned to. Required.
     :vartype db: str
-    :ivar role: The role that is assigned to the user on the database scope. Required. "root"
+    :ivar role: The role that is assigned to the user on the database scope. Required. "dbOwner"
     :vartype role: str or ~azure.mgmt.mongocluster.models.UserRole
     """
 
     db: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Database scope that the role is assigned to. Required."""
     role: Union[str, "_models.UserRole"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The role that is assigned to the user on the database scope. Required. \"root\""""
+    """The role that is assigned to the user on the database scope. Required. \"dbOwner\""""
 
     @overload
     def __init__(
@@ -310,37 +272,6 @@ class DatabaseRole(_Model):
         *,
         db: str,
         role: Union[str, "_models.UserRole"],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class EncryptionProperties(_Model):
-    """The encryption configuration for the mongo cluster.
-
-    :ivar customer_managed_key_encryption: Customer managed key encryption settings.
-    :vartype customer_managed_key_encryption:
-     ~azure.mgmt.mongocluster.models.CustomerManagedKeyEncryptionProperties
-    """
-
-    customer_managed_key_encryption: Optional["_models.CustomerManagedKeyEncryptionProperties"] = rest_field(
-        name="customerManagedKeyEncryption", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Customer managed key encryption settings."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        customer_managed_key_encryption: Optional["_models.CustomerManagedKeyEncryptionProperties"] = None,
     ) -> None: ...
 
     @overload
@@ -688,45 +619,6 @@ class HighAvailabilityProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KeyEncryptionKeyIdentity(_Model):
-    """The identity used for key encryption key.
-
-    :ivar identity_type: The type of identity. Only 'UserAssignedIdentity' is supported. Required.
-     "UserAssignedIdentity"
-    :vartype identity_type: str or ~azure.mgmt.mongocluster.models.KeyEncryptionKeyIdentityType
-    :ivar user_assigned_identity_resource_id: The user assigned identity resource id. Required.
-    :vartype user_assigned_identity_resource_id: str
-    """
-
-    identity_type: Union[str, "_models.KeyEncryptionKeyIdentityType"] = rest_field(
-        name="identityType", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The type of identity. Only 'UserAssignedIdentity' is supported. Required.
-     \"UserAssignedIdentity\""""
-    user_assigned_identity_resource_id: str = rest_field(
-        name="userAssignedIdentityResourceId", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The user assigned identity resource id. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        identity_type: Union[str, "_models.KeyEncryptionKeyIdentityType"],
-        user_assigned_identity_resource_id: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class ListConnectionStringsResult(_Model):
     """The connection strings for the given mongo cluster.
 
@@ -738,58 +630,6 @@ class ListConnectionStringsResult(_Model):
         name="connectionStrings", visibility=["read"]
     )
     """An array that contains the connection strings for a mongo cluster."""
-
-
-class ManagedServiceIdentity(_Model):
-    """Managed service identity (system assigned and/or user assigned identities).
-
-    :ivar principal_id: The service principal ID of the system assigned identity. This property
-     will only be provided for a system assigned identity.
-    :vartype principal_id: str
-    :ivar tenant_id: The tenant ID of the system assigned identity. This property will only be
-     provided for a system assigned identity.
-    :vartype tenant_id: str
-    :ivar type: The type of managed identity assigned to this resource. Required. Known values are:
-     "None", "SystemAssigned", "UserAssigned", and "SystemAssigned,UserAssigned".
-    :vartype type: str or ~azure.mgmt.mongocluster.models.ManagedServiceIdentityType
-    :ivar user_assigned_identities: The identities assigned to this resource by the user.
-    :vartype user_assigned_identities: dict[str,
-     ~azure.mgmt.mongocluster.models.UserAssignedIdentity]
-    """
-
-    principal_id: Optional[str] = rest_field(name="principalId", visibility=["read"])
-    """The service principal ID of the system assigned identity. This property will only be provided
-     for a system assigned identity."""
-    tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read"])
-    """The tenant ID of the system assigned identity. This property will only be provided for a system
-     assigned identity."""
-    type: Union[str, "_models.ManagedServiceIdentityType"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The type of managed identity assigned to this resource. Required. Known values are: \"None\",
-     \"SystemAssigned\", \"UserAssigned\", and \"SystemAssigned,UserAssigned\"."""
-    user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = rest_field(
-        name="userAssignedIdentities", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The identities assigned to this resource by the user."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        type: Union[str, "_models.ManagedServiceIdentityType"],
-        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
 
 
 class TrackedResource(Resource):
@@ -856,18 +696,12 @@ class MongoCluster(TrackedResource):
     :vartype location: str
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: ~azure.mgmt.mongocluster.models.MongoClusterProperties
-    :ivar identity: The managed service identities assigned to this resource.
-    :vartype identity: ~azure.mgmt.mongocluster.models.ManagedServiceIdentity
     """
 
     properties: Optional["_models.MongoClusterProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The resource-specific properties for this resource."""
-    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The managed service identities assigned to this resource."""
 
     @overload
     def __init__(
@@ -876,7 +710,6 @@ class MongoCluster(TrackedResource):
         location: str,
         tags: Optional[Dict[str, str]] = None,
         properties: Optional["_models.MongoClusterProperties"] = None,
-        identity: Optional["_models.ManagedServiceIdentity"] = None,
     ) -> None: ...
 
     @overload
@@ -939,9 +772,6 @@ class MongoClusterProperties(_Model):
     :vartype infrastructure_version: str
     :ivar auth_config: The authentication configuration for the cluster.
     :vartype auth_config: ~azure.mgmt.mongocluster.models.AuthConfigProperties
-    :ivar encryption: The encryption configuration for the cluster. Depends on identity being
-     configured.
-    :vartype encryption: ~azure.mgmt.mongocluster.models.EncryptionProperties
     """
 
     create_mode: Optional[Union[str, "_models.CreateMode"]] = rest_field(
@@ -1022,8 +852,6 @@ class MongoClusterProperties(_Model):
         name="authConfig", visibility=["read", "create", "update", "delete", "query"]
     )
     """The authentication configuration for the cluster."""
-    encryption: Optional["_models.EncryptionProperties"] = rest_field(visibility=["read", "create"])
-    """The encryption configuration for the cluster. Depends on identity being configured."""
 
     @overload
     def __init__(
@@ -1043,7 +871,6 @@ class MongoClusterProperties(_Model):
         data_api: Optional["_models.DataApiProperties"] = None,
         preview_features: Optional[List[Union[str, "_models.PreviewFeature"]]] = None,
         auth_config: Optional["_models.AuthConfigProperties"] = None,
-        encryption: Optional["_models.EncryptionProperties"] = None,
     ) -> None: ...
 
     @overload
@@ -1132,18 +959,12 @@ class MongoClusterRestoreParameters(_Model):
 class MongoClusterUpdate(_Model):
     """The type used for update operations of the MongoCluster.
 
-    :ivar identity: The managed service identities assigned to this resource.
-    :vartype identity: ~azure.mgmt.mongocluster.models.ManagedServiceIdentity
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: ~azure.mgmt.mongocluster.models.MongoClusterUpdateProperties
     """
 
-    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The managed service identities assigned to this resource."""
     tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     properties: Optional["_models.MongoClusterUpdateProperties"] = rest_field(
@@ -1155,7 +976,6 @@ class MongoClusterUpdate(_Model):
     def __init__(
         self,
         *,
-        identity: Optional["_models.ManagedServiceIdentity"] = None,
         tags: Optional[Dict[str, str]] = None,
         properties: Optional["_models.MongoClusterUpdateProperties"] = None,
     ) -> None: ...
@@ -1928,21 +1748,6 @@ class User(ProxyResource):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-
-
-class UserAssignedIdentity(_Model):
-    """User assigned identity properties.
-
-    :ivar principal_id: The principal ID of the assigned identity.
-    :vartype principal_id: str
-    :ivar client_id: The client ID of the assigned identity.
-    :vartype client_id: str
-    """
-
-    principal_id: Optional[str] = rest_field(name="principalId", visibility=["read"])
-    """The principal ID of the assigned identity."""
-    client_id: Optional[str] = rest_field(name="clientId", visibility=["read"])
-    """The client ID of the assigned identity."""
 
 
 class UserProperties(_Model):
