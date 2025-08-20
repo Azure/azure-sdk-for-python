@@ -92,7 +92,7 @@ class TestSessionAsync(unittest.IsolatedAsyncioTestCase):
         # Session token should not be sent for control plane operations
         test_container = await self.created_db.create_container(
             "Container with space" + str(uuid.uuid4()),
-            PartitionKey(path="/id"),
+            PartitionKey(path="/pk"),
             raw_response_hook=test_config.no_token_response_hook
         )
         try:
