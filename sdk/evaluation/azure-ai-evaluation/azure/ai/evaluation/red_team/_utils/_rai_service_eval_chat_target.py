@@ -34,6 +34,7 @@ class RAIServiceEvalChatTarget(PromptChatTarget):
         risk_category: RiskCategory,
         logger: Optional[logging.Logger] = None,
         evaluator_name: Optional[str] = None,
+        context: Optional[str] = None,
     ) -> None:
         """Initialize the RAIServiceEvalChatTarget.
 
@@ -48,6 +49,7 @@ class RAIServiceEvalChatTarget(PromptChatTarget):
         self.evaluator_name = evaluator_name
         self.credential = credential
         self.azure_ai_project = azure_ai_project
+        self.context = context
 
     async def send_prompt_async(
         self, *, prompt_request: PromptRequestResponse, objective: str = ""
@@ -57,7 +59,7 @@ class RAIServiceEvalChatTarget(PromptChatTarget):
 
         thing_to_eval = prompt_request.request_pieces[0].to_dict()["original_value"]
 
-        thing_to_eval_qr = {"query": "query", "response": thing_to_eval}
+        thing_to_eval_qr = {"query": "query", "response": thing_to_eval, "context": self.context}
 
         metric_name = get_metric_from_risk_category(self.risk_category)
         annotation_task = get_annotation_task_from_risk_category(self.risk_category)
