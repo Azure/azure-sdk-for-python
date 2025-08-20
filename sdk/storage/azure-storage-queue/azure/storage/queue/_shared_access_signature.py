@@ -165,9 +165,9 @@ class _QueueSharedAccessHelper(_SharedAccessHelper):
             string_to_sign += get_value_to_append(QueryStringConstants.SIGNED_IDENTIFIER)
 
         string_to_sign += \
-        (get_value_to_append(QueryStringConstants.SIGNED_IP) +
-         get_value_to_append(QueryStringConstants.SIGNED_PROTOCOL) +
-         get_value_to_append(QueryStringConstants.SIGNED_VERSION))
+            (get_value_to_append(QueryStringConstants.SIGNED_IP) +
+             get_value_to_append(QueryStringConstants.SIGNED_PROTOCOL) +
+             get_value_to_append(QueryStringConstants.SIGNED_VERSION))
 
         # remove the trailing newline
         if string_to_sign[-1] == "\n":
