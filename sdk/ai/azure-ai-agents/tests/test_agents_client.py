@@ -647,7 +647,7 @@ class TestAgentClient(TestAgentClientBase):
     def test_list_messages(self, **kwargs):
         """test listing messages in a thread"""
         # create client
-        with self.create_client(**kwargs) as client:
+        with self.create_client(by_endpoint=True, **kwargs) as client:
             assert isinstance(client, AgentsClient)
 
             # create agent
@@ -678,14 +678,26 @@ class TestAgentClient(TestAgentClientBase):
             print("Created message, message ID", message2.id)
             messages2 = list(client.messages.list(thread_id=thread.id))
             assert len(messages2) == 2
-            assert messages2[0].id == message2.id or messages2[1].id == message2.id
+            assert any(msg.id == message2.id for msg in messages2)
 
             message3 = client.messages.create(thread_id=thread.id, role="user", content="Hello, tell me a third joke")
             assert message3.id
             print("Created message, message ID", message3.id)
             messages3 = list(client.messages.list(thread_id=thread.id))
             assert len(messages3) == 3
-            assert messages3[0].id == message3.id or messages3[1].id == message3.id or messages3[2].id == message3.id
+            assert any(msg.id == message3.id for msg in messages3)
+
+            client.messages.delete(thread_id=thread.id, message_id=message3.id)
+            messages4 = list(client.messages.list(thread_id=thread.id))
+            assert len(messages4) == 2
+            assert not any(msg.id == message3.id for msg in messages4)
+
+            # Check that we can add messages after deletion
+            message3 = client.messages.create(thread_id=thread.id, role="user", content="Bar")
+            assert message3.id
+            messages5 = list(client.messages.list(thread_id=thread.id))
+            assert len(messages5) == 3
+            assert any(msg.id == message3.id for msg in messages5)
 
             # delete agent and close client
             client.delete_agent(agent.id)
