@@ -1198,6 +1198,51 @@ class ShareItemInternal(_serialization.Model):
         self.metadata = metadata
 
 
+class ShareNfsSettings(_serialization.Model):
+    """Settings for SMB protocol.
+
+    :ivar encryption_in_transit: Enable or disable encryption in transit.
+    :vartype encryption_in_transit:
+     ~azure.storage.fileshare.models.ShareNfsSettingsEncryptionInTransit
+    """
+
+    _attribute_map = {
+        "encryption_in_transit": {"key": "EncryptionInTransit", "type": "ShareNfsSettingsEncryptionInTransit"},
+    }
+    _xml_map = {"name": "NFS"}
+
+    def __init__(
+        self, *, encryption_in_transit: Optional["_models.ShareNfsSettingsEncryptionInTransit"] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword encryption_in_transit: Enable or disable encryption in transit.
+        :paramtype encryption_in_transit:
+         ~azure.storage.fileshare.models.ShareNfsSettingsEncryptionInTransit
+        """
+        super().__init__(**kwargs)
+        self.encryption_in_transit = encryption_in_transit
+
+
+class ShareNfsSettingsEncryptionInTransit(_serialization.Model):
+    """Enable or disable encryption in transit.
+
+    :ivar required: If encryption in transit is required.
+    :vartype required: bool
+    """
+
+    _attribute_map = {
+        "required": {"key": "Required", "type": "bool"},
+    }
+
+    def __init__(self, *, required: Optional[bool] = None, **kwargs: Any) -> None:
+        """
+        :keyword required: If encryption in transit is required.
+        :paramtype required: bool
+        """
+        super().__init__(**kwargs)
+        self.required = required
+
+
 class SharePermission(_serialization.Model):
     """A permission (a security descriptor) at the share level.
 
@@ -1294,6 +1339,8 @@ class SharePropertiesInternal(_serialization.Model):
     :vartype next_allowed_provisioned_iops_downgrade_time: ~datetime.datetime
     :ivar next_allowed_provisioned_bandwidth_downgrade_time:
     :vartype next_allowed_provisioned_bandwidth_downgrade_time: ~datetime.datetime
+    :ivar enable_smb_directory_lease:
+    :vartype enable_smb_directory_lease: bool
     """
 
     _validation = {
@@ -1335,6 +1382,7 @@ class SharePropertiesInternal(_serialization.Model):
             "key": "NextAllowedProvisionedBandwidthDowngradeTime",
             "type": "rfc-1123",
         },
+        "enable_smb_directory_lease": {"key": "EnableSmbDirectoryLease", "type": "bool"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -1366,6 +1414,7 @@ class SharePropertiesInternal(_serialization.Model):
         max_burst_credits_for_iops: Optional[int] = None,
         next_allowed_provisioned_iops_downgrade_time: Optional[datetime.datetime] = None,
         next_allowed_provisioned_bandwidth_downgrade_time: Optional[datetime.datetime] = None,
+        enable_smb_directory_lease: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1424,6 +1473,8 @@ class SharePropertiesInternal(_serialization.Model):
         :paramtype next_allowed_provisioned_iops_downgrade_time: ~datetime.datetime
         :keyword next_allowed_provisioned_bandwidth_downgrade_time:
         :paramtype next_allowed_provisioned_bandwidth_downgrade_time: ~datetime.datetime
+        :keyword enable_smb_directory_lease:
+        :paramtype enable_smb_directory_lease: bool
         """
         super().__init__(**kwargs)
         self.last_modified = last_modified
@@ -1452,6 +1503,7 @@ class SharePropertiesInternal(_serialization.Model):
         self.max_burst_credits_for_iops = max_burst_credits_for_iops
         self.next_allowed_provisioned_iops_downgrade_time = next_allowed_provisioned_iops_downgrade_time
         self.next_allowed_provisioned_bandwidth_downgrade_time = next_allowed_provisioned_bandwidth_downgrade_time
+        self.enable_smb_directory_lease = enable_smb_directory_lease
 
 
 class ShareProtocolSettings(_serialization.Model):
@@ -1459,20 +1511,32 @@ class ShareProtocolSettings(_serialization.Model):
 
     :ivar smb: Settings for SMB protocol.
     :vartype smb: ~azure.storage.fileshare.models.ShareSmbSettings
+    :ivar nfs: Settings for NFS protocol.
+    :vartype nfs: ~azure.storage.fileshare.models.ShareNfsSettings
     """
 
     _attribute_map = {
         "smb": {"key": "Smb", "type": "ShareSmbSettings"},
+        "nfs": {"key": "Nfs", "type": "ShareNfsSettings"},
     }
     _xml_map = {"name": "ProtocolSettings"}
 
-    def __init__(self, *, smb: Optional["_models.ShareSmbSettings"] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        smb: Optional["_models.ShareSmbSettings"] = None,
+        nfs: Optional["_models.ShareNfsSettings"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword smb: Settings for SMB protocol.
         :paramtype smb: ~azure.storage.fileshare.models.ShareSmbSettings
+        :keyword nfs: Settings for NFS protocol.
+        :paramtype nfs: ~azure.storage.fileshare.models.ShareNfsSettings
         """
         super().__init__(**kwargs)
         self.smb = smb
+        self.nfs = nfs
 
 
 class ShareSmbSettings(_serialization.Model):
@@ -1480,20 +1544,54 @@ class ShareSmbSettings(_serialization.Model):
 
     :ivar multichannel: Settings for SMB Multichannel.
     :vartype multichannel: ~azure.storage.fileshare.models.SmbMultichannel
+    :ivar encryption_in_transit: Enable or disable encryption in transit.
+    :vartype encryption_in_transit:
+     ~azure.storage.fileshare.models.ShareSmbSettingsEncryptionInTransit
     """
 
     _attribute_map = {
         "multichannel": {"key": "Multichannel", "type": "SmbMultichannel"},
+        "encryption_in_transit": {"key": "EncryptionInTransit", "type": "ShareSmbSettingsEncryptionInTransit"},
     }
     _xml_map = {"name": "SMB"}
 
-    def __init__(self, *, multichannel: Optional["_models.SmbMultichannel"] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        multichannel: Optional["_models.SmbMultichannel"] = None,
+        encryption_in_transit: Optional["_models.ShareSmbSettingsEncryptionInTransit"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword multichannel: Settings for SMB Multichannel.
         :paramtype multichannel: ~azure.storage.fileshare.models.SmbMultichannel
+        :keyword encryption_in_transit: Enable or disable encryption in transit.
+        :paramtype encryption_in_transit:
+         ~azure.storage.fileshare.models.ShareSmbSettingsEncryptionInTransit
         """
         super().__init__(**kwargs)
         self.multichannel = multichannel
+        self.encryption_in_transit = encryption_in_transit
+
+
+class ShareSmbSettingsEncryptionInTransit(_serialization.Model):
+    """Enable or disable encryption in transit.
+
+    :ivar required: If encryption in transit is required.
+    :vartype required: bool
+    """
+
+    _attribute_map = {
+        "required": {"key": "Required", "type": "bool"},
+    }
+
+    def __init__(self, *, required: Optional[bool] = None, **kwargs: Any) -> None:
+        """
+        :keyword required: If encryption in transit is required.
+        :paramtype required: bool
+        """
+        super().__init__(**kwargs)
+        self.required = required
 
 
 class ShareStats(_serialization.Model):

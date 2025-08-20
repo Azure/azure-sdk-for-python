@@ -85,6 +85,7 @@ class ShareOperations:
         paid_bursting_max_iops: Optional[int] = None,
         share_provisioned_iops: Optional[int] = None,
         share_provisioned_bandwidth_mibps: Optional[int] = None,
+        enable_smb_directory_lease: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """Creates a new share under the specified account. If the share with the same name already
@@ -131,6 +132,11 @@ class ShareOperations:
          in mebibytes per second (MiBps). If this is not specified, the provisioned bandwidth is set to
          value calculated based on recommendation formula. Default value is None.
         :type share_provisioned_bandwidth_mibps: int
+        :param enable_smb_directory_lease: SMB only, default is true.  Specifies whether granting of
+         new directory leases for directories present in a share are to be enabled or disabled. An input
+         of true specifies that granting of new directory leases is to be allowed. An input of false
+         specifies that granting of new directory leases is to be blocked. Default value is None.
+        :type enable_smb_directory_lease: bool
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -163,6 +169,7 @@ class ShareOperations:
             paid_bursting_max_iops=paid_bursting_max_iops,
             share_provisioned_iops=share_provisioned_iops,
             share_provisioned_bandwidth_mibps=share_provisioned_bandwidth_mibps,
+            enable_smb_directory_lease=enable_smb_directory_lease,
             file_request_intent=self._config.file_request_intent,
             restype=restype,
             version=self._config.version,
@@ -334,6 +341,9 @@ class ShareOperations:
         )
         response_headers["x-ms-share-next-allowed-provisioned-bandwidth-downgrade-time"] = self._deserialize(
             "rfc-1123", response.headers.get("x-ms-share-next-allowed-provisioned-bandwidth-downgrade-time")
+        )
+        response_headers["x-ms-enable-smb-directory-lease"] = self._deserialize(
+            "bool", response.headers.get("x-ms-enable-smb-directory-lease")
         )
 
         if cls:
@@ -1189,6 +1199,7 @@ class ShareOperations:
         paid_bursting_max_iops: Optional[int] = None,
         share_provisioned_iops: Optional[int] = None,
         share_provisioned_bandwidth_mibps: Optional[int] = None,
+        enable_smb_directory_lease: Optional[bool] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> None:
@@ -1230,6 +1241,11 @@ class ShareOperations:
          in mebibytes per second (MiBps). If this is not specified, the provisioned bandwidth is set to
          value calculated based on recommendation formula. Default value is None.
         :type share_provisioned_bandwidth_mibps: int
+        :param enable_smb_directory_lease: SMB only, default is true.  Specifies whether granting of
+         new directory leases for directories present in a share are to be enabled or disabled. An input
+         of true specifies that granting of new directory leases is to be allowed. An input of false
+         specifies that granting of new directory leases is to be blocked. Default value is None.
+        :type enable_smb_directory_lease: bool
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
         :return: None or the result of cls(response)
@@ -1268,6 +1284,7 @@ class ShareOperations:
             paid_bursting_max_iops=paid_bursting_max_iops,
             share_provisioned_iops=share_provisioned_iops,
             share_provisioned_bandwidth_mibps=share_provisioned_bandwidth_mibps,
+            enable_smb_directory_lease=enable_smb_directory_lease,
             file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
