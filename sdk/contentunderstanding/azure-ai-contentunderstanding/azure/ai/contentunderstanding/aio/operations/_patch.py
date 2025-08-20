@@ -26,10 +26,10 @@ def patch_sdk():
 # Make FacesOperations available for import - following WebPubSub pattern
 from ._operations import FacesOperations as FacesOperationsGenerated
 from ._operations import build_faces_detect_request
-from ...models import DetectFacesResult
+from ...models import DetectFacesResult, CompareFacesResult
 
 class FacesOperations(FacesOperationsGenerated):
-    """Extended FacesOperations with improved detect method overloads."""
+    """Extended FacesOperations with improved detect and compare method overloads."""
     
     @overload
     async def detect(
@@ -62,11 +62,30 @@ class FacesOperations(FacesOperationsGenerated):
         """Detect faces using image data.
         
         :param data: Base64-encoded image data as bytes
-        :type data: bytes  
+        :type data: bytes
         :param max_detected_faces: Maximum number of faces to return (up to 100)
         :type max_detected_faces: int
         :return: DetectFacesResult
         :rtype: ~azure.ai.contentunderstanding.models.DetectFacesResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        pass
+
+    @overload
+    async def compare(
+        self,
+        face_source1: Union[str, bytes],
+        face_source2: Union[str, bytes],
+        **kwargs: Any
+    ) -> CompareFacesResult:
+        """Compare two faces using positional parameters.
+        
+        :param face_source1: First face source - can be URL string or image bytes
+        :type face_source1: str or bytes
+        :param face_source2: Second face source - can be URL string or image bytes
+        :type face_source2: str or bytes
+        :return: CompareFacesResult
+        :rtype: ~azure.ai.contentunderstanding.models.CompareFacesResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         pass
@@ -105,6 +124,49 @@ class FacesOperations(FacesOperationsGenerated):
         # Fall back to original method behavior (all other keyword arguments)
         else:
             return await super().detect(*args, **kwargs)
+
+    @distributed_trace_async
+    async def compare(self, *args, **kwargs) -> CompareFacesResult:
+        """Compare two faces with improved overloads.
+        
+        This method accepts either:
+        - Two positional arguments (face_source1, face_source2) where each can be URL string or bytes
+        - Original keyword arguments: compare(face_source1=..., face_source2=..., body={...})
+        
+        :return: CompareFacesResult
+        :rtype: ~azure.ai.contentunderstanding.models.CompareFacesResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        # Check if we have two positional arguments (our new overloads)
+        if args and len(args) >= 2:
+            face_source1, face_source2 = args[0], args[1]
+            
+            # Convert positional arguments to FaceSource objects
+            from ...models import FaceSource
+            
+            if isinstance(face_source1, str):
+                face_source1_obj = FaceSource(url=face_source1)
+            elif isinstance(face_source1, bytes):
+                face_source1_obj = FaceSource(data=face_source1)
+            else:
+                raise TypeError("face_source1 must be a string (URL) or bytes")
+            
+            if isinstance(face_source2, str):
+                face_source2_obj = FaceSource(url=face_source2)
+            elif isinstance(face_source2, bytes):
+                face_source2_obj = FaceSource(data=face_source2)
+            else:
+                raise TypeError("face_source2 must be a string (URL) or bytes")
+            
+            return await super().compare(
+                face_source1=face_source1_obj,
+                face_source2=face_source2_obj,
+                **kwargs
+            )
+        
+        # Fall back to original method behavior (all other keyword arguments)
+        else:
+            return await super().compare(*args, **kwargs)
 
 
 # Make PersonDirectoriesOperations available for import
