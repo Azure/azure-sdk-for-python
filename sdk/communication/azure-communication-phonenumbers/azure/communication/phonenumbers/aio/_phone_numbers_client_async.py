@@ -223,7 +223,7 @@ class PhoneNumbersClient:
             phone_number_type=phone_number_type,
             assignment_type=assignment_type,
             capabilities=capabilities,
-            quantity=quantity,
+            quantity=quantity if quantity is not None else 1,
             area_code=area_code,
         )
         return await self._phone_number_client.phone_numbers.begin_search_available_phone_numbers(
