@@ -88,7 +88,7 @@ class AzureDiagnosticLogging:
                                 makedirs(_DIAGNOSTIC_LOG_PATH)
                             # Multi-thread can create a race condition for creating the log file
                             except FileExistsError as e:
-                                _logger.info("Azure Monitor diagnostic log file already exists: %s", e)
+                                pass
                         f_handler = logging.FileHandler(join(_DIAGNOSTIC_LOG_PATH, _DIAGNOSTIC_LOGGER_FILE_NAME))
                         formatter = logging.Formatter(fmt=log_format, datefmt="%Y-%m-%dT%H:%M:%S")
                         f_handler.setFormatter(formatter)
@@ -100,24 +100,28 @@ class AzureDiagnosticLogging:
 
     @classmethod
     def debug(cls, message: str, message_id: str):
-        cls._initialize()
+        if not cls._initialized:
+            cls._initialize()
         if cls._initialized:
             _diagnostic_file_logger.debug(message, extra={"msgId": message_id})
 
     @classmethod
     def info(cls, message: str, message_id: str):
-        cls._initialize()
+        if not cls._initialized:
+            cls._initialize()
         if cls._initialized:
             _diagnostic_file_logger.info(message, extra={"msgId": message_id})
 
     @classmethod
     def warning(cls, message: str, message_id: str):
-        cls._initialize()
+        if not cls._initialized:
+            cls._initialize()
         if cls._initialized:
             _diagnostic_file_logger.warning(message, extra={"msgId": message_id})
 
     @classmethod
     def error(cls, message: str, message_id: str):
-        cls._initialize()
+        if not cls._initialized:
+            cls._initialize()
         if cls._initialized:
             _diagnostic_file_logger.error(message, extra={"msgId": message_id})

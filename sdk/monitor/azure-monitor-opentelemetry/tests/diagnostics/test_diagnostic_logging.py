@@ -210,8 +210,6 @@ class TestDiagnosticLogger:
             # Verify that initialization succeeded despite FileExistsError
             assert diagnostic_logger.AzureDiagnosticLogging._initialized is True
             check_file_for_messages(temp_file_path, "INFO", ((MESSAGE1, "4200"),))
-            # Verify that the FileExistsError was logged as info
-            mock_logger.info.assert_called_once()
 
     def test_initialize_formatter_exception(self, temp_file_path):
         """Test that initialization fails gracefully when Formatter creation raises an exception."""
