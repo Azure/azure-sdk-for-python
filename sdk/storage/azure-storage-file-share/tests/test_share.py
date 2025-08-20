@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import jwt
 import os
 import time
 import unittest
@@ -21,6 +22,7 @@ from azure.storage.fileshare import (
     AccessPolicy,
     AccountSasPermissions,
     generate_account_sas,
+    generate_file_sas,
     generate_share_sas,
     Metrics,
     ResourceTypes,
@@ -1920,6 +1922,54 @@ class TestStorageShare(StorageRecordedTestCase):
         assert user_delegation_key_1.signed_version == user_delegation_key_2.signed_version
         assert user_delegation_key_1.signed_service == user_delegation_key_2.signed_service
         assert user_delegation_key_1.value == user_delegation_key_2.value
+
+        return variables
+
+    @pytest.mark.live_test_only
+    @FileSharePreparer()
+    def test_share_user_delegation_oid(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+        data = b"abc123"
+
+        self._setup(storage_account_name, storage_account_key)
+        token_credential = self.get_credential(ShareClient)
+        service = ShareServiceClient(
+            self.account_url(storage_account_name, "file"),
+            credential=token_credential
+        )
+        start = self.get_datetime_variable(variables, 'start', datetime.utcnow())
+        expiry = self.get_datetime_variable(variables, 'expiry', datetime.utcnow() + timedelta(hours=1))
+        user_delegation_key = service.get_user_delegation_key(key_start_time=start, key_expiry_time=expiry)
+        token = token_credential.get_token("https://storage.azure.com/.default")
+        user_delegation_oid = jwt.decode(token.token, options={"verify_signature": False}).get("oid")
+
+        share_name = self.get_resource_name("oauthshare")
+        directory_name = self.get_resource_name("oauthdir")
+        file_name = self.get_resource_name("oauthfile")
+        share = service.create_share(share_name)
+        directory = share.create_directory(directory_name)
+        file = directory.upload_file(file_name, data, length=len(data))
+
+        share_token = self.generate_sas(
+            generate_share_sas,
+            share.account_name,
+            share.share_name,
+            share.credential.account_key,
+            permission=ShareSasPermissions(read=True, list=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            user_delegation_key=user_delegation_key,
+            user_delegation_oid=user_delegation_oid
+        )
+        assert "sduoid=" + user_delegation_oid in share_token
+
+        share_client = ShareClient.from_share_url(
+            f"{share.url}?{share_token}",
+            credential=token_credential
+        )
+        structure = list(share_client.list_directories_and_files())
+        assert structure is not None
 
         return variables
 
