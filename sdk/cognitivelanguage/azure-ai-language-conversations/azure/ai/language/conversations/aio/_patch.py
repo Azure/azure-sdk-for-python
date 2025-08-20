@@ -10,7 +10,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 import json
 from typing import Any, Callable, Dict, IO, Mapping, Optional, TypeVar, Union, cast, overload, Generic
-from collections.abc import MutableMapping
+from collections.abc import MutableMapping # pylint:disable=import-error
 from urllib.parse import urlparse
 from azure.core.exceptions import (
     HttpResponseError,
