@@ -94,8 +94,8 @@ async def main():
 
         face_add_response = await client.person_directories.add_face(
             directory_id,
-            person1_id,
             image_bytes,
+            person_id=person1_id,
         )
         face_id = face_add_response.face_id
         print(f"😀 Face added to person 1 (face_id={face_id})")

@@ -107,8 +107,8 @@ async def main():
 
             face_add_response = await client.person_directories.add_face(
                 directory_id,
-                bill_id,
                 image_bytes,
+                person_id=bill_id,
             )
             face_id = face_add_response.face_id
             print(f"   ✅ Face {i+1} enrolled from {face_file} (id={face_id})")
@@ -130,8 +130,8 @@ async def main():
 
             face_add_response = await client.person_directories.add_face(
                 directory_id,
-                clare_id,
                 image_bytes,
+                person_id=clare_id,
             )
             face_id = face_add_response.face_id
             print(f"   ✅ Face {i+1} enrolled from {face_file} (id={face_id})")
