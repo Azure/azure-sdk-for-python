@@ -24,14 +24,13 @@
 import copy
 import json
 import time
-from asyncio import CancelledError
-
 from urllib.parse import urlparse
+
 from azure.core.exceptions import DecodeError  # type: ignore
 
+from . import _retry_utility_async
 from .. import exceptions
 from .. import http_constants
-from . import _retry_utility_async
 from .._synchronized_request import _request_body_from_data, _replace_url_prefix
 from ..documents import _OperationType
 from ..http_constants import ResourceType

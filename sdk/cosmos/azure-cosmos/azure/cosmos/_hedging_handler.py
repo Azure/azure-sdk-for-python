@@ -73,8 +73,6 @@ class HedgingHandler(abc.ABC):
         :type request: HttpRequest
         :param execute_request_fn: Function to execute the actual request
         :type execute_request_fn: Callable[..., ResponseType]
-        :param kwargs: Additional keyword arguments for the execute_request_fn
-        :type kwargs: Any
         :returns: A tuple containing the response data and headers
         :rtype: Tuple[Dict[str, Any], Dict[str, Any]]
         """
@@ -109,8 +107,6 @@ class DisabledHedgingHandler(HedgingHandler):
         :type request: HttpRequest
         :param execute_request_fn: Function to execute the actual request
         :type execute_request_fn: Callable[..., ResponseType]
-        :param kwargs: Additional keyword arguments for the execute_request_fn
-        :type kwargs: Any
         :returns: A tuple containing the response data and headers
         :rtype: Tuple[Dict[str, Any], Dict[str, Any]]
         """
@@ -211,7 +207,6 @@ class CrossRegionHedgingHandler(HedgingHandler):
         :param available_locations: List of available locations
         :param complete_status: Value holder to track completion signal
         :param first_request_params_holder: a value holder for request object for first/initial request
-        :param kwargs: Additional arguments for execute_request_fn
         :returns: Response tuple, exception, or None
         :rtype: Union[ResponseType, Exception, None]
         """
@@ -231,16 +226,17 @@ class CrossRegionHedgingHandler(HedgingHandler):
 
         if location_index == 0:
             # No delay for initial request
-            delay = 0
+            delay: float = 0
             first_request_params_holder.request_params = params
         elif location_index == 1:
             # First hedged request after threshold
-            delay = cast(CrossRegionHedgingStrategy, request_params.availability_strategy).threshold.total_seconds()
+            delay: float = cast(CrossRegionHedgingStrategy, request_params.availability_strategy).threshold.total_seconds()
         else:
             # Subsequent requests after threshold steps
             steps = location_index - 1
-            delay = (cast(CrossRegionHedgingStrategy, request_params.availability_strategy).threshold.total_seconds() +
-                     (steps * cast(CrossRegionHedgingStrategy, request_params.availability_strategy).threshold_steps.total_seconds()))
+            cross_region_hedging_strategy = cast(CrossRegionHedgingStrategy, request_params.availability_strategy)
+            delay: float = (cross_region_hedging_strategy.threshold.total_seconds() +
+                     (steps * cross_region_hedging_strategy.threshold_steps.total_seconds()))
 
         if delay > 0:
             time.sleep(delay)
@@ -285,8 +281,6 @@ class CrossRegionHedgingHandler(HedgingHandler):
         :type request: HttpRequest
         :param execute_request_fn: Function to execute the actual request
         :type execute_request_fn: Callable[..., ResponseType]
-        :param kwargs: Additional keyword arguments for the execute_request_fn
-        :type kwargs: Any
         :returns: A tuple containing the response data and headers
         :rtype: Tuple[Dict[str, Any], Dict[str, Any]]
         :raises: Exception from first request if all requests fail with transient errors
@@ -344,7 +338,9 @@ class CrossRegionHedgingHandler(HedgingHandler):
             # if we have reached here,it means all the futures have completed but all failed with transient exceptions
             # in this case, return the result from the first futures
             completion_status.is_completed = True
-            raise cast(Future, first_request_future).exception()
+            exc = cast(Future, first_request_future).exception()
+            assert exc is not None
+            raise exc
         finally:
             executor.shutdown(wait=False, cancel_futures=True)
 
@@ -403,10 +399,11 @@ def create_hedging_handler(strategy: Optional[AvailabilityStrategy]) -> HedgingH
 
     if isinstance(strategy, DisabledStrategy):
         return DisabledHedgingHandler()
-    elif isinstance(strategy, CrossRegionHedgingStrategy):
+
+    if isinstance(strategy, CrossRegionHedgingStrategy):
         return CrossRegionHedgingHandler()
-    else:
-        raise ValueError(f"Unsupported availability strategy type: {type(strategy)}")
+
+    raise ValueError(f"Unsupported availability strategy type: {type(strategy)}")
 
 def execute_with_hedging(
     client: "CosmosClient",
@@ -434,8 +431,6 @@ def execute_with_hedging(
     :type request: HttpRequest
     :param execute_request_fn: Function to execute the actual request
     :type execute_request_fn: Callable[..., ResponseType]
-    :param kwargs: Additional keyword arguments for the execute_request_fn
-    :type kwargs: Any
     :returns: A tuple containing the response data and headers
     :rtype: Tuple[Dict[str, Any], Dict[str, Any]]
     :raises: Any exceptions raised by the hedging handler's execute_request method

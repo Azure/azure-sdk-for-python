@@ -93,8 +93,11 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
             client_strategy: Optional[AvailabilityStrategy] = None) -> None:
         """Sets the availability strategy for this request from options.
         If not in options, uses the client's default strategy.
+
         :param options: The request options that may contain availabilityStrategy
+        :type options: Mapping[str, Any]
         :param client_strategy: The client's default availability strategy
+        :type client_strategy: ~azure.cosmos.AvailabilityStrategy
         :return: None
         """
         # First try to get from options

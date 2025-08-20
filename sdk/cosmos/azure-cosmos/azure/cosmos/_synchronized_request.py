@@ -116,7 +116,8 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
             pk_range_wrapper = global_endpoint_manager.create_pk_range_wrapper(request_params)
         base_url = global_endpoint_manager.resolve_service_endpoint_for_partition(request_params, pk_range_wrapper)
 
-    # For each retry, check if request should be cancelled due to sibling requests already completed - used for when hedging enabled
+    # For each retry, check if request should be cancelled due to sibling requests already completed
+    # - used for when hedging enabled
     if request_params.should_cancel_request():
         raise CancelledError("The request has been cancelled")
 

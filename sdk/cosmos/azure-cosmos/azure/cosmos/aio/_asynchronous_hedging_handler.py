@@ -21,15 +21,16 @@
 
 """Module for handling asynchronous request hedging strategies in Azure Cosmos DB."""
 import abc
-import asyncio
+import asyncio  # pylint: disable=do-not-import-asyncio
 import copy
 import logging
 from asyncio import Task, CancelledError
 from types import SimpleNamespace
-from typing import Any, Dict, List, Optional, Tuple, Union, Callable, Awaitable, TYPE_CHECKING, cast
+from typing import Any, Dict, List, Optional, Tuple, Callable, Awaitable, TYPE_CHECKING, cast
 
 from azure.core import AsyncPipelineClient
-from azure.core.pipeline.transport import HttpRequest, AsyncHttpResponse  # pylint: disable=no-legacy-azure-core-http-response-import
+from azure.core.pipeline.transport import HttpRequest, \
+    AsyncHttpResponse  # pylint: disable=no-legacy-azure-core-http-response-import
 
 from ._global_partition_endpoint_manager_circuit_breaker_async import \
     _GlobalPartitionEndpointManagerForCircuitBreakerAsync
@@ -46,7 +47,7 @@ ResponseType = Tuple[Dict[str, Any], Dict[str, Any]]
 
 class AsyncHedgingHandler(abc.ABC):
     """Abstract base class for async hedging handlers."""
-    
+
     @abc.abstractmethod
     async def execute_request(
         self,
@@ -75,12 +76,9 @@ class AsyncHedgingHandler(abc.ABC):
         :type request: HttpRequest
         :param execute_request_fn: Async function to execute the actual request
         :type execute_request_fn: Callable[..., Awaitable[ResponseType]]
-        :param kwargs: Additional keyword arguments for the execute_request_fn
-        :type kwargs: Any
         :returns: A tuple containing the response data and headers
         :rtype: Tuple[Dict[str, Any], Dict[str, Any]]
         """
-        pass
 
 class DisabledAsyncHedgingHandler(AsyncHedgingHandler):
     """Handler for DisabledStrategy that executes requests directly."""
@@ -115,8 +113,6 @@ class DisabledAsyncHedgingHandler(AsyncHedgingHandler):
         :type request: HttpRequest
         :param execute_request_fn: Async function to execute the actual request
         :type execute_request_fn: Callable[..., Awaitable[ResponseType]]
-        :param kwargs: Additional keyword arguments for the execute_request_fn
-        :type kwargs: Any
         :returns: A tuple containing the response data and headers
         :rtype: Tuple[Dict[str, Any], Dict[str, Any]]
         """
@@ -154,13 +150,13 @@ class CrossRegionAsyncHedgingHandler(AsyncHedgingHandler):
         """
         # Start with any existing excluded locations
         excluded = list(existing_excluded_locations) if existing_excluded_locations else []
-        
+
         # Add additional excluded regions for hedging
         if location_index > 0:
             for i, loc in enumerate(available_locations):
                 if i != location_index and loc not in excluded:  # Exclude all non-target regions
                     excluded.append(loc)
-        
+
         return excluded
 
     def _is_non_transient_error(self, exception: Exception) -> bool:
@@ -192,7 +188,7 @@ class CrossRegionAsyncHedgingHandler(AsyncHedgingHandler):
         complete_status: SimpleNamespace,
         first_request_params_holder: SimpleNamespace,
         **kwargs: Any
-    ) -> Union[ResponseType, Exception, None]:
+    ) -> ResponseType:
         """Execute a single request.
 
         :param client: Document client instance
@@ -206,16 +202,15 @@ class CrossRegionAsyncHedgingHandler(AsyncHedgingHandler):
         :param available_locations: List of available locations
         :param complete_event: Optional event to signal completion
         :param first_request_params_holder: a value holder for request object for first/initial request
-        :param kwargs: Additional arguments for execute_request_fn
-        :returns: Response tuple, exception, or None
-        :rtype: Union[ResponseType, Exception, None]
+        :returns: Response
+        :rtype: ResponseType
         """
 
         # Create request parameters for this location
         params = copy.deepcopy(request_params)
         params.is_hedging_request = location_index > 0
         params.set_completion_status(complete_status)
-        
+
         # Setup excluded regions for hedging requests
         params.excluded_locations = self.setup_excluded_regions_for_hedging(
             location_index,
@@ -227,16 +222,17 @@ class CrossRegionAsyncHedgingHandler(AsyncHedgingHandler):
 
         # Calculate delay based on location index
         if location_index == 0:
-            delay = 0  # No delay for initial request
+            delay: float = 0  # No delay for initial request
             first_request_params_holder.request_params = params
         elif location_index == 1:
             # First hedged request after threshold
-            delay = cast(CrossRegionHedgingStrategy, request_params.availability_strategy).threshold.total_seconds()
+            delay: float = cast(CrossRegionHedgingStrategy, request_params.availability_strategy).threshold.total_seconds()
         else:
             # Subsequent requests after threshold steps
             steps = location_index - 1
-            delay = (cast(CrossRegionHedgingStrategy, request_params.availability_strategy).threshold.total_seconds() +
-                     (steps * cast(CrossRegionHedgingStrategy, request_params.availability_strategy).threshold_steps.total_seconds()))
+            cross_region_hedging_strategy = cast(CrossRegionHedgingStrategy, request_params.availability_strategy)
+            delay: float = (cross_region_hedging_strategy.threshold.total_seconds() +
+                     (steps * cross_region_hedging_strategy.threshold_steps.total_seconds()))
 
         if delay > 0:
             await asyncio.sleep(delay)
@@ -287,8 +283,6 @@ class CrossRegionAsyncHedgingHandler(AsyncHedgingHandler):
         :type request: HttpRequest
         :param execute_request_fn: Async function to execute the actual request
         :type execute_request_fn: Callable[..., Awaitable[ResponseType]]
-        :param kwargs: Additional keyword arguments for the execute_request_fn
-        :type kwargs: Any
         :returns: A tuple containing the response data and headers from the successful request
         :rtype: ResponseType
         :raises: Exception from the first request if all requests fail with transient errors
@@ -325,27 +319,31 @@ class CrossRegionAsyncHedgingHandler(AsyncHedgingHandler):
             # Wait for tasks to complete
             for completed in asyncio.as_completed(tasks):
                 try:
-                    await completed
+                    result = await completed
                     completion_status.is_completed = True
 
                     if completed is first_task:
-                        return completed.result()
+                        return result
 
+                    # successful response does not come from the initial request, record failure for it
                     await self._record_cancel_for_first_request(first_request_params_holder, global_endpoint_manager)
-                    return completed.result()
+                    return result
                 except Exception as e:
                     if completed is first_task:
                         completion_status.is_completed = True
                         raise e
                     if self._is_non_transient_error(e):
                         completion_status.is_completed = True
-                        await self._record_cancel_for_first_request(first_request_params_holder, global_endpoint_manager)
+                        await self._record_cancel_for_first_request(
+                            first_request_params_holder,
+                            global_endpoint_manager)
                         raise e
 
             # if we have reached here, it means all tasks completed but all failed with transient exceptions
             # in this case, raise the exception from the first task
             completion_status.is_completed = True
-            raise await first_task
+            assert first_task is not None
+            raise first_task.exception()
 
         finally:
             for task in tasks:
@@ -353,7 +351,10 @@ class CrossRegionAsyncHedgingHandler(AsyncHedgingHandler):
                     task.cancel()
             await asyncio.gather(*tasks, return_exceptions=True)
 
-    async def _record_cancel_for_first_request(self, request_params_holder: SimpleNamespace, global_endpoint_manager: Any) -> None:
+    async def _record_cancel_for_first_request(
+            self,
+            request_params_holder: SimpleNamespace,
+            global_endpoint_manager: Any) -> None:
         if request_params_holder.request_params is not None:
             await global_endpoint_manager.record_failure(request_params_holder.request_params)
 
@@ -390,7 +391,7 @@ class CrossRegionAsyncHedgingHandler(AsyncHedgingHandler):
 
         return applicable_endpoints
 
-def create_async_hedging_handler(strategy: AvailabilityStrategy) -> AsyncHedgingHandler:
+def create_async_hedging_handler(strategy: Optional[AvailabilityStrategy]) -> AsyncHedgingHandler:
     """Create appropriate hedging handler based on availability strategy type.
     
     :param strategy: The availability strategy to create a handler for
@@ -399,6 +400,10 @@ def create_async_hedging_handler(strategy: AvailabilityStrategy) -> AsyncHedging
     :rtype: AsyncHedgingHandler
     :raises ValueError: If the strategy type is not supported
     """
+
+    if strategy is None:
+        raise ValueError("Strategy can not be null in create_async_hedging_handler")
+
     if isinstance(strategy, DisabledStrategy):
         return DisabledAsyncHedgingHandler()
     elif isinstance(strategy, CrossRegionHedgingStrategy):
@@ -425,11 +430,11 @@ async def execute_with_hedging(
     :param pipeline_client: Pipeline client
     :param request: HTTP request to execute
     :param execute_request_fn: Function to execute the request
-    :param kwargs: Additional arguments for execute_request_fn
     :returns: Response tuple from successful request
     :rtype: ResponseType
     :raises: CosmosClientError if all hedged requests fail
     """
+
     handler = create_async_hedging_handler(request_params.availability_strategy)
     return await handler.execute_request(
         client,
