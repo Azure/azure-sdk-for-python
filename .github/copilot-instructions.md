@@ -13,6 +13,9 @@
 - Use this as the authoritative source for SDK development guidance
 
 ### RULE 3: VERIFY ENVIRONMENT FIRST
+**REQUIRED CONDITIONS:**
+- To use MCP tool calls, user must have PowerShell installed. Provide [PowerShell installation instructions](https://learn.microsoft.com/powershell/scripting/install/installing-powershell?view=powershell-7.5) if not installed, and recommend restarting VSCode to start the MCP server.
+
 **BEFORE any commands:**
 1. Get path to azure-sdk-for-python repo root, and path to tox.ini file
 2. Use `verify_setup` tool from azure-sdk-python-mcp server
