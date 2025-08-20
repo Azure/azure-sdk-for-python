@@ -60,6 +60,10 @@ def build_create_request(
     group: Optional[str] = None,
     file_mode: Optional[str] = None,
     nfs_file_type: Optional[Union[str, _models.NfsFileType]] = None,
+    content_md5: Optional[bytes] = None,
+    file_property_semantics: Optional[Union[str, _models.FilePropertySemantics]] = None,
+    content_length: Optional[int] = None,
+    content: Optional[IO[bytes]] = None,
     allow_trailing_dot: Optional[bool] = None,
     file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
@@ -68,6 +72,7 @@ def build_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     file_type_constant: Literal["file"] = kwargs.pop("file_type_constant", _headers.pop("x-ms-type", "file"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
@@ -133,9 +138,19 @@ def build_create_request(
         _headers["x-ms-mode"] = _SERIALIZER.header("file_mode", file_mode, "str")
     if nfs_file_type is not None:
         _headers["x-ms-file-file-type"] = _SERIALIZER.header("nfs_file_type", nfs_file_type, "str")
+    if content_md5 is not None:
+        _headers["Content-MD5"] = _SERIALIZER.header("content_md5", content_md5, "bytearray")
+    if file_property_semantics is not None:
+        _headers["x-ms-file-property-semantics"] = _SERIALIZER.header(
+            "file_property_semantics", file_property_semantics, "str"
+        )
+    if content_length is not None:
+        _headers["Content-Length"] = _SERIALIZER.header("content_length", content_length, "int")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, content=content, **kwargs)
 
 
 def build_download_request(
@@ -1329,8 +1344,12 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         group: Optional[str] = None,
         file_mode: Optional[str] = None,
         nfs_file_type: Optional[Union[str, _models.NfsFileType]] = None,
+        content_md5: Optional[bytes] = None,
+        file_property_semantics: Optional[Union[str, _models.FilePropertySemantics]] = None,
+        content_length: Optional[int] = None,
         file_http_headers: Optional[_models.FileHTTPHeaders] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
+        optionalbody: Optional[IO[bytes]] = None,
         **kwargs: Any
     ) -> None:
         """Creates a new file or replaces a file. Note it only initializes the file with no content.
@@ -1386,10 +1405,26 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         :param nfs_file_type: Optional, NFS only. Type of the file or directory. Known values are:
          "Regular", "Directory", and "SymLink". Default value is None.
         :type nfs_file_type: str or ~azure.storage.fileshare.models.NfsFileType
+        :param content_md5: An MD5 hash of the content. This hash is used to verify the integrity of
+         the data during transport. When the Content-MD5 header is specified, the File service compares
+         the hash of the content that has arrived with the header value that was sent. If the two hashes
+         do not match, the operation will fail with error code 400 (Bad Request). Default value is None.
+        :type content_md5: bytes
+        :param file_property_semantics: SMB only, default value is New.  New will forcefully add the
+         ARCHIVE attribute flag and alter the permissions specified in x-ms-file-permission to inherit
+         missing permissions from the parent.  Restore will apply changes without further modification.
+         Known values are: "New" and "Restore". Default value is None.
+        :type file_property_semantics: str or ~azure.storage.fileshare.models.FilePropertySemantics
+        :param content_length: Specifies the number of bytes being transmitted in the request body.
+         When the x-ms-write header is set to clear, the value of this header must be set to zero.
+         Default value is None.
+        :type content_length: int
         :param file_http_headers: Parameter group. Default value is None.
         :type file_http_headers: ~azure.storage.fileshare.models.FileHTTPHeaders
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
+        :param optionalbody: Initial data. Default value is None.
+        :type optionalbody: IO[bytes]
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1406,6 +1441,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         _params = kwargs.pop("params", {}) or {}
 
         file_type_constant: Literal["file"] = kwargs.pop("file_type_constant", _headers.pop("x-ms-type", "file"))
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _file_content_type = None
@@ -1424,6 +1460,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             _file_content_type = file_http_headers.file_content_type
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
+        _content = optionalbody
 
         _request = build_create_request(
             url=self._config.url,
@@ -1448,10 +1485,15 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             group=group,
             file_mode=file_mode,
             nfs_file_type=nfs_file_type,
+            content_md5=content_md5,
+            file_property_semantics=file_property_semantics,
+            content_length=content_length,
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             file_type_constant=file_type_constant,
+            content_type=content_type,
             version=self._config.version,
+            content=_content,
             headers=_headers,
             params=_params,
         )
@@ -1499,6 +1541,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         response_headers["x-ms-owner"] = self._deserialize("str", response.headers.get("x-ms-owner"))
         response_headers["x-ms-group"] = self._deserialize("str", response.headers.get("x-ms-group"))
         response_headers["x-ms-file-file-type"] = self._deserialize("str", response.headers.get("x-ms-file-file-type"))
+        response_headers["Content-MD5"] = self._deserialize("bytearray", response.headers.get("Content-MD5"))
+        response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
