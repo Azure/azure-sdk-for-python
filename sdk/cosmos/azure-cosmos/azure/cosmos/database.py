@@ -816,7 +816,7 @@ class DatabaseProxy(object):
         container_properties = self.client_connection.ReplaceContainer(
             container_link, collection=parameters, options=request_options, **kwargs)
 
-        if return_properties == "ContainerProxy":
+        if not return_properties:
             return ContainerProxy(
                 self.client_connection,
                 self.database_link, container_properties["id"],
