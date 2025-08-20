@@ -136,17 +136,19 @@ async def main():
             face_id = face_add_response.face_id
             print(f"   ✅ Face {i+1} enrolled from {face_file} (id={face_id})")
 
-        # Now identify persons in the family.jpg image
-        print(f"\n🔍 Identifying persons in family.jpg...")
+        # Load family image for identification
         family_image_path = os.path.join(
             sample_file_dir, "sample_files", "face", "family.jpg"
         )
-        family_image_b64 = read_image_to_base64(family_image_path)
+
+        # Read image as bytes directly for the new positional parameter pattern
+        with open(family_image_path, "rb") as image_file:
+            family_image_bytes = image_file.read()
 
         # Use identify_person API to identify persons in the image
         response = await client.person_directories.identify_person(
-            person_directory_id=directory_id,
-            face_source=FaceSource(data=family_image_b64),
+            directory_id,
+            family_image_bytes,
             max_person_candidates=5,
         )
 
