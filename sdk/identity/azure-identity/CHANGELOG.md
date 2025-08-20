@@ -17,6 +17,7 @@
 ### Bugs Fixed
 
 - Fixed an issue where CAE (Continuous Access Evaluation) caches were not properly used by `AuthorizationCodeCredential` and the asynchronous `OnBehalfOfCredential`. ([#42145](https://github.com/Azure/azure-sdk-for-python/pull/42145))
+- Fixed an issue where brokered authentication was not included in the `DefaultAzureCredential` chain when `AZURE_TOKEN_CREDENTIALS` was set to `dev`. ([#42599](https://github.com/Azure/azure-sdk-for-python/pull/42599))
 
 ### Other Changes
 
