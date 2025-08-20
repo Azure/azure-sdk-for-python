@@ -23,7 +23,7 @@ The SDK includes several patch overrides that enhance usability:
 
 ## Content Analyzer Scenarios
 
-### Scenario: Extracting markdown using a prebuilt Document analyzer
+### Scenario: Extracting markdown using a prebuilt Document analyzer with url
 
 ```python
 import os
@@ -52,7 +52,7 @@ async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) 
 	print(content.markdown)
 ```
 
-### Scenario: Analyze binary content (PDF, images, documents)
+### Scenario: Extracting markdown using a prebuilt Document analyzer with binary bytes
 
 ```python
 """Analyze binary content directly from file bytes."""
@@ -67,14 +67,8 @@ poller = await client.content_analyzers.begin_analyze_binary(
 result = await poller.result()
 content = result.contents[0]
 
-# Access extracted content
-print(f"Content type: {content.kind}")
-if hasattr(content, 'markdown') and content.markdown:
-    print(f"Markdown content: {content.markdown[:200]}...")
-
-# Access extracted fields if available
-if hasattr(content, 'fields') and content.fields:
-    print(f"Extracted fields: {list(content.fields.keys())}")
+content: MediaContent = result.contents[0]
+print(content.markdown)
 ```
 
 ### Scenario: Analyze multiple inputs using AnalyzeInput list
@@ -105,14 +99,8 @@ poller = await client.content_analyzers.begin_analyze(
     inputs=analyze_inputs
 )
 result = await poller.result()
-
-# Process results for each input
-for i, content in enumerate(result.contents):
-    print(f"Document {i + 1}:")
-    print(f"  Content type: {content.kind}")
-    if hasattr(content, 'markdown') and content.markdown:
-        print(f"  Markdown preview: {content.markdown[:100]}...")
-    print()
+content: MediaContent = result.contents[0]
+print(content.markdown)
 ```
 
 - [ ] QUESTION: naming of begin_analyze/begin_analyze_binary
