@@ -24,10 +24,11 @@ class AssignDeploymentResourcesDetails(_Model):
     """Represents the options for assigning Azure resources to a project.
 
     :ivar resources_metadata: Represents the metadata for the resources to be assigned. Required.
-    :vartype resources_metadata: list[~azure.ai.language.text.authoring.models.ResourceMetadata]
+    :vartype resources_metadata:
+     list[~azure.ai.language.text.authoring.models._models.ResourceMetadata]
     """
 
-    resources_metadata: List["_models.ResourceMetadata"] = rest_field(
+    resources_metadata: List["_models._models.ResourceMetadata"] = rest_field(
         name="resourcesMetadata", visibility=["read", "create", "update", "delete", "query"]
     )
     """Represents the metadata for the resources to be assigned. Required."""
@@ -36,7 +37,7 @@ class AssignDeploymentResourcesDetails(_Model):
     def __init__(
         self,
         *,
-        resources_metadata: List["_models.ResourceMetadata"],
+        resources_metadata: List["_models._models.ResourceMetadata"],
     ) -> None: ...
 
     @overload
@@ -1043,13 +1044,13 @@ class CustomTextSentimentProjectAssets(ExportedProjectAsset, discriminator="Cust
 
     :ivar documents: The list of documents belonging to the project.
     :vartype documents:
-     list[~azure.ai.language.text.authoring.models.ExportedCustomTextSentimentDocument]
+     list[~azure.ai.language.text.authoring.models._models.ExportedCustomTextSentimentDocument]
     :ivar project_kind: The type of the project the assets belong to. Required. For building a
      sentiment models which are able to extract sentiment for long documents.
     :vartype project_kind: str or ~azure.ai.language.text.authoring.models.CUSTOM_TEXT_SENTIMENT
     """
 
-    documents: Optional[List["_models.ExportedCustomTextSentimentDocument"]] = rest_field(
+    documents: Optional[List["_models._models.ExportedCustomTextSentimentDocument"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of documents belonging to the project."""
@@ -1061,7 +1062,7 @@ class CustomTextSentimentProjectAssets(ExportedProjectAsset, discriminator="Cust
     def __init__(
         self,
         *,
-        documents: Optional[List["_models.ExportedCustomTextSentimentDocument"]] = None,
+        documents: Optional[List["_models._models.ExportedCustomTextSentimentDocument"]] = None,
     ) -> None: ...
 
     @overload
@@ -2008,7 +2009,7 @@ class EvaluationState(_Model):
     :ivar errors: The errors encountered while executing the job.
     :vartype errors: list[~azure.core.ODataV4Format]
     :ivar result: Represents evaluation task detailed result. Required.
-    :vartype result: ~azure.ai.language.text.authoring.models.EvaluationJobResult
+    :vartype result: ~azure.ai.language.text.authoring.models._models.EvaluationJobResult
     """
 
     job_id: str = rest_field(name="jobId", visibility=["read"])
@@ -2034,7 +2035,9 @@ class EvaluationState(_Model):
     """The warnings that were encountered while executing the job."""
     errors: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The errors encountered while executing the job."""
-    result: "_models.EvaluationJobResult" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    result: "_models._models.EvaluationJobResult" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Represents evaluation task detailed result. Required."""
 
     @overload
@@ -2044,7 +2047,7 @@ class EvaluationState(_Model):
         created_on: datetime.datetime,
         last_updated_on: datetime.datetime,
         status: Union[str, "_models.OperationStatus"],
-        result: "_models.EvaluationJobResult",
+        result: "_models._models.EvaluationJobResult",
         expires_on: Optional[datetime.datetime] = None,
         warnings: Optional[List[ODataV4Format]] = None,
         errors: Optional[List[ODataV4Format]] = None,
@@ -2096,23 +2099,24 @@ class ExportedCompositeEntity(_Model):
      each other. Known values are: "separateComponents" and "combineComponents".
     :vartype composition_setting: str or ~azure.ai.language.text.authoring.models.CompositionMode
     :ivar list: The list component of the entity.
-    :vartype list: ~azure.ai.language.text.authoring.models.ExportedEntityList
+    :vartype list: ~azure.ai.language.text.authoring.models._models.ExportedEntityList
     :ivar prebuilts: The prebuilt entities components.
-    :vartype prebuilts: list[~azure.ai.language.text.authoring.models.ExportedPrebuiltEntity]
+    :vartype prebuilts:
+     list[~azure.ai.language.text.authoring.models._models.ExportedPrebuiltEntity]
     :ivar category: The entity category.
     :vartype category: str
     """
 
-    composition_setting: Optional[Union[str, "_models.CompositionMode"]] = rest_field(
+    composition_setting: Optional[Union[str, "_models._enums.CompositionMode"]] = rest_field(
         name="compositionSetting", visibility=["read", "create", "update", "delete", "query"]
     )
     """The behavior to follow when the entity's components overlap with each other. Known values are:
      \"separateComponents\" and \"combineComponents\"."""
-    list: Optional["_models.ExportedEntityList"] = rest_field(
+    list: Optional["_models._models.ExportedEntityList"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The list component of the entity."""
-    prebuilts: Optional[List["_models.ExportedPrebuiltEntity"]] = rest_field(
+    prebuilts: Optional[List["_models._models.ExportedPrebuiltEntity"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The prebuilt entities components."""
@@ -2123,9 +2127,9 @@ class ExportedCompositeEntity(_Model):
     def __init__(
         self,
         *,
-        composition_setting: Optional[Union[str, "_models.CompositionMode"]] = None,
-        list: Optional["_models.ExportedEntityList"] = None,
-        prebuilts: Optional[List["_models.ExportedPrebuiltEntity"]] = None,
+        composition_setting: Optional[Union[str, "_models._enums.CompositionMode"]] = None,
+        list: Optional["_models._models.ExportedEntityList"] = None,
+        prebuilts: Optional[List["_models._models.ExportedPrebuiltEntity"]] = None,
         category: Optional[str] = None,
     ) -> None: ...
 
@@ -2196,14 +2200,14 @@ class ExportedCustomAbstractiveSummarizationProjectAsset(
 
     :ivar documents: The list of documents belonging to this project.
     :vartype documents:
-     list[~azure.ai.language.text.authoring.models.ExportedCustomAbstractiveSummarizationDocument]
+     list[~azure.ai.language.text.authoring.models._models.ExportedCustomAbstractiveSummarizationDocument]
     :ivar project_kind: The type of the project the assets belong to. Required. For building an
      abstractive summarization models which are able to summarize long documents.
     :vartype project_kind: str or
      ~azure.ai.language.text.authoring.models.CUSTOM_ABSTRACTIVE_SUMMARIZATION
     """
 
-    documents: Optional[List["_models.ExportedCustomAbstractiveSummarizationDocument"]] = rest_field(
+    documents: Optional[List["_models._models.ExportedCustomAbstractiveSummarizationDocument"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of documents belonging to this project."""
@@ -2215,7 +2219,7 @@ class ExportedCustomAbstractiveSummarizationProjectAsset(
     def __init__(
         self,
         *,
-        documents: Optional[List["_models.ExportedCustomAbstractiveSummarizationDocument"]] = None,
+        documents: Optional[List["_models._models.ExportedCustomAbstractiveSummarizationDocument"]] = None,
     ) -> None: ...
 
     @overload
@@ -2233,7 +2237,8 @@ class ExportedCustomEntityRecognitionDocument(_Model):
     """Represents an exported document for a custom entity recognition project.
 
     :ivar entities: The list of entity labels belonging to the document.
-    :vartype entities: list[~azure.ai.language.text.authoring.models.ExportedDocumentEntityRegion]
+    :vartype entities:
+     list[~azure.ai.language.text.authoring.models._models.ExportedDocumentEntityRegion]
     :ivar location: The location of the document in the storage.
     :vartype location: str
     :ivar language: Represents the document language. This is BCP-47 representation of a language.
@@ -2243,7 +2248,7 @@ class ExportedCustomEntityRecognitionDocument(_Model):
     :vartype dataset: str
     """
 
-    entities: Optional[List["_models.ExportedDocumentEntityRegion"]] = rest_field(
+    entities: Optional[List["_models._models.ExportedDocumentEntityRegion"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of entity labels belonging to the document."""
@@ -2259,7 +2264,7 @@ class ExportedCustomEntityRecognitionDocument(_Model):
     def __init__(
         self,
         *,
-        entities: Optional[List["_models.ExportedDocumentEntityRegion"]] = None,
+        entities: Optional[List["_models._models.ExportedDocumentEntityRegion"]] = None,
         location: Optional[str] = None,
         language: Optional[str] = None,
         dataset: Optional[str] = None,
@@ -2282,21 +2287,21 @@ class ExportedCustomEntityRecognitionProjectAsset(
     """Represents the exported assets for a entity recognition project.
 
     :ivar entities: The list of entities belonging to the project.
-    :vartype entities: list[~azure.ai.language.text.authoring.models.ExportedEntity]
+    :vartype entities: list[~azure.ai.language.text.authoring.models._models.ExportedEntity]
     :ivar documents: The list of documents belonging to the project.
     :vartype documents:
-     list[~azure.ai.language.text.authoring.models.ExportedCustomEntityRecognitionDocument]
+     list[~azure.ai.language.text.authoring.models._models.ExportedCustomEntityRecognitionDocument]
     :ivar project_kind: The type of the project the assets belong to. Required. For building an
      extraction model to identify your domain categories using your own data.
     :vartype project_kind: str or
      ~azure.ai.language.text.authoring.models.CUSTOM_ENTITY_RECOGNITION
     """
 
-    entities: Optional[List["_models.ExportedEntity"]] = rest_field(
+    entities: Optional[List["_models._models.ExportedEntity"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of entities belonging to the project."""
-    documents: Optional[List["_models.ExportedCustomEntityRecognitionDocument"]] = rest_field(
+    documents: Optional[List["_models._models.ExportedCustomEntityRecognitionDocument"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of documents belonging to the project."""
@@ -2308,8 +2313,8 @@ class ExportedCustomEntityRecognitionProjectAsset(
     def __init__(
         self,
         *,
-        entities: Optional[List["_models.ExportedEntity"]] = None,
-        documents: Optional[List["_models.ExportedCustomEntityRecognitionDocument"]] = None,
+        entities: Optional[List["_models._models.ExportedEntity"]] = None,
+        documents: Optional[List["_models._models.ExportedCustomEntityRecognitionDocument"]] = None,
     ) -> None: ...
 
     @overload
@@ -2327,7 +2332,8 @@ class ExportedCustomHealthcareDocument(_Model):
     """Represents an exported document for a CustomHealthcare project.
 
     :ivar entities: The list of entity labels belonging to the document.
-    :vartype entities: list[~azure.ai.language.text.authoring.models.ExportedDocumentEntityRegion]
+    :vartype entities:
+     list[~azure.ai.language.text.authoring.models._models.ExportedDocumentEntityRegion]
     :ivar location: The location of the document in the storage.
     :vartype location: str
     :ivar language: Represents the document language. This is BCP-47 representation of a language.
@@ -2337,7 +2343,7 @@ class ExportedCustomHealthcareDocument(_Model):
     :vartype dataset: str
     """
 
-    entities: Optional[List["_models.ExportedDocumentEntityRegion"]] = rest_field(
+    entities: Optional[List["_models._models.ExportedDocumentEntityRegion"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of entity labels belonging to the document."""
@@ -2353,7 +2359,7 @@ class ExportedCustomHealthcareDocument(_Model):
     def __init__(
         self,
         *,
-        entities: Optional[List["_models.ExportedDocumentEntityRegion"]] = None,
+        entities: Optional[List["_models._models.ExportedDocumentEntityRegion"]] = None,
         location: Optional[str] = None,
         language: Optional[str] = None,
         dataset: Optional[str] = None,
@@ -2374,20 +2380,21 @@ class ExportedCustomHealthcareProjectAsset(ExportedProjectAsset, discriminator="
     """Represents the exported assets for a CustomHealthcare project.
 
     :ivar entities: The list of entities belonging to the project.
-    :vartype entities: list[~azure.ai.language.text.authoring.models.ExportedCompositeEntity]
+    :vartype entities:
+     list[~azure.ai.language.text.authoring.models._models.ExportedCompositeEntity]
     :ivar documents: The list of documents belonging to the project.
     :vartype documents:
-     list[~azure.ai.language.text.authoring.models.ExportedCustomHealthcareDocument]
+     list[~azure.ai.language.text.authoring.models._models.ExportedCustomHealthcareDocument]
     :ivar project_kind: The type of the project the assets belong to. Required. For building an
      text analytics for health model to identify your health domain data.
     :vartype project_kind: str or ~azure.ai.language.text.authoring.models.CUSTOM_HEALTHCARE
     """
 
-    entities: Optional[List["_models.ExportedCompositeEntity"]] = rest_field(
+    entities: Optional[List["_models._models.ExportedCompositeEntity"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of entities belonging to the project."""
-    documents: Optional[List["_models.ExportedCustomHealthcareDocument"]] = rest_field(
+    documents: Optional[List["_models._models.ExportedCustomHealthcareDocument"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of documents belonging to the project."""
@@ -2399,8 +2406,8 @@ class ExportedCustomHealthcareProjectAsset(ExportedProjectAsset, discriminator="
     def __init__(
         self,
         *,
-        entities: Optional[List["_models.ExportedCompositeEntity"]] = None,
-        documents: Optional[List["_models.ExportedCustomHealthcareDocument"]] = None,
+        entities: Optional[List["_models._models.ExportedCompositeEntity"]] = None,
+        documents: Optional[List["_models._models.ExportedCustomHealthcareDocument"]] = None,
     ) -> None: ...
 
     @overload
@@ -2418,7 +2425,7 @@ class ExportedCustomMultiLabelClassificationDocument(_Model):  # pylint: disable
     """Represents an exported document of a custom multi-label classification project.
 
     :ivar classes: The document classes.
-    :vartype classes: list[~azure.ai.language.text.authoring.models.ExportedDocumentClass]
+    :vartype classes: list[~azure.ai.language.text.authoring.models._models.ExportedDocumentClass]
     :ivar location: The location of the document in the storage.
     :vartype location: str
     :ivar language: Represents the document language. This is BCP-47 representation of a language.
@@ -2428,7 +2435,7 @@ class ExportedCustomMultiLabelClassificationDocument(_Model):  # pylint: disable
     :vartype dataset: str
     """
 
-    classes: Optional[List["_models.ExportedDocumentClass"]] = rest_field(
+    classes: Optional[List["_models._models.ExportedDocumentClass"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The document classes."""
@@ -2444,7 +2451,7 @@ class ExportedCustomMultiLabelClassificationDocument(_Model):  # pylint: disable
     def __init__(
         self,
         *,
-        classes: Optional[List["_models.ExportedDocumentClass"]] = None,
+        classes: Optional[List["_models._models.ExportedDocumentClass"]] = None,
         location: Optional[str] = None,
         language: Optional[str] = None,
         dataset: Optional[str] = None,
@@ -2467,10 +2474,10 @@ class ExportedCustomMultiLabelClassificationProjectAsset(
     """Represents the exported assets for a custom multi-label classification project.
 
     :ivar classes: The list of classes in the project.
-    :vartype classes: list[~azure.ai.language.text.authoring.models.ExportedClass]
+    :vartype classes: list[~azure.ai.language.text.authoring.models._models.ExportedClass]
     :ivar documents: The list of documents in the project.
     :vartype documents:
-     list[~azure.ai.language.text.authoring.models.ExportedCustomMultiLabelClassificationDocument]
+     list[~azure.ai.language.text.authoring.models._models.ExportedCustomMultiLabelClassificationDocument]
     :ivar project_kind: The type of the project the assets belong to. Required. For building a
      classification model to classify text using your own data. Each file can have one or many
      labels. For example, file 1 is classified as A, B, and C and file 2 is classified as B and C.
@@ -2478,11 +2485,11 @@ class ExportedCustomMultiLabelClassificationProjectAsset(
      ~azure.ai.language.text.authoring.models.CUSTOM_MULTI_LABEL_CLASSIFICATION
     """
 
-    classes: Optional[List["_models.ExportedClass"]] = rest_field(
+    classes: Optional[List["_models._models.ExportedClass"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of classes in the project."""
-    documents: Optional[List["_models.ExportedCustomMultiLabelClassificationDocument"]] = rest_field(
+    documents: Optional[List["_models._models.ExportedCustomMultiLabelClassificationDocument"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of documents in the project."""
@@ -2495,8 +2502,8 @@ class ExportedCustomMultiLabelClassificationProjectAsset(
     def __init__(
         self,
         *,
-        classes: Optional[List["_models.ExportedClass"]] = None,
-        documents: Optional[List["_models.ExportedCustomMultiLabelClassificationDocument"]] = None,
+        classes: Optional[List["_models._models.ExportedClass"]] = None,
+        documents: Optional[List["_models._models.ExportedCustomMultiLabelClassificationDocument"]] = None,
     ) -> None: ...
 
     @overload
@@ -2514,7 +2521,7 @@ class ExportedCustomSingleLabelClassificationDocument(_Model):  # pylint: disabl
     """Represents an exported document for a custom single-label classification project.
 
     :ivar class_property: The class of the documents.
-    :vartype class_property: ~azure.ai.language.text.authoring.models.ExportedDocumentClass
+    :vartype class_property: ~azure.ai.language.text.authoring.models._models.ExportedDocumentClass
     :ivar location: The location of the document in the storage.
     :vartype location: str
     :ivar language: Represents the document language. This is BCP-47 representation of a language.
@@ -2524,7 +2531,7 @@ class ExportedCustomSingleLabelClassificationDocument(_Model):  # pylint: disabl
     :vartype dataset: str
     """
 
-    class_property: Optional["_models.ExportedDocumentClass"] = rest_field(
+    class_property: Optional["_models._models.ExportedDocumentClass"] = rest_field(
         name="class", visibility=["read", "create", "update", "delete", "query"]
     )
     """The class of the documents."""
@@ -2540,7 +2547,7 @@ class ExportedCustomSingleLabelClassificationDocument(_Model):  # pylint: disabl
     def __init__(
         self,
         *,
-        class_property: Optional["_models.ExportedDocumentClass"] = None,
+        class_property: Optional["_models._models.ExportedDocumentClass"] = None,
         location: Optional[str] = None,
         language: Optional[str] = None,
         dataset: Optional[str] = None,
@@ -2563,10 +2570,10 @@ class ExportedCustomSingleLabelClassificationProjectAsset(
     """Represents the exported assets for a single-label classification project.
 
     :ivar classes: The list of classes belonging to this project.
-    :vartype classes: list[~azure.ai.language.text.authoring.models.ExportedClass]
+    :vartype classes: list[~azure.ai.language.text.authoring.models._models.ExportedClass]
     :ivar documents: The list of documents belonging to this project.
     :vartype documents:
-     list[~azure.ai.language.text.authoring.models.ExportedCustomSingleLabelClassificationDocument]
+     list[~azure.ai.language.text.authoring.models._models.ExportedCustomSingleLabelClassificationDocument]
     :ivar project_kind: The type of the project the assets belong to. Required. For building a
      classification model to classify text using your own data. Each file will have only one label.
      For example, file 1 is classified as A and file 2 is classified as B.
@@ -2574,11 +2581,11 @@ class ExportedCustomSingleLabelClassificationProjectAsset(
      ~azure.ai.language.text.authoring.models.CUSTOM_SINGLE_LABEL_CLASSIFICATION
     """
 
-    classes: Optional[List["_models.ExportedClass"]] = rest_field(
+    classes: Optional[List["_models._models.ExportedClass"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of classes belonging to this project."""
-    documents: Optional[List["_models.ExportedCustomSingleLabelClassificationDocument"]] = rest_field(
+    documents: Optional[List["_models._models.ExportedCustomSingleLabelClassificationDocument"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of documents belonging to this project."""
@@ -2591,8 +2598,8 @@ class ExportedCustomSingleLabelClassificationProjectAsset(
     def __init__(
         self,
         *,
-        classes: Optional[List["_models.ExportedClass"]] = None,
-        documents: Optional[List["_models.ExportedCustomSingleLabelClassificationDocument"]] = None,
+        classes: Optional[List["_models._models.ExportedClass"]] = None,
+        documents: Optional[List["_models._models.ExportedCustomSingleLabelClassificationDocument"]] = None,
     ) -> None: ...
 
     @overload
@@ -2611,7 +2618,7 @@ class ExportedCustomTextSentimentDocument(_Model):
 
     :ivar sentiment_spans:
     :vartype sentiment_spans:
-     list[~azure.ai.language.text.authoring.models.ExportedDocumentSentimentLabel]
+     list[~azure.ai.language.text.authoring.models._models.ExportedDocumentSentimentLabel]
     :ivar location: The location of the document in the storage.
     :vartype location: str
     :ivar language: Represents the document language. This is BCP-47 representation of a language.
@@ -2621,7 +2628,7 @@ class ExportedCustomTextSentimentDocument(_Model):
     :vartype dataset: str
     """
 
-    sentiment_spans: Optional[List["_models.ExportedDocumentSentimentLabel"]] = rest_field(
+    sentiment_spans: Optional[List["_models._models.ExportedDocumentSentimentLabel"]] = rest_field(
         name="sentimentSpans", visibility=["read", "create", "update", "delete", "query"]
     )
     location: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -2636,7 +2643,7 @@ class ExportedCustomTextSentimentDocument(_Model):
     def __init__(
         self,
         *,
-        sentiment_spans: Optional[List["_models.ExportedDocumentSentimentLabel"]] = None,
+        sentiment_spans: Optional[List["_models._models.ExportedDocumentSentimentLabel"]] = None,
         location: Optional[str] = None,
         language: Optional[str] = None,
         dataset: Optional[str] = None,
@@ -2726,7 +2733,8 @@ class ExportedDocumentEntityRegion(_Model):
     :ivar region_length: Length for the region text.
     :vartype region_length: int
     :ivar labels: The list of entity labels belonging to this region.
-    :vartype labels: list[~azure.ai.language.text.authoring.models.ExportedDocumentEntityLabel]
+    :vartype labels:
+     list[~azure.ai.language.text.authoring.models._models.ExportedDocumentEntityLabel]
     """
 
     region_offset: Optional[int] = rest_field(
@@ -2737,7 +2745,7 @@ class ExportedDocumentEntityRegion(_Model):
         name="regionLength", visibility=["read", "create", "update", "delete", "query"]
     )
     """Length for the region text."""
-    labels: Optional[List["_models.ExportedDocumentEntityLabel"]] = rest_field(
+    labels: Optional[List["_models._models.ExportedDocumentEntityLabel"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of entity labels belonging to this region."""
@@ -2748,7 +2756,7 @@ class ExportedDocumentEntityRegion(_Model):
         *,
         region_offset: Optional[int] = None,
         region_length: Optional[int] = None,
-        labels: Optional[List["_models.ExportedDocumentEntityLabel"]] = None,
+        labels: Optional[List["_models._models.ExportedDocumentEntityLabel"]] = None,
     ) -> None: ...
 
     @overload
@@ -2841,10 +2849,10 @@ class ExportedEntityList(_Model):
     """Represents a list component of an entity.
 
     :ivar sublists: The sub-lists of the list component.
-    :vartype sublists: list[~azure.ai.language.text.authoring.models.ExportedEntitySublist]
+    :vartype sublists: list[~azure.ai.language.text.authoring.models._models.ExportedEntitySublist]
     """
 
-    sublists: Optional[List["_models.ExportedEntitySublist"]] = rest_field(
+    sublists: Optional[List["_models._models.ExportedEntitySublist"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The sub-lists of the list component."""
@@ -2853,7 +2861,7 @@ class ExportedEntityList(_Model):
     def __init__(
         self,
         *,
-        sublists: Optional[List["_models.ExportedEntitySublist"]] = None,
+        sublists: Optional[List["_models._models.ExportedEntitySublist"]] = None,
     ) -> None: ...
 
     @overload
@@ -2910,12 +2918,13 @@ class ExportedEntitySublist(_Model):
     :ivar list_key: The key of the sub-list.
     :vartype list_key: str
     :ivar synonyms: The phrases of that correspond to the sub-list.
-    :vartype synonyms: list[~azure.ai.language.text.authoring.models.ExportedEntityListSynonym]
+    :vartype synonyms:
+     list[~azure.ai.language.text.authoring.models._models.ExportedEntityListSynonym]
     """
 
     list_key: Optional[str] = rest_field(name="listKey", visibility=["read", "create", "update", "delete", "query"])
     """The key of the sub-list."""
-    synonyms: Optional[List["_models.ExportedEntityListSynonym"]] = rest_field(
+    synonyms: Optional[List["_models._models.ExportedEntityListSynonym"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The phrases of that correspond to the sub-list."""
@@ -2925,7 +2934,7 @@ class ExportedEntitySublist(_Model):
         self,
         *,
         list_key: Optional[str] = None,
-        synonyms: Optional[List["_models.ExportedEntityListSynonym"]] = None,
+        synonyms: Optional[List["_models._models.ExportedEntityListSynonym"]] = None,
     ) -> None: ...
 
     @overload
@@ -3106,7 +3115,7 @@ class ExportedProject(_Model):
     :ivar metadata: Represents the project metadata. Required.
     :vartype metadata: ~azure.ai.language.text.authoring.models.CreateProjectOptions
     :ivar assets: Represents the project assets.
-    :vartype assets: ~azure.ai.language.text.authoring.models.ExportedProjectAsset
+    :vartype assets: ~azure.ai.language.text.authoring.models._models.ExportedProjectAsset
     """
 
     project_file_version: str = rest_field(
@@ -3121,7 +3130,7 @@ class ExportedProject(_Model):
      \"Utf16CodeUnit\""""
     metadata: "_models.CreateProjectOptions" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Represents the project metadata. Required."""
-    assets: Optional["_models.ExportedProjectAsset"] = rest_field(
+    assets: Optional["_models._models.ExportedProjectAsset"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Represents the project assets."""
@@ -3133,7 +3142,7 @@ class ExportedProject(_Model):
         project_file_version: str,
         string_index_type: Union[str, "_models.StringIndexType"],
         metadata: "_models.CreateProjectOptions",
-        assets: Optional["_models.ExportedProjectAsset"] = None,
+        assets: Optional["_models._models.ExportedProjectAsset"] = None,
     ) -> None: ...
 
     @overload
@@ -4634,7 +4643,7 @@ class TrainingJobDetails(_Model):
     :ivar data_generation_settings: Represents the settings for using data generation as part of
      training a custom model.
     :vartype data_generation_settings:
-     ~azure.ai.language.text.authoring.models.DataGenerationSetting
+     ~azure.ai.language.text.authoring.models._models.DataGenerationSetting
     """
 
     model_label: str = rest_field(name="modelLabel", visibility=["read", "create", "update", "delete", "query"])
@@ -4648,7 +4657,7 @@ class TrainingJobDetails(_Model):
     )
     """Represents the evaluation options. By default, the evaluation kind is percentage, with training
      split percentage as 80, and testing split percentage as 20."""
-    data_generation_settings: Optional["_models.DataGenerationSetting"] = rest_field(
+    data_generation_settings: Optional["_models._models.DataGenerationSetting"] = rest_field(
         name="dataGenerationSettings", visibility=["read", "create", "update", "delete", "query"]
     )
     """Represents the settings for using data generation as part of training a custom model."""
@@ -4660,7 +4669,7 @@ class TrainingJobDetails(_Model):
         model_label: str,
         training_config_version: str,
         evaluation_options: Optional["_models.EvaluationDetails"] = None,
-        data_generation_settings: Optional["_models.DataGenerationSetting"] = None,
+        data_generation_settings: Optional["_models._models.DataGenerationSetting"] = None,
     ) -> None: ...
 
     @overload

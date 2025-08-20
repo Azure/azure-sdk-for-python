@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from azure.ai.language.text.authoring import TextAuthoringProjectClient
+from azure.ai.language.text.authoring import TextAuthoringClient
 
 """
 # PREREQUISITES
@@ -22,7 +22,7 @@ def main():
         credential="CREDENTIAL",
     )
 
-    response = client.project.get_project(
+    response = client.get_project(
         project_name="LoanAgreements",
     )
     print(response)

@@ -27,35 +27,6 @@ class TestTextAuthoringProjectExportedModelOperationsAsync(TextAuthoringProjectC
 
     @TextAuthoringProjectPreparer()
     @recorded_by_proxy_async
-    async def test_exported_model_begin_delete_exported_model(self, textauthoringproject_endpoint):
-        client = self.create_async_client(endpoint=textauthoringproject_endpoint)
-        response = await (
-            await client.exported_model.begin_delete_exported_model(
-                project_name="str",
-                exported_model_name="str",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @TextAuthoringProjectPreparer()
-    @recorded_by_proxy_async
-    async def test_exported_model_begin_create_or_update_exported_model(self, textauthoringproject_endpoint):
-        client = self.create_async_client(endpoint=textauthoringproject_endpoint)
-        response = await (
-            await client.exported_model.begin_create_or_update_exported_model(
-                project_name="str",
-                exported_model_name="str",
-                body={"trainedModelLabel": "str"},
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @TextAuthoringProjectPreparer()
-    @recorded_by_proxy_async
     async def test_exported_model_get_exported_model_manifest(self, textauthoringproject_endpoint):
         client = self.create_async_client(endpoint=textauthoringproject_endpoint)
         response = await client.exported_model.get_exported_model_manifest(

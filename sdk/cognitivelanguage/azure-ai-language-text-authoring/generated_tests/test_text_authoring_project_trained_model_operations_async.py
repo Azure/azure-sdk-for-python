@@ -39,35 +39,6 @@ class TestTextAuthoringProjectTrainedModelOperationsAsync(TextAuthoringProjectCl
 
     @TextAuthoringProjectPreparer()
     @recorded_by_proxy_async
-    async def test_trained_model_begin_evaluate_model(self, textauthoringproject_endpoint):
-        client = self.create_async_client(endpoint=textauthoringproject_endpoint)
-        response = await (
-            await client.trained_model.begin_evaluate_model(
-                project_name="str",
-                trained_model_label="str",
-                body={"kind": "str", "testingSplitPercentage": 0, "trainingSplitPercentage": 0},
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @TextAuthoringProjectPreparer()
-    @recorded_by_proxy_async
-    async def test_trained_model_begin_load_snapshot(self, textauthoringproject_endpoint):
-        client = self.create_async_client(endpoint=textauthoringproject_endpoint)
-        response = await (
-            await client.trained_model.begin_load_snapshot(
-                project_name="str",
-                trained_model_label="str",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @TextAuthoringProjectPreparer()
-    @recorded_by_proxy_async
     async def test_trained_model_get_model_evaluation_results(self, textauthoringproject_endpoint):
         client = self.create_async_client(endpoint=textauthoringproject_endpoint)
         response = client.trained_model.get_model_evaluation_results(
