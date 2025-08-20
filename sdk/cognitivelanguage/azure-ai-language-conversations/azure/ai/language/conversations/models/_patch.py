@@ -7,26 +7,12 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Any, Mapping, Optional, Dict, IO, cast, List, TypeVar
-import json
-from urllib.parse import urlparse
-
-from azure.core.exceptions import HttpResponseError
-from azure.core.paging import ItemPaged
-from azure.core.polling import LROPoller, AsyncLROPoller
-from azure.core.polling.base_polling import LROBasePolling, PollingMethod
-from azure.core.rest import HttpRequest
-from azure.core.polling.async_base_polling import (
-    AsyncLROBasePolling,
-)
-from azure.core.polling._async_poller import AsyncPollingMethod
 from ._models import (
     AnalyzeConversationOperationInput,
     MultiLanguageConversationInput,
     SummarizationOperationAction,
     ConversationSummarizationActionContent,
     AnalyzeConversationOperationAction,
-    AnalyzeConversationOperationState,
     ConversationPiiActionContent,
     PiiOperationAction,
     CharacterMaskPolicyType,

@@ -9,13 +9,10 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import json
-from typing import Any, Callable, Dict, IO, Mapping, Optional, TypeVar, Union, cast, Generic, overload
-from ._client import ConversationAnalysisClient as AnalysisClientGenerated
+from typing import Any, Callable, Dict, IO, Mapping, Optional, TypeVar, Union, cast, overload, Generic
 from collections.abc import MutableMapping
-from ..models import AnalyzeConversationOperationInput, AnalyzeConversationOperationState, ConversationActions
-from azure.core.polling import AsyncNoPolling
+from urllib.parse import urlparse
 from azure.core.exceptions import (
-    ClientAuthenticationError,
     HttpResponseError,
 )
 from azure.core.pipeline import PipelineResponse
@@ -25,25 +22,24 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 from azure.core.async_paging import AsyncItemPaged
-from urllib.parse import urlparse
-from ._configuration import ConversationAnalysisClientConfiguration
-from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
-from .._utils.serialization import Serializer
-from .._utils.utils import ClientMixinABC
-from .._validation import api_version_validation
+from ._client import ConversationAnalysisClient as AnalysisClientGenerated
+from ..models import AnalyzeConversationOperationInput, AnalyzeConversationOperationState, ConversationActions
 
-from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
-from .._utils.utils import ClientMixinABC
 from .._validation import api_version_validation
-from ._configuration import ConversationAnalysisClientConfiguration
-
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
 def _parse_operation_id(op_loc: Optional[str]) -> Optional[str]:
-    """Extract the final path segment as operation id (service-agnostic)."""
+    """Extract the operation ID from an Operation-Location URL.
+
+    :param op_loc: The ``Operation-Location`` header value or URL to parse.
+        If ``None`` or malformed, no ID can be extracted.
+    :type op_loc: Optional[str]
+    :return: The trailing path segment as the operation ID, or ``None`` if not found.
+    :rtype: Optional[str]
+    """
     if not op_loc:
         return None
     path = urlparse(op_loc).path.rstrip("/")
@@ -63,13 +59,31 @@ class AnalyzeConversationAsyncLROPoller(AsyncLROPoller[PollingReturnType_co], Ge
         # populated by your deserialization callback in begin_*_async
         self._last_state: Optional["AnalyzeConversationOperationState"] = None
 
+    def record_state_for_details(self, state: "AnalyzeConversationOperationState") -> None:
+        """Internal: update the state used by ``.details``.
+
+        :param state: The latest operation state to expose via ``details``.
+        :type state: AnalyzeConversationOperationState
+        :return: None
+        :rtype: None
+        """
+        self._last_state = state
+
     @property
     def details(self) -> Mapping[str, Any]:
-        """Metadata associated with the long-running operation."""
+        """Metadata associated with the long-running operation.
+
+        :return: A mapping with keys like ``operation_id`` and, when available,
+            ``status``, ``job_id``, ``display_name``, ``created_date_time``,
+            ``last_updated_date_time``, ``expiration_date_time``, ``statistics``,
+            ``errors``, and ``next_link``.
+        :rtype: Mapping[str, Any]
+        """
         try:
-            headers = self.polling_method()._initial_response.http_response.headers  # type: ignore[attr-defined]
+            headers = getattr(self.polling_method(), "_initial_response").http_response.headers  # type: ignore[attr-defined]
             op_loc = headers.get("Operation-Location") or headers.get("operation-location")
-        except Exception:
+        except (AttributeError, TypeError):
+            # missing attributes in the chain, or headers is not a mapping
             op_loc = None
 
         info: Dict[str, Any] = {"operation_id": _parse_operation_id(op_loc)}
@@ -227,7 +241,7 @@ class ConversationAnalysisClient(AnalysisClientGenerated):
                 op_state = AnalyzeConversationOperationState(data)
 
                 poller_ref = poller_holder["poller"]
-                poller_ref._last_state = op_state  # type: ignore[attr-defined]
+                poller_ref.record_state_for_details(op_state)
 
                 paged = _build_pager_from_state(op_state)
                 return cls(pipeline_response, paged, {}) if cls else paged
