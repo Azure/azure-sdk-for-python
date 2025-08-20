@@ -10,6 +10,20 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class AcceptGrowCapacityPoolForShortTermCloneSplit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """While auto splitting the short term clone volume, if the parent pool does not have enough space
+    to accommodate the volume after split, it will be automatically resized, which will lead to
+    increased billing. To accept capacity pool size auto grow and create a short term clone volume,
+    set the property as accepted.
+    """
+
+    ACCEPTED = "Accepted"
+    """Auto grow capacity pool for short term clone split is accepted."""
+    DECLINED = "Declined"
+    """Auto grow capacity pool for short term clone split is declined. Short term clone volume
+    creation will not be allowed, to create short term clone volume accept auto grow capacity pool."""
+
+
 class ActiveDirectoryStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Status of the Active Directory."""
 
@@ -349,6 +363,8 @@ class ServiceLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Ultra service level"""
     STANDARD_ZRS = "StandardZRS"
     """Zone redundant storage service level. This will be deprecated soon."""
+    FLEXIBLE = "Flexible"
+    """Flexible service level"""
 
 
 class SmbAccessBasedEnumeration(str, Enum, metaclass=CaseInsensitiveEnumMeta):

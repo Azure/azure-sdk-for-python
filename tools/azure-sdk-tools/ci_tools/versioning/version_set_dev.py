@@ -20,6 +20,9 @@ from ci_tools.versioning.version_shared import (
 
 from ci_tools.variables import discover_repo_root
 from ci_tools.functions import process_requires
+from ci_tools.parsing import ParsedSetup
+
+from typing import List
 
 MAX_R_DIGITS = 3
 
@@ -84,6 +87,9 @@ def version_set_dev_main() -> None:
     target_packages = get_packages(args, root_dir=root_dir)
     build_id = format_build_id(args.build_id)
 
+    set_dev_version(target_packages, build_id)
+
+def set_dev_version(target_packages: List[ParsedSetup], build_id: str):
     if not target_packages:
         print("No packages found")
 

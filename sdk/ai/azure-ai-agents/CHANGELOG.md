@@ -1,6 +1,23 @@
 
 # Release History
 
+## 1.2.0b3 (Unreleased)
+
+### Breaking Changes
+
+### Features Added
+
+- Add `RunStepDetailsActivity`, describing MCP function parameters.
+- Add `RunStepDeltaCustomBingGroundingToolCall`, describing `BingCustomSearchTool` updates in streaming scenario.
+
+### Bugs Fixed
+
+- Fixed the issue when the `create_and_process` call hangs if MCP tool approval is required.
+
+### Sample updates
+
+- Bing Grounding and Bing Custom Search samples were fixed to correctly present references.
+
 ## 1.2.0b2 (2025-08-12)
 
 ### Features Added
