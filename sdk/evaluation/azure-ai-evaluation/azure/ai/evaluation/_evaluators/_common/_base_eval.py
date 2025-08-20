@@ -37,6 +37,8 @@ from azure.ai.evaluation._common._experimental import experimental
 
 from ._conversation_aggregators import GetAggregator, GetAggregatorType
 
+import copy
+
 P = ParamSpec("P")
 T = TypeVar("T")
 T_EvalValue = TypeVar("T_EvalValue")
@@ -486,8 +488,12 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         """
         tool_calls = []
         tool_results_map = {}
-        if isinstance(response, list):
-            for message in response:
+
+        # Work on a deep copy to avoid modifying the original object
+        response_copy = copy.deepcopy(response)
+
+        if isinstance(response_copy, list):
+            for message in response_copy:
                 # Extract tool calls from assistant messages
                 if message.get("role") == "assistant" and isinstance(message.get("content"), list):
                     for content_item in message.get("content"):
