@@ -1,22 +1,37 @@
 # References
 
-- TypeSpec - [Content Understanding 2025-05-01-preview by bojunehsu · Pull Request #21772 · Azure/azure-rest-api-specs-pr](https://github.com/Azure/azure-rest-api-specs-pr/pull/21772)
-- Concepts - [Content Understan         ding Glossary - Azure AI services | Microsoft Learn](https://learn.microsoft.com/en-us/azure/ai-services/content-understanding/glossary)
-- Documentation - [What is Azure AI Content Understanding? - Azure AI services | Microsoft Learn](https://learn.microsoft.com/en-us/azure/ai-services/content-understanding/overview)
+- TypeSpec - [Content Understanding 2025-05-01-preview by bojunehsu · Pull Request #21772 · Azure/azure-rest-api-specs-pr](https://github.com/Azure/azure-rest-api-specs-pr/pull/21772)
+- Concepts - [Content Understanding Glossary - Azure AI services | Microsoft Learn](https://learn.microsoft.com/en-us/azure/ai-services/content-understanding/glossary)
+- Documentation - [What is Azure AI Content Understanding? - Azure AI services | Microsoft Learn](https://learn.microsoft.com/en-us/azure/ai-services/content-understanding/overview)
 
 ## Additional Concepts
 
-- Classifier - A component that takes a set of categories to classify an input file with optional splitting.
-- Segmentation - Splits content into consecutive segments according to user-configurable definition.
-- Source expression - A string that encodes a position in the multimodal input file.
-- Analysis mode - The approach to take to perform the analysis: standard, pro, agentic.  More sophisticated modes generally lead to greater quality at increased cost.
+- **Classifier** - A component that takes a set of categories to classify an input file with optional splitting.
+- **Segmentation** - Splits content into consecutive segments according to user-configurable definition.
+- **Source expression** - A string that encodes a position in the multimodal input file.
+- **Analysis mode** - The approach to take to perform the analysis: standard, pro, agentic. More sophisticated modes generally lead to greater quality at increased cost.
+
+## Patch Overrides Enabled
+
+The SDK includes several patch overrides that enhance usability:
+
+- **Field Value Access** - All field types (StringField, NumberField, etc.) now have a unified `.value` property for easier access
+- **Positional Parameters** - Face detection and comparison methods accept positional arguments for URLs and image data
+- **Simplified Face Operations** - Person directory operations accept direct URLs/bytes instead of requiring FaceSource objects
 
 # Hero Scenarios
 
 ## Content Analyzer Scenarios
+
 ### Scenario: Extracting markdown using a prebuilt Document analyzer
 
 ```python
+import os
+from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
+from azure.core.credentials import AzureKeyCredential
+from azure.identity.aio import DefaultAzureCredential
+
+endpoint = os.environ["AZURE_CONTENT_UNDERSTANDING_ENDPOINT"]
 key = os.getenv("AZURE_CONTENT_UNDERSTANDING_KEY")
 credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
 
@@ -36,14 +51,16 @@ async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) 
 	content: MediaContent = result.contents[0]
 	print(content.markdown)
 ```
-### Scenario: Extracting invoice fields with the prebuilt invoice analyzer 
+
+### Scenario: Extracting invoice fields with the prebuilt invoice analyzer
 
 ```python
 """Analyze an invoice and display the extracted fields."""
 file_url = "https://github.com/Azure-Samples/azure-ai-content-understanding-python/raw/refs/heads/main/data/invoice.pdf"
+
 poller = await client.content_analyzers.begin_analyze(
-	analyzer_id="prebuilt-invoice", 
-	url=file_url
+    analyzer_id="prebuilt-invoice", 
+    url=file_url
 )
 result: AnalyzeResult = await poller.result()
 content: MediaContent = result.contents[0]
@@ -53,72 +70,79 @@ print(content.fields['CustomerName'].value)
 print(content.fields['InvoiceTotal'].value)
 
 # Get array values in the invoice items
-for i, item in enumerate(content.fields['Items'].value):
-  item_obj = item.value 
-  print(item_obj['Description'].value) # return a string
-  print(item_obj['Quantity'].value) # return a number
-  print(item_obj['UnitPrice'].value) # return a number
-  print(item_obj['TotalPrice'].value) # return a number
+for item in content.fields['Items'].value:
+    item_obj = item.value                   # enabled by patch. Simplified from `item.value_object
+    print(item_obj['Description'].value)    # enabled by patch. Simplified from `item_obj['Description'].value_string`
+    print(item_obj['Quantity'].value)       # enabled by patch. Simplified from `item_obj['Quantity'].value_number`
+    print(item_obj['UnitPrice'].value)      # enabled by patch.
+    print(item_obj['TotalPrice'].value)     # eanbled by patch.
 ```
-### Scenarios: Create a custom content analyzer
+
+### Scenario: Create a custom content analyzer
 
 ```python
-endpoint = os.environ["AZURE_CONTENT_UNDERSTANDING_ENDPOINT"]
-# Return AzureKeyCredential if AZURE_CONTENT_UNDERSTANDING_KEY is set, otherwise DefaultAzureCredential
-key = os.getenv("AZURE_CONTENT_UNDERSTANDING_KEY")
-credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
+from azure.ai.contentunderstanding.models import (
+    ContentAnalyzer, ContentAnalyzerConfig, FieldSchema, 
+    FieldDefinition, FieldType, GenerationMethod
+)
 
-async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client, credential:
-	analyzer_id = "my_company_analyzer"
+analyzer_id = "my_company_analyzer"
 
-	# Create a custom analyzer using object model based on prebuilt-documentAnalyzer
-	custom_analyzer = ContentAnalyzer(
-		base_analyzer_id="prebuilt-documentAnalyzer",
-		description="Custom analyzer for extracting company information",
-		config=ContentAnalyzerConfig(
-			enable_layout=True,
-			enable_ocr=True,
-			estimate_field_source_and_confidence=True,
-			return_details=True,
-		),
+custom_analyzer = ContentAnalyzer(
+    base_analyzer_id="prebuilt-documentAnalyzer",
+    description="Custom analyzer for extracting company information",
+    config=ContentAnalyzerConfig(
+        enable_layout=True,
+        enable_ocr=True,
+        estimate_field_source_and_confidence=True,
+        return_details=True,
+    ),
+    field_schema=FieldSchema(
+        name="company_schema",
+        description="Schema for extracting company information",
+        fields={
+            "company_name": FieldDefinition(
+                type=FieldType.STRING,
+                method=GenerationMethod.EXTRACT,
+                description="Name of the company",
+            ),
+            "total_amount": FieldDefinition(
+                type=FieldType.NUMBER,
+                method=GenerationMethod.EXTRACT,
+                description="Total amount on the document",
+            ),
+            "summary": FieldDefinition(
+                type=FieldType.STRING,
+                method=GenerationMethod.GENERATE,
+                description="Summary of the document",
+            )
+        },
+    ),
+)
 
-		field_schema=FieldSchema(
-			name="company_schema",
-			description="Schema for extracting company information",
-			fields={
-				"company_name": FieldDefinition(
-					type=FieldType.STRING,
-					method=GenerationMethod.EXTRACT,
-					description="Name of the company",
-				),
-				"total_amount": FieldDefinition(
-					type=FieldType.NUMBER,
-					method=GenerationMethod.EXTRACT,
-					description="Total amount on the document",
-				),
-				"summary": FieldDefinition(
-					type=FieldType.STRING,
-					method=GenerationMethod.GENERATE,
-					description="Summary of the document",
-				)
-			},
-		),
-	)
-	poller = await client.content_analyzers.begin_create_or_replace(
-		analyzer_id=analyzer_id,
-		resource=custom_analyzer,
-	)
-	create_result = await poller.result()
-	
-	file_url = "https://github.com/Azure-Samples/azure-ai-content-understanding-python/raw/refs/heads/main/data/invoice.pdf"
-	poller = await client.content_analyzers.begin_analyze(
-		analyzer_id="my_company_analyzer", 
-		url=file_url
-	)
-	result: AnalyzeResult = await poller.result()
-	content: MediaContent = result.contents[0]
-```  
-### Scenario: Output document content  and table
+poller = await client.content_analyzers.begin_create_or_replace(
+    analyzer_id=analyzer_id,
+    resource=custom_analyzer,
+)
+create_result = await poller.result()
+```
+
+### Scenario: Update analyzer with patch operation
+
+```python
+"""Update analyzer description and tags using patch operation."""
+updated_analyzer = ContentAnalyzer(
+    description="Updated description for company analyzer",
+    tags={"tag_added": "new tag value", "tag_to_change": "updated_value", "tag_removed": None}
+)
+
+response = await client.content_analyzers.update(
+    analyzer_id="my_company_analyzer",
+    resource=updated_analyzer,
+)
+```
+
+### Scenario: Output document content and table information
 
 ```python
 endpoint = os.environ["AZURE_CONTENT_UNDERSTANDING_ENDPOINT"]
@@ -165,52 +189,66 @@ async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) 
 	else:
 		print("\n📚 Document Information: Not available for this content type")
 ```    
-## Classifier Scenarios
-
-### Build Classifier
+### Scenario: Get operation status and results
 
 ```python
-endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT") or ""
-key = os.getenv("AZURE_CONTENT_UNDERSTANDING_KEY")
-credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
+"""Monitor long-running analysis operation and retrieve results."""
+operation_id = "operation_GUID"
 
-async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client, credential:
-	classifier_id = "my_classifer"
+# Check operation status
+status = await client.content_analyzers.get_operation_status(operation_id)
+print(f"Status: {status.status}")
 
-	classifier_schema = ContentClassifier(
-        categories={
-            "Loan application": ClassifierCategory(
-                description="Documents submitted by individuals or businesses to request funding"
-            ),
-            "Invoice": ClassifierCategory(
-                description="Billing documents issued by sellers or service providers to request payment for goods or services"
-            ),
-            "Bank_Statement": ClassifierCategory(
-                description="Official statements issued by banks that summarize account activity over a period"
-            ),
-        },
-        split_mode="auto",
-        description="Classify between loan application, invoices, and bank statements",
-    )
-
-	# Start the classifier creation operation
-	poller = await client.content_classifiers.begin_create_or_replace(
-		classifier_id=classifier_id,
-		resource=classifier_schema,
-	)
-
-	# Wait for the classifier to be created
-	result = await poller.result()
+# Get results when complete
+if status.status == "succeeded":
+    result = await client.content_analyzers.get_result(operation_id)
+    print(f"Analysis completed with {len(result.contents)} content items")
 ```
 
-### Classify a Document with a custom classifier
+
+## Classifier Scenarios
+
+### Scenario: Build Classifier
+
+```python
+from azure.ai.contentunderstanding.models import ContentClassifier, ClassifierCategory
+
+classifier_id = "my_classifier"
+
+classifier_schema = ContentClassifier(
+    categories={
+        "Loan application": ClassifierCategory(
+            description="Documents submitted by individuals or businesses to request funding"
+        ),
+        "Invoice": ClassifierCategory(
+            description="Billing documents issued by sellers or service providers to request payment for goods or services"
+        ),
+        "Bank_Statement": ClassifierCategory(
+            description="Official statements issued by banks that summarize account activity over a period"
+        ),
+    },
+    split_mode="auto",
+    description="Classify between loan application, invoices, and bank statements",
+)
+
+# Start the classifier creation operation
+poller = await client.content_classifiers.begin_create_or_replace(
+    classifier_id=classifier_id,
+    resource=classifier_schema,
+)
+
+# Wait for the classifier to be created
+result = await poller.result()
+```
+
+### Scenario: Classify a Document with a custom classifier
 
 ```python
 mixed_docs_url = "https://github.com/Azure-Samples/azure-ai-content-understanding-python/raw/refs/heads/main/data/mixed_financial_docs.pdf"
 
 classification_poller = await client.content_classifiers.begin_classify(
-	classifier_id="my_classifer",
-	url=mixed_docs_url
+    classifier_id="my_classifier",
+    url=mixed_docs_url
 )
 classification_result = await classification_poller.result()
 
@@ -222,124 +260,187 @@ for content in classification_result.contents:
 	print(f"   End Page Number: {document_content.end_page_number}")
 
 ```
-  
-## Face Scenario
 
-### Detect faces for existence and locations
+### Scenario: Classify binary content
+
 ```python
-endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT") or ""
-    key = os.getenv("AZURE_CONTENT_UNDERSTANDING_KEY")
-    credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
+"""Classify document from binary data."""
+with open("document.pdf", "rb") as f:
+    document_bytes = f.read()
 
-    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client, credential:
-        """Detect faces in a test image and display results."""
-
-        # Convert image to base64
-        image_data = read_image_to_base64(MY_IMAGE_FILE_PATH)
-
-        response: DetectFacesResult = await client.faces.detect(
-            data=image_data, max_detected_faces=10
-        )
-
-        if hasattr(response, "detected_faces") and response.detected_faces:
-            face_count = len(response.detected_faces)
-            for i, face in enumerate(response.detected_faces, 1):
-                print(f"\n   Face {i}:")
-                if hasattr(face, "bounding_box") and face.bounding_box:
-                    bbox = face.bounding_box
-                    print(f"      Bounding Box:")
-                    print(f"         Left: {bbox.left}, Top: {bbox.top}")
-                    print(f"         Width: {bbox.width}, Height: {bbox.height}")
-        else:
-            print("👤 No faces detected in the image")
+poller = await client.content_classifiers.begin_classify_binary(
+    classifier_id="my_classifier",
+    input=document_bytes,
+    content_type="application/pdf"
+)
+result = await poller.result()
 ```
 
-### Build Person Directory and register faces with specific person
+## Face Scenarios
+
+### Scenario: Detect faces for existence and locations
 
 ```python
-endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT") or ""
-key = os.getenv("AZURE_CONTENT_UNDERSTANDING_KEY")
-credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
+"""Detect faces in an image and display results."""
+# Using patch override: direct bytes input
+with open("family.jpg", "rb") as f:
+    image_bytes = f.read()
 
-async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client, credential:
-	# Create a person directory
-	directory_id = "my_person_dir"
-	await client.person_directories.create(
-		person_directory_id=directory_id,
-		resource=PersonDirectory(
-			description="my person directory",
-			tags = {"my_tag": "my_tag_value"}
-		)
-	)
+response = await client.faces.detect(
+    image_bytes, max_detected_faces=10
+)
 
-	# Add a person
-	person_response = await client.person_directories.add_person(
-		person_directory_id=directory_id,
-		body={"tags": {"name": "Demo User 1"}},
-	)
-	person_id = person_response.person_id
-
-	# Add two different faces to the person from Bill's family
-	face_images = [
-		"enrollment_data/Bill/Family1-Dad1.jpg",
-		"enrollment_data/Bill/Family1-Dad2.jpg",
-	]
-
-	for i, face_file in enumerate(face_images):
-		image_base64 = read_image_to_base64(face_file)
-		face_add_response = await client.person_directories.add_face(
-			person_directory_id=directory_id,
-			face_source=FaceSource(data=image_base64),
-			person_id=person_id,
-		)
+if response.detected_faces:
+    face_count = len(response.detected_faces)
+    for i, face in enumerate(response.detected_faces, 1):
+        print(f"\nFace {i}:")
+        if face.bounding_box:
+            bbox = face.bounding_box
+            print(f"   Bounding Box: Left={bbox.left}, Top={bbox.top}, Width={bbox.width}, Height={bbox.height}")
+else:
+    print("No faces detected in the image")
 ```
 
-### Find similar faces against person directory
+### Scenario: Compare two faces
 
 ```python
-# Continued from the last scenario
+"""Compare two faces using patch override for positional parameters."""
+# Using patch override: direct URL and bytes comparison
+face1_url = "https://example.com/face1.jpg"
+with open("face2.jpg", "rb") as f:
+    face2_bytes = f.read()
 
-query_image_base64 = read_image_to_base64(query_image_path)
+result = await client.faces.compare(face1_url, face2_bytes) # Enabled by patch
+print(f"Similarity: {result.similarity}")
+```
+
+### Scenario: Build Person Directory and register faces
+
+```python
+"""Create person directory and add persons with faces."""
+directory_id = "my_person_dir"
+
+# Create directory
+await client.person_directories.create(
+    person_directory_id=directory_id,
+    resource=PersonDirectory(
+        description="My person directory",
+        tags={"purpose": "demo"}
+    )
+)
+
+# Add person
+person_response = await client.person_directories.add_person(
+    person_directory_id=directory_id,
+    body={"tags": {"name": "Demo User 1"}}
+)
+person_id = person_response.person_id
+
+# Add faces using patch override: direct bytes input
+with open("face1.jpg", "rb") as f:
+    face1_bytes = f.read()
+
+
+for face_bytes in face_images:
+    face_response = await client.person_directories.add_face(
+        person_directory_id=directory_id,
+        face1_bytes,  # Using patch override
+        person_id=person_id
+    )
+    # Enabled by patch, simplified from:
+    # face_add_response = await client.person_directories.add_face(
+    #     person_directory_id=directory_id,
+    #     face_source=FaceSource(data=face1_bytes),
+    #     person_id=person_id,
+    # )    
+```
+
+### Scenario: Find similar faces against person directory
+
+```python
+"""Find similar faces using patch override for direct input."""
+with open("query_face.jpg", "rb") as f:
+    query_image_bytes = f.read()
 
 response = await client.person_directories.find_similar_faces(
-	person_directory_id=directory_id,
-	face_source=FaceSource(data=query_image_base64),
-	max_similar_faces=10,
+    person_directory_id=directory_id,
+    query_image_bytes,  # Using patch override, compared to `face_source=FaceSource(data=query_image_bytes),`
+    max_similar_faces=10,
 )
 
-# Display results for Dad3 query
-if hasattr(response, "similar_faces") and response.similar_faces:
-	for i, similar_face in enumerate(response.similar_faces, 1):
-		print(f"   Face {i}:")
-		print(f"      Face ID: {getattr(similar_face, 'face_id', 'N/A')}")
-		print(f"      Confidence: {getattr(similar_face, 'confidence', 'N/A')}")
-		print(f"      Person ID: {getattr(similar_face, 'person_id', 'N/A')}")
-		print()
-else:
-	print("ℹ️  No similar faces found")
+if response.similar_faces:
+    for i, similar_face in enumerate(response.similar_faces, 1):
+        print(f"Face {i}:")
+        print(f"   Face ID: {similar_face.face_id}")
+        print(f"   Confidence: {similar_face.confidence}")
+        print(f"   Person ID: {similar_face.person_id}")
 ```
 
-### Identify person against a Person Directory
+### Scenario: Identify person against a Person Directory
 
 ```python
-# Assume several persons are added in person directory with the name `directory_id` already
- 
-family_image_b64 = read_image_to_base64(family_image_path)
+"""Identify person using patch override for direct input."""
+with open("family_image.jpg", "rb") as f:
+    family_image_bytes = f.read()
 
-# Use identify_person API to identify persons in the image
 response = await client.person_directories.identify_person(
-	person_directory_id=directory_id,
-	face_source=FaceSource(data=family_image_b64),
-	max_person_candidates=5,
+    person_directory_id=directory_id,
+    family_image_bytes,  # Using patch override, simplified from `face_source=FaceSource(data=family_image_b64),`
+    max_person_candidates=5,
 )
 
-# Display identification results
-if hasattr(response, "person_candidates") and response.person_candidates:
-	for i, candidate in enumerate(response.person_candidates, 1):
-		person_id = getattr(candidate, "person_id", "N/A")
-		confidence = getattr(candidate, "confidence", "N/A")
-				
-		print(f"   Person {i}:")
-		print(f"      Person ID: {person_id}")
-		print(f"      Confidence: {confidence}")
+if response.person_candidates:
+    for i, candidate in enumerate(response.person_candidates, 1):
+        print(f"Person {i}:")
+        print(f"   Person ID: {candidate.person_id}")
+        print(f"   Confidence: {candidate.confidence}")
+```
+
+## Management Scenarios
+
+### Scenario: List and manage analyzers
+
+```python
+"""List all analyzers and get specific analyzer details."""
+# List all analyzers
+analyzers = client.content_analyzers.list()
+for analyzer in analyzers:
+    print(f"Analyzer: {analyzer.analyzer_id} - {analyzer.description}")
+
+# Get specific analyzer
+analyzer = await client.content_analyzers.get("my_company_analyzer")
+print(f"Config: {analyzer.config}")
+```
+
+### Scenario: List and manage classifiers
+
+```python
+"""List all classifiers and get specific classifier details."""
+# List all classifiers
+classifiers = client.content_classifiers.list()
+for classifier in classifiers:
+    print(f"Classifier: {classifier.classifier_id} - {classifier.description}")
+
+# Get specific classifier
+classifier = await client.content_classifiers.get("my_classifier")
+print(f"Categories: {list(classifier.categories.keys())}")
+```
+
+### Scenario: List and manage person directories
+
+```python
+"""List all person directories and get specific directory details."""
+# List all directories
+directories = client.person_directories.list()
+for directory in directories:
+    print(f"Directory: {directory.person_directory_id} - {directory.description}")
+
+# Get specific directory
+directory = await client.person_directories.get("my_person_dir")
+print(f"Tags: {directory.tags}")
+
+# List persons in directory
+persons = client.person_directories.list_persons("my_person_dir")
+for person in persons:
+    print(f"Person: {person.person_id} - {person.tags}")
 ```
