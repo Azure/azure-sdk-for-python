@@ -73,7 +73,7 @@ class QueueSharedAccessSignature(SharedAccessSignature):
             Required unless an id is given referencing a stored access policy
             which contains this field. This field must be omitted if it has been
             specified in an associated stored access policy.
-        :type permission: ~azure.storage.queue.QueueSasPermissions or str
+        :type permission: Optional[Union[~azure.storage.queue.QueueSasPermissions, str]]
         :param expiry:
             The time at which the shared access signature becomes invalid.
             Required unless an id is given referencing a stored access policy
@@ -81,26 +81,26 @@ class QueueSharedAccessSignature(SharedAccessSignature):
             been specified in an associated stored access policy. Azure will always
             convert values to UTC. If a date is passed in without timezone info, it
             is assumed to be UTC.
-        :type expiry: ~datetime.datetime or str
+        :type expiry: Optional[Union[~datetime.datetime, str]]
         :param start:
             The time at which the shared access signature becomes valid. If
             omitted, start time for this call is assumed to be the time when the
             storage service receives the request. The provided datetime will always
             be interpreted as UTC.
-        :type start: ~datetime.datetime or str
-        :param str policy_id:
+        :type start: Optional[Union[~datetime.datetime, str]]
+        :param Optional[str] policy_id:
             A unique value up to 64 characters in length that correlates to a
             stored access policy.
-        :param str ip:
+        :param Optional[str] ip:
             Specifies an IP address or a range of IP addresses from which to accept requests.
             If the IP address from which the request originates does not match the IP address
             or address range specified on the SAS token, the request is not authenticated.
             For example, specifying sip=168.1.5.65 or sip=168.1.5.60-168.1.5.70 on the SAS
             restricts the request to those IP addresses.
-        :param str protocol:
+        :param Optional[str] protocol:
             Specifies the protocol permitted for a request made. The default value
             is https,http. See :class:`~azure.storage.common.models.Protocol` for possible values.
-        :param str user_delegation_oid:
+        :param Optional[str] user_delegation_oid:
             Specifies the Entra ID of the user that is authorized to use the resulting SAS URL.
             The resulting SAS URL must be used in conjunction with an Entra ID token that has been
             issued to the user specified in this value.
@@ -177,23 +177,23 @@ def generate_account_sas(
         The storage account name used to generate the shared access signature.
     :param str account_key:
         The account key, also called shared key or access key, to generate the shared access signature.
-    :param ~azure.storage.queue.ResourceTypes resource_types:
+    :param Optional[Union[~azure.storage.queue.ResourceTypes, str]] resource_types:
         Specifies the resource types that are accessible with the account SAS.
     :param permission:
         The permissions associated with the shared access signature. The
         user is restricted to operations allowed by the permissions.
-    :type permission: ~azure.storage.queue.AccountSasPermissions or str
+    :type permission: Optional[Union[~azure.storage.queue.AccountSasPermissions, str]]
     :param expiry:
         The time at which the shared access signature becomes invalid.
         The provided datetime will always be interpreted as UTC.
-    :type expiry: ~datetime.datetime or str
+    :type expiry: Optional[Union[~datetime.datetime, str]]
     :param start:
         The time at which the shared access signature becomes valid. If
         omitted, start time for this call is assumed to be the time when the
         storage service receives the request. The provided datetime will always
         be interpreted as UTC.
-    :type start: ~datetime.datetime or str
-    :param str ip:
+    :type start: Optional[Union[~datetime.datetime, str]]
+    :param Optional[str] ip:
         Specifies an IP address or a range of IP addresses from which to accept requests.
         If the IP address from which the request originates does not match the IP address
         or address range specified on the SAS token, the request is not authenticated.
@@ -247,9 +247,9 @@ def generate_queue_sas(
         The storage account name used to generate the shared access signature.
     :param str queue_name:
         The name of the queue.
-    :param str account_key:
+    :param Optional[str] account_key:
         The account key, also called shared key or access key, to generate the shared access signature.
-    :param ~azure.storage.queue.UserDelegationKey user_delegation_key:
+    :param Optional[~azure.storage.queue.UserDelegationKey] user_delegation_key:
         Instead of an account shared key, the user could pass in a user delegation key.
         A user delegation key can be obtained from the service by authenticating with an AAD identity;
         this can be accomplished by calling :func:`~azure.storage.queue.QueueServiceClient.get_user_delegation_key`.
@@ -260,7 +260,7 @@ def generate_queue_sas(
         Required unless a policy_id is given referencing a stored access policy
         which contains this field. This field must be omitted if it has been
         specified in an associated stored access policy.
-    :type permission: ~azure.storage.queue.QueueSasPermissions or str
+    :type permission: Optional[Union[~azure.storage.queue.QueueSasPermissions, str]]
     :param expiry:
         The time at which the shared access signature becomes invalid.
         Required unless a policy_id is given referencing a stored access policy
@@ -268,18 +268,18 @@ def generate_queue_sas(
         been specified in an associated stored access policy. Azure will always
         convert values to UTC. If a date is passed in without timezone info, it
         is assumed to be UTC.
-    :type expiry: ~datetime.datetime or str
+    :type expiry: Optional[Union[~datetime.datetime, str]]
     :param start:
         The time at which the shared access signature becomes valid. If
         omitted, start time for this call is assumed to be the time when the
         storage service receives the request. The provided datetime will always
         be interpreted as UTC.
-    :type start: ~datetime.datetime or str
-    :param str policy_id:
+    :type start: Optional[Union[~datetime.datetime, str]]
+    :param Optional[str] policy_id:
         A unique value up to 64 characters in length that correlates to a
         stored access policy. To create a stored access policy, use
         :func:`~azure.storage.queue.QueueClient.set_queue_access_policy`.
-    :param str ip:
+    :param Optional[str] ip:
         Specifies an IP address or a range of IP addresses from which to accept requests.
         If the IP address from which the request originates does not match the IP address
         or address range specified on the SAS token, the request is not authenticated.
