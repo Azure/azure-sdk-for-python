@@ -1,0 +1,149 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com//language/authoring/analyze-conversations/projects/Test-data-labels/:train?api-version=2025-05-15-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "198",
+        "Content-Type": "application/json",
+        "Ocp-Apim-Subscription-Key": "Sanitized",
+        "User-Agent": "azsdk-python-ai-language-conversations-authoring/1.0.0b1 Python/3.13.7 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": {
+        "modelLabel": "MyModel",
+        "trainingMode": "standard",
+        "trainingConfigVersion": "2023-04-15",
+        "evaluationOptions": {
+          "kind": "percentage",
+          "testingSplitPercentage": 20,
+          "trainingSplitPercentage": 80
+        }
+      },
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": "*",
+        "apim-request-id": "11cd1a3c-eb62-4a71-8d00-c8b085fcf65e",
+        "Content-Length": "0",
+        "Date": "Thu, 21 Aug 2025 06:12:46 GMT",
+        "operation-location": "https://Sanitized.cognitiveservices.azure.com/language/authoring/analyze-conversations/projects/Test-data-labels/train/jobs/6e596bb0-cedc-472a-b97d-012b97ac6234_638913312000000000?api-version=2025-05-15-preview",
+        "request-id": "11cd1a3c-eb62-4a71-8d00-c8b085fcf65e",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "296",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/authoring/analyze-conversations/projects/Test-data-labels/train/jobs/6e596bb0-cedc-472a-b97d-012b97ac6234_638913312000000000?api-version=2025-05-15-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Ocp-Apim-Subscription-Key": "Sanitized",
+        "User-Agent": "azsdk-python-ai-language-conversations-authoring/1.0.0b1 Python/3.13.7 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": "*",
+        "apim-request-id": "a5ad516d-3d0f-4b59-88c1-cde1ac75f7d6",
+        "Content-Length": "504",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 21 Aug 2025 06:12:47 GMT",
+        "request-id": "a5ad516d-3d0f-4b59-88c1-cde1ac75f7d6",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "111",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": {
+        "result": {
+          "modelLabel": "MyModel",
+          "trainingConfigVersion": "2023-04-15",
+          "trainingMode": "standard",
+          "dataGenerationStatus": {
+            "percentComplete": 0,
+            "status": "notStarted"
+          },
+          "trainingStatus": {
+            "percentComplete": 0,
+            "status": "notStarted"
+          },
+          "evaluationStatus": {
+            "percentComplete": 0,
+            "status": "notStarted"
+          }
+        },
+        "jobId": "6e596bb0-cedc-472a-b97d-012b97ac6234_638913312000000000",
+        "createdDateTime": "2025-08-21T06:12:47Z",
+        "lastUpdatedDateTime": "2025-08-21T06:12:47Z",
+        "expirationDateTime": "2025-08-28T06:12:47Z",
+        "status": "running"
+      }
+    },
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/authoring/analyze-conversations/projects/Test-data-labels/train/jobs/6e596bb0-cedc-472a-b97d-012b97ac6234_638913312000000000?api-version=2025-05-15-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Ocp-Apim-Subscription-Key": "Sanitized",
+        "User-Agent": "azsdk-python-ai-language-conversations-authoring/1.0.0b1 Python/3.13.7 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": "*",
+        "apim-request-id": "1cc5099c-a3f0-4c3c-ad46-2d1d2a537623",
+        "Content-Length": "916",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 21 Aug 2025 06:13:17 GMT",
+        "request-id": "1cc5099c-a3f0-4c3c-ad46-2d1d2a537623",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "24",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": {
+        "result": {
+          "modelLabel": "MyModel",
+          "trainingConfigVersion": "2023-04-15",
+          "trainingMode": "standard",
+          "dataGenerationStatus": {
+            "percentComplete": 0,
+            "status": "notStarted"
+          },
+          "trainingStatus": {
+            "percentComplete": 100,
+            "startDateTime": "2025-08-21T06:12:48.2955908Z",
+            "endDateTime": "2025-08-21T06:12:50.3723921Z",
+            "status": "succeeded"
+          },
+          "evaluationStatus": {
+            "percentComplete": 0,
+            "status": "notStarted"
+          }
+        },
+        "jobId": "6e596bb0-cedc-472a-b97d-012b97ac6234_638913312000000000",
+        "createdDateTime": "2025-08-21T06:12:47Z",
+        "lastUpdatedDateTime": "2025-08-21T06:12:52Z",
+        "expirationDateTime": "2025-08-28T06:12:47Z",
+        "status": "succeeded",
+        "warnings": [
+          {
+            "code": "Warning",
+            "message": "Intent `Buy` is tagged in `3` training dataset examples, it is recommended to have `10` tags for better model quality."
+          },
+          {
+            "code": "Warning",
+            "message": "Entity `product` is tagged in `3` training dataset examples, it is recommended to have `10` tags for better model quality."
+          }
+        ]
+      }
+    }
+  ],
+  "Variables": {}
+}
