@@ -1,0 +1,44 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/authoring/analyze-conversations/projects/EmailApp?api-version=2025-05-15-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Ocp-Apim-Subscription-Key": "Sanitized",
+        "User-Agent": "azsdk-python-ai-language-conversations-authoring/1.0.0b1 Python/3.13.7 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": "*",
+        "apim-request-id": "93f864a0-a845-4217-afc2-f05608c303cd",
+        "Content-Length": "287",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 21 Aug 2025 05:28:55 GMT",
+        "request-id": "93f864a0-a845-4217-afc2-f05608c303cd",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "13",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": {
+        "createdDateTime": "2025-06-18T06:20:35Z",
+        "lastModifiedDateTime": "2025-08-19T07:26:18Z",
+        "projectKind": "Conversation",
+        "settings": {
+          "confidenceThreshold": 0.7,
+          "normalizeCasing": false,
+          "augmentDiacritics": false
+        },
+        "projectName": "EmailApp",
+        "multilingual": true,
+        "description": "",
+        "language": "en-us"
+      }
+    }
+  ],
+  "Variables": {}
+}
