@@ -51,6 +51,7 @@ from ._models import (
     ConversationExportedEntity,
     ConversationExportedUtterance,
     ExportedUtteranceEntityLabel,
+    ResourceMetadata,
 )
 from ._enums import ExportedProjectFormat
 
@@ -344,4 +345,5 @@ __all__ = [
     "ConversationExportedEntity",
     "ConversationExportedUtterance",
     "ExportedUtteranceEntityLabel",
+    "ResourceMetadata",
 ]
