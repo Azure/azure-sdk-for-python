@@ -9,7 +9,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import json
-from typing import Any, Callable, Dict, IO, Mapping, Optional, TypeVar, Union, cast, overload, Generic
+from typing import Any, Callable, Dict, IO, Mapping, Optional, TypeVar, Union, cast, overload, Generic, TYPE_CHECKING
 from collections.abc import MutableMapping # pylint:disable=import-error
 from urllib.parse import urlparse
 from azure.core.exceptions import (
@@ -21,11 +21,16 @@ from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
+from azure.core.credentials import AzureKeyCredential
 from azure.core.async_paging import AsyncItemPaged
 from ._client import ConversationAnalysisClient as AnalysisClientGenerated
 from ..models import AnalyzeConversationOperationInput, AnalyzeConversationOperationState, ConversationActions
 
 from .._validation import api_version_validation
+
+if TYPE_CHECKING:
+    from azure.core.credentials_async import AsyncTokenCredential
+
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -120,6 +125,28 @@ class AnalyzeConversationAsyncLROPoller(AsyncLROPoller[PollingReturnType_co], Ge
 
 
 class ConversationAnalysisClient(AnalysisClientGenerated):
+
+    def __init__(
+        self,
+        endpoint: str,
+        credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
+        *,
+        api_version: Optional[str] = None,
+        **kwargs: Any,
+    ) -> None:
+        """Create a ConversationAnalysisClient.
+        :param endpoint: Supported Cognitive Services endpoint.
+        :type endpoint: str
+        :param credential: Key or token credential.
+        :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.TokenCredential
+        :keyword api_version: The API version to use for this operation. Default value is
+     "2025-05-15-preview". Note that overriding this default value may result in unsupported
+     behavior.
+        :paramtype api_version: str`
+        """
+        if api_version is not None:
+            kwargs["api_version"] = api_version
+        super().__init__(endpoint=endpoint, credential=credential, **kwargs)
 
     @overload
     async def begin_analyze_conversation_job(
