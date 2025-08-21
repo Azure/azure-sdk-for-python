@@ -59,11 +59,13 @@ from azure.ai.agents.models import (
     RunStepBingCustomSearchToolCall,
     RunStepBingGroundingToolCall,
     RunStepBrowserAutomationToolCall,
+    RunStepCodeInterpreterToolCall,
     RunStepConnectedAgentToolCall,
     RunStepDeepResearchToolCall,
     RunStepDeltaAzureFunctionToolCall,
     RunStepDeltaAzureAISearchToolCall,
     RunStepDeltaChunk,
+    RunStepDeltaCodeInterpreterToolCall,
     RunStepDeltaCustomBingGroundingToolCall,
     RunStepDeltaBingGroundingToolCall,
     RunStepDeltaFileSearchToolCall,
@@ -3602,6 +3604,50 @@ class TestAgentClient(TestAgentClientBase):
                 instructions="You are helpful agent",
                 prompt="Hello, summarize the key points of the first document in the list.",
                 expected_delta_class=RunStepDeltaSharepointToolCall,
+            )
+
+    def _get_code_interpreter_tool(self, **kwargs):
+        """Helper method to get the code interpreter."""
+        ds = [
+            VectorStoreDataSource(
+                asset_identifier=kwargs["azure_ai_agents_tests_data_path"],
+                asset_type=VectorStoreDataSourceAssetType.URI_ASSET,
+            )
+        ]
+        return CodeInterpreterTool(data_sources=ds)
+
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_code_interpreter_tool(self, **kwargs):
+        """Test file search tool."""
+        with self.create_client(**kwargs, by_endpoint=True) as client:
+            model_name = "gpt-4o"
+            code_iterpreter = self._get_code_interpreter_tool(**kwargs)
+
+            self._do_test_tool(
+                client=client,
+                model_name=model_name,
+                tool_to_test=code_iterpreter,
+                instructions="You are helpful agent",
+                prompt="What feature does Smart Eyewear offer?",
+                expected_class=RunStepCodeInterpreterToolCall
+            )
+
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_code_interpreter_tool_streaming(self, **kwargs):
+        """Test file search tool."""
+        with self.create_client(**kwargs, by_endpoint=True) as client:
+            model_name = "gpt-4o"
+            code_iterpreter = self._get_code_interpreter_tool(**kwargs)
+
+            self._do_test_tool_streaming(
+                client=client,
+                model_name=model_name,
+                tool_to_test=code_iterpreter,
+                instructions="You are helpful agent",
+                prompt="What feature does Smart Eyewear offer?",
+                expected_delta_class=RunStepDeltaCodeInterpreterToolCall,
             )
 
     def _do_test_tool(

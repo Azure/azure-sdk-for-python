@@ -12,6 +12,7 @@
 - Add `RunStepDeltaCustomBingGroundingToolCall`, describing `BingCustomSearchTool` updates in streaming scenario.
 - Add `RunStepDeltaMicrosoftFabricToolCall`, describing `FabricTool` updates in streaming scenario.
 - Add `RunStepDeltaSharepointToolCall`, describing `SharepointTool` updates in streaming scenario.
+- Improve code interpreter tool to take the list of `VectorStoreDataSource` as an input for enterprise file search.
 
 ### Bugs Fixed
 
