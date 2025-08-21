@@ -2,4 +2,4 @@ aiohttp==3.8.3
 python-dateutil==2.8.2
 -e ../../core/azure-core
 -e ../../identity/azure-identity
--e ../../../tools/azure-sdk-tools
+-e ../../../eng/tools/azure-sdk-tools

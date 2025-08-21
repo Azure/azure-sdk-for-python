@@ -20,7 +20,7 @@ steps:
     versionSpec: 3.9
 
 - script: |
-    python3 -m pip install -e $(Build.SourcesDirectory)/tools/azure-sdk-tools[ghtools]
+    python3 -m pip install -e $(Build.SourcesDirectory)/eng/tools/azure-sdk-tools[ghtools]
   displayName: 'Install Azure SDK tools'
 
 - script: python3 -m packaging_tools.update_pr -v --pr-number $(System.PullRequest.PullRequestNumber) --repo $(Build.Repository.Name)
