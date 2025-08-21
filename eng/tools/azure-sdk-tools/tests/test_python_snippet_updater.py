@@ -1,5 +1,8 @@
 import os
 import pytest
+import shutil
+from tempfile import mkdtemp
+
 from ci_tools.snippet_update.python_snippet_updater import (
     get_snippet,
     update_snippet,
@@ -7,9 +10,23 @@ from ci_tools.snippet_update.python_snippet_updater import (
     check_not_up_to_date,
 )
 
+scenario = os.path.join(os.path.dirname(__file__), "integration", "scenarios", "snippet-updater")
+
+def create_temp_directory_from_template(input_directory: str) -> str:
+    """
+    Create a temporary directory from a template directory.
+    Args:
+        input_directory (str): The path to the input directory to copy.
+    Returns:
+        str: The path to the newly created temporary directory.
+    """
+    temp_dir = mkdtemp()
+    shutil.copytree(input_directory, temp_dir, dirs_exist_ok=True)
+    return temp_dir
+
 
 def test_get_snippet():
-    folder = os.path.dirname(os.path.abspath(__file__))
+    folder = scenario
     file = os.path.join(folder, "example_async.py")
     get_snippet(file)
     snippets = check_snippets().keys()
@@ -19,7 +36,7 @@ def test_get_snippet():
 
 
 def test_update_snippet():
-    folder = os.path.dirname(os.path.abspath(__file__))
+    folder = create_temp_directory_from_template(scenario)
     file = os.path.join(folder, "example_async.py")
     get_snippet(file)
     file_1 = os.path.join(folder, "README.md")
@@ -27,7 +44,7 @@ def test_update_snippet():
 
 
 def test_missing_snippet():
-    folder = os.path.dirname(os.path.abspath(__file__))
+    folder = create_temp_directory_from_template(scenario)
     file = os.path.join(folder, "example_async.py")
     get_snippet(file)
     file_1 = os.path.join(folder, "README_missing_snippet.md")
@@ -36,7 +53,7 @@ def test_missing_snippet():
 
 
 def test_out_of_sync():
-    folder = os.path.dirname(os.path.abspath(__file__))
+    folder = create_temp_directory_from_template(scenario)
     file = os.path.join(folder, "example_async.py")
     get_snippet(file)
     file_1 = os.path.join(folder, "README_out_of_sync.md")
