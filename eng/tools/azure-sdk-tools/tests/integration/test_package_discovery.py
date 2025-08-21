@@ -4,7 +4,7 @@ from ci_tools.parsing import ParsedSetup
 from ci_tools.functions import discover_targeted_packages
 
 
-repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", ".."))
+repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", ".."))
 core_service_root = os.path.join(repo_root, "sdk", "core")
 storage_service_root = os.path.join(repo_root, "sdk", "storage")
 
