@@ -1,6 +1,6 @@
 # Release History
 
-## 2.0.0b1 (2025-08-20)
+## 2.0.0b1 (2025-08-21)
 
 ### Features Added
 
@@ -8,6 +8,7 @@
   - Model `FleetProperties` added property `capacity_type`
   - Model `FleetProperties` added property `zone_allocation_policy`
   - Enum `ManagedServiceIdentityType` added member `SYSTEM_ASSIGNED_USER_ASSIGNED`
+  - Model `VirtualMachineScaleSet` added property `name`
   - Added enum `CapacityType`
   - Added enum `FleetMode`
   - Added enum `VMOperationStatus`
@@ -15,8 +16,8 @@
   - Added model `ZoneAllocationPolicy`
   - Added enum `ZoneDistributionStrategy`
   - Added model `ZonePreference`
-  - Model `FleetsOperations` added method `begin_cancel`
-  - Model `FleetsOperations` added method `list_virtual_machines`
+  - Operation group `FleetsOperations` added method `begin_cancel`
+  - Operation group `FleetsOperations` added method `list_virtual_machines`
 
 ### Breaking Changes
 

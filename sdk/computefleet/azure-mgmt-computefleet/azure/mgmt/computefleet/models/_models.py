@@ -2832,6 +2832,8 @@ class VirtualHardDisk(_Model):
 class VirtualMachine(_Model):
     """An instant Fleet's virtual machine.
 
+    :ivar name: The name of the virtual machine. Required.
+    :vartype name: str
     :ivar id: The compute RP resource id of the virtual machine.
      subscriptions/{subId}/resourceGroups/{rgName}/providers/Microsoft.Compute/virtualMachines/{vmName}.
      Required.
@@ -2846,6 +2848,8 @@ class VirtualMachine(_Model):
     :vartype error: ~azure.mgmt.computefleet.models.ApiError
     """
 
+    name: str = rest_field(visibility=["read"])
+    """The name of the virtual machine. Required."""
     id: str = rest_field(visibility=["read"])
     """The compute RP resource id of the virtual machine.
      subscriptions/{subId}/resourceGroups/{rgName}/providers/Microsoft.Compute/virtualMachines/{vmName}.
@@ -2863,6 +2867,8 @@ class VirtualMachine(_Model):
 class VirtualMachineScaleSet(_Model):
     """An AzureFleet's virtualMachineScaleSet.
 
+    :ivar name: The name of the virtualMachineScaleSet. Required.
+    :vartype name: str
     :ivar id: The compute RP resource id of the virtualMachineScaleSet
      "subscriptions/{subId}/resourceGroups/{rgName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmssName}".
      Required.
@@ -2877,6 +2883,8 @@ class VirtualMachineScaleSet(_Model):
     :vartype error: ~azure.mgmt.computefleet.models.ApiError
     """
 
+    name: str = rest_field(visibility=["read"])
+    """The name of the virtualMachineScaleSet. Required."""
     id: str = rest_field(visibility=["read"])
     """The compute RP resource id of the virtualMachineScaleSet
      \"subscriptions/{subId}/resourceGroups/{rgName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmssName}\".
