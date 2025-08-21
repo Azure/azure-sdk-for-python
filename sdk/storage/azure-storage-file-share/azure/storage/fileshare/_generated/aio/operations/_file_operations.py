@@ -189,7 +189,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         _params = kwargs.pop("params", {}) or {}
 
         file_type_constant: Literal["file"] = kwargs.pop("file_type_constant", _headers.pop("x-ms-type", "file"))
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/octet-stream"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _file_content_type = None
