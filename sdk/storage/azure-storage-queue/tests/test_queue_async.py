@@ -1512,7 +1512,7 @@ class TestAsyncStorageQueue(AsyncStorageRecordedTestCase):
             user_delegation_oid=user_delegation_oid,
         )
 
-        queue_client = QueueClient.from_queue_url(queue_url=queue.url, credential=queue_token)
+        queue_client = QueueClient.from_queue_url(queue_url=f"{queue.url}?{queue_token}", credential=token_credential)
         queue_msg = await queue_client.send_message(message)
         assert queue_msg is not None
 
