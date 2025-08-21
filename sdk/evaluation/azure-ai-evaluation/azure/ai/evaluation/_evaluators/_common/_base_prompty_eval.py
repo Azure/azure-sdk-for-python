@@ -108,6 +108,7 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
                     from promptflow.core._flow import (  # type: ignore
                         AsyncPrompty as _PFAsyncPrompty_import,
                     )
+
                     # assign to module-level for reuse
                     globals()["_PFAsyncPrompty"] = _PFAsyncPrompty_import
                 except Exception:  # pragma: no cover - PF not available

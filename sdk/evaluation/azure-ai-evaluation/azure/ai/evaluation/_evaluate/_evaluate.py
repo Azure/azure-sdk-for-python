@@ -1027,9 +1027,7 @@ def _preprocess_data(
     batch_run_client: BatchClient
     batch_run_data: Union[str, os.PathLike, pd.DataFrame] = data
 
-    def get_client_type(evaluate_kwargs: Dict[str, Any]) -> Literal[
-        "run_submitter", "pf_client", "code_client"
-    ]:
+    def get_client_type(evaluate_kwargs: Dict[str, Any]) -> Literal["run_submitter", "pf_client", "code_client"]:
         """Pick batch client from kwargs: _use_run_submitter_client and _use_pf_client."""
         _use_run = cast(Optional[bool], evaluate_kwargs.pop("_use_run_submitter_client", None))
         _use_pf = cast(Optional[bool], evaluate_kwargs.pop("_use_pf_client", None))
@@ -1039,10 +1037,7 @@ def _preprocess_data(
 
         if _use_run and _use_pf:
             raise EvaluationException(
-                message=(
-                    "Only one of _use_pf_client and _use_run_submitter_client "
-                    "should be set to True."
-                ),
+                message=("Only one of _use_pf_client and _use_run_submitter_client " "should be set to True."),
                 target=ErrorTarget.EVALUATE,
                 category=ErrorCategory.INVALID_VALUE,
                 blame=ErrorBlame.USER_ERROR,
