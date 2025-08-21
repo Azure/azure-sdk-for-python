@@ -54,9 +54,11 @@ class ConversationAuthoringProjectClient(AuthoringProjectClientGenerated):
         self,
         endpoint: str,
         credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
+        *,
         project_name: str,
         **kwargs: Any
     ) -> None:
+        self._project_name = project_name
         _endpoint = "{Endpoint}/language"
         self._config = ConversationAuthoringProjectClientConfiguration(
             endpoint=endpoint, credential=credential, project_name=project_name, **kwargs
