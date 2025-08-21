@@ -105,7 +105,7 @@ client to the test.
 
 Test suites that haven't fully migrated to using a `test-resources.json` file for test resource deployment might use
 resource preparers, such as
-[ResourceGroupPreparer](https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/resource_testcase.py).
+[ResourceGroupPreparer](https://github.com/Azure/azure-sdk-for-python/blob/main/eng/tools/azure-sdk-tools/devtools_testutils/resource_testcase.py).
 Resource preparers need a management client to function, so test classes that use them will need to inherit from
 [AzureMgmtRecordedTestCase][mgmt_recorded_test_case] instead of AzureRecordedTestCase.
 
@@ -369,20 +369,20 @@ Alternatively, you can delete the installed tool and re-run your tests to automa
 
 <!-- Links -->
 
-[custom_default_matcher]: https://github.com/Azure/azure-sdk-for-python/blob/497f5f3435162c4f2086d1429fc1bba4f31a4354/tools/azure-sdk-tools/devtools_testutils/sanitizers.py#L85
+[custom_default_matcher]: https://github.com/Azure/azure-sdk-for-python/blob/497f5f3435162c4f2086d1429fc1bba4f31a4354/eng/tools/azure-sdk-tools/devtools_testutils/sanitizers.py#L85
 [detailed_docs]: https://github.com/Azure/azure-sdk-tools/tree/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy/README.md
-[env_var_loader]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/envvariable_loader.py
+[env_var_loader]: https://github.com/Azure/azure-sdk-for-python/blob/main/eng/tools/azure-sdk-tools/devtools_testutils/envvariable_loader.py
 [gitattributes]: https://git-scm.com/docs/gitattributes
-[mgmt_recorded_test_case]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/mgmt_recorded_testcase.py
+[mgmt_recorded_test_case]: https://github.com/Azure/azure-sdk-for-python/blob/main/eng/tools/azure-sdk-tools/devtools_testutils/mgmt_recorded_testcase.py
 [parametrize]: https://docs.pytest.org/latest/example/parametrize.html
 [parametrize_class]: https://github.com/Azure/azure-sdk-for-python/blob/aa607b3b8c3e646928375ebcc6339d68e4e90a49/sdk/keyvault/azure-keyvault-keys/tests/_test_case.py#L61
 [parametrize_example]: https://github.com/Azure/azure-sdk-for-python/blob/aa607b3b8c3e646928375ebcc6339d68e4e90a49/sdk/keyvault/azure-keyvault-keys/tests/test_key_client.py#L190
 [pipelines_ci]: https://github.com/Azure/azure-sdk-for-python/blob/5ba894966ed6b0e1ee8d854871f8c2da36a73d79/sdk/eventgrid/ci.yml#L30
 [pipelines_live]: https://github.com/Azure/azure-sdk-for-python/blob/e2b5852deaef04752c1323d2ab0958f83b98858f/sdk/textanalytics/tests.yml#L26-L27
-[playback_request_failure]: https://github.com/Azure/azure-sdk-for-python/blob/e23d9a6b1edcc1127ded40b9993029495b4ad08c/tools/azure-sdk-tools/devtools_testutils/proxy_testcase.py#L108
-[py_sanitizers]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/sanitizers.py
+[playback_request_failure]: https://github.com/Azure/azure-sdk-for-python/blob/e23d9a6b1edcc1127ded40b9993029495b4ad08c/eng/tools/azure-sdk-tools/devtools_testutils/proxy_testcase.py#L108
+[py_sanitizers]: https://github.com/Azure/azure-sdk-for-python/blob/main/eng/tools/azure-sdk-tools/devtools_testutils/sanitizers.py
 [pytest_collection]: https://docs.pytest.org/latest/goodpractices.html#test-discovery
 [pytest_commands]: https://docs.pytest.org/latest/usage.html
-[record_request_failure]: https://github.com/Azure/azure-sdk-for-python/blob/e23d9a6b1edcc1127ded40b9993029495b4ad08c/tools/azure-sdk-tools/devtools_testutils/proxy_testcase.py#L97
+[record_request_failure]: https://github.com/Azure/azure-sdk-for-python/blob/e23d9a6b1edcc1127ded40b9993029495b4ad08c/eng/tools/azure-sdk-tools/devtools_testutils/proxy_testcase.py#L97
 [test_proxy_sanitizers]: https://github.com/Azure/azure-sdk-tools/blob/57382d5dc00b10a2f9cfd597293eeee0c2dbd8fd/tools/test-proxy/Azure.Sdk.Tools.TestProxy/Common/SanitizerDictionary.cs#L65
 [wrong_exception]: https://github.com/Azure/azure-sdk-tools/issues/2907

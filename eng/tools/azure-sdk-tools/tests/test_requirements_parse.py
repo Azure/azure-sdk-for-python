@@ -6,7 +6,7 @@ from ci_tools.parsing import ParsedSetup
 
 integration_folder = os.path.join(os.path.dirname(__file__), "integration")
 sample_dev_reqs_folder = os.path.join(integration_folder, "scenarios", "dev_requirement_samples")
-repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
+repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", ".."))
 core_location = os.path.join(repo_root, "sdk", "core", "azure-core")
 
 
