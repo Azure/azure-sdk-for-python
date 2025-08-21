@@ -952,4 +952,8 @@ def try_ppaf_failover_threshold(
             # If the PPAF threshold is reached, we reset the count and retry to the next region
             global_endpoint_manager.ppaf_thresholds_tracker.clear_pk_failures(pk_range_wrapper)
             partition_level_info = global_endpoint_manager.partition_range_to_failover_info[pk_range_wrapper]
-            partition_level_info.unavailable_regional_endpoints.add(request.location_endpoint_to_route)
+            location = global_endpoint_manager.location_cache.get_location_from_endpoint(
+                str(request.location_endpoint_to_route))
+            regional_context = (global_endpoint_manager.location_cache.
+                                account_read_regional_routing_contexts_by_location.get(location).primary_endpoint)
+            partition_level_info.unavailable_regional_endpoints[location] = regional_context

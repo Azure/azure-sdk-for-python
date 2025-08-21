@@ -16,7 +16,7 @@ from test_per_partition_circuit_breaker_mm import (REGION_1, REGION_2, PK_VALUE,
 
 def create_failover_errors():
     errors = []
-    error_codes = [403]
+    error_codes = [403, 503]
     for error_code in error_codes:
         errors.append(CosmosHttpResponseError(
             status_code=error_code,
@@ -26,7 +26,7 @@ def create_failover_errors():
 
 def create_threshold_errors():
     errors = []
-    error_codes = [408, 500, 502, 503, 504]
+    error_codes = [408, 500, 502, 504]
     for error_code in error_codes:
         errors.append(CosmosHttpResponseError(
             status_code=error_code,
@@ -43,12 +43,13 @@ class TestPerPartitionAutomaticFailover:
     TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
     TEST_CONTAINER_MULTI_PARTITION_ID = test_config.TestConfig.TEST_MULTI_PARTITION_CONTAINER_ID
 
-    def setup_method_with_custom_transport(self, custom_transport, default_endpoint=host, **kwargs):
+    def setup_method_with_custom_transport(self, custom_transport, default_endpoint=host, read_first=False, **kwargs):
+        regions = [REGION_2, REGION_1] if read_first else [REGION_1, REGION_2]
         container_id = kwargs.pop("container_id", None)
         if not container_id:
             container_id = self.TEST_CONTAINER_MULTI_PARTITION_ID
         client = CosmosClient(default_endpoint, self.master_key, consistency_level="Session",
-                              preferred_locations=[REGION_1, REGION_2],
+                              preferred_locations=regions,
                               transport=custom_transport, **kwargs)
         db = client.get_database_client(self.TEST_DATABASE_ID)
         container = db.get_container_client(container_id)
@@ -93,7 +94,7 @@ class TestPerPartitionAutomaticFailover:
         fault_injection_container.create_item(body={'id': doc_success_id, 'pk': PK_VALUE,
                                                     'name': 'sample document', 'key': 'value'})
         pk_range_wrapper = list(global_endpoint_manager.partition_range_to_failover_info.keys())[0]
-        initial_endpoint = global_endpoint_manager.partition_range_to_failover_info[pk_range_wrapper].current_regional_endpoint
+        initial_region = global_endpoint_manager.partition_range_to_failover_info[pk_range_wrapper].current_region
 
         # Based on our configuration, we should have had one error followed by a success - marking only the previous endpoint as unavailable
         perform_write_operation(
@@ -105,8 +106,8 @@ class TestPerPartitionAutomaticFailover:
         partition_info = global_endpoint_manager.partition_range_to_failover_info[pk_range_wrapper]
         # Verify that the partition is marked as unavailable, and that the current regional endpoint is not the same
         assert len(partition_info.unavailable_regional_endpoints) == 1
-        assert initial_endpoint in partition_info.unavailable_regional_endpoints
-        assert initial_endpoint != partition_info.current_regional_endpoint # west us 3 != west us
+        assert initial_region in partition_info.unavailable_regional_endpoints
+        assert initial_region != partition_info.current_region # west us 3 != west us
 
         # Now we run another request to see how the cache gets updated
         perform_write_operation(
@@ -119,8 +120,8 @@ class TestPerPartitionAutomaticFailover:
         # Verify that the cache is empty, since the request going to the second regional endpoint failed
         # Once we reach the point of all available regions being marked as unavailable, the cache is cleared
         assert len(partition_info.unavailable_regional_endpoints) == 0
-        assert initial_endpoint not in partition_info.unavailable_regional_endpoints
-        assert partition_info.current_regional_endpoint is None
+        assert initial_region not in partition_info.unavailable_regional_endpoints
+        assert partition_info.current_region is None
 
 
     @pytest.mark.parametrize("write_operation, error", write_operations_and_errors(create_threshold_errors()))
@@ -138,8 +139,7 @@ class TestPerPartitionAutomaticFailover:
         fault_injection_container.create_item(body={'id': doc_success_id, 'pk': PK_VALUE,
                                                     'name': 'sample document', 'key': 'value'})
         pk_range_wrapper = list(global_endpoint_manager.partition_range_to_failover_info.keys())[0]
-        initial_endpoint = global_endpoint_manager.partition_range_to_failover_info[pk_range_wrapper].current_regional_endpoint
-
+        initial_region = global_endpoint_manager.partition_range_to_failover_info[pk_range_wrapper].current_region
 
         is_503 = hasattr(error, 'status_code') and error.status_code == 503
         # Since 503 errors are retried by default, we each request counts as two failures
@@ -172,8 +172,8 @@ class TestPerPartitionAutomaticFailover:
         partition_info = global_endpoint_manager.partition_range_to_failover_info[pk_range_wrapper]
         # Verify that the partition is marked as unavailable, and that the current regional endpoint is not the same
         assert len(partition_info.unavailable_regional_endpoints) == 1
-        assert initial_endpoint in partition_info.unavailable_regional_endpoints
-        assert initial_endpoint != partition_info.current_regional_endpoint # west us 3 != west us
+        assert initial_region in partition_info.unavailable_regional_endpoints
+        assert initial_region != partition_info.current_region # west us 3 != west us
 
         # Since we are failing every request, even though we retried to the next region, that retry should have failed as well
         # This means we should have one extra failure - verify that the value makes sense
@@ -185,9 +185,27 @@ class TestPerPartitionAutomaticFailover:
         # TODO: finish this test
         return
 
-    @pytest.mark.parametrize("write_operation, error", write_operations_and_errors(create_failover_errors()))
-    def test_ppaf_invalid_configs(self, write_operation, error):
-        # TODO: finish this test
+    def test_ppaf_session_unavailable_retry(self):
+        # For this test, the main requirement is to have 3 regions total in the account: A, B and C.
+        # Writes go to region A, and reads go to region C. Preferred locations are set to C, B, A in order.
+        # This test depends on the fact that the chosen region for the failover is region B and not region C.
+        # We will inject a 403.3 error on region A, marking it as unavailable with PPAF. We verify the retry goes
+        # to region B next. Next we inject a 404.1002 to a read in the same partition, which should retry to region B
+        # as well since A was marked as unavailable in the context of PPAF.
+
+        # For this test, we have two regions in the account West US 3 (write) and West US (read).
+        # Writes go to West US 3, and reads go to region C - preferred locations are set to that order.
+        # This test depends on the fact that the chosen region for the failover is region B and not region C.
+        # We will inject a 403.3 error on region A, marking it as unavailable with PPAF. We verify the retry goes
+        # to region B next. Next we inject a 404.1002 to a read in the same partition, which should retry to region B
+        # as well since A was marked as unavailable in the context of PPAF.
+
+        # Account config has 2 regions: West US 3 (A) and West US (B).
+        error_lambda = lambda r: FaultInjectionTransport.error_after_delay(0, error)
+        setup, doc_fail_id, doc_success_id, custom_setup, custom_transport, predicate = self.setup_info(error_lambda, read_first=True)
+        container = setup['col']
+        fault_injection_container = custom_setup['col']
+        global_endpoint_manager = fault_injection_container.client_connection._global_endpoint_manager
         return
 
 

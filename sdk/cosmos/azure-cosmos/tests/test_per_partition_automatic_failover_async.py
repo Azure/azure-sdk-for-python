@@ -86,7 +86,7 @@ class TestPerPartitionAutomaticFailoverAsync:
         await fault_injection_container.create_item(body={'id': doc_success_id, 'pk': PK_VALUE,
                                                     'name': 'sample document', 'key': 'value'})
         pk_range_wrapper = list(global_endpoint_manager.partition_range_to_failover_info.keys())[0]
-        initial_endpoint = global_endpoint_manager.partition_range_to_failover_info[pk_range_wrapper].current_regional_endpoint
+        initial_region = global_endpoint_manager.partition_range_to_failover_info[pk_range_wrapper].current_region
 
         # Based on our configuration, we should have had one error followed by a success - marking only the previous endpoint as unavailable
         await perform_write_operation(
@@ -98,8 +98,8 @@ class TestPerPartitionAutomaticFailoverAsync:
         partition_info = global_endpoint_manager.partition_range_to_failover_info[pk_range_wrapper]
         # Verify that the partition is marked as unavailable, and that the current regional endpoint is not the same
         assert len(partition_info.unavailable_regional_endpoints) == 1
-        assert initial_endpoint in partition_info.unavailable_regional_endpoints
-        assert initial_endpoint != partition_info.current_regional_endpoint # west us 3 != west us
+        assert initial_region in partition_info.unavailable_regional_endpoints
+        assert initial_region != partition_info.current_region # west us 3 != west us
 
         # Now we run another request to see how the cache gets updated
         await perform_write_operation(
@@ -112,8 +112,8 @@ class TestPerPartitionAutomaticFailoverAsync:
         # Verify that the cache is empty, since the request going to the second regional endpoint failed
         # Once we reach the point of all available regions being marked as unavailable, the cache is cleared
         assert len(partition_info.unavailable_regional_endpoints) == 0
-        assert initial_endpoint not in partition_info.unavailable_regional_endpoints
-        assert partition_info.current_regional_endpoint is None
+        assert initial_region not in partition_info.unavailable_regional_endpoints
+        assert partition_info.current_region is None
 
     @pytest.mark.parametrize("write_operation, error", write_operations_and_errors(create_threshold_errors()))
     async def test_ppaf_partition_thresholds_and_routing_async(self, write_operation, error):
@@ -129,7 +129,7 @@ class TestPerPartitionAutomaticFailoverAsync:
         await fault_injection_container.create_item(body={'id': doc_success_id, 'pk': PK_VALUE,
                                                     'name': 'sample document', 'key': 'value'})
         pk_range_wrapper = list(global_endpoint_manager.partition_range_to_failover_info.keys())[0]
-        initial_endpoint = global_endpoint_manager.partition_range_to_failover_info[pk_range_wrapper].current_regional_endpoint
+        initial_region = global_endpoint_manager.partition_range_to_failover_info[pk_range_wrapper].current_region
 
         is_503 = hasattr(error, 'status_code') and error.status_code == 503
         # Since 503 errors are retried by default, we each request counts as two failures
@@ -163,8 +163,8 @@ class TestPerPartitionAutomaticFailoverAsync:
         partition_info = global_endpoint_manager.partition_range_to_failover_info[pk_range_wrapper]
         # Verify that the partition is marked as unavailable, and that the current regional endpoint is not the same
         assert len(partition_info.unavailable_regional_endpoints) == 1
-        assert initial_endpoint in partition_info.unavailable_regional_endpoints
-        assert initial_endpoint != partition_info.current_regional_endpoint # west us 3 != west us
+        assert initial_region in partition_info.unavailable_regional_endpoints
+        assert initial_region != partition_info.current_region # west us 3 != west us
 
         # Since we are failing every request, even though we retried to the next region, that retry should have failed as well
         # This means we should have one extra failure - verify that the value makes sense

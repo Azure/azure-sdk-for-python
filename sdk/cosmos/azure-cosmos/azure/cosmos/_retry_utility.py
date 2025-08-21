@@ -208,8 +208,6 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
                     retry_policy.container_rid = cached_container["_rid"]
                     request.headers[retry_policy._intended_headers] = retry_policy.container_rid
             elif e.status_code == StatusCodes.SERVICE_UNAVAILABLE:
-                if args and global_endpoint_manager.is_per_partition_automatic_failover_applicable(args[0]):
-                    global_endpoint_manager.record_failure(args[0], pk_range_wrapper)
                 retry_policy = service_unavailable_retry_policy
             elif e.status_code == StatusCodes.REQUEST_TIMEOUT or e.status_code >= StatusCodes.INTERNAL_SERVER_ERROR:
                 if args:

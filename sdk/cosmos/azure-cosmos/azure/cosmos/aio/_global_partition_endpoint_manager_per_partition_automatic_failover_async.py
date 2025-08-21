@@ -13,7 +13,7 @@ from azure.cosmos.http_constants import ResourceType
 from azure.cosmos.aio._global_partition_endpoint_manager_circuit_breaker_async import \
     _GlobalPartitionEndpointManagerForCircuitBreakerAsync
 from azure.cosmos.documents import _OperationType
-
+from azure.cosmos._location_cache import RegionalRoutingContext
 from azure.cosmos._partition_health_tracker import _PPAFPartitionThresholdsTracker
 from azure.cosmos._request_object import RequestObject
 from azure.cosmos._routing.routing_range import PartitionKeyRangeWrapper
@@ -32,28 +32,34 @@ class PartitionLevelFailoverInfo:
     Used to track the partition key range and the regions where it is available.
     """
     def __init__(self):
-        self.unavailable_regional_endpoints = set()
-        self.current_regional_endpoint = None
+        self.unavailable_regional_endpoints: Dict[str, RegionalRoutingContext] = {}
+        self.current_region = None
         self._lock = threading.Lock()
 
-    def try_move_to_next_location(self, available_account_regional_endpoints: Set[str], request: RequestObject) -> bool:
+    def try_move_to_next_location(
+            self,
+            available_account_regional_endpoints: Dict[str, str],
+            endpoint_region: str,
+            request: RequestObject) -> bool:
         with self._lock:
-            failed_regional_endpoint = request.location_endpoint_to_route
-            if failed_regional_endpoint != self.current_regional_endpoint:
-                logger.info("Moving to next available regional endpoint: %s", self.current_regional_endpoint)
-                request.route_to_location(self.current_regional_endpoint)
+            if endpoint_region != self.current_region:
+                logger.info("PPAF - Moving to next available regional endpoint: %s", self.current_region)
+                # make the actual endpoint since the current_region is just West US
+                regional_endpoint = available_account_regional_endpoints[self.current_region]
+                request.route_to_location(regional_endpoint)
                 return True
 
             for regional_endpoint in available_account_regional_endpoints:
-                if regional_endpoint == self.current_regional_endpoint:
+                if regional_endpoint == self.current_region:
                     continue
 
                 if regional_endpoint in self.unavailable_regional_endpoints:
                     continue
 
-                self.current_regional_endpoint = regional_endpoint
-                logger.info("Moving to next available regional endpoint: %s", self.current_regional_endpoint)
-                request.route_to_location(self.current_regional_endpoint)
+                self.current_region = regional_endpoint
+                logger.info("PPAF - Moving to next available regional endpoint: %s", self.current_region)
+                regional_endpoint = available_account_regional_endpoints[self.current_region]
+                request.route_to_location(regional_endpoint)
                 return True
 
             return False
@@ -103,10 +109,12 @@ class _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailoverAsync(
                 logger.info("Resolving service endpoint for partition with per partition automatic failover enabled.")
                 partition_failover_info = self.partition_range_to_failover_info[pk_range_wrapper]
                 if request.location_endpoint_to_route is not None:
-                    if request.location_endpoint_to_route in partition_failover_info.unavailable_regional_endpoints:
+                    endpoint_region = self.location_cache.get_location_from_endpoint(request.location_endpoint_to_route)
+                    if endpoint_region in partition_failover_info.unavailable_regional_endpoints:
                         # If the current region is unavailable, we try to move to the next available region
                         if not partition_failover_info.try_move_to_next_location(
                                 self.compute_available_preferred_regions(request),
+                                endpoint_region,
                                 request):
                             logger.info("All available regions for partition are unavailable. Refreshing cache.")
                             # If no other region is available, we invalidate the cache and start once again from our
@@ -117,23 +125,26 @@ class _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailoverAsync(
                                                                                                 pk_range_wrapper)
                     else:
                         # Update the current regional endpoint to whatever the request is routing to
-                        partition_failover_info.current_regional_endpoint = request.location_endpoint_to_route
+                        endpoint_region = self.location_cache.get_location_from_endpoint(
+                            request.location_endpoint_to_route)
+                        partition_failover_info.current_region = endpoint_region
             else:
                 partition_failover_info = PartitionLevelFailoverInfo()
-                partition_failover_info.current_regional_endpoint = request.location_endpoint_to_route
+                endpoint_region = self.location_cache.get_location_from_endpoint(
+                    request.location_endpoint_to_route)
+                partition_failover_info.current_region = endpoint_region
                 self.partition_range_to_failover_info[pk_range_wrapper] = partition_failover_info
-            return self._resolve_service_endpoint_for_partition_circuit_breaker(request, pk_range_wrapper)
         return self._resolve_service_endpoint_for_partition_circuit_breaker(request, pk_range_wrapper)
 
     def compute_available_preferred_regions(
             self,
             request: RequestObject
-    ) -> Set[str]:
+    ) -> Dict[str, str]:
         """
         Computes the available regional endpoints for the request based on customer-set preferred and excluded regions.
         :param RequestObject request: The request object containing the routing context.
         :return: A set of available regional endpoints.
-        :rtype: Set[str]
+        :rtype: Dict[str, str]
         """
         if request.excluded_locations:
             excluded_locations = request.excluded_locations + self.location_cache.connection_policy.ExcludedLocations
@@ -141,10 +152,10 @@ class _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailoverAsync(
             excluded_locations = self.location_cache.connection_policy.ExcludedLocations
         preferred_locations = self.PreferredLocations
         available_regions = [item for item in preferred_locations if item not in excluded_locations]
-        available_regional_endpoints = {
-            self.location_cache.account_read_regional_routing_contexts_by_location[region].primary_endpoint
-            for region in available_regions
-        }
+        available_regional_endpoints = {}
+        for region, context in self.location_cache.account_read_regional_routing_contexts_by_location.items():
+            if region in available_regions:
+                available_regional_endpoints[region] = context.primary_endpoint
         return available_regional_endpoints
 
     async def record_failure(self,
@@ -157,10 +168,11 @@ class _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailoverAsync(
         :return: None
         """
         if self.is_per_partition_automatic_failover_applicable(request):
+            location = self.location_cache.get_location_from_endpoint(str(request.location_endpoint_to_route))
             if pk_range_wrapper is None:
                 pk_range_wrapper = await self.create_pk_range_wrapper(request)
             if pk_range_wrapper:
-                self.ppaf_thresholds_tracker.add_failure(pk_range_wrapper)
+                self.ppaf_thresholds_tracker.add_failure(pk_range_wrapper, location)
         else:
             await self.record_ppcb_failure(request, pk_range_wrapper)
 

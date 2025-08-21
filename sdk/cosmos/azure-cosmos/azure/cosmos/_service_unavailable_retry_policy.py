@@ -5,7 +5,6 @@
 Cosmos database service.
 """
 from azure.cosmos.documents import _OperationType
-from azure.cosmos._base import try_ppaf_failover_threshold
 
 #cspell:ignore ppaf
 
@@ -42,7 +41,18 @@ class _ServiceUnavailableRetryPolicy(object):
             return False
 
         if self.request:
-            try_ppaf_failover_threshold(self.global_endpoint_manager, self.pk_range_wrapper, self.request)
+            # If per partition automatic failover is applicable, we mark the current endpoint as unavailable
+            # and resolve the service endpoint for the partition range - otherwise, continue the default retry logic
+            if self.global_endpoint_manager.is_per_partition_automatic_failover_applicable(self.request):
+                partition_level_info = self.global_endpoint_manager.partition_range_to_failover_info[
+                    self.pk_range_wrapper]
+                location = self.global_endpoint_manager.location_cache.get_location_from_endpoint(
+                    str(self.request.location_endpoint_to_route))
+                regional_context = (self.global_endpoint_manager.location_cache.
+                                    account_read_regional_routing_contexts_by_location.get(location).primary_endpoint)
+                partition_level_info.unavailable_regional_endpoints[location] = regional_context
+                self.global_endpoint_manager.resolve_service_endpoint_for_partition(self.request, self.pk_range_wrapper)
+                return True
             location_endpoint = self.resolve_next_region_service_endpoint()
             self.request.route_to_location(location_endpoint)
         return True

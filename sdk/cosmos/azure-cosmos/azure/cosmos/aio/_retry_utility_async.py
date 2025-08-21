@@ -207,8 +207,6 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                     request.headers[retry_policy._intended_headers] = retry_policy.container_rid
             elif e.status_code == StatusCodes.SERVICE_UNAVAILABLE:
                 # if ppaf is applicable, we record the failure
-                if args and global_endpoint_manager.is_per_partition_automatic_failover_applicable(args[0]):
-                    await global_endpoint_manager.record_failure(args[0], pk_range_wrapper)
                 retry_policy = service_unavailable_retry_policy
             elif e.status_code == StatusCodes.REQUEST_TIMEOUT or e.status_code >= StatusCodes.INTERNAL_SERVER_ERROR:
                 if args:
