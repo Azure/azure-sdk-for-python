@@ -906,9 +906,9 @@ class TestStorageQueue(StorageRecordedTestCase):
             queue_client.account_name,
             queue_client.queue_name,
             queue_client.credential.account_key,
-            QueueSasPermissions(read=True),
-            datetime.utcnow() + timedelta(hours=1),
-            datetime.utcnow() - timedelta(minutes=5),
+            permission=QueueSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            start=datetime.utcnow() - timedelta(minutes=5),
         )
 
         # Act
@@ -941,8 +941,8 @@ class TestStorageQueue(StorageRecordedTestCase):
             queue_client.account_name,
             queue_client.queue_name,
             queue_client.credential.account_key,
-            QueueSasPermissions(add=True),
-            datetime.utcnow() + timedelta(hours=1),
+            permission=QueueSasPermissions(add=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
         )
 
         # Act
@@ -972,8 +972,8 @@ class TestStorageQueue(StorageRecordedTestCase):
             queue_client.account_name,
             queue_client.queue_name,
             queue_client.credential.account_key,
-            QueueSasPermissions(update=True),
-            datetime.utcnow() + timedelta(hours=1),
+            permission=QueueSasPermissions(update=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
         )
         messages = queue_client.receive_messages()
         result = next(messages)
@@ -1010,8 +1010,8 @@ class TestStorageQueue(StorageRecordedTestCase):
             queue_client.account_name,
             queue_client.queue_name,
             queue_client.credential.account_key,
-            QueueSasPermissions(process=True),
-            datetime.utcnow() + timedelta(hours=1),
+            permission=QueueSasPermissions(process=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
         )
 
         # Act
