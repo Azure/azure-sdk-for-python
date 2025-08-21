@@ -42,7 +42,7 @@ For more information about `pytest` invocations, refer to [Usage and Invocations
 
 ## ServiceRequestError: Cannot connect to host
 
-Async tests may occasionally fail during startup with the following exception:
+Tests may fail during startup with the following exception:
 
 ```text
 azure.core.exceptions.ServiceRequestError: Cannot connect to host localhost:5001
@@ -50,10 +50,14 @@ ssl:True [SSLCertVerificationError: (1, '[SSL: CERTIFICATE_VERIFY_FAILED] certif
 verify failed: self signed certificate (_ssl.c:1123)')]
 ```
 
-This is caused by the test proxy's certificate being incorrectly configured. The certificate is
+This is caused by the test proxy's certificate being incorrectly configured. First, update your branch to include the
+latest changes from `main` -- this ensures you have the latest certificate version (it needs to be occasionally
+rotated).
+
+If tests continue to fail, this is likely due to an async-specific environment issue. The certificate is
 [automatically configured][cert_setup] during proxy startup, but async environments can still nondeterministically fail.
 
-To work around this issue, set the following environment variable in your `.env` file:
+To work around this, set the following environment variable in your `.env` file:
 
 ```text
 PROXY_URL='http://localhost:5000'
