@@ -68,7 +68,8 @@ _COMMON_OPTIONS = {
     'retry_write': Constants.Kwargs.RETRY_WRITE,
     'max_item_count': 'maxItemCount',
     'throughput_bucket': 'throughputBucket',
-    'excluded_locations': 'excludedLocations'
+    'excluded_locations': 'excludedLocations',
+    'availability_strategy': 'availabilityStrategy'
 }
 
 # Cosmos resource ID validation regex breakdown:

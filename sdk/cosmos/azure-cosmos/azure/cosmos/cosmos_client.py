@@ -30,6 +30,7 @@ from azure.core.paging import ItemPaged
 from azure.core.credentials import TokenCredential
 from azure.core.pipeline.policies import RetryMode
 
+from ._availability_strategy import AvailabilityStrategy
 from ._cosmos_client_connection import CosmosClientConnection, CredentialDict
 from ._base import build_options, _set_throughput_options
 from .offer import ThroughputProperties
@@ -199,6 +200,9 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         response payloads on write operations for items.
     :keyword int throughput_bucket: The desired throughput bucket for the client
     :keyword str user_agent_suffix: Allows user agent suffix to be specified when creating client
+    :keyword availability_strategy: The availability strategy for request routing. The default value is None.
+        Can be an instance of CrossRegionHedgingStrategy or any other class implementing AvailabilityStrategy.
+    :paramtype availability_strategy: ~azure.cosmos.AvailabilityStrategy
 
     .. admonition:: Example:
 
@@ -215,13 +219,25 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         url: str,
         credential: Union[TokenCredential, str, Dict[str, Any]],
         consistency_level: Optional[str] = None,
+        *,
+        availability_strategy: Optional['AvailabilityStrategy'] = None,
         **kwargs
     ) -> None:
-        """Instantiate a new CosmosClient."""
+        """Instantiate a new CosmosClient.
+
+        :param availability_strategy: The availability strategy for request routing. The default value is None.
+            Can be an instance of CrossRegionHedgingStrategy or any other class implementing AvailabilityStrategy.
+        :type availability_strategy: Optional[~azure.cosmos.AvailabilityStrategy]
+        """
         auth = _build_auth(credential)
         connection_policy = _build_connection_policy(kwargs)
         self.client_connection = CosmosClientConnection(
-            url, auth=auth, consistency_level=consistency_level, connection_policy=connection_policy, **kwargs
+            url,
+            auth=auth,
+            consistency_level=consistency_level,
+            connection_policy=connection_policy,
+            availability_strategy=availability_strategy,
+            **kwargs
         )
 
     def __repr__(self) -> str:

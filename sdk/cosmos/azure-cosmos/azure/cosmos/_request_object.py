@@ -19,12 +19,63 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Represents a request object.
-"""
+"""Represents a request object."""
+from abc import ABC, abstractmethod
+from threading import Event
 from typing import Optional, Mapping, Any, Dict, List
+
+from ._availability_strategy import AvailabilityStrategy
+from ._constants import _Constants as Constants
 from .documents import _OperationType
 from .http_constants import ResourceType
-from ._constants import _Constants as Constants
+
+
+class HedgingCompletionStatus(ABC):
+    """Abstract base class for tracking request completion status.
+    
+    This class defines the interface for both synchronous and asynchronous
+    implementations of completion status tracking.
+    """
+
+    @property
+    @abstractmethod
+    def is_completed(self) -> bool:
+        """Check if request is completed.
+        
+        This is a non-blocking operation that returns immediately.
+        
+        :returns: True if request is completed, False otherwise
+        :rtype: bool
+        """
+
+    @abstractmethod
+    def set_completed(self) -> None:
+        """Signal request completion.
+        
+        This is a non-blocking operation that sets completion status to True.
+        Once set, is_completed will always return True.
+        """
+
+class SyncHedgingCompletionStatus(HedgingCompletionStatus):
+    """Thread-safe implementation of completion status using Threading.Event."""
+
+    def __init__(self):
+        """Initialize completion status with a Threading.Event."""
+        self._completed = Event()
+
+    @property
+    def is_completed(self) -> bool:
+        """Check if request is completed (non-blocking).
+        
+        :returns: True if request is completed, False otherwise
+        :rtype: bool
+        """
+        return self._completed.is_set()
+
+    def set_completed(self) -> None:
+        """Signal request completion (non-blocking)."""
+        self._completed.set()
+
 
 class RequestObject(object): # pylint: disable=too-many-instance-attributes
     def __init__(
@@ -39,6 +90,7 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
         self.endpoint_override = endpoint_override
         self.should_clear_session_token_on_session_read_failure: bool = False  # pylint: disable=name-too-long
         self.headers = headers
+        self.availability_strategy: Optional[AvailabilityStrategy] = None
         self.use_preferred_locations: Optional[bool] = None
         self.location_index_to_route: Optional[int] = None
         self.location_endpoint_to_route: Optional[str] = None
@@ -47,6 +99,8 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
         self.excluded_locations_circuit_breaker: List[str] = []
         self.healthy_tentative_location: Optional[str] = None
         self.retry_write: bool = False
+        self.is_hedging_request: bool = False # Flag to track if this is a hedged request
+        self.completion_status: Optional[HedgingCompletionStatus] = None # Status shared between parallel requests
 
     def route_to_location_with_preferred_location_flag(  # pylint: disable=name-too-long
         self,
@@ -80,6 +134,26 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
 
         return True
 
+    def set_availability_strategy_from_options(
+            self,
+            options: Mapping[str, Any],
+            client_strategy: Optional[AvailabilityStrategy] = None) -> None:
+        """Sets the availability strategy for this request from options.
+        If not in options, uses the client's default strategy.
+
+        :param options: The request options that may contain availabilityStrategy
+        :type options: Mapping[str, Any]
+        :param client_strategy: The client's default availability strategy
+        :type client_strategy: ~azure.cosmos.AvailabilityStrategy
+        :return: None
+        """
+        # First try to get from options
+        if options is not None and 'availabilityStrategy' in options and options['availabilityStrategy'] is not None:
+            self.availability_strategy = options['availabilityStrategy']
+        # If not in options, use client default
+        elif client_strategy is not None:
+            self.availability_strategy = client_strategy
+
     def set_excluded_location_from_options(self, options: Mapping[str, Any]) -> None:
         if self._can_set_excluded_location(options):
             self.excluded_locations = options['excludedLocations']
@@ -95,3 +169,42 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
 
     def set_excluded_locations_from_circuit_breaker(self, excluded_locations: List[str]) -> None: # pylint: disable=name-too-long
         self.excluded_locations_circuit_breaker = excluded_locations
+
+    def set_is_hedging_request(self, is_hedging_request: bool) -> None:
+        self.is_hedging_request = is_hedging_request
+
+    def set_completion_status(self, status: HedgingCompletionStatus) -> None:
+        """Set the shared completion status between parallel requests.
+        
+        :param status: Thread-safe or async-safe completion status tracker
+        :type status: HedgingCompletionStatus
+        :raises ValueError: If status is None
+        """
+        if status is None:
+            raise ValueError("completion status argument can not be None")
+        self.completion_status = status
+
+    def get_completion_status(self) -> Optional[HedgingCompletionStatus]:
+        """Get the shared completion status.
+        
+        :return: The completion status or None if not set
+        :rtype: Optional[HedgingCompletionStatus]
+        """
+        return self.completion_status
+
+    def get_is_hedging_request(self) -> bool:
+        """Check if this is a hedged request.
+        
+        :return: True if this is a hedged request, False otherwise
+        :rtype: bool
+        """
+        return self.is_hedging_request
+
+    def should_cancel_request(self) -> bool:
+        """Check if this request should be cancelled due to parallel request completion.
+        
+        :return: True if request should be cancelled, False otherwise
+        :rtype: bool
+        """
+        status = self.get_completion_status()
+        return status is not None and status.is_completed
