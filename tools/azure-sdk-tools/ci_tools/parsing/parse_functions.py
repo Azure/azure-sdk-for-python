@@ -4,8 +4,6 @@ import textwrap
 import re
 import fnmatch
 import logging
-from pkginfo import get_metadata
-import pkginfo
 
 try:
     # py 311 adds this library natively
@@ -54,6 +52,7 @@ EXCLUDE = {
 
 def extract_package_metadata(package_path: str) -> Dict[str, Any]:
     """Extract package metadata from a built package or source directory with comprehensive PEP 566/621 normalization."""
+    from pkginfo import get_metadata
     try:
         # Note: metadata may be different between source directory and built packages since
         # some metadata may be normalized/transformed during build process
@@ -125,7 +124,6 @@ def _normalize_person_fields(pkg_info, metadata: Dict[str, Any], role: str) -> N
         # Check if email contains name in format "Name <email>"
         if '<' in email_attr and '>' in email_attr:
             # Extract name and email from "Name <email>" format
-            import re
             match = re.match(r'^(.+?)\s*<(.+?)>$', email_attr.strip())
             if match:
                 name_part = match.group(1).strip()
@@ -304,7 +302,6 @@ class ParsedSetup:
         ext_package: str,
         ext_modules: List[Extension],
         metapackage: bool,
-        metadata: Dict[str, Any],
     ):
         self.name: str = name
         self.version: str = version
@@ -320,7 +317,6 @@ class ParsedSetup:
         self.ext_package = ext_package
         self.ext_modules = ext_modules
         self.is_metapackage = metapackage
-        self.metadata = metadata
 
         self.is_pyproject = self.setup_filename.endswith(".toml")
 
@@ -347,7 +343,6 @@ class ParsedSetup:
             ext_package,
             ext_modules,
             metapackage,
-            metadata
         ) = parse_setup(parse_directory_or_file)
 
         return cls(
@@ -365,7 +360,6 @@ class ParsedSetup:
             ext_package,
             ext_modules,
             metapackage,
-            metadata
         )
 
     def get_build_config(self) -> Optional[Dict[str, Any]]:
@@ -753,13 +747,10 @@ def parse_setup(
         <ext_packages>,
         <ext_modules>,
         <is_metapackage>,
-        <metadata>
     )
 
     If a pyproject.toml (containing [project]) or a setup.py is NOT found, a ValueError will be raised.
     """
-    metadata = {}
-    metadata.update(extract_package_metadata(setup_filename_or_folder))
 
     targeted_path = setup_filename_or_folder
     if os.path.isfile(setup_filename_or_folder):
@@ -774,7 +765,7 @@ def parse_setup(
     else:
         result = parse_setup_py(resolved_filename)
 
-    return result + (metadata,)
+    return result
 
 
 def get_pyproject_dict(pyproject_file: str) -> Dict[str, Any]:

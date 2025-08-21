@@ -119,7 +119,7 @@ def verify_prior_version_metadata(package_name: str, prior_version: str, current
     """Download prior version and verify metadata compatibility."""
     with tempfile.TemporaryDirectory() as tmp_dir:
         try:
-            is_binary = "--no-binary=:all:" if package_type == "*tar.gz" else "--only-binary=:all:"
+            is_binary = "--only-binary=:all:" if package_type == "*.whl" else "--no-binary=:all:"
             subprocess.run([
                 "pip", "download", "--no-deps", is_binary,
                 f"{package_name}=={prior_version}", "--dest", tmp_dir
