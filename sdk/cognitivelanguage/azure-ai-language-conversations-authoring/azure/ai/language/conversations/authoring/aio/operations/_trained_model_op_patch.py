@@ -23,7 +23,7 @@ from ._operations import (
     ExportedModelOperations as ExportedModelOperationsGenerated,
     TrainedModelOperations as TrainedModelOperationsGenerated,
 )
-from .._utils.model_base import SdkJSONEncoder, _deserialize
+from ..._utils.model_base import SdkJSONEncoder, _deserialize
 from azure.core.utils import case_insensitive_dict
 from azure.core.polling.base_polling import LROBasePolling
 from ...models import (

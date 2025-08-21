@@ -46,6 +46,11 @@ from ._models import (
     CopyProjectDetails,
     EvaluationJobResult,
     EvaluationState,
+    ConversationExportedProjectAsset,
+    ConversationExportedIntent,
+    ConversationExportedEntity,
+    ConversationExportedUtterance,
+    ExportedUtteranceEntityLabel,
 )
 from ._enums import ExportedProjectFormat
 
@@ -334,4 +339,9 @@ __all__ = [
     "EvaluationJobResult",
     "EvaluationState",
     "AsyncJobsPollingMethod",
+    "ConversationExportedProjectAsset",
+    "ConversationExportedIntent",
+    "ConversationExportedEntity",
+    "ConversationExportedUtterance",
+    "ExportedUtteranceEntityLabel",
 ]

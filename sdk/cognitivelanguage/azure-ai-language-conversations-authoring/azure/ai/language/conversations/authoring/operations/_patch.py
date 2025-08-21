@@ -8,10 +8,6 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Any, Callable, Dict, IO, Iterator, List, Optional, TypeVar, Union, cast, overload
-from azure.core.polling import LROPoller, NoPolling, PollingMethod
-from azure.core.tracing.decorator import distributed_trace
-
 from ._project_op_patch import ProjectOperations
 from ._trained_model_op_patch import TrainedModelOperations
 from ._deployment_op_patch import DeploymentOperations

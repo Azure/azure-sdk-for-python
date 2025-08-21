@@ -1,6 +1,5 @@
 # pylint: disable=line-too-long,useless-suppression
 import functools
-import pytest
 
 from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer, recorded_by_proxy
 from azure.ai.language.conversations.authoring import ConversationAuthoringClient
