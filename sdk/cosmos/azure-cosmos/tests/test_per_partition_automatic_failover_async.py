@@ -13,10 +13,11 @@ from azure.core.pipeline.transport._aiohttp import AioHttpTransport
 from azure.core.exceptions import ServiceResponseError
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos.aio import CosmosClient
+from azure.cosmos._request_object import RequestObject
 from _fault_injection_transport import FaultInjectionTransport
 from _fault_injection_transport_async import FaultInjectionTransportAsync
 from test_per_partition_automatic_failover import create_failover_errors, create_threshold_errors
-from test_per_partition_circuit_breaker_mm import REGION_1, REGION_2, PK_VALUE, BATCH, write_operations_and_errors
+from test_per_partition_circuit_breaker_mm import REGION_1, REGION_2, PK_VALUE, BATCH, write_operations_and_errors, write_operations_and_boolean
 from test_per_partition_circuit_breaker_mm_async import perform_write_operation
 
 # cspell:disable
@@ -31,15 +32,23 @@ class TestPerPartitionAutomaticFailoverAsync:
     TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
     TEST_CONTAINER_MULTI_PARTITION_ID = test_config.TestConfig.TEST_MULTI_PARTITION_CONTAINER_ID
 
-    async def setup_method_with_custom_transport(self, custom_transport: Optional[AioHttpTransport], default_endpoint=host, **kwargs):
+    async def setup_method_with_custom_transport(self, custom_transport: Optional[AioHttpTransport],
+                                                 default_endpoint=host, read_first=False, **kwargs):
+        regions = [REGION_2, REGION_1] if read_first else [REGION_1, REGION_2]
         container_id = kwargs.pop("container_id", None)
+        exclude_client_regions = kwargs.pop("exclude_client_regions", False)
+        excluded_regions = []
+        if exclude_client_regions:
+            excluded_regions = [REGION_2]
         if not container_id:
             container_id = self.TEST_CONTAINER_MULTI_PARTITION_ID
         client = CosmosClient(default_endpoint, self.master_key, consistency_level="Session",
-                              preferred_locations=[REGION_1, REGION_2],
+                              preferred_locations=regions,
+                              excluded_locations=excluded_regions,
                               transport=custom_transport, **kwargs)
         db = client.get_database_client(self.TEST_DATABASE_ID)
         container = db.get_container_client(container_id)
+        await client.__aenter__()
         return {"client": client, "db": db, "col": container}
     
     @staticmethod
@@ -47,7 +56,7 @@ class TestPerPartitionAutomaticFailoverAsync:
         method_client: CosmosClient = initialized_objects["client"]
         await method_client.close()
 
-    async def setup_info(self, error, max_count=None, is_batch=False, **kwargs):
+    async def setup_info(self, error=None, max_count=None, is_batch=False, exclude_client_regions=False, **kwargs):
         custom_transport = FaultInjectionTransportAsync()
         # two documents targeted to same partition, one will always fail and the other will succeed
         doc_fail_id = str(uuid.uuid4())
@@ -59,8 +68,9 @@ class TestPerPartitionAutomaticFailoverAsync:
             success_response = FaultInjectionTransportAsync.MockHttpResponse(mock_request, 200, [{"statusCode": 200}],)
         else:
             success_response = FaultInjectionTransportAsync.MockHttpResponse(mock_request, 200)
-        custom_transport.add_fault(predicate=predicate, fault_factory=error, max_inner_count=max_count,
-                                   after_max_count=success_response)
+        if error:
+            custom_transport.add_fault(predicate=predicate, fault_factory=error, max_inner_count=max_count,
+                                       after_max_count=success_response)
         is_get_account_predicate = lambda r: FaultInjectionTransportAsync.predicate_is_database_account_call(r)
         # Set the database account response to have PPAF enabled
         ppaf_enabled_database_account = \
@@ -68,8 +78,10 @@ class TestPerPartitionAutomaticFailoverAsync:
         custom_transport.add_response_transformation(
             is_get_account_predicate,
             ppaf_enabled_database_account)
-        setup = await self.setup_method_with_custom_transport(None, default_endpoint=self.host, **kwargs)
-        custom_setup = await self.setup_method_with_custom_transport(custom_transport, default_endpoint=self.host, **kwargs)
+        setup = await self.setup_method_with_custom_transport(None, default_endpoint=self.host,
+                                                        exclude_client_regions=exclude_client_regions, **kwargs)
+        custom_setup = await self.setup_method_with_custom_transport(custom_transport, default_endpoint=self.host,
+                                                        exclude_client_regions=exclude_client_regions, **kwargs)
         return setup, doc_fail_id, doc_success_id, custom_setup, custom_transport, predicate
 
     @pytest.mark.parametrize("write_operation, error", write_operations_and_errors(create_failover_errors()))
@@ -171,11 +183,20 @@ class TestPerPartitionAutomaticFailoverAsync:
         failure_count = global_endpoint_manager.ppaf_thresholds_tracker.pk_range_wrapper_to_failure_count[pk_range_wrappers[0]]
         assert failure_count == 1 if is_503 else 3
 
-
-    @pytest.mark.parametrize("write_operation, error", write_operations_and_errors(create_threshold_errors()))
-    async def test_ppaf_exclude_regions_async(self, write_operation, error):
-        # TODO: finish this test
-        return
+    @pytest.mark.parametrize("write_operation, exclude_client_regions", write_operations_and_boolean())
+    async def test_ppaf_exclude_regions_async(self, write_operation, exclude_client_regions):
+        # This test validates that the per-partition automatic failover logic does not apply to configs without enough regions.
+        setup, doc_fail_id, doc_success_id, custom_setup, custom_transport, predicate = await self.setup_info(exclude_client_regions=exclude_client_regions)
+        fault_injection_container = custom_setup['col']
+        global_endpoint_manager = fault_injection_container.client_connection._global_endpoint_manager
+        # Check that computing valid regions for PPAF only returns a single region
+        request_object = RequestObject(resource_type="docs", operation_type=write_operation, headers={})
+        if exclude_client_regions is False:
+            request_object.excluded_locations = [REGION_2]
+        available_ppaf_regions = global_endpoint_manager.compute_available_preferred_regions(request_object)
+        assert len(available_ppaf_regions) == 1
+        # Check that all requests are marked as non-PPAF available due to the fact that we only have one region
+        assert global_endpoint_manager.is_per_partition_automatic_failover_applicable(request_object) is False
 
 
 

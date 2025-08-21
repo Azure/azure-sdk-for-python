@@ -60,6 +60,15 @@ def write_operations_and_errors(error_list=None):
 
     return params
 
+def write_operations_and_boolean():
+    write_operations = [CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH]
+    params = []
+    for write_operation in write_operations:
+        for boolean in [True, False]:
+            params.append((write_operation, boolean))
+
+    return params
+
 def operations():
     write_operations = [CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH]
     read_operations = [READ, QUERY_PK, CHANGE_FEED_PK, CHANGE_FEED_EPK]
