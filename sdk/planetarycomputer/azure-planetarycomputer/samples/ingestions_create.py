@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.planetarycomputer import PlanetaryComputerClient
+from azure.planetarycomputer import IngestionManagementClient
 
 """
 # PREREQUISITES
@@ -25,11 +25,11 @@ from azure.planetarycomputer import PlanetaryComputerClient
 
 
 def main():
-    client = PlanetaryComputerClient(
+    client = IngestionManagementClient(
         credential=DefaultAzureCredential(),
     )
 
-    response = client.ingestions.create(
+    response = client.create_ingestion(
         collection_id="collectionId",
         definition={
             "importType": "StaticCatalog",

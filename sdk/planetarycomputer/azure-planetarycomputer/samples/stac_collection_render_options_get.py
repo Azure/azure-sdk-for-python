@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.planetarycomputer import PlanetaryComputerClient
+from azure.planetarycomputer import StacClient
 
 """
 # PREREQUISITES
@@ -25,11 +25,11 @@ from azure.planetarycomputer import PlanetaryComputerClient
 
 
 def main():
-    client = PlanetaryComputerClient(
+    client = StacClient(
         credential=DefaultAzureCredential(),
     )
 
-    response = client.stac_collection_render_options.get(
+    response = client.get_render_option(
         collection_id="sentinel-2-l2a-tutorial-7",
         render_option_id="a1007ec2-3ddc-4335-9edd-b1c26b1b4c92",
     )

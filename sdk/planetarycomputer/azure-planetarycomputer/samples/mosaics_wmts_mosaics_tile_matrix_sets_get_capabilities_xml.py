@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.planetarycomputer import PlanetaryComputerClient
+from azure.planetarycomputer import TilerClient
 
 """
 # PREREQUISITES
@@ -25,11 +25,11 @@ from azure.planetarycomputer import PlanetaryComputerClient
 
 
 def main():
-    client = PlanetaryComputerClient(
+    client = TilerClient(
         credential=DefaultAzureCredential(),
     )
 
-    response = client.mosaics_wmts_mosaics_tile_matrix_sets.get_capabilities_xml(
+    response = client.get_mosaics_wmts_capabilities_with_matrix_set(
         search_id="searchid-0df36a74d7ed",
         tile_matrix_set_id="WebMercatorQuad",
     )

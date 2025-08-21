@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.planetarycomputer import PlanetaryComputerClient
+from azure.planetarycomputer import TilerClient
 
 """
 # PREREQUISITES
@@ -25,11 +25,11 @@ from azure.planetarycomputer import PlanetaryComputerClient
 
 
 def main():
-    client = PlanetaryComputerClient(
+    client = TilerClient(
         credential=DefaultAzureCredential(),
     )
 
-    response = client.tile_matrix_definitions.get(
+    response = client.get_tile_matrix_definitions(
         tile_matrix_set_id="WebMercatorQuad",
     )
     print(response)

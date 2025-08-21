@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.planetarycomputer import PlanetaryComputerClient
+from azure.planetarycomputer import StacClient
 
 """
 # PREREQUISITES
@@ -25,11 +25,11 @@ from azure.planetarycomputer import PlanetaryComputerClient
 
 
 def main():
-    client = PlanetaryComputerClient(
+    client = StacClient(
         credential=DefaultAzureCredential(),
     )
 
-    client.stac_collection_operations.begin_create_or_replace(
+    client.begin_create_or_replace_collection(
         collection_id="test-collection-568725878606",
         body={
             "description": "A collection for integration tests purposes",

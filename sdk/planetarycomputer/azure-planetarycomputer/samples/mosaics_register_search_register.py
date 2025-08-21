@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.planetarycomputer import PlanetaryComputerClient
+from azure.planetarycomputer import TilerClient
 
 """
 # PREREQUISITES
@@ -25,11 +25,11 @@ from azure.planetarycomputer import PlanetaryComputerClient
 
 
 def main():
-    client = PlanetaryComputerClient(
+    client = TilerClient(
         credential=DefaultAzureCredential(),
     )
 
-    response = client.mosaics_register_search.register(
+    response = client.register_mosaics_search(
         body={
             "filter": {"args": [{"args": [{"property": "collection"}, "maxar"], "op": "="}], "op": "and"},
             "filter-lang": "cql2-json",

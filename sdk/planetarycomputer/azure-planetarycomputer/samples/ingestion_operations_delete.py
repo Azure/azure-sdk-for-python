@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.planetarycomputer import PlanetaryComputerClient
+from azure.planetarycomputer import IngestionManagementClient
 
 """
 # PREREQUISITES
@@ -25,11 +25,11 @@ from azure.planetarycomputer import PlanetaryComputerClient
 
 
 def main():
-    client = PlanetaryComputerClient(
+    client = IngestionManagementClient(
         credential=DefaultAzureCredential(),
     )
 
-    client.ingestion_operations.delete(
+    client.delete_ingestion_operation(
         operation_id="9bb31abd-91d6-4649-9c6f-beadbec7c622",
     )
 

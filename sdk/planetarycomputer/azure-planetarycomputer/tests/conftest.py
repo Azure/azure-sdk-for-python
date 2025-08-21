@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -21,18 +22,68 @@ load_dotenv()
 # For security, please avoid record sensitive identity information in recordings
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
-    planetarycomputer_subscription_id = os.environ.get(
-        "PLANETARYCOMPUTER_SUBSCRIPTION_ID", "00000000-0000-0000-0000-000000000000"
+    geocatalog_subscription_id = os.environ.get("GEOCATALOG_SUBSCRIPTION_ID", "00000000-0000-0000-0000-000000000000")
+    geocatalog_tenant_id = os.environ.get("GEOCATALOG_TENANT_ID", "00000000-0000-0000-0000-000000000000")
+    geocatalog_client_id = os.environ.get("GEOCATALOG_CLIENT_ID", "00000000-0000-0000-0000-000000000000")
+    geocatalog_client_secret = os.environ.get("GEOCATALOG_CLIENT_SECRET", "00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=geocatalog_subscription_id, value="00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=geocatalog_tenant_id, value="00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=geocatalog_client_id, value="00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=geocatalog_client_secret, value="00000000-0000-0000-0000-000000000000")
+
+    ingestionmanagement_subscription_id = os.environ.get(
+        "INGESTIONMANAGEMENT_SUBSCRIPTION_ID", "00000000-0000-0000-0000-000000000000"
     )
-    planetarycomputer_tenant_id = os.environ.get("PLANETARYCOMPUTER_TENANT_ID", "00000000-0000-0000-0000-000000000000")
-    planetarycomputer_client_id = os.environ.get("PLANETARYCOMPUTER_CLIENT_ID", "00000000-0000-0000-0000-000000000000")
-    planetarycomputer_client_secret = os.environ.get(
-        "PLANETARYCOMPUTER_CLIENT_SECRET", "00000000-0000-0000-0000-000000000000"
+    ingestionmanagement_tenant_id = os.environ.get(
+        "INGESTIONMANAGEMENT_TENANT_ID", "00000000-0000-0000-0000-000000000000"
     )
-    add_general_regex_sanitizer(regex=planetarycomputer_subscription_id, value="00000000-0000-0000-0000-000000000000")
-    add_general_regex_sanitizer(regex=planetarycomputer_tenant_id, value="00000000-0000-0000-0000-000000000000")
-    add_general_regex_sanitizer(regex=planetarycomputer_client_id, value="00000000-0000-0000-0000-000000000000")
-    add_general_regex_sanitizer(regex=planetarycomputer_client_secret, value="00000000-0000-0000-0000-000000000000")
+    ingestionmanagement_client_id = os.environ.get(
+        "INGESTIONMANAGEMENT_CLIENT_ID", "00000000-0000-0000-0000-000000000000"
+    )
+    ingestionmanagement_client_secret = os.environ.get(
+        "INGESTIONMANAGEMENT_CLIENT_SECRET", "00000000-0000-0000-0000-000000000000"
+    )
+    add_general_regex_sanitizer(regex=ingestionmanagement_subscription_id, value="00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=ingestionmanagement_tenant_id, value="00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=ingestionmanagement_client_id, value="00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=ingestionmanagement_client_secret, value="00000000-0000-0000-0000-000000000000")
+
+    stac_subscription_id = os.environ.get("STAC_SUBSCRIPTION_ID", "00000000-0000-0000-0000-000000000000")
+    stac_tenant_id = os.environ.get("STAC_TENANT_ID", "00000000-0000-0000-0000-000000000000")
+    stac_client_id = os.environ.get("STAC_CLIENT_ID", "00000000-0000-0000-0000-000000000000")
+    stac_client_secret = os.environ.get("STAC_CLIENT_SECRET", "00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=stac_subscription_id, value="00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=stac_tenant_id, value="00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=stac_client_id, value="00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=stac_client_secret, value="00000000-0000-0000-0000-000000000000")
+
+    tiler_subscription_id = os.environ.get("TILER_SUBSCRIPTION_ID", "00000000-0000-0000-0000-000000000000")
+    tiler_tenant_id = os.environ.get("TILER_TENANT_ID", "00000000-0000-0000-0000-000000000000")
+    tiler_client_id = os.environ.get("TILER_CLIENT_ID", "00000000-0000-0000-0000-000000000000")
+    tiler_client_secret = os.environ.get("TILER_CLIENT_SECRET", "00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=tiler_subscription_id, value="00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=tiler_tenant_id, value="00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=tiler_client_id, value="00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=tiler_client_secret, value="00000000-0000-0000-0000-000000000000")
+
+    sharedaccesssignature_subscription_id = os.environ.get(
+        "SHAREDACCESSSIGNATURE_SUBSCRIPTION_ID", "00000000-0000-0000-0000-000000000000"
+    )
+    sharedaccesssignature_tenant_id = os.environ.get(
+        "SHAREDACCESSSIGNATURE_TENANT_ID", "00000000-0000-0000-0000-000000000000"
+    )
+    sharedaccesssignature_client_id = os.environ.get(
+        "SHAREDACCESSSIGNATURE_CLIENT_ID", "00000000-0000-0000-0000-000000000000"
+    )
+    sharedaccesssignature_client_secret = os.environ.get(
+        "SHAREDACCESSSIGNATURE_CLIENT_SECRET", "00000000-0000-0000-0000-000000000000"
+    )
+    add_general_regex_sanitizer(
+        regex=sharedaccesssignature_subscription_id, value="00000000-0000-0000-0000-000000000000"
+    )
+    add_general_regex_sanitizer(regex=sharedaccesssignature_tenant_id, value="00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=sharedaccesssignature_client_id, value="00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=sharedaccesssignature_client_secret, value="00000000-0000-0000-0000-000000000000")
 
     add_header_regex_sanitizer(key="Set-Cookie", value="[set-cookie;]")
     add_header_regex_sanitizer(key="Cookie", value="cookie;")

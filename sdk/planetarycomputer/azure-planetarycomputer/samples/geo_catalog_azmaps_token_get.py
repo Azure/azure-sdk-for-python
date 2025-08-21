@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.planetarycomputer import PlanetaryComputerClient
+from azure.planetarycomputer import GeocatalogClient
 
 """
 # PREREQUISITES
@@ -25,11 +25,11 @@ from azure.planetarycomputer import PlanetaryComputerClient
 
 
 def main():
-    client = PlanetaryComputerClient(
+    client = GeocatalogClient(
         credential=DefaultAzureCredential(),
     )
 
-    response = client.geo_catalog_azmaps_token.get()
+    response = client.get_azmaps_token()
     print(response)
 
 
