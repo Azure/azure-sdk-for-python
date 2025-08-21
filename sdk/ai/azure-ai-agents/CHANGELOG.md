@@ -7,6 +7,7 @@
 
 ### Features Added
 
+- Added delete operation for `ThreadMessages`.
 - Add `RunStepDetailsActivity`, describing MCP function parameters.
 - Add `RunStepDeltaCustomBingGroundingToolCall`, describing `BingCustomSearchTool` updates in streaming scenario.
 
@@ -16,6 +17,8 @@
 
 ### Sample updates
 
+- The file search samples were updated to demonstrate retrieving text associated with citations.
+- Added samples for file search citation with streaming.
 - Bing Grounding and Bing Custom Search samples were fixed to correctly present references.
 
 ## 1.2.0b2 (2025-08-12)

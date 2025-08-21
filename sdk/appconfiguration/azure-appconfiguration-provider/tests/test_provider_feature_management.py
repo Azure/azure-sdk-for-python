@@ -17,7 +17,7 @@ class TestAppConfigurationProviderFeatureManagement(AppConfigTestCase):
     @app_config_decorator
     def test_load_only_feature_flags(self, appconfiguration_connection_string):
         client = self.create_client(
-            appconfiguration_connection_string,
+            connection_string=appconfiguration_connection_string,
             selects=[],
             feature_flag_enabled=True,
         )

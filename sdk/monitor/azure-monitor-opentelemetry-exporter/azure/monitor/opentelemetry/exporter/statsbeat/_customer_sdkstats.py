@@ -1,8 +1,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-"""Customer Statsbeat implementation for Azure Monitor OpenTelemetry Exporter.
+"""Customer SDKStats implementation for Azure Monitor OpenTelemetry Exporter.
 
-This module provides the implementation for collecting and reporting customer statsbeat
+This module provides the implementation for collecting and reporting Customer SDKStats
 metrics that track the usage and performance of the Azure Monitor OpenTelemetry Exporter.
 """
 
@@ -15,14 +15,14 @@ from opentelemetry.sdk.metrics import MeterProvider
 from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
 
 from azure.monitor.opentelemetry.exporter._constants import (
-    _APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW,
-    CustomerStatsbeatProperties,
+    _APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW,
+    CustomerSdkStatsProperties,
     DropCode,
     DropCodeType,
     RetryCode,
     RetryCodeType,
-    CustomerStatsbeatMetricName,
-    _CUSTOMER_STATSBEAT_LANGUAGE,
+    CustomerSdkStatsMetricName,
+    _CUSTOMER_SDKSTATS_LANGUAGE,
 )
 
 from azure.monitor.opentelemetry.exporter.export.metrics._exporter import AzureMonitorMetricExporter
@@ -38,23 +38,21 @@ from azure.monitor.opentelemetry.exporter.statsbeat._utils import (
 from azure.monitor.opentelemetry.exporter import VERSION
 
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
-    _CUSTOMER_STATSBEAT_STATE,
-    _CUSTOMER_STATSBEAT_STATE_LOCK,
+    _CUSTOMER_SDKSTATS_STATE,
+    _CUSTOMER_SDKSTATS_STATE_LOCK,
 )
 
-_CUSTOMER_STATSBEAT_MAP_LOCK = threading.Lock()
-
-class _CustomerStatsbeatTelemetryCounters:
+class _CustomerSdkStatsTelemetryCounters:
     def __init__(self):
         self.total_item_success_count: Dict[str, Any] = {}
         self.total_item_drop_count: Dict[str, Dict[DropCodeType, Dict[str, int]]] = {}
         self.total_item_retry_count: Dict[str, Dict[RetryCodeType, Dict[str, int]]] = {}
 
-class CustomerStatsbeatMetrics(metaclass=Singleton): # pylint: disable=too-many-instance-attributes
+class CustomerSdkStatsMetrics(metaclass=Singleton): # pylint: disable=too-many-instance-attributes
     def __init__(self, connection_string):
-        self._counters = _CustomerStatsbeatTelemetryCounters()
-        self._language = _CUSTOMER_STATSBEAT_LANGUAGE
-        self._is_enabled = os.environ.get(_APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW, "").lower() in ("true")
+        self._counters = _CustomerSdkStatsTelemetryCounters()
+        self._language = _CUSTOMER_SDKSTATS_LANGUAGE
+        self._is_enabled = os.environ.get(_APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW, "").lower() in ("true")
         if not self._is_enabled:
             return
 
@@ -63,36 +61,36 @@ class CustomerStatsbeatMetrics(metaclass=Singleton): # pylint: disable=too-many-
             "instrumentation_collection": True,  # Prevent circular dependency
         }
 
-        self._customer_statsbeat_exporter = AzureMonitorMetricExporter(**exporter_config)
-        self._customer_statsbeat_exporter._is_customer_statsbeat = True
+        self._customer_sdkstats_exporter = AzureMonitorMetricExporter(**exporter_config)
+        self._customer_sdkstats_exporter._is_customer_sdkstats = True
         metric_reader_options = {
-            "exporter": self._customer_statsbeat_exporter,
+            "exporter": self._customer_sdkstats_exporter,
             "export_interval_millis": _get_customer_sdkstats_export_interval()
         }
-        self._customer_statsbeat_metric_reader = PeriodicExportingMetricReader(**metric_reader_options)
-        self._customer_statsbeat_meter_provider = MeterProvider(
-            metric_readers=[self._customer_statsbeat_metric_reader]
+        self._customer_sdkstats_metric_reader = PeriodicExportingMetricReader(**metric_reader_options)
+        self._customer_sdkstats_meter_provider = MeterProvider(
+            metric_readers=[self._customer_sdkstats_metric_reader]
         )
-        self._customer_statsbeat_meter = self._customer_statsbeat_meter_provider.get_meter(__name__)
+        self._customer_sdkstats_meter = self._customer_sdkstats_meter_provider.get_meter(__name__)
 
-        self._customer_properties = CustomerStatsbeatProperties(
+        self._customer_properties = CustomerSdkStatsProperties(
             language=self._language,
             version=VERSION,
             compute_type=get_compute_type(),
         )
 
-        self._success_gauge = self._customer_statsbeat_meter.create_observable_gauge(
-            name=CustomerStatsbeatMetricName.ITEM_SUCCESS_COUNT.value,
+        self._success_gauge = self._customer_sdkstats_meter.create_observable_gauge(
+            name=CustomerSdkStatsMetricName.ITEM_SUCCESS_COUNT.value,
             description="Tracks successful telemetry items sent to Azure Monitor",
             callbacks=[self._item_success_callback]
         )
-        self._dropped_gauge = self._customer_statsbeat_meter.create_observable_gauge(
-            name=CustomerStatsbeatMetricName.ITEM_DROP_COUNT.value,
+        self._dropped_gauge = self._customer_sdkstats_meter.create_observable_gauge(
+            name=CustomerSdkStatsMetricName.ITEM_DROP_COUNT.value,
             description="Tracks dropped telemetry items sent to Azure Monitor",
             callbacks=[self._item_drop_callback]
         )
-        self._retry_gauge = self._customer_statsbeat_meter.create_observable_gauge(
-            name=CustomerStatsbeatMetricName.ITEM_RETRY_COUNT.value,
+        self._retry_gauge = self._customer_sdkstats_meter.create_observable_gauge(
+            name=CustomerSdkStatsMetricName.ITEM_RETRY_COUNT.value,
             description="Tracks retry attempts for telemetry items sent to Azure Monitor",
             callbacks=[self._item_retry_callback]
         )
@@ -236,44 +234,44 @@ class CustomerStatsbeatMetrics(metaclass=Singleton): # pylint: disable=too-many-
         }
         return retry_code_reasons.get(retry_code, "unknown_reason")
 
-# Global customer statsbeat singleton
-_CUSTOMER_STATSBEAT_METRICS = None
-_CUSTOMER_STATSBEAT_LOCK = threading.Lock()
+# Global customer sdkstats singleton
+_CUSTOMER_SDKSTATS_METRICS = None
+_CUSTOMER_SDKSTATS_LOCK = threading.Lock()
 
 
 # pylint: disable=global-statement
 # pylint: disable=protected-access
-def collect_customer_statsbeat(exporter):
-    global _CUSTOMER_STATSBEAT_METRICS
-    # Only start customer statsbeat if did not exist before
-    if _CUSTOMER_STATSBEAT_METRICS is None:
-        with _CUSTOMER_STATSBEAT_LOCK:
+def collect_customer_sdkstats(exporter):
+    global _CUSTOMER_SDKSTATS_METRICS
+    # Only start customer sdkstats if did not exist before
+    if _CUSTOMER_SDKSTATS_METRICS is None:
+        with _CUSTOMER_SDKSTATS_LOCK:
             # Double-check inside the lock to avoid race conditions
-            if _CUSTOMER_STATSBEAT_METRICS is None:
+            if _CUSTOMER_SDKSTATS_METRICS is None:
 
                 connection_string = (
                     f"InstrumentationKey={exporter._instrumentation_key};"
                     f"IngestionEndpoint={exporter._endpoint}"
                 )
-                _CUSTOMER_STATSBEAT_METRICS = CustomerStatsbeatMetrics(connection_string)
+                _CUSTOMER_SDKSTATS_METRICS = CustomerSdkStatsMetrics(connection_string)
 
-    exporter._customer_statsbeat_metrics = _CUSTOMER_STATSBEAT_METRICS
+    exporter._customer_sdkstats_metrics = _CUSTOMER_SDKSTATS_METRICS
     if hasattr(exporter, 'storage') and exporter.storage:
-        exporter.storage._customer_statsbeat_metrics = _CUSTOMER_STATSBEAT_METRICS
+        exporter.storage._customer_sdkstats_metrics = _CUSTOMER_SDKSTATS_METRICS
 
 
-def shutdown_customer_statsbeat_metrics() -> None:
-    global _CUSTOMER_STATSBEAT_METRICS
+def shutdown_customer_sdkstats_metrics() -> None:
+    global _CUSTOMER_SDKSTATS_METRICS
     shutdown_success = False
-    if _CUSTOMER_STATSBEAT_METRICS is not None:
-        with _CUSTOMER_STATSBEAT_LOCK:
+    if _CUSTOMER_SDKSTATS_METRICS is not None:
+        with _CUSTOMER_SDKSTATS_LOCK:
             try:
-                if _CUSTOMER_STATSBEAT_METRICS._meter_provider is not None:
-                    _CUSTOMER_STATSBEAT_METRICS._meter_provider.shutdown()
-                    _CUSTOMER_STATSBEAT_METRICS = None
+                if _CUSTOMER_SDKSTATS_METRICS._customer_sdkstats_meter_provider is not None:
+                    _CUSTOMER_SDKSTATS_METRICS._customer_sdkstats_meter_provider.shutdown()
+                    _CUSTOMER_SDKSTATS_METRICS = None
                     shutdown_success = True
             except:  # pylint: disable=bare-except
                 pass
         if shutdown_success:
-            with _CUSTOMER_STATSBEAT_STATE_LOCK:
-                _CUSTOMER_STATSBEAT_STATE["SHUTDOWN"] = True
+            with _CUSTOMER_SDKSTATS_STATE_LOCK:
+                _CUSTOMER_SDKSTATS_STATE["SHUTDOWN"] = True

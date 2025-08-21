@@ -69,7 +69,7 @@ _COMMON_OPTIONS = {
     'retry_write': Constants.Kwargs.RETRY_WRITE,
     'max_item_count': 'maxItemCount',
     'throughput_bucket': 'throughputBucket',
-    'excluded_locations': 'excludedLocations'
+    'excluded_locations': Constants.Kwargs.EXCLUDED_LOCATIONS
 }
 
 # Cosmos resource ID validation regex breakdown:
@@ -367,7 +367,8 @@ def set_session_token_header(
                                                                 options.get('partitionKey'),
                                                                 cosmos_client_connection._container_properties_cache,
                                                                 cosmos_client_connection._routing_map_provider,
-                                                                partition_key_range_id))
+                                                                partition_key_range_id,
+                                                                options))
                 if session_token != "":
                     headers[http_constants.HttpHeaders.SessionToken] = session_token
 
@@ -396,7 +397,8 @@ async def set_session_token_header_async(
                                                                 options.get('partitionKey'),
                                                                 cosmos_client_connection._container_properties_cache,
                                                                 cosmos_client_connection._routing_map_provider,
-                                                                partition_key_range_id)
+                                                                partition_key_range_id,
+                                                                options)
                 if session_token != "":
                     headers[http_constants.HttpHeaders.SessionToken] = session_token
 

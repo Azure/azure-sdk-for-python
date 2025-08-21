@@ -130,7 +130,7 @@ def environment_variables(test_proxy: None) -> EnvironmentVariableSanitizer:
         - `sanitize_batch(dict)` will sanitize the values of all variables in dictionary `dict`
         - `get(a)` will return the value of environment variable `a` in the current context (live or playback mode)
         See the definition of EnvironmentVariableSanitizer in
-        https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/proxy_fixtures.py
+        https://github.com/Azure/azure-sdk-for-python/blob/main/eng/tools/azure-sdk-tools/devtools_testutils/proxy_fixtures.py
         for more details.
     """
     return EnvironmentVariableSanitizer()
@@ -180,7 +180,7 @@ def variable_recorder(recorded_test: "Dict[str, Any]") -> VariableRecorder:
 
     :returns: A VariableRecorder object. Calling `get_or_record(a, b)` on this object will return the recorded value of
         `a` in playback mode, or record the value `b` in recording mode. See the definition of VariableRecorder in
-        https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/proxy_fixtures.py
+        https://github.com/Azure/azure-sdk-for-python/blob/main/eng/tools/azure-sdk-tools/devtools_testutils/proxy_fixtures.py
         for more details.
     """
     return VariableRecorder(recorded_test["variables"])
