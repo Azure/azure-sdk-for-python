@@ -77,10 +77,6 @@ jobs:
         sdl:
           componentgovernance:
             enabled: true
-          codeql:
-            binaryLanguages: python # Need to specify the language because we clone after the codeql initialize step
-            compiled:
-              enabled: true
 
     steps:
     - template: /eng/pipelines/templates/steps/build-package-artifacts.yml
@@ -309,7 +305,7 @@ jobs:
       OsVmImage: ubuntu-24.04
       Pool: azsdk-pool
       GenerateJobName: generate_regression_matrix
-      SparseCheckoutPaths: [ "scripts/", "sdk/", "tools/azure-sdk-tools/" ]
+      SparseCheckoutPaths: [ "scripts/", "sdk/", "eng/tools/azure-sdk-tools/" ]
       MatrixConfigs:
           - Name: Python_regression_envs
             Path: eng/pipelines/templates/stages/regression-job-matrix.json
@@ -323,7 +319,7 @@ jobs:
         - pwsh: |
             $ErrorActionPreference = 'Stop'
             $PSNativeCommandUseErrorActionPreference = $true
-            $(PIP_EXE) install "./tools/azure-sdk-tools[build]"
+            $(PIP_EXE) install "./eng/tools/azure-sdk-tools[build]"
           displayName: 'Prep Environment'
         - task: PythonScript@0
           displayName: 'Ensure service coverage'

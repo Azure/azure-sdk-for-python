@@ -63,7 +63,7 @@ stages:
                   ArtifactLocation: $(Pipeline.Workspace)/${{parameters.ArtifactName}}
 
               - script: |
-                  python -m pip install "./tools/azure-sdk-tools"
+                  python -m pip install "./eng/tools/azure-sdk-tools"
                 displayName: Install tool dependencies
 
               - task: PythonScript@0
@@ -307,7 +307,7 @@ stages:
               - checkout: self
               - task: UsePythonVersion@0
               - script: |
-                  python -m pip install "./tools/azure-sdk-tools[build]"
+                  python -m pip install "./eng/tools/azure-sdk-tools[build]"
                 displayName: Install versioning tool dependencies
 
               - pwsh: |

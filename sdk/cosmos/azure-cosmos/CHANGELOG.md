@@ -3,12 +3,17 @@
 ### 4.14.0b3 (Unreleased)
 
 #### Features Added
+* Added read_items API to provide an efficient method for retrieving multiple items in a single request. See [PR 42167](https://github.com/Azure/azure-sdk-for-python/pull/42167).
 
 #### Breaking Changes
 
 #### Bugs Fixed
+* Improved the resilience of Database Account Read metadata operation against short-lived network issues by increasing number of retries. See [PR 42525](https://github.com/Azure/azure-sdk-for-python/pull/42525).
+* Fixed bug where during health checks read regions were marked as unavailable for write operations. See [PR 42525](https://github.com/Azure/azure-sdk-for-python/pull/42525).
+* Fixed bug where `excluded_locations` was not being honored for some metadata calls. See [PR 42266](https://github.com/Azure/azure-sdk-for-python/pull/42266).
 
 #### Other Changes
+* Added session token false progress merge logic. See [42393](https://github.com/Azure/azure-sdk-for-python/pull/42393)
 
 ### 4.14.0b2 (2025-08-12)
 
