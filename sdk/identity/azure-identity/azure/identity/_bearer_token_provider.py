@@ -30,7 +30,7 @@ def get_bearer_token_provider(credential: TokenProvider, *scopes: str) -> Callab
         request.headers["Authorization"] = "Bearer " + bearer_token_provider()
 
     :param credential: The credential used to authenticate the request.
-    :type credential: ~azure.core.credentials.TokenCredential
+    :type credential: ~azure.core.credentials.TokenProvider
     :param str scopes: The scopes required for the bearer token.
     :rtype: callable
     :return: A callable that returns a bearer token.
