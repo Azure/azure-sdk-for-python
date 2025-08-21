@@ -115,18 +115,6 @@ def get_prior_version(package_name: str, current_version: str) -> Optional[str]:
         return None
 
 
-def get_prior_stable_version(package_name: str, current_version: str) -> Optional[str]:
-    """Get the latest stable version from PyPI that is prior to the current version."""
-    try:
-        all_versions = retrieve_versions_from_pypi(package_name)
-        current_ver = Version(current_version)
-        stable_versions = [Version(v) for v in all_versions
-                          if not Version(v).is_prerelease and Version(v) < current_ver]
-        return str(max(stable_versions)) if stable_versions else None
-    except Exception:
-        return None
-
-
 def verify_prior_version_metadata(package_name: str, prior_version: str, current_metadata: Dict[str, Any], package_type: str = "*.whl") -> bool:
     """Download prior version and verify metadata compatibility."""
     with tempfile.TemporaryDirectory() as tmp_dir:
