@@ -576,20 +576,20 @@ def parse_setup_py(
 
     # fmt: off
     return (
-        name,
-        version,
-        python_requires,
-        requires,
-        is_new_sdk,
-        setup_filename,
-        name_space,
-        package_data,
-        include_package_data,
-        classifiers,
-        keywords,
-        ext_package,
-        ext_modules,
-        metapackage,
+        name,                   # str
+        version,                # str
+        python_requires,        # str
+        requires,               # List[str]
+        is_new_sdk,             # bool
+        setup_filename,         # str
+        name_space,             # str,
+        package_data,           # Dict[str, Any],
+        include_package_data,   # bool,
+        classifiers,            # List[str],
+        keywords,               # List[str] ADJUSTED
+        ext_package,            # str
+        ext_modules,            # List[Extension],
+        metapackage             # bool
     )
     # fmt: on
 
@@ -669,22 +669,24 @@ def parse_pyproject(
     ext_modules = get_value_from_dict(toml_dict, "tool.setuptools.ext-modules", [])
     ext_modules = [Extension(**moduleArgDict) for moduleArgDict in ext_modules]
 
+    # fmt: off
     return (
-        name,
-        version,
-        python_requires,
-        requires,
-        is_new_sdk,
-        pyproject_filename,
-        name_space,
-        package_data,
-        include_package_data,
-        classifiers,
-        keywords,
-        ext_package,
-        ext_modules,
-        metapackage,
+        name,                   # str
+        version,                # str
+        python_requires,        # str
+        requires,               # List[str]
+        is_new_sdk,             # bool
+        pyproject_filename,     # str
+        name_space,             # str,
+        package_data,           # Dict[str, Any],
+        include_package_data,   # bool,
+        classifiers,            # List[str],
+        keywords,               # List[str] ADJUSTED
+        ext_package,            # str
+        ext_modules,            # List[Extension]
+        metapackage             # bool
     )
+    # fmt: on
 
 
 def get_version_py(setup_path: str) -> Optional[str]:
