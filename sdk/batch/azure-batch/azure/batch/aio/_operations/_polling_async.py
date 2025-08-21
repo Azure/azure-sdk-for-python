@@ -3,18 +3,21 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-""" Custom Sync Polling Methods for Azure Batch Operations."""
+""" Custom Async Polling Methods for Azure Batch Operations."""
 
+import asyncio
 import time
+
 from typing import Any, Callable, Optional
 
 from azure.core.exceptions import ResourceNotFoundError
 from azure.core.pipeline import PipelineResponse
-from azure.core.polling import PollingMethod
+from azure.core.polling import AsyncPollingMethod
 
-from .. import models as _models
+from ... import models as _models
 
-class DeleteJobPollingMethod(PollingMethod):
+
+class DeleteJobPollingMethodAsync(AsyncPollingMethod):
     """Polling method for job delete operation.
 
     This class is used to poll the status of a job deletion operation.
@@ -80,23 +83,23 @@ class DeleteJobPollingMethod(PollingMethod):
             return self._deserialization_callback()
         return None
 
-    def run(self) -> None:
+    async def run(self) -> None:
         """The polling loop.
 
         The polling should call the status monitor, evaluate and set the current status,
         insert delay between polls, and continue polling until a terminal state is reached.
         """
         while not self.finished():
-            self.update_status()
+            await self.update_status()
             if not self.finished():
                 # add a delay if not done
-                time.sleep(self._polling_interval)
+                await asyncio.sleep(self._polling_interval)
 
-    def update_status(self):
+    async def update_status(self):
         """Update the current status of the LRO by calling the status monitor
         and then using the polling strategy's get_status() to set the status."""
         try:
-            job = self._client.get_job(self._job_id)
+            job = await self._client.get_job(self._job_id)
 
             # check job state is DELETING state (if not in deleting state then it's succeeded)
             if job.state != _models.BatchJobState.DELETING:
@@ -115,7 +118,8 @@ class DeleteJobPollingMethod(PollingMethod):
             self._status = "InProgress"
             self._finished = False
 
-class DisableJobPollingMethod(PollingMethod):
+
+class DisableJobPollingMethodAsync(AsyncPollingMethod):
     """Polling method for job disable operation.
 
     This class is used to poll the status of a job disable operation.
@@ -180,23 +184,23 @@ class DisableJobPollingMethod(PollingMethod):
             return self._deserialization_callback()
         return None
 
-    def run(self) -> None:
+    async def run(self) -> None:
         """The polling loop.
 
         The polling should call the status monitor, evaluate and set the current status,
         insert delay between polls, and continue polling until a terminal state is reached.
         """
         while not self.finished():
-            self.update_status()
+            await self.update_status()
             if not self.finished():
                 # add a delay if not done
-                time.sleep(self._polling_interval)
+                await asyncio.sleep(self._polling_interval)
 
-    def update_status(self):
+    async def update_status(self):
         """Update the current status of the LRO by calling the status monitor
         and then using the polling strategy's get_status() to set the status."""
         try:
-            job = self._client.get_job(self._job_id)
+            job = await self._client.get_job(self._job_id)
 
             # check job state is not in DISABLING for success
             if job.state != _models.BatchJobState.DISABLING:
@@ -212,7 +216,8 @@ class DisableJobPollingMethod(PollingMethod):
             self._status = "InProgress"
             self._finished = False
 
-class EnableJobPollingMethod(PollingMethod):
+
+class EnableJobPollingMethodAsync(AsyncPollingMethod):
     """Polling method for job enable operation.
     
     This class is used to poll the status of a job enable operation.
@@ -277,23 +282,23 @@ class EnableJobPollingMethod(PollingMethod):
             return self._deserialization_callback()
         return None
 
-    def run(self) -> None:
+    async def run(self) -> None:
         """The polling loop.
 
         The polling should call the status monitor, evaluate and set the current status,
         insert delay between polls, and continue polling until a terminal state is reached.
         """
         while not self.finished():
-            self.update_status()
+            await self.update_status()
             if not self.finished():
                 # add a delay if not done
-                time.sleep(self._polling_interval)
+                await asyncio.sleep(self._polling_interval)
 
-    def update_status(self):
+    async def update_status(self):
         """Update the current status of the LRO by calling the status monitor
         and then using the polling strategy's get_status() to set the status."""
         try:
-            job = self._client.get_job(self._job_id)
+            job = await self._client.get_job(self._job_id)
 
             # if job is not enabling then done
             if job.state != _models.BatchJobState.ENABLING:
@@ -309,7 +314,8 @@ class EnableJobPollingMethod(PollingMethod):
             self._status = "InProgress"
             self._finished = False
 
-class DeleteJobSchedulePollingMethod(PollingMethod):
+
+class DeleteJobSchedulePollingMethodAsync(AsyncPollingMethod):
     """Polling method for job schedule delete operation.
     
     This class is used to poll the status of a job schedule deletion operation.
@@ -375,23 +381,23 @@ class DeleteJobSchedulePollingMethod(PollingMethod):
             return self._deserialization_callback()
         return None
 
-    def run(self) -> None:
+    async def run(self) -> None:
         """The polling loop.
 
         The polling should call the status monitor, evaluate and set the current status,
         insert delay between polls, and continue polling until a terminal state is reached.
         """
         while not self.finished():
-            self.update_status()
+            await self.update_status()
             if not self.finished():
                 # add a delay if not done
-                time.sleep(self._polling_interval)
+                await asyncio.sleep(self._polling_interval)
 
-    def update_status(self):
+    async def update_status(self):
         """Update the current status of the LRO by calling the status monitor
         and then using the polling strategy's get_status() to set the status."""
         try:
-            job_schedule = self._client.get_job_schedule(self._job_schedule_id)
+            job_schedule = await self._client.get_job_schedule(self._job_schedule_id)
 
             # check job schedule state is DELETING state (if not in deleting state then it's succeeded)
             if job_schedule.state != _models.BatchJobScheduleState.DELETING:
@@ -407,7 +413,8 @@ class DeleteJobSchedulePollingMethod(PollingMethod):
             self._status = "InProgress"
             self._finished = False
 
-class DeletePoolPollingMethod(PollingMethod):
+
+class DeletePoolPollingMethodAsync(AsyncPollingMethod):
     """Polling method for pool delete operation.
     This class is used to poll the status of a pool deletion operation.
     It checks the status of the pool until it is deleted or an error occurs.
@@ -471,23 +478,23 @@ class DeletePoolPollingMethod(PollingMethod):
             return self._deserialization_callback()
         return None
 
-    def run(self) -> None:
+    async def run(self) -> None:
         """The polling loop.
 
         The polling should call the status monitor, evaluate and set the current status,
         insert delay between polls, and continue polling until a terminal state is reached.
         """
         while not self.finished():
-            self.update_status()
+            await self.update_status()
             if not self.finished():
                 # add a delay if not done
-                time.sleep(self._polling_interval)
+                await asyncio.sleep(self._polling_interval)
 
-    def update_status(self):
+    async def update_status(self):
         """Update the current status of the LRO by calling the status monitor
         and then using the polling strategy's get_status() to set the status."""
         try:
-            pool = self._client.get_pool(self._pool_id)
+            pool = await self._client.get_pool(self._pool_id)
 
             # check pool state is DELETING state (if not in deleting state then it's succeeded)
             if pool.state != _models.BatchPoolState.DELETING:
@@ -503,7 +510,8 @@ class DeletePoolPollingMethod(PollingMethod):
             self._status = "InProgress"
             self._finished = False
 
-class DeleteCertificatePollingMethod(PollingMethod):
+
+class DeleteCertificatePollingMethodAsync(AsyncPollingMethod):
     """Polling method for certificate delete operation.
     
     This class is used to poll the status of a certificate deletion operation.
@@ -569,23 +577,23 @@ class DeleteCertificatePollingMethod(PollingMethod):
             return self._deserialization_callback()
         return None
 
-    def run(self) -> None:
+    async def run(self) -> None:
         """The polling loop.
 
         The polling should call the status monitor, evaluate and set the current status,
         insert delay between polls, and continue polling until a terminal state is reached.
         """
         while not self.finished():
-            self.update_status()
+            await self.update_status()
             if not self.finished():
                 # add a delay if not done
-                time.sleep(self._polling_interval)
+                await asyncio.sleep(self._polling_interval)
 
-    def update_status(self):
+    async def update_status(self):
         """Update the current status of the LRO by calling the status monitor
         and then using the polling strategy's get_status() to set the status."""
         try:
-            certificate = self._client.get_certificate(self._thumbprint_algorithm, self._thumbprint)
+            certificate = await self._client.get_certificate(self._thumbprint_algorithm, self._thumbprint)
 
             # check certificate state is DELETING state (if not in deleting state then it's succeeded)
             if certificate.state != _models.BatchCertificateState.DELETING:
@@ -601,7 +609,8 @@ class DeleteCertificatePollingMethod(PollingMethod):
             self._status = "InProgress"
             self._finished = False
 
-class DeallocateNodePollingMethod(PollingMethod):
+
+class DeallocateNodePollingMethodAsync(AsyncPollingMethod):
     """Polling method for node deallocate operation.
     
     This class is used to poll the status of a node deallocation operation.
@@ -667,23 +676,23 @@ class DeallocateNodePollingMethod(PollingMethod):
             return self._deserialization_callback()
         return None
 
-    def run(self) -> None:
+    async def run(self) -> None:
         """The polling loop.
 
         The polling should call the status monitor, evaluate and set the current status,
         insert delay between polls, and continue polling until a terminal state is reached.
         """
         while not self.finished():
-            self.update_status()
+            await self.update_status()
             if not self.finished():
                 # add a delay if not done
-                time.sleep(self._polling_interval)
+                await asyncio.sleep(self._polling_interval)
 
-    def update_status(self):
+    async def update_status(self):
         """Update the current status of the LRO by calling the status monitor
         and then using the polling strategy's get_status() to set the status."""
         try:
-            node = self._client.get_node(self._pool_id, self._node_id)
+            node = await self._client.get_node(self._pool_id, self._node_id)
 
             # If node not in DEALLOCATING state then completed
             # don't check DEALLOCATED (too quick of a state to check?)
@@ -700,7 +709,8 @@ class DeallocateNodePollingMethod(PollingMethod):
             self._status = "InProgress"
             self._finished = False
 
-class RebootNodePollingMethod(PollingMethod):
+
+class RebootNodePollingMethodAsync(AsyncPollingMethod):
     """Polling method for node reboot operation.
     
     This class is used to poll the status of a node reboot operation.
@@ -766,23 +776,23 @@ class RebootNodePollingMethod(PollingMethod):
             return self._deserialization_callback()
         return None
 
-    def run(self) -> None:
+    async def run(self) -> None:
         """The polling loop.
 
         The polling should call the status monitor, evaluate and set the current status,
         insert delay between polls, and continue polling until a terminal state is reached.
         """
         while not self.finished():
-            self.update_status()
+            await self.update_status()
             if not self.finished():
                 # add a delay if not done
-                time.sleep(self._polling_interval)
+                await asyncio.sleep(self._polling_interval)
 
-    def update_status(self):
+    async def update_status(self):
         """Update the current status of the LRO by calling the status monitor
         and then using the polling strategy's get_status() to set the status."""
         try:
-            node = self._client.get_node(self._pool_id, self._node_id)
+            node = await self._client.get_node(self._pool_id, self._node_id)
 
             # Node reboot is complete when it's no longer in REBOOTING state
             if node.state != _models.BatchNodeState.REBOOTING:
@@ -798,7 +808,8 @@ class RebootNodePollingMethod(PollingMethod):
             self._status = "InProgress"
             self._finished = False
 
-class ReimageNodePollingMethod(PollingMethod):
+
+class ReimageNodePollingMethodAsync(AsyncPollingMethod):
     """Polling method for node reimage operation.
     
     This class is used to poll the status of a node reimage operation.
@@ -864,23 +875,23 @@ class ReimageNodePollingMethod(PollingMethod):
             return self._deserialization_callback()
         return None
 
-    def run(self) -> None:
+    async def run(self) -> None:
         """The polling loop.
 
         The polling should call the status monitor, evaluate and set the current status,
         insert delay between polls, and continue polling until a terminal state is reached.
         """
         while not self.finished():
-            self.update_status()
+            await self.update_status()
             if not self.finished():
                 # add a delay if not done
-                time.sleep(self._polling_interval)
+                await asyncio.sleep(self._polling_interval)
 
-    def update_status(self):
+    async def update_status(self):
         """Update the current status of the LRO by calling the status monitor
         and then using the polling strategy's get_status() to set the status."""
         try:
-            node = self._client.get_node(self._pool_id, self._node_id)
+            node = await self._client.get_node(self._pool_id, self._node_id)
 
             # Node reimage is complete when it's no longer in REIMAGING state
             if node.state != _models.BatchNodeState.REIMAGING:
@@ -896,7 +907,8 @@ class ReimageNodePollingMethod(PollingMethod):
             self._status = "InProgress"
             self._finished = False
 
-class RemoveNodePollingMethod(PollingMethod):
+
+class RemoveNodePollingMethodAsync(AsyncPollingMethod):
     """Polling method for node remove operation.
     
     This class is used to poll the status of a node removal operation.
@@ -961,23 +973,23 @@ class RemoveNodePollingMethod(PollingMethod):
             return self._deserialization_callback()
         return None
 
-    def run(self) -> None:
+    async def run(self) -> None:
         """The polling loop.
 
         The polling should call the status monitor, evaluate and set the current status,
         insert delay between polls, and continue polling until a terminal state is reached.
         """
         while not self.finished():
-            self.update_status()
+            await self.update_status()
             if not self.finished():
                 # add a delay if not done
-                time.sleep(self._polling_interval)
+                await asyncio.sleep(self._polling_interval)
 
-    def update_status(self):
+    async def update_status(self):
         """Update the current status of the LRO by calling the status monitor
         and then using the polling strategy's get_status() to set the status."""
         try:
-            pool = self._client.get_pool(self._pool_id)
+            pool = await self._client.get_pool(self._pool_id)
 
             # Node removal is complete when the pool allocation state is STEADY
             # This means the pool is no longer resizing/removing nodes
@@ -994,7 +1006,8 @@ class RemoveNodePollingMethod(PollingMethod):
             self._status = "InProgress"
             self._finished = False
 
-class ResizePoolPollingMethod(PollingMethod):
+
+class ResizePoolPollingMethodAsync(AsyncPollingMethod):
     """Polling method for pool resize operation.
     
     This class is used to poll the status of a pool resize operation.
@@ -1059,23 +1072,23 @@ class ResizePoolPollingMethod(PollingMethod):
             return self._deserialization_callback()
         return None
 
-    def run(self) -> None:
+    async def run(self) -> None:
         """The polling loop.
 
         The polling should call the status monitor, evaluate and set the current status,
         insert delay between polls, and continue polling until a terminal state is reached.
         """
         while not self.finished():
-            self.update_status()
+            await self.update_status()
             if not self.finished():
                 # add a delay if not done
-                time.sleep(self._polling_interval)
+                await asyncio.sleep(self._polling_interval)
 
-    def update_status(self):
+    async def update_status(self):
         """Update the current status of the LRO by calling the status monitor
         and then using the polling strategy's get_status() to set the status."""
         try:
-            pool = self._client.get_pool(self._pool_id)
+            pool = await self._client.get_pool(self._pool_id)
 
             # Pool resize is complete when the pool allocation state is STEADY
             # This means the pool is no longer resizing (adding/removing nodes)
@@ -1092,7 +1105,8 @@ class ResizePoolPollingMethod(PollingMethod):
             self._status = "InProgress"
             self._finished = False
 
-class StartNodePollingMethod(PollingMethod):
+
+class StartNodePollingMethodAsync(AsyncPollingMethod):
     """Polling method for node start operation.
     
     This class is used to poll the status of a node start operation.
@@ -1158,23 +1172,23 @@ class StartNodePollingMethod(PollingMethod):
             return self._deserialization_callback()
         return None
 
-    def run(self) -> None:
+    async def run(self) -> None:
         """The polling loop.
 
         The polling should call the status monitor, evaluate and set the current status,
         insert delay between polls, and continue polling until a terminal state is reached.
         """
         while not self.finished():
-            self.update_status()
+            await self.update_status()
             if not self.finished():
                 # add a delay if not done
-                time.sleep(self._polling_interval)
+                await asyncio.sleep(self._polling_interval)
 
-    def update_status(self):
+    async def update_status(self):
         """Update the current status of the LRO by calling the status monitor
         and then using the polling strategy's get_status() to set the status."""
         try:
-            node = self._client.get_node(self._pool_id, self._node_id)
+            node = await self._client.get_node(self._pool_id, self._node_id)
 
             # Node start is complete when it's no longer in STARTING state
             if node.state != _models.BatchNodeState.STARTING:
@@ -1190,7 +1204,8 @@ class StartNodePollingMethod(PollingMethod):
             self._status = "InProgress"
             self._finished = False
 
-class StopPoolResizePollingMethod(PollingMethod):
+
+class StopPoolResizePollingMethodAsync(AsyncPollingMethod):
     """Polling method for pool stop resize operation.
     
     This class is used to poll the status of a pool stop resize operation.
@@ -1255,23 +1270,23 @@ class StopPoolResizePollingMethod(PollingMethod):
             return self._deserialization_callback()
         return None
 
-    def run(self) -> None:
+    async def run(self) -> None:
         """The polling loop.
 
         The polling should call the status monitor, evaluate and set the current status,
         insert delay between polls, and continue polling until a terminal state is reached.
         """
         while not self.finished():
-            self.update_status()
+            await self.update_status()
             if not self.finished():
                 # add a delay if not done
-                time.sleep(self._polling_interval)
+                await asyncio.sleep(self._polling_interval)
 
-    def update_status(self):
+    async def update_status(self):
         """Update the current status of the LRO by calling the status monitor
         and then using the polling strategy's get_status() to set the status."""
         try:
-            pool = self._client.get_pool(self._pool_id)
+            pool = await self._client.get_pool(self._pool_id)
 
             # Pool stop resize is complete when the pool allocation state is STEADY
             # This means the pool has stopped resizing and is stable
@@ -1288,7 +1303,8 @@ class StopPoolResizePollingMethod(PollingMethod):
             self._status = "InProgress"
             self._finished = False
 
-class TerminateJobPollingMethod(PollingMethod):
+
+class TerminateJobPollingMethodAsync(AsyncPollingMethod):
     """Polling method for job termination operation.
     
     This class is used to poll the status of a job termination operation.
@@ -1353,23 +1369,23 @@ class TerminateJobPollingMethod(PollingMethod):
             return self._deserialization_callback()
         return None
 
-    def run(self) -> None:
+    async def run(self) -> None:
         """The polling loop.
 
         The polling should call the status monitor, evaluate and set the current status,
         insert delay between polls, and continue polling until a terminal state is reached.
         """
         while not self.finished():
-            self.update_status()
+            await self.update_status()
             if not self.finished():
                 # add a delay if not done
-                time.sleep(self._polling_interval)
+                await asyncio.sleep(self._polling_interval)
 
-    def update_status(self):
+    async def update_status(self):
         """Update the current status of the LRO by calling the status monitor
         and then using the polling strategy's get_status() to set the status."""
         try:
-            job = self._client.get_job(self._job_id)
+            job = await self._client.get_job(self._job_id)
 
             # Job termination is complete when it's no longer in TERMINATING state
             if job.state != _models.BatchJobState.TERMINATING:
@@ -1385,7 +1401,8 @@ class TerminateJobPollingMethod(PollingMethod):
             self._status = "InProgress"
             self._finished = False
 
-class TerminateJobSchedulePollingMethod(PollingMethod):
+
+class TerminateJobSchedulePollingMethodAsync(AsyncPollingMethod):
     """Polling method for job schedule termination operation.
     
     This class is used to poll the status of a job schedule termination operation.
@@ -1450,23 +1467,23 @@ class TerminateJobSchedulePollingMethod(PollingMethod):
             return self._deserialization_callback()
         return None
 
-    def run(self) -> None:
+    async def run(self) -> None:
         """The polling loop.
 
         The polling should call the status monitor, evaluate and set the current status,
         insert delay between polls, and continue polling until a terminal state is reached.
         """
         while not self.finished():
-            self.update_status()
+            await self.update_status()
             if not self.finished():
                 # add a delay if not done
-                time.sleep(self._polling_interval)
+                await asyncio.sleep(self._polling_interval)
 
-    def update_status(self):
+    async def update_status(self):
         """Update the current status of the LRO by calling the status monitor
         and then using the polling strategy's get_status() to set the status."""
         try:
-            job_schedule = self._client.get_job_schedule(self._job_schedule_id)
+            job_schedule = await self._client.get_job_schedule(self._job_schedule_id)
 
             # Job schedule termination is complete when it's no longer in TERMINATING state
             if job_schedule.state != _models.BatchJobScheduleState.TERMINATING:

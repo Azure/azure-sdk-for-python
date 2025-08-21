@@ -13,7 +13,7 @@ from azure.core.credentials import TokenCredential
 from azure.core.credentials import AzureNamedKeyCredential
 
 from ._client import BatchClient as GenerateBatchClient
-from .._patch import BatchSharedKeyAuthPolicy
+from .._patch import BatchExceptionPolicy, BatchSharedKeyAuthPolicy
 
 __all__ = [
     "BatchClient",
@@ -37,10 +37,13 @@ class BatchClient(GenerateBatchClient):
     """
 
     def __init__(self, endpoint: str, credential: Union[AzureNamedKeyCredential, TokenCredential], **kwargs):
+        per_call_policies = kwargs.pop("per_call_policies", [])
+        per_call_policies.append(BatchExceptionPolicy())
         super().__init__(
             endpoint=endpoint,
             credential=credential,  # type: ignore
             authentication_policy=kwargs.pop("authentication_policy", self._format_shared_key_credential(credential)),
+            per_call_policies=per_call_policies,
             **kwargs
         )
 

@@ -394,8 +394,14 @@ class TestBatch(AzureMgmtRecordedTestCase):
         poller = await wrap_result(client.begin_delete_pool(pool_id=test_paas_pool.id, polling_interval=5))
         assert poller is not None
         
-        # Wait for LRO completion
-        assert poller.result() is None
+        # Wait for LRO completion - handle both sync and async pollers
+        if hasattr(poller.result(), '__await__'):
+            # Async poller
+            result = await poller.result()
+        else:
+            # Sync poller
+            result = poller.result()
+        assert result is None
         assert poller.done()
         assert poller.status() == "Succeeded"
 
@@ -466,7 +472,13 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert poller is not None
 
         # Wait for LRO completion
-        assert poller.result() is None
+        if hasattr(poller.result(), '__await__'):
+            # Async poller
+            result = await poller.result()
+        else:
+            # Sync poller
+            result = poller.result()
+        assert result is None
         assert poller.done()
         assert poller.status() == "Succeeded"
 
@@ -544,7 +556,13 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert poller is not None
         
         # Wait for LRO completion
-        assert poller.result() is None
+        if hasattr(poller.result(), '__await__'):
+            # Async poller
+            result = await poller.result()
+        else:
+            # Sync poller
+            result = poller.result()
+        assert result is None
         assert poller.done()
         assert poller.status() == "Succeeded"
 
@@ -553,7 +571,13 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert poller is not None
         
         # Wait for LRO completion
-        assert poller.result() is None
+        if hasattr(poller.result(), '__await__'):
+            # Async poller
+            result = await poller.result()
+        else:
+            # Sync poller
+            result = poller.result()
+        assert result is None
         assert poller.done()
         assert poller.status() == "Succeeded"
 
@@ -681,7 +705,13 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert poller is not None
 
         # Wait for LRO completion
-        assert poller.result() is None
+        if hasattr(poller.result(), '__await__'):
+            # Async poller
+            result = await poller.result()
+        else:
+            # Sync poller
+            result = poller.result()
+        assert result is None
         assert poller.done()
         assert poller.status() == "Succeeded"
 
@@ -1057,8 +1087,9 @@ class TestBatch(AzureMgmtRecordedTestCase):
             )
         result = await wrap_result(client.create_tasks(batch_job.id, task_collection=tasks))
         assert isinstance(result, models.BatchCreateTaskCollectionResult)
-        assert len(result.value) == 3
-        assert result.value[0].status.lower() == models.BatchTaskAddStatus.SUCCESS
+        assert result.values_property is not None
+        assert len(result.values_property) == 3
+        assert result.values_property[0].status.lower() == models.BatchTaskAddStatus.SUCCESS
 
         # Test List Tasks
         tasks = list(await wrap_list_result(client.list_tasks(batch_job.id)))
@@ -1146,9 +1177,10 @@ class TestBatch(AzureMgmtRecordedTestCase):
             tasks_to_add.append(task)
         result = await wrap_result(client.create_tasks(batch_job.id, tasks_to_add))
         assert isinstance(result, models.BatchCreateTaskCollectionResult)
-        assert len(result.value) == 733
-        assert result.value[0].status.lower() == models.BatchTaskAddStatus.SUCCESS
-        assert all(t.status.lower() == models.BatchTaskAddStatus.SUCCESS for t in result.value)
+        assert result.values_property is not None
+        assert len(result.values_property) == 733
+        assert result.values_property[0].status.lower() == models.BatchTaskAddStatus.SUCCESS
+        assert all(t.status.lower() == models.BatchTaskAddStatus.SUCCESS for t in result.values_property)
 
     @CachedResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
@@ -1232,7 +1264,13 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert poller is not None
 
         # Wait for LRO completion
-        assert poller.result() is None
+        if hasattr(poller.result(), '__await__'):
+            # Async poller
+            result = await poller.result()
+        else:
+            # Sync poller
+            result = poller.result()
+        assert result is None
         assert poller.done()
         assert poller.status() == "Succeeded"
 
@@ -1250,7 +1288,13 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert poller is not None
 
         # Wait for LRO completion
-        assert poller.result() is None
+        if hasattr(poller.result(), '__await__'):
+            # Async poller
+            result = await poller.result()
+        else:
+            # Sync poller
+            result = poller.result()
+        assert result is None
         assert poller.done()
         assert poller.status() == "Succeeded"
 
@@ -1271,7 +1315,13 @@ class TestBatch(AzureMgmtRecordedTestCase):
         poller = await wrap_result(client.begin_terminate_job(job_id=job_param.id, polling_interval=5))
         assert poller is not None
         # waiting for completion
-        assert poller.result() is None
+        if hasattr(poller.result(), '__await__'):
+            # Async poller
+            result = await poller.result()
+        else:
+            # Sync poller
+            result = poller.result()
+        assert result is None
         assert poller.done()
         assert poller.status() == "Succeeded"
 
@@ -1280,7 +1330,13 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert poller is not None
         
         # Wait for LRO completion
-        assert poller.result() is None
+        if hasattr(poller.result(), '__await__'):
+            # Async poller
+            result = await poller.result()
+        else:
+            # Sync poller
+            result = poller.result()
+        assert result is None
         assert poller.done()
         assert poller.status() == "Succeeded"
 
