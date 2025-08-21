@@ -1,0 +1,126 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com//language/authoring/analyze-conversations/projects/PythonImportProject0820/:export?api-version=2025-05-15-preview&format=Conversation&stringIndexType=Utf16CodeUnit",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "Ocp-Apim-Subscription-Key": "Sanitized",
+        "User-Agent": "azsdk-python-ai-language-conversations-authoring/1.0.0b1 Python/3.13.7 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": "*",
+        "apim-request-id": "b1e7c3bd-de20-454c-9ee2-c71e5eb59218",
+        "Content-Length": "0",
+        "Date": "Thu, 21 Aug 2025 05:23:47 GMT",
+        "operation-location": "https://Sanitized.cognitiveservices.azure.com/language/authoring/analyze-conversations/projects/PythonImportProject0820/export/jobs/58b8b13d-5642-4e11-9392-29fa84089e73_638913312000000000?api-version=2025-05-15-preview",
+        "request-id": "b1e7c3bd-de20-454c-9ee2-c71e5eb59218",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "94",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/authoring/analyze-conversations/projects/PythonImportProject0820/export/jobs/58b8b13d-5642-4e11-9392-29fa84089e73_638913312000000000?api-version=2025-05-15-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Ocp-Apim-Subscription-Key": "Sanitized",
+        "User-Agent": "azsdk-python-ai-language-conversations-authoring/1.0.0b1 Python/3.13.7 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": "*",
+        "apim-request-id": "74dec691-3870-4906-978d-f3f4e21d73da",
+        "Content-Length": "219",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 21 Aug 2025 05:23:47 GMT",
+        "request-id": "74dec691-3870-4906-978d-f3f4e21d73da",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "20",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": {
+        "jobId": "58b8b13d-5642-4e11-9392-29fa84089e73_638913312000000000",
+        "createdDateTime": "2025-08-21T05:23:48Z",
+        "lastUpdatedDateTime": "2025-08-21T05:23:48Z",
+        "expirationDateTime": "2025-08-28T05:23:48Z",
+        "status": "notStarted"
+      }
+    },
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/authoring/analyze-conversations/projects/PythonImportProject0820/export/jobs/58b8b13d-5642-4e11-9392-29fa84089e73_638913312000000000?api-version=2025-05-15-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Ocp-Apim-Subscription-Key": "Sanitized",
+        "User-Agent": "azsdk-python-ai-language-conversations-authoring/1.0.0b1 Python/3.13.7 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": "*",
+        "apim-request-id": "f2c494af-fe5a-4122-aa28-c1b7bf6ad2f4",
+        "Content-Length": "458",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 21 Aug 2025 05:24:17 GMT",
+        "request-id": "f2c494af-fe5a-4122-aa28-c1b7bf6ad2f4",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "19",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": {
+        "resultUrl": "https://Sanitized.cognitiveservices.azure.com/language/authoring/analyze-conversations/projects/PythonImportProject0820/export/jobs/58b8b13d-5642-4e11-9392-29fa84089e73_638913312000000000/result?api-version=2025-05-15-preview",
+        "jobId": "58b8b13d-5642-4e11-9392-29fa84089e73_638913312000000000",
+        "createdDateTime": "2025-08-21T05:23:48Z",
+        "lastUpdatedDateTime": "2025-08-21T05:23:48Z",
+        "expirationDateTime": "2025-08-28T05:23:48Z",
+        "status": "succeeded"
+      }
+    },
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/authoring/analyze-conversations/projects/PythonImportProject0820/export/jobs/58b8b13d-5642-4e11-9392-29fa84089e73_638913312000000000?api-version=2025-05-15-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Ocp-Apim-Subscription-Key": "Sanitized",
+        "User-Agent": "azsdk-python-ai-language-conversations-authoring/1.0.0b1 Python/3.13.7 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": "*",
+        "apim-request-id": "08781c84-a35f-4604-84f4-90594d8c3d07",
+        "Content-Length": "458",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 21 Aug 2025 05:24:18 GMT",
+        "request-id": "08781c84-a35f-4604-84f4-90594d8c3d07",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "23",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": {
+        "resultUrl": "https://Sanitized.cognitiveservices.azure.com/language/authoring/analyze-conversations/projects/PythonImportProject0820/export/jobs/58b8b13d-5642-4e11-9392-29fa84089e73_638913312000000000/result?api-version=2025-05-15-preview",
+        "jobId": "58b8b13d-5642-4e11-9392-29fa84089e73_638913312000000000",
+        "createdDateTime": "2025-08-21T05:23:48Z",
+        "lastUpdatedDateTime": "2025-08-21T05:23:48Z",
+        "expirationDateTime": "2025-08-28T05:23:48Z",
+        "status": "succeeded"
+      }
+    }
+  ],
+  "Variables": {}
+}
