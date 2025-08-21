@@ -9,7 +9,7 @@ from azure.ai.language.conversations.models import (
     ConversationalAIAnalysisInput,
     TextConversation,
     TextConversationItem,
-    ConversationalAILanguageUnderstandingActionContent,
+    ConversationalAIActionContent,
     AnalyzeConversationActionResult,
     StringIndexType,
     ConversationalAITaskResult,
@@ -72,7 +72,7 @@ class TestConversationsCase(TestConversations):
                     )
                 ]
             ),
-            parameters=ConversationalAILanguageUnderstandingActionContent(
+            parameters=ConversationalAIActionContent(
                 project_name=project_name,
                 deployment_name=deployment_name,
                 string_index_type=StringIndexType.UTF16_CODE_UNIT,

@@ -777,6 +777,80 @@ class CharacterMaskPolicyType(BaseRedactionPolicy, discriminator="characterMask"
         super().__init__(*args, policy_kind=RedactionPolicyKind.CHARACTER_MASK, **kwargs)
 
 
+class ConversationActionContent(_Model):
+    """Input parameters necessary for a Conversation task.
+
+    :ivar project_name: The name of the project to use. Required.
+    :vartype project_name: str
+    :ivar deployment_name: The name of the deployment to use. Required.
+    :vartype deployment_name: str
+    :ivar verbose: If true, the service will return more detailed information in the response.
+    :vartype verbose: bool
+    :ivar is_logging_enabled: If true, the service will keep the query for further review.
+    :vartype is_logging_enabled: bool
+    :ivar string_index_type: Specifies the method used to interpret string offsets.  Defaults to
+     Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see
+     `https://aka.ms/text-analytics-offsets <https://aka.ms/text-analytics-offsets>`_. Known values
+     are: "TextElements_v8", "UnicodeCodePoint", and "Utf16CodeUnit".
+    :vartype string_index_type: str or ~azure.ai.language.conversations.models.StringIndexType
+    :ivar direct_target: The name of a target project to forward the request to.
+    :vartype direct_target: str
+    :ivar target_project_parameters: A dictionary representing the parameters for each target
+     project.
+    :vartype target_project_parameters: dict[str,
+     ~azure.ai.language.conversations.models.AnalysisConfig]
+    """
+
+    project_name: str = rest_field(name="projectName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the project to use. Required."""
+    deployment_name: str = rest_field(name="deploymentName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the deployment to use. Required."""
+    verbose: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """If true, the service will return more detailed information in the response."""
+    is_logging_enabled: Optional[bool] = rest_field(
+        name="isLoggingEnabled", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """If true, the service will keep the query for further review."""
+    string_index_type: Optional[Union[str, "_models.StringIndexType"]] = rest_field(
+        name="stringIndexType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the method used to interpret string offsets.  Defaults to Text Elements (Graphemes)
+     according to Unicode v8.0.0. For additional information see
+     `https://aka.ms/text-analytics-offsets <https://aka.ms/text-analytics-offsets>`_. Known values
+     are: \"TextElements_v8\", \"UnicodeCodePoint\", and \"Utf16CodeUnit\"."""
+    direct_target: Optional[str] = rest_field(
+        name="directTarget", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The name of a target project to forward the request to."""
+    target_project_parameters: Optional[Dict[str, "_models.AnalysisConfig"]] = rest_field(
+        name="targetProjectParameters", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A dictionary representing the parameters for each target project."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        project_name: str,
+        deployment_name: str,
+        verbose: Optional[bool] = None,
+        is_logging_enabled: Optional[bool] = None,
+        string_index_type: Optional[Union[str, "_models.StringIndexType"]] = None,
+        direct_target: Optional[str] = None,
+        target_project_parameters: Optional[Dict[str, "_models.AnalysisConfig"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ConversationActionResult(AnalyzeConversationActionResult, discriminator="ConversationResult"):
     """The results of a Conversation task.
 
@@ -848,6 +922,52 @@ class ConversationActions(_Model):
         in_progress: int,
         total: int,
         task_results: Optional[List["_models.AnalyzeConversationOperationResult"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ConversationalAIActionContent(_Model):
+    """Input parameters base for a Conversation task.
+
+    :ivar project_name: The name of the project to use. Required.
+    :vartype project_name: str
+    :ivar deployment_name: The name of the deployment to use. Required.
+    :vartype deployment_name: str
+    :ivar string_index_type: Specifies the method used to interpret string offsets.  Defaults to
+     Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see
+     `https://aka.ms/text-analytics-offsets <https://aka.ms/text-analytics-offsets>`_. Known values
+     are: "TextElements_v8", "UnicodeCodePoint", and "Utf16CodeUnit".
+    :vartype string_index_type: str or ~azure.ai.language.conversations.models.StringIndexType
+    """
+
+    project_name: str = rest_field(name="projectName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the project to use. Required."""
+    deployment_name: str = rest_field(name="deploymentName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the deployment to use. Required."""
+    string_index_type: Optional[Union[str, "_models.StringIndexType"]] = rest_field(
+        name="stringIndexType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the method used to interpret string offsets.  Defaults to Text Elements (Graphemes)
+     according to Unicode v8.0.0. For additional information see
+     `https://aka.ms/text-analytics-offsets <https://aka.ms/text-analytics-offsets>`_. Known values
+     are: \"TextElements_v8\", \"UnicodeCodePoint\", and \"Utf16CodeUnit\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        project_name: str,
+        deployment_name: str,
+        string_index_type: Optional[Union[str, "_models.StringIndexType"]] = None,
     ) -> None: ...
 
     @overload
@@ -1061,52 +1181,6 @@ class ConversationalAIIntent(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConversationalAILanguageUnderstandingActionContent(_Model):  # pylint: disable=name-too-long
-    """Input parameters base for a Conversation task.
-
-    :ivar project_name: The name of the project to use. Required.
-    :vartype project_name: str
-    :ivar deployment_name: The name of the deployment to use. Required.
-    :vartype deployment_name: str
-    :ivar string_index_type: Specifies the method used to interpret string offsets.  Defaults to
-     Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see
-     `https://aka.ms/text-analytics-offsets <https://aka.ms/text-analytics-offsets>`_. Known values
-     are: "TextElements_v8", "UnicodeCodePoint", and "Utf16CodeUnit".
-    :vartype string_index_type: str or ~azure.ai.language.conversations.models.StringIndexType
-    """
-
-    project_name: str = rest_field(name="projectName", visibility=["read", "create", "update", "delete", "query"])
-    """The name of the project to use. Required."""
-    deployment_name: str = rest_field(name="deploymentName", visibility=["read", "create", "update", "delete", "query"])
-    """The name of the deployment to use. Required."""
-    string_index_type: Optional[Union[str, "_models.StringIndexType"]] = rest_field(
-        name="stringIndexType", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Specifies the method used to interpret string offsets.  Defaults to Text Elements (Graphemes)
-     according to Unicode v8.0.0. For additional information see
-     `https://aka.ms/text-analytics-offsets <https://aka.ms/text-analytics-offsets>`_. Known values
-     are: \"TextElements_v8\", \"UnicodeCodePoint\", and \"Utf16CodeUnit\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        project_name: str,
-        deployment_name: str,
-        string_index_type: Optional[Union[str, "_models.StringIndexType"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class ConversationalAIResult(_Model):
     """Represents the conversational analysis response.
 
@@ -1151,8 +1225,7 @@ class ConversationalAITask(AnalyzeConversationInput, discriminator="Conversation
     :vartype analysis_input: ~azure.ai.language.conversations.models.ConversationalAIAnalysisInput
     :ivar parameters: Input parameters necessary for a Conversation language understanding task.
      Required.
-    :vartype parameters:
-     ~azure.ai.language.conversations.models.ConversationalAILanguageUnderstandingActionContent
+    :vartype parameters: ~azure.ai.language.conversations.models.ConversationalAIActionContent
     """
 
     kind: Literal[AnalyzeConversationInputKind.CONVERSATIONAL_AI] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -1161,7 +1234,7 @@ class ConversationalAITask(AnalyzeConversationInput, discriminator="Conversation
         name="analysisInput", visibility=["read", "create", "update", "delete", "query"]
     )
     """The input ConversationItem and its optional parameters. Required."""
-    parameters: "_models.ConversationalAILanguageUnderstandingActionContent" = rest_field(
+    parameters: "_models.ConversationalAIActionContent" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Input parameters necessary for a Conversation language understanding task. Required."""
@@ -1171,7 +1244,7 @@ class ConversationalAITask(AnalyzeConversationInput, discriminator="Conversation
         self,
         *,
         analysis_input: "_models.ConversationalAIAnalysisInput",
-        parameters: "_models.ConversationalAILanguageUnderstandingActionContent",
+        parameters: "_models.ConversationalAIActionContent",
     ) -> None: ...
 
     @overload
@@ -1693,80 +1766,6 @@ class ConversationItemRange(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConversationLanguageUnderstandingActionContent(_Model):  # pylint: disable=name-too-long
-    """Input parameters necessary for a Conversation task.
-
-    :ivar project_name: The name of the project to use. Required.
-    :vartype project_name: str
-    :ivar deployment_name: The name of the deployment to use. Required.
-    :vartype deployment_name: str
-    :ivar verbose: If true, the service will return more detailed information in the response.
-    :vartype verbose: bool
-    :ivar is_logging_enabled: If true, the service will keep the query for further review.
-    :vartype is_logging_enabled: bool
-    :ivar string_index_type: Specifies the method used to interpret string offsets.  Defaults to
-     Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see
-     `https://aka.ms/text-analytics-offsets <https://aka.ms/text-analytics-offsets>`_. Known values
-     are: "TextElements_v8", "UnicodeCodePoint", and "Utf16CodeUnit".
-    :vartype string_index_type: str or ~azure.ai.language.conversations.models.StringIndexType
-    :ivar direct_target: The name of a target project to forward the request to.
-    :vartype direct_target: str
-    :ivar target_project_parameters: A dictionary representing the parameters for each target
-     project.
-    :vartype target_project_parameters: dict[str,
-     ~azure.ai.language.conversations.models.AnalysisConfig]
-    """
-
-    project_name: str = rest_field(name="projectName", visibility=["read", "create", "update", "delete", "query"])
-    """The name of the project to use. Required."""
-    deployment_name: str = rest_field(name="deploymentName", visibility=["read", "create", "update", "delete", "query"])
-    """The name of the deployment to use. Required."""
-    verbose: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """If true, the service will return more detailed information in the response."""
-    is_logging_enabled: Optional[bool] = rest_field(
-        name="isLoggingEnabled", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """If true, the service will keep the query for further review."""
-    string_index_type: Optional[Union[str, "_models.StringIndexType"]] = rest_field(
-        name="stringIndexType", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Specifies the method used to interpret string offsets.  Defaults to Text Elements (Graphemes)
-     according to Unicode v8.0.0. For additional information see
-     `https://aka.ms/text-analytics-offsets <https://aka.ms/text-analytics-offsets>`_. Known values
-     are: \"TextElements_v8\", \"UnicodeCodePoint\", and \"Utf16CodeUnit\"."""
-    direct_target: Optional[str] = rest_field(
-        name="directTarget", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The name of a target project to forward the request to."""
-    target_project_parameters: Optional[Dict[str, "_models.AnalysisConfig"]] = rest_field(
-        name="targetProjectParameters", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """A dictionary representing the parameters for each target project."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        project_name: str,
-        deployment_name: str,
-        verbose: Optional[bool] = None,
-        is_logging_enabled: Optional[bool] = None,
-        string_index_type: Optional[Union[str, "_models.StringIndexType"]] = None,
-        direct_target: Optional[str] = None,
-        target_project_parameters: Optional[Dict[str, "_models.AnalysisConfig"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class ConversationLanguageUnderstandingInput(AnalyzeConversationInput, discriminator="Conversation"):
     """The input for a conversation language understanding task.
 
@@ -1776,8 +1775,7 @@ class ConversationLanguageUnderstandingInput(AnalyzeConversationInput, discrimin
     :vartype conversation_input: ~azure.ai.language.conversations.models.ConversationAnalysisInput
     :ivar action_content: Input parameters necessary for a Conversation language understanding
      task. Required.
-    :vartype action_content:
-     ~azure.ai.language.conversations.models.ConversationLanguageUnderstandingActionContent
+    :vartype action_content: ~azure.ai.language.conversations.models.ConversationActionContent
     """
 
     kind: Literal[AnalyzeConversationInputKind.CONVERSATION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -1786,7 +1784,7 @@ class ConversationLanguageUnderstandingInput(AnalyzeConversationInput, discrimin
         name="analysisInput", visibility=["read", "create", "update", "delete", "query"]
     )
     """The input ConversationItem and its optional parameters. Required."""
-    action_content: "_models.ConversationLanguageUnderstandingActionContent" = rest_field(
+    action_content: "_models.ConversationActionContent" = rest_field(
         name="parameters", visibility=["read", "create", "update", "delete", "query"]
     )
     """Input parameters necessary for a Conversation language understanding task. Required."""
@@ -1796,7 +1794,7 @@ class ConversationLanguageUnderstandingInput(AnalyzeConversationInput, discrimin
         self,
         *,
         conversation_input: "_models.ConversationAnalysisInput",
-        action_content: "_models.ConversationLanguageUnderstandingActionContent",
+        action_content: "_models.ConversationActionContent",
     ) -> None: ...
 
     @overload

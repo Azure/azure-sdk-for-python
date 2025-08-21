@@ -33,7 +33,7 @@ from azure.ai.language.conversations.models import (
     # Request
     ConversationalAITask,
     ConversationalAIAnalysisInput,
-    ConversationalAILanguageUnderstandingActionContent,
+    ConversationalAIActionContent,
     TextConversation,
     TextConversationItem,
     StringIndexType,
@@ -79,7 +79,7 @@ def sample_conversation_multi_turn_prediction():
                 )
             ]
         ),
-        parameters=ConversationalAILanguageUnderstandingActionContent(
+        parameters=ConversationalAIActionContent(
             project_name=project_name,
             deployment_name=deployment_name,
             string_index_type=StringIndexType.UTF16_CODE_UNIT,

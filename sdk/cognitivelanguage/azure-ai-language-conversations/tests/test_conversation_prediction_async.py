@@ -7,7 +7,7 @@ from azure.ai.language.conversations.models import (
     ConversationLanguageUnderstandingInput,
     ConversationAnalysisInput,
     TextConversationItem,
-    ConversationLanguageUnderstandingActionContent,
+    ConversationActionContent,
     AnalyzeConversationActionResult,
     StringIndexType,
     ConversationActionResult,
@@ -59,7 +59,7 @@ class TestConversationsCase(TestConversations):
                         text="Send an email to Carol about tomorrow's demo",
                     )
                 ),
-                action_content=ConversationLanguageUnderstandingActionContent(
+                action_content=ConversationActionContent(
                     project_name=project_name,
                     deployment_name=deployment_name,
                     string_index_type=StringIndexType.UTF16_CODE_UNIT,

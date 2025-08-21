@@ -8,7 +8,7 @@ from azure.core.async_paging import AsyncItemPaged
 from azure.ai.language.conversations.aio import ConversationAnalysisClient, AnalyzeConversationAsyncLROPoller
 from azure.ai.language.conversations.models import (
     AnalyzeConversationActionResult,
-    ConversationLanguageUnderstandingActionContent,
+    ConversationActionContent,
     ConversationAnalysisInput,
     TextConversationItem,
     StringIndexType,
@@ -54,7 +54,7 @@ class TestConversationsCase(TestConversations):
                         text="How are you?",
                     )
                 ),
-                action_content=ConversationLanguageUnderstandingActionContent(
+                action_content=ConversationActionContent(
                     project_name=project_name,
                     deployment_name=deployment_name,
                     string_index_type=StringIndexType.UTF16_CODE_UNIT,
@@ -79,7 +79,7 @@ class TestConversationsCase(TestConversations):
             assert isinstance(target_intent_result, QuestionAnsweringTargetIntentResult)
 
             qa = target_intent_result.result
-            for ans in qa.answers: # type: ignore
+            for ans in qa.answers:  # type: ignore
                 print(ans.answer or "")
 
             # Final assertions like in C#

@@ -5,7 +5,7 @@ from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer, record
 from azure.ai.language.conversations import ConversationAnalysisClient
 from azure.ai.language.conversations.models import (
     AnalyzeConversationOperationInput,
-    ConversationLanguageUnderstandingActionContent,
+    ConversationActionContent,
     ConversationAnalysisInput,
     TextConversationItem,
     ConversationActionResult,
@@ -55,7 +55,7 @@ class TestConversationsCase(TestConversations):
                     id="1", participant_id="participant1", text="Send an email to Carol about tomorrow's demo"
                 )
             ),
-            action_content=ConversationLanguageUnderstandingActionContent(
+            action_content=ConversationActionContent(
                 project_name=project_name,
                 deployment_name=deployment_name,
                 string_index_type=StringIndexType.UTF16_CODE_UNIT,

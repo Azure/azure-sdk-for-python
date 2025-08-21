@@ -64,9 +64,21 @@ def sample_conversation_pii_with_entity_mask_policy():
                 id="1",
                 language="en",
                 conversation_items=[
-                    TextConversationItem(id="1", participant_id="Agent_1", role=ParticipantRole.AGENT, text="Can you provide your name?"),
-                    TextConversationItem(id="2", participant_id="Customer_1", role=ParticipantRole.CUSTOMER, text="Hi, my name is John Doe."),
-                    TextConversationItem(id="3", participant_id="Agent_1", role=ParticipantRole.AGENT, text="Thank you John, that has been updated in our system."),
+                    TextConversationItem(
+                        id="1", participant_id="Agent_1", role=ParticipantRole.AGENT, text="Can you provide your name?"
+                    ),
+                    TextConversationItem(
+                        id="2",
+                        participant_id="Customer_1",
+                        role=ParticipantRole.CUSTOMER,
+                        text="Hi, my name is John Doe.",
+                    ),
+                    TextConversationItem(
+                        id="3",
+                        participant_id="Agent_1",
+                        role=ParticipantRole.AGENT,
+                        text="Thank you John, that has been updated in our system.",
+                    ),
                 ],
             )
         ]
@@ -127,9 +139,9 @@ def sample_conversation_pii_with_entity_mask_policy():
 
                                 # 2) redaction should show an entity mask like [Person] or [Person-1]
                                 expected_mask_pattern = rf"\[{re.escape(entity.category)}-?\d*\]"
-                                assert re.search(expected_mask_pattern, redacted_text, flags=re.IGNORECASE), (
-                                    f"Expected a redaction mask like '[{entity.category}]' but got: {redacted_text}"
-                                )
+                                assert re.search(
+                                    expected_mask_pattern, redacted_text, flags=re.IGNORECASE
+                                ), f"Expected a redaction mask like '[{entity.category}]' but got: {redacted_text}"
 
                             redacted_verified.append(redacted_text)
 

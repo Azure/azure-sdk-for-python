@@ -32,7 +32,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.ai.language.conversations.aio import ConversationAnalysisClient
 from azure.ai.language.conversations.models import (
     AnalyzeConversationActionResult,
-    ConversationLanguageUnderstandingActionContent,
+    ConversationActionContent,
     ConversationAnalysisInput,
     TextConversationItem,
     StringIndexType,
@@ -62,7 +62,7 @@ async def sample_orchestration_prediction_async():
                     text="How are you?",
                 )
             ),
-            action_content=ConversationLanguageUnderstandingActionContent(
+            action_content=ConversationActionContent(
                 project_name=project_name,
                 deployment_name=deployment_name,
                 string_index_type=StringIndexType.UTF16_CODE_UNIT,
@@ -89,7 +89,7 @@ async def sample_orchestration_prediction_async():
 
         # Print answers from the QnA result
         qa = target_intent_result.result
-        for ans in qa.answers: # type: ignore
+        for ans in qa.answers:  # type: ignore
             print(ans.answer or "")
 
         # Optional final assertion

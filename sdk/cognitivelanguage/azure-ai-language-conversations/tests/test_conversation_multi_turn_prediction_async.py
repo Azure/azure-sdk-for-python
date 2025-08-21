@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 import functools
 import pytest
 
@@ -8,7 +9,7 @@ from azure.ai.language.conversations.models import (
     ConversationalAIAnalysisInput,
     TextConversation,
     TextConversationItem,
-    ConversationalAILanguageUnderstandingActionContent,
+    ConversationalAIActionContent,
     AnalyzeConversationActionResult,
     StringIndexType,
     ConversationalAITaskResult,
@@ -75,7 +76,7 @@ class TestConversationsCase(TestConversations):
                         )
                     ]
                 ),
-                parameters=ConversationalAILanguageUnderstandingActionContent(
+                parameters=ConversationalAIActionContent(
                     project_name=project_name,
                     deployment_name=deployment_name,
                     string_index_type=StringIndexType.UTF16_CODE_UNIT,
@@ -151,8 +152,7 @@ class TestConversationsCase(TestConversations):
                     print(f"  Confidence: {ent.confidence_score}")
                     print(f"  Offset: {ent.offset}, Length: {ent.length}")
                     print(
-                        f"  Conversation Item ID: {ent.conversation_item_id}, "
-                        f"Index: {ent.conversation_item_index}"
+                        f"  Conversation Item ID: {ent.conversation_item_id}, " f"Index: {ent.conversation_item_index}"
                     )
 
                     if ent.extra_information:

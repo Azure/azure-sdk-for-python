@@ -31,7 +31,7 @@ from azure.ai.language.conversations.models import (
     ConversationLanguageUnderstandingInput,
     ConversationAnalysisInput,
     TextConversationItem,
-    ConversationLanguageUnderstandingActionContent,
+    ConversationActionContent,
     StringIndexType,
     AnalyzeConversationActionResult,
     ConversationActionResult,
@@ -60,7 +60,7 @@ def sample_conversation_prediction_with_language():
                 language="es",  # specify input language
             )
         ),
-        action_content=ConversationLanguageUnderstandingActionContent(
+        action_content=ConversationActionContent(
             project_name=project_name,
             deployment_name=deployment_name,
             string_index_type=StringIndexType.UTF16_CODE_UNIT,

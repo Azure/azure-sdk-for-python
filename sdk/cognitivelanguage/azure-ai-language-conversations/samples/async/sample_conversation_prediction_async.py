@@ -32,7 +32,7 @@ from azure.ai.language.conversations.models import (
     ConversationLanguageUnderstandingInput,
     ConversationAnalysisInput,
     TextConversationItem,
-    ConversationLanguageUnderstandingActionContent,
+    ConversationActionContent,
     StringIndexType,
     AnalyzeConversationActionResult,
     ConversationActionResult,
@@ -60,7 +60,7 @@ async def sample_conversation_prediction_async():
                     text="Send an email to Carol about tomorrow's demo",
                 )
             ),
-            action_content=ConversationLanguageUnderstandingActionContent(
+            action_content=ConversationActionContent(
                 project_name=project_name,
                 deployment_name=deployment_name,
                 string_index_type=StringIndexType.UTF16_CODE_UNIT,
@@ -111,6 +111,7 @@ async def sample_conversation_prediction_async():
 
 async def main():
     await sample_conversation_prediction_async()
+
 
 if __name__ == "__main__":
     asyncio.run(main())

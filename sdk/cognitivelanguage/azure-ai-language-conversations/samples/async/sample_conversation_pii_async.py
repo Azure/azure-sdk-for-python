@@ -63,9 +63,24 @@ async def sample_conversation_pii_async():
                     id="1",
                     language="en",
                     conversation_items=[
-                        TextConversationItem(id="1", participant_id="Agent_1", role=ParticipantRole.AGENT, text="Can you provide your name?"),
-                        TextConversationItem(id="2", participant_id="Customer_1", role=ParticipantRole.CUSTOMER, text="Hi, my name is John Doe."),
-                        TextConversationItem(id="3", participant_id="Agent_1", role=ParticipantRole.AGENT, text="Thank you John, that has been updated in our system."),
+                        TextConversationItem(
+                            id="1",
+                            participant_id="Agent_1",
+                            role=ParticipantRole.AGENT,
+                            text="Can you provide your name?",
+                        ),
+                        TextConversationItem(
+                            id="2",
+                            participant_id="Customer_1",
+                            role=ParticipantRole.CUSTOMER,
+                            text="Hi, my name is John Doe.",
+                        ),
+                        TextConversationItem(
+                            id="3",
+                            participant_id="Agent_1",
+                            role=ParticipantRole.AGENT,
+                            text="Thank you John, that has been updated in our system.",
+                        ),
                     ],
                 )
             ]

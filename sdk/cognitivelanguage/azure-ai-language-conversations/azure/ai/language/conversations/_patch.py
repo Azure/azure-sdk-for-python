@@ -10,7 +10,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 import json
 from typing import Any, Callable, Dict, IO, Mapping, Optional, TypeVar, Union, cast, overload, Generic, TYPE_CHECKING
-from collections.abc import MutableMapping # pylint:disable=import-error
+from collections.abc import MutableMapping  # pylint:disable=import-error
 from urllib.parse import urlparse
 from azure.core.exceptions import (
     HttpResponseError,
@@ -132,26 +132,26 @@ class AnalyzeConversationLROPoller(LROPoller[PollingReturnType_co], Generic[Poll
 class ConversationAnalysisClient(AnalysisClientGenerated):
 
     def __init__(
-            self,
-            endpoint: str,
-            credential: Union[AzureKeyCredential, "TokenCredential"],
-            *,
-            api_version: Optional[str] = None,
-            **kwargs: Any,
-        ) -> None:
-            """Create a ConversationAnalysisClient.
-            :param endpoint: Supported Cognitive Services endpoint.
-            :type endpoint: str
-            :param credential: Key or token credential.
-            :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.TokenCredential
-            :keyword api_version: The API version to use for this operation. Default value is
-            "2025-05-15-preview". Note that overriding this default value may result in unsupported
-            behavior.
-            :paramtype api_version: str`
-            """
-            if api_version is not None:
-                kwargs["api_version"] = api_version
-            super().__init__(endpoint=endpoint, credential=credential, **kwargs)
+        self,
+        endpoint: str,
+        credential: Union[AzureKeyCredential, "TokenCredential"],
+        *,
+        api_version: Optional[str] = None,
+        **kwargs: Any,
+    ) -> None:
+        """Create a ConversationAnalysisClient.
+        :param endpoint: Supported Cognitive Services endpoint.
+        :type endpoint: str
+        :param credential: Key or token credential.
+        :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.TokenCredential
+        :keyword api_version: The API version to use for this operation. Default value is
+        "2025-05-15-preview". Note that overriding this default value may result in unsupported
+        behavior.
+        :paramtype api_version: str`
+        """
+        if api_version is not None:
+            kwargs["api_version"] = api_version
+        super().__init__(endpoint=endpoint, credential=credential, **kwargs)
 
     @overload
     def begin_analyze_conversation_job(

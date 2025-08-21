@@ -88,8 +88,8 @@ def sample_conversation_summarization():
     )
 
     # Start long-running operation
-    poller: AnalyzeConversationLROPoller[ItemPaged[ConversationActions]] = (
-        client.begin_analyze_conversation_job(body=operation_input)
+    poller: AnalyzeConversationLROPoller[ItemPaged[ConversationActions]] = client.begin_analyze_conversation_job(
+        body=operation_input
     )
 
     # You can read operation id immediately

@@ -34,7 +34,7 @@ from azure.ai.language.conversations.models import (
     # Request
     ConversationalAITask,
     ConversationalAIAnalysisInput,
-    ConversationalAILanguageUnderstandingActionContent,
+    ConversationalAIActionContent,
     TextConversation,
     TextConversationItem,
     StringIndexType,
@@ -80,7 +80,7 @@ async def sample_conversation_multi_turn_prediction_async():
                     )
                 ]
             ),
-            parameters=ConversationalAILanguageUnderstandingActionContent(
+            parameters=ConversationalAIActionContent(
                 project_name=project_name,
                 deployment_name=deployment_name,
                 string_index_type=StringIndexType.UTF16_CODE_UNIT,
@@ -153,10 +153,7 @@ async def sample_conversation_multi_turn_prediction_async():
                 print(f"  Text: {ent.text}")
                 print(f"  Confidence: {ent.confidence_score}")
                 print(f"  Offset: {ent.offset}, Length: {ent.length}")
-                print(
-                    f"  Conversation Item ID: {ent.conversation_item_id}, "
-                    f"Index: {ent.conversation_item_index}"
-                )
+                print(f"  Conversation Item ID: {ent.conversation_item_id}, " f"Index: {ent.conversation_item_index}")
 
                 if ent.extra_information:
                     for extra in ent.extra_information:

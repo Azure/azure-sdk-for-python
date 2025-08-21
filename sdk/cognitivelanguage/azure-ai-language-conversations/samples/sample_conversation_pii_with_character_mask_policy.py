@@ -64,9 +64,21 @@ def sample_conversation_pii_with_character_mask_policy():
                 id="1",
                 language="en",
                 conversation_items=[
-                    TextConversationItem(id="1", participant_id="Agent_1", role=ParticipantRole.AGENT, text="Can you provide your name?"),
-                    TextConversationItem(id="2", participant_id="Customer_1", role=ParticipantRole.CUSTOMER, text="Hi, my name is John Doe."),
-                    TextConversationItem(id="3", participant_id="Agent_1", role=ParticipantRole.AGENT, text="Thank you John, that has been updated in our system."),
+                    TextConversationItem(
+                        id="1", participant_id="Agent_1", role=ParticipantRole.AGENT, text="Can you provide your name?"
+                    ),
+                    TextConversationItem(
+                        id="2",
+                        participant_id="Customer_1",
+                        role=ParticipantRole.CUSTOMER,
+                        text="Hi, my name is John Doe.",
+                    ),
+                    TextConversationItem(
+                        id="3",
+                        participant_id="Agent_1",
+                        role=ParticipantRole.AGENT,
+                        text="Thank you John, that has been updated in our system.",
+                    ),
                 ],
             )
         ]
@@ -124,9 +136,7 @@ def sample_conversation_pii_with_character_mask_policy():
                                     ent_text not in redacted_text
                                 ), f"Expected entity '{ent_text}' to be redacted but found in: {redacted_text}"
 
-                            assert (
-                                "*" in redacted_text
-                            ), f"Expected redacted text to contain '*', got: {redacted_text}"
+                            assert "*" in redacted_text, f"Expected redacted text to contain '*', got: {redacted_text}"
 
                             redacted_verified.append(redacted_text)
 
