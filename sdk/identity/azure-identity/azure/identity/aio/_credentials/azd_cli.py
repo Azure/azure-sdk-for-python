@@ -21,6 +21,7 @@ from ..._credentials.azd_cli import (
     EXECUTABLE_NAME,
     get_safe_working_dir,
     NOT_LOGGED_IN,
+    UNKNOWN_CLAIMS_FLAG,
     parse_token,
     sanitize_output,
     extract_cli_error_message,
@@ -240,6 +241,8 @@ async def _run_command(command_args: List[str], timeout: int) -> str:
     combined_text = f"{output}\n{stderr}"
     if "not logged in, run `azd auth login` to login" in combined_text and "AADSTS" not in combined_text:
         raise CredentialUnavailableError(message=NOT_LOGGED_IN)
+    if "unknown flag: --claims" in combined_text:
+        raise CredentialUnavailableError(message=UNKNOWN_CLAIMS_FLAG)
 
     message = (
         extract_cli_error_message(output)

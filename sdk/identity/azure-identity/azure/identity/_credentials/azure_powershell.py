@@ -32,7 +32,8 @@ POWERSHELL_NOT_INSTALLED = "PowerShell is not installed"
 RUN_CONNECT_AZ_ACCOUNT = 'Please run "Connect-AzAccount" to set up account'
 CLAIMS_UNSUPPORTED_ERROR = (
     "This credential doesn't support claims challenges. To authenticate with the required "
-    "claims, please run the following command: Connect-AzAccount -ClaimsChallenge {claims_value}"
+    "claims, please run the following command (requires Az.Accounts module version 5.2.0 or later): "
+    "Connect-AzAccount -ClaimsChallenge {claims_value}"
 )
 SCRIPT = """$ErrorActionPreference = 'Stop'
 [version]$minimumVersion = '2.2.0'

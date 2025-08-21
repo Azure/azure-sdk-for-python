@@ -36,7 +36,8 @@ EXECUTABLE_NAME = "az"
 NOT_LOGGED_IN = "Please run 'az login' to set up an account"
 CLAIMS_UNSUPPORTED_ERROR = (
     "This credential doesn't support claims challenges. To authenticate with the required "
-    "claims, please run the following command: az login --claims-challenge {claims_value}"
+    "claims, please run the following command (requires Azure CLI version 2.76.0 or later): "
+    "az login --claims-challenge {claims_value}"
 )
 
 

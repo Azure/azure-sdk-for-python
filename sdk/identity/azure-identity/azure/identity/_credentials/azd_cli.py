@@ -28,6 +28,10 @@ CLI_NOT_FOUND = (
     "Please visit https://aka.ms/azure-dev for installation instructions and then,"
     "once installed, authenticate to your Azure account using 'azd auth login'."
 )
+UNKNOWN_CLAIMS_FLAG = (
+    "Claims challenges are not supported by the Azure Developer CLI version you are using. "
+    "Please update to version 1.18.1 or later."
+)
 COMMAND_LINE = ["auth", "token", "--output", "json", "--no-prompt"]
 EXECUTABLE_NAME = "azd"
 NOT_LOGGED_IN = "Please run 'azd auth login' from a command prompt to authenticate before using this credential."
@@ -327,10 +331,10 @@ def _run_command(command_args: List[str], timeout: int) -> str:
         if ex.returncode == 127 or (ex.stderr is not None and ex.stderr.startswith("'azd' is not recognized")):
             raise CredentialUnavailableError(message=CLI_NOT_FOUND) from ex
         combined_text = "{}\n{}".format(ex.output or "", ex.stderr or "")
-        if combined_text and (
-            "not logged in, run `azd auth login` to login" in combined_text and "AADSTS" not in combined_text
-        ):
+        if "not logged in, run `azd auth login` to login" in combined_text and "AADSTS" not in combined_text:
             raise CredentialUnavailableError(message=NOT_LOGGED_IN) from ex
+        if "unknown flag: --claims" in combined_text:
+            raise CredentialUnavailableError(message=UNKNOWN_CLAIMS_FLAG) from ex
 
         # return code is from the CLI -> propagate its output
         message = (
