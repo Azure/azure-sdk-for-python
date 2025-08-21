@@ -1,0 +1,62 @@
+# coding=utf-8
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
+
+"""
+FILE: sample_delete_trained_model_async.py
+DESCRIPTION:
+    This sample demonstrates how to delete a trained model from a Conversation Authoring project (async).
+USAGE:
+    python sample_delete_trained_model_async.py
+REQUIRED ENV VARS:
+    AZURE_CONVERSATIONS_AUTHORING_ENDPOINT
+    AZURE_CONVERSATIONS_AUTHORING_KEY
+    (Optional) PROJECT_NAME       # defaults to "<project-name>"
+    (Optional) TRAINED_MODEL      # defaults to "<trained-model-label>"
+"""
+
+# [START conversation_authoring_delete_trained_model_async]
+import os
+import asyncio
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.language.conversations.authoring.aio import ConversationAuthoringClient
+
+async def sample_delete_trained_model_async():
+    # get secrets
+    endpoint = os.environ["AZURE_CONVERSATIONS_AUTHORING_ENDPOINT"]
+    key = os.environ["AZURE_CONVERSATIONS_AUTHORING_KEY"]
+
+    project_name = os.environ.get("PROJECT_NAME", "<project-name>")
+    trained_model_label = os.environ.get("TRAINED_MODEL", "<trained-model-label>")
+
+    # create an async client
+    client = ConversationAuthoringClient(endpoint, AzureKeyCredential(key))
+
+    try:
+        project_client = client.get_project_client(project_name)
+
+        captured = {}
+
+        def capture_response(pipeline_response):
+            captured["status_code"] = pipeline_response.http_response.status_code
+
+        # delete trained model
+        await project_client.trained_model.delete_trained_model(
+            trained_model_label,
+            raw_response_hook=capture_response,
+        )
+
+        # print response
+        status = captured.get("status_code")
+        print(f"Delete Trained Model Response Status: {status}")
+    finally:
+        await client.close()
+
+async def main():
+    await sample_delete_trained_model_async()
+
+if __name__ == "__main__":
+    asyncio.run(main())
+# [END conversation_authoring_delete_trained_model_async]
