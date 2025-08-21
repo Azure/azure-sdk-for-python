@@ -82,25 +82,6 @@ _COMMON_OPTIONS = {
     Constants.Kwargs.MAX_ITEM_COUNT: InternalOptions.MAX_ITEM_COUNT,
     Constants.Kwargs.THROUGHPUT_BUCKET: InternalOptions.THROUGHPUT_BUCKET,
     Constants.Kwargs.EXCLUDED_LOCATIONS: InternalOptions.EXCLUDED_LOCATIONS,
-    # Additional mappings for new constants
-    Constants.Kwargs.ENABLE_DIAGNOSTICS_LOGGING: (
-        InternalOptions.ENABLE_DIAGNOSTICS_LOGGING
-    ),
-    Constants.Kwargs.LOGGER: InternalOptions.LOGGER,
-    Constants.Kwargs.PROXIES: InternalOptions.PROXIES,
-    Constants.Kwargs.USER_AGENT_SUFFIX: InternalOptions.USER_AGENT_SUFFIX,
-    Constants.Kwargs.TRANSPORT: InternalOptions.TRANSPORT,
-    Constants.Kwargs.RESPONSE_HOOK: InternalOptions.RESPONSE_HOOK,
-    Constants.Kwargs.RAW_RESPONSE_HOOK: InternalOptions.RAW_RESPONSE_HOOK,
-    Constants.Kwargs.FEED_RANGE: InternalOptions.FEED_RANGE,
-    Constants.Kwargs.PREFIX_PARTITION_KEY_OBJECT: (
-        InternalOptions.PREFIX_PARTITION_KEY_OBJECT
-    ),
-    Constants.Kwargs.PREFIX_PARTITION_KEY_VALUE: (
-        InternalOptions.PREFIX_PARTITION_KEY_VALUE
-    ),
-    Constants.Kwargs.ETAG: InternalOptions.ETAG,
-    Constants.Kwargs.MATCH_CONDITION: InternalOptions.MATCH_CONDITION,
 }
 
 # Cosmos resource ID validation regex breakdown:
