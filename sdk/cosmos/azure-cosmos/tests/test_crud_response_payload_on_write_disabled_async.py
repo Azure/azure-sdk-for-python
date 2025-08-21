@@ -90,6 +90,7 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
 
     async def asyncSetUp(self):
         self.client = CosmosClient(self.host, self.masterKey, no_response_on_write=True)
+        await self.client.__aenter__()
         self.database_for_test = self.client.get_database_client(self.configs.TEST_DATABASE_ID)
         self.logger = logging.getLogger("TestCRUDOperationsAsyncResponsePayloadOnWriteDisabledLogger")
         self.logger.setLevel(logging.DEBUG)
