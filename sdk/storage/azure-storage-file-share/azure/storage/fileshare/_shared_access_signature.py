@@ -502,12 +502,7 @@ def generate_share_sas(
             raise ValueError("'permission' parameter must be provided when not using a stored access policy.")
     if not user_delegation_key and not account_key:
         raise ValueError("Either user_delegation_key or account_key must be provided.")
-    if isinstance(account_key, UserDelegationKey):
-        user_delegation_key = account_key
-    if user_delegation_key:
-        sas = FileSharedAccessSignature(account_name, user_delegation_key=user_delegation_key)
-    else:
-        sas = FileSharedAccessSignature(account_name, account_key=account_key)
+    sas = FileSharedAccessSignature(account_name, account_key=account_key, user_delegation_key=user_delegation_key)
     return sas.generate_share(
         share_name=share_name,
         permission=permission,
@@ -622,12 +617,7 @@ def generate_file_sas(
             raise ValueError("'permission' parameter must be provided when not using a stored access policy.")
     if not user_delegation_key and not account_key:
         raise ValueError("Either user_delegation_key or account_key must be provided.")
-    if isinstance(account_key, UserDelegationKey):
-        user_delegation_key = account_key
-    if user_delegation_key:
-        sas = FileSharedAccessSignature(account_name, user_delegation_key=user_delegation_key)
-    else:
-        sas = FileSharedAccessSignature(account_name, account_key=account_key)
+    sas = FileSharedAccessSignature(account_name, account_key=account_key, user_delegation_key=user_delegation_key)
     if len(file_path) > 1:
         dir_path = '/'.join(file_path[:-1])
     else:
