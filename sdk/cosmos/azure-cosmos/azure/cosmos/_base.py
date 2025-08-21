@@ -611,19 +611,21 @@ def GetItemContainerInfo(self_link: str, alt_content_path: str, resource_id: str
 
     self_link = TrimBeginningAndEndingSlashes(self_link) + "/"
 
-    index = IndexOfNth(self_link, "/", 4)
+    end_index = IndexOfNth(self_link, "/", 4)
+    start_index = IndexOfNth(self_link, "/", 3)
 
-    if index != -1:
-        collection_id = self_link[0:index]
+    if start_index != -1 and end_index != -1:
+        # parse only the collection rid from the path as it's unique across databases
+        collection_rid = self_link[start_index + 1:end_index]
 
         if "colls" in self_link:
             # this is a collection request
             index_second_slash = IndexOfNth(alt_content_path, "/", 2)
             if index_second_slash == -1:
                 collection_name = alt_content_path + "/colls/" + urllib_quote(resource_id)
-                return collection_id, collection_name
+                return collection_rid, collection_name
             collection_name = alt_content_path
-            return collection_id, collection_name
+            return collection_rid, collection_name
         raise ValueError(
             "Response Not from Server Partition, self_link: {0}, alt_content_path: {1}, id: {2}".format(
                 self_link, alt_content_path, resource_id
