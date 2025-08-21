@@ -260,6 +260,9 @@
 # ServiceLabel: %AI Projects %Service Attention
 /sdk/ai/azure-ai-projects/                                           @dargilco @jhakulin @trangevi @glharper @nick863 @howieleung
 
+# PRLabel: %AI Voice Live
+/sdk/ai/azure-ai-voicelive/                                          @rhurey @xitzhang @annatisch
+
 
 # PRLabel: %HDInsight
 /sdk/hdinsight/                                                      @idear1203
