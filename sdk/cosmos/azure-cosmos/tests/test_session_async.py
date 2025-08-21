@@ -118,7 +118,6 @@ class TestSessionAsync(unittest.IsolatedAsyncioTestCase):
     async def test_session_token_mwr_for_ops_async(self):
         # For multiple write regions, all document requests should send out session tokens
         # We will use fault injection to simulate the regions the emulator needs
-        first_region_uri: str = test_config.TestConfig.local_host.replace("localhost", "127.0.0.1")
         custom_transport = FaultInjectionTransportAsync()
 
         # Inject topology transformation that would make Emulator look like a multiple write region account
