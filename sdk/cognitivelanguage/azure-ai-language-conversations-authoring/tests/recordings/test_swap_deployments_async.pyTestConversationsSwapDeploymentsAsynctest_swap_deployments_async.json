@@ -1,0 +1,128 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com//language/authoring/analyze-conversations/projects/EmailApp/deployments/:swap?api-version=2025-05-15-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "72",
+        "Content-Type": "application/json",
+        "Ocp-Apim-Subscription-Key": "Sanitized",
+        "User-Agent": "azsdk-python-ai-language-conversations-authoring/1.0.0b1 Python/3.13.7 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": {
+        "firstDeploymentName": "staging",
+        "secondDeploymentName": "production"
+      },
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": "*",
+        "apim-request-id": "39f371cd-6d3c-45af-a684-e7b4a20d4a72",
+        "Content-Length": "0",
+        "Date": "Thu, 21 Aug 2025 08:58:46 GMT",
+        "operation-location": "https://Sanitized.cognitiveservices.azure.com/language/authoring/analyze-conversations/projects/EmailApp/deployments/swap/jobs/28621b87-d0a8-49db-bae6-fd3e656b0d5c_638913312000000000?api-version=2025-05-15-preview",
+        "request-id": "39f371cd-6d3c-45af-a684-e7b4a20d4a72",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "60",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/authoring/analyze-conversations/projects/EmailApp/deployments/swap/jobs/28621b87-d0a8-49db-bae6-fd3e656b0d5c_638913312000000000?api-version=2025-05-15-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Ocp-Apim-Subscription-Key": "Sanitized",
+        "User-Agent": "azsdk-python-ai-language-conversations-authoring/1.0.0b1 Python/3.13.7 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": "*",
+        "apim-request-id": "7b9f5c84-6570-4623-9bb2-9036ba4a458f",
+        "Content-Length": "219",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 21 Aug 2025 08:58:46 GMT",
+        "request-id": "7b9f5c84-6570-4623-9bb2-9036ba4a458f",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "25",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": {
+        "jobId": "28621b87-d0a8-49db-bae6-fd3e656b0d5c_638913312000000000",
+        "createdDateTime": "2025-08-21T08:58:47Z",
+        "lastUpdatedDateTime": "2025-08-21T08:58:47Z",
+        "expirationDateTime": "2025-08-28T08:58:47Z",
+        "status": "notStarted"
+      }
+    },
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/authoring/analyze-conversations/projects/EmailApp/deployments/swap/jobs/28621b87-d0a8-49db-bae6-fd3e656b0d5c_638913312000000000?api-version=2025-05-15-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Ocp-Apim-Subscription-Key": "Sanitized",
+        "User-Agent": "azsdk-python-ai-language-conversations-authoring/1.0.0b1 Python/3.13.7 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": "*",
+        "apim-request-id": "55fb9e20-06db-4962-a3b7-174c0451dbcc",
+        "Content-Length": "218",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 21 Aug 2025 08:59:16 GMT",
+        "request-id": "55fb9e20-06db-4962-a3b7-174c0451dbcc",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "27",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": {
+        "jobId": "28621b87-d0a8-49db-bae6-fd3e656b0d5c_638913312000000000",
+        "createdDateTime": "2025-08-21T08:58:47Z",
+        "lastUpdatedDateTime": "2025-08-21T08:58:51Z",
+        "expirationDateTime": "2025-08-28T08:58:47Z",
+        "status": "succeeded"
+      }
+    },
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/authoring/analyze-conversations/projects/EmailApp/deployments/swap/jobs/28621b87-d0a8-49db-bae6-fd3e656b0d5c_638913312000000000?api-version=2025-05-15-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Ocp-Apim-Subscription-Key": "Sanitized",
+        "User-Agent": "azsdk-python-ai-language-conversations-authoring/1.0.0b1 Python/3.13.7 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": "*",
+        "apim-request-id": "983e1280-b7c1-4a1c-9166-c1c53e2c9524",
+        "Content-Length": "218",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 21 Aug 2025 08:59:16 GMT",
+        "request-id": "983e1280-b7c1-4a1c-9166-c1c53e2c9524",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "25",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": {
+        "jobId": "28621b87-d0a8-49db-bae6-fd3e656b0d5c_638913312000000000",
+        "createdDateTime": "2025-08-21T08:58:47Z",
+        "lastUpdatedDateTime": "2025-08-21T08:58:51Z",
+        "expirationDateTime": "2025-08-28T08:58:47Z",
+        "status": "succeeded"
+      }
+    }
+  ],
+  "Variables": {}
+}
