@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.msi.v2024_11_30 import ManagedServiceIdentityClient
+from azure.mgmt.msi import ManagedServiceIdentityClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -23,7 +23,7 @@ class TestManagedServiceIdentitySystemAssignedIdentitiesOperations(AzureMgmtReco
     def test_system_assigned_identities_get_by_scope(self, resource_group):
         response = self.client.system_assigned_identities.get_by_scope(
             scope="str",
-            api_version="2024-11-30",
+            api_version="2023-01-31",
         )
 
         # please add some check logic here by yourself

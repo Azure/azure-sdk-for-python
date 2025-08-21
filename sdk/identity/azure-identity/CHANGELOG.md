@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed an issue where `AzureDeveloperCliCredential` would time out during token requests when `azd` prompts for user interaction. This issue commonly occurred in environments where the `AZD_DEBUG` environment variable was set, causing the Azure Developer CLI to display additional prompts that interfered with automated token acquisition. ([#42535](https://github.com/Azure/azure-sdk-for-python/pull/42535))
+
 ### Other Changes
 
 ## 1.24.0 (2025-08-07)
@@ -15,6 +17,7 @@
 ### Bugs Fixed
 
 - Fixed an issue where CAE (Continuous Access Evaluation) caches were not properly used by `AuthorizationCodeCredential` and the asynchronous `OnBehalfOfCredential`. ([#42145](https://github.com/Azure/azure-sdk-for-python/pull/42145))
+- Fixed an issue where brokered authentication was not included in the `DefaultAzureCredential` chain when `AZURE_TOKEN_CREDENTIALS` was set to `dev`. ([#42599](https://github.com/Azure/azure-sdk-for-python/pull/42599))
 
 ### Other Changes
 
