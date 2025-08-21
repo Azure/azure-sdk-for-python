@@ -25,16 +25,10 @@ import copy
 import json
 import time
 
-from typing import Any
 from urllib.parse import urlparse
 from azure.core.exceptions import DecodeError  # type: ignore
-from azure.core import PipelineClient
 
 from . import exceptions, http_constants, _retry_utility
-from .documents import ConnectionPolicy
-from ._request_object import RequestObject
-from ._global_partition_endpoint_manager_per_partition_automatic_failover import (
-    _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover)
 
 
 def _is_readable_stream(obj):
@@ -69,13 +63,7 @@ def _request_body_from_data(data):
     return None
 
 
-def _Request(
-        global_endpoint_manager: _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover,
-        request_params: RequestObject,
-        connection_policy: ConnectionPolicy,
-        pipeline_client: PipelineClient,
-        request: Any,
-        **kwargs): # pylint: disable=too-many-statements
+def _Request(global_endpoint_manager, request_params, connection_policy, pipeline_client, request, **kwargs): # pylint: disable=too-many-statements
     """Makes one http request using the requests module.
 
     :param _GlobalEndpointManager global_endpoint_manager:

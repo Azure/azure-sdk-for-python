@@ -38,7 +38,6 @@ async def setup():
 
 
 def error_codes():
-    return [503]
     return [408, 500, 502, 503]
 
 
@@ -137,7 +136,7 @@ class TestTimeoutRetryPolicyAsync:
         try:
             # timeouts should fail immediately for writes - except for 503s, which should retry on every preferred location
             num_exceptions = num_exceptions_503 if error_code == 503 else 0
-            mf = self.MockExecuteFunction(self.original_execute_function,num_exceptions, error_code)
+            mf = self.MockExecuteFunction(self.original_execute_function, num_exceptions, error_code)
             _retry_utility_async.ExecuteFunctionAsync = mf
             try:
                 await setup[COLLECTION].create_item(body=document_definition)

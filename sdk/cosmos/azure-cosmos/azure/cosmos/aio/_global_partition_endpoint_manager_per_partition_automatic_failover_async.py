@@ -7,7 +7,7 @@ endpoint manager, since enabling per partition automatic failover also enables t
 import logging
 import threading
 
-from typing import Dict, Set, TYPE_CHECKING, Optional
+from typing import Dict, TYPE_CHECKING, Optional
 
 from azure.cosmos.http_constants import ResourceType
 from azure.cosmos.aio._global_partition_endpoint_manager_circuit_breaker_async import \
@@ -168,11 +168,10 @@ class _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailoverAsync(
         :return: None
         """
         if self.is_per_partition_automatic_failover_applicable(request):
-            location = self.location_cache.get_location_from_endpoint(str(request.location_endpoint_to_route))
             if pk_range_wrapper is None:
                 pk_range_wrapper = await self.create_pk_range_wrapper(request)
             if pk_range_wrapper:
-                self.ppaf_thresholds_tracker.add_failure(pk_range_wrapper, location)
+                self.ppaf_thresholds_tracker.add_failure(pk_range_wrapper)
         else:
             await self.record_ppcb_failure(request, pk_range_wrapper)
 

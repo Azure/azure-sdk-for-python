@@ -167,11 +167,10 @@ class _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover(_GlobalPar
         :return: None
         """
         if self.is_per_partition_automatic_failover_applicable(request):
-            location = self.location_cache.get_location_from_endpoint(str(request.location_endpoint_to_route))
             if pk_range_wrapper is None:
                 pk_range_wrapper = self.create_pk_range_wrapper(request)
             if pk_range_wrapper:
-                self.ppaf_thresholds_tracker.add_failure(pk_range_wrapper, location)
+                self.ppaf_thresholds_tracker.add_failure(pk_range_wrapper)
         else:
             self.record_ppcb_failure(request, pk_range_wrapper)
 
