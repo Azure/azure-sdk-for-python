@@ -22,8 +22,11 @@ from ._generated.models import CorsRule as GeneratedCorsRule
 from ._generated.models import DirectoryItem
 from ._generated.models import Metrics as GeneratedMetrics
 from ._generated.models import RetentionPolicy as GeneratedRetentionPolicy
+from ._generated.models import ShareNfsSettings as GeneratedShareNfsSettings
+from ._generated.models import ShareNfsSettingsEncryptionInTransit as GeneratedNfsEncryptionInTransit
 from ._generated.models import ShareProtocolSettings as GeneratedShareProtocolSettings
 from ._generated.models import ShareSmbSettings as GeneratedShareSmbSettings
+from ._generated.models import ShareSmbSettingsEncryptionInTransit as GeneratedSmbEncryptionInTransit
 from ._generated.models import SmbMultichannel as GeneratedSmbMultichannel
 from ._generated.models import StorageServiceProperties as GeneratedStorageServiceProperties
 from ._parser import _parse_datetime_from_str
@@ -209,47 +212,105 @@ class SmbMultichannel(GeneratedSmbMultichannel):
     enabled: Optional[bool]
     """If SMB Multichannel is enabled."""
 
-    def __init__(self, **kwargs: Any) -> None:
-        self.enabled = kwargs.get('enabled')
+    def __init__(self, *, enabled: Optional[bool] = None, **kwargs: Any) -> None:
+        self.enabled = enabled
         if self.enabled is None:
             raise ValueError("The value 'enabled' must be specified.")
+
+
+class SmbEncryptionInTransit(GeneratedSmbEncryptionInTransit):
+    """Settings for encryption in transit.
+
+    :keyword bool required: If encryption in transit is required.
+    """
+
+    required: Optional[bool]
+    """If encryption in transit is enabled."""
+
+    def __init__(self, *, required: bool, **kwargs: Any) -> None:
+        self.required = required
 
 
 class ShareSmbSettings(GeneratedShareSmbSettings):
     """Settings for the SMB protocol.
 
     :keyword SmbMultichannel multichannel: Sets the multichannel settings.
+    :keyword SmbEncryptionInTransit encryption_in_transit: Sets the encryption in transit settings.
     """
 
-    multichannel: SmbMultichannel
+    multichannel: Optional[SmbMultichannel]
     """Sets the multichannel settings."""
+    encryption_in_transit: Optional[SmbEncryptionInTransit]
+    """Sets the encryption in transit settings."""
 
-    def __init__(self, **kwargs: Any) -> None:
-        self.multichannel = kwargs.get('multichannel')  # type: ignore [assignment]
-        if self.multichannel is None:
-            raise ValueError("The value 'multichannel' must be specified.")
+    def __init__(
+        self,
+        *,
+        multichannel: Optional[SmbMultichannel] = None,
+        encryption_in_transit: Optional[SmbEncryptionInTransit] = None,
+        **kwargs: Any
+    ) -> None:
+        self.multichannel = multichannel
+        self.encryption_in_transit = encryption_in_transit
+        if self.multichannel is None and self.encryption_in_transit is None:
+            raise ValueError("The value 'multichannel' or 'encryption_in_transit' must be specified.")
+
+
+class NfsEncryptionInTransit(GeneratedNfsEncryptionInTransit):
+    """Settings for encryption in transit.
+
+    :keyword bool required: If encryption in transit is required.
+    """
+
+    required: Optional[bool]
+    """If encryption in transit is enabled."""
+
+    def __init__(self, *, required: bool, **kwargs: Any) -> None:
+        self.required = required
+
+
+class ShareNfsSettings(GeneratedShareNfsSettings):
+    """Settings for the NFS protocol.
+
+    :keyword NfsEncryptionInTransit encryption_in_transit: Sets the encryption in transit settings.
+    """
+
+    encryption_in_transit: Optional[NfsEncryptionInTransit]
+    """Sets the encryption in transit settings."""
+
+    def __init__(self, *, encryption_in_transit: NfsEncryptionInTransit, **kwargs: Any) -> None:
+        self.encryption_in_transit = encryption_in_transit
 
 
 class ShareProtocolSettings(GeneratedShareProtocolSettings):
     """Protocol Settings class used by the set and get service properties methods in the share service.
 
-    Contains protocol properties of the share service such as the SMB setting of the share service.
+    Contains protocol properties of the share service such as the SMB and NFS setting of the share service.
 
     :keyword ShareSmbSettings smb: Sets SMB settings.
+    :keyword ShareNfsSettings nfs: Sets NFS settings.
     """
 
-    smb: ShareSmbSettings
+    smb: Optional[ShareSmbSettings]
     """Sets the SMB settings."""
+    nfs: Optional[ShareNfsSettings]
+    """Sets the NFS settings."""
 
-    def __init__(self, **kwargs: Any) -> None:
-        self.smb = kwargs.get('smb')  # type: ignore [assignment]
-        if self.smb is None:
-            raise ValueError("The value 'smb' must be specified.")
+    def __init__(
+        self,
+        *,
+        smb: Optional[ShareSmbSettings] = None,
+        nfs: Optional[ShareNfsSettings] = None,
+        **kwargs: Any
+    ) -> None:
+        self.smb = smb
+        self.nfs = nfs
+        if self.smb is None and self.nfs is None:
+            raise ValueError("The value 'smb' or 'nfs' must be specified.")
 
     @classmethod
     def _from_generated(cls, generated):
-        return cls(
-            smb=generated.smb)
+        return cls(smb=generated.smb, nfs=generated.nfs)
 
 
 class ShareSasPermissions(object):
@@ -531,7 +592,7 @@ class ShareProperties(DictMixin):
     """Possible values include: 'NoRootSquash', 'RootSquash', 'AllSquash'."""
     enable_snapshot_virtual_directory_access: Optional[bool] = None
     """Specifies whether the snapshot virtual directory should be accessible at the root of the share
-        mount point when NFS is enabled. if not specified, the default is True."""
+        mount point when NFS is enabled. If not specified, the default is True."""
     paid_bursting_enabled: Optional[int] = None
     """This property enables paid bursting."""
     paid_bursting_bandwidth_mibps: Optional[int] = None
@@ -542,6 +603,8 @@ class ShareProperties(DictMixin):
     """The share's next allowed provisioned throughput downgrade time."""
     next_provisioned_bandwidth_downgrade: Optional["datetime"]
     """The share's next allowed provisioned bandwidth downgrade time."""
+    enable_smb_directory_lease: Optional[bool] = None
+    """Specifies whether granting new directory leases for directories present in a SMB share are allowed."""
 
     def __init__(self, **kwargs: Any) -> None:
         self.name = None  # type: ignore [assignment]
@@ -575,6 +638,7 @@ class ShareProperties(DictMixin):
             kwargs.get('x-ms-share-next-allowed-provisioned-iops-downgrade-time'))
         self.next_provisioned_bandwidth_downgrade = (  # pylint: disable=name-too-long
             kwargs.get('x-ms-share-next-allowed-provisioned-bandwidth-downgrade-time'))
+        self.enable_smb_directory_lease = kwargs.get('x-ms-enable-smb-directory-lease')
 
     @classmethod
     def _from_generated(cls, generated):
@@ -609,6 +673,7 @@ class ShareProperties(DictMixin):
             generated.properties.next_allowed_provisioned_iops_downgrade_time)
         props.next_provisioned_bandwidth_downgrade = (  # pylint: disable=name-too-long
             generated.properties.next_allowed_provisioned_bandwidth_downgrade_time)
+        props.enable_smb_directory_lease = generated.properties.enable_smb_directory_lease
         return props
 
 
