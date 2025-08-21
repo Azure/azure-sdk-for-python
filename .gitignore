@@ -172,3 +172,6 @@ component-detection-pip-report.json
 **/.pydevproject
 **/.settings
 .github/prompts/copilot-instructions.md
+
+# No uv lock for now
+uv.lock
