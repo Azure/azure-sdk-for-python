@@ -32,11 +32,11 @@ def main():
 
     response = client.fleets.get(
         resource_group_name="rgazurefleet",
-        fleet_name="testFleet",
+        fleet_name="myFleet",
     )
     print(response)
 
 
-# x-ms-original-file: 2024-11-01/Fleets_Get.json
+# x-ms-original-file: 2025-07-01-preview/Fleets_Get.json
 if __name__ == "__main__":
     main()
