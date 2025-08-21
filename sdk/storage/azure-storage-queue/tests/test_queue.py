@@ -1430,15 +1430,16 @@ class TestStorageQueue(StorageRecordedTestCase):
         # Will not raise ClientAuthenticationError despite bad audience due to Bearer Challenge
         queue.get_queue_properties()
 
-    @pytest.mark.live_test_only
     @QueuePreparer()
+    @recorded_by_proxy
     def test_get_user_delegation_sas(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
+        variables = kwargs.pop("variables", {})
 
         token_credential = self.get_credential(QueueServiceClient)
         service = QueueServiceClient(self.account_url(storage_account_name, "queue"), credential=token_credential)
-        start = datetime.utcnow()
-        expiry = datetime.utcnow() + timedelta(hours=1)
+        start = self.get_datetime_variable(variables, 'start', datetime.utcnow())
+        expiry = self.get_datetime_variable(variables, 'expiry', datetime.utcnow() + timedelta(hours=1))
         user_delegation_key_1 = service.get_user_delegation_key(key_start_time=start, key_expiry_time=expiry)
         user_delegation_key_2 = service.get_user_delegation_key(key_start_time=start, key_expiry_time=expiry)
 
@@ -1459,6 +1460,8 @@ class TestStorageQueue(StorageRecordedTestCase):
         assert user_delegation_key_1.signed_version == user_delegation_key_2.signed_version
         assert user_delegation_key_1.signed_service == user_delegation_key_2.signed_service
         assert user_delegation_key_1.value == user_delegation_key_2.value
+
+        return variables
 
     @pytest.mark.live_test_only
     @QueuePreparer()
