@@ -7,7 +7,7 @@ import platform
 import re
 import sys
 import threading
-from typing import Any, Dict, Iterable, List
+from typing import Any, Dict, Optional, Iterable, List
 
 import requests  # pylint: disable=networking-import-outside-azure-core-transport
 
@@ -114,7 +114,7 @@ class _StatsbeatMetrics:
         disable_offline_storage: bool,
         long_interval_threshold: int,
         has_credential: bool,
-        distro_version: str = "",
+        distro_version: Optional[str] = "",
     ) -> None:
         self._ikey = instrumentation_key
         self._feature = _StatsbeatFeature.NONE

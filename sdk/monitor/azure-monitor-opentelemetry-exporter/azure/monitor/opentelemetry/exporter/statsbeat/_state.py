@@ -96,3 +96,8 @@ def get_local_storage_setup_state_exception():
 def set_local_storage_setup_state_exception(value):
     with _LOCAL_STORAGE_SETUP_STATE_LOCK:
         _LOCAL_STORAGE_SETUP_STATE["EXCEPTION_OCCURRED"] = value
+
+def set_statsbeat_shutdown(shutdown: bool):
+    """Set the statsbeat shutdown state."""
+    with _STATSBEAT_STATE_LOCK:
+        _STATSBEAT_STATE["SHUTDOWN"] = shutdown

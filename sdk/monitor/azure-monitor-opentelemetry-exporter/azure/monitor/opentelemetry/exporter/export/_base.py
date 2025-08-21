@@ -170,10 +170,12 @@ class BaseExporter:
 
         # statsbeat initialization
         if self._should_collect_stats():
-            # Import here to avoid circular dependencies
-            from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat import collect_statsbeat_metrics
-
-            collect_statsbeat_metrics(self)
+            try:
+                # Import here to avoid circular dependencies
+                from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat import collect_statsbeat_metrics
+                collect_statsbeat_metrics(self)
+            except Exception as e:  # pylint: disable=broad-except
+                logger.warning("Failed to initialize statsbeat metrics: %s", e)
 
         # Initialize customer sdkstats if enabled
         self._customer_sdkstats_metrics = None
