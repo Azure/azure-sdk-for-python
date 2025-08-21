@@ -120,7 +120,7 @@ def _normalize_person_fields(pkg_info, metadata: Dict[str, Any], role: str) -> N
     if name_attr and email_attr:
         metadata[role] = name_attr
         metadata[f'{role}_email'] = email_attr
-    # Handle PEP 621 style where email might be embedded in name field
+    # Handle PEP 621 style where name might be embedded in email field
     elif email_attr:
         # Check if email contains name in format "Name <email>"
         if '<' in email_attr and '>' in email_attr:
@@ -133,10 +133,10 @@ def _normalize_person_fields(pkg_info, metadata: Dict[str, Any], role: str) -> N
                 metadata[role] = name_part
                 metadata[f'{role}_email'] = email_part
             else:
-                metadata[role] = email_attr
+                metadata[f'{role}_email'] = email_attr
         else:
-            metadata[role] = email_attr
-    # Handle case where only email is provided
+            metadata[f'{role}_email'] = email_attr
+    # Handle case where only name is provided
     elif name_attr:
         metadata[f'{role}'] = name_attr
 

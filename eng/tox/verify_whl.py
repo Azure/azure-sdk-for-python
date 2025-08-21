@@ -19,7 +19,7 @@ from tox_helper_tasks import (
     unzip_file_to_directory,
 )
 
-from ci_tools.parsing import ParsedSetup
+from ci_tools.parsing import ParsedSetup, extract_package_metadata
 from pypi_tools.pypi import retrieve_versions_from_pypi
 
 logging.getLogger().setLevel(logging.INFO)
@@ -50,7 +50,15 @@ def extract_whl(dist_dir, version):
     return extract_location
 
 
-def verify_whl_root_directory(dist_dir, expected_top_level_module, version):
+def verify_whl_root_directory(dist_dir, expected_top_level_module, parsed_pkg):
+    # Verify metadata compatibility with prior version
+    version: str = parsed_pkg.version
+    metadata: Dict[str, Any] = extract_package_metadata(get_path_to_zip(dist_dir, version))
+    prior_version = get_prior_version(parsed_pkg.name, version)
+    if prior_version:
+        if not verify_prior_version_metadata(parsed_pkg.name, prior_version, metadata):
+            return False
+
     # This method ensures root directory in whl is the directory indicated by our top level namespace
     extract_location = extract_whl(dist_dir, version)
     root_folders = os.listdir(extract_location)
@@ -86,6 +94,27 @@ def should_verify_package(package_name):
     )
 
 
+def get_prior_version(package_name: str, current_version: str) -> Optional[str]:
+    """Get prior stable version if it exists, otherwise get prior preview version, else return None."""
+    try:
+        all_versions = retrieve_versions_from_pypi(package_name)
+        current_ver = Version(current_version)
+        prior_versions = [Version(v) for v in all_versions if Version(v) < current_ver]
+        if not prior_versions:
+            return None
+
+        # Try stable versions first
+        stable_versions = [v for v in prior_versions if not v.is_prerelease]
+        if stable_versions:
+            return str(max(stable_versions))
+
+        # Fall back to preview versions
+        preview_versions = [v for v in prior_versions if v.is_prerelease]
+        return str(max(preview_versions)) if preview_versions else None
+    except Exception:
+        return None
+
+
 def get_prior_stable_version(package_name: str, current_version: str) -> Optional[str]:
     """Get the latest stable version from PyPI that is prior to the current version."""
     try:
@@ -98,18 +127,27 @@ def get_prior_stable_version(package_name: str, current_version: str) -> Optiona
         return None
 
 
-def download_and_parse_prior_version(package_name: str, prior_version: str) -> Optional[ParsedSetup]:
-    """Download the prior version wheel and parse it with ParsedSetup."""
+def verify_prior_version_metadata(package_name: str, prior_version: str, current_metadata: Dict[str, Any], package_type: str = "*.whl") -> bool:
+    """Download prior version and verify metadata compatibility."""
     with tempfile.TemporaryDirectory() as tmp_dir:
         try:
+            is_binary = "--no-binary=:all:" if package_type == "*tar.gz" else "--only-binary=:all:"
             subprocess.run([
-                "pip", "download", "--no-deps", "--only-binary=:all:",
+                "pip", "download", "--no-deps", is_binary,
                 f"{package_name}=={prior_version}", "--dest", tmp_dir
             ], check=True, capture_output=True)
-            whl_files = glob.glob(os.path.join(tmp_dir, "*.whl"))
-            return ParsedSetup.from_path(whl_files[0]) if whl_files else None
+            zip_files = glob.glob(os.path.join(tmp_dir, package_type))
+            if not zip_files:
+                return True
+
+            prior_metadata: Dict[str, Any] = extract_package_metadata(zip_files[0])
+            is_compatible = verify_metadata_compatibility(current_metadata, prior_metadata)
+            if not is_compatible:
+                missing_keys = set(prior_metadata.keys()) - set(current_metadata.keys())
+                logging.error(f"Metadata compatibility failed for {package_name}. Missing keys: {missing_keys}")
+            return is_compatible
         except Exception:
-            return None
+            return True
 
 
 def verify_metadata_compatibility(current_metadata: Dict[str, Any], prior_metadata: Dict[str, Any]) -> bool:
@@ -120,24 +158,16 @@ def verify_metadata_compatibility(current_metadata: Dict[str, Any], prior_metada
         return False
     return set(prior_metadata.keys()).issubset(set(current_metadata.keys()))
 
+def get_path_to_zip(dist_dir: str, version: str, package_type: str = "*.whl") -> str:
+    return glob.glob(os.path.join(dist_dir, "**", "*{}{}".format(version, package_type)), recursive=True)[0]
 
 def verify_whl(dist_dir: str, expected_top_level_module: str, parsed_pkg: ParsedSetup) -> bool:
     """
     Verifies root directory in whl and metadata compatibility with prior stable version.
     """
     # Verify root directory
-    if not verify_whl_root_directory(dist_dir, expected_top_level_module, parsed_pkg.version):
+    if not verify_whl_root_directory(dist_dir, expected_top_level_module, parsed_pkg):
         return False
-
-    # Verify metadata compatibility with prior version
-    metadata: Dict[str, Any] = parsed_pkg.metadata
-    prior_version = get_prior_stable_version(parsed_pkg.name, parsed_pkg.version)
-    if prior_version:
-        prior_parsed_pkg = download_and_parse_prior_version(parsed_pkg.name, prior_version)
-        if prior_parsed_pkg:
-            prior_metadata: Dict[str, Any] = prior_parsed_pkg.metadata
-            if not verify_metadata_compatibility(metadata, prior_metadata):
-                return False
 
     return True
 

@@ -19,7 +19,7 @@ from packaging.version import Version
 from tox_helper_tasks import (
     unzip_file_to_directory,
 )
-from verify_whl import cleanup, should_verify_package
+from verify_whl import cleanup, should_verify_package, get_prior_version, verify_prior_version_metadata, get_path_to_zip
 from typing import List, Mapping, Any, Dict, Optional
 
 from ci_tools.parsing import ParsedSetup, extract_package_metadata
@@ -42,15 +42,12 @@ def get_root_directories_in_source(package_dir: str) -> List[str]:
     source_folders = [d for d in os.listdir(package_dir) if os.path.isdir(d) and d in ALLOWED_ROOT_DIRECTORIES]
     return source_folders
 
-def get_path_to_zip(dist_dir: str, version: str) -> str:
-    return glob.glob(os.path.join(dist_dir, "**", "*{}*.tar.gz".format(version)), recursive=True)[0]
-
 def get_root_directories_in_sdist(dist_dir: str, version: str) -> List[str]:
     """
     Given an unzipped sdist directory, extract which directories are present.
     """
     # find sdist zip file
-    path_to_zip = get_path_to_zip(dist_dir, version)
+    path_to_zip = get_path_to_zip(dist_dir, version, package_type="*.tar.gz")
     # extract sdist and find list of directories in sdist
     extract_location = os.path.join(dist_dir, "unzipped")
     # Cleanup any files in unzipped
@@ -60,58 +57,6 @@ def get_root_directories_in_sdist(dist_dir: str, version: str) -> List[str]:
     return sdist_folders
 
 
-def get_prior_version(package_name: str, current_version: str) -> Optional[str]:
-    """Get prior stable version if it exists, otherwise get prior preview version, else return None."""
-    try:
-        all_versions = retrieve_versions_from_pypi(package_name)
-        current_ver = Version(current_version)
-        prior_versions = [Version(v) for v in all_versions if Version(v) < current_ver]
-        if not prior_versions:
-            return None
-
-        # Try stable versions first
-        stable_versions = [v for v in prior_versions if not v.is_prerelease]
-        if stable_versions:
-            return str(max(stable_versions))
-
-        # Fall back to preview versions
-        preview_versions = [v for v in prior_versions if v.is_prerelease]
-        return str(max(preview_versions)) if preview_versions else None
-    except Exception:
-        return None
-
-
-def verify_prior_version_metadata(package_name: str, prior_version: str, current_metadata: Dict[str, Any]) -> bool:
-    """Download prior version and verify metadata compatibility."""
-    with tempfile.TemporaryDirectory() as tmp_dir:
-        try:
-            subprocess.run([
-                "pip", "download", "--no-deps", "--no-binary=:all:",
-                f"{package_name}=={prior_version}", "--dest", tmp_dir
-            ], check=True, capture_output=True)
-            sdist_files = glob.glob(os.path.join(tmp_dir, "*.tar.gz"))
-            if not sdist_files:
-                return True
-
-            prior_metadata: Dict[str, Any] = extract_package_metadata(sdist_files[0])
-            is_compatible = verify_metadata_compatibility(current_metadata, prior_metadata)
-            if not is_compatible:
-                missing_keys = set(prior_metadata.keys()) - set(current_metadata.keys())
-                logging.error(f"Metadata compatibility failed for {package_name}. Missing keys: {missing_keys}")
-            return is_compatible
-        except Exception:
-            return True
-
-
-def verify_metadata_compatibility(current_metadata: Dict[str, Any], prior_metadata: Dict[str, Any]) -> bool:
-    """Verify that all keys from prior version metadata are present in current version."""
-    if not prior_metadata:
-        return True
-    if not current_metadata:
-        return False
-    return set(prior_metadata.keys()).issubset(set(current_metadata.keys()))
-
-
 def verify_sdist(package_dir: str, dist_dir: str, parsed_pkg: ParsedSetup) -> bool:
     """
     Compares the root directories in source against root directories present within a sdist.
@@ -119,7 +64,7 @@ def verify_sdist(package_dir: str, dist_dir: str, parsed_pkg: ParsedSetup) -> bo
     """
     version = parsed_pkg.version
     # Extract metadata from zip file to ensure we're checking the built package metadata
-    metadata: Dict[str, Any] = extract_package_metadata(get_path_to_zip(dist_dir, version))
+    metadata: Dict[str, Any] = extract_package_metadata(get_path_to_zip(dist_dir, version, package_type="*.tar.gz"))
 
     source_folders = get_root_directories_in_source(package_dir)
     sdist_folders = get_root_directories_in_sdist(dist_dir, version)
@@ -137,7 +82,7 @@ def verify_sdist(package_dir: str, dist_dir: str, parsed_pkg: ParsedSetup) -> bo
     # Verify metadata compatibility with prior version
     prior_version = get_prior_version(parsed_pkg.name, version)
     if prior_version:
-        if not verify_prior_version_metadata(parsed_pkg.name, prior_version, metadata):
+        if not verify_prior_version_metadata(parsed_pkg.name, prior_version, metadata, package_type="*.tar.gz"):
             return False
 
     return True
