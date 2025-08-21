@@ -237,6 +237,10 @@ class ManagedClusterSKUName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     BASE = "Base"
     """Base option for the AKS control plane."""
+    AUTOMATIC = "Automatic"
+    """Automatic clusters are optimized to run most production workloads with configuration that
+    follows AKS best practices and recommendations for cluster and workload setup, scalability, and
+    security. For more details about Automatic clusters see aka.ms/aks/automatic."""
 
 
 class ManagedClusterSKUTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -428,6 +432,11 @@ class OSSKU(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AZURE_LINUX = "AzureLinux"
     """Use AzureLinux as the OS for node images. Azure Linux is a container-optimized Linux distro
     built by Microsoft, visit https://aka.ms/azurelinux for more information."""
+    AZURE_LINUX3 = "AzureLinux3"
+    """Use AzureLinux3 as the OS for node images. Azure Linux is a container-optimized Linux distro
+    built by Microsoft, visit https://aka.ms/azurelinux for more information. For limitations,
+    visit https://aka.ms/aks/node-images. For OS migration guidance, see
+    https://aka.ms/aks/upgrade-os-version."""
     CBL_MARINER = "CBLMariner"
     """Deprecated OSSKU. Microsoft recommends that new deployments choose 'AzureLinux' instead."""
     WINDOWS2019 = "Windows2019"
@@ -438,7 +447,7 @@ class OSSKU(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     supports Windows2022 containers; it cannot run Windows2019 containers and vice versa."""
     UBUNTU2204 = "Ubuntu2204"
     """Use Ubuntu2204 as the OS for node images, however, Ubuntu 22.04 may not be supported for all
-    nodepools. For limitations and supported kubernetes versions, see see
+    nodepools. For limitations and supported kubernetes versions, see
     https://aka.ms/aks/supported-ubuntu-versions"""
 
 

@@ -171,6 +171,12 @@ def add_sanitizers(test_proxy, mock_project_scope, mock_dataset_name, mock_vecto
         value="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.CognitiveServices/accounts/00000/projects/00000/connections/00000",
     )
 
+    # Sanitize Fabric data agent connection
+    add_body_key_sanitizer(
+        json_path="tools[*].fabric_dataagent.connections[*].connection_id",
+        value="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.CognitiveServices/accounts/00000/projects/00000/connections/00000",
+    )
+
     # Sanitize API key from service response (/tests/connections)
     add_body_key_sanitizer(json_path="properties.credentials.key", value="Sanitized")
 

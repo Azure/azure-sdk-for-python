@@ -10,14 +10,14 @@ import types
 import copy
 
 # Import directly from module to avoid circular imports
-from azure.monitor.opentelemetry.exporter.statsbeat._customer_statsbeat import CustomerStatsbeatMetrics
+from azure.monitor.opentelemetry.exporter.statsbeat._customer_sdkstats import CustomerSdkStatsMetrics
 
 from azure.monitor.opentelemetry.exporter._constants import (
-    _APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW,
+    _APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW,
     _REQUEST,
     _DEPENDENCY,
     _REQ_RETRY_NAME,
-    _CUSTOMER_STATSBEAT_LANGUAGE,
+    _CUSTOMER_SDKSTATS_LANGUAGE,
     _APPLICATIONINSIGHTS_SDKSTATS_EXPORT_INTERVAL,
     _DEFAULT_STATS_SHORT_EXPORT_INTERVAL,
     _UNKNOWN,
@@ -58,15 +58,15 @@ class EnvelopeTypeMapper:
 
 _BASE_TYPE_MAP = EnvelopeTypeMapper.get_type_map()
 
-class TestCustomerStatsbeat(unittest.TestCase):
-    """Tests for CustomerStatsbeatMetrics."""
+class TestCustomerSdkStats(unittest.TestCase):
+    """Tests for CustomerSdkStatsMetrics."""
     def setUp(self):
         _REQUESTS_MAP.clear()
         # Clear singleton instance for test isolation
-        CustomerStatsbeatMetrics._instance = None
+        CustomerSdkStatsMetrics._instance = None
         
         self.env_patcher = mock.patch.dict(os.environ, {
-            "APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW": "true",
+            "APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW": "true",
             "APPLICATIONINSIGHTS_SDKSTATS_EXPORT_INTERVAL": ""
         })
         self.env_patcher.start()
@@ -74,10 +74,10 @@ class TestCustomerStatsbeat(unittest.TestCase):
         self.mock_options.instrumentation_key = "363331ca-f431-4119-bdcd-31a75920f958"
         self.mock_options.network_collection_interval = _get_customer_sdkstats_export_interval()
         self.mock_options.connection_string = "InstrumentationKey=363331ca-f431-4119-bdcd-31a75920f958;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/"
-        self.mock_options.language = _CUSTOMER_STATSBEAT_LANGUAGE
+        self.mock_options.language = _CUSTOMER_SDKSTATS_LANGUAGE
         self.original_trace_provider = trace._TRACER_PROVIDER
         trace._TRACER_PROVIDER = None
-        self.mock_options.metrics = CustomerStatsbeatMetrics(self.mock_options.connection_string)
+        self.mock_options.metrics = CustomerSdkStatsMetrics(self.mock_options.connection_string)
         self.mock_options.transmit_called = [False]
 
     def tearDown(self):
@@ -89,26 +89,26 @@ class TestCustomerStatsbeat(unittest.TestCase):
         if hasattr(self.mock_options, 'metrics') and self.mock_options.metrics:
             metrics = self.mock_options.metrics
             
-            if hasattr(metrics, '_customer_statsbeat_metric_reader'):
-                reader = metrics._customer_statsbeat_metric_reader
+            if hasattr(metrics, '_customer_sdkstats_metric_reader'):
+                reader = metrics._customer_sdkstats_metric_reader
                 if not getattr(reader, '_shutdown', False):
                     setattr(reader, '_shutdown', True)
                 
-                metrics._customer_statsbeat_metric_reader = None
+                metrics._customer_sdkstats_metric_reader = None
                 
-            if hasattr(metrics, '_customer_statsbeat_exporter'):
-                metrics._customer_statsbeat_exporter = None
+            if hasattr(metrics, '_customer_sdkstats_exporter'):
+                metrics._customer_sdkstats_exporter = None
                 
-            if hasattr(metrics, '_customer_statsbeat_meter_provider'):
-                metrics._customer_statsbeat_meter_provider = None
+            if hasattr(metrics, '_customer_sdkstats_meter_provider'):
+                metrics._customer_sdkstats_meter_provider = None
 
-        CustomerStatsbeatMetrics._instance = None
+        CustomerSdkStatsMetrics._instance = None
     
-    def test_customer_statsbeat_not_initialized_when_disabled(self):
-        CustomerStatsbeatMetrics._instance = None
+    def test_customer_sdkstats_not_initialized_when_disabled(self):
+        CustomerSdkStatsMetrics._instance = None
         
-        with mock.patch.dict(os.environ, {"APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW": "false"}):
-            metrics = CustomerStatsbeatMetrics(self.mock_options.connection_string)
+        with mock.patch.dict(os.environ, {"APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW": "false"}):
+            metrics = CustomerSdkStatsMetrics(self.mock_options.connection_string)
 
             # Verify is_enabled flag is False
             self.assertFalse(metrics._is_enabled)
@@ -128,7 +128,7 @@ class TestCustomerStatsbeat(unittest.TestCase):
         
         # Mock the environment variable with our custom interval
         with mock.patch.dict(os.environ, {
-            _APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW: "true",
+            _APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW: "true",
             _APPLICATIONINSIGHTS_SDKSTATS_EXPORT_INTERVAL: str(custom_interval)
         }):
             # Get the export interval
@@ -141,20 +141,20 @@ class TestCustomerStatsbeat(unittest.TestCase):
                 f"Expected export interval to be {custom_interval}, got {actual_interval}"
             )
             
-            # Verify the CustomerStatsbeatMetrics instance picks up the custom interval
-            CustomerStatsbeatMetrics._instance = None
-            metrics = CustomerStatsbeatMetrics(self.mock_options.connection_string)
+            # Verify the CustomerSdkStatsMetrics instance picks up the custom interval
+            CustomerSdkStatsMetrics._instance = None
+            metrics = CustomerSdkStatsMetrics(self.mock_options.connection_string)
             self.assertEqual(
-                metrics._customer_statsbeat_metric_reader._export_interval_millis,
+                metrics._customer_sdkstats_metric_reader._export_interval_millis,
                 custom_interval,
-                f"CustomerStatsbeatMetrics should use export interval {custom_interval}, got {metrics._customer_statsbeat_metric_reader._export_interval_millis}"
+                f"CustomerSdkStatsMetrics should use export interval {custom_interval}, got {metrics._customer_sdkstats_metric_reader._export_interval_millis}"
             )
             
     def test_default_export_interval_when_env_var_empty(self):
         """Test that the default export interval is used when the environment variable is empty."""
         # Mock the environment variable as empty
         with mock.patch.dict(os.environ, {
-            _APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW: "true",
+            _APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW: "true",
             _APPLICATIONINSIGHTS_SDKSTATS_EXPORT_INTERVAL: ""
         }):
             # Get the export interval
@@ -167,13 +167,13 @@ class TestCustomerStatsbeat(unittest.TestCase):
                 f"Expected export interval to be default {_DEFAULT_STATS_SHORT_EXPORT_INTERVAL}, got {actual_interval}"
             )
             
-            # Verify the CustomerStatsbeatMetrics instance picks up the default interval
-            CustomerStatsbeatMetrics._instance = None
-            metrics = CustomerStatsbeatMetrics(self.mock_options.connection_string)
+            # Verify the CustomerSdkStatsMetrics instance picks up the default interval
+            CustomerSdkStatsMetrics._instance = None
+            metrics = CustomerSdkStatsMetrics(self.mock_options.connection_string)
             self.assertEqual(
-                metrics._customer_statsbeat_metric_reader._export_interval_millis,
+                metrics._customer_sdkstats_metric_reader._export_interval_millis,
                 _DEFAULT_STATS_SHORT_EXPORT_INTERVAL,
-                f"CustomerStatsbeatMetrics should use default export interval {_DEFAULT_STATS_SHORT_EXPORT_INTERVAL}, got {metrics._customer_statsbeat_metric_reader._export_interval_millis}"
+                f"CustomerSdkStatsMetrics should use default export interval {_DEFAULT_STATS_SHORT_EXPORT_INTERVAL}, got {metrics._customer_sdkstats_metric_reader._export_interval_millis}"
             )
 
     def test_successful_items_count(self):
