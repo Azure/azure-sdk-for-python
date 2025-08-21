@@ -25,6 +25,21 @@ class RiskCategory(str, Enum):
 
 
 @experimental
+class SupportedLanguages(Enum):
+    """Supported languages for attack objectives, using ISO standard language codes."""
+
+    Spanish = "es"
+    Italian = "it"
+    French = "fr"
+    German = "de"
+    SimplifiedChinese = "zh-cn"
+    Portuguese = "pt"
+    Japanese = "ja"
+    English = "en"
+    Korean = "ko"
+
+
+@experimental
 class _InternalRiskCategory(str, Enum):
     ECI = "eci"
 

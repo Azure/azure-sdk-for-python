@@ -1,11 +1,12 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+from itertools import chain
 import math
 import os
 import logging
 import re
-from typing import Dict, List, Union, TypeVar, cast
+from typing import Dict, List, Union, TypeVar, Optional
 from typing_extensions import overload, override
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
 from azure.ai.evaluation._exceptions import (
@@ -16,10 +17,44 @@ from azure.ai.evaluation._exceptions import (
 )
 from ..._common.utils import check_score_is_valid
 from azure.ai.evaluation._common._experimental import experimental
+from ..._converters._models import (
+    _BUILT_IN_DESCRIPTIONS,
+    _BUILT_IN_PARAMS,
+)
 
 logger = logging.getLogger(__name__)
 
 T_EvalValue = TypeVar("T_EvalValue")
+
+
+def _get_built_in_definition(tool_name: str):
+    """Get the definition for the built-in tool."""
+    if tool_name in _BUILT_IN_DESCRIPTIONS:
+        return {
+            "type": tool_name,
+            "description": _BUILT_IN_DESCRIPTIONS[tool_name],
+            "name": tool_name,
+            "parameters": _BUILT_IN_PARAMS.get(tool_name, {}),
+        }
+    return None
+
+
+def _get_needed_built_in_definitions(tool_calls: List[Dict]) -> List[Dict]:
+    """Extract tool definitions needed for the given built-in tool calls."""
+    needed_definitions = []
+    for tool_call in tool_calls:
+        if isinstance(tool_call, dict):
+            tool_type = tool_call.get("type")
+
+            # Only support converter format: {type: "tool_call", name: "bing_custom_search", arguments: {...}}
+            if tool_type == "tool_call":
+                tool_name = tool_call.get("name")
+                if tool_name in _BUILT_IN_DESCRIPTIONS:
+                    built_in_def = _get_built_in_definition(tool_name)
+                    if built_in_def and built_in_def not in needed_definitions:
+                        needed_definitions.append(built_in_def)
+
+    return needed_definitions
 
 
 @experimental
@@ -153,10 +188,9 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         # TODO add warning that only tool calls of type function are supported
         # Collect inputs
         tool_calls = kwargs.get("tool_calls")
-        tool_definitions = kwargs.get("tool_definitions")
+        tool_definitions = kwargs.get("tool_definitions", [])  # Default to empty list
         query = kwargs.get("query")
         response = kwargs.get("response")
-
         # TODO : Support classes that represents tool calls, messages etc once client side definitions are available
         if response:
             parsed_tool_calls = self._parse_tools_from_response(response)
@@ -165,20 +199,23 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         if not tool_calls:
             return {"error_message": self._NO_TOOL_CALLS_MESSAGE}
-        if not tool_definitions or len(tool_definitions) == 0:
-            return {"error_message": self._NO_TOOL_DEFINITIONS_MESSAGE}
 
         if not isinstance(tool_calls, list):
             tool_calls = [tool_calls]
         if not isinstance(tool_definitions, list):
-            tool_definitions = [tool_definitions]
+            tool_definitions = [tool_definitions] if tool_definitions else []
 
         try:
             needed_tool_definitions = self._extract_needed_tool_definitions(tool_calls, tool_definitions)
         except EvaluationException as e:
-            return {"error_message": self._TOOL_DEFINITIONS_MISSING_MESSAGE}
+            # Check if this is because no tool definitions were provided at all
+            if len(tool_definitions) == 0:
+                return {"error_message": self._NO_TOOL_DEFINITIONS_MESSAGE}
+            else:
+                return {"error_message": self._TOOL_DEFINITIONS_MISSING_MESSAGE}
+
         if len(needed_tool_definitions) == 0:
-            return {"error_message": self._TOOL_DEFINITIONS_MISSING_MESSAGE}
+            return {"error_message": self._NO_TOOL_DEFINITIONS_MESSAGE}
 
         return {
             "query": query,
@@ -269,32 +306,71 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         }
 
     def _extract_needed_tool_definitions(self, tool_calls, tool_definitions):
-        """Extract the tool definitions that are needed for the provided tool calls.
-        :param tool_calls: List of tool calls to evaluate.
-        :type tool_calls: List[dict]
-        :param tool_definitions: List of tool definitions to use for evaluation.
-        :type tool_definitions: List[dict]
-        :return: List of tool definitions that are needed for the provided tool calls.
-        :rtype: List[dict]
-        """
+        """Extract the tool definitions that are needed for the provided tool calls."""
         needed_tool_definitions = []
+
+        # Add all user-provided tool definitions
+        needed_tool_definitions.extend(tool_definitions)
+
+        # Add the needed built-in tool definitions (if they are called)
+        built_in_definitions = _get_needed_built_in_definitions(tool_calls)
+        needed_tool_definitions.extend(built_in_definitions)
+
+        # OpenAPI tool is a collection of functions, so we need to expand it
+        tool_definitions_expanded = list(
+            chain.from_iterable(
+                tool.get("functions", []) if tool.get("type") == "openapi" else [tool]
+                for tool in needed_tool_definitions
+            )
+        )
+
+        # Validate that all tool calls have corresponding definitions
         for tool_call in tool_calls:
-            if isinstance(tool_call, dict) and tool_call.get("type") == "tool_call":
-                tool_name = tool_call.get("name")
-                tool_definition = [
-                    tool
-                    for tool in tool_definitions
-                    if tool.get("name") == tool_name and tool.get("type", "function") == "function"
-                ]
-                if len(tool_definition) > 0:
-                    needed_tool_definitions.extend(tool_definition)
+            if isinstance(tool_call, dict):
+                tool_type = tool_call.get("type")
+
+                if tool_type == "tool_call":
+                    tool_name = tool_call.get("name")
+                    if tool_name and tool_name in _BUILT_IN_DESCRIPTIONS:
+                        # This is a built-in tool from converter, already handled above
+                        continue
+                    elif tool_name:
+                        # This is a regular function tool from converter
+                        tool_definition_exists = any(
+                            tool.get("name") == tool_name and tool.get("type", "function") == "function"
+                            for tool in tool_definitions_expanded
+                        )
+                        if not tool_definition_exists:
+                            raise EvaluationException(
+                                message=f"Tool definition for {tool_name} not found",
+                                blame=ErrorBlame.USER_ERROR,
+                                category=ErrorCategory.INVALID_VALUE,
+                                target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
+                            )
+                    else:
+                        raise EvaluationException(
+                            message=f"Tool call missing name: {tool_call}",
+                            blame=ErrorBlame.USER_ERROR,
+                            category=ErrorCategory.INVALID_VALUE,
+                            target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
+                        )
                 else:
+                    # Unsupported tool format - only converter format is supported
                     raise EvaluationException(
-                        message=f"Tool definition for {tool_name} not found",
+                        message=f"Unsupported tool call format. Only converter format is supported: {tool_call}",
                         blame=ErrorBlame.USER_ERROR,
                         category=ErrorCategory.INVALID_VALUE,
                         target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
                     )
+            else:
+                # Tool call is not a dictionary
+                raise EvaluationException(
+                    message=f"Tool call is not a dictionary: {tool_call}",
+                    blame=ErrorBlame.USER_ERROR,
+                    category=ErrorCategory.INVALID_VALUE,
+                    target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
+                )
+
         return needed_tool_definitions
 
     @override

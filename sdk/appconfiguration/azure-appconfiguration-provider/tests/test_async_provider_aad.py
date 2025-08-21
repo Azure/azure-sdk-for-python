@@ -16,8 +16,8 @@ class TestAppConfigurationProvider(AppConfigTestCase):
     @app_config_decorator_async
     @recorded_by_proxy_async
     async def test_provider_creation_aad(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
-        async with await self.create_aad_client(
-            appconfiguration_endpoint_string,
+        async with await self.create_client(
+            endpoint=appconfiguration_endpoint_string,
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
             feature_flag_enabled=True,
         ) as client:
@@ -32,8 +32,8 @@ class TestAppConfigurationProvider(AppConfigTestCase):
     @recorded_by_proxy_async
     async def test_provider_trim_prefixes(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
         trimmed = {"test."}
-        async with await self.create_aad_client(
-            appconfiguration_endpoint_string,
+        async with await self.create_client(
+            endpoint=appconfiguration_endpoint_string,
             trim_prefixes=trimmed,
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
             feature_flag_enabled=True,
@@ -49,8 +49,8 @@ class TestAppConfigurationProvider(AppConfigTestCase):
     @recorded_by_proxy_async
     async def test_provider_selectors(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
         selects = {SettingSelector(key_filter="message*", label_filter="dev")}
-        async with await self.create_aad_client(
-            appconfiguration_endpoint_string,
+        async with await self.create_client(
+            endpoint=appconfiguration_endpoint_string,
             selects=selects,
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
         ) as client:
@@ -65,8 +65,10 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url
     ):
         selects = {SettingSelector(key_filter="*", label_filter="prod")}
-        async with await self.create_aad_client(
-            appconfiguration_endpoint_string, selects=selects, keyvault_secret_url=appconfiguration_keyvault_secret_url
+        async with await self.create_client(
+            endpoint=appconfiguration_endpoint_string,
+            selects=selects,
+            keyvault_secret_url=appconfiguration_keyvault_secret_url,
         ) as client:
             assert client["secret"] == "Very secret value"
 
@@ -75,8 +77,8 @@ class TestAppConfigurationProvider(AppConfigTestCase):
     @recorded_by_proxy_async
     async def test_provider_secret_resolver(self, appconfiguration_endpoint_string):
         selects = {SettingSelector(key_filter="*", label_filter="prod")}
-        async with await self.create_aad_client(
-            appconfiguration_endpoint_string, selects=selects, secret_resolver=secret_resolver
+        async with await self.create_client(
+            endpoint=appconfiguration_endpoint_string, selects=selects, secret_resolver=secret_resolver
         ) as client:
             assert client["secret"] == "Resolver Value"
 
@@ -88,8 +90,8 @@ class TestAppConfigurationProvider(AppConfigTestCase):
     ):
         selects = {SettingSelector(key_filter="*", label_filter="prod")}
         key_vault_options = AzureAppConfigurationKeyVaultOptions()
-        async with await self.create_aad_client(
-            appconfiguration_endpoint_string,
+        async with await self.create_client(
+            endpoint=appconfiguration_endpoint_string,
             selects=selects,
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
             key_vault_options=key_vault_options,
@@ -102,8 +104,8 @@ class TestAppConfigurationProvider(AppConfigTestCase):
     async def test_provider_secret_resolver_options(self, appconfiguration_endpoint_string):
         selects = {SettingSelector(key_filter="*", label_filter="prod")}
         key_vault_options = AzureAppConfigurationKeyVaultOptions(secret_resolver=secret_resolver)
-        async with await self.create_aad_client(
-            appconfiguration_endpoint_string, selects=selects, key_vault_options=key_vault_options
+        async with await self.create_client(
+            endpoint=appconfiguration_endpoint_string, selects=selects, key_vault_options=key_vault_options
         ) as client:
             assert client["secret"] == "Resolver Value"
 
@@ -111,8 +113,8 @@ class TestAppConfigurationProvider(AppConfigTestCase):
     @recorded_by_proxy_async
     async def test_provider_tag_filters(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
         selects = {SettingSelector(key_filter="*", tag_filters=["a=b"])}
-        async with await self.create_aad_client(
-            appconfiguration_endpoint_string,
+        async with await self.create_client(
+            endpoint=appconfiguration_endpoint_string,
             selects=selects,
             feature_flag_enabled=True,
             feature_flag_selectors={SettingSelector(key_filter="*", tag_filters=["a=b"])},

@@ -1,4 +1,4 @@
--e ../../../tools/azure-sdk-tools
+-e ../../../eng/tools/azure-sdk-tools
 azure-mgmt-keyvault<9.0.0
 azure-mgmt-network<19.0.0
 -e ../../resources/azure-mgmt-resource

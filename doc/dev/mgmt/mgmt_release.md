@@ -21,7 +21,7 @@ IMPORTANT NOTE: All the commands in this page assumes you have loaded the [dev_s
 ## Manual generation
 
 If the automation is not doing its job to create an auto PR, Python has a SwaggerToSdk CLI that can be used to generate a specific Readme. You need
-a virtual environment loaded with at least `tools/azure-sdk-tools` installed.
+a virtual environment loaded with at least `eng/tools/azure-sdk-tools` installed.
 
 ```shell
 # Using default configuration (this can be a Github raw link)

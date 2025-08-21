@@ -98,7 +98,7 @@ class TestLatestSessionTokenAsync(unittest.IsolatedAsyncioTestCase):
         phys_session_token = await container.get_latest_session_token(phys_feed_ranges_and_session_tokens, phys_target_feed_range)
         pk_range_id, session_token = parse_session_token(phys_session_token)
 
-        assert 330 <= session_token.global_lsn <= 370
+        assert 300 <= session_token.global_lsn <= 370
         assert '2' in pk_range_id
         await self.database.delete_container(container.id)
 

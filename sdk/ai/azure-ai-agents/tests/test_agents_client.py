@@ -4,25 +4,21 @@
 # Licensed under the MIT License.
 # ------------------------------------
 # cSpell:disable
-from typing import Any, Optional
+from typing import Any, Dict, Optional, Type
 
 import os
-import datetime
+import re
 import json
-import logging
+import jsonref
 import tempfile
-import sys
 import time
 import pytest
-import functools
 import io
 import user_functions
 
 from azure.ai.agents import AgentsClient
 from azure.core.exceptions import HttpResponseError
 from devtools_testutils import (
-    AzureRecordedTestCase,
-    EnvironmentVariableLoader,
     recorded_by_proxy,
 )
 from azure.ai.agents.models import (
@@ -32,10 +28,14 @@ from azure.ai.agents.models import (
     AzureAISearchTool,
     AzureFunctionStorageQueue,
     AzureFunctionTool,
+    BingCustomSearchTool,
+    BingGroundingTool,
+    BrowserAutomationTool,
     CodeInterpreterTool,
     CodeInterpreterToolResource,
     ConnectedAgentTool,
     DeepResearchTool,
+    FabricTool,
     FilePurpose,
     FileSearchTool,
     FileSearchToolCallContent,
@@ -44,18 +44,37 @@ from azure.ai.agents.models import (
     MessageAttachment,
     MessageDeltaChunk,
     MessageTextContent,
+    MessageTextFileCitationDetails,
+    MessageTextFileCitationAnnotation,
+    MessageTextUrlCitationDetails,
     MessageRole,
     FileInfo,
+    OpenApiTool,
+    OpenApiAnonymousAuthDetails,
     ResponseFormatJsonSchema,
     ResponseFormatJsonSchemaType,
     RunAdditionalFieldList,
+    RunStepAzureFunctionToolCall,
+    RunStepAzureAISearchToolCall,
+    RunStepBingCustomSearchToolCall,
+    RunStepBingGroundingToolCall,
+    RunStepBrowserAutomationToolCall,
     RunStepConnectedAgentToolCall,
     RunStepDeepResearchToolCall,
+    RunStepDeltaAzureFunctionToolCall,
+    RunStepDeltaAzureAISearchToolCall,
     RunStepDeltaChunk,
+    RunStepDeltaCustomBingGroundingToolCall,
+    RunStepDeltaBingGroundingToolCall,
+    RunStepDeltaFileSearchToolCall,
+    RunStepDeltaMicrosoftFabricToolCall,
+    RunStepDeltaOpenAPIToolCall,
     RunStepDeltaToolCallObject,
     RunStepFileSearchToolCall,
     RunStepFileSearchToolCallResult,
     RunStepFileSearchToolCallResults,
+    RunStepMicrosoftFabricToolCall,
+    RunStepOpenAPIToolCall,
     RunStepToolCallDetails,
     RunStatus,
     RunStep,
@@ -70,64 +89,13 @@ from azure.ai.agents.models import (
     VectorStoreDataSource,
     VectorStoreDataSourceAssetType,
 )
-from devtools_testutils.azure_testcase import is_live
 from azure.ai.agents.models._models import RunStepDeltaConnectedAgentToolCall
-
-# Set to True to enable SDK logging
-LOGGING_ENABLED = True
-
-if LOGGING_ENABLED:
-    # Create a logger for the 'azure' SDK
-    # See https://docs.python.org/3/library/logging.html
-    logger = logging.getLogger("azure")
-    logger.setLevel(logging.DEBUG)  # INFO or DEBUG
-
-    # Configure a console output
-    handler = logging.StreamHandler(stream=sys.stdout)
-    logger.addHandler(handler)
-
-agentClientPreparer = functools.partial(
-    EnvironmentVariableLoader,
-    "azure_ai_agents",
-    # TODO: uncomment this endpoint when re running with 1DP
-    # azure_ai_agents_tests_project_endpoint="https://aiservices-id.services.ai.azure.com/api/projects/project-name",
-    # TODO: remove this endpoint when re running with 1DP
-    azure_ai_agents_tests_project_connection_string="https://Sanitized.api.azureml.ms/agents/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/",
-    azure_ai_agents_tests_project_endpoint="https://Sanitized.services.ai.azure.com/api/projects/00000",
-    azure_ai_agents_tests_data_path="azureml://subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg-resour-cegr-oupfoo1/workspaces/abcd-abcdabcdabcda-abcdefghijklm/datastores/workspaceblobstore/paths/LocalUpload/000000000000/product_info_1.md",
-    azure_ai_agents_tests_storage_queue="https://foobar.queue.core.windows.net",
-    azure_ai_agents_tests_search_index_name="sample_index",
-    azure_ai_agents_tests_search_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/someindex",
-    azure_ai_agents_tests_bing_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.CognitiveServices/accounts/00000/projects/00000/connections/00000",
-    azure_ai_agents_tests_deep_research_model="gpt-4o-deep-research",
-    azure_ai_agents_tests_is_test_run="True",
+from test_agents_client_base import (
+    TestAgentClientBase,
+    agentClientPreparer,
+    fetch_current_datetime_recordings,
+    fetch_current_datetime_live,
 )
-
-
-# create tool for agent use
-def fetch_current_datetime_live():
-    """
-    Get the current time as a JSON string.
-
-    :return: Static time string so that test recordings work.
-    :rtype: str
-    """
-    current_datetime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    time_json = json.dumps({"current_time": current_datetime})
-    return time_json
-
-
-# create tool for agent use
-def fetch_current_datetime_recordings():
-    """
-    Get the current time as a JSON string.
-
-    :return: Static time string so that test recordings work.
-    :rtype: str
-    """
-    time_json = json.dumps({"current_time": "2024-10-10 12:30:19"})
-    return time_json
-
 
 # Statically defined user functions for fast reference
 user_functions_recording = {fetch_current_datetime_recordings}
@@ -135,7 +103,7 @@ user_functions_live = {fetch_current_datetime_live}
 
 
 # The test class name needs to start with "Test" to get collected by pytest
-class TestAgentClient(AzureRecordedTestCase):
+class TestAgentClient(TestAgentClientBase):
 
     # helper function: create client using environment variables
     def create_client(self, by_endpoint=False, **kwargs) -> AgentsClient:
@@ -679,7 +647,7 @@ class TestAgentClient(AzureRecordedTestCase):
     def test_list_messages(self, **kwargs):
         """test listing messages in a thread"""
         # create client
-        with self.create_client(**kwargs) as client:
+        with self.create_client(by_endpoint=True, **kwargs) as client:
             assert isinstance(client, AgentsClient)
 
             # create agent
@@ -710,14 +678,26 @@ class TestAgentClient(AzureRecordedTestCase):
             print("Created message, message ID", message2.id)
             messages2 = list(client.messages.list(thread_id=thread.id))
             assert len(messages2) == 2
-            assert messages2[0].id == message2.id or messages2[1].id == message2.id
+            assert any(msg.id == message2.id for msg in messages2)
 
             message3 = client.messages.create(thread_id=thread.id, role="user", content="Hello, tell me a third joke")
             assert message3.id
             print("Created message, message ID", message3.id)
             messages3 = list(client.messages.list(thread_id=thread.id))
             assert len(messages3) == 3
-            assert messages3[0].id == message3.id or messages3[1].id == message3.id or messages3[2].id == message3.id
+            assert any(msg.id == message3.id for msg in messages3)
+
+            client.messages.delete(thread_id=thread.id, message_id=message3.id)
+            messages4 = list(client.messages.list(thread_id=thread.id))
+            assert len(messages4) == 2
+            assert not any(msg.id == message3.id for msg in messages4)
+
+            # Check that we can add messages after deletion
+            message3 = client.messages.create(thread_id=thread.id, role="user", content="Bar")
+            assert message3.id
+            messages5 = list(client.messages.list(thread_id=thread.id))
+            assert len(messages5) == 3
+            assert any(msg.id == message3.id for msg in messages5)
 
             # delete agent and close client
             client.delete_agent(agent.id)
@@ -2164,7 +2144,9 @@ class TestAgentClient(AzureRecordedTestCase):
         openai_file = client.files.upload_and_poll(file_path=file_path, purpose="assistants")
         print(f"Uploaded file, file ID: {openai_file.id}")
 
-        openai_vectorstore = client.vector_stores.create_and_poll(file_ids=[openai_file.id], name="my_vectorstore")
+        openai_vectorstore = client.vector_stores.create_and_poll(
+            file_ids=[openai_file.id], name="my_vectorstore", polling_interval=self._sleep_time()
+        )
         print(f"Created vector store, vector store ID: {openai_vectorstore.id}")
 
         file_search.add_vector_store(openai_vectorstore.id)
@@ -2203,7 +2185,7 @@ class TestAgentClient(AzureRecordedTestCase):
         # Create vector store
         body = {"name": "test_vector_store", "metadata": {"key1": "value1", "key2": "value2"}}
         try:
-            vector_store = client.vector_stores.create_and_poll(body=body, polling_interval=2)
+            vector_store = client.vector_stores.create_and_poll(body=body, polling_interval=self._sleep_time(2))
             # check correct creation
             assert isinstance(vector_store, VectorStore)
             assert vector_store.name == "test_vector_store"
@@ -2295,7 +2277,7 @@ class TestAgentClient(AzureRecordedTestCase):
                 )
             ]
         vector_store = ai_client.vector_stores.create_and_poll(
-            file_ids=file_ids, data_sources=ds, name="my_vectorstore"
+            file_ids=file_ids, data_sources=ds, name="my_vectorstore", polling_interval=self._sleep_time()
         )
         assert vector_store.id
         self._test_file_search(ai_client, vector_store, file_id, streaming)
@@ -2388,7 +2370,9 @@ class TestAgentClient(AzureRecordedTestCase):
                 asset_identifier=kwargs["azure_ai_agents_tests_data_path"],
                 asset_type="uri_asset",
             )
-        vector_store = ai_client.vector_stores.create_and_poll(file_ids=[], name="sample_vector_store")
+        vector_store = ai_client.vector_stores.create_and_poll(
+            file_ids=[], name="sample_vector_store", polling_interval=self._sleep_time()
+        )
         assert vector_store.id
         vector_store_file = ai_client.vector_store_files.create(
             vector_store_id=vector_store.id, data_source=ds, file_id=file_id
@@ -2441,10 +2425,12 @@ class TestAgentClient(AzureRecordedTestCase):
                     asset_type=VectorStoreDataSourceAssetType.URI_ASSET,
                 )
             ]
-        vector_store = ai_client.vector_stores.create_and_poll(file_ids=[], name="sample_vector_store")
+        vector_store = ai_client.vector_stores.create_and_poll(
+            file_ids=[], name="sample_vector_store", polling_interval=self._sleep_time()
+        )
         assert vector_store.id
         vector_store_file_batch = ai_client.vector_store_file_batches.create_and_poll(
-            vector_store_id=vector_store.id, data_sources=ds, file_ids=file_ids
+            vector_store_id=vector_store.id, data_sources=ds, file_ids=file_ids, polling_interval=self._sleep_time()
         )
         assert vector_store_file_batch.id
         self._test_file_search(ai_client, vector_store, file_id, streaming)
@@ -2799,60 +2785,57 @@ class TestAgentClient(AzureRecordedTestCase):
         ai_client.delete_agent(agent.id)
         ai_client.close()
 
+    def _get_azure_ai_search_tool(self, **kwargs):
+        """Get the azure AI search tool."""
+        conn_id = kwargs.pop("azure_ai_agents_tests_search_connection_id", "my-search-connection-ID")
+        index_name = kwargs.pop("azure_ai_agents_tests_search_index_name", "my-search-index")
+
+        return AzureAISearchTool(
+            index_connection_id=conn_id,
+            index_name=index_name,
+        )
+
     @agentClientPreparer()
-    @pytest.mark.skip("Fail to find entry.")
     @recorded_by_proxy
     def test_azure_ai_search_tool(self, **kwargs):
         """Test using the AzureAISearchTool with an agent."""
-        # create client
-        with self.create_client(**kwargs) as client:
+        azure_search_tool = self._get_azure_ai_search_tool(**kwargs)
+        with self.create_client(by_endpoint=True, **kwargs) as client:
             assert isinstance(client, AgentsClient)
 
-            # Create AzureAISearchTool
-            conn_id = kwargs.pop("azure_ai_agents_tests_search_connection_id", "my-search-connection-ID")
-            index_name = kwargs.pop("azure_ai_agents_tests_search_index_name", "my-search-index")
-
-            azure_search_tool = AzureAISearchTool(
-                index_connection_id=conn_id,
-                index_name=index_name,
-            )
-
-            # Create agent with the search tool
-            agent = client.create_agent(
-                model="gpt-4o",
-                name="search-agent",
+            self._do_test_tool(
+                client=client,
+                model_name="gpt-4o",
+                tool_to_test=azure_search_tool,
                 instructions="You are a helpful agent that can search for information using Azure AI Search.",
-                tools=azure_search_tool.definitions,
-                tool_resources=azure_search_tool.resources,
+                prompt="What is the temperature rating of the cozynights sleeping bag?",
+                expected_class=RunStepAzureAISearchToolCall,
+                agent_message_regex="60",
+                uri_annotation=MessageTextUrlCitationDetails(
+                    url="www.microsoft.com",
+                    title="product_info_7.md",
+                ),
             )
-            assert agent.id
-            print(f"Created agent with ID: {agent.id}")
 
-            # Create thread
-            thread = client.threads.create()
-            assert thread.id
-            print(f"Created thread with ID: {thread.id}")
-
-            # Create message
-            message = client.messages.create(
-                thread_id=thread.id, role="user", content="Search for information about iPhone prices."
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_azure_ai_search_tool_streaming(self, **kwargs):
+        """Test using the AzureAISearchTool with an agent in streaming scenario."""
+        azure_search_tool = self._get_azure_ai_search_tool(**kwargs)
+        with self.create_client(by_endpoint=True, **kwargs) as client:
+            assert isinstance(client, AgentsClient)
+            self._do_test_tool_streaming(
+                client=client,
+                model_name="gpt-4o",
+                tool_to_test=azure_search_tool,
+                instructions="You are a helpful agent that can search for information using Azure AI Search.",
+                prompt="What is the temperature rating of the cozynights sleeping bag?",
+                expected_delta_class=RunStepDeltaAzureAISearchToolCall,
+                uri_annotation=MessageTextUrlCitationDetails(
+                    url="www.microsoft.com",
+                    title="product_info_7.md",
+                ),
             )
-            assert message.id
-            print(f"Created message with ID: {message.id}")
-
-            # Create and process run
-            run = client.runs.create_and_process(
-                thread_id=thread.id, agent_id=agent.id, polling_interval=self._sleep_time()
-            )
-            assert run.status == RunStatus.COMPLETED, run.last_error.message
-
-            # List messages to verify tool was used
-            messages = list(client.messages.list(thread_id=thread.id))
-            assert len(messages) > 0
-
-            # Clean up
-            client.delete_agent(agent.id)
-            print("Deleted agent")
 
     @agentClientPreparer()
     @recorded_by_proxy
@@ -2877,7 +2860,9 @@ class TestAgentClient(AzureRecordedTestCase):
                     asset_type=VectorStoreDataSourceAssetType.URI_ASSET,
                 )
             ]
-            vector_store = ai_client.vector_stores.create_and_poll(file_ids=[], data_sources=ds, name="my_vectorstore")
+            vector_store = ai_client.vector_stores.create_and_poll(
+                file_ids=[], data_sources=ds, name="my_vectorstore", polling_interval=self._sleep_time()
+            )
             # vector_store = await ai_client.vector_stores.get('vs_M9oxKG7JngORHcYNBGVZ6Iz3')
             assert vector_store.id
 
@@ -2930,7 +2915,7 @@ class TestAgentClient(AzureRecordedTestCase):
             self._assert_file_search_valid(steps[1].step_details.tool_calls[0], include_content)
 
             messages = list(ai_client.messages.list(thread_id=thread.id))
-            assert len(messages)
+            assert len(messages) > 1
 
             ai_client.vector_stores.delete(vector_store.id)
             # delete agent and close client
@@ -3109,31 +3094,35 @@ class TestAgentClient(AzureRecordedTestCase):
 
             assert output_file_exist
 
+    def _get_azure_function_tool(self, storage_queue: str) -> AzureFunctionTool:
+        """Helper method to get an AzureFunctionTool."""
+        return AzureFunctionTool(
+            name="foo",
+            description="Get answers from the foo bot.",
+            parameters={
+                "type": "object",
+                "properties": {
+                    "query": {"type": "string", "description": "The question to ask."},
+                    "outputqueueuri": {"type": "string", "description": "The full output queue uri."},
+                },
+            },
+            input_queue=AzureFunctionStorageQueue(
+                queue_name="azure-function-foo-input",
+                storage_service_endpoint=storage_queue,
+            ),
+            output_queue=AzureFunctionStorageQueue(
+                queue_name="azure-function-tool-output",
+                storage_service_endpoint=storage_queue,
+            ),
+        )
+
     @agentClientPreparer()
     @recorded_by_proxy
     def test_azure_function_call(self, **kwargs):
         """Test calling Azure functions."""
         storage_queue = kwargs["azure_ai_agents_tests_storage_queue"]
         with self.create_client(by_endpoint=True, **kwargs) as client:
-            azure_function_tool = AzureFunctionTool(
-                name="foo",
-                description="Get answers from the foo bot.",
-                parameters={
-                    "type": "object",
-                    "properties": {
-                        "query": {"type": "string", "description": "The question to ask."},
-                        "outputqueueuri": {"type": "string", "description": "The full output queue uri."},
-                    },
-                },
-                input_queue=AzureFunctionStorageQueue(
-                    queue_name="azure-function-foo-input",
-                    storage_service_endpoint=storage_queue,
-                ),
-                output_queue=AzureFunctionStorageQueue(
-                    queue_name="azure-function-tool-output",
-                    storage_service_endpoint=storage_queue,
-                ),
-            )
+            azure_function_tool = self._get_azure_function_tool(storage_queue)
 
             self._do_test_tool(
                 client=client,
@@ -3147,9 +3136,64 @@ class TestAgentClient(AzureRecordedTestCase):
                     '. Always responds with "Foo says" and then the response from the tool.'
                 ),
                 prompt="What is the most prevalent element in the universe? What would foo say?",
-                # TODO: Implement the run step for AzureFunction.
-                expected_class=None,
-                specific_message_text="bar",
+                expected_class=RunStepAzureFunctionToolCall,
+                agent_message_regex="bar",
+            )
+
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_azure_function_call_streaming(self, **kwargs):
+        """Test calling Azure functions in streaming scenarios."""
+        storage_queue = kwargs["azure_ai_agents_tests_storage_queue"]
+        with self.create_client(by_endpoint=True, **kwargs) as client:
+            azure_function_tool = self._get_azure_function_tool(storage_queue)
+
+            self._do_test_tool_streaming(
+                client=client,
+                model_name="gpt-4o",
+                tool_to_test=azure_function_tool,
+                instructions=(
+                    "You are a helpful support agent. Use the provided function any "
+                    "time the prompt contains the string 'What would foo say?'. When "
+                    "you invoke the function, ALWAYS specify the output queue uri parameter as "
+                    f"'{storage_queue}/azure-function-tool-output'"
+                    '. Always responds with "Foo says" and then the response from the tool.'
+                ),
+                prompt="What is the most prevalent element in the universe? What would foo say?",
+                expected_delta_class=RunStepDeltaAzureFunctionToolCall,
+                agent_message_regex="bar",
+            )
+
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_browser_automation_tool(self, **kwargs):
+        connection_id = kwargs["azure_ai_agents_tests_playwright_connection_id"]
+        with self.create_client(by_endpoint=True, **kwargs) as client:
+            browser_automation_tool = BrowserAutomationTool(connection_id=connection_id)
+            self._do_test_tool(
+                client=client,
+                model_name="gpt-4o",
+                tool_to_test=browser_automation_tool,
+                instructions="""
+                    You are an Agent helping with browser automation tasks.
+                    You can answer questions, provide information, and assist with various tasks
+                    related to web browsing using the Browser Automation tool available to you.
+                    """,
+                prompt="""
+                    Your goal is to report the percent of Microsoft year-to-date stock price change.
+                    To do that, go to the website finance.yahoo.com.
+                    At the top of the page, you will find a search bar.
+                    Enter the value 'MSFT', to get information about the Microsoft stock price.
+                    At the top of the resulting page you will see a default chart of Microsoft stock price.
+                    Click on 'YTD' at the top of that chart, and read the value that shows up right underneath it.
+                    Report your result using exactly the following sentence, followed by the value you found:
+                    `The year-to-date (YTD) stock price change for Microsoft (MSFT) is`
+                    """,
+                # The tool is very slow to run, since the Microsoft Playwright Workspace service needs to
+                # load a VM and open a browser. Use a large polling interval to avoid tons of REST API calls in test recordings.
+                polling_interval=60,
+                expected_class=RunStepBrowserAutomationToolCall,
+                agent_message_regex="the year-to-date [(]ytd[)] stock price change for microsoft [(]msft[)] is",
             )
 
     @agentClientPreparer()
@@ -3276,6 +3320,253 @@ class TestAgentClient(AzureRecordedTestCase):
             finally:
                 client.delete_agent(connected_agent.connected_agent.id)
 
+    def _get_file_search_tool_and_file_id(self, client, **kwargs):
+        """Helper method to get the file search tool."""
+        ds = [
+            VectorStoreDataSource(
+                asset_identifier=kwargs["azure_ai_agents_tests_data_path"],
+                asset_type=VectorStoreDataSourceAssetType.URI_ASSET,
+            )
+        ]
+        vector_store = client.vector_stores.create_and_poll(
+            data_sources=ds, name="my_vectorstore", polling_interval=self._sleep_time()
+        )
+        file_id = None
+        for fle in client.vector_store_files.list(vector_store.id):
+            # We have only one file in vector store.
+            file_id = fle.id
+        assert file_id is not None, "No files were found in the vector store."
+        return FileSearchTool(vector_store_ids=[vector_store.id]), file_id
+
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_file_search_tool(self, **kwargs):
+        """Test file search tool."""
+        with self.create_client(**kwargs, by_endpoint=True) as client:
+            model_name = "gpt-4o"
+            file_search_tool, file_id = self._get_file_search_tool_and_file_id(client, **kwargs)
+            assert file_search_tool.resources.file_search is not None
+            assert file_search_tool.resources.file_search.vector_store_ids
+
+            try:
+                self._do_test_tool(
+                    client=client,
+                    model_name=model_name,
+                    tool_to_test=file_search_tool,
+                    instructions="You are helpful agent",
+                    prompt="What feature does Smart Eyewear offer?",
+                    expected_class=RunStepFileSearchToolCall,
+                    file_annotation=MessageTextFileCitationAnnotation(
+                        text="test",
+                        file_citation=MessageTextFileCitationDetails(
+                            file_id=file_id,
+                        ),
+                    ),
+                )
+            finally:
+                client.vector_stores.delete(file_search_tool.resources.file_search.vector_store_ids[0])
+
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_file_search_tool_streaming(self, **kwargs):
+        """Test file search tool."""
+        with self.create_client(**kwargs, by_endpoint=True) as client:
+            model_name = "gpt-4o"
+            file_search_tool, file_id = self._get_file_search_tool_and_file_id(client, **kwargs)
+            assert file_search_tool.resources.file_search is not None
+            assert file_search_tool.resources.file_search.vector_store_ids
+
+            try:
+                self._do_test_tool_streaming(
+                    client=client,
+                    model_name=model_name,
+                    tool_to_test=file_search_tool,
+                    instructions="You are helpful agent",
+                    prompt="What feature does Smart Eyewear offer?",
+                    expected_delta_class=RunStepDeltaFileSearchToolCall,
+                    file_annotation=MessageTextFileCitationAnnotation(
+                        text="test",
+                        file_citation=MessageTextFileCitationDetails(
+                            file_id=file_id,
+                        ),
+                    ),
+                )
+            finally:
+                client.vector_stores.delete(file_search_tool.resources.file_search.vector_store_ids[0])
+
+    def _get_open_api_tool(self):
+        """Helper method to get the openAPI tool."""
+        weather_asset_file_path = os.path.join(os.path.dirname(__file__), "assets", "weather_openapi.json")
+        auth = OpenApiAnonymousAuthDetails()
+        with open(weather_asset_file_path, "r") as f:
+            openapi_weather = jsonref.load(f)
+        return OpenApiTool(
+            name="get_weather",
+            spec=openapi_weather,
+            description="Retrieve weather information for a location",
+            auth=auth,
+        )
+
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_open_api_tool(self, **kwargs):
+        """Test open API tool call in non-streaming Scenario."""
+        with self.create_client(**kwargs, by_endpoint=True) as client:
+            model_name = "gpt-4o"
+            openapi_tool = self._get_open_api_tool()
+
+            self._do_test_tool(
+                client=client,
+                model_name=model_name,
+                tool_to_test=openapi_tool,
+                instructions="You are helpful agent",
+                prompt="What is the weather in Centralia, PA?",
+                expected_class=RunStepOpenAPIToolCall,
+            )
+
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_open_api_tool_streaming(self, **kwargs):
+        """Test open API tool call in streaming Scenario."""
+        with self.create_client(**kwargs, by_endpoint=True) as client:
+            model_name = "gpt-4o"
+            openapi_tool = self._get_open_api_tool()
+
+            self._do_test_tool_streaming(
+                client=client,
+                model_name=model_name,
+                tool_to_test=openapi_tool,
+                instructions="You are helpful agent",
+                prompt="What is the weather in Centralia, PA?",
+                expected_delta_class=RunStepDeltaOpenAPIToolCall,
+            )
+
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_bing_grounding_tool(self, **kwargs):
+        """Test Bing grounding tool call in non-streaming Scenario."""
+        with self.create_client(**kwargs, by_endpoint=True) as client:
+            model_name = "gpt-4o"
+            openapi_tool = BingGroundingTool(connection_id=kwargs.get("azure_ai_agents_tests_bing_connection_id"))
+
+            self._do_test_tool(
+                client=client,
+                model_name=model_name,
+                tool_to_test=openapi_tool,
+                instructions="You are helpful agent",
+                prompt="How does wikipedia explain Euler's Identity?",
+                expected_class=RunStepBingGroundingToolCall,
+                uri_annotation=MessageTextUrlCitationDetails(
+                    url="*",
+                    title="*",
+                ),
+            )
+
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_bing_grounding_tool_streaming(self, **kwargs):
+        """Test Bing grounding tool call in streaming Scenario."""
+        with self.create_client(**kwargs, by_endpoint=True) as client:
+            model_name = "gpt-4o"
+            openapi_tool = BingGroundingTool(connection_id=kwargs.get("azure_ai_agents_tests_bing_connection_id"))
+
+            self._do_test_tool_streaming(
+                client=client,
+                model_name=model_name,
+                tool_to_test=openapi_tool,
+                instructions="You are helpful agent",
+                prompt="How does wikipedia explain Euler's Identity?",
+                expected_delta_class=RunStepDeltaBingGroundingToolCall,
+                uri_annotation=MessageTextUrlCitationDetails(
+                    url="*",
+                    title="*",
+                ),
+            )
+
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_custom_bing_grounding_tool(self, **kwargs):
+        """Test Bing grounding tool call in non-streaming Scenario."""
+        with self.create_client(by_endpoint=True, **kwargs) as client:
+            model_name = "gpt-4o"
+            bing_custom_tool = BingCustomSearchTool(
+                connection_id=kwargs.get("azure_ai_agents_tests_bing_custom_connection_id"),
+                instance_name=kwargs.get("azure_ai_agents_tests_bing_configuration_name"),
+            )
+
+            self._do_test_tool(
+                client=client,
+                model_name=model_name,
+                tool_to_test=bing_custom_tool,
+                instructions="You are helpful agent",
+                prompt="How many medals did the USA win in the 2024 summer olympics?",
+                expected_class=RunStepBingCustomSearchToolCall,
+                agent_message_regex="40.+gold.+44 silver.+42.+bronze",
+                uri_annotation=MessageTextUrlCitationDetails(
+                    url="*",
+                    title="*",
+                ),
+            )
+
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_custom_bing_grounding_tool_streaming(self, **kwargs):
+        """Test Bing grounding tool call in streaming Scenario."""
+        with self.create_client(by_endpoint=True, **kwargs) as client:
+            model_name = "gpt-4o"
+            bing_custom_tool = BingCustomSearchTool(
+                connection_id=kwargs.get("azure_ai_agents_tests_bing_custom_connection_id"),
+                instance_name=kwargs.get("azure_ai_agents_tests_bing_configuration_name"),
+            )
+
+            self._do_test_tool_streaming(
+                client=client,
+                model_name=model_name,
+                tool_to_test=bing_custom_tool,
+                instructions="You are helpful agent",
+                prompt="How many medals did the USA win in the 2024 summer olympics?",
+                expected_delta_class=RunStepDeltaCustomBingGroundingToolCall,
+                agent_message_regex="40.+gold.+44 silver.+42.+bronze",
+                uri_annotation=MessageTextUrlCitationDetails(
+                    url="*",
+                    title="*",
+                ),
+            )
+
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_microsoft_fabric_tool(self, **kwargs):
+        """Test Microsoft Fabric tool call in non-streaming Scenario."""
+        with self.create_client(by_endpoint=True, **kwargs) as client:
+            model_name = "gpt-4o"
+            fabric_tool = FabricTool(connection_id=kwargs.get("azure_ai_agents_tests_fabric_connection_id"))
+
+            self._do_test_tool(
+                client=client,
+                model_name=model_name,
+                tool_to_test=fabric_tool,
+                instructions="You are helpful agent",
+                prompt="What are top 3 weather events with largest revenue loss?",
+                expected_class=RunStepMicrosoftFabricToolCall,
+            )
+
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_microsoft_fabric_tool_streaming(self, **kwargs):
+        """Test Microsoft Fabric tool call in streaming Scenario."""
+        with self.create_client(by_endpoint=True, **kwargs) as client:
+            model_name = "gpt-4o"
+            fabric_tool = FabricTool(connection_id=kwargs.get("azure_ai_agents_tests_fabric_connection_id"))
+
+            self._do_test_tool_streaming(
+                client=client,
+                model_name=model_name,
+                tool_to_test=fabric_tool,
+                instructions="You are helpful agent",
+                prompt="What are top 3 weather events with largest revenue loss?",
+                expected_delta_class=RunStepDeltaMicrosoftFabricToolCall,
+            )
+
     def _do_test_tool(
         self,
         client,
@@ -3286,8 +3577,10 @@ class TestAgentClient(AzureRecordedTestCase):
         expected_class,
         headers=None,
         polling_interval=1,
-        specific_message_text=None,
+        agent_message_regex=None,
         minimal_text_length=1,
+        uri_annotation=None,
+        file_annotation=None,
         **kwargs,
     ):
         """
@@ -3300,10 +3593,15 @@ class TestAgentClient(AzureRecordedTestCase):
         :param tool_to_test: The pre created tool to be used.
         :param instructions: The instructions, given to an agent.
         :param prompt: The prompt, given in the first user message.
+        :param expected_class: If a tool call is expected, the name of the class derived from RunStepToolCall
+               corresponding to the expected tool call (e.g. RunStepBrowserAutomationToolCall).
         :param headers: The headers used to call the agents.
                For example: {"x-ms-enable-preview": "true"}
         :param polling_interval: The polling interval (useful, when we need to wait longer times).
-        :param specific_message_text: The specific text to search in the messages.
+        :param agent_message_regex: The regular expression to search in the messages. Must be all lower-case.
+        :param minimal_text_length: The minimal length of a text.
+        :param uri_annotation: The URI annotation, which have to present in response.
+        :param file_annotation: The file annotation, which have to present in response.
         """
         if headers is None:
             headers = {}
@@ -3347,10 +3645,27 @@ class TestAgentClient(AzureRecordedTestCase):
             ), "Response too short - may not have completed research"
 
             # Search for the specific message when asked.
-            if specific_message_text:
-                assert any(
-                    specific_message_text in t.text.value.lower() for t in text_messages
-                ), f"{specific_message_text} was not found in messages."
+            text = "\n".join([t.text.value.lower() for t in text_messages])
+            if agent_message_regex:
+                assert re.findall(agent_message_regex, text.lower()), f"{agent_message_regex} was not found in {text}."
+
+            # Search for the specific URL and title in the message annotation.
+            if uri_annotation is not None:
+                has_annotation = False
+                for message in agent_messages:
+                    has_annotation = self._has_url_annotation(message, uri_annotation)
+                    if has_annotation:
+                        break
+                assert has_annotation, f"The annotation [{uri_annotation.title}]({uri_annotation.url}) was not found."
+
+            # Search for the file annotation.
+            if file_annotation:
+                has_annotation = False
+                for message in agent_messages:
+                    has_annotation = self._has_file_annotation(message, file_annotation)
+                    if has_annotation:
+                        break
+                assert has_annotation, f"The annotation {file_annotation} was not found."
 
             if expected_class is not None:
                 found_step = False
@@ -3361,13 +3676,25 @@ class TestAgentClient(AzureRecordedTestCase):
                                 found_step = True
                                 if "connected_agent_name" in kwargs:
                                     assert tool_call.connected_agent.name == kwargs["connected_agent_name"]
+                                if isinstance(tool_call, RunStepBrowserAutomationToolCall):
+                                    self._validate_run_step_browser_automation_tool_call(tool_call)
                 assert found_step, f"The {expected_class} was not found."
         finally:
             client.delete_agent(agent.id)
             client.threads.delete(thread.id)
 
     def _do_test_tool_streaming(
-        self, client, model_name, tool_to_test, instructions, prompt, expected_delta_class, headers=None
+        self,
+        client,
+        model_name,
+        tool_to_test,
+        instructions,
+        prompt,
+        expected_delta_class: Type,
+        headers: Dict[str, str] = None,
+        uri_annotation: MessageTextUrlCitationDetails = None,
+        file_annotation: MessageTextFileCitationDetails = None,
+        agent_message_regex=None,
     ):
         """
         The helper method to test the non-interactive tools in the streaming scenarios.
@@ -3379,6 +3706,9 @@ class TestAgentClient(AzureRecordedTestCase):
         :param prompt: The prompt, given in the first user message.
         :param headers: The headers used to call the agents.
                For example: {"x-ms-enable-preview": "true"}
+        :param uri_annotation: The URI annotation, which have to present in response.
+        :param file_annotation: The file annotation, which have to present in response.
+        :param agent_message_regex: The regular expression to search in the messages. Must be all lower-case.
         """
         if headers is None:
             headers = {}
@@ -3405,10 +3735,36 @@ class TestAgentClient(AzureRecordedTestCase):
                 got_expected_delta = False
                 is_completed = False
                 is_run_step_created = False
+                # Annotation checks
+                has_uri_annotation = uri_annotation is None
+                has_file_annotation = file_annotation is None
+                # Agent message regex
+                has_agent_message_regex = agent_message_regex is None
+                received_messages = []
                 for event_type, event_data, _ in stream:
 
                     if isinstance(event_data, MessageDeltaChunk):
                         received_message = True
+
+                    elif isinstance(event_data, ThreadMessage):
+                        if event_data.role == MessageRole.AGENT:
+                            # Search for the specific URL and title in the message annotation.
+                            if not has_uri_annotation:
+                                has_uri_annotation = has_uri_annotation or self._has_url_annotation(
+                                    event_data, uri_annotation
+                                )
+
+                            # Search for the file annotation.
+                            if not has_file_annotation:
+                                has_file_annotation = has_file_annotation or self._has_file_annotation(
+                                    event_data, file_annotation
+                                )
+                            for content in event_data.content:
+                                if not has_agent_message_regex and isinstance(content, MessageTextContent):
+                                    has_agent_message_regex = re.findall(
+                                        agent_message_regex, content.text.value.lower()
+                                    )
+                                    received_messages.append(content.text.value.lower())
 
                     elif isinstance(event_data, RunStepDeltaChunk):
                         if expected_delta_class is not None:
@@ -3439,10 +3795,17 @@ class TestAgentClient(AzureRecordedTestCase):
                 assert got_expected_delta, f"The delta tool call of type {expected_delta_class} was not found."
                 assert is_completed, "The stream was not completed."
                 assert is_run_step_created, "No run steps were created."
+                assert (
+                    has_agent_message_regex
+                ), f"The text {agent_message_regex} was not found: {' '.join(received_messages)}."
+
+                assert (
+                    has_uri_annotation
+                ), f"The annotation [{uri_annotation.title}]({uri_annotation.url}) was not found."
+                assert has_file_annotation, f"The annotation {file_annotation} was not found."
+            # Assertions on messages
+            messages = list(client.messages.list(thread_id=thread.id))
+            assert len(messages) > 1
         finally:
             client.delete_agent(agent.id)
             client.threads.delete(thread.id)
-
-    def _sleep_time(self, sleep: int = 1) -> int:
-        """Return sleep or zero if we are running the recording."""
-        return sleep if is_live() else 0

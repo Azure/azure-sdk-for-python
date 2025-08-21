@@ -19,7 +19,7 @@ class TestAppConfigurationProviderFeatureManagement(AppConfigTestCase):
     @recorded_by_proxy_async
     async def test_load_only_feature_flags(self, appconfiguration_connection_string):
         async with await self.create_client(
-            appconfiguration_connection_string,
+            connection_string=appconfiguration_connection_string,
             selects=[],
             feature_flag_enabled=True,
         ) as client:
