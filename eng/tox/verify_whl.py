@@ -149,16 +149,6 @@ def verify_metadata_compatibility(current_metadata: Dict[str, Any], prior_metada
 def get_path_to_zip(dist_dir: str, version: str, package_type: str = "*.whl") -> str:
     return glob.glob(os.path.join(dist_dir, "**", "*{}{}".format(version, package_type)), recursive=True)[0]
 
-def verify_whl(dist_dir: str, expected_top_level_module: str, parsed_pkg: ParsedSetup) -> bool:
-    """
-    Verifies root directory in whl and metadata compatibility with prior stable version.
-    """
-    # Verify root directory
-    if not verify_whl_root_directory(dist_dir, expected_top_level_module, parsed_pkg):
-        return False
-
-    return True
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -191,7 +181,7 @@ if __name__ == "__main__":
 
     if should_verify_package(pkg_details.name):
         logging.info("Verifying whl for package: [%s]", pkg_details.name)
-        if verify_whl(args.dist_dir, top_level_module, pkg_details):
+        if verify_whl_root_directory(args.dist_dir, top_level_module, pkg_details):
             logging.info("Verified whl for package: [%s]", pkg_details.name)
         else:
             logging.error("Failed to verify whl for package: [%s]", pkg_details.name)
