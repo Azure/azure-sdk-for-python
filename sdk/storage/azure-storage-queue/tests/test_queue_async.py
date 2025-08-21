@@ -1456,8 +1456,8 @@ class TestAsyncStorageQueue(AsyncStorageRecordedTestCase):
 
         token_credential = self.get_credential(QueueServiceClient, is_async=True)
         service = QueueServiceClient(self.account_url(storage_account_name, "queue"), credential=token_credential)
-        start = self.get_datetime_variable(variables, 'start', datetime.utcnow())
-        expiry = self.get_datetime_variable(variables, 'expiry', datetime.utcnow() + timedelta(hours=1))
+        start = self.get_datetime_variable(variables, "start", datetime.utcnow())
+        expiry = self.get_datetime_variable(variables, "expiry", datetime.utcnow() + timedelta(hours=1))
         user_delegation_key_1 = await service.get_user_delegation_key(key_start_time=start, key_expiry_time=expiry)
         user_delegation_key_2 = await service.get_user_delegation_key(key_start_time=start, key_expiry_time=expiry)
 
