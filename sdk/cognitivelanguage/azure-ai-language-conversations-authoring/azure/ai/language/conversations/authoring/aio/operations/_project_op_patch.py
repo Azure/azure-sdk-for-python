@@ -52,7 +52,6 @@ from ...models import (
     ProjectKind,
     AsyncJobsPollingMethod,
 )
-from azure.core.paging import ItemPaged
 from collections.abc import MutableMapping
 from azure.core.pipeline import PipelineResponse
 from azure.core.rest import HttpRequest, HttpResponse
