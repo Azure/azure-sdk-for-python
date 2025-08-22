@@ -65,10 +65,10 @@ class TestTimeToLive(unittest.TestCase):
         self.__AssertHTTPFailureWithStatus(
             StatusCodes.BAD_REQUEST,
             self.created_db.create_container,
-            id=collection_id,
-            partition_key=PartitionKey(path='/id'),
-            indexing_policy=None,
-            default_ttl=ttl)
+            collection_id,
+            PartitionKey(path='/id'),
+            None,
+            ttl)
 
         document_definition = {'id': 'doc1' + str(uuid.uuid4()),
                                'name': 'sample document',

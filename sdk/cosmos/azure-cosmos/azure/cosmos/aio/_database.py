@@ -232,7 +232,8 @@ class DatabaseProxy(object):
         :param str id: ID (name) of container to create.
         :param partition_key: The partition key to use for the container.
         :type partition_key: ~azure.cosmos.PartitionKey
-        :keyword bool return_properties: Specifies function to return either a ContainerProxy or a CosmosDict instance.
+        :keyword bool return_properties: Specifies function to return either a ContainerProxy
+            or a Tuple of a ContainerProxy and CosmosDict instance.
         :keyword dict[str, str] indexing_policy: The indexing policy to apply to the container.
         :keyword int default_ttl: Default time to live (TTL) for items in the container.
             If unspecified, items do not expire.
@@ -260,7 +261,7 @@ class DatabaseProxy(object):
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container creation failed.
         :returns: A `ContainerProxy` instance representing the new container or a tuple of the ContainerProxy
             and CosmosDict with the response headers.
-        :rtype: ~azure.cosmos.aio.ContainerProxy or tuple[ContainerProxy, CosmosDict]
+        :rtype: ~azure.cosmos.aio.ContainerProxy or tuple[~azure.cosmos.aioContainerProxy, ~azure.cosmos.CosmosDict]
 
         .. admonition:: Example:
 
@@ -410,7 +411,8 @@ class DatabaseProxy(object):
         :param str id: ID (name) of container to create.
         :param partition_key: The partition key to use for the container.
         :type partition_key: ~azure.cosmos.PartitionKey
-        :keyword bool return_properties: Specifies function to return either a ContainerProxy or a CosmosDict instance.
+        :keyword bool return_properties: Specifies function to return either a ContainerProxy
+            or a Tuple of a ContainerProxy and CosmosDict instance.
         :keyword dict[str, str] indexing_policy: The indexing policy to apply to the container.
         :keyword int default_ttl: Default time to live (TTL) for items in the container.
             If unspecified, items do not expire.
@@ -438,7 +440,7 @@ class DatabaseProxy(object):
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container creation failed.
         :returns: A `ContainerProxy` instance representing the new container or a tuple of the ContainerProxy
             and CosmosDict with the response headers.
-        :rtype: ~azure.cosmos.ContainerProxy or tuple[ContainerProxy, CosmosDict]
+        :rtype: ~azure.cosmos.ContainerProxy or tuple[~azure.cosmos.aio.ContainerProxy, ~azure.cosmos.CosmosDict]
         """
         session_token = kwargs.get('session_token')
         if session_token is not None:
@@ -668,7 +670,8 @@ class DatabaseProxy(object):
         :type container: Union[str, Dict[str, Any], ~azure.cosmos.aio.ContainerProxy]
         :param partition_key: The partition key to use for the container.
         :type partition_key: ~azure.cosmos.PartitionKey
-        :keyword bool return_properties: Specifies function to return either a ContainerProxy or a CosmosDict instance.
+        :keyword bool return_properties: Specifies function to return either a ContainerProxy
+            or a Tuple of a ContainerProxy and CosmosDict instance.
         :keyword dict[str, str] indexing_policy: The indexing policy to apply to the container.
         :keyword int default_ttl: Default time to live (TTL) for items in the container.
             If unspecified, items do not expire.
@@ -689,7 +692,7 @@ class DatabaseProxy(object):
             and CosmosDict with the response headers.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be replaced.
             This includes if the container with given id does not exist.
-        :rtype: ~azure.cosmos.ContainerProxy or tuple[ContainerProxy, CosmosDict]
+        :rtype: ~azure.cosmos.aio.ContainerProxy or tuple[~azure.cosmos.aio.ContainerProxy, ~azure.cosmos.CosmosDict]
 
         .. admonition:: Example:
 
