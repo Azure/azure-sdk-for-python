@@ -12,6 +12,7 @@ import sys
 from typing import Sequence, Optional
 
 from .whl import whl
+from .depends import depends
 
 __all__ = ["main", "build_parser"]
 __version__ = "0.0.0"
@@ -33,8 +34,9 @@ def build_parser() -> argparse.ArgumentParser:
 
     subparsers = parser.add_subparsers(title="commands", dest="command")
 
-    # register the whl check
+    # register our checks with common params
     whl().register(subparsers, [common])
+    depends().register(subparsers, [common])
 
     return parser
 

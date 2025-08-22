@@ -2,6 +2,8 @@ import argparse
 import os
 import sys
 
+from typing import Optional,List
+
 from .Check import Check
 
 from ci_tools.functions import discover_targeted_packages
@@ -11,7 +13,7 @@ class depends(Check):
         super().__init__()
 
     def register(self, subparsers: "argparse._SubParsersAction", parent_parsers: Optional[List[argparse.ArgumentParser]] = None) -> None:
-        """Register the `whl` check.
+        """Register the `depends` check.
 
         `subparsers` is the object returned by ArgumentParser.add_subparsers().
         `parent_parsers` is an optional list of parent ArgumentParser objects
@@ -24,7 +26,7 @@ class depends(Check):
 
     # todo: figure out venv abstraction mechanism via override
     def run(self, args: argparse.Namespace) -> int:
-        """Run the whl check command."""
+        """Run the depends check command."""
         print("Running depends check in isolated venv...")
 
         # this is common. we should have an abstraction layer for this somehow
@@ -33,6 +35,5 @@ class depends(Check):
         else:
             target_dir = os.getcwd()
             targeted = discover_targeted_packages(args.target, target_dir)
-
 
         print(targeted)
