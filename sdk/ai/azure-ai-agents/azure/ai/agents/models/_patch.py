@@ -1435,13 +1435,14 @@ class CodeInterpreterTool(Tool[CodeInterpreterToolDefinition]):
     :type data_sources: list[VectorStoreDataSource]
     :raises: ValueError if both file_ids and data_sources are provided.
     """
+
     _INVALID_CONFIGURATION = "file_ids and data_sources are mutually exclusive."
-    
+
     def __init__(
-            self,
-            file_ids: Optional[List[str]] = None,
-            data_sources: Optional[List[VectorStoreDataSource]] = None,
-        ):
+        self,
+        file_ids: Optional[List[str]] = None,
+        data_sources: Optional[List[VectorStoreDataSource]] = None,
+    ):
         if file_ids and data_sources:
             raise ValueError(CodeInterpreterTool._INVALID_CONFIGURATION)
         self.file_ids = set()
@@ -1450,7 +1451,6 @@ class CodeInterpreterTool(Tool[CodeInterpreterToolDefinition]):
         self.data_sources: Dict[str, VectorStoreDataSource] = {}
         if data_sources:
             self.data_sources = {ds.asset_identifier: ds for ds in data_sources}
-            
 
     def add_file(self, file_id: str) -> None:
         """
@@ -1474,7 +1474,7 @@ class CodeInterpreterTool(Tool[CodeInterpreterToolDefinition]):
         """
         if self.file_ids:
             raise ValueError(CodeInterpreterTool._INVALID_CONFIGURATION)
-        self.data_sources[data_source.asset_identifier] = (data_source)
+        self.data_sources[data_source.asset_identifier] = data_source
 
     def remove_file(self, file_id: str) -> None:
         """
@@ -1489,7 +1489,7 @@ class CodeInterpreterTool(Tool[CodeInterpreterToolDefinition]):
         """
         Remove The asset from data_sources.
 
-        :param asset_identifier: The asset ientifier to remove.
+        :param asset_identifier: The asset identifier to remove.
         :type asset_identifier: str
         """
         self.data_sources.pop(asset_identifier, None)
@@ -1514,8 +1514,9 @@ class CodeInterpreterTool(Tool[CodeInterpreterToolDefinition]):
             return ToolResources()
         if self.file_ids:
             return ToolResources(code_interpreter=CodeInterpreterToolResource(file_ids=list(self.file_ids)))
-        else:
-            return ToolResources(code_interpreter=CodeInterpreterToolResource(data_sources=list(self.data_sources.values())))
+        return ToolResources(
+            code_interpreter=CodeInterpreterToolResource(data_sources=list(self.data_sources.values()))
+        )
 
     def execute(self, tool_call: Any) -> Any:
         pass

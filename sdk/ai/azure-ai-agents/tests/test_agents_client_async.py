@@ -3455,7 +3455,7 @@ class TestAgentClientAsync(TestAgentClientBase):
                 tool_to_test=code_iterpreter,
                 instructions="You are helpful agent",
                 prompt="What feature does Smart Eyewear offer?",
-                expected_class=RunStepCodeInterpreterToolCall
+                expected_class=RunStepCodeInterpreterToolCall,
             )
 
     @agentClientPreparer()

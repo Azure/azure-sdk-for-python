@@ -182,11 +182,10 @@ def add_sanitizers(test_proxy, mock_project_scope, mock_dataset_name, mock_vecto
         json_path="tools[*].sharepoint_grounding.connections[*].connection_id",
         value="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.CognitiveServices/accounts/00000/projects/00000/connections/00000",
     )
-    
-    
+
     add_body_key_sanitizer(
         json_path="tool_resources.code_interpreter.data_sources[*].uri",
-        value="azureai://accounts/0000-0000/projects/0000000/data/00000/versions/1.0"
+        value="azureai://accounts/0000-0000/projects/0000000/data/00000/versions/1.0",
     )
 
     # Sanitize API key from service response (/tests/connections)
