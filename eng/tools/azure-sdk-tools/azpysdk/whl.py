@@ -27,9 +27,9 @@ class whl(Check):
         parents = parent_parsers or []
         p = subparsers.add_parser("whl", parents=parents, help="Run the whl check")
         p.set_defaults(func=self.run)
-        # Add any additional arguments specific to WhlCheck here (do not re-add common args)
+        # Add any additional arguments specific to WhlCheck here (do not re-add common handled by parents)
 
-    # todo: figure out venv abstraction mechanism
+    # todo: figure out venv abstraction mechanism via override
     def run(self, args: argparse.Namespace) -> int:
         """Run the whl check command."""
         print("Running whl check...")
@@ -41,6 +41,7 @@ class whl(Check):
         else:
             target_dir = os.getcwd()
             targeted = discover_targeted_packages(args.target, target_dir)
+        results: List[int] = []
 
         for pkg in targeted:
             dev_requirements = os.path.join(pkg, "dev_requirements.txt")

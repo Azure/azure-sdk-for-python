@@ -28,7 +28,7 @@ def build_parser() -> argparse.ArgumentParser:
         "target",
         nargs="?",
         default=".",
-        help="Glob pattern for packages. Defaults to '.', but will match patterns below CWD."
+        help="Glob pattern for packages. Defaults to '.', but will match patterns below CWD if a value is provided."
     )
 
     subparsers = parser.add_subparsers(title="commands", dest="command")

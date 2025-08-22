@@ -7,18 +7,10 @@ class Check(abc.ABC):
     Base class for checks.
 
     Subclasses must implement register() to add a subparser for the check.
-    Provide:
-        - name: str - command name for the check
-        - specifications: Sequence[str] - requirements or local files describing spec
     """
 
-    # Command name used in the CLI
-    name: str = "unnamed"
-    # Specifications that this check can use to decide applicability
-    specifications: Sequence[str] = ()
-
     def __init__(self) -> None:
-        pass
+        self.isolated_namespace = False
 
     @abc.abstractmethod
     def register(self, subparsers: "argparse._SubParsersAction", parent_parsers: Optional[List[argparse.ArgumentParser]] = None) -> None:
