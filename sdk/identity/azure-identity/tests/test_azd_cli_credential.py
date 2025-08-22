@@ -8,7 +8,7 @@ import re
 
 from azure.identity import AzureDeveloperCliCredential, CredentialUnavailableError
 from azure.identity._constants import EnvironmentVariables
-from azure.identity._credentials.azd_cli import CLI_NOT_FOUND, NOT_LOGGED_IN
+from azure.identity._credentials.azd_cli import CLI_NOT_FOUND, NOT_LOGGED_IN, COMMAND_LINE
 from azure.core.exceptions import ClientAuthenticationError
 
 import subprocess
@@ -92,6 +92,33 @@ def test_get_token(get_token_method):
 
     assert token.token == access_token
     assert type(token.expires_on) == int
+    assert token.expires_on == expected_expires_on
+
+
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+def test_command_list(get_token_method):
+    """The credential should formulate the command arg list correctly"""
+    access_token = "access token"
+    expected_expires_on = 1602015811
+    successful_output = json.dumps(
+        {
+            "expiresOn": datetime.fromtimestamp(expected_expires_on).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "token": access_token,
+            "subscription": "some-guid",
+            "tenant": "some-guid",
+            "tokenType": "Bearer",
+        }
+    )
+
+    def fake_check_output(command_line, **_):
+        assert command_line == ["azd"] + COMMAND_LINE + ["--scope", "scope"]
+        return successful_output
+
+    with mock.patch("shutil.which", return_value="azd"):
+        with mock.patch(CHECK_OUTPUT, fake_check_output):
+            token = getattr(AzureDeveloperCliCredential(), get_token_method)("scope")
+
+    assert token.token == access_token
     assert token.expires_on == expected_expires_on
 
 

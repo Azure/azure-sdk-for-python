@@ -21,12 +21,12 @@ class TestContainerAppsAPILogicAppsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_logic_apps_get(self, resource_group):
         response = await self.client.logic_apps.get(
             resource_group_name=resource_group.name,
             container_app_name="str",
             logic_app_name="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-02-02-preview",
         )
 
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestContainerAppsAPILogicAppsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create_or_update(self, resource_group):
+    async def test_logic_apps_create_or_update(self, resource_group):
         response = await self.client.logic_apps.create_or_update(
             resource_group_name=resource_group.name,
             container_app_name="str",
@@ -53,7 +53,7 @@ class TestContainerAppsAPILogicAppsOperationsAsync(AzureMgmtRecordedTestCase):
                 },
                 "type": "str",
             },
-            api_version="2024-08-02-preview",
+            api_version="2025-02-02-preview",
         )
 
         # please add some check logic here by yourself
@@ -61,12 +61,12 @@ class TestContainerAppsAPILogicAppsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_delete(self, resource_group):
+    async def test_logic_apps_delete(self, resource_group):
         response = await self.client.logic_apps.delete(
             resource_group_name=resource_group.name,
             container_app_name="str",
             logic_app_name="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-02-02-preview",
         )
 
         # please add some check logic here by yourself
@@ -74,12 +74,12 @@ class TestContainerAppsAPILogicAppsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_workflows(self, resource_group):
+    async def test_logic_apps_list_workflows(self, resource_group):
         response = self.client.logic_apps.list_workflows(
             resource_group_name=resource_group.name,
             container_app_name="str",
             logic_app_name="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-02-02-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -87,13 +87,13 @@ class TestContainerAppsAPILogicAppsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_workflow(self, resource_group):
+    async def test_logic_apps_get_workflow(self, resource_group):
         response = await self.client.logic_apps.get_workflow(
             resource_group_name=resource_group.name,
             container_app_name="str",
             logic_app_name="str",
             workflow_name="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-02-02-preview",
         )
 
         # please add some check logic here by yourself
@@ -101,12 +101,12 @@ class TestContainerAppsAPILogicAppsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_deploy_workflow_artifacts(self, resource_group):
+    async def test_logic_apps_deploy_workflow_artifacts(self, resource_group):
         response = await self.client.logic_apps.deploy_workflow_artifacts(
             resource_group_name=resource_group.name,
             container_app_name="str",
             logic_app_name="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-02-02-preview",
         )
 
         # please add some check logic here by yourself
@@ -114,12 +114,12 @@ class TestContainerAppsAPILogicAppsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_workflows_connections(self, resource_group):
+    async def test_logic_apps_list_workflows_connections(self, resource_group):
         response = await self.client.logic_apps.list_workflows_connections(
             resource_group_name=resource_group.name,
             container_app_name="str",
             logic_app_name="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-02-02-preview",
         )
 
         # please add some check logic here by yourself
@@ -127,14 +127,14 @@ class TestContainerAppsAPILogicAppsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_invoke(self, resource_group):
+    async def test_logic_apps_invoke(self, resource_group):
         response = await self.client.logic_apps.invoke(
             resource_group_name=resource_group.name,
             container_app_name="str",
             logic_app_name="str",
             x_ms_logic_apps_proxy_path="str",
             x_ms_logic_apps_proxy_method="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-02-02-preview",
         )
 
         # please add some check logic here by yourself

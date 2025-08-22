@@ -101,10 +101,7 @@ with project_client:
         if msg.text_messages:
             last_text = msg.text_messages[-1].text.value
             for annotation in msg.text_messages[-1].text.annotations:
-                
-                citation = (
-                    vector_store_files.get(
-                        annotation.file_citation.file_id, annotation.file_citation.file_id)
-                )
+
+                citation = vector_store_files.get(annotation.file_citation.file_id, annotation.file_citation.file_id)
                 last_text = last_text.replace(annotation.text, f" [{citation}]")
             print(f"{msg.role}: {last_text}")
