@@ -3,10 +3,11 @@ This guide covers advanced testing scenarios for Azure SDK for Python libraries.
 
 ## Table of contents
 
-- [Mixin classes](#test-mixin-classes)
+- [Mixin classes](#mixin-classes)
 - [Pre-test setup](#pre-test-setup)
   - [xunit-style setup](#xunit-style-setup)
   - [Fixture setup](#fixture-setup)
+- [Use HTTPS test proxy endpoint](#use-https-test-proxy-endpoint)
 
 ## Mixin classes
 Many of our test suites use a base/mixin class to consolidate shared test logic. Mixin classes can define instance attributes to handle environment variables, make complex assertions, and more. By inheriting from these mixins, test classes can then share this logic throughout multiple files.
@@ -152,3 +153,22 @@ can't be accessed and class state can't be modified.
 
 By convention, fixtures should be defined in a library's `tests/conftest.py` file. This will provide access to the
 fixture across test files, and the fixture can be requested without having to manually import it.
+
+## Use HTTPS test proxy endpoint
+
+By default, the test proxy is reached at `http://localhost:5000`. Service requests are ultimately made as usual with a
+secure connection, but some libraries may require that the immediate proxy endpoint uses an SSL connection.
+
+In that scenario, you can set the `PROXY_URL` environment variable to target the test proxy at an HTTPS URL:
+
+```text
+PROXY_URL='https://localhost:5001'
+```
+
+The test proxy's certificate is [automatically configured][cert_setup] during proxy startup, though async tests may
+exhibit [inconsistent behavior][async_cert_troubleshoot].
+
+<!-- Links -->
+
+[async_cert_troubleshoot]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_troubleshooting.md#servicerequesterror-cannot-connect-to-host
+[cert_setup]: https://github.com/Azure/azure-sdk-for-python/blob/9958caf6269247f940c697a3f982bbbf0a47a19b/eng/tools/azure-sdk-tools/devtools_testutils/proxy_startup.py#L210
