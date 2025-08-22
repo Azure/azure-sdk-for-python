@@ -93,7 +93,7 @@ stages:
             displayName: 'Update vNext Issues with build errors'
             continueOnError: true
             inputs:
-              scriptPath: 'tools/azure-sdk-tools/gh_tools/update_issue.py'
+              scriptPath: 'eng/tools/azure-sdk-tools/gh_tools/update_issue.py'
               arguments: >-
                 ${{ parameters.BuildTargetingString }}
                 --service="${{ parameters.ServiceDirectory }}"

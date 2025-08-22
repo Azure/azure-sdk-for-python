@@ -473,7 +473,6 @@ class TestLocalFileStorage(unittest.TestCase):
         
         from azure.monitor.opentelemetry.exporter.statsbeat._state import (
             get_local_storage_setup_state_readonly,
-            set_local_storage_setup_state_readonly,
             set_local_storage_setup_state_exception,
         )
         
