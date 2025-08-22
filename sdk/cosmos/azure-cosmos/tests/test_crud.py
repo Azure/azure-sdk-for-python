@@ -1239,7 +1239,7 @@ class TestCRUDOperations(unittest.TestCase):
                 TestCRUDOperations.masterKey,
                 retry_total=50,
                 connection_timeout=100,
-                timeout= 10)
+                timeout=10)
 
     def test_absolute_client_timeout_on_read_operation(self):
         error_response = ServiceResponseError("Read timeout")
@@ -1271,7 +1271,7 @@ class TestCRUDOperations(unittest.TestCase):
               list(databases)
 
     def test_absolute_client_timeout_on_throttling_error(self):
-        #Throttling(429): Keeps retrying → Eventually times out → CosmosClientTimeoutError
+        # Throttling(429): Keeps retrying → Eventually times out → CosmosClientTimeoutError
         status_response = 429  # Uses Cosmos custom retry
         timeout_transport = TimeoutTransport(status_response, passthrough=True)
         client = cosmos_client.CosmosClient(

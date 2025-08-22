@@ -187,7 +187,7 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                     # container properties and pass in the new RID in the headers.
                     await client._refresh_container_properties_cache(retry_policy.container_link)
                     if e.sub_status != SubStatusCodes.COLLECTION_RID_MISMATCH and retry_policy.check_if_rid_different(
-                            retry_policy.container_link, client._container_properties_cache, retry_policy.container_rid):
+                          retry_policy.container_link, client._container_properties_cache, retry_policy.container_rid):
                         retry_policy.refresh_container_properties_cache = False
                     else:
                         cached_container = client._container_properties_cache[retry_policy.container_link]

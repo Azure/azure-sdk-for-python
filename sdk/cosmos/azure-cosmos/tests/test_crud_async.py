@@ -1024,7 +1024,8 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
 
             databases = client.list_databases(timeout=2)
             with self.assertRaises(exceptions.CosmosClientTimeoutError):
-                _ = [database async for database in databases]
+                async for _ in databases:
+                    pass
 
     async def test_absolute_client_timeout_on_throttling_error_async(self):
         # Throttling(429): Keeps retrying → Eventually times out → CosmosClientTimeoutError
