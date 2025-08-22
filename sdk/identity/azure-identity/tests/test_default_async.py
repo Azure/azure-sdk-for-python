@@ -412,3 +412,13 @@ async def test_failed_dac_credential_in_chain():
     # The error should mention the failed credentials
     error_str = str(exc_info.value)
     assert "workload identity error" in error_str or "test credential error" in error_str
+
+
+@pytest.mark.asyncio
+async def test_require_envvar_raises_error_when_envvar_missing():
+    with patch.dict("os.environ", {}, clear=True):
+        import pytest
+
+        with pytest.raises(ValueError) as exc_info:
+            DefaultAzureCredential(require_envvar=True)
+        assert "AZURE_TOKEN_CREDENTIALS" in str(exc_info.value)
