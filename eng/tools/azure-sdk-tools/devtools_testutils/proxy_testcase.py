@@ -237,8 +237,14 @@ def recorded_by_proxy(test_func: "Callable") -> None:
 
         except ResourceNotFoundError as error:
             error_body = ContentDecodePolicy.deserialize_from_http_generics(error.response)
+            troubleshoot = (
+                "Playback failure -- for help resolving, see https://aka.ms/azsdk/python/test-proxy/troubleshoot."
+            )
             message = error_body.get("message") or error_body.get("Message")
-            error_with_message = ResourceNotFoundError(message=message, response=error.response)
+            error_with_message = ResourceNotFoundError(
+                message=f"{troubleshoot} Error details:\n{message}",
+                response=error.response,
+            )
             six.raise_from(error_with_message, error)
 
         finally:
