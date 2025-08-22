@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- `AzureDeveloperCliCredential` now supports `claims` in `get_token` and `get_token_info`.  ([#42568](https://github.com/Azure/azure-sdk-for-python/pull/42568))
+
 ### Breaking Changes
 
 ### Bugs Fixed
@@ -23,6 +25,7 @@
 
 - `ManagedIdentityCredential` now retries IMDS 410 status responses for at least 70 seconds total duration as required by [Azure IMDS documentation](https://learn.microsoft.com/azure/virtual-machines/instance-metadata-service?tabs=windows#errors-and-debugging).  ([#42330](https://github.com/Azure/azure-sdk-for-python/pull/42330))
 - Improved `DefaultAzureCredential` diagnostics when `WorkloadIdentityCredential` initialization fails. If DAC fails to find a successful credential in the chain, the reason `WorkloadIdentityCredential` failed will be included in the error message. ([#42346](https://github.com/Azure/azure-sdk-for-python/pull/42346))
+- `AzureCliCredential` and `AzurePowerShellCredential` now raise `ClientAuthenticationError` when `claims` are provided to `get_token` or `get_token_info`, as these credentials do not support claims challenges. The error message includes instructions for handling claims authentication scenarios. ([#42568](https://github.com/Azure/azure-sdk-for-python/pull/42568))
 
 ## 1.24.0b1 (2025-07-17)
 
