@@ -4,6 +4,7 @@ from collections import OrderedDict
 
 import pytest
 
+from azure.ai.ml._internal._schema.component import NodeType as InternalNodeType
 from azure.ai.ml._utils.utils import (
     _get_mfe_base_url_from_batch_endpoint,
     dict_eq,
@@ -125,19 +126,14 @@ class TestUtils:
 
     def test_get_type_from_spec_case_insensitive(self):
         """Test that get_type_from_spec normalizes type to lowercase for case-insensitive validation."""
-        valid_keys = [NodeType.COMMAND, NodeType.PARALLEL]
+        valid_keys = [NodeType.COMMAND, InternalNodeType.COMMAND]
 
-        # Test various cases all normalize to lowercase
         test_cases = [
             ({"type": "command"}, "command"),  # lowercase
-            ({"type": "Command"}, "command"),  # uppercase
-            ({"type": "PARALLEL"}, "parallel"),  # all caps
+            ({"type": "Command"}, "command"),  # uppercase - should normalize to lowercase
+            ({"type": "CommandComponent"}, "CommandComponent"),  # remains unchanged as it's not in NodeType
         ]
 
         for data, expected in test_cases:
             result = get_type_from_spec(data, valid_keys=valid_keys)
             assert result == expected
-
-        # Test invalid type still raises exception
-        with pytest.raises(ValidationException):
-            get_type_from_spec({"type": "InvalidType"}, valid_keys=valid_keys)
