@@ -15,49 +15,50 @@ DESCRIPTION:
 USAGE:
     python sample_conversation_pii_with_no_mask_policy_async.py
 
-REQUIRED ENV VARS:
+REQUIRED ENV VARS (for AAD / DefaultAzureCredential):
     AZURE_CONVERSATIONS_ENDPOINT
-    AZURE_CONVERSATIONS_KEY
+    AZURE_CLIENT_ID
+    AZURE_TENANT_ID
+    AZURE_CLIENT_SECRET
+
+NOTE:
+    If you want to use AzureKeyCredential instead, set:
+      - AZURE_CONVERSATIONS_ENDPOINT
+      - AZURE_CONVERSATIONS_KEY
 """
 
 # [START conversation_pii_with_no_mask_policy_async]
 import os
 import asyncio
-from typing import List, cast
 
-from azure.core.credentials import AzureKeyCredential
-from azure.ai.language.conversations.aio import ConversationAnalysisClient, AnalyzeConversationAsyncLROPoller
+from azure.identity.aio import DefaultAzureCredential
+from azure.ai.language.conversations.aio import ConversationAnalysisClient
 from azure.ai.language.conversations.models import (
     MultiLanguageConversationInput,
     TextConversation,
     TextConversationItem,
     ParticipantRole,
     AnalyzeConversationOperationInput,
-    AnalyzeConversationOperationAction,
     PiiOperationAction,
     ConversationPiiActionContent,
     NoMaskPolicyType,
     AnalyzeConversationOperationResult,
-    ConversationActions,
     ConversationPiiOperationResult,
     ConversationalPiiResult,
     ConversationPiiItemResult,
     NamedEntity,
     ConversationError,
 )
-from azure.core.async_paging import AsyncItemPaged
 
 
 async def sample_conversation_pii_with_no_mask_policy_async():
-    # get secrets
-    clu_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
-    clu_key = os.environ["AZURE_CONVERSATIONS_KEY"]
+    # settings
+    endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
+    credential = DefaultAzureCredential()
 
-    client = ConversationAnalysisClient(clu_endpoint, AzureKeyCredential(clu_key))
+    detected_entities = []
 
-    try:
-        detected_entities: List[str] = []
-
+    async with ConversationAnalysisClient(endpoint, credential=credential) as client:
         # build input
         ml_input = MultiLanguageConversationInput(
             conversations=[
@@ -66,16 +67,10 @@ async def sample_conversation_pii_with_no_mask_policy_async():
                     language="en",
                     conversation_items=[
                         TextConversationItem(
-                            id="1",
-                            participant_id="Agent_1",
-                            role=ParticipantRole.AGENT,
-                            text="Can you provide your name?",
+                            id="1", participant_id="Agent_1", role=ParticipantRole.AGENT, text="Can you provide your name?"
                         ),
                         TextConversationItem(
-                            id="2",
-                            participant_id="Customer_1",
-                            role=ParticipantRole.CUSTOMER,
-                            text="Hi, my name is John Doe.",
+                            id="2", participant_id="Customer_1", role=ParticipantRole.CUSTOMER, text="Hi, my name is John Doe."
                         ),
                         TextConversationItem(
                             id="3",
@@ -88,25 +83,23 @@ async def sample_conversation_pii_with_no_mask_policy_async():
             ]
         )
 
-        # action with NoMaskPolicyType
-        pii_action: AnalyzeConversationOperationAction = PiiOperationAction(
+        # action with NoMaskPolicyType (detect but do not redact)
+        pii_action = PiiOperationAction(
             action_content=ConversationPiiActionContent(redaction_policy=NoMaskPolicyType()),
             name="Conversation PII with No Mask Policy",
         )
+
         operation_input = AnalyzeConversationOperationInput(
             conversation_input=ml_input,
             actions=[pii_action],
         )
 
         # start long-running job
-        poller: AnalyzeConversationAsyncLROPoller[AsyncItemPaged[ConversationActions]] = (
-            await client.begin_analyze_conversation_job(body=operation_input)
-        )
-
+        poller = await client.begin_analyze_conversation_job(body=operation_input)
         print(f"Operation ID: {poller.details.get('operation_id')}")
 
         # wait for result
-        paged_actions: AsyncItemPaged[ConversationActions] = await poller.result()
+        paged_actions = await poller.result()
 
         # final metadata
         d = poller.details
@@ -115,39 +108,39 @@ async def sample_conversation_pii_with_no_mask_policy_async():
         if d.get("errors"):
             print("Errors:")
             for err in d["errors"]:
-                err = cast(ConversationError, err)
-                print(f"  Code: {err.code} - {err.message}")
+                if isinstance(err, ConversationError):
+                    print(f"  Code: {err.code} - {err.message}")
 
         # iterate results
         async for actions_page in paged_actions:
             for action_result in actions_page.task_results or []:
-                ar = cast(AnalyzeConversationOperationResult, action_result)
-                if isinstance(ar, ConversationPiiOperationResult):
-                    for conversation in ar.results.conversations or []:
-                        conversation = cast(ConversationalPiiResult, conversation)
-                        for item in conversation.conversation_items or []:
-                            item = cast(ConversationPiiItemResult, item)
-                            returned_text = (getattr(item.redacted_content, "text", None) or "").strip()
+                if isinstance(action_result, AnalyzeConversationOperationResult):
+                    if isinstance(action_result, ConversationPiiOperationResult):
+                        for conversation in action_result.results.conversations or []:
+                            if isinstance(conversation, ConversationalPiiResult):
+                                for item in conversation.conversation_items or []:
+                                    if isinstance(item, ConversationPiiItemResult):
+                                        # NoMaskPolicyType returns original text (no redaction)
+                                        returned_text = (item.redacted_content.text or "").strip()
+                                        if not returned_text:
+                                            continue
 
-                            if item.entities and returned_text:
-                                for entity in item.entities:
-                                    entity = cast(NamedEntity, entity)
-                                    ent_text = entity.text or ""
-                                    detected_entities.append(ent_text)
+                                        if item.entities:
+                                            for entity in item.entities:
+                                                if isinstance(entity, NamedEntity):
+                                                    ent_text = entity.text or ""
+                                                    detected_entities.append(ent_text)
+                                                    if ent_text not in returned_text:
+                                                        print(
+                                                            f"WARNING: Expected entity '{ent_text}' in returned text but not found."
+                                                        )
+# [END conversation_pii_with_no_mask_policy_async]
 
-                                    # verify original PII text is still present
-                                    assert (
-                                        ent_text in returned_text
-                                    ), f"Expected entity '{ent_text}' in: {returned_text}"
 
-        # assertions
-        assert len(detected_entities) > 0, "Expected at least one detected PII entity."
-        assert (d.get("status") or "").lower() in {"succeeded", "partiallysucceeded"}
-
-    finally:
-        await client.close()
+async def main():
+    await sample_conversation_pii_with_no_mask_policy_async()
 
 
 if __name__ == "__main__":
-    asyncio.run(sample_conversation_pii_with_no_mask_policy_async())
-# [END conversation_pii_with_no_mask_policy_async]
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())

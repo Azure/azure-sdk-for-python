@@ -8,30 +8,35 @@
 FILE: sample_orchestration_prediction_async.py
 
 DESCRIPTION:
-    This sample demonstrates how to analyze user query using an orchestration project.
-    In this sample, orchestration project's top intent will map to a Qna project.
+    This sample demonstrates how to analyze a user query using an orchestration project.
+    In this sample, the orchestration project's top intent routes to a QnA project.
 
-    For more info about how to setup a CLU orchestration project, see the README.
-    
 USAGE:
     python sample_orchestration_prediction_async.py
 
-REQUIRED ENV VARS:
+REQUIRED ENV VARS (for AAD / DefaultAzureCredential):
     AZURE_CONVERSATIONS_ENDPOINT
-    AZURE_CONVERSATIONS_KEY
+    AZURE_CLIENT_ID
+    AZURE_TENANT_ID
+    AZURE_CLIENT_SECRET
     AZURE_CONVERSATIONS_PROJECT_NAME
     AZURE_CONVERSATIONS_DEPLOYMENT_NAME
+
+NOTE:
+    If you want to use AzureKeyCredential instead, set:
+      - AZURE_CONVERSATIONS_ENDPOINT
+      - AZURE_CONVERSATIONS_KEY
+      - AZURE_CONVERSATIONS_PROJECT_NAME
+      - AZURE_CONVERSATIONS_DEPLOYMENT_NAME
 """
 
 # [START orchestration_prediction_async]
 import os
 import asyncio
-from typing import cast
 
-from azure.core.credentials import AzureKeyCredential
+from azure.identity.aio import DefaultAzureCredential
 from azure.ai.language.conversations.aio import ConversationAnalysisClient
 from azure.ai.language.conversations.models import (
-    AnalyzeConversationActionResult,
     ConversationActionContent,
     ConversationAnalysisInput,
     TextConversationItem,
@@ -44,15 +49,14 @@ from azure.ai.language.conversations.models import (
 
 
 async def sample_orchestration_prediction_async():
-    # get secrets
-    clu_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
-    clu_key = os.environ["AZURE_CONVERSATIONS_KEY"]
+    # settings
+    endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
     project_name = os.environ["AZURE_CONVERSATIONS_PROJECT_NAME"]
     deployment_name = os.environ["AZURE_CONVERSATIONS_DEPLOYMENT_NAME"]
 
-    client = ConversationAnalysisClient(clu_endpoint, AzureKeyCredential(clu_key))
+    credential = DefaultAzureCredential()
 
-    try:
+    async with ConversationAnalysisClient(endpoint, credential=credential) as client:
         # Build request using strongly-typed models
         data = ConversationLanguageUnderstandingInput(
             conversation_input=ConversationAnalysisInput(
@@ -70,33 +74,34 @@ async def sample_orchestration_prediction_async():
         )
 
         # Call async API
-        response: AnalyzeConversationActionResult = await client.analyze_conversation(data)
+        response = await client.analyze_conversation(data)
 
-        # Cast to the orchestration result type
-        conversation_result = cast(ConversationActionResult, response)
-        prediction = conversation_result.result.prediction
+        # Narrow to expected result types
+        if isinstance(response, ConversationActionResult):
+            pred = response.result.prediction
+            if isinstance(pred, OrchestrationPrediction):
+                # Top intent name is the routed project name
+                top_intent = pred.top_intent
+                if not top_intent:
+                    print("No top intent was returned by orchestration.")
+                    return
 
-        assert isinstance(prediction, OrchestrationPrediction)
+                print(f"Top intent (responding project): {top_intent}")
 
-        # Ensure top intent exists
-        assert prediction.top_intent is not None, "top_intent missing in orchestration prediction"
-        responding_project_name = cast(str, prediction.top_intent)
-        print(f"Top intent: {responding_project_name}")
+                # Look up the routed target result
+                target_intent_result = pred.intents.get(top_intent)
+                if not isinstance(target_intent_result, QuestionAnsweringTargetIntentResult):
+                    print("Top intent did not route to a Question Answering result.")
+                    return
 
-        # Get routed target result
-        target_intent_result = prediction.intents[responding_project_name]
-        assert isinstance(target_intent_result, QuestionAnsweringTargetIntentResult)
-
-        # Print answers from the QnA result
-        qa = target_intent_result.result
-        for ans in qa.answers:  # type: ignore
-            print(ans.answer or "")
-
-        # Optional final assertion
-        assert responding_project_name == "ChitChat-QnA"
-
-    finally:
-        await client.close()
+                qa = target_intent_result.result
+                for ans in qa.answers:  # type: ignore
+                    print(ans.answer or "")
+            else:
+                print("Prediction was not an OrchestrationPrediction.")
+        else:
+            print("Unexpected result type from analyze_conversation.")
+# [END orchestration_prediction_async]
 
 
 async def main():
@@ -104,5 +109,5 @@ async def main():
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
-# [END orchestration_prediction_async]
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())

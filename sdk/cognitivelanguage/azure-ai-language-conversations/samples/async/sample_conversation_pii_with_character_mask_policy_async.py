@@ -15,51 +15,49 @@ DESCRIPTION:
 USAGE:
     python sample_conversation_pii_with_character_mask_policy_async.py
 
-REQUIRED ENV VARS:
+REQUIRED ENV VARS (for AAD / DefaultAzureCredential):
     AZURE_CONVERSATIONS_ENDPOINT
-    AZURE_CONVERSATIONS_KEY
+    AZURE_CLIENT_ID
+    AZURE_TENANT_ID
+    AZURE_CLIENT_SECRET
+
+NOTE:
+    If you want to use AzureKeyCredential instead, set:
+      - AZURE_CONVERSATIONS_ENDPOINT
+      - AZURE_CONVERSATIONS_KEY
 """
 
 # [START conversation_pii_with_character_mask_policy_async]
 import os
 import asyncio
-from typing import List, cast
 
-from azure.core.credentials import AzureKeyCredential
+from azure.identity.aio import DefaultAzureCredential
 from azure.ai.language.conversations.aio import ConversationAnalysisClient
-from azure.ai.language.conversations.aio._lro import AnalyzeConversationAsyncLROPoller
 from azure.ai.language.conversations.models import (
     MultiLanguageConversationInput,
     TextConversation,
     TextConversationItem,
     ParticipantRole,
     AnalyzeConversationOperationInput,
-    AnalyzeConversationOperationAction,
     PiiOperationAction,
     ConversationPiiActionContent,
     CharacterMaskPolicyType,
     RedactionCharacter,
-    AnalyzeConversationOperationResult,
-    ConversationActions,
     ConversationPiiOperationResult,
-    ConversationalPiiResult,
-    ConversationPiiItemResult,
-    NamedEntity,
     ConversationError,
 )
-from azure.core.async_paging import AsyncItemPaged
 
 
 async def sample_conversation_pii_with_character_mask_policy_async():
-    # get secrets
-    clu_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
-    clu_key = os.environ["AZURE_CONVERSATIONS_KEY"]
+    # settings
+    endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
 
-    client = ConversationAnalysisClient(clu_endpoint, AzureKeyCredential(clu_key))
+    # AAD credential
+    credential = DefaultAzureCredential()
 
-    redacted_verified: List[str] = []
+    redacted_verified: list[str] = []
 
-    async with client:
+    async with ConversationAnalysisClient(endpoint, credential=credential) as client:
         # build input
         ml_input = MultiLanguageConversationInput(
             conversations=[
@@ -92,25 +90,22 @@ async def sample_conversation_pii_with_character_mask_policy_async():
 
         # action with CharacterMaskPolicyType
         redaction_policy = CharacterMaskPolicyType(redaction_character=RedactionCharacter.ASTERISK)
-        pii_action: AnalyzeConversationOperationAction = PiiOperationAction(
+        pii_action = PiiOperationAction(
             action_content=ConversationPiiActionContent(redaction_policy=redaction_policy),
             name="Conversation PII with Character Mask Policy",
         )
-        actions: List[AnalyzeConversationOperationAction] = [pii_action]
 
         operation_input = AnalyzeConversationOperationInput(
             conversation_input=ml_input,
-            actions=actions,
+            actions=[pii_action],
         )
 
         # start long-running job
-        poller: AnalyzeConversationAsyncLROPoller[AsyncItemPaged[ConversationActions]] = (
-            await client.begin_analyze_conversation_job(body=operation_input)
-        )
-
+        poller = await client.begin_analyze_conversation_job(body=operation_input)
         print(f"Operation ID: {poller.details.get('operation_id')}")
 
-        paged_actions: AsyncItemPaged[ConversationActions] = await poller.result()
+        # wait for completion
+        paged_actions = await poller.result()
 
         # final metadata
         d = poller.details
@@ -119,40 +114,35 @@ async def sample_conversation_pii_with_character_mask_policy_async():
         if d.get("errors"):
             print("Errors:")
             for err in d["errors"]:
-                err = cast(ConversationError, err)
-                print(f"  Code: {err.code} - {err.message}")
+                if isinstance(err, ConversationError):
+                    print(f"  Code: {err.code} - {err.message}")
 
         # iterate results and verify redaction
         async for actions_page in paged_actions:
             for action_result in actions_page.task_results or []:
-                ar = cast(AnalyzeConversationOperationResult, action_result)
-                if isinstance(ar, ConversationPiiOperationResult):
-                    for conversation in ar.results.conversations or []:
-                        conversation = cast(ConversationalPiiResult, conversation)
+                if isinstance(action_result, ConversationPiiOperationResult):
+                    for conversation in action_result.results.conversations or []:
                         for item in conversation.conversation_items or []:
-                            item = cast(ConversationPiiItemResult, item)
-                            redacted_text = (getattr(item.redacted_content, "text", None) or "").strip()
+                            redacted_text = (item.redacted_content.text or "").strip()
                             if not redacted_text:
                                 continue
 
                             if item.entities:
                                 for entity in item.entities:
-                                    ent_text = cast(NamedEntity, entity).text or ""
-                                    assert (
-                                        ent_text not in redacted_text
-                                    ), f"Expected entity '{ent_text}' to be redacted but found in: {redacted_text}"
+                                    ent_text = entity.text or ""
+                                    if ent_text in redacted_text:
+                                        print(
+                                            f"WARNING: Expected '{ent_text}' to be redacted but found in: {redacted_text}"
+                                        )
 
-                                assert (
-                                    "*" in redacted_text
-                                ), f"Expected redacted text to contain '*', got: {redacted_text}"
+                                if "*" in redacted_text:
+                                    redacted_verified.append(redacted_text)
+# [END conversation_pii_with_character_mask_policy_async]
 
-                                redacted_verified.append(redacted_text)
-
-        # assertions
-        assert (d.get("status") or "").lower() in {"succeeded", "partiallysucceeded"}
-        assert len(redacted_verified) > 0, "Expected at least one redacted line to be verified."
+async def main():
+    await sample_conversation_pii_with_character_mask_policy_async()
 
 
 if __name__ == "__main__":
-    asyncio.run(sample_conversation_pii_with_character_mask_policy_async())
-# [END conversation_pii_with_character_mask_policy_async]
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())

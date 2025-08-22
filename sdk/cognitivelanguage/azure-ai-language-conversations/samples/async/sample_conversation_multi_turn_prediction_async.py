@@ -8,27 +8,32 @@
 FILE: sample_conversation_multi_turn_prediction_async.py
 
 DESCRIPTION:
-    This sample demonstrates how to run a multi-turn conversation prediction asynchronously
-    using the Conversational AI task. It sends a short dialog (user ↔ bot ↔ user) to a
-    CLU Conversation project and prints intents and entities, including spans,
+    Run a multi-turn conversation prediction asynchronously using the
+    Conversational AI task. Prints intents and entities, including spans,
     datetime resolutions, and subtype/tag metadata.
 
 USAGE:
     python sample_conversation_multi_turn_prediction_async.py
 
-REQUIRED ENV VARS:
+REQUIRED ENV VARS (for AAD / DefaultAzureCredential):
     AZURE_CONVERSATIONS_ENDPOINT
-    AZURE_CONVERSATIONS_KEY
+    AZURE_CLIENT_ID
+    AZURE_TENANT_ID
+    AZURE_CLIENT_SECRET
     AZURE_CONVERSATIONS_PROJECT_NAME
     AZURE_CONVERSATIONS_DEPLOYMENT_NAME
+    
+NOTE:
+    If you prefer `AzureKeyCredential`, set:
+    AZURE_CONVERSATIONS_ENDPOINT
+    AZURE_CONVERSATIONS_KEY
 """
 
 # [START conversation_multi_turn_prediction_async]
 import os
 import asyncio
-from typing import cast
 
-from azure.core.credentials import AzureKeyCredential
+from azure.identity.aio import DefaultAzureCredential
 from azure.ai.language.conversations.aio import ConversationAnalysisClient
 from azure.ai.language.conversations.models import (
     # Request
@@ -39,7 +44,6 @@ from azure.ai.language.conversations.models import (
     TextConversationItem,
     StringIndexType,
     # Response/result discriminators
-    AnalyzeConversationActionResult,
     ConversationalAITaskResult,
     ConversationalAIResult,
     ConversationalAIAnalysis,
@@ -53,14 +57,15 @@ from azure.ai.language.conversations.models import (
 
 
 async def sample_conversation_multi_turn_prediction_async():
-    # get secrets
-    clu_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
-    clu_key = os.environ["AZURE_CONVERSATIONS_KEY"]
+    # get settings
+    endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
     project_name = os.environ["AZURE_CONVERSATIONS_PROJECT_NAME"]
     deployment_name = os.environ["AZURE_CONVERSATIONS_DEPLOYMENT_NAME"]
 
-    client = ConversationAnalysisClient(clu_endpoint, AzureKeyCredential(clu_key))
-    try:
+    # AAD credential
+    credential = DefaultAzureCredential()
+
+    async with ConversationAnalysisClient(endpoint, credential=credential) as client:
         # Build a small multi-turn dialog
         data = ConversationalAITask(
             analysis_input=ConversationalAIAnalysisInput(
@@ -88,85 +93,86 @@ async def sample_conversation_multi_turn_prediction_async():
         )
 
         # Async call
-        response: AnalyzeConversationActionResult = await client.analyze_conversation(data)
+        response = await client.analyze_conversation(data)
 
-        # Cast to ConversationalAI task result
-        ai_task_result = cast(ConversationalAITaskResult, response)
-        ai_result: ConversationalAIResult = ai_task_result.result
+        if isinstance(response, ConversationalAITaskResult):
+            ai_result: ConversationalAIResult = response.result
+            if not ai_result or not ai_result.conversations:
+                print("No conversations found in result.")
+                return
 
-        if not ai_result or not ai_result.conversations:
-            print("No conversations found in result.")
-            return
+            for conversation in ai_result.conversations or []:
+                if isinstance(conversation, ConversationalAIAnalysis):
+                    print(f"Conversation ID: {conversation.id}\n")
 
-        for conversation in ai_result.conversations or []:
-            conversation = cast(ConversationalAIAnalysis, conversation)
-            print(f"Conversation ID: {conversation.id}\n")
+                    # Intents
+                    print("Intents:")
+                    for intent in conversation.intents or []:
+                        if isinstance(intent, ConversationalAIIntent):
+                            print(f"  Name: {intent.name}")
+                            print(f"  Type: {intent.type}")
 
-            # Intents
-            print("Intents:")
-            for intent in conversation.intents or []:
-                intent = cast(ConversationalAIIntent, intent)
-                print(f"  Name: {intent.name}")
-                print(f"  Type: {getattr(intent, 'type', None)}")
+                            print("  Conversation Item Ranges:")
+                            for rng in intent.conversation_item_ranges or []:
+                                if isinstance(rng, ConversationItemRange):
+                                    print(f"    - Offset: {rng.offset}, Count: {rng.count}")
 
-                print("  Conversation Item Ranges:")
-                for rng in intent.conversation_item_ranges or []:
-                    rng = cast(ConversationItemRange, rng)
-                    print(f"    - Offset: {rng.offset}, Count: {rng.count}")
+                            print("\n  Entities (Scoped to Intent):")
+                            for ent in intent.entities or []:
+                                if isinstance(ent, ConversationalAIEntity):
+                                    print(f"    Name: {ent.name}")
+                                    print(f"    Text: {ent.text}")
+                                    print(f"    Confidence: {ent.confidence_score}")
+                                    print(f"    Offset: {ent.offset}, Length: {ent.length}")
+                                    print(
+                                        f"    Conversation Item ID: {ent.conversation_item_id}, "
+                                        f"Index: {ent.conversation_item_index}"
+                                    )
 
-                print("\n  Entities (Scoped to Intent):")
-                for ent in intent.entities or []:
-                    ent = cast(ConversationalAIEntity, ent)
-                    print(f"    Name: {ent.name}")
-                    print(f"    Text: {ent.text}")
-                    print(f"    Confidence: {ent.confidence_score}")
-                    print(f"    Offset: {ent.offset}, Length: {ent.length}")
-                    print(
-                        f"    Conversation Item ID: {ent.conversation_item_id}, "
-                        f"Index: {ent.conversation_item_index}"
-                    )
+                                    # Date/time resolutions
+                                    for res in ent.resolutions or []:
+                                        if isinstance(res, DateTimeResolution):
+                                            print(
+                                                f"    - [DateTimeResolution] SubKind: {res.date_time_sub_kind}, "
+                                                f"Timex: {res.timex}, Value: {res.value}"
+                                            )
 
-                    # Date/time resolutions
-                    if ent.resolutions:
-                        for res in ent.resolutions:
-                            if isinstance(res, DateTimeResolution):
-                                print(
-                                    f"    - [DateTimeResolution] SubKind: {getattr(res, 'date_time_sub_kind', None)}, "
-                                    f"Timex: {res.timex}, Value: {res.value}"
-                                )
+                                    # Extra information (entity subtype + tags)
+                                    for extra in ent.extra_information or []:
+                                        if isinstance(extra, EntitySubtype):
+                                            print(f"    - [EntitySubtype] Value: {extra.value}")
+                                            for tag in extra.tags or []:
+                                                if isinstance(tag, EntityTag):
+                                                    print(f"      • Tag: {tag.name}, Confidence: {tag.confidence_score}")
+                    print()
 
-                    # Extra information (entity subtype + tags)
-                    if ent.extra_information:
-                        for extra in ent.extra_information:
-                            if isinstance(extra, EntitySubtype):
-                                print(f"    - [EntitySubtype] Value: {extra.value}")
-                                for tag in extra.tags or []:
-                                    tag = cast(EntityTag, tag)
-                                    print(f"      • Tag: {tag.name}, Confidence: {tag.confidence_score}")
-            print()
+                    # Global entities
+                    print("Global Entities:")
+                    for ent in conversation.entities or []:
+                        if isinstance(ent, ConversationalAIEntity):
+                            print(f"  Name: {ent.name}")
+                            print(f"  Text: {ent.text}")
+                            print(f"  Confidence: {ent.confidence_score}")
+                            print(f"  Offset: {ent.offset}, Length: {ent.length}")
+                            print(
+                                f"  Conversation Item ID: {ent.conversation_item_id}, "
+                                f"Index: {ent.conversation_item_index}"
+                            )
 
-            # Global entities
-            print("Global Entities:")
-            for ent in conversation.entities or []:
-                ent = cast(ConversationalAIEntity, ent)
-                print(f"  Name: {ent.name}")
-                print(f"  Text: {ent.text}")
-                print(f"  Confidence: {ent.confidence_score}")
-                print(f"  Offset: {ent.offset}, Length: {ent.length}")
-                print(f"  Conversation Item ID: {ent.conversation_item_id}, " f"Index: {ent.conversation_item_index}")
+                            for extra in ent.extra_information or []:
+                                if isinstance(extra, EntitySubtype):
+                                    print(f"    - [EntitySubtype] Value: {extra.value}")
+                                    for tag in extra.tags or []:
+                                        if isinstance(tag, EntityTag):
+                                            print(f"      • Tag: {tag.name}, Confidence: {tag.confidence_score}")
+                    print("-" * 40)
+        else:
+            print("No Conversational AI result returned.")
+# [END conversation_multi_turn_prediction_async]
 
-                if ent.extra_information:
-                    for extra in ent.extra_information:
-                        if isinstance(extra, EntitySubtype):
-                            print(f"    - [EntitySubtype] Value: {extra.value}")
-                            for tag in extra.tags or []:
-                                tag = cast(EntityTag, tag)
-                                print(f"      • Tag: {tag.name}, Confidence: {tag.confidence_score}")
-            print("-" * 40)
-    finally:
-        await client.close()
-
+async def main():
+    await sample_conversation_multi_turn_prediction_async()
 
 if __name__ == "__main__":
-    asyncio.run(sample_conversation_multi_turn_prediction_async())
-# [END conversation_multi_turn_prediction_async]
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())
