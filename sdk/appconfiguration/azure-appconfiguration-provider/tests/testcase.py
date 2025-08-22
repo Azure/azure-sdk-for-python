@@ -22,7 +22,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
         else:
             client = AzureAppConfigurationClient(kwargs["endpoint"], credential)
 
-        setup_configs(client, kwargs.get("keyvault_secret_url"))
+        setup_configs(client, kwargs.get("keyvault_secret_url"), kwargs.get("keyvault_secret_url2"))
         kwargs["user_agent"] = "SDK/Integration"
 
         if "endpoint" in kwargs:
