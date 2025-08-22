@@ -423,8 +423,10 @@ def set_session_token_header(
                     options.get(InternalOptions.PARTITION_KEY),
                     cosmos_client_connection._container_properties_cache,
                     cosmos_client_connection._routing_map_provider,
-                    partition_key_range_id
+                    partition_key_range_id,
+                    options
                 )
+
                 if session_token != "":
                     headers[http_constants.HttpHeaders.SessionToken] = session_token
 
@@ -453,8 +455,10 @@ async def set_session_token_header_async(
                     options.get(InternalOptions.PARTITION_KEY),
                     cosmos_client_connection._container_properties_cache,
                     cosmos_client_connection._routing_map_provider,
-                    partition_key_range_id
+                    partition_key_range_id,
+                    options
                 )
+
                 if session_token != "":
                     headers[http_constants.HttpHeaders.SessionToken] = session_token
 

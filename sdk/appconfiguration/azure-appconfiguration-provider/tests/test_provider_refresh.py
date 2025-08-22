@@ -19,8 +19,8 @@ class TestAppConfigurationProvider(AppConfigTestCase, unittest.TestCase):
     @app_config_decorator_aad
     def test_refresh(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
         mock_callback = Mock()
-        client = self.create_aad_client(
-            appconfiguration_endpoint_string,
+        client = self.create_client(
+            endpoint=appconfiguration_endpoint_string,
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
             refresh_on=[WatchKey("refresh_message")],
             refresh_interval=1,
@@ -86,8 +86,8 @@ class TestAppConfigurationProvider(AppConfigTestCase, unittest.TestCase):
     @app_config_decorator_aad
     def test_empty_refresh(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
         mock_callback = Mock()
-        client = self.create_aad_client(
-            appconfiguration_endpoint_string,
+        client = self.create_client(
+            endpoint=appconfiguration_endpoint_string,
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
             on_refresh_success=mock_callback,
             feature_flag_enabled=True,
