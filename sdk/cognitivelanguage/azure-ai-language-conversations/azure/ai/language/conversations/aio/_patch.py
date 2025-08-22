@@ -64,7 +64,7 @@ class AnalyzeConversationAsyncLROPoller(AsyncLROPoller[PollingReturnType_co], Ge
         # populated by your deserialization callback in begin_*_async
         self._last_state: Optional["AnalyzeConversationOperationState"] = None
 
-    def record_state_for_details(self, state: "AnalyzeConversationOperationState") -> None:
+    def _record_state_for_details(self, state: "AnalyzeConversationOperationState") -> None:
         """Internal: update the state used by ``.details``.
 
         :param state: The latest operation state to expose via ``details``.
@@ -268,7 +268,7 @@ class ConversationAnalysisClient(AnalysisClientGenerated):
                 op_state = AnalyzeConversationOperationState(data)
 
                 poller_ref = poller_holder["poller"]
-                poller_ref.record_state_for_details(op_state)
+                poller_ref._record_state_for_details(op_state)
 
                 paged = _build_pager_from_state(op_state)
                 return cls(pipeline_response, paged, {}) if cls else paged
