@@ -799,6 +799,11 @@
       "words": [ "ctxt", "somethingstuid" ]
     },
     {
+      "filename": "sdk/cognitivelanguage/azure-ai-textanalytics/**",
+      "words": [ "Fhir", "BRCPF", "IDRG", "fhir", "EUGPS", "PLREGON", "REGON", "ESDNI", "USUK" ],
+      "caseSensitive": false
+    },
+    {
       "filename": "sdk/cognitivelanguage/azure-ai-language-conversations/**",
       "words": [ "conv", "summ" ],
       "caseSensitive": false
