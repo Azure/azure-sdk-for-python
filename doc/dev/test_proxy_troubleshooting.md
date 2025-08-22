@@ -472,7 +472,7 @@ Alternatively, you can delete the installed tool and re-run your tests to automa
 [parametrize_example]: https://github.com/Azure/azure-sdk-for-python/blob/aa607b3b8c3e646928375ebcc6339d68e4e90a49/sdk/keyvault/azure-keyvault-keys/tests/test_key_client.py#L190
 [pipelines_ci]: https://github.com/Azure/azure-sdk-for-python/blob/5ba894966ed6b0e1ee8d854871f8c2da36a73d79/sdk/eventgrid/ci.yml#L30
 [pipelines_live]: https://github.com/Azure/azure-sdk-for-python/blob/e2b5852deaef04752c1323d2ab0958f83b98858f/sdk/textanalytics/tests.yml#L26-L27
-[playback_request_failure]: https://github.com/Azure/azure-sdk-for-python/blob/e23d9a6b1edcc1127ded40b9993029495b4ad08c/eng/tools/azure-sdk-tools/devtools_testutils/proxy_testcase.py#L108
+[playback_request_failure]: https://github.com/Azure/azure-sdk-for-python/blob/9958caf6269247f940c697a3f982bbbf0a47a19b/eng/tools/azure-sdk-tools/devtools_testutils/proxy_testcase.py#L102
 [py_sanitizers]: https://github.com/Azure/azure-sdk-for-python/blob/main/eng/tools/azure-sdk-tools/devtools_testutils/sanitizers.py
 [pytest_collection]: https://docs.pytest.org/latest/goodpractices.html#test-discovery
 [pytest_commands]: https://docs.pytest.org/latest/usage.html
