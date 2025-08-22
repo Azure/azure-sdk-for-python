@@ -232,12 +232,12 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         """
         key_info = KeyInfo(start=_to_utc_datetime(key_start_time), expiry=_to_utc_datetime(key_expiry_time))
         try:
-            user_delegation_key = self._client.service.get_user_delegation_key(  # type: ignore
+            user_delegation_key = self._client.service.get_user_delegation_key(
                 key_info=key_info, timeout=timeout, **kwargs
             )
         except HttpResponseError as error:
             process_storage_error(error)
-        return parse_to_internal_user_delegation_key(user_delegation_key)  # type: ignore
+        return parse_to_internal_user_delegation_key(user_delegation_key)
 
     @distributed_trace
     def get_service_stats(self, *, timeout: Optional[int] = None, **kwargs: Any) -> Dict[str, Any]:
