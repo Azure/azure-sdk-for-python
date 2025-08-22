@@ -6,6 +6,7 @@ on:
     branches: [ main ]
     paths:
       - "eng/tools/azure-sdk-tools/**"
+      - ".github/workflows/azure-sdk-tools.yml"
 
 jobs:
   build-and-test:
