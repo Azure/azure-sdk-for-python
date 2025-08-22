@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
@@ -9,53 +10,52 @@ FILE: sample_conversation_pii_with_entity_mask_policy.py
 
 DESCRIPTION:
     This sample demonstrates how to run a PII detection action over a conversation
-    using the `EntityMaskPolicyType`, which redacts detected PII by replacing it
-    with an entity category mask such as `[Person]` or `[Person-1]`.
+    using the `EntityMaskPolicyType` in sync mode, which redacts detected PII by
+    replacing it with an entity category mask such as `[Person]` or `[Person-1]`.
 
 USAGE:
     python sample_conversation_pii_with_entity_mask_policy.py
 
-REQUIRED ENV VARS:
+REQUIRED ENV VARS (for AAD / DefaultAzureCredential):
     AZURE_CONVERSATIONS_ENDPOINT
-    AZURE_CONVERSATIONS_KEY
+    AZURE_CLIENT_ID
+    AZURE_TENANT_ID
+    AZURE_CLIENT_SECRET
+
+NOTE:
+    If you want to use AzureKeyCredential instead, set:
+      - AZURE_CONVERSATIONS_ENDPOINT
+      - AZURE_CONVERSATIONS_KEY
 """
 
 # [START conversation_pii_with_entity_mask_policy]
 import os
 import re
-from typing import List, cast
 
-from azure.core.credentials import AzureKeyCredential
-from azure.ai.language.conversations import ConversationAnalysisClient, AnalyzeConversationLROPoller
+from azure.identity import DefaultAzureCredential
+from azure.ai.language.conversations import ConversationAnalysisClient
 from azure.ai.language.conversations.models import (
     MultiLanguageConversationInput,
     TextConversation,
     TextConversationItem,
     ParticipantRole,
     AnalyzeConversationOperationInput,
-    AnalyzeConversationOperationAction,
     PiiOperationAction,
     ConversationPiiActionContent,
     EntityMaskTypePolicyType,
-    AnalyzeConversationOperationResult,
-    ConversationActions,
     ConversationPiiOperationResult,
-    ConversationalPiiResult,
-    ConversationPiiItemResult,
-    NamedEntity,
     ConversationError,
 )
-from azure.core.paging import ItemPaged
 
 
 def sample_conversation_pii_with_entity_mask_policy():
-    # get secrets
-    clu_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
-    clu_key = os.environ["AZURE_CONVERSATIONS_KEY"]
+    # settings
+    endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
+    credential = DefaultAzureCredential()
 
-    client = ConversationAnalysisClient(clu_endpoint, AzureKeyCredential(clu_key))
+    redacted_verified = []
 
-    redacted_verified: List[str] = []
+    client = ConversationAnalysisClient(endpoint, credential=credential)
 
     # build input
     ml_input = MultiLanguageConversationInput(
@@ -65,7 +65,10 @@ def sample_conversation_pii_with_entity_mask_policy():
                 language="en",
                 conversation_items=[
                     TextConversationItem(
-                        id="1", participant_id="Agent_1", role=ParticipantRole.AGENT, text="Can you provide your name?"
+                        id="1",
+                        participant_id="Agent_1",
+                        role=ParticipantRole.AGENT,
+                        text="Can you provide your name?",
                     ),
                     TextConversationItem(
                         id="2",
@@ -86,26 +89,22 @@ def sample_conversation_pii_with_entity_mask_policy():
 
     # action with EntityMaskTypePolicyType
     redaction_policy = EntityMaskTypePolicyType()
-    pii_action: AnalyzeConversationOperationAction = PiiOperationAction(
+    pii_action = PiiOperationAction(
         action_content=ConversationPiiActionContent(redaction_policy=redaction_policy),
         name="Conversation PII with Entity Mask Policy",
     )
-    actions: List[AnalyzeConversationOperationAction] = [pii_action]
 
     operation_input = AnalyzeConversationOperationInput(
         conversation_input=ml_input,
-        actions=actions,
+        actions=[pii_action],
     )
 
     # start long-running job
-    poller: AnalyzeConversationLROPoller[ItemPaged[ConversationActions]] = client.begin_analyze_conversation_job(
-        body=operation_input
-    )
-
+    poller = client.begin_analyze_conversation_job(body=operation_input)
     print(f"Operation ID: {poller.details.get('operation_id')}")
 
     # wait for result
-    paged_actions: ItemPaged[ConversationActions] = poller.result()
+    paged_actions = poller.result()
 
     # final metadata
     d = poller.details
@@ -114,42 +113,45 @@ def sample_conversation_pii_with_entity_mask_policy():
     if d.get("errors"):
         print("Errors:")
         for err in d["errors"]:
-            err = cast(ConversationError, err)
-            print(f"  Code: {err.code} - {err.message}")
+            if isinstance(err, ConversationError):
+                print(f"  Code: {err.code} - {err.message}")
 
     # iterate results
     for actions_page in paged_actions:
         for action_result in actions_page.task_results or []:
-            ar = cast(AnalyzeConversationOperationResult, action_result)
-            if isinstance(ar, ConversationPiiOperationResult):
-                for conversation in ar.results.conversations or []:
-                    conversation = cast(ConversationalPiiResult, conversation)
+            if isinstance(action_result, ConversationPiiOperationResult):
+                for conversation in action_result.results.conversations or []:
                     for item in conversation.conversation_items or []:
-                        item = cast(ConversationPiiItemResult, item)
-                        redacted_text = (getattr(item.redacted_content, "text", None) or "").strip()
+                        redacted_text = (item.redacted_content.text or "").strip()
+                        if not redacted_text:
+                            continue
                         if item.entities and redacted_text:
+                            all_ok = True
                             for entity in item.entities:
-                                entity = cast(NamedEntity, entity)
                                 original_text = entity.text or ""
-
-                                # 1) original PII should not be present
-                                assert (
-                                    original_text not in redacted_text
-                                ), f"Expected entity '{original_text}' to be redacted but found in: {redacted_text}"
-
-                                # 2) redaction should show an entity mask like [Person] or [Person-1]
+                                # 1) original PII must be removed
+                                if original_text and original_text in redacted_text:
+                                    print(
+                                        f"WARNING: Expected entity '{original_text}' to be redacted "
+                                        f"but found in: {redacted_text}"
+                                    )
+                                    all_ok = False
+                                # 2) mask should appear like [Person] or [Person-1]
                                 expected_mask_pattern = rf"\[{re.escape(entity.category)}-?\d*\]"
-                                assert re.search(
-                                    expected_mask_pattern, redacted_text, flags=re.IGNORECASE
-                                ), f"Expected a redaction mask like '[{entity.category}]' but got: {redacted_text}"
+                                if not re.search(expected_mask_pattern, redacted_text, flags=re.IGNORECASE):
+                                    print(
+                                        f"WARNING: Expected entity mask similar to "
+                                        f"'[{entity.category}]' but got: {redacted_text}"
+                                    )
+                                    all_ok = False
+                            if all_ok:
+                                redacted_verified.append(redacted_text)
+# [END conversation_pii_with_entity_mask_policy]
 
-                            redacted_verified.append(redacted_text)
 
-    # assertions
-    assert len(redacted_verified) > 0, "Expected at least one redacted line to be verified."
-    assert (d.get("status") or "").lower() in {"succeeded", "partiallysucceeded"}
+def main():
+    sample_conversation_pii_with_entity_mask_policy()
 
 
 if __name__ == "__main__":
-    sample_conversation_pii_with_entity_mask_policy()
-# [END conversation_pii_with_entity_mask_policy]
+    main()

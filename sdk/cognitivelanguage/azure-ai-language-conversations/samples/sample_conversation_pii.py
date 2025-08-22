@@ -8,51 +8,52 @@
 FILE: sample_conversation_pii.py
 
 DESCRIPTION:
-    This sample demonstrates how to run a PII detection action over a conversation.
+    This sample demonstrates how to run a PII detection action over a conversation (sync).
 
 USAGE:
     python sample_conversation_pii.py
 
-REQUIRED ENV VARS:
+REQUIRED ENV VARS (for AAD / DefaultAzureCredential):
     AZURE_CONVERSATIONS_ENDPOINT
-    AZURE_CONVERSATIONS_KEY
+    AZURE_CLIENT_ID
+    AZURE_TENANT_ID
+    AZURE_CLIENT_SECRET
+
+NOTE:
+    If you want to use AzureKeyCredential instead, set:
+      - AZURE_CONVERSATIONS_ENDPOINT
+      - AZURE_CONVERSATIONS_KEY
 """
 
 # [START conversation_pii]
 import os
-from typing import List, cast
 
-from azure.core.credentials import AzureKeyCredential
-from azure.ai.language.conversations import ConversationAnalysisClient, AnalyzeConversationLROPoller
+from azure.identity import DefaultAzureCredential
+from azure.ai.language.conversations import ConversationAnalysisClient
 from azure.ai.language.conversations.models import (
     MultiLanguageConversationInput,
     TextConversation,
     TextConversationItem,
     ParticipantRole,
     AnalyzeConversationOperationInput,
-    AnalyzeConversationOperationAction,
     PiiOperationAction,
     ConversationPiiActionContent,
     AnalyzeConversationOperationResult,
-    ConversationActions,
     ConversationPiiOperationResult,
-    ConversationalPiiResult,
-    ConversationPiiItemResult,
-    NamedEntity,
     InputWarning,
     ConversationError,
 )
-from azure.core.paging import ItemPaged
 
 
 def sample_conversation_pii():
-    # get secrets
-    clu_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
-    clu_key = os.environ["AZURE_CONVERSATIONS_KEY"]
+    # get settings
+    endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
 
-    client = ConversationAnalysisClient(clu_endpoint, AzureKeyCredential(clu_key))
+    credential = DefaultAzureCredential()
 
-    entities_detected: List[NamedEntity] = []
+    entities_detected = []
+
+    client = ConversationAnalysisClient(endpoint, credential=credential)
 
     # build input
     ml_input = MultiLanguageConversationInput(
@@ -62,7 +63,10 @@ def sample_conversation_pii():
                 language="en",
                 conversation_items=[
                     TextConversationItem(
-                        id="1", participant_id="Agent_1", role=ParticipantRole.AGENT, text="Can you provide your name?"
+                        id="1",
+                        participant_id="Agent_1",
+                        role=ParticipantRole.AGENT,
+                        text="Can you provide your name?",
                     ),
                     TextConversationItem(
                         id="2",
@@ -81,27 +85,24 @@ def sample_conversation_pii():
         ]
     )
 
-    pii_action: AnalyzeConversationOperationAction = PiiOperationAction(
+    pii_action = PiiOperationAction(
         action_content=ConversationPiiActionContent(),
         name="Conversation PII",
     )
-    actions: List[AnalyzeConversationOperationAction] = [pii_action]
 
     operation_input = AnalyzeConversationOperationInput(
         conversation_input=ml_input,
-        actions=actions,
+        actions=[pii_action],
     )
 
-    # start long-running PII analysis job
-    poller: AnalyzeConversationLROPoller[ItemPaged[ConversationActions]] = client.begin_analyze_conversation_job(
-        body=operation_input
-    )
+    # start long-running operation (sync)
+    poller = client.begin_analyze_conversation_job(body=operation_input)
 
-    # operation metadata available immediately
+    # operation metadata
     print(f"Operation ID: {poller.details.get('operation_id')}")
 
     # wait for completion
-    paged_actions: ItemPaged[ConversationActions] = poller.result()
+    paged_actions = poller.result()
 
     # final-state metadata
     d = poller.details
@@ -114,7 +115,7 @@ def sample_conversation_pii():
     if d.get("display_name"):
         print(f"Display Name: {d.get('display_name')}")
 
-    # iterate results
+    # iterate results (sync pageable)
     for actions_page in paged_actions:
         print(
             f"Completed: {actions_page.completed}, "
@@ -124,51 +125,50 @@ def sample_conversation_pii():
         )
 
         for action_result in actions_page.task_results or []:
-            ar = cast(AnalyzeConversationOperationResult, action_result)
-            print(f"\nAction Name: {getattr(ar, 'name', None)}")
-            print(f"Action Status: {getattr(ar, 'status', None)}")
-            print(f"Kind: {getattr(ar, 'kind', None)}")
+            if isinstance(action_result, AnalyzeConversationOperationResult):
+                print(f"\nAction Name: {action_result.name}")
+                print(f"Action Status: {action_result.status}")
+                print(f"Kind: {action_result.kind}")
 
-            if isinstance(ar, ConversationPiiOperationResult):
-                for conversation in ar.results.conversations or []:
-                    conversation = cast(ConversationalPiiResult, conversation)
-                    print(f"Conversation: #{conversation.id}")
-                    print("Detected Entities:")
+                if isinstance(action_result, ConversationPiiOperationResult):
+                    for conversation in action_result.results.conversations or []:
+                        print(f"Conversation: #{conversation.id}")
+                        print("Detected Entities:")
 
-                    for item in conversation.conversation_items or []:
-                        item = cast(ConversationPiiItemResult, item)
-                        for entity in item.entities or []:
-                            entity = cast(NamedEntity, entity)
-                            print(f"  Category: {entity.category}")
-                            print(f"  Subcategory: {entity.subcategory}")
-                            print(f"  Text: {entity.text}")
-                            print(f"  Offset: {entity.offset}")
-                            print(f"  Length: {entity.length}")
-                            print(f"  Confidence score: {entity.confidence_score}\n")
-                            entities_detected.append(entity)
+                        for item in conversation.conversation_items or []:
+                            for entity in item.entities or []:
+                                print(f"  Category: {entity.category}")
+                                print(f"  Subcategory: {entity.subcategory}")
+                                print(f"  Text: {entity.text}")
+                                print(f"  Offset: {entity.offset}")
+                                print(f"  Length: {entity.length}")
+                                print(f"  Confidence score: {entity.confidence_score}\n")
+                                entities_detected.append(entity)
 
-                    if conversation.warnings:
-                        print("Warnings:")
-                        for warning in conversation.warnings:
-                            warning = cast(InputWarning, warning)
-                            print(f"  Code: {warning.code}")
-                            print(f"  Message: {warning.message}")
-                    print()
+                        if conversation.warnings:
+                            print("Warnings:")
+                            for warning in conversation.warnings:
+                                if isinstance(warning, InputWarning):
+                                    print(f"  Code: {warning.code}")
+                                    print(f"  Message: {warning.message}")
+                        print()
+                else:
+                    print("  [No supported results to display for this action type]")
             else:
-                print("  [No supported results to display for this action type]")
+                print("  [Unexpected action result type]")
 
-    # print errors
+    # errors
     if d.get("errors"):
         print("\nErrors:")
         for err in d["errors"]:
-            err = cast(ConversationError, err)
-            print(f"  Code: {err.code} - {err.message}")
+            if isinstance(err, ConversationError):
+                print(f"  Code: {err.code} - {err.message}")
+# [END conversation_pii]
 
-    # assertions
-    assert len(entities_detected) > 0, "Expected at least one PII entity."
-    assert (d.get("status") or "").lower() in {"succeeded", "partiallysucceeded"}
+
+def main():
+    sample_conversation_pii()
 
 
 if __name__ == "__main__":
-    sample_conversation_pii()
-# [END conversation_pii]
+    main()

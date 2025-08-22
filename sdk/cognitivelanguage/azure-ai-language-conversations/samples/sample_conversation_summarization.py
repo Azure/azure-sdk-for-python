@@ -8,22 +8,29 @@
 FILE: sample_conversation_summarization.py
 
 DESCRIPTION:
-    This sample demonstrates how to summarize a conversation using CLU's conversation summarization capability.
+    This sample demonstrates how to summarize a conversation using CLU's conversation
+    summarization capability (sync).
 
 USAGE:
     python sample_conversation_summarization.py
 
-REQUIRED ENV VARS:
+REQUIRED ENV VARS (for AAD / DefaultAzureCredential):
     AZURE_CONVERSATIONS_ENDPOINT
-    AZURE_CONVERSATIONS_KEY
+    AZURE_CLIENT_ID
+    AZURE_TENANT_ID
+    AZURE_CLIENT_SECRET
+
+NOTE:
+    If you want to use AzureKeyCredential instead, set:
+      - AZURE_CONVERSATIONS_ENDPOINT
+      - AZURE_CONVERSATIONS_KEY
 """
 
 # [START conversation_summarization]
 import os
-from typing import cast, List
 
-from azure.core.credentials import AzureKeyCredential
-from azure.ai.language.conversations import ConversationAnalysisClient, AnalyzeConversationLROPoller
+from azure.identity import DefaultAzureCredential
+from azure.ai.language.conversations import ConversationAnalysisClient
 from azure.ai.language.conversations.models import (
     TextConversationItem,
     TextConversation,
@@ -33,21 +40,17 @@ from azure.ai.language.conversations.models import (
     ConversationSummarizationActionContent,
     SummaryAspect,
     AnalyzeConversationOperationInput,
-    AnalyzeConversationOperationAction,
-    ConversationActions,
     SummarizationOperationResult,
+    ConversationError,
 )
-from azure.core.paging import ItemPaged
 
 
 def sample_conversation_summarization():
-    # get secrets
-    clu_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
-    clu_key = os.environ["AZURE_CONVERSATIONS_KEY"]
+    # settings
+    endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
+    credential = DefaultAzureCredential()
 
-    client = ConversationAnalysisClient(clu_endpoint, AzureKeyCredential(clu_key))
-
-    # Construct conversation input
+    # Build conversation input
     conversation_items = [
         TextConversationItem(
             id="1", participant_id="Agent_1", text="Hello, how can I help you?", role=ParticipantRole.AGENT
@@ -70,33 +73,32 @@ def sample_conversation_summarization():
         conversations=[TextConversation(id="1", language="en", conversation_items=conversation_items)]
     )
 
-    # Construct summarization actions
-    actions = [
-        SummarizationOperationAction(
-            name="Issue task",
-            action_content=ConversationSummarizationActionContent(summary_aspects=[SummaryAspect.ISSUE]),
-        ),
-        SummarizationOperationAction(
-            name="Resolution task",
-            action_content=ConversationSummarizationActionContent(summary_aspects=[SummaryAspect.RESOLUTION]),
-        ),
-    ]
-
-    # Wrap into operation input
+    # Build the operation input and inline actions
     operation_input = AnalyzeConversationOperationInput(
-        conversation_input=conversation_input, actions=cast(List[AnalyzeConversationOperationAction], actions)
+        conversation_input=conversation_input,
+        actions=[
+            SummarizationOperationAction(
+                name="Issue task",
+                action_content=ConversationSummarizationActionContent(summary_aspects=[SummaryAspect.ISSUE]),
+            ),
+            SummarizationOperationAction(
+                name="Resolution task",
+                action_content=ConversationSummarizationActionContent(summary_aspects=[SummaryAspect.RESOLUTION]),
+            ),
+        ],
     )
 
-    # Start long-running operation
-    poller: AnalyzeConversationLROPoller[ItemPaged[ConversationActions]] = client.begin_analyze_conversation_job(
-        body=operation_input
-    )
+    client = ConversationAnalysisClient(endpoint, credential=credential)
 
-    # You can read operation id immediately
-    print(f"Operation ID: {poller.details.get('operation_id')}")
+    poller = client.begin_analyze_conversation_job(body=operation_input)
 
-    # Result is pageable
-    paged_actions: ItemPaged[ConversationActions] = poller.result()
+    # Operation ID
+    op_id = poller.details.get("operation_id")
+    if op_id:
+        print(f"Operation ID: {op_id}")
+
+    # Wait for result
+    paged_actions = poller.result()
 
     # Final-state metadata
     d = poller.details
@@ -109,7 +111,7 @@ def sample_conversation_summarization():
     if d.get("display_name"):
         print(f"Display Name: {d.get('display_name')}")
 
-    # Iterate through pages of actions
+    # Iterate results
     for actions_page in paged_actions:
         print(
             f"Completed: {actions_page.completed}, "
@@ -119,15 +121,11 @@ def sample_conversation_summarization():
         )
 
         for action_result in actions_page.task_results or []:
-            print(f"\nAction Name: {getattr(action_result, 'name', None)}")
-            print(f"Action Status: {getattr(action_result, 'status', None)}")
-            print(f"Kind: {getattr(action_result, 'kind', None)}")
-
             if isinstance(action_result, SummarizationOperationResult):
-                for conversation in action_result.results.conversations:
+                for conversation in action_result.results.conversations or []:
                     print(f"  Conversation ID: {conversation.id}")
                     print("  Summaries:")
-                    for summary in conversation.summaries:
+                    for summary in conversation.summaries or []:
                         print(f"    Aspect: {summary.aspect}")
                         print(f"    Text: {summary.text}")
                     if conversation.warnings:
@@ -137,13 +135,18 @@ def sample_conversation_summarization():
             else:
                 print("  [No supported results to display for this action type]")
 
-    # Print errors if any
+    # Errors
     if d.get("errors"):
         print("\nErrors:")
         for error in d["errors"]:
-            print(f"  Code: {error.code} - {error.message}")
+            if isinstance(error, ConversationError):
+                print(f"  Code: {error.code} - {error.message}")
+# [END conversation_summarization]
+
+
+def main():
+    sample_conversation_summarization()
 
 
 if __name__ == "__main__":
-    sample_conversation_summarization()
-# [END conversation_summarization]
+    main()
