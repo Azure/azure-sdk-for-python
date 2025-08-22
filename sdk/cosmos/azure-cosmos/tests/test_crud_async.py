@@ -12,12 +12,12 @@ import unittest
 import urllib.parse as urllib
 import uuid
 from asyncio import sleep
-
+from unittest import mock
 import pytest
-import requests
+from aiohttp import web
 from azure.core import MatchConditions
 from azure.core.exceptions import AzureError, ServiceResponseError
-from azure.core.pipeline.transport import AsyncioRequestsTransport, AsyncioRequestsTransportResponse
+from azure.core.pipeline.transport import AsyncioRequestsTransport, AsyncioRequestsTransportResponse, AioHttpTransport, AioHttpTransportResponse
 
 import azure.cosmos.documents as documents
 import azure.cosmos.exceptions as exceptions
@@ -27,23 +27,28 @@ from azure.cosmos.http_constants import HttpHeaders, StatusCodes
 from azure.cosmos.partition_key import PartitionKey
 
 
-class TimeoutTransport(AsyncioRequestsTransport):
+class TimeoutTransport(AioHttpTransport):
 
-    def __init__(self, response):
+    def __init__(self, response, passthrough=False):
         self._response = response
-        super(TimeoutTransport, self).__init__()
+        self.passthrough = passthrough
+        super().__init__()
 
-    async def send(self, *args, **kwargs):
-        if kwargs.pop("passthrough", False):
-            return super(TimeoutTransport, self).send(*args, **kwargs)
+    async def send(self, request, **kwargs):
+        if self.passthrough:
+            return await super().send(request, **kwargs)
 
-        time.sleep(5)
+        await asyncio.sleep(5)
         if isinstance(self._response, Exception):
+            # The SDK's retry logic wraps the original error in a ServiceRequestError.
+            # We raise it this way to properly simulate a transport-level timeout.
             raise self._response
-        current_response = await self._response
-        output = requests.Response()
-        output.status_code = current_response
-        response = AsyncioRequestsTransportResponse(None, output)
+
+        # This part of the mock is for simulating successful responses, not used in this specific timeout test.
+        raw_response = web.Response(status=self._response, reason="mock")
+        raw_response.read = mock.AsyncMock(return_value=b"")
+        response = AioHttpTransportResponse(request, raw_response)
+        await response.load_body()
         return response
 
 @pytest.mark.cosmosCircuitBreaker
@@ -968,50 +973,71 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
                 end_time = time.time()
                 return end_time - start_time
 
-    # TODO: Skipping this test to debug later
-    @unittest.skip
-    async def test_absolute_client_timeout_async(self):
-        with self.assertRaises(exceptions.CosmosClientTimeoutError):
-            async with CosmosClient(
-                    "https://localhost:9999",
-                    TestCRUDOperationsAsync.masterKey,
-                    retry_total=3,
-                    timeout=1) as client:
-                print('Async initialization')
+    async def test_absolute_client_timeout_on_connection_error_async(self):
+        # Connection Refused: This is an active rejection from the target machine's operating system. It receives your
+        # connection request but immediately sends back a response indicating that no process is listening on that port.
+        # This is a fast failure.
+        # Connection Timeout Setting: This occurs when your connection request receives no response at all within a
+        # specified period. The client gives up waiting. This typically happens if the target machine is down,
+        # unreachable due to network configuration, or a firewall is silently dropping the packets.
+        # so in the below test connection_timeout setting has no bearing on the test outcome
+        client = None
+        try:
+            with self.assertRaises(exceptions.CosmosClientTimeoutError):
+                async with CosmosClient(
+                        "https://localhost:9999",
+                        TestCRUDOperationsAsync.masterKey,
+                        retry_total=10,
+                        connection_timeout=100,
+                        timeout=2) as client:
+                    print('Async initialization')
+        finally:
+            if client:
+                await client.close()
 
+    async def test_absolute_client_timeout_on_read_operation_async(self):
         error_response = ServiceResponseError("Read timeout")
-        timeout_transport = TimeoutTransport(error_response)
-        async with CosmosClient(
-                self.host, self.masterKey, transport=timeout_transport,
-                passthrough=True) as client:
-            print('Async initialization')
+        # Initialize transport with passthrough enabled for client setup
+        timeout_transport = TimeoutTransport(error_response, passthrough=True)
 
+        async with CosmosClient(
+                self.host, self.masterKey, transport=timeout_transport) as client:
+            # Disable passthrough to test the timeout on the next call
+            timeout_transport.passthrough = False
             with self.assertRaises(exceptions.CosmosClientTimeoutError):
                 await client.create_database_if_not_exists("test", timeout=2)
 
-        status_response = 500  # Users connection level retry
-        timeout_transport = TimeoutTransport(status_response)
+
+    async def test_absolute_client_timeout_on_server_error_async(self):
+        # Server Error (500): Retry policy doesn't retry, it fails fast by raising the exception
+        # CosmosHttpResponseError.So if we increase the timeout below to a higher value
+        # it will return in CosmosHttpResponseError instead of CosmosClientTimeoutError which is correct.
+        status_response = 500  # server error
+        timeout_transport = TimeoutTransport(status_response, passthrough=True)
         async with CosmosClient(
-                self.host, self.masterKey, transport=timeout_transport,
-                passthrough=True) as client:
-            print('Async initialization')
+                self.host, self.masterKey, transport=timeout_transport) as client:
+
+            timeout_transport.passthrough = False
             with self.assertRaises(exceptions.CosmosClientTimeoutError):
                 await client.create_database("test", timeout=2)
 
             databases = client.list_databases(timeout=2)
             with self.assertRaises(exceptions.CosmosClientTimeoutError):
-                databases = [database async for database in databases]
+                _ = [database async for database in databases]
 
+    async def test_absolute_client_timeout_on_throttling_error_async(self):
+        # Throttling(429): Keeps retrying → Eventually times out → CosmosClientTimeoutError
         status_response = 429  # Uses Cosmos custom retry
-        timeout_transport = TimeoutTransport(status_response)
+        timeout_transport = TimeoutTransport(status_response, passthrough=True)
         async with CosmosClient(
-                self.host, self.masterKey, transport=timeout_transport,
-                passthrough=True) as client:
+                self.host, self.masterKey, transport=timeout_transport
+                ) as client:
             print('Async initialization')
+            timeout_transport.passthrough = False
             with self.assertRaises(exceptions.CosmosClientTimeoutError):
-                await client.create_database_if_not_exists("test", timeout=2)
+                await client.create_database_if_not_exists("test", timeout=20)
 
-            databases = client.list_databases(timeout=2)
+            databases = client.list_databases(timeout=12)
             with self.assertRaises(exceptions.CosmosClientTimeoutError):
                 databases = [database async for database in databases]
 

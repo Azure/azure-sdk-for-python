@@ -30,12 +30,13 @@ from azure.cosmos.partition_key import PartitionKey
 
 class TimeoutTransport(RequestsTransport):
 
-    def __init__(self, response):
+    def __init__(self, response, passthrough=False):
         self._response = response
+        self.passthrough = passthrough
         super(TimeoutTransport, self).__init__()
 
     def send(self, *args, **kwargs):
-        if kwargs.pop("passthrough", False):
+        if self.passthrough:
             return super(TimeoutTransport, self).send(*args, **kwargs)
 
         time.sleep(5)
@@ -1224,44 +1225,63 @@ class TestCRUDOperations(unittest.TestCase):
             end_time = time.time()
             return end_time - start_time
 
-    # TODO: Skipping this test to debug later
-    @unittest.skip
-    def test_absolute_client_timeout(self):
+    def test_absolute_client_timeout_on_connection_error(self):
+        # Connection Refused: This is an active rejection from the target machine's operating system. It receives your
+        # connection request but immediately sends back a response indicating that no process is listening on that port.
+        # This is a fast failure.
+        # Connection Timeout Setting: This occurs when your connection request receives no response at all within a
+        # specified period. The client gives up waiting. This typically happens if the target machine is down,
+        # unreachable due to network configuration, or a firewall is silently dropping the packets.
+        # so in the below test connection_timeout setting has no bearing on the test outcome
         with self.assertRaises(exceptions.CosmosClientTimeoutError):
             cosmos_client.CosmosClient(
                 "https://localhost:9999",
                 TestCRUDOperations.masterKey,
-                "Session",
-                retry_total=3,
-                timeout=1)
+                retry_total=50,
+                connection_timeout=100,
+                timeout= 10)
 
+    def test_absolute_client_timeout_on_read_operation(self):
         error_response = ServiceResponseError("Read timeout")
-        timeout_transport = TimeoutTransport(error_response)
-        client = cosmos_client.CosmosClient(
-            self.host, self.masterKey, "Session", transport=timeout_transport, passthrough=True)
+        # Initialize transport with passthrough enabled for client setup
+        timeout_transport = TimeoutTransport(error_response, passthrough=True)
 
+        client = cosmos_client.CosmosClient(
+            self.host, self.masterKey, "Session", transport=timeout_transport)
+        timeout_transport.passthrough = False
         with self.assertRaises(exceptions.CosmosClientTimeoutError):
             client.create_database_if_not_exists("test", timeout=2)
 
-        status_response = 500  # Users connection level retry
-        timeout_transport = TimeoutTransport(status_response)
+    def test_absolute_client_timeout_on_server_error(self):
+        # Server Error (500): Retry policy doesn't retry, it fails fast by raising the exception
+        # CosmosHttpResponseError.So if we increase the timeout below to a higher value
+        # it will return in CosmosHttpResponseError instead of CosmosClientTimeoutError which is correct.
+
+        status_response = 500  # server error
+        timeout_transport = TimeoutTransport(status_response, passthrough=True)
         client = cosmos_client.CosmosClient(
-            self.host, self.masterKey, "Session", transport=timeout_transport, passthrough=True)
-        with self.assertRaises(exceptions.CosmosClientTimeoutError):
-            client.create_database("test", timeout=2)
+            self.host, self.masterKey, "Session", transport=timeout_transport)
 
-        databases = client.list_databases(timeout=2)
+        timeout_transport.passthrough = False
         with self.assertRaises(exceptions.CosmosClientTimeoutError):
-            list(databases)
+          client.create_database("test", timeout=2)
 
+        databases = client.list_databases(timeout=3)
+        with self.assertRaises(exceptions.CosmosClientTimeoutError):
+              list(databases)
+
+    def test_absolute_client_timeout_on_throttling_error(self):
+        #Throttling(429): Keeps retrying → Eventually times out → CosmosClientTimeoutError
         status_response = 429  # Uses Cosmos custom retry
-        timeout_transport = TimeoutTransport(status_response)
+        timeout_transport = TimeoutTransport(status_response, passthrough=True)
         client = cosmos_client.CosmosClient(
-            self.host, self.masterKey, "Session", transport=timeout_transport, passthrough=True)
-        with self.assertRaises(exceptions.CosmosClientTimeoutError):
-            client.create_database_if_not_exists("test", timeout=2)
+            self.host, self.masterKey, "Session", transport=timeout_transport)
 
-        databases = client.list_databases(timeout=2)
+        timeout_transport.passthrough = False
+        with self.assertRaises(exceptions.CosmosClientTimeoutError):
+            client.create_database_if_not_exists("test", timeout=30)
+
+        databases = client.list_databases(timeout=29)
         with self.assertRaises(exceptions.CosmosClientTimeoutError):
             list(databases)
 
