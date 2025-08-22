@@ -5112,7 +5112,7 @@ class RunStepDeltaToolCall(_Model):
     RunStepDeltaCodeInterpreterToolCall, RunStepDeltaConnectedAgentToolCall,
     RunStepDeltaDeepResearchToolCall, RunStepDeltaMicrosoftFabricToolCall,
     RunStepDeltaFileSearchToolCall, RunStepDeltaFunctionToolCall, RunStepDeltaMcpToolCall,
-    RunStepDeltaOpenAPIToolCall
+    RunStepDeltaOpenAPIToolCall, RunStepDeltaSharepointToolCall
 
     :ivar index: The index of the tool call detail in the run step's tool_calls array. Required.
     :vartype index: int
@@ -6071,6 +6071,46 @@ class RunStepDeltaOpenAPIToolCall(RunStepDeltaToolCall, discriminator="openapi")
         super().__init__(*args, type="openapi", **kwargs)
 
 
+class RunStepDeltaSharepointToolCall(RunStepDeltaToolCall, discriminator="sharepoint_grounding"):
+    """Represents the SharePoint tool call in a streaming run step.
+
+    :ivar index: The index of the tool call detail in the run step's tool_calls array. Required.
+    :vartype index: int
+    :ivar id: The ID of the tool call, used when submitting outputs to the run. Required.
+    :vartype id: str
+    :ivar type: The object type, which is always 'sharepoint_grounding'. Required. Default value is
+     "sharepoint_grounding".
+    :vartype type: str
+    :ivar sharepoint_grounding: SharePoint tool input and output. Required.
+    :vartype sharepoint_grounding: dict[str, str]
+    """
+
+    type: Literal["sharepoint_grounding"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always 'sharepoint_grounding'. Required. Default value is
+     \"sharepoint_grounding\"."""
+    sharepoint_grounding: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """SharePoint tool input and output. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        index: int,
+        id: str,  # pylint: disable=redefined-builtin
+        sharepoint_grounding: Dict[str, str],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="sharepoint_grounding", **kwargs)
+
+
 class RunStepDeltaToolCallObject(RunStepDeltaDetail, discriminator="tool_calls"):
     """Represents an invocation of tool calls as part of a streaming run step.
 
@@ -6601,7 +6641,7 @@ class RunStepSharepointToolCall(RunStepToolCall, discriminator="sharepoint_groun
     :ivar type: The object type, which is always 'sharepoint_grounding'. Required. Default value is
      "sharepoint_grounding".
     :vartype type: str
-    :ivar share_point: Reserved for future use. Required.
+    :ivar share_point: SharePoint tool input and output. Required.
     :vartype share_point: dict[str, str]
     """
 
@@ -6611,7 +6651,7 @@ class RunStepSharepointToolCall(RunStepToolCall, discriminator="sharepoint_groun
     share_point: Dict[str, str] = rest_field(
         name="sharepoint_grounding", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Reserved for future use. Required."""
+    """SharePoint tool input and output. Required."""
 
     @overload
     def __init__(
