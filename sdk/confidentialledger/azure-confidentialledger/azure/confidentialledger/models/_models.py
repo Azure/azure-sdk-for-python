@@ -593,41 +593,6 @@ class LedgerEntryClaim(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LedgerIdentityInformation(_Model):
-    """Contains the information about a Confidential Ledger.
-
-    :ivar ledger_id: Id for the ledger.
-    :vartype ledger_id: str
-    :ivar ledger_tls_certificate: PEM-encoded certificate used for TLS by the Confidential Ledger.
-     Required.
-    :vartype ledger_tls_certificate: str
-    """
-
-    ledger_id: Optional[str] = rest_field(name="ledgerId", visibility=["read"])
-    """Id for the ledger."""
-    ledger_tls_certificate: str = rest_field(
-        name="ledgerTlsCertificate", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """PEM-encoded certificate used for TLS by the Confidential Ledger. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        ledger_tls_certificate: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class LedgerQueryResult(_Model):
     """The result of querying for a ledger entry from an older transaction id. The
     ledger entry is available in the response only if the returned state is Ready.

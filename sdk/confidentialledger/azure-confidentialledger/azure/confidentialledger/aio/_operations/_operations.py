@@ -30,7 +30,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ... import models as _models2
+from ... import models as _models
 from ..._operations._operations import (
     build_confidential_ledger_create_ledger_entry_request,
     build_confidential_ledger_create_or_update_ledger_user_request,
@@ -79,7 +79,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 ):
 
     @distributed_trace_async
-    async def get_constitution(self, **kwargs: Any) -> _models2.Constitution:
+    async def get_constitution(self, **kwargs: Any) -> _models.Constitution:
         """Gets the constitution used for governance.
 
         The constitution is a script that assesses and applies proposals from
@@ -100,7 +100,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models2.Constitution] = kwargs.pop("cls", None)
+        cls: ClsType[_models.Constitution] = kwargs.pop("cls", None)
 
         _request = build_confidential_ledger_get_constitution_request(
             api_version=self._config.api_version,
@@ -128,13 +128,13 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ConfidentialLedgerError, response)
+            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models2.Constitution, response.json())
+            deserialized = _deserialize(_models.Constitution, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -142,7 +142,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_consortium_members(self, **kwargs: Any) -> AsyncItemPaged["_models2.ConsortiumMember"]:
+    def list_consortium_members(self, **kwargs: Any) -> AsyncItemPaged["_models.ConsortiumMember"]:
         """Lists the consortium members.
 
         Consortium members can manage the Confidential Ledger.
@@ -155,7 +155,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models2.ConsortiumMember]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.ConsortiumMember]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -204,7 +204,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models2.ConsortiumMember], deserialized.get("members", []))
+            list_of_elem = _deserialize(List[_models.ConsortiumMember], deserialized.get("members", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -220,7 +220,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models2.ConfidentialLedgerError, response)
+                error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -228,7 +228,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def get_enclave_quotes(self, **kwargs: Any) -> _models2.ConfidentialLedgerEnclaves:
+    async def get_enclave_quotes(self, **kwargs: Any) -> _models.ConfidentialLedgerEnclaves:
         """Gets quotes for all nodes of the Confidential Ledger.
 
         A quote is an SGX enclave measurement that can be used to verify the validity
@@ -250,7 +250,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models2.ConfidentialLedgerEnclaves] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ConfidentialLedgerEnclaves] = kwargs.pop("cls", None)
 
         _request = build_confidential_ledger_get_enclave_quotes_request(
             api_version=self._config.api_version,
@@ -278,13 +278,13 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ConfidentialLedgerError, response)
+            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models2.ConfidentialLedgerEnclaves, response.json())
+            deserialized = _deserialize(_models.ConfidentialLedgerEnclaves, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -292,7 +292,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_collections(self, **kwargs: Any) -> AsyncItemPaged["_models2.Collection"]:
+    def list_collections(self, **kwargs: Any) -> AsyncItemPaged["_models.Collection"]:
         """Retrieves a list of collection ids present in the Confidential Ledger.
 
         Collection ids are user-created collections of ledger entries.
@@ -304,7 +304,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models2.Collection]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.Collection]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -353,7 +353,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models2.Collection], deserialized.get("collections", []))
+            list_of_elem = _deserialize(List[_models.Collection], deserialized.get("collections", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -369,7 +369,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models2.ConfidentialLedgerError, response)
+                error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -385,7 +385,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         to_transaction_id: Optional[str] = None,
         tag: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncItemPaged["_models2.LedgerEntry"]:
+    ) -> AsyncItemPaged["_models.LedgerEntry"]:
         """Gets ledger entries from a collection corresponding to a range.
 
         A collection id may optionally be specified. Only entries in the specified (or
@@ -407,7 +407,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models2.LedgerEntry]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.LedgerEntry]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -460,7 +460,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models2.LedgerEntry], deserialized.get("entries", []))
+            list_of_elem = _deserialize(List[_models.LedgerEntry], deserialized.get("entries", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -476,7 +476,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models2.ConfidentialLedgerError, response)
+                error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -486,13 +486,13 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
     @overload
     async def create_ledger_entry(
         self,
-        entry: _models2.LedgerEntry,
+        entry: _models.LedgerEntry,
         *,
         collection_id: Optional[str] = None,
         tags: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models2.LedgerWriteResult:
+    ) -> _models.LedgerWriteResult:
         """Writes a ledger entry.
 
         A collection id may optionally be specified.
@@ -520,7 +520,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         tags: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models2.LedgerWriteResult:
+    ) -> _models.LedgerWriteResult:
         """Writes a ledger entry.
 
         A collection id may optionally be specified.
@@ -548,7 +548,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         tags: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models2.LedgerWriteResult:
+    ) -> _models.LedgerWriteResult:
         """Writes a ledger entry.
 
         A collection id may optionally be specified.
@@ -570,12 +570,12 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
     @distributed_trace_async
     async def create_ledger_entry(
         self,
-        entry: Union[_models2.LedgerEntry, JSON, IO[bytes]],
+        entry: Union[_models.LedgerEntry, JSON, IO[bytes]],
         *,
         collection_id: Optional[str] = None,
         tags: Optional[str] = None,
         **kwargs: Any
-    ) -> _models2.LedgerWriteResult:
+    ) -> _models.LedgerWriteResult:
         """Writes a ledger entry.
 
         A collection id may optionally be specified.
@@ -603,7 +603,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models2.LedgerWriteResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.LedgerWriteResult] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -642,7 +642,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ConfidentialLedgerError, response)
+            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -653,7 +653,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models2.LedgerWriteResult, response.json())
+            deserialized = _deserialize(_models.LedgerWriteResult, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -663,7 +663,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
     @distributed_trace_async
     async def get_ledger_entry(
         self, transaction_id: str, *, collection_id: Optional[str] = None, **kwargs: Any
-    ) -> _models2.LedgerQueryResult:
+    ) -> _models.LedgerQueryResult:
         """Gets the ledger entry at the specified transaction id. A collection id may
         optionally be specified to indicate the collection from which to fetch the
         value.
@@ -692,7 +692,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models2.LedgerQueryResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.LedgerQueryResult] = kwargs.pop("cls", None)
 
         _request = build_confidential_ledger_get_ledger_entry_request(
             transaction_id=transaction_id,
@@ -722,13 +722,13 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ConfidentialLedgerError, response)
+            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models2.LedgerQueryResult, response.json())
+            deserialized = _deserialize(_models.LedgerQueryResult, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -736,7 +736,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_receipt(self, transaction_id: str, **kwargs: Any) -> _models2.TransactionReceipt:
+    async def get_receipt(self, transaction_id: str, **kwargs: Any) -> _models.TransactionReceipt:
         """Gets a receipt certifying ledger contents at a particular transaction id.
 
         Gets a receipt certifying ledger contents at a particular transaction id.
@@ -758,7 +758,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models2.TransactionReceipt] = kwargs.pop("cls", None)
+        cls: ClsType[_models.TransactionReceipt] = kwargs.pop("cls", None)
 
         _request = build_confidential_ledger_get_receipt_request(
             transaction_id=transaction_id,
@@ -787,13 +787,13 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ConfidentialLedgerError, response)
+            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models2.TransactionReceipt, response.json())
+            deserialized = _deserialize(_models.TransactionReceipt, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -801,7 +801,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_transaction_status(self, transaction_id: str, **kwargs: Any) -> _models2.TransactionStatus:
+    async def get_transaction_status(self, transaction_id: str, **kwargs: Any) -> _models.TransactionStatus:
         """Gets the status of an entry identified by a transaction id.
 
         Gets the status of an entry identified by a transaction id.
@@ -823,7 +823,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models2.TransactionStatus] = kwargs.pop("cls", None)
+        cls: ClsType[_models.TransactionStatus] = kwargs.pop("cls", None)
 
         _request = build_confidential_ledger_get_transaction_status_request(
             transaction_id=transaction_id,
@@ -852,13 +852,13 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ConfidentialLedgerError, response)
+            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models2.TransactionStatus, response.json())
+            deserialized = _deserialize(_models.TransactionStatus, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -868,7 +868,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
     @distributed_trace_async
     async def get_current_ledger_entry(
         self, *, collection_id: Optional[str] = None, **kwargs: Any
-    ) -> _models2.LedgerEntry:
+    ) -> _models.LedgerEntry:
         """Gets the current value available in the ledger.
 
         A collection id may optionally be specified.
@@ -890,7 +890,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models2.LedgerEntry] = kwargs.pop("cls", None)
+        cls: ClsType[_models.LedgerEntry] = kwargs.pop("cls", None)
 
         _request = build_confidential_ledger_get_current_ledger_entry_request(
             collection_id=collection_id,
@@ -919,13 +919,13 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ConfidentialLedgerError, response)
+            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models2.LedgerEntry, response.json())
+            deserialized = _deserialize(_models.LedgerEntry, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -933,7 +933,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_users(self, **kwargs: Any) -> AsyncItemPaged["_models2.LedgerUser"]:
+    def list_users(self, **kwargs: Any) -> AsyncItemPaged["_models.LedgerUser"]:
         """Gets details on a list of users.
 
         All users' object IDs and single role per user will be returned.
@@ -945,7 +945,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models2.LedgerUser]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.LedgerUser]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -994,7 +994,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models2.LedgerUser], deserialized.get("ledgerUsers", []))
+            list_of_elem = _deserialize(List[_models.LedgerUser], deserialized.get("ledgerUsers", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -1010,7 +1010,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models2.ConfidentialLedgerError, response)
+                error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -1018,7 +1018,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_ledger_users(self, **kwargs: Any) -> AsyncItemPaged["_models2.LedgerUserMultipleRoles"]:
+    def list_ledger_users(self, **kwargs: Any) -> AsyncItemPaged["_models.LedgerUserMultipleRoles"]:
         """Gets details on a list of users.
 
         All users' object IDs and multiple roles will be returned.
@@ -1031,7 +1031,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models2.LedgerUserMultipleRoles]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.LedgerUserMultipleRoles]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -1080,7 +1080,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models2.LedgerUserMultipleRoles], deserialized.get("ledgerUsers", []))
+            list_of_elem = _deserialize(List[_models.LedgerUserMultipleRoles], deserialized.get("ledgerUsers", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -1096,7 +1096,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models2.ConfidentialLedgerError, response)
+                error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -1150,14 +1150,14 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ConfidentialLedgerError, response)
+            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
-    async def get_user(self, user_id: str, **kwargs: Any) -> _models2.LedgerUser:
+    async def get_user(self, user_id: str, **kwargs: Any) -> _models.LedgerUser:
         """Gets a user.
 
         Gets a user.
@@ -1179,7 +1179,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models2.LedgerUser] = kwargs.pop("cls", None)
+        cls: ClsType[_models.LedgerUser] = kwargs.pop("cls", None)
 
         _request = build_confidential_ledger_get_user_request(
             user_id=user_id,
@@ -1208,13 +1208,13 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ConfidentialLedgerError, response)
+            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models2.LedgerUser, response.json())
+            deserialized = _deserialize(_models.LedgerUser, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1225,11 +1225,11 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
     async def create_or_update_user(
         self,
         user_id: str,
-        user_details: _models2.LedgerUser,
+        user_details: _models.LedgerUser,
         *,
         content_type: str = "application/merge-patch+json",
         **kwargs: Any
-    ) -> _models2.LedgerUser:
+    ) -> _models.LedgerUser:
         """Adds a user or updates a user's fields.
 
         A JSON merge patch is applied for existing users.
@@ -1249,7 +1249,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
     @overload
     async def create_or_update_user(
         self, user_id: str, user_details: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
-    ) -> _models2.LedgerUser:
+    ) -> _models.LedgerUser:
         """Adds a user or updates a user's fields.
 
         A JSON merge patch is applied for existing users.
@@ -1274,7 +1274,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         *,
         content_type: str = "application/merge-patch+json",
         **kwargs: Any
-    ) -> _models2.LedgerUser:
+    ) -> _models.LedgerUser:
         """Adds a user or updates a user's fields.
 
         A JSON merge patch is applied for existing users.
@@ -1293,8 +1293,8 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
     @distributed_trace_async
     async def create_or_update_user(
-        self, user_id: str, user_details: Union[_models2.LedgerUser, JSON, IO[bytes]], **kwargs: Any
-    ) -> _models2.LedgerUser:
+        self, user_id: str, user_details: Union[_models.LedgerUser, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.LedgerUser:
         """Adds a user or updates a user's fields.
 
         A JSON merge patch is applied for existing users.
@@ -1320,7 +1320,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models2.LedgerUser] = kwargs.pop("cls", None)
+        cls: ClsType[_models.LedgerUser] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/merge-patch+json"
         _content = None
@@ -1358,13 +1358,13 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ConfidentialLedgerError, response)
+            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models2.LedgerUser, response.json())
+            deserialized = _deserialize(_models.LedgerUser, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1418,14 +1418,14 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ConfidentialLedgerError, response)
+            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
-    async def get_ledger_user(self, user_id: str, **kwargs: Any) -> _models2.LedgerUserMultipleRoles:
+    async def get_ledger_user(self, user_id: str, **kwargs: Any) -> _models.LedgerUserMultipleRoles:
         """Gets a user with multiple roles.
 
         Gets a user with multiple roles.
@@ -1447,7 +1447,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models2.LedgerUserMultipleRoles] = kwargs.pop("cls", None)
+        cls: ClsType[_models.LedgerUserMultipleRoles] = kwargs.pop("cls", None)
 
         _request = build_confidential_ledger_get_ledger_user_request(
             user_id=user_id,
@@ -1476,13 +1476,13 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ConfidentialLedgerError, response)
+            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models2.LedgerUserMultipleRoles, response.json())
+            deserialized = _deserialize(_models.LedgerUserMultipleRoles, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1493,11 +1493,11 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
     async def create_or_update_ledger_user(
         self,
         user_id: str,
-        user_multiple_roles: _models2.LedgerUserMultipleRoles,
+        user_multiple_roles: _models.LedgerUserMultipleRoles,
         *,
         content_type: str = "application/merge-patch+json",
         **kwargs: Any
-    ) -> _models2.LedgerUserMultipleRoles:
+    ) -> _models.LedgerUserMultipleRoles:
         """Adds a user or updates a user's fields.
 
         A JSON merge patch is applied for existing users.
@@ -1523,7 +1523,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         *,
         content_type: str = "application/merge-patch+json",
         **kwargs: Any
-    ) -> _models2.LedgerUserMultipleRoles:
+    ) -> _models.LedgerUserMultipleRoles:
         """Adds a user or updates a user's fields.
 
         A JSON merge patch is applied for existing users.
@@ -1549,7 +1549,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         *,
         content_type: str = "application/merge-patch+json",
         **kwargs: Any
-    ) -> _models2.LedgerUserMultipleRoles:
+    ) -> _models.LedgerUserMultipleRoles:
         """Adds a user or updates a user's fields.
 
         A JSON merge patch is applied for existing users.
@@ -1569,8 +1569,8 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
     @distributed_trace_async
     async def create_or_update_ledger_user(
-        self, user_id: str, user_multiple_roles: Union[_models2.LedgerUserMultipleRoles, JSON, IO[bytes]], **kwargs: Any
-    ) -> _models2.LedgerUserMultipleRoles:
+        self, user_id: str, user_multiple_roles: Union[_models.LedgerUserMultipleRoles, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.LedgerUserMultipleRoles:
         """Adds a user or updates a user's fields.
 
         A JSON merge patch is applied for existing users.
@@ -1597,7 +1597,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models2.LedgerUserMultipleRoles] = kwargs.pop("cls", None)
+        cls: ClsType[_models.LedgerUserMultipleRoles] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/merge-patch+json"
         _content = None
@@ -1635,13 +1635,13 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ConfidentialLedgerError, response)
+            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models2.LedgerUserMultipleRoles, response.json())
+            deserialized = _deserialize(_models.LedgerUserMultipleRoles, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1649,7 +1649,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_user_defined_endpoint(self, **kwargs: Any) -> _models2.Bundle:
+    async def get_user_defined_endpoint(self, **kwargs: Any) -> _models.Bundle:
         """Gets a user defined endpoint.
 
         Returns the user defined endpoint in the ACL instance.
@@ -1669,7 +1669,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models2.Bundle] = kwargs.pop("cls", None)
+        cls: ClsType[_models.Bundle] = kwargs.pop("cls", None)
 
         _request = build_confidential_ledger_get_user_defined_endpoint_request(
             api_version=self._config.api_version,
@@ -1697,13 +1697,13 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ConfidentialLedgerError, response)
+            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models2.Bundle, response.json())
+            deserialized = _deserialize(_models.Bundle, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1712,7 +1712,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
     @overload
     async def create_user_defined_endpoint(
-        self, bundle: _models2.Bundle, *, content_type: str = "application/json", **kwargs: Any
+        self, bundle: _models.Bundle, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Creates a user defined endpoint.
 
@@ -1765,9 +1765,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         """
 
     @distributed_trace_async
-    async def create_user_defined_endpoint(
-        self, bundle: Union[_models2.Bundle, JSON, IO[bytes]], **kwargs: Any
-    ) -> None:
+    async def create_user_defined_endpoint(self, bundle: Union[_models.Bundle, JSON, IO[bytes]], **kwargs: Any) -> None:
         """Creates a user defined endpoint.
 
         Creates the user defined endpoint in the ACL instance.
@@ -1823,14 +1821,14 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ConfidentialLedgerError, response)
+            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
-    async def get_runtime_options(self, **kwargs: Any) -> _models2.JsRuntimeOptions:
+    async def get_runtime_options(self, **kwargs: Any) -> _models.JsRuntimeOptions:
         """Runtime options for user defined endpoints.
 
         It returns the runtime options.
@@ -1850,7 +1848,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models2.JsRuntimeOptions] = kwargs.pop("cls", None)
+        cls: ClsType[_models.JsRuntimeOptions] = kwargs.pop("cls", None)
 
         _request = build_confidential_ledger_get_runtime_options_request(
             api_version=self._config.api_version,
@@ -1878,13 +1876,13 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ConfidentialLedgerError, response)
+            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models2.JsRuntimeOptions, response.json())
+            deserialized = _deserialize(_models.JsRuntimeOptions, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1893,8 +1891,8 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
     @overload
     async def update_runtime_options(
-        self, js_runtime_options: _models2.JsRuntimeOptions, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models2.JsRuntimeOptions:
+        self, js_runtime_options: _models.JsRuntimeOptions, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.JsRuntimeOptions:
         """Runtime options for user defined endpoints.
 
         Updates the runtime options.
@@ -1912,7 +1910,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
     @overload
     async def update_runtime_options(
         self, js_runtime_options: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models2.JsRuntimeOptions:
+    ) -> _models.JsRuntimeOptions:
         """Runtime options for user defined endpoints.
 
         Updates the runtime options.
@@ -1930,7 +1928,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
     @overload
     async def update_runtime_options(
         self, js_runtime_options: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models2.JsRuntimeOptions:
+    ) -> _models.JsRuntimeOptions:
         """Runtime options for user defined endpoints.
 
         Updates the runtime options.
@@ -1947,8 +1945,8 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
     @distributed_trace_async
     async def update_runtime_options(
-        self, js_runtime_options: Union[_models2.JsRuntimeOptions, JSON, IO[bytes]], **kwargs: Any
-    ) -> _models2.JsRuntimeOptions:
+        self, js_runtime_options: Union[_models.JsRuntimeOptions, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.JsRuntimeOptions:
         """Runtime options for user defined endpoints.
 
         Updates the runtime options.
@@ -1973,7 +1971,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models2.JsRuntimeOptions] = kwargs.pop("cls", None)
+        cls: ClsType[_models.JsRuntimeOptions] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -2010,13 +2008,13 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ConfidentialLedgerError, response)
+            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models2.JsRuntimeOptions, response.json())
+            deserialized = _deserialize(_models.JsRuntimeOptions, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2024,7 +2022,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_user_defined_endpoints_module(self, *, module_name: str, **kwargs: Any) -> _models2.ModuleDef:
+    async def get_user_defined_endpoints_module(self, *, module_name: str, **kwargs: Any) -> _models.ModuleDef:
         """Module for user defined endpoints.
 
         It gets the module for the user defined endpoint.
@@ -2046,7 +2044,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models2.ModuleDef] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ModuleDef] = kwargs.pop("cls", None)
 
         _request = build_confidential_ledger_get_user_defined_endpoints_module_request(
             module_name=module_name,
@@ -2075,13 +2073,13 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ConfidentialLedgerError, response)
+            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models2.ModuleDef, response.json())
+            deserialized = _deserialize(_models.ModuleDef, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2089,7 +2087,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_user_defined_functions(self, **kwargs: Any) -> AsyncItemPaged["_models2.UserDefinedFunction"]:
+    def list_user_defined_functions(self, **kwargs: Any) -> AsyncItemPaged["_models.UserDefinedFunction"]:
         """Retrieves a list of user defined functions present in the Confidential Ledger.
 
         User defined functions stored in the Confidential Ledger.
@@ -2102,7 +2100,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models2.UserDefinedFunction]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.UserDefinedFunction]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -2151,7 +2149,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models2.UserDefinedFunction], deserialized.get("functions", []))
+            list_of_elem = _deserialize(List[_models.UserDefinedFunction], deserialized.get("functions", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -2167,7 +2165,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models2.ConfidentialLedgerError, response)
+                error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -2221,14 +2219,14 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ConfidentialLedgerError, response)
+            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
-    async def get_user_defined_function(self, function_id: str, **kwargs: Any) -> _models2.UserDefinedFunction:
+    async def get_user_defined_function(self, function_id: str, **kwargs: Any) -> _models.UserDefinedFunction:
         """Gets a user defined function.
 
         Returns the user defined function in the Confidential Ledger.
@@ -2250,7 +2248,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models2.UserDefinedFunction] = kwargs.pop("cls", None)
+        cls: ClsType[_models.UserDefinedFunction] = kwargs.pop("cls", None)
 
         _request = build_confidential_ledger_get_user_defined_function_request(
             function_id=function_id,
@@ -2279,13 +2277,13 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ConfidentialLedgerError, response)
+            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models2.UserDefinedFunction, response.json())
+            deserialized = _deserialize(_models.UserDefinedFunction, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2296,11 +2294,11 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
     async def create_user_defined_function(
         self,
         function_id: str,
-        user_defined_function: _models2.UserDefinedFunction,
+        user_defined_function: _models.UserDefinedFunction,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models2.UserDefinedFunction:
+    ) -> _models.UserDefinedFunction:
         """Creates a user defined function.
 
         Creates the user defined function in the Confidential Ledger.
@@ -2321,7 +2319,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
     @overload
     async def create_user_defined_function(
         self, function_id: str, user_defined_function: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models2.UserDefinedFunction:
+    ) -> _models.UserDefinedFunction:
         """Creates a user defined function.
 
         Creates the user defined function in the Confidential Ledger.
@@ -2347,7 +2345,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models2.UserDefinedFunction:
+    ) -> _models.UserDefinedFunction:
         """Creates a user defined function.
 
         Creates the user defined function in the Confidential Ledger.
@@ -2369,9 +2367,9 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
     async def create_user_defined_function(
         self,
         function_id: str,
-        user_defined_function: Union[_models2.UserDefinedFunction, JSON, IO[bytes]],
+        user_defined_function: Union[_models.UserDefinedFunction, JSON, IO[bytes]],
         **kwargs: Any
-    ) -> _models2.UserDefinedFunction:
+    ) -> _models.UserDefinedFunction:
         """Creates a user defined function.
 
         Creates the user defined function in the Confidential Ledger.
@@ -2398,7 +2396,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models2.UserDefinedFunction] = kwargs.pop("cls", None)
+        cls: ClsType[_models.UserDefinedFunction] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -2436,7 +2434,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ConfidentialLedgerError, response)
+            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2447,7 +2445,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models2.UserDefinedFunction, response.json())
+            deserialized = _deserialize(_models.UserDefinedFunction, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2458,11 +2456,11 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
     async def execute_user_defined_function(
         self,
         function_id: str,
-        user_defined_function_execution_properties: Optional[_models2.UserDefinedFunctionExecutionProperties] = None,
+        user_defined_function_execution_properties: Optional[_models.UserDefinedFunctionExecutionProperties] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models2.UserDefinedFunctionExecutionResponse:
+    ) -> _models.UserDefinedFunctionExecutionResponse:
         """Executes a user defined function.
 
         Executes the user defined function in the Confidential Ledger.
@@ -2490,7 +2488,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models2.UserDefinedFunctionExecutionResponse:
+    ) -> _models.UserDefinedFunctionExecutionResponse:
         """Executes a user defined function.
 
         Executes the user defined function in the Confidential Ledger.
@@ -2517,7 +2515,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models2.UserDefinedFunctionExecutionResponse:
+    ) -> _models.UserDefinedFunctionExecutionResponse:
         """Executes a user defined function.
 
         Executes the user defined function in the Confidential Ledger.
@@ -2541,10 +2539,10 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         self,
         function_id: str,
         user_defined_function_execution_properties: Optional[
-            Union[_models2.UserDefinedFunctionExecutionProperties, JSON, IO[bytes]]
+            Union[_models.UserDefinedFunctionExecutionProperties, JSON, IO[bytes]]
         ] = None,
         **kwargs: Any
-    ) -> _models2.UserDefinedFunctionExecutionResponse:
+    ) -> _models.UserDefinedFunctionExecutionResponse:
         """Executes a user defined function.
 
         Executes the user defined function in the Confidential Ledger.
@@ -2573,7 +2571,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models2.UserDefinedFunctionExecutionResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.UserDefinedFunctionExecutionResponse] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -2614,13 +2612,13 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ConfidentialLedgerError, response)
+            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models2.UserDefinedFunctionExecutionResponse, response.json())
+            deserialized = _deserialize(_models.UserDefinedFunctionExecutionResponse, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2628,7 +2626,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_user_defined_role(self, *, role_name: str, **kwargs: Any) -> List[_models2.Role]:
+    async def get_user_defined_role(self, *, role_name: str, **kwargs: Any) -> List[_models.Role]:
         """Gets role actions for user defined roles.
 
         user defined roles allow users to define and manage app specific AuthZ policy.
@@ -2650,7 +2648,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models2.Role]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.Role]] = kwargs.pop("cls", None)
 
         _request = build_confidential_ledger_get_user_defined_role_request(
             role_name=role_name,
@@ -2679,13 +2677,13 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ConfidentialLedgerError, response)
+            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(List[_models2.Role], response.json())
+            deserialized = _deserialize(List[_models.Role], response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2694,7 +2692,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
     @overload
     async def create_user_defined_role(
-        self, roles: List[_models2.Role], *, content_type: str = "application/json", **kwargs: Any
+        self, roles: List[_models.Role], *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Creates new roles and their actions.
 
@@ -2729,7 +2727,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         """
 
     @distributed_trace_async
-    async def create_user_defined_role(self, roles: Union[List[_models2.Role], IO[bytes]], **kwargs: Any) -> None:
+    async def create_user_defined_role(self, roles: Union[List[_models.Role], IO[bytes]], **kwargs: Any) -> None:
         """Creates new roles and their actions.
 
         User defined roles allow users to define and manage app specific AuthZ policy.
@@ -2784,7 +2782,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ConfidentialLedgerError, response)
+            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -2792,7 +2790,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
     @overload
     async def update_user_defined_role(
-        self, roles: List[_models2.Role], *, content_type: str = "application/json", **kwargs: Any
+        self, roles: List[_models.Role], *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Patch replaces the allowed action on existing roles,if the desire is to remove
         an existing action, the role must be deleted and recreated.
@@ -2829,7 +2827,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         """
 
     @distributed_trace_async
-    async def update_user_defined_role(self, roles: Union[List[_models2.Role], IO[bytes]], **kwargs: Any) -> None:
+    async def update_user_defined_role(self, roles: Union[List[_models.Role], IO[bytes]], **kwargs: Any) -> None:
         """Patch replaces the allowed action on existing roles,if the desire is to remove
         an existing action, the role must be deleted and recreated.
 
@@ -2885,7 +2883,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ConfidentialLedgerError, response)
+            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -2939,7 +2937,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ConfidentialLedgerError, response)
+            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:

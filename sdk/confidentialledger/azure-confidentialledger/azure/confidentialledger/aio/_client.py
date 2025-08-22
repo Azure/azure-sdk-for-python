@@ -20,7 +20,7 @@ from ._operations import _ConfidentialLedgerClientOperationsMixin
 
 
 class ConfidentialLedgerClient(_ConfidentialLedgerClientOperationsMixin):
-    """ConfidentialLedgerClient.
+    """Write and retrieve ledger entries against the Confidential Ledger service.
 
     :param ledger_endpoint: Required.
     :type ledger_endpoint: str
