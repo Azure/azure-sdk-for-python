@@ -31,6 +31,7 @@ from azure.cosmos.partition_key import PartitionKey
 
 from ._cosmos_client_connection import CosmosClientConnection
 from ._base import build_options, _set_throughput_options, _deserialize_throughput, _replace_throughput
+from ._constants import _Constants as Constants
 from .container import ContainerProxy
 from .offer import Offer, ThroughputProperties
 from .http_constants import StatusCodes as _StatusCodes
@@ -42,7 +43,8 @@ __all__ = ("DatabaseProxy",)
 
 
 # pylint: disable=protected-access
-# pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
+# pylint: disable=missing-client-constructor-parameter-credential
+# pylint: disable=missing-client-constructor-parameter-kwargs
 # pylint: disable=docstring-keyword-should-match-keyword-only
 
 def _get_database_link(database_or_id: Union[str, 'DatabaseProxy', Mapping[str, Any]]) -> str:
@@ -98,14 +100,18 @@ class DatabaseProxy(object):
     def __repr__(self) -> str:
         return "<DatabaseProxy [{}]>".format(self.database_link)[:1024]
 
-    def _get_container_id(self, container_or_id: Union[str, ContainerProxy, Mapping[str, Any]]) -> str:
+    def _get_container_id(
+        self, container_or_id: Union[str, ContainerProxy, Mapping[str, Any]]
+    ) -> str:
         if isinstance(container_or_id, str):
             return container_or_id
         if isinstance(container_or_id, ContainerProxy):
             return container_or_id.id
         return container_or_id["id"]
 
-    def _get_container_link(self, container_or_id: Union[str, ContainerProxy, Mapping[str, Any]]) -> str:
+    def _get_container_link(
+        self, container_or_id: Union[str, ContainerProxy, Mapping[str, Any]]
+    ) -> str:
         return "{}/colls/{}".format(self.database_link, self._get_container_id(container_or_id))
 
     def _get_user_link(self, user_or_id: Union[UserProxy, str, Mapping[str, Any]]) -> str:
@@ -136,7 +142,7 @@ class DatabaseProxy(object):
         :rtype: Dict[Str, Any]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given database couldn't be retrieved.
         """
-        session_token = kwargs.get('session_token')
+        session_token = kwargs.get(Constants.Kwargs.SESSION_TOKEN)
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
@@ -150,7 +156,7 @@ class DatabaseProxy(object):
 
         database_link = _get_database_link(self)
         if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
+            kwargs[Constants.Kwargs.INITIAL_HEADERS] = initial_headers
         request_options = build_options(kwargs)
         self._properties = self.client_connection.ReadDatabase(
             database_link, options=request_options, **kwargs
@@ -225,7 +231,7 @@ class DatabaseProxy(object):
                 :dedent: 0
                 :caption: Create a container with specific settings; in this case, a custom partition key:
         """
-        session_token = kwargs.get('session_token')
+        session_token = kwargs.get(Constants.Kwargs.SESSION_TOKEN)
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
@@ -277,14 +283,22 @@ class DatabaseProxy(object):
         if full_text_policy is not None:
             definition["fullTextPolicy"] = full_text_policy
         if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
+            kwargs[Constants.Kwargs.INITIAL_HEADERS] = initial_headers
         request_options = build_options(kwargs)
         _set_throughput_options(offer=offer_throughput, request_options=request_options)
         result = self.client_connection.CreateContainer(
-            database_link=self.database_link, collection=definition, options=request_options, **kwargs
+            database_link=self.database_link,
+            collection=definition,
+            options=request_options,
+            **kwargs
         )
 
-        return ContainerProxy(self.client_connection, self.database_link, result["id"], properties=result)
+        return ContainerProxy(
+            self.client_connection,
+            self.database_link,
+            result["id"],
+            properties=result
+        )
 
     @distributed_trace
     def create_container_if_not_exists(  # pylint:disable=docstring-missing-param
@@ -340,7 +354,7 @@ class DatabaseProxy(object):
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container read or creation failed.
         :rtype: ~azure.cosmos.ContainerProxy
         """
-        session_token = kwargs.get('session_token')
+        session_token = kwargs.get(Constants.Kwargs.SESSION_TOKEN)
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
@@ -410,7 +424,7 @@ class DatabaseProxy(object):
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the container couldn't be deleted.
         :rtype: None
         """
-        session_token = kwargs.get('session_token')
+        session_token = kwargs.get(Constants.Kwargs.SESSION_TOKEN)
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
@@ -435,7 +449,7 @@ class DatabaseProxy(object):
             )
 
         if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
+            kwargs[Constants.Kwargs.INITIAL_HEADERS] = initial_headers
         request_options = build_options(kwargs)
         collection_link = self._get_container_link(container)
         self.client_connection.DeleteContainer(collection_link, options=request_options, **kwargs)
@@ -495,7 +509,7 @@ class DatabaseProxy(object):
                 :dedent: 0
                 :caption: List all containers in the database:
         """
-        session_token = kwargs.get('session_token')
+        session_token = kwargs.get(Constants.Kwargs.SESSION_TOKEN)
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
@@ -508,7 +522,7 @@ class DatabaseProxy(object):
             )
 
         if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
+            kwargs[Constants.Kwargs.INITIAL_HEADERS] = initial_headers
         feed_options = build_options(kwargs)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
@@ -543,7 +557,7 @@ class DatabaseProxy(object):
         :returns: An Iterable of container properties (dicts).
         :rtype: Iterable[Dict[str, Any]]
         """
-        session_token = kwargs.get('session_token')
+        session_token = kwargs.get(Constants.Kwargs.SESSION_TOKEN)
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
@@ -556,7 +570,7 @@ class DatabaseProxy(object):
             )
 
         if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
+            kwargs[Constants.Kwargs.INITIAL_HEADERS] = initial_headers
         feed_options = build_options(kwargs)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
@@ -624,7 +638,7 @@ class DatabaseProxy(object):
                 :dedent: 0
                 :caption: Reset the TTL property on a container, and display the updated properties:
         """
-        session_token = kwargs.get('session_token')
+        session_token = kwargs.get(Constants.Kwargs.SESSION_TOKEN)
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
@@ -649,7 +663,7 @@ class DatabaseProxy(object):
             )
 
         if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
+            kwargs[Constants.Kwargs.INITIAL_HEADERS] = initial_headers
         request_options = build_options(kwargs)
 
         container_id = self._get_container_id(container)
