@@ -1235,7 +1235,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             if collection_link in self.__container_properties_cache:
                 # TODO: This will make deep copy. Check if this has any performance impact
                 new_options = dict(options)
-                new_options["containerRID"] = self.__container_properties_cache[collection_link]["_rid"]
+                new_options[Constants.InternalOptions.CONTAINER_RID] = self.__container_properties_cache[collection_link]["_rid"]
                 options = new_options
             return self.__QueryFeed(
                 path,
@@ -3186,8 +3186,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             change_feed_state: Optional[ChangeFeedState] = options.get("changeFeedState")
             if change_feed_state is not None:
                 feed_options = {}
-                if 'excludedLocations' in options:
-                    feed_options['excludedLocations'] = options['excludedLocations']
+                if Constants.InternalOptions.EXCLUDED_LOCATIONS in options:
+                    feed_options[Constants.InternalOptions.EXCLUDED_LOCATIONS] = options[Constants.InternalOptions.EXCLUDED_LOCATIONS]
                 change_feed_state.populate_request_headers(self._routing_map_provider, headers, feed_options)
                 request_params.headers = headers
 
@@ -3394,9 +3394,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         # If the collection doesn't have a partition key definition, skip it as it's a legacy collection
         if partitionKeyDefinition:
             # If the user has passed in the partitionKey in options use that else extract it from the document
-            if "partitionKey" not in options:
+            if Constants.InternalOptions.PARTITION_KEY not in options:
                 partitionKeyValue = self._ExtractPartitionKey(partitionKeyDefinition, document)
-                new_options["partitionKey"] = partitionKeyValue
+                new_options[Constants.InternalOptions.PARTITION_KEY] = partitionKeyValue
         return new_options
 
     # Extracts the partition key from the document using the partitionKey definition

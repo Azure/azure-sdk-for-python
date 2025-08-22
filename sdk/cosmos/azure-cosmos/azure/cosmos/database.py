@@ -525,7 +525,7 @@ class DatabaseProxy(object):
             kwargs[Constants.Kwargs.INITIAL_HEADERS] = initial_headers
         feed_options = build_options(kwargs)
         if max_item_count is not None:
-            feed_options["maxItemCount"] = max_item_count
+            feed_options[Constants.InternalOptions.MAX_ITEM_COUNT] = max_item_count
         result = self.client_connection.ReadContainers(
             database_link=self.database_link, options=feed_options, **kwargs
         )
@@ -573,7 +573,7 @@ class DatabaseProxy(object):
             kwargs[Constants.Kwargs.INITIAL_HEADERS] = initial_headers
         feed_options = build_options(kwargs)
         if max_item_count is not None:
-            feed_options["maxItemCount"] = max_item_count
+            feed_options[Constants.InternalOptions.MAX_ITEM_COUNT] = max_item_count
         result = self.client_connection.QueryContainers(
             database_link=self.database_link,
             query=query if parameters is None else {"query": query, "parameters": parameters},
@@ -707,7 +707,7 @@ class DatabaseProxy(object):
         """
         feed_options = build_options(kwargs)
         if max_item_count is not None:
-            feed_options["maxItemCount"] = max_item_count
+            feed_options[Constants.InternalOptions.MAX_ITEM_COUNT] = max_item_count
 
         result = self.client_connection.ReadUsers(
             database_link=self.database_link, options=feed_options, **kwargs
@@ -739,7 +739,7 @@ class DatabaseProxy(object):
         """
         feed_options = build_options(kwargs)
         if max_item_count is not None:
-            feed_options["maxItemCount"] = max_item_count
+            feed_options[Constants.InternalOptions.MAX_ITEM_COUNT] = max_item_count
 
         result = self.client_connection.QueryUsers(
             database_link=self.database_link,

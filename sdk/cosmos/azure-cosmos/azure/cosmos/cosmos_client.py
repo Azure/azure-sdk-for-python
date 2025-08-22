@@ -457,7 +457,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             kwargs[Constants.Kwargs.INITIAL_HEADERS] = initial_headers
         feed_options = build_options(kwargs)
         if max_item_count is not None:
-            feed_options["maxItemCount"] = max_item_count
+            feed_options[Constants.InternalOptions.MAX_ITEM_COUNT] = max_item_count
         result = self.client_connection.ReadDatabases(options=feed_options, **kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers)
@@ -510,9 +510,9 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             kwargs[Constants.Kwargs.THROUGHPUT_BUCKET] = throughput_bucket
         feed_options = build_options(kwargs)
         if enable_cross_partition_query is not None:
-            feed_options["enableCrossPartitionQuery"] = enable_cross_partition_query
+            feed_options[Constants.InternalOptions.ENABLE_CROSS_PARTITION_QUERY] = enable_cross_partition_query
         if max_item_count is not None:
-            feed_options["maxItemCount"] = max_item_count
+            feed_options[Constants.InternalOptions.MAX_ITEM_COUNT] = max_item_count
 
         if query:
             result = self.client_connection.QueryDatabases(

@@ -439,7 +439,7 @@ class ContainerProxy:
             feed_options[
             Constants.InternalOptions.CONTAINER_RID
         ] = self.__get_client_container_caches()[self.container_link]["_rid"]
-        kwargs["containerProperties"] = self._get_properties_with_options
+        kwargs[Constants.Kwargs.CONTAINER_PROPERTIES] = self._get_properties_with_options
 
         items = self.client_connection.ReadItems(
             collection_link=self.container_link, feed_options=feed_options, response_hook=response_hook, **kwargs
@@ -484,23 +484,23 @@ class ContainerProxy:
 
 
         if session_token is not None:
-            kwargs['session_token'] = session_token
+            kwargs[Constants.Kwargs.SESSION_TOKEN] = session_token
         if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
+            kwargs[Constants.Kwargs.INITIAL_HEADERS] = initial_headers
         if consistency_level is not None:
-            kwargs['consistencyLevel'] = consistency_level
+            kwargs[Constants.Kwargs.CONSISTENCY_LEVEL] = consistency_level
         if excluded_locations is not None:
-            kwargs['excludedLocations'] = excluded_locations
+            kwargs[Constants.Kwargs.EXCLUDED_LOCATIONS] = excluded_locations
         if priority is not None:
-            kwargs['priority'] = priority
+            kwargs[Constants.Kwargs.PRIORITY] = priority
         if throughput_bucket is not None:
-            kwargs["throughput_bucket"] = throughput_bucket
+            kwargs[Constants.Kwargs.THROUGHPUT_BUCKET] = throughput_bucket
 
         kwargs['max_concurrency'] = max_concurrency
-        kwargs["containerProperties"] = self._get_properties_with_options
+        kwargs[Constants.Kwargs.CONTAINER_PROPERTIES] = self._get_properties_with_options
         query_options = _build_options(kwargs)
         await self._get_properties_with_options(query_options)
-        query_options["enableCrossPartitionQuery"] = True
+        query_options[Constants.InternalOptions.ENABLE_CROSS_PARTITION_QUERY] = True
 
         return await self.client_connection.read_items(
             collection_link=self.container_link,
@@ -774,7 +774,7 @@ class ContainerProxy:
             query = kwargs.pop("query", None)
 
         # Set method to get/cache container properties
-        kwargs["containerProperties"] = self._get_properties_with_options
+        kwargs[Constants.Kwargs.CONTAINER_PROPERTIES] = self._get_properties_with_options
 
         utils.verify_exclusive_arguments(["feed_range", "partition_key"], **kwargs)
         partition_key = None

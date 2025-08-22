@@ -342,22 +342,22 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         """
 
         if session_token is not None:
-            kwargs['session_token'] = session_token
+            kwargs[Constants.Kwargs.SESSION_TOKEN] = session_token
         if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
+            kwargs[Constants.Kwargs.INITIAL_HEADERS] = initial_headers
         if consistency_level is not None:
-            kwargs['consistencyLevel'] = consistency_level
+            kwargs[Constants.Kwargs.CONSISTENCY_LEVEL] = consistency_level
         if excluded_locations is not None:
-            kwargs['excludedLocations'] = excluded_locations
+            kwargs[Constants.Kwargs.EXCLUDED_LOCATIONS] = excluded_locations
         if priority is not None:
-            kwargs['priority'] = priority
+            kwargs[Constants.Kwargs.PRIORITY] = priority
         if throughput_bucket is not None:
-            kwargs["throughput_bucket"] = throughput_bucket
+            kwargs[Constants.Kwargs.THROUGHPUT_BUCKET] = throughput_bucket
 
         kwargs['max_concurrency'] = max_concurrency
         query_options = build_options(kwargs)
         self._get_properties_with_options(query_options)
-        query_options["enableCrossPartitionQuery"] = True
+        query_options[Constants.InternalOptions.ENABLE_CROSS_PARTITION_QUERY] = True
 
         item_tuples = [(item_id, self._set_partition_key(pk)) for item_id, pk in items]
 
@@ -658,13 +658,13 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             change_feed_state_context["startTime"] = kwargs.pop("start_time")
 
         container_properties = self._get_properties_with_options(feed_options)
-        if "partition_key" in kwargs:
-            partition_key = kwargs.pop("partition_key")
+        if Constants.Kwargs.PARTITION_KEY in kwargs:
+            partition_key = kwargs.pop(Constants.Kwargs.PARTITION_KEY)
             change_feed_state_context["partitionKey"] = self._set_partition_key(cast(_PartitionKeyType, partition_key))
             change_feed_state_context["partitionKeyFeedRange"] = \
                 get_epk_range_for_partition_key(container_properties, partition_key)
-        if "feed_range" in kwargs:
-            change_feed_state_context["feedRange"] = kwargs.pop('feed_range')
+        if Constants.Kwargs.FEED_RANGE in kwargs:
+            change_feed_state_context["feedRange"] = kwargs.pop(Constants.Kwargs.FEED_RANGE)
         if "continuation" in feed_options:
             change_feed_state_context["continuation"] = feed_options.pop("continuation")
 
@@ -675,7 +675,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
         ] = container_properties["_rid"]
 
-        response_hook = kwargs.pop("response_hook", None)
+        response_hook = kwargs.pop(Constants.Kwargs.RESPONSE_HOOK, None)
         if hasattr(response_hook, "clear"):
             response_hook.clear()
 
@@ -977,17 +977,17 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             partition_key_value = self._set_partition_key(kwargs.pop("partition_key"))
             partition_key_obj = _build_partition_key_from_properties(container_properties)
             if partition_key_obj._is_prefix_partition_key(partition_key_value):
-                kwargs["prefix_partition_key_object"] = partition_key_obj
-                kwargs["prefix_partition_key_value"] = cast(_SequentialPartitionKeyType, partition_key_value)
+                kwargs[Constants.Kwargs.PREFIX_PARTITION_KEY_OBJECT] = partition_key_obj
+                kwargs[Constants.Kwargs.PREFIX_PARTITION_KEY_VALUE] = cast(_SequentialPartitionKeyType, partition_key_value)
             else:
                 # Add to feed_options, only when feed_range not given and partition_key was not prefixed partition_key
                 feed_options[Constants.InternalOptions.PARTITION_KEY] = partition_key_value
 
         # Set 'partition_key' for QueryItems method. This can be 'None' if feed range or prefix partition key was set
-        partition_key = feed_options.get("partitionKey")
+        partition_key = feed_options.get(Constants.InternalOptions.PARTITION_KEY)
 
         # Set 'response_hook'
-        response_hook = kwargs.pop("response_hook", None)
+        response_hook = kwargs.pop(Constants.Kwargs.RESPONSE_HOOK, None)
         if response_hook and hasattr(response_hook, "clear"):
             response_hook.clear()
 
