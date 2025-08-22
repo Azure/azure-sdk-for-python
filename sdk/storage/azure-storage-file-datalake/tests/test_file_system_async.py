@@ -909,7 +909,7 @@ class TestFileSystemAsync(AsyncStorageRecordedTestCase):
 
     @DataLakePreparer()
     @recorded_by_proxy_async
-    async def test_list_paths_begin_from(self, **kwargs):
+    async def test_list_paths_start_from(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
 
@@ -917,7 +917,7 @@ class TestFileSystemAsync(AsyncStorageRecordedTestCase):
         # Arrange
         file_system = await self._create_file_system()
         for i in range(0, 6):
-            dir = await file_system.create_directory("dir{}".format(i))
+            dir = await file_system.create_directory(f"dir{i}")
 
             # create a subdirectory under the current directory
             subdir = await dir.create_sub_directory("subdir")
@@ -927,7 +927,7 @@ class TestFileSystemAsync(AsyncStorageRecordedTestCase):
             await subdir.create_file("file")
 
         paths = []
-        async for path in file_system.get_paths(recursive=True, max_results=2, begin_from="dir3"):
+        async for path in file_system.get_paths(recursive=True, max_results=2, start_from="dir3"):
             paths.append(path)
 
         # there are 12 subpaths in total

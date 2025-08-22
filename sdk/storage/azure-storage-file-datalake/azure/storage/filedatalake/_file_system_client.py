@@ -618,16 +618,17 @@ class FileSystemClient(StorageAccountHostsMixin):
                 :caption: List the paths in the file system.
         """
         timeout = kwargs.pop('timeout', None)
+        begin_from = kwargs.pop("start_from")
         command = functools.partial(
             self._client.file_system.list_paths,
             path=path,
             timeout=timeout,
-            begin_from=kwargs.pop("start_from"),
+            begin_from=begin_from,
             **kwargs
         )
         return ItemPaged(
             command, recursive, path=path, max_results=max_results,
-            page_iterator_class=PathPropertiesPaged, **kwargs
+            begin_from=begin_from, page_iterator_class=PathPropertiesPaged, **kwargs
         )
 
     @distributed_trace

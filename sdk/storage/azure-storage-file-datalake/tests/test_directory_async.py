@@ -1589,7 +1589,7 @@ class TestDirectoryAsync(AsyncStorageRecordedTestCase):
         await subdir_client2.get_file_client('file8').create_file()
 
         path_response = []
-        async for path in directory_client2.get_paths(recursive=True, begin_from="subdir1/file4", max_results=2):
+        async for path in directory_client2.get_paths(recursive=True, start_from="subdir1/file4", max_results=2):
             path_response.append(path)
 
         assert len(path_response) == 6

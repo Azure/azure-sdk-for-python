@@ -1635,7 +1635,7 @@ class TestDirectory(StorageRecordedTestCase):
         subdir_client2.get_file_client('file7').create_file()
         subdir_client2.get_file_client('file8').create_file()
 
-        path_response = list(directory_client2.get_paths(recursive=True, begin_from="subdir1/file4", max_results=2))
+        path_response = list(directory_client2.get_paths(recursive=True, start_from="subdir1/file4", max_results=2))
         assert len(path_response) == 6
         assert path_response[0]['name'] == directory_name + "2/subdir1/file4"
         assert path_response[1]['name'] == directory_name + "2/subdir1/file5"
