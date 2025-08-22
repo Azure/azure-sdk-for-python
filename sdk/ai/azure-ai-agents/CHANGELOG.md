@@ -10,6 +10,9 @@
 - Added delete operation for `ThreadMessages`.
 - Add `RunStepDetailsActivity`, describing MCP function parameters.
 - Add `RunStepDeltaCustomBingGroundingToolCall`, describing `BingCustomSearchTool` updates in streaming scenario.
+- Add `RunStepDeltaMicrosoftFabricToolCall`, describing `FabricTool` updates in streaming scenario.
+- Add `RunStepDeltaSharepointToolCall`, describing `SharepointTool` updates in streaming scenario.
+- Improve code interpreter tool to take the list of `VectorStoreDataSource` as an input for enterprise file search.
 
 ### Bugs Fixed
 
@@ -18,6 +21,7 @@
 ### Sample updates
 
 - The file search samples were updated to demonstrate retrieving text associated with citations.
+- The SharePoint tool sample was updated to demonstrate retrieving text associated with citations and render references correctly.
 - Added samples for file search citation with streaming.
 - Bing Grounding and Bing Custom Search samples were fixed to correctly present references.
 
