@@ -603,70 +603,74 @@
   - Added model `VmScannersGcp`
   - Added model `WorkspaceSetting`
   - Added model `WorkspaceSettingList`
-  - Added model `APICollectionsOperations`
-  - Added model `AdvancedThreatProtectionOperations`
-  - Added model `AlertsOperations`
-  - Added model `AlertsSuppressionRulesOperations`
-  - Added model `AllowedConnectionsOperations`
-  - Added model `ApplicationOperations`
-  - Added model `ApplicationsOperations`
-  - Added model `AssessmentsMetadataOperations`
-  - Added model `AssessmentsOperations`
-  - Added model `AutoProvisioningSettingsOperations`
-  - Added model `AutomationsOperations`
-  - Added model `ComplianceResultsOperations`
-  - Added model `CompliancesOperations`
-  - Added model `ConnectorsOperations`
-  - Added model `CustomAssessmentAutomationsOperations`
-  - Added model `CustomEntityStoreAssignmentsOperations`
-  - Added model `CustomRecommendationsOperations`
-  - Added model `DefenderForStorageOperations`
-  - Added model `DeviceSecurityGroupsOperations`
-  - Added model `DiscoveredSecuritySolutionsOperations`
-  - Added model `ExternalSecuritySolutionsOperations`
-  - Added model `GovernanceAssignmentsOperations`
-  - Added model `GovernanceRulesOperations`
-  - Added model `HealthReportsOperations`
-  - Added model `InformationProtectionPoliciesOperations`
-  - Added model `IotSecuritySolutionAnalyticsOperations`
-  - Added model `IotSecuritySolutionOperations`
-  - Added model `IotSecuritySolutionsAnalyticsAggregatedAlertOperations`
-  - Added model `IotSecuritySolutionsAnalyticsRecommendationOperations`
-  - Added model `JitNetworkAccessPoliciesOperations`
-  - Added model `LocationsOperations`
-  - Added model `MdeOnboardingsOperations`
-  - Added model `Operations`
-  - Added model `PricingsOperations`
-  - Added model `PrivateEndpointConnectionsOperations`
-  - Added model `PrivateLinkResourcesOperations`
-  - Added model `PrivateLinksOperations`
-  - Added model `RegulatoryComplianceAssessmentsOperations`
-  - Added model `RegulatoryComplianceControlsOperations`
-  - Added model `RegulatoryComplianceStandardsOperations`
-  - Added model `SecureScoreControlDefinitionsOperations`
-  - Added model `SecureScoreControlsOperations`
-  - Added model `SecureScoresOperations`
-  - Added model `SecurityConnectorApplicationOperations`
-  - Added model `SecurityConnectorApplicationsOperations`
-  - Added model `SecurityConnectorsOperations`
-  - Added model `SecurityContactsOperations`
-  - Added model `SecurityOperatorsOperations`
-  - Added model `SecuritySolutionsOperations`
-  - Added model `SecuritySolutionsReferenceDataOperations`
-  - Added model `SecurityStandardsOperations`
-  - Added model `SensitivitySettingsOperations`
-  - Added model `ServerVulnerabilityAssessmentOperations`
-  - Added model `ServerVulnerabilityAssessmentsSettingsOperations`
-  - Added model `SettingsOperations`
-  - Added model `SoftwareInventoriesOperations`
-  - Added model `SqlVulnerabilityAssessmentBaselineRulesOperations`
-  - Added model `SqlVulnerabilityAssessmentScanResultsOperations`
-  - Added model `SqlVulnerabilityAssessmentScansOperations`
-  - Added model `StandardAssignmentsOperations`
-  - Added model `SubAssessmentsOperations`
-  - Added model `TasksOperations`
-  - Added model `TopologyOperations`
-  - Added model `WorkspaceSettingsOperations`
+  - Added operation group `APICollectionsOperations`
+  - Added operation group `AdvancedThreatProtectionOperations`
+  - Added operation group `AlertsOperations`
+  - Added operation group `AlertsSuppressionRulesOperations`
+  - Added operation group `AllowedConnectionsOperations`
+  - Added operation group `ApplicationOperations`
+  - Added operation group `ApplicationsOperations`
+  - Added operation group `AssessmentsMetadataOperations`
+  - Added operation group `AssessmentsOperations`
+  - Added operation group `AutoProvisioningSettingsOperations`
+  - Added operation group `AutomationsOperations`
+  - Added operation group `ComplianceResultsOperations`
+  - Added operation group `CompliancesOperations`
+  - Added operation group `ConnectorsOperations`
+  - Added operation group `CustomAssessmentAutomationsOperations`
+  - Added operation group `CustomEntityStoreAssignmentsOperations`
+  - Added operation group `CustomRecommendationsOperations`
+  - Added operation group `DefenderForStorageOperations`
+  - Added operation group `DeviceSecurityGroupsOperations`
+  - Added operation group `DiscoveredSecuritySolutionsOperations`
+  - Added operation group `ExternalSecuritySolutionsOperations`
+  - Added operation group `GovernanceAssignmentsOperations`
+  - Added operation group `GovernanceRulesOperations`
+  - Added operation group `HealthReportsOperations`
+  - Added operation group `InformationProtectionPoliciesOperations`
+  - Added operation group `IotSecuritySolutionAnalyticsOperations`
+  - Added operation group `IotSecuritySolutionOperations`
+  - Added operation group `IotSecuritySolutionsAnalyticsAggregatedAlertOperations`
+  - Added operation group `IotSecuritySolutionsAnalyticsRecommendationOperations`
+  - Added operation group `JitNetworkAccessPoliciesOperations`
+  - Added operation group `LocationsOperations`
+  - Added operation group `MdeOnboardingsOperations`
+  - Added operation group `Operations`
+  - Added operation group `PricingsOperations`
+  - Added operation group `PrivateEndpointConnectionsOperations`
+  - Added operation group `PrivateLinkResourcesOperations`
+  - Added operation group `PrivateLinksOperations`
+  - Added operation group `RegulatoryComplianceAssessmentsOperations`
+  - Added operation group `RegulatoryComplianceControlsOperations`
+  - Added operation group `RegulatoryComplianceStandardsOperations`
+  - Added operation group `SecureScoreControlDefinitionsOperations`
+  - Added operation group `SecureScoreControlsOperations`
+  - Added operation group `SecureScoresOperations`
+  - Added operation group `SecurityConnectorApplicationOperations`
+  - Added operation group `SecurityConnectorApplicationsOperations`
+  - Added operation group `SecurityConnectorsOperations`
+  - Added operation group `SecurityContactsOperations`
+  - Added operation group `SecurityOperatorsOperations`
+  - Added operation group `SecuritySolutionsOperations`
+  - Added operation group `SecuritySolutionsReferenceDataOperations`
+  - Added operation group `SecurityStandardsOperations`
+  - Added operation group `SensitivitySettingsOperations`
+  - Added operation group `ServerVulnerabilityAssessmentOperations`
+  - Added operation group `ServerVulnerabilityAssessmentsSettingsOperations`
+  - Added operation group `SettingsOperations`
+  - Added operation group `SoftwareInventoriesOperations`
+  - Added operation group `SqlVulnerabilityAssessmentBaselineRulesOperations`
+  - Added operation group `SqlVulnerabilityAssessmentScanResultsOperations`
+  - Added operation group `SqlVulnerabilityAssessmentScansOperations`
+  - Added operation group `StandardAssignmentsOperations`
+  - Added operation group `SubAssessmentsOperations`
+  - Added operation group `TasksOperations`
+  - Added operation group `TopologyOperations`
+  - Added operation group `WorkspaceSettingsOperations`
+
+### Breaking Changes
+
+- This package now only targets the latest Api-Version available on Azure and removes APIs of other Api-Version. After this change, the package can have much smaller size. If your application requires a specific and non-latest Api-Version, it's recommended to pin this package to the previous released version; If your application always only use latest Api-Version, please ignore this change.
 
 ## 7.0.0 (2024-05-20)
 
