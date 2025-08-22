@@ -32,3 +32,4 @@ sudo apt-get install -y powershell
 python -m pip install -U pip > /dev/null
 python scripts/dev_setup.py -p azure-core > /dev/null
 pip install -r eng/ci_tools.txt > /dev/null
+
