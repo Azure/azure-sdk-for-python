@@ -1010,8 +1010,8 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
 
 
     async def test_absolute_client_timeout_on_server_error_async(self):
-        # Server Error (500): Retry policy doesn't retry, it fails fast by raising the exception
-        # CosmosHttpResponseError.So if we increase the timeout below to a higher value
+        # Server Error (500)-Retry policy doesn't retry, it fails fast by raising
+        # CosmosHttpResponseError. So if we increase the timeout below to a higher value
         # it will return in CosmosHttpResponseError instead of CosmosClientTimeoutError which is correct.
         status_response = 500  # server error
         timeout_transport = TimeoutTransport(status_response, passthrough=True)
@@ -1028,7 +1028,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
                     pass
 
     async def test_absolute_client_timeout_on_throttling_error_async(self):
-        # Throttling(429): Keeps retrying → Eventually times out → CosmosClientTimeoutError
+        # Throttling(429): Keeps retrying -> Eventually times out -> CosmosClientTimeoutError
         status_response = 429  # Uses Cosmos custom retry
         timeout_transport = TimeoutTransport(status_response, passthrough=True)
         async with CosmosClient(
