@@ -22,7 +22,7 @@
 """Internal class for session read/write unavailable retry policy implementation
 in the Azure Cosmos database service.
 """
-
+# cspell:disable
 from azure.cosmos.documents import _OperationType
 
 class _SessionRetryPolicy(object):
@@ -60,15 +60,11 @@ class _SessionRetryPolicy(object):
         :returns: a boolean stating whether the request should be retried
         :rtype: bool
         """
-        if not self.request:
+        if not self.request or not self.endpoint_discovery_enable:
             return False
         self.session_token_retry_count += 1
         # clear previous location-based routing directive
         self.request.clear_route_to_location()
-
-        if not self.endpoint_discovery_enable:
-            # if endpoint discovery is disabled, the request cannot be retried anywhere else
-            return False
 
         if self.can_use_multiple_write_locations:
             if _OperationType.IsReadOnlyOperation(self.request.operation_type):

@@ -75,15 +75,20 @@ class _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailoverAsync(
         self.partition_range_to_failover_info: Dict[PartitionKeyRangeWrapper, PartitionLevelFailoverInfo] = {}
         self.ppaf_thresholds_tracker = _PPAFPartitionThresholdsTracker()
 
+    def is_per_partition_automatic_failover_enabled(self) -> bool:
+        if not self._database_account_cache or not self._database_account_cache._EnablePerPartitionFailoverBehavior:
+            return False
+        return True
+
     def is_per_partition_automatic_failover_applicable(self, request: RequestObject) -> bool:
+        if not self.is_per_partition_automatic_failover_enabled():
+            return False
+
         if not request:
             return False
 
         if (self.location_cache.can_use_multiple_write_locations_for_request(request)
                 or _OperationType.IsReadOnlyOperation(request.operation_type)):
-            return False
-
-        if not self._database_account_cache or not self._database_account_cache._EnablePerPartitionFailoverBehavior:
             return False
 
         # if we have at most one region available in the account, we cannot do per partition automatic failover
