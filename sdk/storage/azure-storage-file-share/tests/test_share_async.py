@@ -1936,6 +1936,7 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
     @recorded_by_proxy_async
     async def test_get_user_delegation_sas(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
+        variables = kwargs.pop("variables", {})
 
         token_credential = self.get_credential(ShareServiceClient, is_async=True)
         service = ShareServiceClient(
@@ -1943,8 +1944,8 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
             credential=token_credential,
             token_intent="backup"
         )
-        start = datetime.utcnow()
-        expiry = datetime.utcnow() + timedelta(hours=1)
+        start = self.get_datetime_variable(variables, 'start_time', datetime.utcnow())
+        expiry = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
         user_delegation_key_1 = await service.get_user_delegation_key(key_start_time=start, key_expiry_time=expiry)
         user_delegation_key_2 = await service.get_user_delegation_key(key_start_time=start, key_expiry_time=expiry)
 
@@ -1965,6 +1966,8 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
         assert user_delegation_key_1.signed_version == user_delegation_key_2.signed_version
         assert user_delegation_key_1.signed_service == user_delegation_key_2.signed_service
         assert user_delegation_key_1.value == user_delegation_key_2.value
+
+        return variables
 
     @pytest.mark.live_test_only
     @FileSharePreparer()
