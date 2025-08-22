@@ -125,44 +125,40 @@ async def sample_conversation_pii_async():
             )
 
             for action_result in actions_page.task_results or []:
-                if isinstance(action_result, AnalyzeConversationOperationResult):
-                    print(f"\nAction Name: {action_result.name}")
-                    print(f"Action Status: {action_result.status}")
-                    print(f"Kind: {action_result.kind}")
+                print(f"\nAction Name: {action_result.name}")
+                print(f"Action Status: {action_result.status}")
+                print(f"Kind: {action_result.kind}")
 
-                    if isinstance(action_result, ConversationPiiOperationResult):
-                        for conversation in action_result.results.conversations or []:
-                            print(f"Conversation: #{conversation.id}")
-                            print("Detected Entities:")
+                if isinstance(action_result, ConversationPiiOperationResult):
+                    for conversation in action_result.results.conversations or []:
+                        print(f"Conversation: #{conversation.id}")
+                        print("Detected Entities:")
 
-                            for item in conversation.conversation_items or []:
-                                for entity in item.entities or []:
-                                    print(f"  Category: {entity.category}")
-                                    print(f"  Subcategory: {entity.subcategory}")
-                                    print(f"  Text: {entity.text}")
-                                    print(f"  Offset: {entity.offset}")
-                                    print(f"  Length: {entity.length}")
-                                    print(f"  Confidence score: {entity.confidence_score}\n")
-                                    entities_detected.append(entity)
+                        for item in conversation.conversation_items or []:
+                            for entity in item.entities or []:
+                                print(f"  Category: {entity.category}")
+                                print(f"  Subcategory: {entity.subcategory}")
+                                print(f"  Text: {entity.text}")
+                                print(f"  Offset: {entity.offset}")
+                                print(f"  Length: {entity.length}")
+                                print(f"  Confidence score: {entity.confidence_score}\n")
+                                entities_detected.append(entity)
 
-                            if conversation.warnings:
-                                print("Warnings:")
-                                for warning in conversation.warnings:
-                                    if isinstance(warning, InputWarning):
-                                        print(f"  Code: {warning.code}")
-                                        print(f"  Message: {warning.message}")
-                            print()
-                    else:
-                        print("  [No supported results to display for this action type]")
+                        if conversation.warnings:
+                            print("Warnings:")
+                            for warning in conversation.warnings:
+                                if isinstance(warning, InputWarning):
+                                    print(f"  Code: {warning.code}")
+                                    print(f"  Message: {warning.message}")
+                        print()
                 else:
-                    print("  [Unexpected action result type]")
+                    print("  [No supported results to display for this action type]")
 
         # errors
         if d.get("errors"):
             print("\nErrors:")
             for err in d["errors"]:
-                if isinstance(err, ConversationError):
-                    print(f"  Code: {err.code} - {err.message}")
+                print(f"  Code: {err.code} - {err.message}")
 # [END conversation_pii_async]
 
 

@@ -113,8 +113,7 @@ def sample_conversation_pii_with_entity_mask_policy():
     if d.get("errors"):
         print("Errors:")
         for err in d["errors"]:
-            if isinstance(err, ConversationError):
-                print(f"  Code: {err.code} - {err.message}")
+            print(f"  Code: {err.code} - {err.message}")
 
     # iterate results
     for actions_page in paged_actions:

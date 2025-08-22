@@ -131,8 +131,7 @@ def sample_conversation_multi_turn_prediction():
                         if isinstance(extra, EntitySubtype):
                             print(f"    - [EntitySubtype] Value: {extra.value}")
                             for tag in extra.tags or []:
-                                if isinstance(tag, EntityTag):
-                                    print(f"      • Tag: {tag.name}, Confidence: {tag.confidence_score}")
+                                print(f"      • Tag: {tag.name}, Confidence: {tag.confidence_score}")
                 print()
 
                 # Global entities
@@ -151,8 +150,7 @@ def sample_conversation_multi_turn_prediction():
                         if isinstance(extra, EntitySubtype):
                             print(f"    - [EntitySubtype] Value: {extra.value}")
                             for tag in extra.tags or []:
-                                if isinstance(tag, EntityTag):
-                                    print(f"      • Tag: {tag.name}, Confidence: {tag.confidence_score}")
+                                print(f"      • Tag: {tag.name}, Confidence: {tag.confidence_score}")
                 print("-" * 40)
     else:
         print("No Conversational AI result returned.")

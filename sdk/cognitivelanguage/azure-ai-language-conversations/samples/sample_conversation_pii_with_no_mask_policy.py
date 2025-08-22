@@ -112,30 +112,27 @@ def sample_conversation_pii_with_no_mask_policy():
     if d.get("errors"):
         print("Errors:")
         for err in d["errors"]:
-            if isinstance(err, ConversationError):
-                print(f"  Code: {err.code} - {err.message}")
+            print(f"  Code: {err.code} - {err.message}")
 
     # iterate results
     for actions_page in paged_actions:
         for action_result in actions_page.task_results or []:
             if isinstance(action_result, ConversationPiiOperationResult):
                 for conversation in action_result.results.conversations or []:
-                    if isinstance(conversation, ConversationalPiiResult):
-                        for item in conversation.conversation_items or []:
-                            # NoMaskPolicyType returns original text (no redaction)
-                            returned_text = (item.redacted_content.text or "").strip()
-                            if not returned_text:
-                                continue
+                    for item in conversation.conversation_items or []:
+                        # NoMaskPolicyType returns original text (no redaction)
+                        returned_text = (item.redacted_content.text or "").strip()
+                        if not returned_text:
+                            continue
 
-                            if item.entities:
-                                for entity in item.entities:
-                                    if isinstance(entity, NamedEntity):
-                                        ent_text = entity.text or ""
-                                        detected_entities.append(ent_text)
-                                        if ent_text not in returned_text:
-                                            print(
-                                                f"WARNING: Expected entity '{ent_text}' in returned text but not found."
-                                            )
+                        if item.entities:
+                            for entity in item.entities:
+                                ent_text = entity.text or ""
+                                detected_entities.append(ent_text)
+                                if ent_text not in returned_text:
+                                    print(
+                                        f"WARNING: Expected entity '{ent_text}' in returned text but not found."
+                                    )
 # [END conversation_pii_with_no_mask_policy]
 
 
