@@ -287,7 +287,7 @@ class PhoneNumbersClient:
             isinstance(result_properties.get("status"), str) and
             result_properties["status"].lower() == "failed"):
             error_info = result_properties.get("error", {})
-            error_message = (error_info.get("message", "Operation failed") 
+            error_message = (error_info.get("message", "Operation failed")
                            if isinstance(error_info, dict) else "Operation failed")
             raise HttpResponseError(message=error_message)
 
