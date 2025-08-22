@@ -181,17 +181,17 @@ class CustomerSdkStatsProperties:
         self.version = version
         self.compute_type = compute_type
 
-## Map from Azure Monitor envelope names to TelemetryType
+## Map from Azure Monitor envelope base_types to TelemetryType
 _TYPE_MAP = {
-                _EVENT_ENVELOPE_NAME: _CUSTOM_EVENT,
-                _METRIC_ENVELOPE_NAME: _CUSTOM_METRIC,
-                _REMOTE_DEPENDENCY_ENVELOPE_NAME: _DEPENDENCY,
-                _EXCEPTION_ENVELOPE_NAME: _EXCEPTION,
-                _PAGE_VIEW_ENVELOPE_NAME: _PAGE_VIEW,
-                _MESSAGE_ENVELOPE_NAME: _TRACE,
-                _REQUEST_ENVELOPE_NAME: _REQUEST,
-                _PERFORMANCE_COUNTER_ENVELOPE_NAME: _PERFORMANCE_COUNTER,
-                _AVAILABILITY_ENVELOPE_NAME: _AVAILABILITY,
+                "EventData": _CUSTOM_EVENT,
+                "MetricData": _CUSTOM_METRIC,
+                "RemoteDependencyData": _DEPENDENCY,
+                "ExceptionData": _EXCEPTION,
+                "PageViewData": _PAGE_VIEW,
+                "MessageData": _TRACE,
+                "RequestData": _REQUEST,
+                "PerformanceCounterData": _PERFORMANCE_COUNTER,
+                "AvailabilityData": _AVAILABILITY,
             }
 
 # Map RP names
