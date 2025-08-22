@@ -3,7 +3,7 @@ import logging
 import tempfile
 import os
 from typing import Optional, List, Any
-from pytest import pytest_main
+from pytest import main as pytest_main
 import sys
 
 from .Check import Check
@@ -36,15 +36,17 @@ class whl(Check):
 
         set_envvar_defaults()
 
-        target_dir = os.getcwd()
-        targeted = discover_targeted_packages(args.target, target_dir)
-        results = []
+        if args.target == ".":
+            targeted = [os.getcwd()]
+        else:
+            target_dir = os.getcwd()
+            targeted = discover_targeted_packages(args.target, target_dir)
 
         for pkg in targeted:
             dev_requirements = os.path.join(pkg, "dev_requirements.txt")
 
             if os.path.exists(dev_requirements):
-                pip_install([f"-r {dev_requirements}"], sys.executable)
+                pip_install([f"-r", f"{dev_requirements}"], sys.executable)
 
             staging_area = tempfile.mkdtemp()
 
