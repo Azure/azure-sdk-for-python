@@ -1152,12 +1152,12 @@ class TestFileSystem(StorageRecordedTestCase):
     @DataLakePreparer()
     @recorded_by_proxy
     def test_get_user_delegation_sas(self, **kwargs):
-        storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         variables = kwargs.pop("variables", {})
 
         token_credential = self.get_credential(DataLakeServiceClient)
         service = DataLakeServiceClient(
-            self.account_url(storage_account_name, "file"),
+            self.account_url(datalake_storage_account_name, "dfs"),
             credential=token_credential,
         )
         start = self.get_datetime_variable(variables, 'start_time', datetime.utcnow())
@@ -1184,6 +1184,21 @@ class TestFileSystem(StorageRecordedTestCase):
         assert user_delegation_key_1.value == user_delegation_key_2.value
 
         return variables
+
+    @pytest.mark.live_test_only
+    @DataLakePreparer()
+    def test_datalake_user_delegation_oid_20(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        token_credential = self.get_credential(DataLakeServiceClient)
+        dsc = DataLakeServiceClient(
+            self.account_url(datalake_storage_account_name, 'dfs'),
+            credential=token_credential
+        )
+        file_system = dsc.create_file_system(self.get_resource_name(TEST_FILE_SYSTEM_PREFIX))
+        directory = file_system._get_root_directory_client()
+
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

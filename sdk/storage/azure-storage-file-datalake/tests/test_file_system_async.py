@@ -1282,12 +1282,12 @@ class TestFileSystemAsync(AsyncStorageRecordedTestCase):
     @DataLakePreparer()
     @recorded_by_proxy_async
     async def test_get_user_delegation_sas(self, **kwargs):
-        storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         variables = kwargs.pop("variables", {})
 
         token_credential = self.get_credential(DataLakeServiceClient, is_async=True)
         service = DataLakeServiceClient(
-            self.account_url(storage_account_name, "file"),
+            self.account_url(datalake_storage_account_name, "dfs"),
             credential=token_credential,
         )
         start = self.get_datetime_variable(variables, 'start_time', datetime.utcnow())
