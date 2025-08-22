@@ -668,7 +668,7 @@ class DataLakeDirectoryClient(PathClient):
         recursive: bool = True,
         max_results: Optional[int] = None,
         upn: Optional[bool] = None,
-        begin_from: Optional[str] = None,
+        start_from: Optional[str] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> AsyncItemPaged["PathProperties"]:
@@ -686,7 +686,7 @@ class DataLakeDirectoryClient(PathClient):
             :class:`~azure.storage.filedatalake.PathProperties`. If False, the values will be returned
             as Azure Active Directory Object IDs. The default value is None. Note that group and application
             Object IDs are not translate because they do not have unique friendly names.
-        :keyword Optional[str] begin_from: A relative path within the specified directory where the listing
+        :keyword Optional[str] start_from: A relative path within the specified directory where the listing
             will start from. For example, a recursive listing under directory folder1/folder2 with
             beginFrom as folder3/readmefile.txt will start listing from folder1/folder2/folder3/readmefile.txt.
             Multiple entity levels are supported for recursive listing.
@@ -707,13 +707,14 @@ class DataLakeDirectoryClient(PathClient):
         command = functools.partial(
             client.file_system.list_paths,
             path=self.path_name,
-            begin_from=begin_from,
+            begin_from=start_from,
             timeout=timeout,
             **kwargs
         )
         return AsyncItemPaged(
             command, recursive, path=self.path_name, max_results=max_results,
-            upn=upn, begin_from=begin_from, page_iterator_class=PathPropertiesPaged, **kwargs)
+            upn=upn, page_iterator_class=PathPropertiesPaged, **kwargs
+        )
 
     def get_file_client(self, file: Union[FileProperties, str]) -> DataLakeFileClient:
         """Get a client to interact with the specified file.
