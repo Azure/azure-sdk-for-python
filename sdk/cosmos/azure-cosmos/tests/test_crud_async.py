@@ -91,6 +91,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         if os.environ.get("AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER", "False") == "True":
             use_multiple_write_locations = True
         self.client = CosmosClient(self.host, self.masterKey, multiple_write_locations=use_multiple_write_locations)
+        await self.client.__aenter__()
         self.database_for_test = self.client.get_database_client(self.configs.TEST_DATABASE_ID)
 
     async def asyncTearDown(self):
