@@ -14,7 +14,7 @@
 - Rename Customer Statsbeat to Customer SDKStats as per [Spec] - https://github.com/aep-health-and-standards/Telemetry-Collection-Spec/pull/581
   ([#42573](https://github.com/Azure/azure-sdk-for-python/pull/42573))
 - Customer Facing SDKStats: Added logic for race conditions and updated the implementation to use a global instance for customer SDKStats metrics
-
+  ([#42655](https://github.com/Azure/azure-sdk-for-python/pull/42655))
 ### Breaking Changes
 
 ### Bugs Fixed
