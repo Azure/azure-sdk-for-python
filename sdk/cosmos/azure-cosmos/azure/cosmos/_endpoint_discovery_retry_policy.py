@@ -72,9 +72,9 @@ class EndpointDiscoveryRetryPolicy(object):
             partition_level_info = self.global_endpoint_manager.partition_range_to_failover_info[self.pk_range_wrapper]
             location = self.global_endpoint_manager.location_cache.get_location_from_endpoint(
                 str(self.request.location_endpoint_to_route))
-            regional_context = (self.global_endpoint_manager.location_cache.
+            location_endpoint = (self.global_endpoint_manager.location_cache.
                                 account_read_regional_routing_contexts_by_location.get(location).primary_endpoint)
-            partition_level_info.unavailable_regional_endpoints[location] = regional_context
+            partition_level_info.unavailable_regional_endpoints[location] = location_endpoint
             self.global_endpoint_manager.resolve_service_endpoint_for_partition(self.request, self.pk_range_wrapper)
             return True
 

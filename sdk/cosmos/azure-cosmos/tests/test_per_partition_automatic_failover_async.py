@@ -16,7 +16,7 @@ from azure.cosmos.aio import CosmosClient
 from azure.cosmos._request_object import RequestObject
 from _fault_injection_transport import FaultInjectionTransport
 from _fault_injection_transport_async import FaultInjectionTransportAsync
-from test_per_partition_automatic_failover import create_failover_errors, create_threshold_errors
+from test_per_partition_automatic_failover import create_failover_errors, create_threshold_errors, session_retry_hook
 from test_per_partition_circuit_breaker_mm import REGION_1, REGION_2, PK_VALUE, BATCH, write_operations_and_errors, write_operations_and_boolean
 from test_per_partition_circuit_breaker_mm_async import perform_write_operation
 
@@ -56,12 +56,13 @@ class TestPerPartitionAutomaticFailoverAsync:
         method_client: CosmosClient = initialized_objects["client"]
         await method_client.close()
 
-    async def setup_info(self, error=None, max_count=None, is_batch=False, exclude_client_regions=False, **kwargs):
+    async def setup_info(self, error=None, max_count=None, is_batch=False, exclude_client_regions=False, session_error=False, **kwargs):
         custom_transport = FaultInjectionTransportAsync()
         # two documents targeted to same partition, one will always fail and the other will succeed
         doc_fail_id = str(uuid.uuid4())
         doc_success_id = str(uuid.uuid4())
-        predicate = lambda r: FaultInjectionTransportAsync.predicate_req_for_document_with_id(r, doc_fail_id)
+        predicate = lambda r: (FaultInjectionTransportAsync.predicate_req_for_document_with_id(r, doc_fail_id)
+                               and FaultInjectionTransportAsync.predicate_is_write_operation(r, "west"))
         # The MockRequest only gets used to create the MockHttpResponse
         mock_request = FaultInjectionTransport.MockHttpRequest(url=self.host)
         if is_batch:
@@ -70,6 +71,17 @@ class TestPerPartitionAutomaticFailoverAsync:
             success_response = FaultInjectionTransportAsync.MockHttpResponse(mock_request, 200)
         if error:
             custom_transport.add_fault(predicate=predicate, fault_factory=error, max_inner_count=max_count,
+                                       after_max_count=success_response)
+        if session_error:
+            read_predicate = lambda r: (FaultInjectionTransportAsync.predicate_is_operation_type(r, "Read")
+                                        and FaultInjectionTransportAsync.predicate_req_for_document_with_id(r, doc_fail_id))
+            read_error = CosmosHttpResponseError(
+                            status_code=404,
+                            message="Some injected error.",
+                            sub_status=1002)
+            error_lambda = lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(0, read_error))
+            success_response = FaultInjectionTransportAsync.MockHttpResponse(mock_request, 200)
+            custom_transport.add_fault(predicate=read_predicate, fault_factory=error_lambda, max_inner_count=max_count,
                                        after_max_count=success_response)
         is_get_account_predicate = lambda r: FaultInjectionTransportAsync.predicate_is_database_account_call(r)
         # Set the database account response to have PPAF enabled
@@ -198,6 +210,46 @@ class TestPerPartitionAutomaticFailoverAsync:
         # Check that all requests are marked as non-PPAF available due to the fact that we only have one region
         assert global_endpoint_manager.is_per_partition_automatic_failover_applicable(request_object) is False
 
+    @pytest.mark.parametrize("write_operation, error", write_operations_and_errors(create_failover_errors()))
+    async def test_ppaf_session_unavailable_retry_async(self, write_operation, error):
+        # Account config has 2 regions: West US 3 (A) and West US (B). This test validates that after marking the write
+        # region (A) as unavailable, the next request is retried to the read region (B) and succeeds. The next read request
+        # should see that the write region (A) is unavailable for the partition, and should retry to the read region (B) as well.
+        error_lambda = lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(0, error))
+        setup, doc_fail_id, doc_success_id, custom_setup, custom_transport, predicate = await self.setup_info(error_lambda, max_count=1,
+                                                                                                        is_batch=write_operation==BATCH, session_error=True)
+        container = setup['col']
+        fault_injection_container = custom_setup['col']
+        global_endpoint_manager = fault_injection_container.client_connection._global_endpoint_manager
+
+        # Create a document to populate the per-partition GEM partition range info cache
+        await fault_injection_container.create_item(body={'id': doc_success_id, 'pk': PK_VALUE,
+                                                    'name': 'sample document', 'key': 'value'})
+        pk_range_wrapper = list(global_endpoint_manager.partition_range_to_failover_info.keys())[0]
+        initial_region = global_endpoint_manager.partition_range_to_failover_info[pk_range_wrapper].current_region
+
+        # Verify the region that is being used for the read requests
+        read_response = await fault_injection_container.read_item(doc_success_id, PK_VALUE)
+        uri = read_response.get_response_headers().get('Content-Location')
+        region = fault_injection_container.client_connection._global_endpoint_manager.location_cache.get_location_from_endpoint(uri)
+        assert region == REGION_1 # first preferred region
+
+        # Based on our configuration, we should have had one error followed by a success - marking only the previous endpoint as unavailable
+        await perform_write_operation(
+                write_operation,
+                container,
+                fault_injection_container,
+                doc_fail_id,
+                PK_VALUE)
+        partition_info = global_endpoint_manager.partition_range_to_failover_info[pk_range_wrapper]
+        # Verify that the partition is marked as unavailable, and that the current regional endpoint is not the same
+        assert len(partition_info.unavailable_regional_endpoints) == 1
+        assert initial_region in partition_info.unavailable_regional_endpoints
+        assert initial_region != partition_info.current_region # west us 3 != west us
+
+        # Now we run a read request that runs into a 404.1002 error, which should retry to the read region
+        # We verify that the read request was going to the correct region by using the raw_response_hook
+        fault_injection_container.read_item(doc_fail_id, PK_VALUE, raw_response_hook=session_retry_hook)
 
 
 if __name__ == '__main__':
