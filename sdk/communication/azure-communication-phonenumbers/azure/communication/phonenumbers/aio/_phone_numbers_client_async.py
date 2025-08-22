@@ -14,9 +14,6 @@ from azure.core.polling import AsyncLROPoller
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
-if TYPE_CHECKING:
-    from azure.core.polling import PollingMethod
-
 from .._generated.aio._client import PhoneNumbersClient as PhoneNumbersClientGen
 from .._generated.models import (
     PhoneNumberSearchRequest,
@@ -46,6 +43,9 @@ from .._shared.auth_policy_utils import get_authentication_policy
 from .._shared.utils import parse_connection_str
 from .._version import SDK_MONIKER
 from .._api_versions import DEFAULT_VERSION
+
+if TYPE_CHECKING:
+    from azure.core.polling import PollingMethod
 
 _DEFAULT_POLLING_INTERVAL_IN_SECONDS = 2
 
