@@ -26,8 +26,8 @@ class TestSecretRefresh(AppConfigTestCase, unittest.TestCase):
         mock_callback = Mock()
 
         # Create client with key vault reference and secret refresh interval
-        client = self.create_aad_client(
-            appconfiguration_endpoint_string,
+        client = self.create_client(
+            endpoint=appconfiguration_endpoint_string,
             selects={SettingSelector(key_filter="*", label_filter="prod")},
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
             keyvault_secret_url2=appconfiguration_keyvault_secret_url2,
@@ -69,8 +69,8 @@ class TestSecretRefresh(AppConfigTestCase, unittest.TestCase):
         mock_callback = Mock()
 
         # Create client with the mock secret resolver
-        client = self.create_aad_client(
-            appconfiguration_endpoint_string,
+        client = self.create_client(
+            endpoint=appconfiguration_endpoint_string,
             selects={SettingSelector(key_filter="*", label_filter="prod")},
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
             keyvault_secret_url2=appconfiguration_keyvault_secret_url2,
@@ -117,8 +117,8 @@ class TestSecretRefresh(AppConfigTestCase, unittest.TestCase):
         mock_callback = Mock()
 
         # Create client without specifying secret_refresh_interval
-        client = self.create_aad_client(
-            appconfiguration_endpoint_string,
+        client = self.create_client(
+            endpoint=appconfiguration_endpoint_string,
             selects={SettingSelector(key_filter="*", label_filter="prod")},
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
             keyvault_secret_url2=appconfiguration_keyvault_secret_url2,
@@ -157,8 +157,8 @@ class TestSecretRefresh(AppConfigTestCase, unittest.TestCase):
         mock_callback = Mock()
 
         # Create client with key vault reference and separate refresh intervals
-        client = self.create_aad_client(
-            appconfiguration_endpoint_string,
+        client = self.create_client(
+            endpoint=appconfiguration_endpoint_string,
             selects={SettingSelector(key_filter="*", label_filter="prod")},
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
             keyvault_secret_url2=appconfiguration_keyvault_secret_url2,
@@ -192,8 +192,8 @@ class TestSecretRefresh(AppConfigTestCase, unittest.TestCase):
         mock_callback = Mock()
 
         # Create client with specific secret_refresh_interval
-        client = self.create_aad_client(
-            appconfiguration_endpoint_string,
+        client = self.create_client(
+            endpoint=appconfiguration_endpoint_string,
             selects={SettingSelector(key_filter="*", label_filter="prod")},
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
             keyvault_secret_url2=appconfiguration_keyvault_secret_url2,
@@ -209,8 +209,8 @@ class TestSecretRefresh(AppConfigTestCase, unittest.TestCase):
         # as it's a protected attribute
 
         # Check with no refresh interval to ensure it's properly handled
-        client2 = self.create_aad_client(
-            appconfiguration_endpoint_string,
+        client2 = self.create_client(
+            endpoint=appconfiguration_endpoint_string,
             selects={SettingSelector(key_filter="*", label_filter="prod")},
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
             keyvault_secret_url2=appconfiguration_keyvault_secret_url2,

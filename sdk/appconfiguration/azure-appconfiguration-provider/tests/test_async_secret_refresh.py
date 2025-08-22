@@ -34,8 +34,8 @@ class TestAsyncSecretRefresh(AppConfigTestCase, unittest.TestCase):
         mock_callback = Mock(side_effect=async_callback)
 
         # Create client with key vault reference and secret refresh interval
-        client = await self.create_aad_client(
-            appconfiguration_endpoint_string,
+        client = await self.create_client(
+            endpoint=appconfiguration_endpoint_string,
             selects={SettingSelector(key_filter="*", label_filter="prod")},
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
             keyvault_secret_url2=appconfiguration_keyvault_secret_url2,
@@ -77,8 +77,8 @@ class TestAsyncSecretRefresh(AppConfigTestCase, unittest.TestCase):
         mock_callback = Mock()
 
         # Create client with the mock secret resolver
-        client = await self.create_aad_client(
-            appconfiguration_endpoint_string,
+        client = await self.create_client(
+            endpoint=appconfiguration_endpoint_string,
             selects={SettingSelector(key_filter="*", label_filter="prod")},
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
             keyvault_secret_url2=appconfiguration_keyvault_secret_url2,
@@ -130,8 +130,8 @@ class TestAsyncSecretRefresh(AppConfigTestCase, unittest.TestCase):
         mock_callback = Mock(side_effect=async_callback)
 
         # Create client without specifying secret_refresh_interval
-        client = await self.create_aad_client(
-            appconfiguration_endpoint_string,
+        client = await self.create_client(
+            endpoint=appconfiguration_endpoint_string,
             selects={SettingSelector(key_filter="*", label_filter="prod")},
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
             keyvault_secret_url2=appconfiguration_keyvault_secret_url2,
@@ -175,8 +175,8 @@ class TestAsyncSecretRefresh(AppConfigTestCase, unittest.TestCase):
         mock_callback = Mock(side_effect=async_callback)
 
         # Create client with key vault reference and separate refresh intervals
-        client = await self.create_aad_client(
-            appconfiguration_endpoint_string,
+        client = await self.create_client(
+            endpoint=appconfiguration_endpoint_string,
             selects={SettingSelector(key_filter="*", label_filter="prod")},
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
             keyvault_secret_url2=appconfiguration_keyvault_secret_url2,
@@ -215,8 +215,8 @@ class TestAsyncSecretRefresh(AppConfigTestCase, unittest.TestCase):
         mock_callback = Mock(side_effect=async_callback)
 
         # Create client with specific secret_refresh_interval
-        client = await self.create_aad_client(
-            appconfiguration_endpoint_string,
+        client = await self.create_client(
+            endpoint=appconfiguration_endpoint_string,
             selects={SettingSelector(key_filter="*", label_filter="prod")},
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
             keyvault_secret_url2=appconfiguration_keyvault_secret_url2,
@@ -232,8 +232,8 @@ class TestAsyncSecretRefresh(AppConfigTestCase, unittest.TestCase):
         # as it's a protected attribute
 
         # Check with no refresh interval to ensure it's properly handled
-        client2 = await self.create_aad_client(
-            appconfiguration_endpoint_string,
+        client2 = await self.create_client(
+            endpoint=appconfiguration_endpoint_string,
             selects={SettingSelector(key_filter="*", label_filter="prod")},
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
             keyvault_secret_url2=appconfiguration_keyvault_secret_url2,
