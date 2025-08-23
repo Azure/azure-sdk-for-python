@@ -1,5 +1,6 @@
 # Release History
 
-## 1.0.0b1 (1970-01-01)
+## 1.0.0b1 (2025-08-25)
 
-- Initial version
+### Features Added
+* Initial release
