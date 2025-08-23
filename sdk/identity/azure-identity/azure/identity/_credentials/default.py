@@ -128,7 +128,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         subprocesses (e.g. AzureCliCredential, AzurePowerShellCredential). Defaults to **10** seconds.
     :keyword bool require_envvar: If **True**, require that the AZURE_TOKEN_CREDENTIALS environment variable be set
         to a value denoting the credential type or credential group to use. If unset or empty, DefaultAzureCredential
-        will raise a `ValueError`.
+        will raise a `ValueError`. Defaults to **False**.
 
     .. admonition:: Example:
 
