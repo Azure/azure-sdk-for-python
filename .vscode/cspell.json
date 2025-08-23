@@ -135,13 +135,13 @@
     "eng/common/docgeneration/Generate-DocIndex.ps1",
     "eng/**/*.py",
     ".gitignore",
-    "tools/azure-sdk-tools/ci_tools/github_tools.py",
-    "tools/azure-sdk-tools/devtools_testutils/fake_credentials.py",
-    "tools/azure-sdk-tools/packaging_tools/**",
-    "tools/azure-sdk-tools/setup.py",
+    "eng/tools/azure-sdk-tools/ci_tools/github_tools.py",
+    "eng/tools/azure-sdk-tools/devtools_testutils/fake_credentials.py",
+    "eng/tools/azure-sdk-tools/packaging_tools/**",
+    "eng/tools/azure-sdk-tools/setup.py",
     "sdk/webpubsub/azure-messaging-webpubsubclient/azure/messaging/webpubsubclient/_serialization.py",
     "sdk/webpubsub/azure-messaging-webpubsubclient/azure/messaging/webpubsubclient/_model_base.py",
-    "tools/azure-sdk-tools/tests/test_servicemetadata.py",
+    "eng/tools/azure-sdk-tools/tests/test_servicemetadata.py",
     "conda/conda-recipes/azure-ai-ml/meta.yaml",
     "conda/conda-recipes/azure-eventhub/meta.yaml",
     "conda/conda-recipes/azure-mgmt/meta.yaml",
@@ -564,20 +564,26 @@
       ]
     },
     {
+      "filename": "doc/dev/tests-advanced.md",
+      "words": [
+        "xunit"
+      ]
+    },
+    {
       "filename": "doc/dev/pylint_checking.md",
       "words": [
         "pylintrc"
       ]
     },
     {
-      "filename": "tools/azure-sdk-tools/devtools_testutils/proxy_startup.py",
+      "filename": "eng/tools/azure-sdk-tools/devtools_testutils/proxy_startup.py",
       "words": [
         "certifi",
         "passenv"
       ]
     },
     {
-      "filename": "tools/azure-sdk-tools/tests/integration/test_proxy_startup.py",
+      "filename": "eng/tools/azure-sdk-tools/tests/integration/test_proxy_startup.py",
       "words": [
         "spinup"
       ]
@@ -589,7 +595,7 @@
       ]
     },
     {
-      "filename": "tools/azure-sdk-tools/ci_tools/deps.html.j2",
+      "filename": "eng/tools/azure-sdk-tools/ci_tools/deps.html.j2",
       "words": [
         "isfork",
         "ISFORK",
@@ -597,14 +603,14 @@
       ]
     },
     {
-      "filename": "tools/azure-sdk-tools/gh_tools/**",
+      "filename": "eng/tools/azure-sdk-tools/gh_tools/**",
       "words": [
         "JOBID",
         "vnext"
       ]
     },
     {
-      "filename": "tools/azure-sdk-tools/tests/test_labels.py",
+      "filename": "eng/tools/azure-sdk-tools/tests/test_labels.py",
       "words": [
         "vnext"
       ]
