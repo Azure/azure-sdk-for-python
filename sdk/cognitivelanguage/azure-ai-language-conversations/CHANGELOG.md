@@ -1,6 +1,6 @@
 # Release History
 
-## 2.0.0b1 (Unreleased)
+## 2.0.0b1 (2025-08-22)
 
 ### Features Added
 - Added support for service version 2024-05-01, 2024-11-01, 2024-11-15-preview,2025-05-15-preview.
