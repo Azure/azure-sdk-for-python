@@ -268,7 +268,7 @@ class ConversationAnalysisClient(AnalysisClientGenerated):
                 op_state = AnalyzeConversationOperationState(data)
 
                 poller_ref = poller_holder["poller"]
-                poller_ref._record_state_for_details(op_state)
+                poller_ref._record_state_for_details(op_state) # pylint:disable=protected-access
 
                 paged = _build_pager_from_state(op_state)
                 return cls(pipeline_response, paged, {}) if cls else paged
