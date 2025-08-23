@@ -1,4 +1,4 @@
--e ../../../tools/azure-sdk-tools
+-e ../../../eng/tools/azure-sdk-tools
 -e ../../identity/azure-identity
 azure-mgmt-resource<=21.1.0
 aiohttp

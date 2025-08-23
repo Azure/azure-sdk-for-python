@@ -25,6 +25,91 @@ if TYPE_CHECKING:
     from .. import _types, models as _models
 
 
+class ActivityFunctionDefinition(_Model):
+    """The activity definition information for a function.
+
+    :ivar description: A description of what the function does, used by the model to choose when
+     and how to call the function.
+    :vartype description: str
+    :ivar parameters: The parameters the functions accepts, described as a JSON Schema object.
+     Required.
+    :vartype parameters: ~azure.ai.agents.models.ActivityFunctionParameters
+    """
+
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A description of what the function does, used by the model to choose when and how to call the
+     function."""
+    parameters: "_models.ActivityFunctionParameters" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The parameters the functions accepts, described as a JSON Schema object. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        parameters: "_models.ActivityFunctionParameters",
+        description: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ActivityFunctionParameters(_Model):
+    """The parameters used for activity function definition.
+
+    :ivar type: The parameter type, it is always object. Required. Default value is "object".
+    :vartype type: str
+    :ivar properties: The dictionary of function arguments. Required.
+    :vartype properties: dict[str, ~azure.ai.agents.models.FunctionArgument]
+    :ivar required: The list of the required parameters. Required.
+    :vartype required: list[str]
+    :ivar additional_properties: If true the function has additional parameters.
+    :vartype additional_properties: bool
+    """
+
+    type: Literal["object"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The parameter type, it is always object. Required. Default value is \"object\"."""
+    properties: Dict[str, "_models.FunctionArgument"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The dictionary of function arguments. Required."""
+    required: List[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The list of the required parameters. Required."""
+    additional_properties: Optional[bool] = rest_field(
+        name="additionalProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """If true the function has additional parameters."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Dict[str, "_models.FunctionArgument"],
+        required: List[str],
+        additional_properties: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["object"] = "object"
+
+
 class Agent(_Model):
     """Represents an agent that can call the model and use tools.
 
@@ -708,6 +793,46 @@ class AzureFunctionStorageQueue(_Model):
         *,
         storage_service_endpoint: str,
         queue_name: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AzureFunctionToolCallDetails(_Model):
+    """The Azure function call description. All the fields are present in the completed run step,
+    however
+    only some fields are present in the RunStepDeltaAzureFunctionToolCall.
+
+    :ivar name: The Azure function name.
+    :vartype name: str
+    :ivar arguments: JSON serialized function arguments.
+    :vartype arguments: str
+    :ivar output: The function output.
+    :vartype output: str
+    """
+
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The Azure function name."""
+    arguments: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """JSON serialized function arguments."""
+    output: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The function output."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        arguments: Optional[str] = None,
+        output: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -1791,6 +1916,39 @@ class FileSearchToolResource(_Model):
         super().__init__(*args, **kwargs)
 
 
+class FunctionArgument(_Model):
+    """The function argument and description.
+
+    :ivar type: The type of an argument, for example 'string' or 'number'. Required.
+    :vartype type: str
+    :ivar description: The argument description.
+    :vartype description: str
+    """
+
+    type: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The type of an argument, for example 'string' or 'number'. Required."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The argument description."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+        description: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class FunctionDefinition(_Model):
     """The input definition information for a function.
 
@@ -2145,6 +2303,46 @@ class MessageContent(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class MessageDeletionStatus(_Model):
+    """The status of a thread message deletion operation.
+
+    :ivar id: The ID of the resource specified for deletion. Required.
+    :vartype id: str
+    :ivar deleted: A value indicating whether deletion was successful. Required.
+    :vartype deleted: bool
+    :ivar object: The object type, which is always 'thread.message.deleted'. Required. Default
+     value is "thread.message.deleted".
+    :vartype object: str
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The ID of the resource specified for deletion. Required."""
+    deleted: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A value indicating whether deletion was successful. Required."""
+    object: Literal["thread.message.deleted"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The object type, which is always 'thread.message.deleted'. Required. Default value is
+     \"thread.message.deleted\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        deleted: bool,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.object: Literal["thread.message.deleted"] = "thread.message.deleted"
 
 
 class MessageDelta(_Model):
@@ -4021,7 +4219,7 @@ class RunStep(_Model):
      "thread.run.step".
     :vartype object: str
     :ivar type: The type of run step, which can be either message_creation or tool_calls. Required.
-     Known values are: "message_creation" and "tool_calls".
+     Known values are: "message_creation", "tool_calls", and "activities".
     :vartype type: str or ~azure.ai.agents.models.RunStepType
     :ivar agent_id: The ID of the agent associated with the run step. Required.
     :vartype agent_id: str
@@ -4066,7 +4264,7 @@ class RunStep(_Model):
      \"thread.run.step\"."""
     type: Union[str, "_models.RunStepType"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The type of run step, which can be either message_creation or tool_calls. Required. Known
-     values are: \"message_creation\" and \"tool_calls\"."""
+     values are: \"message_creation\", \"tool_calls\", and \"activities\"."""
     agent_id: str = rest_field(name="assistant_id", visibility=["read", "create", "update", "delete", "query"])
     """The ID of the agent associated with the run step. Required."""
     thread_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -4143,13 +4341,83 @@ class RunStep(_Model):
         self.object: Literal["thread.run.step"] = "thread.run.step"
 
 
+class RunStepDetails(_Model):
+    """An abstract representation of the details for a run step.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    RunStepActivityDetails, RunStepMessageCreationDetails, RunStepToolCallDetails
+
+    :ivar type: The object type. Required. Known values are: "message_creation", "tool_calls", and
+     "activities".
+    :vartype type: str or ~azure.ai.agents.models.RunStepType
+    """
+
+    __mapping__: Dict[str, _Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """The object type. Required. Known values are: \"message_creation\", \"tool_calls\", and
+     \"activities\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RunStepActivityDetails(RunStepDetails, discriminator="activities"):
+    """The detailed information associated with a run step activities.
+
+    :ivar type: The object type, which is always 'activities'. Required. Represents a run step with
+     activities information.
+    :vartype type: str or ~azure.ai.agents.models.ACTIVITIES
+    :ivar activities: A list of activities for this run step. Required.
+    :vartype activities: list[~azure.ai.agents.models.RunStepDetailsActivity]
+    """
+
+    type: Literal[RunStepType.ACTIVITIES] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always 'activities'. Required. Represents a run step with activities
+     information."""
+    activities: List["_models.RunStepDetailsActivity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A list of activities for this run step. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        activities: List["_models.RunStepDetailsActivity"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type=RunStepType.ACTIVITIES, **kwargs)
+
+
 class RunStepToolCall(_Model):
     """An abstract representation of a detailed tool call as recorded within a run step for an
     existing run.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    RunStepAzureAISearchToolCall, RunStepBingCustomSearchToolCall, RunStepBingGroundingToolCall,
-    RunStepBrowserAutomationToolCall, RunStepCodeInterpreterToolCall,
+    RunStepAzureAISearchToolCall, RunStepAzureFunctionToolCall, RunStepBingCustomSearchToolCall,
+    RunStepBingGroundingToolCall, RunStepBrowserAutomationToolCall, RunStepCodeInterpreterToolCall,
     RunStepConnectedAgentToolCall, RunStepDeepResearchToolCall, RunStepMicrosoftFabricToolCall,
     RunStepFileSearchToolCall, RunStepFunctionToolCall, RunStepMcpToolCall, RunStepOpenAPIToolCall,
     RunStepSharepointToolCall
@@ -4226,10 +4494,50 @@ class RunStepAzureAISearchToolCall(RunStepToolCall, discriminator="azure_ai_sear
         super().__init__(*args, type="azure_ai_search", **kwargs)
 
 
+class RunStepAzureFunctionToolCall(RunStepToolCall, discriminator="azure_function"):
+    """A record of a call to an Azure Function tool.
+
+    :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
+     Required.
+    :vartype id: str
+    :ivar type: The object type, which is always 'azure_function'. Required. Default value is
+     "azure_function".
+    :vartype type: str
+    :ivar azure_function: The description of an Azure function call. Required.
+    :vartype azure_function: ~azure.ai.agents.models.AzureFunctionToolCallDetails
+    """
+
+    type: Literal["azure_function"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always 'azure_function'. Required. Default value is
+     \"azure_function\"."""
+    azure_function: "_models.AzureFunctionToolCallDetails" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The description of an Azure function call. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        azure_function: "_models.AzureFunctionToolCallDetails",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="azure_function", **kwargs)
+
+
 class RunStepBingCustomSearchToolCall(RunStepToolCall, discriminator="bing_custom_search"):
-    """A record of a call to a bing custom search tool, issued by the model in evaluation of a defined
+    """A record of a call to a Bing Custom Search tool, issued by the model in evaluation of a defined
     tool, that represents
-    executed search with bing custom search.
+    executed search with Bing Custom Search.
 
     :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
      Required.
@@ -4237,7 +4545,8 @@ class RunStepBingCustomSearchToolCall(RunStepToolCall, discriminator="bing_custo
     :ivar type: The object type, which is always 'bing_custom_search'. Required. Default value is
      "bing_custom_search".
     :vartype type: str
-    :ivar bing_custom_search: Reserved for future use. Required.
+    :ivar bing_custom_search: The dictionary with request and response from Bing Custom Search
+     tool. Required.
     :vartype bing_custom_search: dict[str, str]
     """
 
@@ -4245,7 +4554,7 @@ class RunStepBingCustomSearchToolCall(RunStepToolCall, discriminator="bing_custo
     """The object type, which is always 'bing_custom_search'. Required. Default value is
      \"bing_custom_search\"."""
     bing_custom_search: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Reserved for future use. Required."""
+    """The dictionary with request and response from Bing Custom Search tool. Required."""
 
     @overload
     def __init__(
@@ -4277,7 +4586,8 @@ class RunStepBingGroundingToolCall(RunStepToolCall, discriminator="bing_groundin
     :ivar type: The object type, which is always 'bing_grounding'. Required. Default value is
      "bing_grounding".
     :vartype type: str
-    :ivar bing_grounding: Reserved for future use. Required.
+    :ivar bing_grounding: The dictionary with request and response from Bing Grounding search tool.
+     Required.
     :vartype bing_grounding: dict[str, str]
     """
 
@@ -4285,7 +4595,7 @@ class RunStepBingGroundingToolCall(RunStepToolCall, discriminator="bing_groundin
     """The object type, which is always 'bing_grounding'. Required. Default value is
      \"bing_grounding\"."""
     bing_grounding: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Reserved for future use. Required."""
+    """The dictionary with request and response from Bing Grounding search tool. Required."""
 
     @overload
     def __init__(
@@ -4797,10 +5107,12 @@ class RunStepDeltaToolCall(_Model):
     call details.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    RunStepDeltaAzureAISearchToolCall, RunStepDeltaBingGroundingToolCall,
+    RunStepDeltaAzureAISearchToolCall, RunStepDeltaAzureFunctionToolCall,
+    RunStepDeltaCustomBingGroundingToolCall, RunStepDeltaBingGroundingToolCall,
     RunStepDeltaCodeInterpreterToolCall, RunStepDeltaConnectedAgentToolCall,
-    RunStepDeltaDeepResearchToolCall, RunStepDeltaFileSearchToolCall, RunStepDeltaFunctionToolCall,
-    RunStepDeltaMcpToolCall, RunStepDeltaOpenAPIToolCall
+    RunStepDeltaDeepResearchToolCall, RunStepDeltaMicrosoftFabricToolCall,
+    RunStepDeltaFileSearchToolCall, RunStepDeltaFunctionToolCall, RunStepDeltaMcpToolCall,
+    RunStepDeltaOpenAPIToolCall, RunStepDeltaSharepointToolCall
 
     :ivar index: The index of the tool call detail in the run step's tool_calls array. Required.
     :vartype index: int
@@ -4880,6 +5192,48 @@ class RunStepDeltaAzureAISearchToolCall(RunStepDeltaToolCall, discriminator="azu
         super().__init__(*args, type="azure_ai_search", **kwargs)
 
 
+class RunStepDeltaAzureFunctionToolCall(RunStepDeltaToolCall, discriminator="azure_function"):
+    """Represents the Azure Function tool call in a streaming run step.
+
+    :ivar index: The index of the tool call detail in the run step's tool_calls array. Required.
+    :vartype index: int
+    :ivar id: The ID of the tool call, used when submitting outputs to the run. Required.
+    :vartype id: str
+    :ivar type: The object type, which is always 'azure_function'. Required. Default value is
+     "azure_function".
+    :vartype type: str
+    :ivar azure_function: Partial description of an Azure function call. Required.
+    :vartype azure_function: ~azure.ai.agents.models.AzureFunctionToolCallDetails
+    """
+
+    type: Literal["azure_function"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always 'azure_function'. Required. Default value is
+     \"azure_function\"."""
+    azure_function: "_models.AzureFunctionToolCallDetails" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Partial description of an Azure function call. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        index: int,
+        id: str,  # pylint: disable=redefined-builtin
+        azure_function: "_models.AzureFunctionToolCallDetails",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="azure_function", **kwargs)
+
+
 class RunStepDeltaBingGroundingToolCall(RunStepDeltaToolCall, discriminator="bing_grounding"):
     """Represents the bing grounding tool call in a streaming run step.
 
@@ -4890,7 +5244,8 @@ class RunStepDeltaBingGroundingToolCall(RunStepDeltaToolCall, discriminator="bin
     :ivar type: The object type, which is always "bing_grounding". Required. Default value is
      "bing_grounding".
     :vartype type: str
-    :ivar bing_grounding: Reserved for future use. Required.
+    :ivar bing_grounding: The dictionary with request and response from Bing Grounding search tool.
+     Required.
     :vartype bing_grounding: dict[str, str]
     """
 
@@ -4898,7 +5253,7 @@ class RunStepDeltaBingGroundingToolCall(RunStepDeltaToolCall, discriminator="bin
     """The object type, which is always \"bing_grounding\". Required. Default value is
      \"bing_grounding\"."""
     bing_grounding: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Reserved for future use. Required."""
+    """The dictionary with request and response from Bing Grounding search tool. Required."""
 
     @overload
     def __init__(
@@ -5230,6 +5585,47 @@ class RunStepDeltaConnectedAgentToolCall(RunStepDeltaToolCall, discriminator="co
         super().__init__(*args, type="connected_agent", **kwargs)
 
 
+class RunStepDeltaCustomBingGroundingToolCall(RunStepDeltaToolCall, discriminator="bing_custom_search"):
+    """Represents the Bing Custom Search tool call in a streaming run step.
+
+    :ivar index: The index of the tool call detail in the run step's tool_calls array. Required.
+    :vartype index: int
+    :ivar id: The ID of the tool call, used when submitting outputs to the run. Required.
+    :vartype id: str
+    :ivar type: The object type, which is always 'bing_custom_search'. Required. Default value is
+     "bing_custom_search".
+    :vartype type: str
+    :ivar bing_custom_search: The dictionary with request and response from Bing Custom Search
+     tool. Required.
+    :vartype bing_custom_search: dict[str, str]
+    """
+
+    type: Literal["bing_custom_search"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always 'bing_custom_search'. Required. Default value is
+     \"bing_custom_search\"."""
+    bing_custom_search: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The dictionary with request and response from Bing Custom Search tool. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        index: int,
+        id: str,  # pylint: disable=redefined-builtin
+        bing_custom_search: Dict[str, str],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="bing_custom_search", **kwargs)
+
+
 class RunStepDeltaDeepResearchToolCall(RunStepDeltaToolCall, discriminator="deep_research"):
     """Represents the Deep research in a streaming run step.
 
@@ -5460,7 +5856,7 @@ class RunStepDeltaMCPObject(RunStepDeltaDetail, discriminator="mcp"):
 
 
 class RunStepDeltaMcpToolCall(RunStepDeltaToolCall, discriminator="mcp"):
-    """Represents the function data in a streaming run step MCP call.*.
+    """Represents the function data in a streaming run step MCP call.
 
     :ivar id: The ID of the tool call, used when submitting outputs to the run. Required.
     :vartype id: str
@@ -5561,6 +5957,48 @@ class RunStepDeltaMessageCreationObject(_Model):
         super().__init__(*args, **kwargs)
 
 
+class RunStepDeltaMicrosoftFabricToolCall(RunStepDeltaToolCall, discriminator="fabric_dataagent"):
+    """Represents the Microsoft Fabric tool call in a streaming run step.
+
+    :ivar index: The index of the tool call detail in the run step's tool_calls array. Required.
+    :vartype index: int
+    :ivar id: The ID of the tool call, used when submitting outputs to the run. Required.
+    :vartype id: str
+    :ivar type: The object type, which is always 'fabric_dataagent'. Required. Default value is
+     "fabric_dataagent".
+    :vartype type: str
+    :ivar microsoft_fabric: Fabric input and output. Required.
+    :vartype microsoft_fabric: dict[str, str]
+    """
+
+    type: Literal["fabric_dataagent"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always 'fabric_dataagent'. Required. Default value is
+     \"fabric_dataagent\"."""
+    microsoft_fabric: Dict[str, str] = rest_field(
+        name="fabric_dataagent", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Fabric input and output. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        index: int,
+        id: str,  # pylint: disable=redefined-builtin
+        microsoft_fabric: Dict[str, str],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="fabric_dataagent", **kwargs)
+
+
 class RunStepDeltaOpenAPIObject(RunStepDeltaDetail, discriminator="openapi"):
     """Represents an invocation of openapi as part of a streaming run step.
 
@@ -5633,6 +6071,46 @@ class RunStepDeltaOpenAPIToolCall(RunStepDeltaToolCall, discriminator="openapi")
         super().__init__(*args, type="openapi", **kwargs)
 
 
+class RunStepDeltaSharepointToolCall(RunStepDeltaToolCall, discriminator="sharepoint_grounding"):
+    """Represents the SharePoint tool call in a streaming run step.
+
+    :ivar index: The index of the tool call detail in the run step's tool_calls array. Required.
+    :vartype index: int
+    :ivar id: The ID of the tool call, used when submitting outputs to the run. Required.
+    :vartype id: str
+    :ivar type: The object type, which is always 'sharepoint_grounding'. Required. Default value is
+     "sharepoint_grounding".
+    :vartype type: str
+    :ivar sharepoint_grounding: SharePoint tool input and output. Required.
+    :vartype sharepoint_grounding: dict[str, str]
+    """
+
+    type: Literal["sharepoint_grounding"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always 'sharepoint_grounding'. Required. Default value is
+     \"sharepoint_grounding\"."""
+    sharepoint_grounding: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """SharePoint tool input and output. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        index: int,
+        id: str,  # pylint: disable=redefined-builtin
+        sharepoint_grounding: Dict[str, str],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="sharepoint_grounding", **kwargs)
+
+
 class RunStepDeltaToolCallObject(RunStepDeltaDetail, discriminator="tool_calls"):
     """Represents an invocation of tool calls as part of a streaming run step.
 
@@ -5668,25 +6146,39 @@ class RunStepDeltaToolCallObject(RunStepDeltaDetail, discriminator="tool_calls")
         super().__init__(*args, type="tool_calls", **kwargs)
 
 
-class RunStepDetails(_Model):
-    """An abstract representation of the details for a run step.
+class RunStepDetailsActivity(_Model):
+    """Represents the list of activities, associated with the given step.
 
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    RunStepMessageCreationDetails, RunStepToolCallDetails
-
-    :ivar type: The object type. Required. Known values are: "message_creation" and "tool_calls".
-    :vartype type: str or ~azure.ai.agents.models.RunStepType
+    :ivar type: The activity type, which is always 'mcp_list_tools'. Required. Default value is
+     "mcp_list_tools".
+    :vartype type: str
+    :ivar id: The activity ID. Required.
+    :vartype id: str
+    :ivar server_label: Server label. Required.
+    :vartype server_label: str
+    :ivar tools: The supported function list. Required.
+    :vartype tools: dict[str, ~azure.ai.agents.models.ActivityFunctionDefinition]
     """
 
-    __mapping__: Dict[str, _Model] = {}
-    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
-    """The object type. Required. Known values are: \"message_creation\" and \"tool_calls\"."""
+    type: Literal["mcp_list_tools"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The activity type, which is always 'mcp_list_tools'. Required. Default value is
+     \"mcp_list_tools\"."""
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The activity ID. Required."""
+    server_label: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Server label. Required."""
+    tools: Dict[str, "_models.ActivityFunctionDefinition"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The supported function list. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        type: str,
+        id: str,  # pylint: disable=redefined-builtin
+        server_label: str,
+        tools: Dict[str, "_models.ActivityFunctionDefinition"],
     ) -> None: ...
 
     @overload
@@ -5698,6 +6190,7 @@ class RunStepDetails(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+        self.type: Literal["mcp_list_tools"] = "mcp_list_tools"
 
 
 class RunStepError(_Model):
@@ -6068,7 +6561,7 @@ class RunStepMicrosoftFabricToolCall(RunStepToolCall, discriminator="fabric_data
     :ivar type: The object type, which is always 'fabric_dataagent'. Required. Default value is
      "fabric_dataagent".
     :vartype type: str
-    :ivar microsoft_fabric: Reserved for future use. Required.
+    :ivar microsoft_fabric: Fabric input and output. Required.
     :vartype microsoft_fabric: dict[str, str]
     """
 
@@ -6078,7 +6571,7 @@ class RunStepMicrosoftFabricToolCall(RunStepToolCall, discriminator="fabric_data
     microsoft_fabric: Dict[str, str] = rest_field(
         name="fabric_dataagent", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Reserved for future use. Required."""
+    """Fabric input and output. Required."""
 
     @overload
     def __init__(
@@ -6148,7 +6641,7 @@ class RunStepSharepointToolCall(RunStepToolCall, discriminator="sharepoint_groun
     :ivar type: The object type, which is always 'sharepoint_grounding'. Required. Default value is
      "sharepoint_grounding".
     :vartype type: str
-    :ivar share_point: Reserved for future use. Required.
+    :ivar share_point: SharePoint tool input and output. Required.
     :vartype share_point: dict[str, str]
     """
 
@@ -6158,7 +6651,7 @@ class RunStepSharepointToolCall(RunStepToolCall, discriminator="sharepoint_groun
     share_point: Dict[str, str] = rest_field(
         name="sharepoint_grounding", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Reserved for future use. Required."""
+    """SharePoint tool input and output. Required."""
 
     @overload
     def __init__(

@@ -369,7 +369,7 @@ Here is an example:
 <!-- SNIPPET:sample_agents_bing_grounding.create_agent_with_bing_grounding_tool -->
 
 ```python
-conn_id = os.environ["AZURE_BING_CONNECTION_ID"]
+conn_id = project_client.connections.get(os.environ["BING_CONNECTION_NAME"]).id
 
 # Initialize agent bing tool and add the connection id
 bing = BingGroundingTool(connection_id=conn_id)
@@ -876,7 +876,7 @@ Here is an example:
 <!-- SNIPPET:sample_agents_browser_automation.create_agent_with_browser_automation -->
 
 ```python
-connection_id = os.environ["AZURE_PLAYWRIGHT_CONNECTION_ID"]
+connection_id = project_client.connections.get(os.environ["AZURE_PLAYWRIGHT_CONNECTION_NAME"]).id
 
 # Initialize Browser Automation tool and add the connection id
 browser_automation = BrowserAutomationTool(connection_id=connection_id)
@@ -911,7 +911,7 @@ Here is an example:
 <!-- SNIPPET:sample_agents_fabric.create_agent_with_fabric_tool -->
 
 ```python
-conn_id = os.environ["FABRIC_CONNECTION_ID"]
+conn_id = project_client.connections.get(os.environ["FABRIC_CONNECTION_NAME"]).id
 
 print(conn_id)
 
@@ -1083,8 +1083,7 @@ for run_step in agents_client.run_steps.list(thread_id=thread.id, run_id=run.id,
         for tool_call in run_step.step_details.tool_calls:
             if isinstance(tool_call, RunStepConnectedAgentToolCall):
                 print(
-                    f"\tAgent: {tool_call.connected_agent.name} "
-                    f"query: {tool_call.connected_agent.arguments} ",
+                    f"\tAgent: {tool_call.connected_agent.name} " f"query: {tool_call.connected_agent.arguments} ",
                     f"output: {tool_call.connected_agent.output}",
                 )
 ```

@@ -27,7 +27,7 @@ class TestTagFilters(AppConfigTestCase):
         """Test filtering by exact tag name and value match."""
         selects = {SettingSelector(key_filter="*", tag_filters=["a=b"])}
         config_client = self.create_client(
-            appconfiguration_connection_string,
+            connection_string=appconfiguration_connection_string,
             selects=selects,
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
         )
@@ -47,7 +47,7 @@ class TestTagFilters(AppConfigTestCase):
         """Test filtering with multiple tag filters (AND condition)."""
         selects = {SettingSelector(key_filter="*", tag_filters=["a=b", "c=d"])}
         config_client = self.create_client(
-            appconfiguration_connection_string,
+            connection_string=appconfiguration_connection_string,
             selects=selects,
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
         )
@@ -66,7 +66,7 @@ class TestTagFilters(AppConfigTestCase):
         """Test filtering by tag with empty value."""
         selects = {SettingSelector(key_filter="*", tag_filters=["a="])}
         config_client = self.create_client(
-            appconfiguration_connection_string,
+            connection_string=appconfiguration_connection_string,
             selects=selects,
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
         )
@@ -88,7 +88,7 @@ class TestTagFilters(AppConfigTestCase):
     ):
         selects = {SettingSelector(key_filter="*", tag_filters=["special@tag=special:value"])}
         config_client = self.create_client(
-            appconfiguration_connection_string,
+            connection_string=appconfiguration_connection_string,
             selects=selects,
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
         )
@@ -107,7 +107,7 @@ class TestTagFilters(AppConfigTestCase):
         """Test tag filters with feature flags."""
         # Only apply tag filters to feature flags
         config_client = self.create_client(
-            appconfiguration_connection_string,
+            connection_string=appconfiguration_connection_string,
             feature_flag_enabled=True,
             feature_flag_selectors={SettingSelector(key_filter="*", tag_filters=["a=b"])},
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
@@ -131,7 +131,7 @@ class TestTagFilters(AppConfigTestCase):
         """Test filtering by non-existent tag."""
         selects = {SettingSelector(key_filter="*", tag_filters=["nonexistent=tag"])}
         config_client = self.create_client(
-            appconfiguration_connection_string,
+            connection_string=appconfiguration_connection_string,
             selects=selects,
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
         )
@@ -144,7 +144,7 @@ class TestTagFilters(AppConfigTestCase):
 
         # Check that feature flags are also filtered properly
         config_client = self.create_client(
-            appconfiguration_connection_string,
+            connection_string=appconfiguration_connection_string,
             feature_flag_enabled=True,
             feature_flag_selectors={SettingSelector(key_filter="*", tag_filters=["nonexistent=tag"])},
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
@@ -159,7 +159,7 @@ class TestTagFilters(AppConfigTestCase):
         """Test filtering by tag with null value."""
         selects = {SettingSelector(key_filter="*", tag_filters=["tag=" + NULL_CHAR])}
         config_client = self.create_client(
-            appconfiguration_connection_string,
+            connection_string=appconfiguration_connection_string,
             selects=selects,
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
         )

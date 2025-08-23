@@ -1,0 +1,78 @@
+# Variable 'ACCOUNT_HOST' was defined in the Variables tab
+# Variable 'ACCOUNT_KEY' was defined in the Variables tab
+# Variable 'AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER' was defined in the Variables tab
+# Agent Queue 'Azure Pipelines' was used with unrecognized Agent Specification, vmImage property must be specified to determine image - https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/hosted?view=azure-devops&tabs=yaml#software
+name: $(date:yyyyMMdd)$(rev:.r)
+resources:
+  repositories:
+  - repository: self
+    type: git
+    ref: refs/heads/main
+jobs:
+- job: Job_1
+  displayName: Python 3
+  timeoutInMinutes: 240
+  pool:
+    name: Azure Pipelines
+  steps:
+  - checkout: self
+    submodules: recursive
+    fetchDepth: 5
+    fetchTags: true
+  - task: UsePythonVersion@0
+    name: ''
+    displayName: Use Python 3.x
+    condition: succeededOrFailed()
+  - task: Bash@3
+    displayName: Bash Script
+    inputs:
+      targetType: inline
+      script: >-
+        cd ./sdk/cosmos/azure-cosmos
+
+        pip install tox==4.5.0
+
+        tox -c ../../../eng/tox/tox.ini --root . -e whl -- -k 'not cosmosEmulator and not cosmosMultiRegion and not cosmosCircuitBreaker and not cosmosCircuitBreakerMultiRegion'
+    env:
+      ACCOUNT_KEY: $(ACCOUNT_KEY) # Maps the secret variable $(token) from my-var-group
+  - task: AzurePowerShell@5
+    displayName: Clean up resources
+    condition: always()
+    inputs:
+      ConnectedServiceNameARM: d71e80c4-c3df-4a27-9fc7-f25563bbb0d1
+      ScriptType: InlineScript
+      Inline: "$uri = New-Object System.Uri(\"${env:ACCOUNT_HOST}\")\n\n$accountName = $uri.Host.Split('.')[0]\nWrite-Host \"Clean up databases from $accountName\"\n\n$res = Get-AzResource -Name $accountName -ResourceType \"Microsoft.DocumentDb/databaseAccounts\"\n\nif ($res -ne $null) {\n\n    $account = Get-AzCosmosDBAccount -ResourceId $res.ResourceId\n\n    $dbs = Get-AzCosmosDBSqlDatabase -ParentObject $account\n\n    $dbs | Write-Output\n\n    $dbs | Remove-AzCosmosDBSqlDatabase\n    \n    Write-Host \"$accountName is cleaned\"\n}\nelse {\n   Write-Host \"Unable to find $accountName\"\n}"
+      errorActionPreference: continue
+      TargetAzurePs: LatestVersion
+  - task: Bash@3
+    displayName: Additional clean up using Python SDK - install SDK
+    condition: succeededOrFailed()
+    inputs:
+      targetType: inline
+      script: pip install azure-cosmos
+  - task: PythonScript@0
+    displayName: Additional clean up using Python SDK
+    condition: succeededOrFailed()
+    inputs:
+      scriptSource: inline
+      script: >-
+        # python tests creates databases with special characters (!@$%^&*()-~`'_[]{}|;:,.<>) and PS and Portal unable to remove them. This task additionally clean resource that couldn't be removed using previous PS task
+
+
+        import os
+
+        import azure.cosmos.cosmos_client as cosmos_client
+
+        host = os.environ.get("ACCOUNT_HOST", "") 
+
+        key = os.environ.get("ACCOUNT_KEY", "")
+
+        client = cosmos_client.CosmosClient(host, key)
+
+
+        for db in client.list_databases():
+
+            client.delete_database(db["id"])
+    env:
+      ACCOUNT_KEY: $(ACCOUNT_KEY) # Maps the secret variable $(token) from my-var-group
+...

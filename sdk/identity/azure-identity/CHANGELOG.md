@@ -4,9 +4,13 @@
 
 ### Features Added
 
+- `AzureDeveloperCliCredential` now supports `claims` in `get_token` and `get_token_info`.  ([#42568](https://github.com/Azure/azure-sdk-for-python/pull/42568))
+
 ### Breaking Changes
 
 ### Bugs Fixed
+
+- Fixed an issue where `AzureDeveloperCliCredential` would time out during token requests when `azd` prompts for user interaction. This issue commonly occurred in environments where the `AZD_DEBUG` environment variable was set, causing the Azure Developer CLI to display additional prompts that interfered with automated token acquisition. ([#42535](https://github.com/Azure/azure-sdk-for-python/pull/42535))
 
 ### Other Changes
 
@@ -15,11 +19,13 @@
 ### Bugs Fixed
 
 - Fixed an issue where CAE (Continuous Access Evaluation) caches were not properly used by `AuthorizationCodeCredential` and the asynchronous `OnBehalfOfCredential`. ([#42145](https://github.com/Azure/azure-sdk-for-python/pull/42145))
+- Fixed an issue where brokered authentication was not included in the `DefaultAzureCredential` chain when `AZURE_TOKEN_CREDENTIALS` was set to `dev`. ([#42599](https://github.com/Azure/azure-sdk-for-python/pull/42599))
 
 ### Other Changes
 
 - `ManagedIdentityCredential` now retries IMDS 410 status responses for at least 70 seconds total duration as required by [Azure IMDS documentation](https://learn.microsoft.com/azure/virtual-machines/instance-metadata-service?tabs=windows#errors-and-debugging).  ([#42330](https://github.com/Azure/azure-sdk-for-python/pull/42330))
 - Improved `DefaultAzureCredential` diagnostics when `WorkloadIdentityCredential` initialization fails. If DAC fails to find a successful credential in the chain, the reason `WorkloadIdentityCredential` failed will be included in the error message. ([#42346](https://github.com/Azure/azure-sdk-for-python/pull/42346))
+- `AzureCliCredential` and `AzurePowerShellCredential` now raise `ClientAuthenticationError` when `claims` are provided to `get_token` or `get_token_info`, as these credentials do not support claims challenges. The error message includes instructions for handling claims authentication scenarios. ([#42568](https://github.com/Azure/azure-sdk-for-python/pull/42568))
 
 ## 1.24.0b1 (2025-07-17)
 
