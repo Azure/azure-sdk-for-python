@@ -16,10 +16,6 @@
 ### Breaking Changes
 - Removed support for Conversations Authoring.
 
-### Bugs Fixed
-
-### Other Changes
-
 ## 1.1.0 (2023-06-13)
 
 ### Features Added
