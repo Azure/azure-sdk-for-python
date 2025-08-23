@@ -118,10 +118,10 @@ class TrainedModelOperations(TrainedModelOperationsGenerated):
         """
 
     @distributed_trace
-    def begin_evaluate_model(  # type: ignore[override]
+    def begin_evaluate_model(
         self,
         trained_model_label: str,
-        body: Union[EvaluationDetails, dict, IO[bytes]],
+        body: Union[EvaluationDetails, JSON, IO[bytes]],
         *,
         content_type: str = "application/json",
         **kwargs: Any

@@ -82,7 +82,7 @@ class JobsStrategy(LongRunningOperation):
         raise OperationFailed("Operation failed or canceled")
 
     # Map service statuses to core strings
-    def get_status(self, response: JSON) -> str:  # noqa: D401
+    def get_status(self, response: JSON) -> str:  # type: ignore
         raw = str(response.get("status", "")).lower()
         if raw in ("succeeded",):
             return "Succeeded"

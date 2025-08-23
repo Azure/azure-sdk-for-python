@@ -152,7 +152,7 @@ class ExportedModelOperations(ExportedModelOperationsGenerated):
                 params=_params,
                 **kwargs,
             )
-            await initial.http_response.read()  # type: ignore[func-returns-value]
+            await initial.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
@@ -226,7 +226,7 @@ class ExportedModelOperations(ExportedModelOperationsGenerated):
                 params=_params,
                 **kwargs,
             )
-            await initial.http_response.read()  # type: ignore[func-returns-value]
+            await initial.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):

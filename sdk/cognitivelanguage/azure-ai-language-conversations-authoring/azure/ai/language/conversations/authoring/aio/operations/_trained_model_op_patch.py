@@ -125,7 +125,7 @@ class TrainedModelOperations(TrainedModelOperationsGenerated):
     async def begin_evaluate_model(  # type: ignore[override]
         self,
         trained_model_label: str,
-        body: Union[EvaluationDetails, dict, IO[bytes]],
+        body: Union[EvaluationDetails, JSON, IO[bytes]],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -169,7 +169,7 @@ class TrainedModelOperations(TrainedModelOperationsGenerated):
                 params=_params,
                 **kwargs,
             )
-            await initial.http_response.read()  # type: ignore[func-returns-value]
+            await initial.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
