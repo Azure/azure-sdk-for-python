@@ -95,8 +95,9 @@ async def sample_orchestration_prediction_async():
                     return
 
                 qa = target_intent_result.result
-                for ans in qa.answers:  # type: ignore
-                    print(ans.answer or "")
+                if qa is not None and qa.answers is not None:
+                    for ans in qa.answers:
+                        print(ans.answer or "")
             else:
                 print("Prediction was not an OrchestrationPrediction.")
         else:

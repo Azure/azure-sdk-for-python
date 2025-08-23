@@ -94,8 +94,9 @@ def sample_orchestration_prediction():
                 return
 
             qa = target_intent_result.result
-            for ans in qa.answers or []:  # type: ignore[attr-defined]
-                print(ans.answer or "")
+            if qa is not None and qa.answers is not None:
+                for ans in qa.answers:
+                    print(ans.answer or "")
         else:
             print("Prediction was not an OrchestrationPrediction.")
     else:
