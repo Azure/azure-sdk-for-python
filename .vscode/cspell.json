@@ -812,6 +812,11 @@
       "words": [ "ctxt", "wday", "mday", "astimezone", "unflattened", "JSONify", "deseralize" ]
     },
     {
+      "filename": "sdk/cognitivelanguage/azure-ai-language-conversations-authoring/**",
+      "words": [ "unassigning" ],
+      "caseSensitive": false
+    },
+    {
       "filename": "sdk/cognitivelanguage/azure-ai-language-questionanswering/**",
       "words": [ "qnas", "qnamaker", "ADTO" ],
       "caseSensitive": false
