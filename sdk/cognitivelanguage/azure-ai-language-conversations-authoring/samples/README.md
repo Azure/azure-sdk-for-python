@@ -125,5 +125,5 @@ what you can do with the Azure Conversational Language Understanding **Authoring
 [sample_assign_deployment_resources]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations-authoring/samples/sample_assign_deployment_resources.py
 [sample_cancel_training_job]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations-authoring/samples/sample_cancel_training_job.py
 
-[api_reference_authoring]: https://learn.microsoft.com/python/api/azure-ai-language-conversations-authoring/azure.ai.language.conversations.authoring?view=azure-python
+[api_reference_authoring]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-ai-language-conversations-authoring/latest/azure.ai.language.conversations.authoring.html
 [versioning_story_readme]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations-authoring#install-the-package
