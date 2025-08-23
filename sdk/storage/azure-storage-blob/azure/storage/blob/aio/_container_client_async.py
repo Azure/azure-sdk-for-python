@@ -62,7 +62,11 @@ if TYPE_CHECKING:
     )
 
 
-class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, StorageEncryptionMixin):  # type: ignore [misc]  # pylint: disable=too-many-public-methods
+class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public-methods
+    AsyncStorageAccountHostsMixin,
+    StorageAccountHostsMixin,
+    StorageEncryptionMixin
+):
     """A client to interact with a specific container, although that container
     may not yet exist.
 
@@ -798,6 +802,9 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
             Options include: 'snapshots', 'metadata', 'uncommittedblobs', 'copy', 'deleted', 'deletedwithversions',
             'tags', 'versions', 'immutabilitypolicy', 'legalhold'.
         :type include: list[str] or str
+        :keyword int results_per_page:
+            Controls the maximum number of Blobs that will be included in each page of results if using
+            `AsyncItemPaged.by_page()`.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
@@ -851,6 +858,9 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
         :keyword str name_starts_with:
             Filters the results to return only blobs whose names
             begin with the specified prefix.
+        :keyword int results_per_page:
+            Controls the maximum number of Blobs that will be included in each page of results if using
+            `AsyncItemPaged.by_page()`.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.

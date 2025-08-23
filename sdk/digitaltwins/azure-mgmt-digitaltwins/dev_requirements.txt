@@ -1,4 +1,4 @@
--e ../../../tools/azure-sdk-tools
+-e ../../../eng/tools/azure-sdk-tools
 -e ../../identity/azure-identity
 -e ../../resources/azure-mgmt-msi
 -e ../../resources/azure-mgmt-resource

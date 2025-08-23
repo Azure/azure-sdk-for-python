@@ -96,11 +96,7 @@ You can rearrange sequence or disable particular tests.
 ## Running Test
 
 To run tests, refer to the documentation at
-[/doc/dev/mgmt/tests.md](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/mgmt/tests.md). Most test
-suites in the Azure SDK have been migrated to use the Azure SDK test proxy, but some libraries that have inactive tests
-may still be using an older, deprecated system. The
-[test proxy migration guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md)
-describes the differences between the systems and their requirements.
+[/doc/dev/mgmt/tests.md](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/mgmt/tests.md).
 
 ## Fixing Test
 

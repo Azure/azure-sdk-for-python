@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -31,7 +32,7 @@ def main():
     )
 
     response = client.event_subscriptions.begin_create_or_update(
-        scope="subscriptions/5b4b650e-28b9-4790-b3ab-ddbd88d727c4/resourceGroups/examplerg/providers/Microsoft.EventGrid/topics/exampletopic1",
+        scope="subscriptions/8f6b6269-84f2-4d09-9e31-1127efcd1e40/resourceGroups/examplerg/providers/Microsoft.EventGrid/topics/exampletopic1",
         event_subscription_name="examplesubscription1",
         event_subscription_info={
             "properties": {
@@ -59,6 +60,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2025-02-15/examples/EventSubscriptions_CreateOrUpdateForCustomTopic_AzureFunctionDestination.json
+# x-ms-original-file: specification/eventgrid/resource-manager/Microsoft.EventGrid/preview/2025-04-01-preview/examples/EventSubscriptions_CreateOrUpdateForCustomTopic_AzureFunctionDestination.json
 if __name__ == "__main__":
     main()

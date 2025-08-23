@@ -45,7 +45,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
     """
 
     def __init__(self, client, resource_link, options, partitioned_query_execution_info,
-                 hybrid_search_query_info, response_hook):
+                 hybrid_search_query_info, response_hook, raw_response_hook):
         super(_HybridSearchContextAggregator, self).__init__(client, options)
 
         # use the routing provider in the client
@@ -58,6 +58,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
         self._aggregated_global_statistics = None
         self._document_producer_comparator = None
         self._response_hook = response_hook
+        self._raw_response_hook = raw_response_hook
 
     async def _run_hybrid_search(self):  # pylint: disable=too-many-branches, too-many-statements
         # Check if we need to run global statistics queries, and if so do for every partition in the container
@@ -76,7 +77,8 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
                         global_statistics_query,
                         self._document_producer_comparator,
                         self._options,
-                        self._response_hook
+                        self._response_hook,
+                        self._raw_response_hook
                     )
                 )
 
@@ -119,7 +121,8 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
                         rewritten_query['rewrittenQuery'],
                         self._document_producer_comparator,
                         self._options,
-                        self._response_hook
+                        self._response_hook,
+                        self._raw_response_hook
                     )
                 )
         # verify all document producers have items/ no splits
@@ -236,7 +239,8 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
                     query,
                     self._document_producer_comparator,
                     self._options,
-                    self._response_hook
+                    self._response_hook,
+                    self._raw_response_hook
                 )
             )
 
@@ -254,5 +258,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
             return [item async for item in self._client._ReadPartitionKeyRanges(collection_link=self._resource_link)]
         query_ranges = self._partitioned_query_ex_info.get_query_ranges()
         return await self._routing_provider.get_overlapping_ranges(
-            self._resource_link, [routing_range.Range.ParseFromDict(range_as_dict) for range_as_dict in query_ranges]
+            self._resource_link,
+            [routing_range.Range.ParseFromDict(range_as_dict) for range_as_dict in query_ranges],
+            self._options
         )

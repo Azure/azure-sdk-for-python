@@ -4,11 +4,20 @@
 
 ### Features Added
 
-### Breaking Changes
+- Added support for Teams multipersona users in create call, add participant, transfer, and redirect scenarios in OPS calls
+- Added TeamsAppSource for use when creating outbound OPS calls
+- Recording with the call connection ID is now supported. OPS calls can be recorded using the call connection ID.
 
-### Bugs Fixed
-
-### Other Changes
+## 1.4.0 (2025-06-06)
+ 
+### Features Added
+ 
+- Real-time transcription support
+- Audio and DTMF streaming capabilities
+- Integration of ConnectAPI for seamless streaming and transcription
+- Improved media streaming with bidirectional functionality, allowing audio formats in both directions, currently supporting sample rates of 24kHz and 16kHz
+- Support for custom speech models has been integrated into transcription
+- A confidence level for recognized speech has been introduced, ranging from 0.0 to 1.0 when available
 
 ## 1.4.0b1 (2024-11-22)
 

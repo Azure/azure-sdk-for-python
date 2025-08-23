@@ -46,6 +46,9 @@ from ._models import (
     AzureFunctionToolDefinition,
     AzureFunctionBinding,
     BingGroundingToolDefinition,
+    BrowserAutomationToolConnectionParameters,
+    BrowserAutomationToolDefinition,
+    BrowserAutomationToolParameters,
     CodeInterpreterToolDefinition,
     CodeInterpreterToolResource,
     ConnectedAgentToolDefinition,
@@ -54,6 +57,8 @@ from ._models import (
     FileSearchToolResource,
     FunctionDefinition,
     FunctionToolDefinition,
+    MCPToolDefinition,
+    MCPToolResource,
     MessageImageFileContent,
     MessageTextContent,
     MessageTextFileCitationAnnotation,
@@ -90,7 +95,7 @@ from ._models import MessageDeltaChunk as MessageDeltaChunkGenerated
 from ._models import ThreadMessage as ThreadMessageGenerated
 from ._models import MessageAttachment as MessageAttachmentGenerated
 
-from .. import _types
+from .. import types as _types
 
 
 logger = logging.getLogger(__name__)
@@ -791,6 +796,176 @@ class OpenApiTool(Tool[OpenApiToolDefinition]):
     def execute(self, tool_call: Any) -> None:
         """
         OpenApiTool does not execute client-side.
+        :param Any tool_call: The tool call to execute.
+        :type tool_call: Any
+        """
+
+
+class McpTool(Tool[MCPToolDefinition]):
+    """
+    A tool that connects to Model Context Protocol (MCP) servers.
+    Initialized with server configuration, this class supports managing MCP server connections
+    and allowed tools dynamically.
+    """
+
+    def __init__(
+        self,
+        server_label: str,
+        server_url: str,
+        allowed_tools: Optional[List[str]] = None,
+    ) -> None:
+        """
+        Constructor initializes the tool with MCP server configuration.
+
+        :param server_label: The label for the MCP server.
+        :type server_label: str
+        :param server_url: The endpoint for the MCP server.
+        :type server_url: str
+        :param allowed_tools: List of allowed tools for MCP server.
+        :type allowed_tools: Optional[List[str]]
+        """
+        self._server_label = server_label
+        self._server_url = server_url
+        self._allowed_tools = allowed_tools or []
+        self._require_approval = "always"
+        self._headers: Dict[str, str] = {}
+        self._definition = MCPToolDefinition(
+            server_label=server_label,
+            server_url=server_url,
+            allowed_tools=self._allowed_tools if self._allowed_tools else None,
+        )
+        self._resource = MCPToolResource(
+            server_label=self._server_label, headers=self._headers, require_approval=self._require_approval
+        )
+
+    @property
+    def definitions(self) -> List[MCPToolDefinition]:
+        """
+        Get the MCP tool definition.
+
+        :return: A list containing the MCP tool definition.
+        :rtype: List[MCPToolDefinition]
+        """
+        return [self._definition]
+
+    def allow_tool(self, tool_name: str) -> None:
+        """
+        Add a tool to the list of allowed tools.
+
+        :param tool_name: The name of the tool to allow.
+        :type tool_name: str
+        """
+        if tool_name not in self._allowed_tools:
+            self._allowed_tools.append(tool_name)
+            # Update the definition
+            self._definition = MCPToolDefinition(
+                server_label=self._server_label,
+                server_url=self._server_url,
+                allowed_tools=self._allowed_tools if self._allowed_tools else None,
+            )
+
+    def disallow_tool(self, tool_name: str) -> None:
+        """
+        Remove a tool from the list of allowed tools.
+
+        :param tool_name: The name of the tool to remove from allowed tools.
+        :type tool_name: str
+        :raises ValueError: If the tool is not in the allowed tools list.
+        """
+        if tool_name in self._allowed_tools:
+            self._allowed_tools.remove(tool_name)
+            # Update the definition
+            self._definition = MCPToolDefinition(
+                server_label=self._server_label,
+                server_url=self._server_url,
+                allowed_tools=self._allowed_tools if self._allowed_tools else None,
+            )
+        else:
+            raise ValueError(f"Tool '{tool_name}' is not in the allowed tools list.")
+
+    def set_approval_mode(self, require_approval: str) -> None:
+        """
+        Update the headers for the MCP tool.
+
+        :param require_approval: The require_approval setting to update.
+        :type require_approval: str
+        """
+        self._require_approval = require_approval
+        self._resource = MCPToolResource(
+            server_label=self._server_label, headers=self._headers, require_approval=self._require_approval
+        )
+
+    def update_headers(self, key: str, value: str) -> None:
+        """
+        Update the headers for the MCP tool.
+
+        :param key: The header key to update.
+        :type key: str
+        :param value: The new value for the header key.
+        :type value: str
+        :raises ValueError: If the key is empty.
+        """
+        if key:
+            self._headers[key] = value
+            self._resource = MCPToolResource(
+                server_label=self._server_label, headers=self._headers, require_approval=self._require_approval
+            )
+        else:
+            raise ValueError("Header key cannot be empty.")
+
+    @property
+    def server_label(self) -> str:
+        """
+        Get the server label for the MCP tool.
+
+        :return: The label identifying the MCP server.
+        :rtype: str
+        """
+        return self._server_label
+
+    @property
+    def server_url(self) -> str:
+        """
+        Get the server URL for the MCP tool.
+
+        :return: The endpoint URL for the MCP server.
+        :rtype: str
+        """
+        return self._server_url
+
+    @property
+    def allowed_tools(self) -> List[str]:
+        """
+        Get the list of allowed tools for the MCP server.
+
+        :return: A copy of the list of tool names that are allowed to be executed on this MCP server.
+        :rtype: List[str]
+        """
+        return self._allowed_tools.copy()
+
+    @property
+    def headers(self) -> Dict[str, str]:
+        """
+        Get the headers for the MCP tool.
+
+        :return: Dictionary of HTTP headers to be sent with MCP server requests.
+        :rtype: Dict[str, str]
+        """
+        return self._resource.headers
+
+    @property
+    def resources(self) -> ToolResources:
+        """
+        Get the tool resources for the agent.
+
+        :return: ToolResources with MCP configuration.
+        :rtype: ToolResources
+        """
+        return ToolResources(mcp=[self._resource])
+
+    def execute(self, tool_call: Any) -> None:
+        """
+        McpTool approvals should currently be handled client-side.
 
         :param Any tool_call: The tool call to execute.
         :type tool_call: Any
@@ -913,8 +1088,8 @@ class DeepResearchTool(Tool[DeepResearchToolDefinition]):
             )
 
         self._deep_research_details = DeepResearchDetails(
-            deep_research_model=deep_research_model,
-            deep_research_bing_grounding_connections=[
+            model=deep_research_model,
+            bing_grounding_connections=[
                 DeepResearchBingGroundingConnection(connection_id=bing_grounding_connection_id)
             ],
         )
@@ -927,6 +1102,54 @@ class DeepResearchTool(Tool[DeepResearchToolDefinition]):
         :rtype: List[ToolDefinition]
         """
         return [DeepResearchToolDefinition(deep_research=self._deep_research_details)]
+
+    @property
+    def resources(self) -> ToolResources:
+        """
+        Get the tool resources.
+
+        :rtype: ToolResources
+        """
+        return ToolResources()
+
+    def execute(self, tool_call: Any) -> Any:
+        pass
+
+
+class BrowserAutomationTool(Tool[BrowserAutomationToolDefinition]):
+    """
+    A tool that allows your Agent to perform real-world web browser navigation tasks through natural language prompts.
+    """
+
+    def __init__(self, connection_id: str):
+        """
+        Initialize a Browser Automation tool with the ID of the connection to an Azure Playwright service.
+
+        :param connection_id: Connection ID to an Azure Playwright service, to be used by tool. Browser Automation tool allows only one connection.
+        :raises ValueError: If the connection ID is invalid.
+        """
+
+        if not _is_valid_connection_id(connection_id):
+            raise ValueError(
+                "Connection ID '"
+                + connection_id
+                + "' does not fit the format:"
+                + "'/subscriptions/<subscription_id>/resourceGroups/<resource_group_name>/"
+                + "providers/<provider_name>/accounts/<account_name>/projects/<project_name>/connections/<connection_name>'"
+            )
+
+        self._browser_automation_tool_parameters = BrowserAutomationToolParameters(
+            connection=BrowserAutomationToolConnectionParameters(id=connection_id)
+        )
+
+    @property
+    def definitions(self) -> List[BrowserAutomationToolDefinition]:
+        """
+        Get the Browser Automation tool definitions.
+
+        :rtype: List[ToolDefinition]
+        """
+        return [BrowserAutomationToolDefinition(browser_automation=self._browser_automation_tool_parameters)]
 
     @property
     def resources(self) -> ToolResources:
@@ -1208,13 +1431,26 @@ class CodeInterpreterTool(Tool[CodeInterpreterToolDefinition]):
 
     :param file_ids: A list of file IDs to interpret.
     :type file_ids: list[str]
+    :param data_sources: The list of data sources for the enterprise file search.
+    :type data_sources: list[VectorStoreDataSource]
+    :raises: ValueError if both file_ids and data_sources are provided.
     """
 
-    def __init__(self, file_ids: Optional[List[str]] = None):
-        if file_ids is None:
-            self.file_ids = set()
-        else:
+    _INVALID_CONFIGURATION = "file_ids and data_sources are mutually exclusive."
+
+    def __init__(
+        self,
+        file_ids: Optional[List[str]] = None,
+        data_sources: Optional[List[VectorStoreDataSource]] = None,
+    ):
+        if file_ids and data_sources:
+            raise ValueError(CodeInterpreterTool._INVALID_CONFIGURATION)
+        self.file_ids = set()
+        if file_ids:
             self.file_ids = set(file_ids)
+        self.data_sources: Dict[str, VectorStoreDataSource] = {}
+        if data_sources:
+            self.data_sources = {ds.asset_identifier: ds for ds in data_sources}
 
     def add_file(self, file_id: str) -> None:
         """
@@ -1222,8 +1458,23 @@ class CodeInterpreterTool(Tool[CodeInterpreterToolDefinition]):
 
         :param file_id: The ID of the file to interpret.
         :type file_id: str
+        :raises: ValueError if data_sources are provided.
         """
+        if self.data_sources:
+            raise ValueError(CodeInterpreterTool._INVALID_CONFIGURATION)
         self.file_ids.add(file_id)
+
+    def add_data_source(self, data_source: VectorStoreDataSource) -> None:
+        """
+        Add a data source to the list of data sources to interpret.
+
+        :param data_source: The new data source.
+        :type data_source: VectorStoreDataSource
+        :raises: ValueError if file_ids are provided.
+        """
+        if self.file_ids:
+            raise ValueError(CodeInterpreterTool._INVALID_CONFIGURATION)
+        self.data_sources[data_source.asset_identifier] = data_source
 
     def remove_file(self, file_id: str) -> None:
         """
@@ -1232,7 +1483,16 @@ class CodeInterpreterTool(Tool[CodeInterpreterToolDefinition]):
         :param file_id: The ID of the file to remove.
         :type file_id: str
         """
-        self.file_ids.remove(file_id)
+        self.file_ids.discard(file_id)
+
+    def remove_data_source(self, asset_identifier: str) -> None:
+        """
+        Remove The asset from data_sources.
+
+        :param asset_identifier: The asset identifier to remove.
+        :type asset_identifier: str
+        """
+        self.data_sources.pop(asset_identifier, None)
 
     @property
     def definitions(self) -> List[CodeInterpreterToolDefinition]:
@@ -1250,9 +1510,13 @@ class CodeInterpreterTool(Tool[CodeInterpreterToolDefinition]):
 
         :rtype: ToolResources
         """
-        if not self.file_ids:
+        if not self.file_ids and not self.data_sources:
             return ToolResources()
-        return ToolResources(code_interpreter=CodeInterpreterToolResource(file_ids=list(self.file_ids)))
+        if self.file_ids:
+            return ToolResources(code_interpreter=CodeInterpreterToolResource(file_ids=list(self.file_ids)))
+        return ToolResources(
+            code_interpreter=CodeInterpreterToolResource(data_sources=list(self.data_sources.values()))
+        )
 
     def execute(self, tool_call: Any) -> Any:
         pass
@@ -1931,12 +2195,14 @@ __all__: List[str] = [
     "AzureFunctionTool",
     "BaseAsyncAgentEventHandler",
     "BaseAgentEventHandler",
+    "BrowserAutomationTool",
     "CodeInterpreterTool",
     "ConnectedAgentTool",
     "DeepResearchTool",
     "AsyncAgentEventHandler",
     "FileSearchTool",
     "FunctionTool",
+    "McpTool",
     "OpenApiTool",
     "BingGroundingTool",
     "FabricTool",

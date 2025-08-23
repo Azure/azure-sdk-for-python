@@ -625,7 +625,7 @@ class MLClient:
         self._local_endpoint_helper = _LocalEndpointHelper(requests_pipeline=self._requests_pipeline)
         self._local_deployment_helper = _LocalDeploymentHelper(self._operation_container)
         self._online_endpoints = OnlineEndpointOperations(
-            self._operation_scope,
+            self._ws_operation_scope if registry_reference else self._operation_scope,
             self._operation_config,
             self._service_client_02_2022_preview,
             self._operation_container,

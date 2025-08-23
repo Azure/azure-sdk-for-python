@@ -15,8 +15,8 @@ from _fault_injection_transport import FaultInjectionTransport
 from azure.cosmos.exceptions import CosmosHttpResponseError
 
 COLLECTION = "created_collection"
-REGION_1 = "West US 3"
-REGION_2 = "West US"
+REGION_1 = test_config.TestConfig.WRITE_LOCATION
+REGION_2 = test_config.TestConfig.READ_LOCATION
 REGION_3 = "West US 2"
 ACCOUNT_REGIONS = [REGION_1, REGION_2, REGION_3]
 
@@ -83,13 +83,16 @@ class TestPreferredLocations:
         uri_down = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_1)
         predicate = lambda r: (FaultInjectionTransport.predicate_is_document_operation(r) and
                                (FaultInjectionTransport.predicate_targets_region(r, uri_down) or
-                                FaultInjectionTransport.predicate_targets_region(r, default_endpoint)))
+                                FaultInjectionTransport.predicate_targets_region(r, default_endpoint)) and
+                               not FaultInjectionTransport.predicate_is_operation_type(r, "ReadFeed")
+                               )
+
         custom_transport.add_fault(predicate,
                                    error_lambda)
         client = CosmosClient(default_endpoint,
                               self.master_key,
                               multiple_write_locations=True,
-                              transport=custom_transport, **kwargs)
+                              transport=custom_transport, consistency_level="Session", **kwargs)
         db = client.get_database_client(self.TEST_DATABASE_ID)
         container = db.get_container_client(self.TEST_CONTAINER_SINGLE_PARTITION_ID)
         return {"client": client, "db": db, "col": container}
@@ -140,7 +143,7 @@ class TestPreferredLocations:
 
         # setup fault injection so that first account region fails
         custom_transport = FaultInjectionTransport()
-        error_lambda = lambda r:FaultInjectionTransport.error_after_delay(
+        error_lambda = lambda r: FaultInjectionTransport.error_after_delay(
             0,
             error
         )

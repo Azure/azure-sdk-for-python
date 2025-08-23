@@ -29,7 +29,7 @@ class TestQuery(unittest.TestCase):
     connectionPolicy = config.connectionPolicy
     TEST_DATABASE_ID = config.TEST_DATABASE_ID
     is_emulator = config.is_emulator
-    credential = config.credential
+    credential = config.masterKey
 
     @classmethod
     def setUpClass(cls):
@@ -493,6 +493,20 @@ class TestQuery(unittest.TestCase):
 
         self.assertListEqual(list(query_results), [None])
 
+    def test_value_max_query_results(self):
+        container = self.created_db.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
+        container.upsert_item(
+            {"id": str(uuid.uuid4()), "isComplete": True, "version": 3, "lookupVersion": "console_version"})
+        container.upsert_item(
+            {"id": str(uuid.uuid4()), "isComplete": True, "version": 2, "lookupVersion": "console_version"})
+        query = "Select value max(c.version) FROM c where c.isComplete = true and c.lookupVersion = @lookupVersion"
+        query_results = container.query_items(query, parameters=[
+            {"name": "@lookupVersion", "value": "console_version"}  # cspell:disable-line
+        ], enable_cross_partition_query=True)
+        item_list = list(query_results)
+        assert len(item_list) == 1
+        assert item_list[0] == 3
+
     def test_continuation_token_size_limit_query(self):
         container = self.created_db.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
         for i in range(1, 1000):
@@ -568,6 +582,51 @@ class TestQuery(unittest.TestCase):
         retry_utility.ExecuteFunction = self.OriginalExecuteFunction
         self.created_db.delete_container(created_collection.id)
 
+    def test_query_positional_args(self):
+        container = self.created_db.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
+        partition_key_value1 = "pk1"
+        partition_key_value2 = "pk2"
+
+        num_items = 10
+        new_items = []
+        for pk_value in [partition_key_value1, partition_key_value2]:
+            for i in range(num_items):
+                item = {
+                    self.config.TEST_CONTAINER_PARTITION_KEY: pk_value,
+                    'id': f"{pk_value}_{i}",
+                    'name': 'sample name'
+                }
+                new_items.append(item)
+
+        for item in new_items:
+            container.upsert_item(body=item)
+
+        query = "SELECT * FROM root r WHERE r.name=@name"
+        parameters = [{'name': '@name', 'value': 'sample name'}]
+        partition_key_value = partition_key_value2
+        enable_cross_partition_query = True
+        max_item_count = 3
+        enable_scan_in_query = True
+        populate_query_metrics = True
+        pager = container.query_items(
+            query,
+            parameters,
+            partition_key_value,
+            enable_cross_partition_query,
+            max_item_count,
+            enable_scan_in_query,
+            populate_query_metrics,
+        ).by_page()
+
+        ids = []
+        for page in pager:
+            items = list(page)
+            num_items = len(items)
+            for item in items:
+                assert item['pk'] == partition_key_value
+                ids.append(item['id'])
+            assert num_items <= max_item_count
+        assert ids == [item['id'] for item in new_items if item['pk'] == partition_key_value]
 
     def _MockExecuteFunctionSessionRetry(self, function, *args, **kwargs):
         if args:

@@ -5,7 +5,8 @@ on:
   pull_request:
     branches: [ main ]
     paths:
-      - "tools/azure-sdk-tools/**"
+      - "eng/tools/azure-sdk-tools/**"
+      - ".github/workflows/azure-sdk-tools.yml"
 
 jobs:
   build-and-test:
@@ -13,14 +14,14 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Set up Python 3.11
+      - name: Set up Python 3.13
         uses: actions/setup-python@v4
         with:
-          python-version: 3.11
+          python-version: 3.13
 
       - name: Install azure-sdk-tools
         run: |
-          python -m pip install -e tools/azure-sdk-tools[build,ghtools,conda]
+          python -m pip install -e eng/tools/azure-sdk-tools[build,ghtools,conda]
           python -m pip freeze
         shell: bash
 
@@ -28,4 +29,28 @@ jobs:
         run: |
           pytest ./tests
         shell: bash
-        working-directory: tools/azure-sdk-tools
+        working-directory: eng/tools/azure-sdk-tools
+
+  dev-setup-and-import:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.13
+
+      - name: Run dev_setup to install specified packages
+        run: |
+          python scripts/dev_setup.py --packageList azure-storage-blob,azure-appconfiguration
+        shell: bash
+
+      - name: Validate imports
+        run: |
+          python - <<'PY'
+          from azure.storage.blob import *
+          from azure.appconfiguration import *
+          print("Successful Imports")
+          PY
+        shell: bash

@@ -33,6 +33,8 @@ class AgentsNamedToolChoiceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Tool type ``connected_agent``"""
     DEEP_RESEARCH = "deep_research"
     """Tool type ``deep_research``"""
+    MCP = "mcp"
+    """Tool type ``mcp``"""
 
 
 class AgentsResponseFormatMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -399,6 +401,8 @@ class RunStepType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Represents a run step to create a message."""
     TOOL_CALLS = "tool_calls"
     """Represents a run step that calls tools."""
+    ACTIVITIES = "activities"
+    """Represents a run step with activities information."""
 
 
 class RunStreamEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):

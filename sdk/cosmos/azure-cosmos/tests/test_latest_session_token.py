@@ -67,7 +67,7 @@ class TestLatestSessionToken(unittest.TestCase):
         # testing with storing session tokens by feed range that maps to physical pk
         phys_feed_ranges_and_session_tokens = []
         phys_previous_session_token = ""
-        pk_feed_range = container.feed_range_from_partition_key('A1')
+        pk_feed_range = container.feed_range_from_partition_key(target_pk)
         phys_target_session_token, phys_target_feed_range, phys_previous_session_token = self.create_items_physical_pk(container, pk_feed_range,
                                                                                                         phys_previous_session_token,
                                                                                                         phys_feed_ranges_and_session_tokens)
@@ -93,16 +93,10 @@ class TestLatestSessionToken(unittest.TestCase):
                                                                                      phys_feed_ranges_and_session_tokens)
 
         phys_session_token = container.get_latest_session_token(phys_feed_ranges_and_session_tokens, phys_target_feed_range)
-        assert is_compound_session_token(phys_session_token)
-        session_tokens = phys_session_token.split(",")
-        assert len(session_tokens) == 2
-        pk_range_id1, session_token1 = parse_session_token(session_tokens[0])
-        pk_range_id2, session_token2 = parse_session_token(session_tokens[1])
-        pk_range_ids = [pk_range_id1, pk_range_id2]
+        pk_range_id, session_token = parse_session_token(phys_session_token)
 
-        assert 620 <= (session_token1.global_lsn + session_token2.global_lsn)
-        assert '1' in pk_range_ids
-        assert '2' in pk_range_ids
+        assert 300 <= session_token.global_lsn <= 370
+        assert '2' in pk_range_id
         self.database.delete_container(container.id)
 
     def test_latest_session_token_hpk(self):

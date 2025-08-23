@@ -38,6 +38,6 @@ def main():
     )
 
 
-# x-ms-original-file: specification/servicebus/resource-manager/Microsoft.ServiceBus/stable/2021-11-01/examples/Migrationconfigurations/SBMigrationconfigurationCompleteMigration.json
+# x-ms-original-file: specification/servicebus/resource-manager/Microsoft.ServiceBus/preview/2022-10-01-preview/examples/Migrationconfigurations/SBMigrationconfigurationCompleteMigration.json
 if __name__ == "__main__":
     main()

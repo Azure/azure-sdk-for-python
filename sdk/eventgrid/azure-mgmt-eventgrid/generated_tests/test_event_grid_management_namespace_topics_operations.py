@@ -25,7 +25,7 @@ class TestEventGridManagementNamespaceTopicsOperations(AzureMgmtRecordedTestCase
             resource_group_name=resource_group.name,
             namespace_name="str",
             topic_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -55,7 +55,7 @@ class TestEventGridManagementNamespaceTopicsOperations(AzureMgmtRecordedTestCase
                 },
                 "type": "str",
             },
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -68,7 +68,7 @@ class TestEventGridManagementNamespaceTopicsOperations(AzureMgmtRecordedTestCase
             resource_group_name=resource_group.name,
             namespace_name="str",
             topic_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -82,7 +82,7 @@ class TestEventGridManagementNamespaceTopicsOperations(AzureMgmtRecordedTestCase
             namespace_name="str",
             topic_name="str",
             namespace_topic_update_parameters={"eventRetentionInDays": 0},
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -94,7 +94,7 @@ class TestEventGridManagementNamespaceTopicsOperations(AzureMgmtRecordedTestCase
         response = self.client.namespace_topics.list_by_namespace(
             resource_group_name=resource_group.name,
             namespace_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -107,7 +107,7 @@ class TestEventGridManagementNamespaceTopicsOperations(AzureMgmtRecordedTestCase
             resource_group_name=resource_group.name,
             namespace_name="str",
             topic_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -121,7 +121,7 @@ class TestEventGridManagementNamespaceTopicsOperations(AzureMgmtRecordedTestCase
             namespace_name="str",
             topic_name="str",
             regenerate_key_request={"keyName": "str"},
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

@@ -1138,343 +1138,6 @@ class BreakReplicationRequest(_serialization.Model):
         self.force_break_replication = force_break_replication
 
 
-class Bucket(ProxyResource):
-    """Bucket resource.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
-    :ivar path: The volume path mounted inside the bucket. The default is the root path '/' if no
-     value is provided when the bucket is created.
-    :vartype path: str
-    :ivar file_system_user: File System user having access to volume data. For Unix, this is the
-     user's uid and gid. For Windows, this is the user's username. Note that the Unix and Windows
-     user details are mutually exclusive, meaning one or other must be supplied, but not both.
-    :vartype file_system_user: ~azure.mgmt.netapp.models.FileSystemUser
-    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Succeeded",
-     "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
-    :vartype provisioning_state: str or ~azure.mgmt.netapp.models.NetappProvisioningState
-    :ivar status: The bucket credentials status. There states:
-
-     "NoCredentialsSet": Access and Secret key pair have not been generated.
-     "CredentialsExpired": Access and Secret key pair have expired.
-     "Active": The certificate has been installed and credentials are unexpired. Known values are:
-     "NoCredentialsSet", "CredentialsExpired", and "Active".
-    :vartype status: str or ~azure.mgmt.netapp.models.CredentialsStatus
-    :ivar server: Properties of the server managing the lifecycle of volume buckets.
-    :vartype server: ~azure.mgmt.netapp.models.BucketServerProperties
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-        "provisioning_state": {"readonly": True},
-        "status": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-        "path": {"key": "properties.path", "type": "str"},
-        "file_system_user": {"key": "properties.fileSystemUser", "type": "FileSystemUser"},
-        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
-        "status": {"key": "properties.status", "type": "str"},
-        "server": {"key": "properties.server", "type": "BucketServerProperties"},
-    }
-
-    def __init__(
-        self,
-        *,
-        path: str = "/",
-        file_system_user: Optional["_models.FileSystemUser"] = None,
-        server: Optional["_models.BucketServerProperties"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword path: The volume path mounted inside the bucket. The default is the root path '/' if
-         no value is provided when the bucket is created.
-        :paramtype path: str
-        :keyword file_system_user: File System user having access to volume data. For Unix, this is the
-         user's uid and gid. For Windows, this is the user's username. Note that the Unix and Windows
-         user details are mutually exclusive, meaning one or other must be supplied, but not both.
-        :paramtype file_system_user: ~azure.mgmt.netapp.models.FileSystemUser
-        :keyword server: Properties of the server managing the lifecycle of volume buckets.
-        :paramtype server: ~azure.mgmt.netapp.models.BucketServerProperties
-        """
-        super().__init__(**kwargs)
-        self.path = path
-        self.file_system_user = file_system_user
-        self.provisioning_state: Optional[Union[str, "_models.NetappProvisioningState"]] = None
-        self.status: Optional[Union[str, "_models.CredentialsStatus"]] = None
-        self.server = server
-
-
-class BucketCredentialsExpiry(_serialization.Model):
-    """The bucket's Access and Secret key pair Expiry Time expressed as the number of days from now.
-
-    :ivar key_pair_expiry_days: The number of days from now until the newly generated Access and
-     Secret key pair will expire.
-    :vartype key_pair_expiry_days: int
-    """
-
-    _validation = {
-        "key_pair_expiry_days": {"minimum": 1},
-    }
-
-    _attribute_map = {
-        "key_pair_expiry_days": {"key": "keyPairExpiryDays", "type": "int"},
-    }
-
-    def __init__(self, *, key_pair_expiry_days: Optional[int] = None, **kwargs: Any) -> None:
-        """
-        :keyword key_pair_expiry_days: The number of days from now until the newly generated Access and
-         Secret key pair will expire.
-        :paramtype key_pair_expiry_days: int
-        """
-        super().__init__(**kwargs)
-        self.key_pair_expiry_days = key_pair_expiry_days
-
-
-class BucketGenerateCredentials(_serialization.Model):
-    """Bucket Access Key, Secret Key, and Expiry date and time of the key pair.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar access_key: The Access Key that is required along with the Secret Key to access the
-     bucket.
-    :vartype access_key: str
-    :ivar secret_key: The Secret Key that is required along with the Access Key to access the
-     bucket.
-    :vartype secret_key: str
-    :ivar key_pair_expiry: The bucket's Access and Secret key pair expiry date and time (in UTC).
-    :vartype key_pair_expiry: ~datetime.datetime
-    """
-
-    _validation = {
-        "access_key": {"readonly": True},
-        "secret_key": {"readonly": True},
-        "key_pair_expiry": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "access_key": {"key": "accessKey", "type": "str"},
-        "secret_key": {"key": "secretKey", "type": "str"},
-        "key_pair_expiry": {"key": "keyPairExpiry", "type": "iso-8601"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.access_key: Optional[str] = None
-        self.secret_key: Optional[str] = None
-        self.key_pair_expiry: Optional[datetime.datetime] = None
-
-
-class BucketList(_serialization.Model):
-    """List of volume bucket resources.
-
-    :ivar value: List of volume buckets.
-    :vartype value: list[~azure.mgmt.netapp.models.Bucket]
-    :ivar next_link: URL to get the next set of results.
-    :vartype next_link: str
-    """
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[Bucket]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(
-        self, *, value: Optional[List["_models.Bucket"]] = None, next_link: Optional[str] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword value: List of volume buckets.
-        :paramtype value: list[~azure.mgmt.netapp.models.Bucket]
-        :keyword next_link: URL to get the next set of results.
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
-class BucketPatch(ProxyResource):
-    """Bucket resource.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
-    :ivar path: The volume path mounted inside the bucket.
-    :vartype path: str
-    :ivar file_system_user: File System user having access to volume data. For Unix, this is the
-     user's uid and gid. For Windows, this is the user's username. Note that the Unix and Windows
-     user details are mutually exclusive, meaning one or other must be supplied, but not both.
-    :vartype file_system_user: ~azure.mgmt.netapp.models.FileSystemUser
-    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Succeeded",
-     "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
-    :vartype provisioning_state: str or ~azure.mgmt.netapp.models.NetappProvisioningState
-    :ivar server: Properties of the server managing the lifecycle of volume buckets.
-    :vartype server: ~azure.mgmt.netapp.models.BucketServerPatchProperties
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-        "provisioning_state": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-        "path": {"key": "properties.path", "type": "str"},
-        "file_system_user": {"key": "properties.fileSystemUser", "type": "FileSystemUser"},
-        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
-        "server": {"key": "properties.server", "type": "BucketServerPatchProperties"},
-    }
-
-    def __init__(
-        self,
-        *,
-        path: Optional[str] = None,
-        file_system_user: Optional["_models.FileSystemUser"] = None,
-        server: Optional["_models.BucketServerPatchProperties"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword path: The volume path mounted inside the bucket.
-        :paramtype path: str
-        :keyword file_system_user: File System user having access to volume data. For Unix, this is the
-         user's uid and gid. For Windows, this is the user's username. Note that the Unix and Windows
-         user details are mutually exclusive, meaning one or other must be supplied, but not both.
-        :paramtype file_system_user: ~azure.mgmt.netapp.models.FileSystemUser
-        :keyword server: Properties of the server managing the lifecycle of volume buckets.
-        :paramtype server: ~azure.mgmt.netapp.models.BucketServerPatchProperties
-        """
-        super().__init__(**kwargs)
-        self.path = path
-        self.file_system_user = file_system_user
-        self.provisioning_state: Optional[Union[str, "_models.NetappProvisioningState"]] = None
-        self.server = server
-
-
-class BucketServerPatchProperties(_serialization.Model):
-    """Properties of the server managing the lifecycle of volume buckets.
-
-    :ivar fqdn: The host part of the bucket URL, resolving to the bucket IP address and allowed by
-     the server certificate.
-    :vartype fqdn: str
-    :ivar certificate_object: A base64-encoded PEM file, which includes both the bucket server's
-     certificate and private key. It is used to authenticate the user and allows access to volume
-     data in a read-only manner.
-    :vartype certificate_object: str
-    """
-
-    _validation = {
-        "certificate_object": {"max_length": 10240, "min_length": 1},
-    }
-
-    _attribute_map = {
-        "fqdn": {"key": "fqdn", "type": "str"},
-        "certificate_object": {"key": "certificateObject", "type": "str"},
-    }
-
-    def __init__(self, *, fqdn: Optional[str] = None, certificate_object: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword fqdn: The host part of the bucket URL, resolving to the bucket IP address and allowed
-         by the server certificate.
-        :paramtype fqdn: str
-        :keyword certificate_object: A base64-encoded PEM file, which includes both the bucket server's
-         certificate and private key. It is used to authenticate the user and allows access to volume
-         data in a read-only manner.
-        :paramtype certificate_object: str
-        """
-        super().__init__(**kwargs)
-        self.fqdn = fqdn
-        self.certificate_object = certificate_object
-
-
-class BucketServerProperties(_serialization.Model):
-    """Properties of the server managing the lifecycle of volume buckets.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar fqdn: The host part of the bucket URL, resolving to the bucket IP address and allowed by
-     the server certificate.
-    :vartype fqdn: str
-    :ivar certificate_common_name: Certificate Common Name taken from the certificate installed on
-     the bucket server.
-    :vartype certificate_common_name: str
-    :ivar certificate_expiry_date: The bucket server's certificate expiry date.
-    :vartype certificate_expiry_date: ~datetime.datetime
-    :ivar ip_address: The bucket server's IPv4 address.
-    :vartype ip_address: str
-    :ivar certificate_object: A base64-encoded PEM file, which includes both the bucket server's
-     certificate and private key. It is used to authenticate the user and allows access to volume
-     data in a read-only manner.
-    :vartype certificate_object: str
-    """
-
-    _validation = {
-        "certificate_common_name": {"readonly": True, "max_length": 64, "min_length": 1},
-        "certificate_expiry_date": {"readonly": True},
-        "ip_address": {"readonly": True},
-        "certificate_object": {"max_length": 10240, "min_length": 1},
-    }
-
-    _attribute_map = {
-        "fqdn": {"key": "fqdn", "type": "str"},
-        "certificate_common_name": {"key": "certificateCommonName", "type": "str"},
-        "certificate_expiry_date": {"key": "certificateExpiryDate", "type": "iso-8601"},
-        "ip_address": {"key": "ipAddress", "type": "str"},
-        "certificate_object": {"key": "certificateObject", "type": "str"},
-    }
-
-    def __init__(self, *, fqdn: Optional[str] = None, certificate_object: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword fqdn: The host part of the bucket URL, resolving to the bucket IP address and allowed
-         by the server certificate.
-        :paramtype fqdn: str
-        :keyword certificate_object: A base64-encoded PEM file, which includes both the bucket server's
-         certificate and private key. It is used to authenticate the user and allows access to volume
-         data in a read-only manner.
-        :paramtype certificate_object: str
-        """
-        super().__init__(**kwargs)
-        self.fqdn = fqdn
-        self.certificate_common_name: Optional[str] = None
-        self.certificate_expiry_date: Optional[datetime.datetime] = None
-        self.ip_address: Optional[str] = None
-        self.certificate_object = certificate_object
-
-
 class CapacityPool(TrackedResource):
     """Capacity pool resource.
 
@@ -1841,26 +1504,6 @@ class CheckAvailabilityResponse(_serialization.Model):
         self.message = message
 
 
-class CifsUser(_serialization.Model):
-    """The effective CIFS username when accessing the volume data.
-
-    :ivar username: The CIFS user's username.
-    :vartype username: str
-    """
-
-    _attribute_map = {
-        "username": {"key": "username", "type": "str"},
-    }
-
-    def __init__(self, *, username: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword username: The CIFS user's username.
-        :paramtype username: str
-        """
-        super().__init__(**kwargs)
-        self.username = username
-
-
 class CloudErrorBody(_serialization.Model):
     """An error response from the service.
 
@@ -2048,7 +1691,7 @@ class EncryptionIdentity(_serialization.Model):
      key of identity.userAssignedIdentities.
     :vartype user_assigned_identity: str
     :ivar federated_client_id: ClientId of the multi-tenant AAD Application. Used to access
-     cross-tenant KeyVaults.
+     cross-tenant keyvaults.
     :vartype federated_client_id: str
     """
 
@@ -2071,7 +1714,7 @@ class EncryptionIdentity(_serialization.Model):
          key of identity.userAssignedIdentities.
         :paramtype user_assigned_identity: str
         :keyword federated_client_id: ClientId of the multi-tenant AAD Application. Used to access
-         cross-tenant KeyVaults.
+         cross-tenant keyvaults.
         :paramtype federated_client_id: str
         """
         super().__init__(**kwargs)
@@ -2394,40 +2037,6 @@ class FilePathAvailabilityRequest(_serialization.Model):
         self.availability_zone = availability_zone
 
 
-class FileSystemUser(_serialization.Model):
-    """File System user having access to volume data. For Unix, this is the user's uid and gid. For
-    Windows, this is the user's username. Note that the Unix and Windows user details are mutually
-    exclusive, meaning one or other must be supplied, but not both.
-
-    :ivar nfs_user: The effective NFS User ID and Group ID when accessing the volume data.
-    :vartype nfs_user: ~azure.mgmt.netapp.models.NfsUser
-    :ivar cifs_user: The effective CIFS username when accessing the volume data.
-    :vartype cifs_user: ~azure.mgmt.netapp.models.CifsUser
-    """
-
-    _attribute_map = {
-        "nfs_user": {"key": "nfsUser", "type": "NfsUser"},
-        "cifs_user": {"key": "cifsUser", "type": "CifsUser"},
-    }
-
-    def __init__(
-        self,
-        *,
-        nfs_user: Optional["_models.NfsUser"] = None,
-        cifs_user: Optional["_models.CifsUser"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword nfs_user: The effective NFS User ID and Group ID when accessing the volume data.
-        :paramtype nfs_user: ~azure.mgmt.netapp.models.NfsUser
-        :keyword cifs_user: The effective CIFS username when accessing the volume data.
-        :paramtype cifs_user: ~azure.mgmt.netapp.models.CifsUser
-        """
-        super().__init__(**kwargs)
-        self.nfs_user = nfs_user
-        self.cifs_user = cifs_user
-
-
 class GetGroupIdListForLDAPUserRequest(_serialization.Model):
     """Get group Id list for LDAP User request.
 
@@ -2658,70 +2267,6 @@ class KeyVaultProperties(_serialization.Model):
         self.status: Optional[Union[str, "_models.KeyVaultStatus"]] = None
 
 
-class LdapConfiguration(_serialization.Model):
-    """LDAP configuration.
-
-    :ivar domain: Name of the LDAP configuration domain.
-    :vartype domain: str
-    :ivar ldap_servers: List of LDAP server IP addresses (IPv4 only) for the LDAP domain.
-    :vartype ldap_servers: list[str]
-    :ivar ldap_over_tls: Specifies whether or not the LDAP traffic needs to be secured via TLS.
-    :vartype ldap_over_tls: bool
-    :ivar server_ca_certificate: When LDAP over SSL/TLS is enabled, the LDAP client is required to
-     have base64 encoded ldap servers CA certificate.
-    :vartype server_ca_certificate: str
-    :ivar certificate_cn_host: The CN host name used while generating the certificate, LDAP Over
-     TLS requires the CN host name to create DNS host entry.
-    :vartype certificate_cn_host: str
-    """
-
-    _validation = {
-        "domain": {"max_length": 255, "pattern": r"^[a-zA-Z0-9][a-zA-Z0-9.-]{0,253}[a-zA-Z0-9]$"},
-        "ldap_servers": {"min_items": 1},
-        "server_ca_certificate": {"max_length": 10240, "min_length": 1},
-        "certificate_cn_host": {"max_length": 255},
-    }
-
-    _attribute_map = {
-        "domain": {"key": "domain", "type": "str"},
-        "ldap_servers": {"key": "ldapServers", "type": "[str]"},
-        "ldap_over_tls": {"key": "ldapOverTLS", "type": "bool"},
-        "server_ca_certificate": {"key": "serverCACertificate", "type": "str"},
-        "certificate_cn_host": {"key": "certificateCNHost", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        domain: Optional[str] = None,
-        ldap_servers: Optional[List[str]] = None,
-        ldap_over_tls: Optional[bool] = None,
-        server_ca_certificate: Optional[str] = None,
-        certificate_cn_host: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword domain: Name of the LDAP configuration domain.
-        :paramtype domain: str
-        :keyword ldap_servers: List of LDAP server IP addresses (IPv4 only) for the LDAP domain.
-        :paramtype ldap_servers: list[str]
-        :keyword ldap_over_tls: Specifies whether or not the LDAP traffic needs to be secured via TLS.
-        :paramtype ldap_over_tls: bool
-        :keyword server_ca_certificate: When LDAP over SSL/TLS is enabled, the LDAP client is required
-         to have base64 encoded ldap servers CA certificate.
-        :paramtype server_ca_certificate: str
-        :keyword certificate_cn_host: The CN host name used while generating the certificate, LDAP Over
-         TLS requires the CN host name to create DNS host entry.
-        :paramtype certificate_cn_host: str
-        """
-        super().__init__(**kwargs)
-        self.domain = domain
-        self.ldap_servers = ldap_servers
-        self.ldap_over_tls = ldap_over_tls
-        self.server_ca_certificate = server_ca_certificate
-        self.certificate_cn_host = certificate_cn_host
-
-
 class LdapSearchScopeOpt(_serialization.Model):
     """LDAP search scope.
 
@@ -2767,34 +2312,6 @@ class LdapSearchScopeOpt(_serialization.Model):
         self.user_dn = user_dn
         self.group_dn = group_dn
         self.group_membership_filter = group_membership_filter
-
-
-class ListQuotaReportResponse(_serialization.Model):
-    """Quota Report for volume.
-
-    :ivar value: List of volume quota report records.
-    :vartype value: list[~azure.mgmt.netapp.models.QuotaReport]
-    :ivar next_link: URL to get the next set of results.
-    :vartype next_link: str
-    """
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[QuotaReport]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(
-        self, *, value: Optional[List["_models.QuotaReport"]] = None, next_link: Optional[str] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword value: List of volume quota report records.
-        :paramtype value: list[~azure.mgmt.netapp.models.QuotaReport]
-        :keyword next_link: URL to get the next set of results.
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
 
 
 class ListReplications(_serialization.Model):
@@ -3278,8 +2795,6 @@ class NetAppAccount(TrackedResource):
     :ivar multi_ad_status: MultiAD Status for the account. Known values are: "Disabled" and
      "Enabled".
     :vartype multi_ad_status: str or ~azure.mgmt.netapp.models.MultiAdStatus
-    :ivar ldap_configuration: LDAP Configuration for the account.
-    :vartype ldap_configuration: ~azure.mgmt.netapp.models.LdapConfiguration
     """
 
     _validation = {
@@ -3310,7 +2825,6 @@ class NetAppAccount(TrackedResource):
         "disable_showmount": {"key": "properties.disableShowmount", "type": "bool"},
         "nfs_v4_id_domain": {"key": "properties.nfsV4IDDomain", "type": "str"},
         "multi_ad_status": {"key": "properties.multiAdStatus", "type": "str"},
-        "ldap_configuration": {"key": "properties.ldapConfiguration", "type": "LdapConfiguration"},
     }
 
     def __init__(
@@ -3322,7 +2836,6 @@ class NetAppAccount(TrackedResource):
         active_directories: Optional[List["_models.ActiveDirectory"]] = None,
         encryption: Optional["_models.AccountEncryption"] = None,
         nfs_v4_id_domain: Optional[str] = None,
-        ldap_configuration: Optional["_models.LdapConfiguration"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3339,8 +2852,6 @@ class NetAppAccount(TrackedResource):
         :keyword nfs_v4_id_domain: Domain for NFSv4 user ID mapping. This property will be set for all
          NetApp accounts in the subscription and region and only affect non ldap NFSv4 volumes.
         :paramtype nfs_v4_id_domain: str
-        :keyword ldap_configuration: LDAP Configuration for the account.
-        :paramtype ldap_configuration: ~azure.mgmt.netapp.models.LdapConfiguration
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.etag: Optional[str] = None
@@ -3351,7 +2862,6 @@ class NetAppAccount(TrackedResource):
         self.disable_showmount: Optional[bool] = None
         self.nfs_v4_id_domain = nfs_v4_id_domain
         self.multi_ad_status: Optional[Union[str, "_models.MultiAdStatus"]] = None
-        self.ldap_configuration = ldap_configuration
 
 
 class NetAppAccountList(_serialization.Model):
@@ -3414,8 +2924,6 @@ class NetAppAccountPatch(_serialization.Model):
     :ivar multi_ad_status: MultiAD Status for the account. Known values are: "Disabled" and
      "Enabled".
     :vartype multi_ad_status: str or ~azure.mgmt.netapp.models.MultiAdStatus
-    :ivar ldap_configuration: LDAP Configuration for the account.
-    :vartype ldap_configuration: ~azure.mgmt.netapp.models.LdapConfiguration
     """
 
     _validation = {
@@ -3441,7 +2949,6 @@ class NetAppAccountPatch(_serialization.Model):
         "disable_showmount": {"key": "properties.disableShowmount", "type": "bool"},
         "nfs_v4_id_domain": {"key": "properties.nfsV4IDDomain", "type": "str"},
         "multi_ad_status": {"key": "properties.multiAdStatus", "type": "str"},
-        "ldap_configuration": {"key": "properties.ldapConfiguration", "type": "LdapConfiguration"},
     }
 
     def __init__(
@@ -3453,7 +2960,6 @@ class NetAppAccountPatch(_serialization.Model):
         active_directories: Optional[List["_models.ActiveDirectory"]] = None,
         encryption: Optional["_models.AccountEncryption"] = None,
         nfs_v4_id_domain: Optional[str] = None,
-        ldap_configuration: Optional["_models.LdapConfiguration"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3470,8 +2976,6 @@ class NetAppAccountPatch(_serialization.Model):
         :keyword nfs_v4_id_domain: Domain for NFSv4 user ID mapping. This property will be set for all
          NetApp accounts in the subscription and region and only affect non ldap NFSv4 volumes.
         :paramtype nfs_v4_id_domain: str
-        :keyword ldap_configuration: LDAP Configuration for the account.
-        :paramtype ldap_configuration: ~azure.mgmt.netapp.models.LdapConfiguration
         """
         super().__init__(**kwargs)
         self.location = location
@@ -3486,7 +2990,6 @@ class NetAppAccountPatch(_serialization.Model):
         self.disable_showmount: Optional[bool] = None
         self.nfs_v4_id_domain = nfs_v4_id_domain
         self.multi_ad_status: Optional[Union[str, "_models.MultiAdStatus"]] = None
-        self.ldap_configuration = ldap_configuration
 
 
 class NetworkSiblingSet(_serialization.Model):
@@ -3567,32 +3070,6 @@ class NetworkSiblingSet(_serialization.Model):
         self.network_features = network_features
         self.provisioning_state: Optional[Union[str, "_models.NetworkSiblingSetProvisioningState"]] = None
         self.nic_info_list = nic_info_list
-
-
-class NfsUser(_serialization.Model):
-    """The effective NFS User ID and Group ID when accessing the volume data.
-
-    :ivar user_id: The NFS user's UID.
-    :vartype user_id: int
-    :ivar group_id: The NFS user's GID.
-    :vartype group_id: int
-    """
-
-    _attribute_map = {
-        "user_id": {"key": "userId", "type": "int"},
-        "group_id": {"key": "groupId", "type": "int"},
-    }
-
-    def __init__(self, *, user_id: Optional[int] = None, group_id: Optional[int] = None, **kwargs: Any) -> None:
-        """
-        :keyword user_id: The NFS user's UID.
-        :paramtype user_id: int
-        :keyword group_id: The NFS user's GID.
-        :paramtype group_id: int
-        """
-        super().__init__(**kwargs)
-        self.user_id = user_id
-        self.group_id = group_id
 
 
 class NicInfo(_serialization.Model):
@@ -3931,156 +3408,6 @@ class QuotaAvailabilityRequest(_serialization.Model):
         self.name = name
         self.type = type
         self.resource_group = resource_group
-
-
-class QuotaItem(ProxyResource):
-    """Information regarding Quota Item.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
-    :ivar current: The current quota value.
-    :vartype current: int
-    :ivar default: The default quota value.
-    :vartype default: int
-    :ivar usage: The usage quota value.
-    :vartype usage: int
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-        "current": {"readonly": True},
-        "default": {"readonly": True},
-        "usage": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-        "current": {"key": "properties.current", "type": "int"},
-        "default": {"key": "properties.default", "type": "int"},
-        "usage": {"key": "properties.usage", "type": "int"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.current: Optional[int] = None
-        self.default: Optional[int] = None
-        self.usage: Optional[int] = None
-
-
-class QuotaItemList(_serialization.Model):
-    """List of Quota Items.
-
-    :ivar value: A list of QuotaItems.
-    :vartype value: list[~azure.mgmt.netapp.models.QuotaItem]
-    :ivar next_link: URL to get the next set of results.
-    :vartype next_link: str
-    """
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[QuotaItem]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(
-        self, *, value: Optional[List["_models.QuotaItem"]] = None, next_link: Optional[str] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword value: A list of QuotaItems.
-        :paramtype value: list[~azure.mgmt.netapp.models.QuotaItem]
-        :keyword next_link: URL to get the next set of results.
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
-class QuotaReport(_serialization.Model):
-    """Quota report record properties.
-
-    :ivar quota_type: Type of quota. Known values are: "DefaultUserQuota", "DefaultGroupQuota",
-     "IndividualUserQuota", and "IndividualGroupQuota".
-    :vartype quota_type: str or ~azure.mgmt.netapp.models.Type
-    :ivar quota_target: UserID/GroupID/SID based on the quota target type. UserID and groupID can
-     be found by running ‘id’ or ‘getent’ command for the user or group and SID can be found by
-     running :code:`<wmic useraccount where name='user-name' get sid>`.
-    :vartype quota_target: str
-    :ivar quota_limit_used_in_ki_bs: Specifies the current usage in kibibytes for the user/group
-     quota.
-    :vartype quota_limit_used_in_ki_bs: int
-    :ivar quota_limit_total_in_ki_bs: Specifies the total size limit in kibibytes for the
-     user/group quota.
-    :vartype quota_limit_total_in_ki_bs: int
-    :ivar percentage_used: Percentage of used size compared to total size.
-    :vartype percentage_used: float
-    :ivar is_derived_quota: Flag to indicate whether the quota is derived from default quota.
-    :vartype is_derived_quota: bool
-    """
-
-    _attribute_map = {
-        "quota_type": {"key": "quotaType", "type": "str"},
-        "quota_target": {"key": "quotaTarget", "type": "str"},
-        "quota_limit_used_in_ki_bs": {"key": "quotaLimitUsedInKiBs", "type": "int"},
-        "quota_limit_total_in_ki_bs": {"key": "quotaLimitTotalInKiBs", "type": "int"},
-        "percentage_used": {"key": "percentageUsed", "type": "float"},
-        "is_derived_quota": {"key": "isDerivedQuota", "type": "bool"},
-    }
-
-    def __init__(
-        self,
-        *,
-        quota_type: Optional[Union[str, "_models.Type"]] = None,
-        quota_target: Optional[str] = None,
-        quota_limit_used_in_ki_bs: Optional[int] = None,
-        quota_limit_total_in_ki_bs: Optional[int] = None,
-        percentage_used: Optional[float] = None,
-        is_derived_quota: Optional[bool] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword quota_type: Type of quota. Known values are: "DefaultUserQuota", "DefaultGroupQuota",
-         "IndividualUserQuota", and "IndividualGroupQuota".
-        :paramtype quota_type: str or ~azure.mgmt.netapp.models.Type
-        :keyword quota_target: UserID/GroupID/SID based on the quota target type. UserID and groupID
-         can be found by running ‘id’ or ‘getent’ command for the user or group and SID can be found by
-         running :code:`<wmic useraccount where name='user-name' get sid>`.
-        :paramtype quota_target: str
-        :keyword quota_limit_used_in_ki_bs: Specifies the current usage in kibibytes for the user/group
-         quota.
-        :paramtype quota_limit_used_in_ki_bs: int
-        :keyword quota_limit_total_in_ki_bs: Specifies the total size limit in kibibytes for the
-         user/group quota.
-        :paramtype quota_limit_total_in_ki_bs: int
-        :keyword percentage_used: Percentage of used size compared to total size.
-        :paramtype percentage_used: float
-        :keyword is_derived_quota: Flag to indicate whether the quota is derived from default quota.
-        :paramtype is_derived_quota: bool
-        """
-        super().__init__(**kwargs)
-        self.quota_type = quota_type
-        self.quota_target = quota_target
-        self.quota_limit_used_in_ki_bs = quota_limit_used_in_ki_bs
-        self.quota_limit_total_in_ki_bs = quota_limit_total_in_ki_bs
-        self.percentage_used = percentage_used
-        self.is_derived_quota = is_derived_quota
 
 
 class ReestablishReplicationRequest(_serialization.Model):
@@ -4426,23 +3753,12 @@ class ReplicationObject(_serialization.Model):
     :vartype remote_volume_region: str
     :ivar destination_replications: A list of destination replications.
     :vartype destination_replications: list[~azure.mgmt.netapp.models.DestinationReplication]
-    :ivar external_replication_setup_status: Property that only applies to external replications.
-     Provides a machine-readable value for the status of the external replication setup. Known
-     values are: "ClusterPeerRequired", "ClusterPeerPending", "VServerPeerRequired",
-     "ReplicationCreateRequired", and "NoActionRequired".
-    :vartype external_replication_setup_status: str or
-     ~azure.mgmt.netapp.models.ExternalReplicationSetupStatus
-    :ivar external_replication_setup_info: Contains human-readable instructions on what the next
-     step is to finish the external replication setup.
-    :vartype external_replication_setup_info: str
     """
 
     _validation = {
         "replication_id": {"readonly": True},
         "endpoint_type": {"readonly": True},
         "destination_replications": {"readonly": True},
-        "external_replication_setup_status": {"readonly": True},
-        "external_replication_setup_info": {"readonly": True},
     }
 
     _attribute_map = {
@@ -4453,8 +3769,6 @@ class ReplicationObject(_serialization.Model):
         "remote_path": {"key": "remotePath", "type": "RemotePath"},
         "remote_volume_region": {"key": "remoteVolumeRegion", "type": "str"},
         "destination_replications": {"key": "destinationReplications", "type": "[DestinationReplication]"},
-        "external_replication_setup_status": {"key": "externalReplicationSetupStatus", "type": "str"},
-        "external_replication_setup_info": {"key": "externalReplicationSetupInfo", "type": "str"},
     }
 
     def __init__(
@@ -4487,8 +3801,6 @@ class ReplicationObject(_serialization.Model):
         self.remote_path = remote_path
         self.remote_volume_region = remote_volume_region
         self.destination_replications: Optional[List["_models.DestinationReplication"]] = None
-        self.external_replication_setup_status: Optional[Union[str, "_models.ExternalReplicationSetupStatus"]] = None
-        self.external_replication_setup_info: Optional[str] = None
 
 
 class ReplicationStatus(_serialization.Model):
@@ -5158,6 +4470,85 @@ class SnapshotsList(_serialization.Model):
         self.value = value
 
 
+class SubscriptionQuotaItem(ProxyResource):
+    """Information regarding Subscription Quota Item.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
+    :ivar current: The current quota value.
+    :vartype current: int
+    :ivar default: The default quota value.
+    :vartype default: int
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "current": {"readonly": True},
+        "default": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "current": {"key": "properties.current", "type": "int"},
+        "default": {"key": "properties.default", "type": "int"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.current: Optional[int] = None
+        self.default: Optional[int] = None
+
+
+class SubscriptionQuotaItemList(_serialization.Model):
+    """List of Subscription Quota Items.
+
+    :ivar value: A list of SubscriptionQuotaItems.
+    :vartype value: list[~azure.mgmt.netapp.models.SubscriptionQuotaItem]
+    :ivar next_link: URL to get the next set of results.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[SubscriptionQuotaItem]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["_models.SubscriptionQuotaItem"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: A list of SubscriptionQuotaItems.
+        :paramtype value: list[~azure.mgmt.netapp.models.SubscriptionQuotaItem]
+        :keyword next_link: URL to get the next set of results.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
 class SubvolumeInfo(ProxyResource):
     """Subvolume Information properties.
 
@@ -5748,7 +5139,7 @@ class Volume(TrackedResource):
     :ivar mount_targets: List of mount targets.
     :vartype mount_targets: list[~azure.mgmt.netapp.models.MountTargetProperties]
     :ivar volume_type: What type of volume is this. For destination volumes in Cross Region
-     Replication, set type to DataProtection. For creating clone volume, set type to ShortTermClone.
+     Replication, set type to DataProtection.
     :vartype volume_type: str
     :ivar data_protection: DataProtection type volumes include an object containing details of the
      replication.
@@ -5802,9 +5193,6 @@ class Volume(TrackedResource):
     :vartype key_vault_private_endpoint_resource_id: str
     :ivar ldap_enabled: Specifies whether LDAP is enabled or not for a given NFS volume.
     :vartype ldap_enabled: bool
-    :ivar ldap_server_type: Specifies the type of LDAP server for a given NFS volume. Known values
-     are: "ActiveDirectory" and "OpenLDAP".
-    :vartype ldap_server_type: str or ~azure.mgmt.netapp.models.LdapServerType
     :ivar cool_access: Specifies whether Cool Access(tiering) is enabled for the volume.
     :vartype cool_access: bool
     :ivar coolness_period: Specifies the number of days after which data that is not accessed by
@@ -5833,10 +5221,7 @@ class Volume(TrackedResource):
      selects permission for the owner of the file: read (4), write (2) and execute (1). Third
      selects permissions for other users in the same group. the fourth for other users not in the
      group. 0755 - gives read/write/execute permissions to owner and read/execute to group and other
-     users.  Avoid passing null value for unixPermissions in volume update operation, As per the
-     behavior, If Null value is passed then user-visible unixPermissions value will became null, and
-     user will not be able to get unixPermissions value. On safer side, actual unixPermissions value
-     on volume will remain as its last saved value only.
+     users.
     :vartype unix_permissions: str
     :ivar clone_progress: When a volume is being restored from another volume's snapshot, will show
      the percentage completion of this cloning process. When this value is empty/null there is no
@@ -5893,16 +5278,6 @@ class Volume(TrackedResource):
     :ivar inherited_size_in_bytes: Space shared by short term clone volume with parent volume in
      bytes.
     :vartype inherited_size_in_bytes: int
-    :ivar language: Language supported for volume. Known values are: "c.utf-8", "utf8mb4", "ar",
-     "ar.utf-8", "hr", "hr.utf-8", "cs", "cs.utf-8", "da", "da.utf-8", "nl", "nl.utf-8", "en",
-     "en.utf-8", "fi", "fi.utf-8", "fr", "fr.utf-8", "de", "de.utf-8", "he", "he.utf-8", "hu",
-     "hu.utf-8", "it", "it.utf-8", "ja", "ja.utf-8", "ja-v1", "ja-v1.utf-8", "ja-jp.pck",
-     "ja-jp.pck.utf-8", "ja-jp.932", "ja-jp.932.utf-8", "ja-jp.pck-v2", "ja-jp.pck-v2.utf-8", "ko",
-     "ko.utf-8", "no", "no.utf-8", "pl", "pl.utf-8", "pt", "pt.utf-8", "c", "ro", "ro.utf-8", "ru",
-     "ru.utf-8", "zh", "zh.utf-8", "zh.gbk", "zh.gbk.utf-8", "zh-tw.big5", "zh-tw.big5.utf-8",
-     "zh-tw", "zh-tw.utf-8", "sk", "sk.utf-8", "sl", "sl.utf-8", "es", "es.utf-8", "sv", "sv.utf-8",
-     "tr", "tr.utf-8", "en-us", and "en-us.utf-8".
-    :vartype language: str or ~azure.mgmt.netapp.models.VolumeLanguage
     """
 
     _validation = {
@@ -6001,7 +5376,6 @@ class Volume(TrackedResource):
             "type": "str",
         },
         "ldap_enabled": {"key": "properties.ldapEnabled", "type": "bool"},
-        "ldap_server_type": {"key": "properties.ldapServerType", "type": "str"},
         "cool_access": {"key": "properties.coolAccess", "type": "bool"},
         "coolness_period": {"key": "properties.coolnessPeriod", "type": "int"},
         "cool_access_retrieval_policy": {"key": "properties.coolAccessRetrievalPolicy", "type": "str"},
@@ -6027,7 +5401,6 @@ class Volume(TrackedResource):
         "is_large_volume": {"key": "properties.isLargeVolume", "type": "bool"},
         "originating_resource_id": {"key": "properties.originatingResourceId", "type": "str"},
         "inherited_size_in_bytes": {"key": "properties.inheritedSizeInBytes", "type": "int"},
-        "language": {"key": "properties.language", "type": "str"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -6062,7 +5435,6 @@ class Volume(TrackedResource):
         encryption_key_source: Union[str, "_models.EncryptionKeySource"] = "Microsoft.NetApp",
         key_vault_private_endpoint_resource_id: Optional[str] = None,
         ldap_enabled: bool = False,
-        ldap_server_type: Optional[Union[str, "_models.LdapServerType"]] = None,
         cool_access: bool = False,
         coolness_period: Optional[int] = None,
         cool_access_retrieval_policy: Optional[Union[str, "_models.CoolAccessRetrievalPolicy"]] = None,
@@ -6078,7 +5450,6 @@ class Volume(TrackedResource):
         placement_rules: Optional[List["_models.PlacementKeyValuePairs"]] = None,
         enable_subvolumes: Union[str, "_models.EnableSubvolumes"] = "Disabled",
         is_large_volume: bool = False,
-        language: Optional[Union[str, "_models.VolumeLanguage"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -6118,7 +5489,7 @@ class Volume(TrackedResource):
          "Standard_Basic".
         :paramtype network_features: str or ~azure.mgmt.netapp.models.NetworkFeatures
         :keyword volume_type: What type of volume is this. For destination volumes in Cross Region
-         Replication, set type to DataProtection. For creating clone volume, set type to ShortTermClone.
+         Replication, set type to DataProtection.
         :paramtype volume_type: str
         :keyword data_protection: DataProtection type volumes include an object containing details of
          the replication.
@@ -6167,9 +5538,6 @@ class Volume(TrackedResource):
         :paramtype key_vault_private_endpoint_resource_id: str
         :keyword ldap_enabled: Specifies whether LDAP is enabled or not for a given NFS volume.
         :paramtype ldap_enabled: bool
-        :keyword ldap_server_type: Specifies the type of LDAP server for a given NFS volume. Known
-         values are: "ActiveDirectory" and "OpenLDAP".
-        :paramtype ldap_server_type: str or ~azure.mgmt.netapp.models.LdapServerType
         :keyword cool_access: Specifies whether Cool Access(tiering) is enabled for the volume.
         :paramtype cool_access: bool
         :keyword coolness_period: Specifies the number of days after which data that is not accessed by
@@ -6198,10 +5566,7 @@ class Volume(TrackedResource):
          digit selects permission for the owner of the file: read (4), write (2) and execute (1). Third
          selects permissions for other users in the same group. the fourth for other users not in the
          group. 0755 - gives read/write/execute permissions to owner and read/execute to group and other
-         users.  Avoid passing null value for unixPermissions in volume update operation, As per the
-         behavior, If Null value is passed then user-visible unixPermissions value will became null, and
-         user will not be able to get unixPermissions value. On safer side, actual unixPermissions value
-         on volume will remain as its last saved value only.
+         users.
         :paramtype unix_permissions: str
         :keyword avs_data_store: Specifies whether the volume is enabled for Azure VMware Solution
          (AVS) datastore purpose. Known values are: "Enabled" and "Disabled".
@@ -6229,16 +5594,6 @@ class Volume(TrackedResource):
         :paramtype enable_subvolumes: str or ~azure.mgmt.netapp.models.EnableSubvolumes
         :keyword is_large_volume: Specifies whether volume is a Large Volume or Regular Volume.
         :paramtype is_large_volume: bool
-        :keyword language: Language supported for volume. Known values are: "c.utf-8", "utf8mb4", "ar",
-         "ar.utf-8", "hr", "hr.utf-8", "cs", "cs.utf-8", "da", "da.utf-8", "nl", "nl.utf-8", "en",
-         "en.utf-8", "fi", "fi.utf-8", "fr", "fr.utf-8", "de", "de.utf-8", "he", "he.utf-8", "hu",
-         "hu.utf-8", "it", "it.utf-8", "ja", "ja.utf-8", "ja-v1", "ja-v1.utf-8", "ja-jp.pck",
-         "ja-jp.pck.utf-8", "ja-jp.932", "ja-jp.932.utf-8", "ja-jp.pck-v2", "ja-jp.pck-v2.utf-8", "ko",
-         "ko.utf-8", "no", "no.utf-8", "pl", "pl.utf-8", "pt", "pt.utf-8", "c", "ro", "ro.utf-8", "ru",
-         "ru.utf-8", "zh", "zh.utf-8", "zh.gbk", "zh.gbk.utf-8", "zh-tw.big5", "zh-tw.big5.utf-8",
-         "zh-tw", "zh-tw.utf-8", "sk", "sk.utf-8", "sl", "sl.utf-8", "es", "es.utf-8", "sv", "sv.utf-8",
-         "tr", "tr.utf-8", "en-us", and "en-us.utf-8".
-        :paramtype language: str or ~azure.mgmt.netapp.models.VolumeLanguage
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.etag: Optional[str] = None
@@ -6276,7 +5631,6 @@ class Volume(TrackedResource):
         self.encryption_key_source = encryption_key_source
         self.key_vault_private_endpoint_resource_id = key_vault_private_endpoint_resource_id
         self.ldap_enabled = ldap_enabled
-        self.ldap_server_type = ldap_server_type
         self.cool_access = cool_access
         self.coolness_period = coolness_period
         self.cool_access_retrieval_policy = cool_access_retrieval_policy
@@ -6302,7 +5656,6 @@ class Volume(TrackedResource):
         self.is_large_volume = is_large_volume
         self.originating_resource_id: Optional[str] = None
         self.inherited_size_in_bytes: Optional[int] = None
-        self.language = language
 
 
 class VolumeBackupProperties(_serialization.Model):
@@ -6653,7 +6006,7 @@ class VolumeGroupVolumeProperties(_serialization.Model):
     :ivar mount_targets: List of mount targets.
     :vartype mount_targets: list[~azure.mgmt.netapp.models.MountTargetProperties]
     :ivar volume_type: What type of volume is this. For destination volumes in Cross Region
-     Replication, set type to DataProtection. For creating clone volume, set type to ShortTermClone.
+     Replication, set type to DataProtection.
     :vartype volume_type: str
     :ivar data_protection: DataProtection type volumes include an object containing details of the
      replication.
@@ -6707,9 +6060,6 @@ class VolumeGroupVolumeProperties(_serialization.Model):
     :vartype key_vault_private_endpoint_resource_id: str
     :ivar ldap_enabled: Specifies whether LDAP is enabled or not for a given NFS volume.
     :vartype ldap_enabled: bool
-    :ivar ldap_server_type: Specifies the type of LDAP server for a given NFS volume. Known values
-     are: "ActiveDirectory" and "OpenLDAP".
-    :vartype ldap_server_type: str or ~azure.mgmt.netapp.models.LdapServerType
     :ivar cool_access: Specifies whether Cool Access(tiering) is enabled for the volume.
     :vartype cool_access: bool
     :ivar coolness_period: Specifies the number of days after which data that is not accessed by
@@ -6738,10 +6088,7 @@ class VolumeGroupVolumeProperties(_serialization.Model):
      selects permission for the owner of the file: read (4), write (2) and execute (1). Third
      selects permissions for other users in the same group. the fourth for other users not in the
      group. 0755 - gives read/write/execute permissions to owner and read/execute to group and other
-     users.  Avoid passing null value for unixPermissions in volume update operation, As per the
-     behavior, If Null value is passed then user-visible unixPermissions value will became null, and
-     user will not be able to get unixPermissions value. On safer side, actual unixPermissions value
-     on volume will remain as its last saved value only.
+     users.
     :vartype unix_permissions: str
     :ivar clone_progress: When a volume is being restored from another volume's snapshot, will show
      the percentage completion of this cloning process. When this value is empty/null there is no
@@ -6798,16 +6145,6 @@ class VolumeGroupVolumeProperties(_serialization.Model):
     :ivar inherited_size_in_bytes: Space shared by short term clone volume with parent volume in
      bytes.
     :vartype inherited_size_in_bytes: int
-    :ivar language: Language supported for volume. Known values are: "c.utf-8", "utf8mb4", "ar",
-     "ar.utf-8", "hr", "hr.utf-8", "cs", "cs.utf-8", "da", "da.utf-8", "nl", "nl.utf-8", "en",
-     "en.utf-8", "fi", "fi.utf-8", "fr", "fr.utf-8", "de", "de.utf-8", "he", "he.utf-8", "hu",
-     "hu.utf-8", "it", "it.utf-8", "ja", "ja.utf-8", "ja-v1", "ja-v1.utf-8", "ja-jp.pck",
-     "ja-jp.pck.utf-8", "ja-jp.932", "ja-jp.932.utf-8", "ja-jp.pck-v2", "ja-jp.pck-v2.utf-8", "ko",
-     "ko.utf-8", "no", "no.utf-8", "pl", "pl.utf-8", "pt", "pt.utf-8", "c", "ro", "ro.utf-8", "ru",
-     "ru.utf-8", "zh", "zh.utf-8", "zh.gbk", "zh.gbk.utf-8", "zh-tw.big5", "zh-tw.big5.utf-8",
-     "zh-tw", "zh-tw.utf-8", "sk", "sk.utf-8", "sl", "sl.utf-8", "es", "es.utf-8", "sv", "sv.utf-8",
-     "tr", "tr.utf-8", "en-us", and "en-us.utf-8".
-    :vartype language: str or ~azure.mgmt.netapp.models.VolumeLanguage
     """
 
     _validation = {
@@ -6899,7 +6236,6 @@ class VolumeGroupVolumeProperties(_serialization.Model):
             "type": "str",
         },
         "ldap_enabled": {"key": "properties.ldapEnabled", "type": "bool"},
-        "ldap_server_type": {"key": "properties.ldapServerType", "type": "str"},
         "cool_access": {"key": "properties.coolAccess", "type": "bool"},
         "coolness_period": {"key": "properties.coolnessPeriod", "type": "int"},
         "cool_access_retrieval_policy": {"key": "properties.coolAccessRetrievalPolicy", "type": "str"},
@@ -6925,7 +6261,6 @@ class VolumeGroupVolumeProperties(_serialization.Model):
         "is_large_volume": {"key": "properties.isLargeVolume", "type": "bool"},
         "originating_resource_id": {"key": "properties.originatingResourceId", "type": "str"},
         "inherited_size_in_bytes": {"key": "properties.inheritedSizeInBytes", "type": "int"},
-        "language": {"key": "properties.language", "type": "str"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -6960,7 +6295,6 @@ class VolumeGroupVolumeProperties(_serialization.Model):
         encryption_key_source: Union[str, "_models.EncryptionKeySource"] = "Microsoft.NetApp",
         key_vault_private_endpoint_resource_id: Optional[str] = None,
         ldap_enabled: bool = False,
-        ldap_server_type: Optional[Union[str, "_models.LdapServerType"]] = None,
         cool_access: bool = False,
         coolness_period: Optional[int] = None,
         cool_access_retrieval_policy: Optional[Union[str, "_models.CoolAccessRetrievalPolicy"]] = None,
@@ -6976,7 +6310,6 @@ class VolumeGroupVolumeProperties(_serialization.Model):
         placement_rules: Optional[List["_models.PlacementKeyValuePairs"]] = None,
         enable_subvolumes: Union[str, "_models.EnableSubvolumes"] = "Disabled",
         is_large_volume: bool = False,
-        language: Optional[Union[str, "_models.VolumeLanguage"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -7016,7 +6349,7 @@ class VolumeGroupVolumeProperties(_serialization.Model):
          "Standard_Basic".
         :paramtype network_features: str or ~azure.mgmt.netapp.models.NetworkFeatures
         :keyword volume_type: What type of volume is this. For destination volumes in Cross Region
-         Replication, set type to DataProtection. For creating clone volume, set type to ShortTermClone.
+         Replication, set type to DataProtection.
         :paramtype volume_type: str
         :keyword data_protection: DataProtection type volumes include an object containing details of
          the replication.
@@ -7065,9 +6398,6 @@ class VolumeGroupVolumeProperties(_serialization.Model):
         :paramtype key_vault_private_endpoint_resource_id: str
         :keyword ldap_enabled: Specifies whether LDAP is enabled or not for a given NFS volume.
         :paramtype ldap_enabled: bool
-        :keyword ldap_server_type: Specifies the type of LDAP server for a given NFS volume. Known
-         values are: "ActiveDirectory" and "OpenLDAP".
-        :paramtype ldap_server_type: str or ~azure.mgmt.netapp.models.LdapServerType
         :keyword cool_access: Specifies whether Cool Access(tiering) is enabled for the volume.
         :paramtype cool_access: bool
         :keyword coolness_period: Specifies the number of days after which data that is not accessed by
@@ -7096,10 +6426,7 @@ class VolumeGroupVolumeProperties(_serialization.Model):
          digit selects permission for the owner of the file: read (4), write (2) and execute (1). Third
          selects permissions for other users in the same group. the fourth for other users not in the
          group. 0755 - gives read/write/execute permissions to owner and read/execute to group and other
-         users.  Avoid passing null value for unixPermissions in volume update operation, As per the
-         behavior, If Null value is passed then user-visible unixPermissions value will became null, and
-         user will not be able to get unixPermissions value. On safer side, actual unixPermissions value
-         on volume will remain as its last saved value only.
+         users.
         :paramtype unix_permissions: str
         :keyword avs_data_store: Specifies whether the volume is enabled for Azure VMware Solution
          (AVS) datastore purpose. Known values are: "Enabled" and "Disabled".
@@ -7127,16 +6454,6 @@ class VolumeGroupVolumeProperties(_serialization.Model):
         :paramtype enable_subvolumes: str or ~azure.mgmt.netapp.models.EnableSubvolumes
         :keyword is_large_volume: Specifies whether volume is a Large Volume or Regular Volume.
         :paramtype is_large_volume: bool
-        :keyword language: Language supported for volume. Known values are: "c.utf-8", "utf8mb4", "ar",
-         "ar.utf-8", "hr", "hr.utf-8", "cs", "cs.utf-8", "da", "da.utf-8", "nl", "nl.utf-8", "en",
-         "en.utf-8", "fi", "fi.utf-8", "fr", "fr.utf-8", "de", "de.utf-8", "he", "he.utf-8", "hu",
-         "hu.utf-8", "it", "it.utf-8", "ja", "ja.utf-8", "ja-v1", "ja-v1.utf-8", "ja-jp.pck",
-         "ja-jp.pck.utf-8", "ja-jp.932", "ja-jp.932.utf-8", "ja-jp.pck-v2", "ja-jp.pck-v2.utf-8", "ko",
-         "ko.utf-8", "no", "no.utf-8", "pl", "pl.utf-8", "pt", "pt.utf-8", "c", "ro", "ro.utf-8", "ru",
-         "ru.utf-8", "zh", "zh.utf-8", "zh.gbk", "zh.gbk.utf-8", "zh-tw.big5", "zh-tw.big5.utf-8",
-         "zh-tw", "zh-tw.utf-8", "sk", "sk.utf-8", "sl", "sl.utf-8", "es", "es.utf-8", "sv", "sv.utf-8",
-         "tr", "tr.utf-8", "en-us", and "en-us.utf-8".
-        :paramtype language: str or ~azure.mgmt.netapp.models.VolumeLanguage
         """
         super().__init__(**kwargs)
         self.id: Optional[str] = None
@@ -7177,7 +6494,6 @@ class VolumeGroupVolumeProperties(_serialization.Model):
         self.encryption_key_source = encryption_key_source
         self.key_vault_private_endpoint_resource_id = key_vault_private_endpoint_resource_id
         self.ldap_enabled = ldap_enabled
-        self.ldap_server_type = ldap_server_type
         self.cool_access = cool_access
         self.coolness_period = coolness_period
         self.cool_access_retrieval_policy = cool_access_retrieval_policy
@@ -7203,7 +6519,6 @@ class VolumeGroupVolumeProperties(_serialization.Model):
         self.is_large_volume = is_large_volume
         self.originating_resource_id: Optional[str] = None
         self.inherited_size_in_bytes: Optional[int] = None
-        self.language = language
 
 
 class VolumeList(_serialization.Model):
