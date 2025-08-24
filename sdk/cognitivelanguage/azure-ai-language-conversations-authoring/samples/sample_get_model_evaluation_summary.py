@@ -67,15 +67,15 @@ def sample_get_model_evaluation_summary():
 
         # Per-entity details
         ent_map = entities_summary.entities or {}
-        for name, summary in ent_map.items():
-            print(f"Entity '{name}': F1 = {summary.f1}, Precision = {summary.precision}, Recall = {summary.recall}")
+        for entity_name, entity_summary in ent_map.items():
+            print(f"Entity '{entity_name}': F1 = {entity_summary.f1}, Precision = {entity_summary.precision}, Recall = {entity_summary.recall}")
             print(
-                f"  True Positives: {summary.true_positive_count}, "
-                f"True Negatives: {summary.true_negative_count}"
+                f"  True Positives: {entity_summary.true_positive_count}, "
+                f"True Negatives: {entity_summary.true_negative_count}"
             )
             print(
-                f"  False Positives: {summary.false_positive_count}, "
-                f"False Negatives: {summary.false_negative_count}"
+                f"  False Positives: {entity_summary.false_positive_count}, "
+                f"False Negatives: {entity_summary.false_negative_count}"
             )
 
     # ----- Intents evaluation (micro/macro) -----
@@ -94,15 +94,15 @@ def sample_get_model_evaluation_summary():
 
         # Per-intent details
         intent_map = intents_summary.intents or {}
-        for name, summary in intent_map.items():
-            print(f"Intent '{name}': F1 = {summary.f1}, Precision = {summary.precision}, Recall = {summary.recall}")
+        for intent_name, intent_summary in intent_map.items():
+            print(f"Intent '{intent_name}': F1 = {intent_summary.f1}, Precision = {intent_summary.precision}, Recall = {intent_summary.recall}")
             print(
-                f"  True Positives: {summary.true_positive_count}, "
-                f"True Negatives: {summary.true_negative_count}"
+                f"  True Positives: {intent_summary.true_positive_count}, "
+                f"True Negatives: {intent_summary.true_negative_count}"
             )
             print(
-                f"  False Positives: {summary.false_positive_count}, "
-                f"False Negatives: {summary.false_negative_count}"
+                f"  False Positives: {intent_summary.false_positive_count}, "
+                f"False Negatives: {intent_summary.false_negative_count}"
             )
 
 # [END conversation_authoring_get_model_evaluation_summary]
