@@ -10,15 +10,25 @@ DESCRIPTION:
     This sample demonstrates how to import a Conversation Authoring project.
 USAGE:
     python sample_import_project.py
-REQUIRED ENV VARS:
+
+REQUIRED ENV VARS (for AAD / DefaultAzureCredential):
     AZURE_CONVERSATIONS_AUTHORING_ENDPOINT
-    AZURE_CONVERSATIONS_AUTHORING_KEY
-    (Optional) PROJECT_NAME   # defaults to "<project-name>"
+    AZURE_CLIENT_ID
+    AZURE_TENANT_ID
+    AZURE_CLIENT_SECRET
+
+NOTE:
+    If you want to use AzureKeyCredential instead, set:
+      - AZURE_CONVERSATIONS_AUTHORING_ENDPOINT
+      - AZURE_CONVERSATIONS_AUTHORING_KEY
+
+OPTIONAL ENV VARS:
+    PROJECT_NAME   # defaults to "<project-name>"
 """
 
 # [START conversation_authoring_import_project]
 import os
-from azure.core.credentials import AzureKeyCredential
+from azure.identity import DefaultAzureCredential
 from azure.ai.language.conversations.authoring import ConversationAuthoringClient
 from azure.ai.language.conversations.authoring.models import (
     ConversationExportedIntent,
@@ -35,14 +45,13 @@ from azure.ai.language.conversations.authoring.models import (
 
 
 def sample_import_project():
-    # get secrets
+    # settings
     endpoint = os.environ["AZURE_CONVERSATIONS_AUTHORING_ENDPOINT"]
-    key = os.environ["AZURE_CONVERSATIONS_AUTHORING_KEY"]
-
     project_name = os.environ.get("PROJECT_NAME", "<project-name>")
 
-    # create a client
-    client = ConversationAuthoringClient(endpoint, AzureKeyCredential(key))
+    # create a client with AAD
+    credential = DefaultAzureCredential()
+    client = ConversationAuthoringClient(endpoint, credential=credential)
     project_client = client.get_project_client(project_name)
 
     # ----- Build assets using objects (placeholders) -----
@@ -110,20 +119,25 @@ def sample_import_project():
         exported_project_format=ExportedProjectFormat.CONVERSATION,
     )
 
-    # wait for completion and get the result (ImportProjectState)
+    # wait for completion and get the result
     result = poller.result()
 
-    # print result details
+    # print result details (direct attribute access; no getattr)
     print("=== Import Project Result ===")
-    print(f"Job ID: {getattr(result, 'job_id', None)}")
-    print(f"Status: {getattr(result, 'status', None)}")
-    print(f"Created on: {getattr(result, 'created_on', None)}")
-    print(f"Last updated on: {getattr(result, 'last_updated_on', None)}")
-    print(f"Expires on: {getattr(result, 'expires_on', None)}")
-    print(f"Warnings: {getattr(result, 'warnings', None)}")
-    print(f"Errors: {getattr(result, 'errors', None)}")
+    print(f"Job ID: {result.job_id}")
+    print(f"Status: {result.status}")
+    print(f"Created on: {result.created_on}")
+    print(f"Last updated on: {result.last_updated_on}")
+    print(f"Expires on: {result.expires_on}")
+    print(f"Warnings: {result.warnings}")
+    print(f"Errors: {result.errors}")
+
+# [END conversation_authoring_import_project]
+
+
+def main():
+    sample_import_project()
 
 
 if __name__ == "__main__":
-    sample_import_project()
-# [END conversation_authoring_import_project]
+    main()

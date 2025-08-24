@@ -10,28 +10,38 @@ DESCRIPTION:
     This sample demonstrates how to cancel a training job in a Conversation Authoring project.
 USAGE:
     python sample_cancel_training_job.py
-REQUIRED ENV VARS:
+
+REQUIRED ENV VARS (for AAD / DefaultAzureCredential):
     AZURE_CONVERSATIONS_AUTHORING_ENDPOINT
-    AZURE_CONVERSATIONS_AUTHORING_KEY
-    (Optional) PROJECT_NAME   # defaults to "<project-name>"
-    (Optional) JOB_ID         # defaults to "<job-id>"
+    AZURE_CLIENT_ID
+    AZURE_TENANT_ID
+    AZURE_CLIENT_SECRET
+
+NOTE:
+    If you want to use AzureKeyCredential instead, set:
+      - AZURE_CONVERSATIONS_AUTHORING_ENDPOINT
+      - AZURE_CONVERSATIONS_AUTHORING_KEY
+
+OPTIONAL ENV VARS:
+    PROJECT_NAME   # defaults to "<project-name>"
+    JOB_ID         # defaults to "<job-id>"
 """
 
 # [START conversation_authoring_cancel_training_job]
 import os
-from azure.core.credentials import AzureKeyCredential
+from azure.identity import DefaultAzureCredential
 from azure.ai.language.conversations.authoring import ConversationAuthoringClient
 
 
 def sample_cancel_training_job():
-    # get secrets
+    # settings
     endpoint = os.environ["AZURE_CONVERSATIONS_AUTHORING_ENDPOINT"]
-    key = os.environ["AZURE_CONVERSATIONS_AUTHORING_KEY"]
     project_name = os.environ.get("PROJECT_NAME", "<project-name>")
     job_id = os.environ.get("JOB_ID", "<job-id>")
 
-    # create a client
-    client = ConversationAuthoringClient(endpoint, AzureKeyCredential(key))
+    # create a client with AAD
+    credential = DefaultAzureCredential()
+    client = ConversationAuthoringClient(endpoint, credential=credential)
     project_client = client.get_project_client(project_name)
 
     captured = {}
@@ -58,10 +68,12 @@ def sample_cancel_training_job():
     print(f"Operation-Location: {headers.get('Operation-Location') or headers.get('operation-location')}")
     print(f"Location: {headers.get('Location') or headers.get('location')}")
 
-    # you still have a poller object (NoPolling)
-    assert poller is not None
+# [END conversation_authoring_cancel_training_job]
+
+
+def main():
+    sample_cancel_training_job()
 
 
 if __name__ == "__main__":
-    sample_cancel_training_job()
-# [END conversation_authoring_cancel_training_job]
+    main()

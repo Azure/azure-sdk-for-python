@@ -8,20 +8,31 @@
 FILE: sample_assign_deployment_resources.py
 DESCRIPTION:
     This sample demonstrates how to assign deployment resources to a Conversation Authoring project.
+
 USAGE:
     python sample_assign_deployment_resources.py
-REQUIRED ENV VARS:
+
+REQUIRED ENV VARS (for AAD / DefaultAzureCredential):
     AZURE_CONVERSATIONS_AUTHORING_ENDPOINT
-    AZURE_CONVERSATIONS_AUTHORING_KEY
-    (Optional) PROJECT_NAME         # defaults to "<project-name>"
-    (Optional) RESOURCE_ID          # defaults to "<azure-resource-id>"
-    (Optional) RESOURCE_DOMAIN      # defaults to "<custom-domain>"
-    (Optional) RESOURCE_REGION      # defaults to "<region>"
+    AZURE_CLIENT_ID
+    AZURE_TENANT_ID
+    AZURE_CLIENT_SECRET
+
+NOTE:
+    If you want to use AzureKeyCredential instead, set:
+      - AZURE_CONVERSATIONS_AUTHORING_ENDPOINT
+      - AZURE_CONVERSATIONS_AUTHORING_KEY
+
+OPTIONAL ENV VARS:
+    PROJECT_NAME         # defaults to "<project-name>"
+    RESOURCE_ID          # defaults to "<azure-resource-id>"
+    RESOURCE_DOMAIN      # defaults to "<custom-domain>"
+    RESOURCE_REGION      # defaults to "<region>"
 """
 
 # [START conversation_authoring_assign_deployment_resources]
 import os
-from azure.core.credentials import AzureKeyCredential
+from azure.identity import DefaultAzureCredential
 from azure.ai.language.conversations.authoring import ConversationAuthoringClient
 from azure.ai.language.conversations.authoring.models import (
     ResourceMetadata,
@@ -31,17 +42,17 @@ from azure.ai.language.conversations.authoring.models import (
 
 
 def sample_assign_deployment_resources():
-    # get secrets
+    # settings
     endpoint = os.environ["AZURE_CONVERSATIONS_AUTHORING_ENDPOINT"]
-    key = os.environ["AZURE_CONVERSATIONS_AUTHORING_KEY"]
 
     project_name = os.environ.get("PROJECT_NAME", "<project-name>")
     resource_id = os.environ.get("RESOURCE_ID", "<azure-resource-id>")
     resource_domain = os.environ.get("RESOURCE_DOMAIN", "<custom-domain>")
     resource_region = os.environ.get("RESOURCE_REGION", "<region>")
 
-    # create a client
-    client = ConversationAuthoringClient(endpoint, AzureKeyCredential(key))
+    # create a client with AAD
+    credential = DefaultAzureCredential()
+    client = ConversationAuthoringClient(endpoint, credential=credential)
     project_client = client.get_project_client(project_name)
 
     # build request body
@@ -55,10 +66,10 @@ def sample_assign_deployment_resources():
     # start assign (long-running operation)
     poller = project_client.project.begin_assign_deployment_resources(body=details)
 
-    # wait for completion and get the result
-    result: DeploymentResourcesState = poller.result()
+    # wait for completion and get the result (no explicit type variables)
+    result = poller.result()
 
-    # print result details
+    # print result details (direct attribute access; no getattr)
     print("=== Assign Deployment Resources Result ===")
     print(f"Job ID: {result.job_id}")
     print(f"Status: {result.status}")
@@ -68,7 +79,12 @@ def sample_assign_deployment_resources():
     print(f"Warnings: {result.warnings}")
     print(f"Errors: {result.errors}")
 
+# [END conversation_authoring_assign_deployment_resources]
+
+
+def main():
+    sample_assign_deployment_resources()
+
 
 if __name__ == "__main__":
-    sample_assign_deployment_resources()
-# [END conversation_authoring_assign_deployment_resources]
+    main()

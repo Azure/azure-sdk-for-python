@@ -10,32 +10,41 @@ DESCRIPTION:
     This sample demonstrates how to swap two deployments within a Conversation Authoring project.
 USAGE:
     python sample_swap_deployments.py
-REQUIRED ENV VARS:
+
+REQUIRED ENV VARS (for AAD / DefaultAzureCredential):
     AZURE_CONVERSATIONS_AUTHORING_ENDPOINT
-    AZURE_CONVERSATIONS_AUTHORING_KEY
-    (Optional) PROJECT_NAME          # defaults to "<project-name>"
-    (Optional) FIRST_DEPLOYMENT      # defaults to "<first-deployment>"
-    (Optional) SECOND_DEPLOYMENT     # defaults to "<second-deployment>"
+    AZURE_CLIENT_ID
+    AZURE_TENANT_ID
+    AZURE_CLIENT_SECRET
+
+NOTE:
+    If you want to use AzureKeyCredential instead, set:
+      - AZURE_CONVERSATIONS_AUTHORING_ENDPOINT
+      - AZURE_CONVERSATIONS_AUTHORING_KEY
+
+OPTIONAL ENV VARS:
+    PROJECT_NAME          # defaults to "<project-name>"
+    FIRST_DEPLOYMENT      # defaults to "<first-deployment>"
+    SECOND_DEPLOYMENT     # defaults to "<second-deployment>"
 """
 
 # [START conversation_authoring_swap_deployments]
 import os
-from azure.core.credentials import AzureKeyCredential
+from azure.identity import DefaultAzureCredential
 from azure.ai.language.conversations.authoring import ConversationAuthoringClient
-from azure.ai.language.conversations.authoring.models import SwapDeploymentsDetails, SwapDeploymentsState
+from azure.ai.language.conversations.authoring.models import SwapDeploymentsDetails
 
 
 def sample_swap_deployments():
-    # get secrets
+    # settings
     endpoint = os.environ["AZURE_CONVERSATIONS_AUTHORING_ENDPOINT"]
-    key = os.environ["AZURE_CONVERSATIONS_AUTHORING_KEY"]
-
     project_name = os.environ.get("PROJECT_NAME", "<project-name>")
     deployment_name_1 = os.environ.get("FIRST_DEPLOYMENT", "<first-deployment>")
     deployment_name_2 = os.environ.get("SECOND_DEPLOYMENT", "<second-deployment>")
 
-    # create a client
-    client = ConversationAuthoringClient(endpoint, AzureKeyCredential(key))
+    # create a client with AAD
+    credential = DefaultAzureCredential()
+    client = ConversationAuthoringClient(endpoint, credential=credential)
     project_client = client.get_project_client(project_name)
 
     # build swap details
@@ -47,8 +56,8 @@ def sample_swap_deployments():
     # start swap (long-running operation)
     poller = project_client.project.begin_swap_deployments(body=details)
 
-    # wait for job completion and get the result
-    result: SwapDeploymentsState = poller.result()
+    # wait for job completion and get the result (no explicit type variables)
+    result = poller.result()
 
     # print result details
     print("=== Swap Deployments Result ===")
@@ -60,7 +69,12 @@ def sample_swap_deployments():
     print(f"Warnings: {result.warnings}")
     print(f"Errors: {result.errors}")
 
+# [END conversation_authoring_swap_deployments]
+
+
+def main():
+    sample_swap_deployments()
+
 
 if __name__ == "__main__":
-    sample_swap_deployments()
-# [END conversation_authoring_swap_deployments]
+    main()

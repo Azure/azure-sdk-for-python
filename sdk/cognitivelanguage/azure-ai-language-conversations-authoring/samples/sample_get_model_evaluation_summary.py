@@ -12,29 +12,38 @@ DESCRIPTION:
     in a Conversation Authoring project.
 USAGE:
     python sample_get_model_evaluation_summary.py
-REQUIRED ENV VARS:
+
+REQUIRED ENV VARS (for AAD / DefaultAzureCredential):
     AZURE_CONVERSATIONS_AUTHORING_ENDPOINT
-    AZURE_CONVERSATIONS_AUTHORING_KEY
-    (Optional) PROJECT_NAME   # defaults to "<project-name>"
-    (Optional) TRAINED_MODEL  # defaults to "<trained-model-label>"
+    AZURE_CLIENT_ID
+    AZURE_TENANT_ID
+    AZURE_CLIENT_SECRET
+
+NOTE:
+    If you want to use AzureKeyCredential instead, set:
+      - AZURE_CONVERSATIONS_AUTHORING_ENDPOINT
+      - AZURE_CONVERSATIONS_AUTHORING_KEY
+
+OPTIONAL ENV VARS:
+    PROJECT_NAME   # defaults to "<project-name>"
+    TRAINED_MODEL  # defaults to "<trained-model-label>"
 """
 
 # [START conversation_authoring_get_model_evaluation_summary]
 import os
-from azure.core.credentials import AzureKeyCredential
+from azure.identity import DefaultAzureCredential
 from azure.ai.language.conversations.authoring import ConversationAuthoringClient
 
 
 def sample_get_model_evaluation_summary():
-    # get secrets
+    # settings
     endpoint = os.environ["AZURE_CONVERSATIONS_AUTHORING_ENDPOINT"]
-    key = os.environ["AZURE_CONVERSATIONS_AUTHORING_KEY"]
-
     project_name = os.environ.get("PROJECT_NAME", "<project-name>")
     trained_model_label = os.environ.get("TRAINED_MODEL", "<trained-model-label>")
 
-    # create a client
-    client = ConversationAuthoringClient(endpoint, AzureKeyCredential(key))
+    # create a client with AAD
+    credential = DefaultAzureCredential()
+    client = ConversationAuthoringClient(endpoint, credential=credential)
     project_client = client.get_project_client(project_name)
 
     # get evaluation summary for a trained model
@@ -43,8 +52,8 @@ def sample_get_model_evaluation_summary():
     print("=== Model Evaluation Summary ===")
 
     # ----- Entities evaluation -----
-    entities_eval = getattr(eval_summary, "entities_evaluation", None)
-    if entities_eval:
+    if eval_summary.entities_evaluation:
+        entities_eval = eval_summary.entities_evaluation
         print(
             f"Entities - Micro F1: {entities_eval.micro_f1}, Precision: {entities_eval.micro_precision}, Recall: {entities_eval.micro_recall}"
         )
@@ -59,8 +68,8 @@ def sample_get_model_evaluation_summary():
             )
 
     # ----- Intents evaluation -----
-    intents_eval = getattr(eval_summary, "intents_evaluation", None)
-    if intents_eval:
+    if eval_summary.intents_evaluation:
+        intents_eval = eval_summary.intents_evaluation
         print(
             f"Intents - Micro F1: {intents_eval.micro_f1}, Precision: {intents_eval.micro_precision}, Recall: {intents_eval.micro_recall}"
         )
@@ -74,7 +83,12 @@ def sample_get_model_evaluation_summary():
                 f"  TP: {summary.true_positive_count}, TN: {summary.true_negative_count}, FP: {summary.false_positive_count}, FN: {summary.false_negative_count}"
             )
 
+# [END conversation_authoring_get_model_evaluation_summary]
+
+
+def main():
+    sample_get_model_evaluation_summary()
+
 
 if __name__ == "__main__":
-    sample_get_model_evaluation_summary()
-# [END conversation_authoring_get_model_evaluation_summary]
+    main()
