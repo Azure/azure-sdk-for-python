@@ -29,7 +29,7 @@ def add_sanitizers(test_proxy):
     azure_attestation_uri = os.environ.get("AZURE_KEYVAULT_ATTESTATION_URL","https://Sanitized.azurewebsites.net")
     azure_attestation_uri = azure_attestation_uri.rstrip('/')
     storage_url = os.environ.get("BLOB_STORAGE_URL", "https://Sanitized.blob.core.windows.net")
-    client_id = os.environ.get("KEYVAULT_CLIENT_ID", "service-principal-id")
+    client_id = os.environ.get("CLIENT_OBJECTID", "service-principal-id")
     sas_token = os.environ.get("BLOB_STORAGE_SAS_TOKEN","fake-sas")
 
     add_general_string_sanitizer(target=azure_keyvault_url, value="https://Sanitized.vault.azure.net")
