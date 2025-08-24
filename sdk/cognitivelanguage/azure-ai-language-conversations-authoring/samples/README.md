@@ -73,23 +73,11 @@ python sample_train.py
 
 Check out the [API reference documentation][api_reference_authoring] to explore the full set of operations available in the Azure Conversational Language Understanding **Authoring** client library for Python.
 
-You may also want to review:
-
-- [Product documentation][conversation_authoring_docs] for a conceptual overview of conversation authoring.  
-- [REST API documentation][conversation_authoring_restdocs] for details on the underlying REST endpoints.  
-- The [main README][conversation_authoring_root_readme] for installation instructions, authentication, and key concepts.  
-
----
-
-## Next Steps
-
-Check out the [API reference documentation][api_reference_authoring] to learn more about
-what you can do with the Azure Conversational Language Understanding **Authoring** client library.
-
 [azure_subscription]: https://azure.microsoft.com/free/
 [language_resource]: https://portal.azure.com/#create/Microsoft.CognitiveServicesTextAnalytics
 [pip]: https://pypi.org/project/pip/
-
+[api_reference_authoring]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations-authoring
+<!-- TODO: change api_reference_documentation to azuresdkdocs link after first publish -->
 [sample_authentication]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations-authoring/samples/sample_authentication.py
 [sample_authentication_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations-authoring/samples/async/sample_authentication_async.py
 
@@ -124,6 +112,4 @@ what you can do with the Azure Conversational Language Understanding **Authoring
 
 [sample_assign_deployment_resources]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations-authoring/samples/sample_assign_deployment_resources.py
 [sample_cancel_training_job]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations-authoring/samples/sample_cancel_training_job.py
-
-[api_reference_authoring]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-ai-language-conversations-authoring/latest/azure.ai.language.conversations.authoring.html
 [versioning_story_readme]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations-authoring#install-the-package

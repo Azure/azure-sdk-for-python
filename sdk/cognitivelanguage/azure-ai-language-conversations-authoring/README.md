@@ -13,6 +13,7 @@
 
 [Source code][conversation_authoring_client_src]
 | [Package (PyPI)][conversation_authoring_pypi_package]
+| [API reference documentation][api_reference_authoring]
 | [Samples][conversation_authoring_samples]
 | [Product documentation][conversation_authoring_docs]
 | [REST API documentation][conversation_authoring_restdocs]
@@ -320,6 +321,8 @@ For more information, see the [Code of Conduct FAQ][coc_faq] or contact [opencod
 [conversation_authoring_pypi_package]: https://pypi.org/project/azure-ai-language-conversations-authoring/
 [conversation_authoring_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations-authoring/samples/README.md
 [conversation_authoring_docs]: https://learn.microsoft.com/azure/ai-services/language-service/conversational-language-understanding/overview
+[api_reference_authoring]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations-authoring
+<!-- TODO: change api_reference_documentation to azuresdkdocs link after first publish -->
 [conversation_authoring_restdocs]: https://learn.microsoft.com/rest/api/language/conversation-authoring-project?view=rest-language-2023-04-01
 [azure_language_portal]: https://language.cognitive.azure.com/home
 [cognitive_authentication_aad]: https://learn.microsoft.com/azure/cognitive-services/authentication#authenticate-with-azure-active-directory
