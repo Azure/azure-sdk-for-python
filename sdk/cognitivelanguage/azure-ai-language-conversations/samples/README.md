@@ -19,13 +19,18 @@ You can authenticate your client with a Conversational Language Understanding AP
 
 These sample programs show common scenarios for the Conversational Language Understanding client's offerings.
 
-| **File Name**| **Description**|
+| **File Name** | **Description** |
 |-|-|
-|[sample_analyze_conversation_app.py][sample_analyze_conversation_app] and [sample_analyze_conversation_app_async.py][sample_analyze_conversation_app_async] | Analyze intents and entities in your utterance using a conversation project. |
-| [sample_analyze_orchestration_app_conv_response.py][sample_analyze_orchestration_app_conv_response] and [sample_analyze_orchestration_app_conv_response_async.py][sample_analyze_orchestration_app_conv_response_async]| Analyze user utterance using an orchestration project, which selects the best candidate from one of your different apps to analyze user query (ex: Qna, Conversation, and Luis). In this case, it uses a conversation project. |
-| [sample_analyze_orchestration_app_qna_response.py][sample_analyze_orchestration_app_qna_response] and [sample_analyze_orchestration_app_qna_response_async.py][sample_analyze_orchestration_app_qna_response_async]| Analyze user utterance using an orchestration project, which selects the best candidate from one of your different apps to analyze user query (ex: Qna, Conversation, and Luis). In this case, it uses a Qna project. |
-| [sample_conv_summarization.py][sample_conv_summarization] and [sample_conv_summarization_async.py][sample_conv_summarization_async]| Summarize conversation in the form of issues and resolutions (ex: tech support conversation) |
-| [sample_manage_projects.py][sample_manage_projects] and [sample_manage_projects_async.py][sample_manage_projects_async]| Shows common authoring operations on projects. |
+| [sample_conversation_prediction.py][sample_conversation_prediction] and [sample_conversation_prediction_async.py][sample_conversation_prediction_async] | Analyze intents and entities in an utterance using a conversation project. |
+| [sample_orchestration_prediction.py][sample_orchestration_prediction] and [sample_orchestration_prediction_async.py][sample_orchestration_prediction_async] | Analyze an utterance with an orchestration project that routes to the best skill; this sample uses a Qna project. |
+| [sample_conversation_prediction_with_language.py][sample_conversation_prediction_with_language] and [sample_conversation_prediction_with_language_async.py][sample_conversation_prediction_with_language_async] | Analyze a conversation in a specified (non-default) language/locale. |
+| [sample_conversation_prediction_with_options.py][sample_conversation_prediction_with_options] and [sample_conversation_prediction_with_options_async.py][sample_conversation_prediction_with_options_async] | Analyze a conversation using extra options (e.g., verbosity, logging). |
+| [sample_conversation_multi_turn_prediction.py][sample_conversation_multi_turn_prediction] and [sample_conversation_multi_turn_prediction_async.py][sample_conversation_multi_turn_prediction_async] | Perform multi-turn analysis over a back-and-forth conversation. |
+| [sample_conversation_summarization.py][sample_conversation_summarization] and [sample_conversation_summarization_async.py][sample_conversation_summarization_async] | Summarize a conversation into issues and resolutions (e.g., tech support). |
+| [sample_conversation_pii.py][sample_conversation_pii] and [sample_conversation_pii_async.py][sample_conversation_pii_async] | Detect and redact PII in a conversation using default masking. |
+| [sample_conversation_pii_with_character_mask_policy.py][sample_conversation_pii_with_character_mask_policy] and [sample_conversation_pii_with_character_mask_policy_async.py][sample_conversation_pii_with_character_mask_policy_async] | Detect PII and apply character-masking (e.g., replace with `*`). |
+| [sample_conversation_pii_with_entity_mask_policy.py][sample_conversation_pii_with_entity_mask_policy] and [sample_conversation_pii_with_entity_mask_policy_async.py][sample_conversation_pii_with_entity_mask_policy_async] | Detect PII and mask by entity type (e.g., `<PHONE_NUMBER>`). |
+| [sample_conversation_pii_with_no_mask_policy.py][sample_conversation_pii_with_no_mask_policy] and [sample_conversation_pii_with_no_mask_policy_async.py][sample_conversation_pii_with_no_mask_policy_async] | Detect PII without masking; return entities and spans only. |
 
 ## Prerequisites
 
@@ -66,20 +71,35 @@ what you can do with the Azure Conversational Language Understanding client libr
 [sample_authentication]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/sample_authentication.py
 [sample_authentication_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/async/sample_authentication_async.py
 
-[sample_analyze_conversation_app]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/sample_analyze_conversation_app.py
-[sample_analyze_conversation_app_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/async/sample_analyze_conversation_app_async.py
+[sample_conversation_prediction]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/sample_conversation_prediction.py
+[sample_conversation_prediction_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/async/sample_conversation_prediction_async.py
 
-[sample_analyze_orchestration_app_conv_response]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/sample_analyze_orchestration_app_conv_response.py
-[sample_analyze_orchestration_app_conv_response_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/async/sample_analyze_orchestration_app_conv_response_async.py
+[sample_orchestration_prediction]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/sample_orchestration_prediction.py
+[sample_orchestration_prediction_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/async/sample_orchestration_prediction_async.py
 
-[sample_analyze_orchestration_app_qna_response]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/sample_analyze_orchestration_app_qna_response.py
-[sample_analyze_orchestration_app_qna_response_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/async/sample_analyze_orchestration_app_qna_response_async.py
+[sample_conversation_prediction_with_language]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/sample_conversation_prediction_with_language.py
+[sample_conversation_prediction_with_language_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/async/sample_conversation_prediction_with_language_async.py
 
-[sample_conv_summarization]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/sample_conv_summarization.py
-[sample_conv_summarization_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/async/sample_conv_summarization_async.py
+[sample_conversation_prediction_with_options]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/sample_conversation_prediction_with_options.py
+[sample_conversation_prediction_with_options_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/async/sample_conversation_prediction_with_options_async.py
 
-[sample_manage_projects]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/authoring/sample_manage_projects.py
-[sample_manage_projects_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/async/authoring/sample_manage_projects_async.py
+[sample_conversation_multi_turn_prediction]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/sample_conversation_multi_turn_prediction.py
+[sample_conversation_multi_turn_prediction_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/async/sample_conversation_multi_turn_prediction_async.py
+
+[sample_conversation_summarization]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/sample_conversation_summarization.py
+[sample_conversation_summarization_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/async/sample_conversation_summarization_async.py
+
+[sample_conversation_pii]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/sample_conversation_pii.py
+[sample_conversation_pii_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/async/sample_conversation_pii_async.py
+
+[sample_conversation_pii_with_character_mask_policy]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/sample_conversation_pii_with_character_mask_policy.py
+[sample_conversation_pii_with_character_mask_policy_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/async/sample_conversation_pii_with_character_mask_policy_async.py
+
+[sample_conversation_pii_with_entity_mask_policy]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/sample_conversation_pii_with_entity_mask_policy.py
+[sample_conversation_pii_with_entity_mask_policy_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/async/sample_conversation_pii_with_entity_mask_policy_async.py
+
+[sample_conversation_pii_with_no_mask_policy]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/sample_conversation_pii_with_no_mask_policy.py
+[sample_conversation_pii_with_no_mask_policy_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/async/sample_conversation_pii_with_no_mask_policy_async.py
 
 [api_reference_documentation]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-ai-language-conversations/latest/azure.ai.language.conversations.html
 [versioning_story_readme]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations#install-the-package
