@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -78,12 +79,12 @@ class KeyClient(KeyVaultClientBase):
         return None
 
     def get_cryptography_client(
-            self,
-            key_name: str,
-            *,
-            key_version: Optional[str] = None,
-            **kwargs,  # pylint: disable=unused-argument
-        ) -> CryptographyClient:
+        self,
+        key_name: str,
+        *,
+        key_version: Optional[str] = None,
+        **kwargs,  # pylint: disable=unused-argument
+    ) -> CryptographyClient:
         """Gets a :class:`~azure.keyvault.keys.crypto.CryptographyClient` for the given key.
 
         :param str key_name: The name of the key used to perform cryptographic operations.
@@ -398,7 +399,9 @@ class KeyClient(KeyVaultClientBase):
         )
 
     @distributed_trace
-    def begin_delete_key(self, name: str, **kwargs: Any) -> LROPoller[DeletedKey]:  # pylint:disable=bad-option-value,delete-operation-wrong-return-type
+    def begin_delete_key(
+        self, name: str, **kwargs: Any
+    ) -> LROPoller[DeletedKey]:  # pylint:disable=bad-option-value,delete-operation-wrong-return-type
         """Delete all versions of a key and its cryptographic material.
 
         Requires keys/delete permission. When this method returns Key Vault has begun deleting the key. Deletion may
@@ -519,7 +522,7 @@ class KeyClient(KeyVaultClientBase):
         return self._client.get_deleted_keys(
             maxresults=kwargs.pop("max_page_size", None),
             cls=lambda objs: [DeletedKey._from_deleted_key_item(x) for x in objs],
-            **kwargs
+            **kwargs,
         )
 
     @distributed_trace
@@ -542,7 +545,7 @@ class KeyClient(KeyVaultClientBase):
         return self._client.get_keys(
             maxresults=kwargs.pop("max_page_size", None),
             cls=lambda objs: [KeyProperties._from_key_item(x) for x in objs],
-            **kwargs
+            **kwargs,
         )
 
     @distributed_trace
@@ -568,7 +571,7 @@ class KeyClient(KeyVaultClientBase):
             name,
             maxresults=kwargs.pop("max_page_size", None),
             cls=lambda objs: [KeyProperties._from_key_item(x) for x in objs],
-            **kwargs
+            **kwargs,
         )
 
     @distributed_trace
@@ -709,9 +712,7 @@ class KeyClient(KeyVaultClientBase):
             release_policy=policy,
         )
 
-        bundle = self._client.update_key(
-            name, key_version=version or "", parameters=parameters, **kwargs
-        )
+        bundle = self._client.update_key(name, key_version=version or "", parameters=parameters, **kwargs)
         return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace
@@ -770,8 +771,7 @@ class KeyClient(KeyVaultClientBase):
                 :dedent: 8
         """
         bundle = self._client.restore_key(
-            parameters=self._models.KeyRestoreParameters(key_bundle_backup=backup),
-            **kwargs
+            parameters=self._models.KeyRestoreParameters(key_bundle_backup=backup), **kwargs
         )
         return KeyVaultKey._from_key_bundle(bundle)
 
@@ -877,7 +877,7 @@ class KeyClient(KeyVaultClientBase):
                 nonce=nonce,
                 enc=algorithm,
             ),
-            **kwargs
+            **kwargs,
         )
         return ReleaseKeyResult(result.value)
 
@@ -988,7 +988,7 @@ class KeyClient(KeyVaultClientBase):
     @distributed_trace
     def get_key_attestation(self, name: str, version: Optional[str] = None, **kwargs: Any) -> KeyVaultKey:
         """Get a key and its attestation blob.
-        
+
         This method is applicable to any key stored in Azure Key Vault Managed HSM. This operation requires the keys/get
         permission.
 
