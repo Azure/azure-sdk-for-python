@@ -1,5 +1,16 @@
 # Release History
 
+## 1.5.0 (2025-09-21)
+
+### Features Added
+
+  - Model `ItemPathBasedRestoreCriteria` added property `rename_to`
+  - Model `KubernetesClusterBackupDatasourceParameters` added property `included_volume_types`
+  - Added enum `AKSVolumeTypes`
+  - Added model `AdlsBlobBackupDatasourceParameters`
+  - Added model `ValidateForModifyBackupRequest`
+  - Model `BackupInstancesOperations` added method `begin_validate_for_modify_backup`
+
 ## 1.4.0 (2024-07-22)
 
 ### Features Added
