@@ -6,6 +6,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, overload
+import urllib.parse
 
 from azure.core import PipelineClient
 from azure.core.exceptions import (
@@ -16,6 +17,7 @@ from azure.core.exceptions import (
     ResourceNotModifiedError,
     map_error,
 )
+from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
@@ -33,7 +35,7 @@ _SERIALIZER.client_side_validation = False
 
 
 def build_create_or_update_request(
-    synonym_map_name: str,
+    source_name: str,
     *,
     prefer: Union[str, _models.Enum0],
     x_ms_client_request_id: Optional[str] = None,
@@ -49,9 +51,9 @@ def build_create_or_update_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "/synonymmaps('{synonymMapName}')")
+    _url = kwargs.pop("template_url", "/knowledgesources('{sourceName}')")
     path_format_arguments = {
-        "synonymMapName": _SERIALIZER.url("synonym_map_name", synonym_map_name, "str"),
+        "sourceName": _SERIALIZER.url("source_name", source_name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -75,7 +77,7 @@ def build_create_or_update_request(
 
 
 def build_delete_request(
-    synonym_map_name: str,
+    source_name: str,
     *,
     x_ms_client_request_id: Optional[str] = None,
     if_match: Optional[str] = None,
@@ -89,9 +91,9 @@ def build_delete_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "/synonymmaps('{synonymMapName}')")
+    _url = kwargs.pop("template_url", "/knowledgesources('{sourceName}')")
     path_format_arguments = {
-        "synonymMapName": _SERIALIZER.url("synonym_map_name", synonym_map_name, "str"),
+        "sourceName": _SERIALIZER.url("source_name", source_name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -111,9 +113,7 @@ def build_delete_request(
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_request(
-    synonym_map_name: str, *, x_ms_client_request_id: Optional[str] = None, **kwargs: Any
-) -> HttpRequest:
+def build_get_request(source_name: str, *, x_ms_client_request_id: Optional[str] = None, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -121,9 +121,9 @@ def build_get_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "/synonymmaps('{synonymMapName}')")
+    _url = kwargs.pop("template_url", "/knowledgesources('{sourceName}')")
     path_format_arguments = {
-        "synonymMapName": _SERIALIZER.url("synonym_map_name", synonym_map_name, "str"),
+        "sourceName": _SERIALIZER.url("source_name", source_name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -139,9 +139,7 @@ def build_get_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_list_request(
-    *, select: Optional[str] = None, x_ms_client_request_id: Optional[str] = None, **kwargs: Any
-) -> HttpRequest:
+def build_list_request(*, x_ms_client_request_id: Optional[str] = None, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -149,11 +147,9 @@ def build_list_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "/synonymmaps")
+    _url = kwargs.pop("template_url", "/knowledgesources")
 
     # Construct parameters
-    if select is not None:
-        _params["$select"] = _SERIALIZER.query("select", select, "str")
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
@@ -173,7 +169,7 @@ def build_create_request(*, x_ms_client_request_id: Optional[str] = None, **kwar
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "/synonymmaps")
+    _url = kwargs.pop("template_url", "/knowledgesources")
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -188,14 +184,14 @@ def build_create_request(*, x_ms_client_request_id: Optional[str] = None, **kwar
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class SynonymMapsOperations:
+class KnowledgeSourcesOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.search.documents.indexes.SearchServiceClient`'s
-        :attr:`synonym_maps` attribute.
+        :attr:`knowledge_sources` attribute.
     """
 
     models = _models
@@ -210,28 +206,25 @@ class SynonymMapsOperations:
     @overload
     def create_or_update(
         self,
-        synonym_map_name: str,
+        source_name: str,
         prefer: Union[str, _models.Enum0],
-        synonym_map: _models.SynonymMap,
+        knowledge_source: _models.KnowledgeSource,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
         request_options: Optional[_models.RequestOptions] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.SynonymMap:
-        """Creates a new synonym map or updates a synonym map if it already exists.
+    ) -> _models.KnowledgeSource:
+        """Creates a new knowledge source or updates an knowledge source if it already exists.
 
-        .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/Update-Synonym-Map
-
-        :param synonym_map_name: The name of the synonym map to create or update. Required.
-        :type synonym_map_name: str
+        :param source_name: The name of the knowledge source to create or update. Required.
+        :type source_name: str
         :param prefer: For HTTP PUT requests, instructs the service to return the created/updated
          resource on success. "return=representation" Required.
         :type prefer: str or ~azure.search.documents.indexes.models.Enum0
-        :param synonym_map: The definition of the synonym map to create or update. Required.
-        :type synonym_map: ~azure.search.documents.indexes.models.SynonymMap
+        :param knowledge_source: The definition of the knowledge source to create or update. Required.
+        :type knowledge_source: ~azure.search.documents.indexes.models.KnowledgeSource
         :param if_match: Defines the If-Match condition. The operation will be performed only if the
          ETag on the server matches this value. Default value is None.
         :type if_match: str
@@ -243,36 +236,33 @@ class SynonymMapsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: SynonymMap or the result of cls(response)
-        :rtype: ~azure.search.documents.indexes.models.SynonymMap
+        :return: KnowledgeSource or the result of cls(response)
+        :rtype: ~azure.search.documents.indexes.models.KnowledgeSource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def create_or_update(
         self,
-        synonym_map_name: str,
+        source_name: str,
         prefer: Union[str, _models.Enum0],
-        synonym_map: IO[bytes],
+        knowledge_source: IO[bytes],
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
         request_options: Optional[_models.RequestOptions] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.SynonymMap:
-        """Creates a new synonym map or updates a synonym map if it already exists.
+    ) -> _models.KnowledgeSource:
+        """Creates a new knowledge source or updates an knowledge source if it already exists.
 
-        .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/Update-Synonym-Map
-
-        :param synonym_map_name: The name of the synonym map to create or update. Required.
-        :type synonym_map_name: str
+        :param source_name: The name of the knowledge source to create or update. Required.
+        :type source_name: str
         :param prefer: For HTTP PUT requests, instructs the service to return the created/updated
          resource on success. "return=representation" Required.
         :type prefer: str or ~azure.search.documents.indexes.models.Enum0
-        :param synonym_map: The definition of the synonym map to create or update. Required.
-        :type synonym_map: IO[bytes]
+        :param knowledge_source: The definition of the knowledge source to create or update. Required.
+        :type knowledge_source: IO[bytes]
         :param if_match: Defines the If-Match condition. The operation will be performed only if the
          ETag on the server matches this value. Default value is None.
         :type if_match: str
@@ -284,35 +274,32 @@ class SynonymMapsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: SynonymMap or the result of cls(response)
-        :rtype: ~azure.search.documents.indexes.models.SynonymMap
+        :return: KnowledgeSource or the result of cls(response)
+        :rtype: ~azure.search.documents.indexes.models.KnowledgeSource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
     def create_or_update(
         self,
-        synonym_map_name: str,
+        source_name: str,
         prefer: Union[str, _models.Enum0],
-        synonym_map: Union[_models.SynonymMap, IO[bytes]],
+        knowledge_source: Union[_models.KnowledgeSource, IO[bytes]],
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
         request_options: Optional[_models.RequestOptions] = None,
         **kwargs: Any
-    ) -> _models.SynonymMap:
-        """Creates a new synonym map or updates a synonym map if it already exists.
+    ) -> _models.KnowledgeSource:
+        """Creates a new knowledge source or updates an knowledge source if it already exists.
 
-        .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/Update-Synonym-Map
-
-        :param synonym_map_name: The name of the synonym map to create or update. Required.
-        :type synonym_map_name: str
+        :param source_name: The name of the knowledge source to create or update. Required.
+        :type source_name: str
         :param prefer: For HTTP PUT requests, instructs the service to return the created/updated
          resource on success. "return=representation" Required.
         :type prefer: str or ~azure.search.documents.indexes.models.Enum0
-        :param synonym_map: The definition of the synonym map to create or update. Is either a
-         SynonymMap type or a IO[bytes] type. Required.
-        :type synonym_map: ~azure.search.documents.indexes.models.SynonymMap or IO[bytes]
+        :param knowledge_source: The definition of the knowledge source to create or update. Is either
+         a KnowledgeSource type or a IO[bytes] type. Required.
+        :type knowledge_source: ~azure.search.documents.indexes.models.KnowledgeSource or IO[bytes]
         :param if_match: Defines the If-Match condition. The operation will be performed only if the
          ETag on the server matches this value. Default value is None.
         :type if_match: str
@@ -321,8 +308,8 @@ class SynonymMapsOperations:
         :type if_none_match: str
         :param request_options: Parameter group. Default value is None.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
-        :return: SynonymMap or the result of cls(response)
-        :rtype: ~azure.search.documents.indexes.models.SynonymMap
+        :return: KnowledgeSource or the result of cls(response)
+        :rtype: ~azure.search.documents.indexes.models.KnowledgeSource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -338,7 +325,7 @@ class SynonymMapsOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.SynonymMap] = kwargs.pop("cls", None)
+        cls: ClsType[_models.KnowledgeSource] = kwargs.pop("cls", None)
 
         _x_ms_client_request_id = None
         if request_options is not None:
@@ -346,13 +333,13 @@ class SynonymMapsOperations:
         content_type = content_type or "application/json"
         _json = None
         _content = None
-        if isinstance(synonym_map, (IOBase, bytes)):
-            _content = synonym_map
+        if isinstance(knowledge_source, (IOBase, bytes)):
+            _content = knowledge_source
         else:
-            _json = self._serialize.body(synonym_map, "SynonymMap")
+            _json = self._serialize.body(knowledge_source, "KnowledgeSource")
 
         _request = build_create_or_update_request(
-            synonym_map_name=synonym_map_name,
+            source_name=source_name,
             prefer=prefer,
             x_ms_client_request_id=_x_ms_client_request_id,
             if_match=if_match,
@@ -381,7 +368,7 @@ class SynonymMapsOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("SynonymMap", pipeline_response.http_response)
+        deserialized = self._deserialize("KnowledgeSource", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -391,19 +378,16 @@ class SynonymMapsOperations:
     @distributed_trace
     def delete(  # pylint: disable=inconsistent-return-statements
         self,
-        synonym_map_name: str,
+        source_name: str,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
         request_options: Optional[_models.RequestOptions] = None,
         **kwargs: Any
     ) -> None:
-        """Deletes a synonym map.
+        """Deletes an existing knowledge source.
 
-        .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/Delete-Synonym-Map
-
-        :param synonym_map_name: The name of the synonym map to delete. Required.
-        :type synonym_map_name: str
+        :param source_name: The name of the knowledge source to delete. Required.
+        :type source_name: str
         :param if_match: Defines the If-Match condition. The operation will be performed only if the
          ETag on the server matches this value. Default value is None.
         :type if_match: str
@@ -435,7 +419,7 @@ class SynonymMapsOperations:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
 
         _request = build_delete_request(
-            synonym_map_name=synonym_map_name,
+            source_name=source_name,
             x_ms_client_request_id=_x_ms_client_request_id,
             if_match=if_match,
             if_none_match=if_none_match,
@@ -465,19 +449,16 @@ class SynonymMapsOperations:
 
     @distributed_trace
     def get(
-        self, synonym_map_name: str, request_options: Optional[_models.RequestOptions] = None, **kwargs: Any
-    ) -> _models.SynonymMap:
-        """Retrieves a synonym map definition.
+        self, source_name: str, request_options: Optional[_models.RequestOptions] = None, **kwargs: Any
+    ) -> _models.KnowledgeSource:
+        """Retrieves a knowledge source definition.
 
-        .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/Get-Synonym-Map
-
-        :param synonym_map_name: The name of the synonym map to retrieve. Required.
-        :type synonym_map_name: str
+        :param source_name: The name of the knowledge source to retrieve. Required.
+        :type source_name: str
         :param request_options: Parameter group. Default value is None.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
-        :return: SynonymMap or the result of cls(response)
-        :rtype: ~azure.search.documents.indexes.models.SynonymMap
+        :return: KnowledgeSource or the result of cls(response)
+        :rtype: ~azure.search.documents.indexes.models.KnowledgeSource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -492,14 +473,14 @@ class SynonymMapsOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.SynonymMap] = kwargs.pop("cls", None)
+        cls: ClsType[_models.KnowledgeSource] = kwargs.pop("cls", None)
 
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
 
         _request = build_get_request(
-            synonym_map_name=synonym_map_name,
+            source_name=source_name,
             x_ms_client_request_id=_x_ms_client_request_id,
             api_version=api_version,
             headers=_headers,
@@ -522,7 +503,7 @@ class SynonymMapsOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("SynonymMap", pipeline_response.http_response)
+        deserialized = self._deserialize("KnowledgeSource", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -531,23 +512,22 @@ class SynonymMapsOperations:
 
     @distributed_trace
     def list(
-        self, select: Optional[str] = None, request_options: Optional[_models.RequestOptions] = None, **kwargs: Any
-    ) -> _models.ListSynonymMapsResult:
-        """Lists all synonym maps available for a search service.
+        self, request_options: Optional[_models.RequestOptions] = None, **kwargs: Any
+    ) -> ItemPaged["_models.KnowledgeSource"]:
+        """Lists all knowledge sources available for a search service.
 
-        .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/List-Synonym-Maps
-
-        :param select: Selects which top-level properties of the synonym maps to retrieve. Specified as
-         a comma-separated list of JSON property names, or '*' for all properties. The default is all
-         properties. Default value is None.
-        :type select: str
         :param request_options: Parameter group. Default value is None.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
-        :return: ListSynonymMapsResult or the result of cls(response)
-        :rtype: ~azure.search.documents.indexes.models.ListSynonymMapsResult
+        :return: An iterator like instance of either KnowledgeSource or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.search.documents.indexes.models.KnowledgeSource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[_models.ListKnowledgeSourcesResult] = kwargs.pop("cls", None)
+
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -556,118 +536,134 @@ class SynonymMapsOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        def prepare_request(next_link=None):
+            if not next_link:
+                _x_ms_client_request_id = None
+                if request_options is not None:
+                    _x_ms_client_request_id = request_options.x_ms_client_request_id
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.ListSynonymMapsResult] = kwargs.pop("cls", None)
+                _request = build_list_request(
+                    x_ms_client_request_id=_x_ms_client_request_id,
+                    api_version=api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _x_ms_client_request_id = None
-        if request_options is not None:
-            _x_ms_client_request_id = request_options.x_ms_client_request_id
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.method = "GET"
+            return _request
 
-        _request = build_list_request(
-            select=select,
-            x_ms_client_request_id=_x_ms_client_request_id,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+        def extract_data(pipeline_response):
+            deserialized = self._deserialize("ListKnowledgeSourcesResult", pipeline_response)
+            list_of_elem = deserialized.knowledge_sources
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return None, iter(list_of_elem)
 
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
 
-        response = pipeline_response.http_response
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("ListSynonymMapsResult", pipeline_response.http_response)
+            return pipeline_response
 
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
+        return ItemPaged(get_next, extract_data)
 
     @overload
     def create(
         self,
-        synonym_map: _models.SynonymMap,
+        knowledge_source: _models.KnowledgeSource,
         request_options: Optional[_models.RequestOptions] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.SynonymMap:
-        """Creates a new synonym map.
+    ) -> _models.KnowledgeSource:
+        """Creates a new knowledge source.
 
-        .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/Create-Synonym-Map
-
-        :param synonym_map: The definition of the synonym map to create. Required.
-        :type synonym_map: ~azure.search.documents.indexes.models.SynonymMap
+        :param knowledge_source: The definition of the knowledge source to create. Required.
+        :type knowledge_source: ~azure.search.documents.indexes.models.KnowledgeSource
         :param request_options: Parameter group. Default value is None.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: SynonymMap or the result of cls(response)
-        :rtype: ~azure.search.documents.indexes.models.SynonymMap
+        :return: KnowledgeSource or the result of cls(response)
+        :rtype: ~azure.search.documents.indexes.models.KnowledgeSource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def create(
         self,
-        synonym_map: IO[bytes],
+        knowledge_source: IO[bytes],
         request_options: Optional[_models.RequestOptions] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.SynonymMap:
-        """Creates a new synonym map.
+    ) -> _models.KnowledgeSource:
+        """Creates a new knowledge source.
 
-        .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/Create-Synonym-Map
-
-        :param synonym_map: The definition of the synonym map to create. Required.
-        :type synonym_map: IO[bytes]
+        :param knowledge_source: The definition of the knowledge source to create. Required.
+        :type knowledge_source: IO[bytes]
         :param request_options: Parameter group. Default value is None.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: SynonymMap or the result of cls(response)
-        :rtype: ~azure.search.documents.indexes.models.SynonymMap
+        :return: KnowledgeSource or the result of cls(response)
+        :rtype: ~azure.search.documents.indexes.models.KnowledgeSource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
     def create(
         self,
-        synonym_map: Union[_models.SynonymMap, IO[bytes]],
+        knowledge_source: Union[_models.KnowledgeSource, IO[bytes]],
         request_options: Optional[_models.RequestOptions] = None,
         **kwargs: Any
-    ) -> _models.SynonymMap:
-        """Creates a new synonym map.
+    ) -> _models.KnowledgeSource:
+        """Creates a new knowledge source.
 
-        .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/Create-Synonym-Map
-
-        :param synonym_map: The definition of the synonym map to create. Is either a SynonymMap type or
-         a IO[bytes] type. Required.
-        :type synonym_map: ~azure.search.documents.indexes.models.SynonymMap or IO[bytes]
+        :param knowledge_source: The definition of the knowledge source to create. Is either a
+         KnowledgeSource type or a IO[bytes] type. Required.
+        :type knowledge_source: ~azure.search.documents.indexes.models.KnowledgeSource or IO[bytes]
         :param request_options: Parameter group. Default value is None.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
-        :return: SynonymMap or the result of cls(response)
-        :rtype: ~azure.search.documents.indexes.models.SynonymMap
+        :return: KnowledgeSource or the result of cls(response)
+        :rtype: ~azure.search.documents.indexes.models.KnowledgeSource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -683,7 +679,7 @@ class SynonymMapsOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.SynonymMap] = kwargs.pop("cls", None)
+        cls: ClsType[_models.KnowledgeSource] = kwargs.pop("cls", None)
 
         _x_ms_client_request_id = None
         if request_options is not None:
@@ -691,10 +687,10 @@ class SynonymMapsOperations:
         content_type = content_type or "application/json"
         _json = None
         _content = None
-        if isinstance(synonym_map, (IOBase, bytes)):
-            _content = synonym_map
+        if isinstance(knowledge_source, (IOBase, bytes)):
+            _content = knowledge_source
         else:
-            _json = self._serialize.body(synonym_map, "SynonymMap")
+            _json = self._serialize.body(knowledge_source, "KnowledgeSource")
 
         _request = build_create_request(
             x_ms_client_request_id=_x_ms_client_request_id,
@@ -722,7 +718,7 @@ class SynonymMapsOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("SynonymMap", pipeline_response.http_response)
+        deserialized = self._deserialize("KnowledgeSource", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
