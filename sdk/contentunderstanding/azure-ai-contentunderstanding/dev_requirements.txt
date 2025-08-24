@@ -1,0 +1,6 @@
+-e ../../../tools/azure-sdk-tools
+aiohttp
+azure-core
+azure-identity
+setuptools
+pytest-xdist
