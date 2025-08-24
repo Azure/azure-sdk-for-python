@@ -375,12 +375,6 @@ function Find-python-Artifacts-For-Apireview($artifactDir, $artifactName)
 {
   # Find wheel file in given artifact directory
   # Make sure to pick only package with given artifact name
-  # Skip auto API review creation for management packages
-  if ($artifactName -match "mgmt")
-  {
-    Write-Host "Skipping automatic API review for management artifact $($artifactName)"
-    return $null
-  }
 
   $packageName = $artifactName.Replace("_","-")
   $whlDirectory = (Join-Path -Path $artifactDir -ChildPath $packageName)
