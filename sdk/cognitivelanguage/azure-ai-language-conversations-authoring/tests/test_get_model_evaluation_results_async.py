@@ -33,7 +33,7 @@ class TestConversationsGetModelEvaluationResultsAsync(TestConversationsAsync):
 
             # Get trained-model scoped client and fetch the paged evaluation results
             project_client = client.get_project_client(project_name)
-            results = await project_client.trained_model.get_model_evaluation_results(
+            results = project_client.trained_model.get_model_evaluation_results(
                 trained_model_label=trained_model_label, string_index_type="Utf16CodeUnit"
             )  # returns AsyncItemPaged
 

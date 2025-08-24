@@ -40,7 +40,7 @@ async def sample_get_model_evaluation_results_async():
         project_client = client.get_project_client(project_name)
 
         # fetch async paged evaluation results
-        results = await project_client.trained_model.get_model_evaluation_results(
+        results = project_client.trained_model.get_model_evaluation_results(
             trained_model_label=trained_model_label, string_index_type="Utf16CodeUnit"
         )
 
