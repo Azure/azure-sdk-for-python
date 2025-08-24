@@ -13,9 +13,11 @@ ConversationsPreparer = functools.partial(
     authoring_key="fake_key",
 )
 
+
 class TestConversationsAsync(AzureRecordedTestCase):
     async def create_client(self, endpoint: str, key: str) -> ConversationAuthoringClient:
         return ConversationAuthoringClient(endpoint, AzureKeyCredential(key))
+
 
 class TestConversationsGetDeploymentAsync(TestConversationsAsync):
     @ConversationsPreparer()

@@ -40,25 +40,45 @@ class TestConversationsGetModelEvaluationSummaryAsync(TestConversationsAsync):
             # ----- Entities evaluation (micro/macro) -----
             entities_eval = getattr(eval_summary, "entities_evaluation", None)
             if entities_eval:
-                print(f"Entities - Micro F1: {getattr(entities_eval, 'micro_f1', None)}, Micro Precision: {getattr(entities_eval, 'micro_precision', None)}, Micro Recall: {getattr(entities_eval, 'micro_recall', None)}")
-                print(f"Entities - Macro F1: {getattr(entities_eval, 'macro_f1', None)}, Macro Precision: {getattr(entities_eval, 'macro_precision', None)}, Macro Recall: {getattr(entities_eval, 'macro_recall', None)}")
+                print(
+                    f"Entities - Micro F1: {getattr(entities_eval, 'micro_f1', None)}, Micro Precision: {getattr(entities_eval, 'micro_precision', None)}, Micro Recall: {getattr(entities_eval, 'micro_recall', None)}"
+                )
+                print(
+                    f"Entities - Macro F1: {getattr(entities_eval, 'macro_f1', None)}, Macro Precision: {getattr(entities_eval, 'macro_precision', None)}, Macro Recall: {getattr(entities_eval, 'macro_recall', None)}"
+                )
 
                 ent_map = getattr(entities_eval, "entities", {}) or {}
                 for name, summary in ent_map.items():
-                    print(f"Entity '{name}': F1 = {getattr(summary, 'f1', None)}, Precision = {getattr(summary, 'precision', None)}, Recall = {getattr(summary, 'recall', None)}")
-                    print(f"  True Positives: {getattr(summary, 'true_positive_count', None)}, True Negatives: {getattr(summary, 'true_negative_count', None)}")
-                    print(f"  False Positives: {getattr(summary, 'false_positive_count', None)}, False Negatives: {getattr(summary, 'false_negative_count', None)}")
+                    print(
+                        f"Entity '{name}': F1 = {getattr(summary, 'f1', None)}, Precision = {getattr(summary, 'precision', None)}, Recall = {getattr(summary, 'recall', None)}"
+                    )
+                    print(
+                        f"  True Positives: {getattr(summary, 'true_positive_count', None)}, True Negatives: {getattr(summary, 'true_negative_count', None)}"
+                    )
+                    print(
+                        f"  False Positives: {getattr(summary, 'false_positive_count', None)}, False Negatives: {getattr(summary, 'false_negative_count', None)}"
+                    )
 
             # ----- Intents evaluation (micro/macro) -----
             intents_eval = getattr(eval_summary, "intents_evaluation", None)
             if intents_eval:
-                print(f"Intents - Micro F1: {getattr(intents_eval, 'micro_f1', None)}, Micro Precision: {getattr(intents_eval, 'micro_precision', None)}, Micro Recall: {getattr(intents_eval, 'micro_recall', None)}")
-                print(f"Intents - Macro F1: {getattr(intents_eval, 'macro_f1', None)}, Macro Precision: {getattr(intents_eval, 'macro_precision', None)}, Macro Recall: {getattr(intents_eval, 'macro_recall', None)}")
+                print(
+                    f"Intents - Micro F1: {getattr(intents_eval, 'micro_f1', None)}, Micro Precision: {getattr(intents_eval, 'micro_precision', None)}, Micro Recall: {getattr(intents_eval, 'micro_recall', None)}"
+                )
+                print(
+                    f"Intents - Macro F1: {getattr(intents_eval, 'macro_f1', None)}, Macro Precision: {getattr(intents_eval, 'macro_precision', None)}, Macro Recall: {getattr(intents_eval, 'macro_recall', None)}"
+                )
 
                 intent_map = getattr(intents_eval, "intents", {}) or {}
                 for name, summary in intent_map.items():
-                    print(f"Intent '{name}': F1 = {getattr(summary, 'f1', None)}, Precision = {getattr(summary, 'precision', None)}, Recall = {getattr(summary, 'recall', None)}")
-                    print(f"  True Positives: {getattr(summary, 'true_positive_count', None)}, True Negatives: {getattr(summary, 'true_negative_count', None)}")
-                    print(f"  False Positives: {getattr(summary, 'false_positive_count', None)}, False Negatives: {getattr(summary, 'false_negative_count', None)}")
+                    print(
+                        f"Intent '{name}': F1 = {getattr(summary, 'f1', None)}, Precision = {getattr(summary, 'precision', None)}, Recall = {getattr(summary, 'recall', None)}"
+                    )
+                    print(
+                        f"  True Positives: {getattr(summary, 'true_positive_count', None)}, True Negatives: {getattr(summary, 'true_negative_count', None)}"
+                    )
+                    print(
+                        f"  False Positives: {getattr(summary, 'false_positive_count', None)}, False Negatives: {getattr(summary, 'false_negative_count', None)}"
+                    )
         finally:
             await client.close()

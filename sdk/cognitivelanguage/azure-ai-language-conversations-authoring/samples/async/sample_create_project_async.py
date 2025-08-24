@@ -23,6 +23,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.ai.language.conversations.authoring.aio import ConversationAuthoringClient
 from azure.ai.language.conversations.authoring.models import CreateProjectOptions, ProjectKind, ProjectDetails
 
+
 async def sample_create_project_async():
     # get secrets
     endpoint = os.environ["AZURE_CONVERSATIONS_AUTHORING_ENDPOINT"]
@@ -37,7 +38,7 @@ async def sample_create_project_async():
         body = CreateProjectOptions(
             project_kind=ProjectKind.CONVERSATION,
             project_name=project_name,
-            language="<language-tag>",            # e.g. "en-us"
+            language="<language-tag>",  # e.g. "en-us"
             multilingual=True,
             description="Sample project created via Python SDK",
         )
@@ -55,8 +56,10 @@ async def sample_create_project_async():
     finally:
         await client.close()
 
+
 async def main():
     await sample_create_project_async()
+
 
 if __name__ == "__main__":
     asyncio.run(main())

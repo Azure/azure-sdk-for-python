@@ -23,6 +23,7 @@ import os
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.language.conversations.authoring import ConversationAuthoringClient
 
+
 def sample_get_model_evaluation_results():
     # get secrets
     endpoint = os.environ["AZURE_CONVERSATIONS_AUTHORING_ENDPOINT"]
@@ -37,8 +38,7 @@ def sample_get_model_evaluation_results():
 
     # fetch paged evaluation results
     results = project_client.trained_model.get_model_evaluation_results(
-        trained_model_label=trained_model_label,
-        string_index_type="Utf16CodeUnit"
+        trained_model_label=trained_model_label, string_index_type="Utf16CodeUnit"
     )
 
     print("=== Model Evaluation Results ===")
@@ -68,6 +68,7 @@ def sample_get_model_evaluation_results():
         print()
 
     print(f"Total Results: {seen}")
+
 
 if __name__ == "__main__":
     sample_get_model_evaluation_results()

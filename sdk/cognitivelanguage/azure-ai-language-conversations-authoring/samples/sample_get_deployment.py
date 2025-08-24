@@ -22,6 +22,7 @@ import os
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.language.conversations.authoring import ConversationAuthoringClient
 
+
 def sample_get_deployment():
     # get secrets
     endpoint = os.environ["AZURE_CONVERSATIONS_AUTHORING_ENDPOINT"]
@@ -56,6 +57,7 @@ def sample_get_deployment():
                 print(f"AOAI Kind: {getattr(aoai, 'kind', None)}")
                 print(f"AOAI Resource ID: {getattr(aoai, 'resource_id', None)}")
                 print(f"AOAI Deployment Name: {getattr(aoai, 'deployment_name', None)}")
+
 
 if __name__ == "__main__":
     sample_get_deployment()

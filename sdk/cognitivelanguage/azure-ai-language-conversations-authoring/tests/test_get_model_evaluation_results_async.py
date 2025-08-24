@@ -34,8 +34,7 @@ class TestConversationsGetModelEvaluationResultsAsync(TestConversationsAsync):
             # Get trained-model scoped client and fetch the paged evaluation results
             project_client = client.get_project_client(project_name)
             results = await project_client.trained_model.get_model_evaluation_results(
-                trained_model_label=trained_model_label,
-                string_index_type="Utf16CodeUnit"
+                trained_model_label=trained_model_label, string_index_type="Utf16CodeUnit"
             )  # returns AsyncItemPaged
 
             # Iterate and print like the C# sample
@@ -55,12 +54,16 @@ class TestConversationsGetModelEvaluationResultsAsync(TestConversationsAsync):
                     expected_entities = getattr(entities_result, "expected_entities", []) or []
                     print("Expected Entities:")
                     for ent in expected_entities:
-                        print(f" - Category: {getattr(ent, 'category', None)}, Offset: {getattr(ent, 'offset', None)}, Length: {getattr(ent, 'length', None)}")
+                        print(
+                            f" - Category: {getattr(ent, 'category', None)}, Offset: {getattr(ent, 'offset', None)}, Length: {getattr(ent, 'length', None)}"
+                        )
 
                     predicted_entities = getattr(entities_result, "predicted_entities", []) or []
                     print("Predicted Entities:")
                     for ent in predicted_entities:
-                        print(f" - Category: {getattr(ent, 'category', None)}, Offset: {getattr(ent, 'offset', None)}, Length: {getattr(ent, 'length', None)}")
+                        print(
+                            f" - Category: {getattr(ent, 'category', None)}, Offset: {getattr(ent, 'offset', None)}, Length: {getattr(ent, 'length', None)}"
+                        )
 
                     print()
 

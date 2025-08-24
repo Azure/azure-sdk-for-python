@@ -23,6 +23,7 @@ import asyncio
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.language.conversations.authoring.aio import ConversationAuthoringClient
 
+
 async def sample_delete_trained_model_async():
     # get secrets
     endpoint = os.environ["AZURE_CONVERSATIONS_AUTHORING_ENDPOINT"]
@@ -54,8 +55,10 @@ async def sample_delete_trained_model_async():
     finally:
         await client.close()
 
+
 async def main():
     await sample_delete_trained_model_async()
+
 
 if __name__ == "__main__":
     asyncio.run(main())

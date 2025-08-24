@@ -23,7 +23,7 @@ class TestConversationsCancelTrainingSync(TestConversations):
     @ConversationsPreparer()
     @recorded_by_proxy
     def test_cancel_training_job(self, authoring_endpoint, authoring_key):
-        
+
         client = self.create_client(authoring_endpoint, authoring_key)
 
         project_name = "Test-data-labels"

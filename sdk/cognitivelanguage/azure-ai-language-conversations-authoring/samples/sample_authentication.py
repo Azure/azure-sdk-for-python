@@ -65,6 +65,7 @@ def sample_authentication_with_azure_active_directory():
 
     clu_client = ConversationAuthoringClient(endpoint, credential=credential)
 
+
 def main():
     sample_authentication_api_key()
 

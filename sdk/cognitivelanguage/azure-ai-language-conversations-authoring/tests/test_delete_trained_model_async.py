@@ -14,9 +14,11 @@ ConversationsPreparer = functools.partial(
     authoring_key="fake_key",
 )
 
+
 class TestConversationsAsync(AzureRecordedTestCase):
     async def create_client(self, endpoint: str, key: str) -> ConversationAuthoringClient:
         return ConversationAuthoringClient(endpoint, AzureKeyCredential(key))
+
 
 class TestConversationsDeleteTrainedModelAsync(TestConversationsAsync):
     @ConversationsPreparer()
@@ -31,6 +33,7 @@ class TestConversationsDeleteTrainedModelAsync(TestConversationsAsync):
             project_client = client.get_project_client(project_name)
 
             captured = {}
+
             def capture_response(pipeline_response):
                 captured["status_code"] = pipeline_response.http_response.status_code
 

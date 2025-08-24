@@ -24,6 +24,7 @@ import asyncio
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.language.conversations.authoring.aio import ConversationAuthoringClient
 
+
 async def sample_get_model_evaluation_results_async():
     # get secrets
     endpoint = os.environ["AZURE_CONVERSATIONS_AUTHORING_ENDPOINT"]
@@ -40,8 +41,7 @@ async def sample_get_model_evaluation_results_async():
 
         # fetch async paged evaluation results
         results = await project_client.trained_model.get_model_evaluation_results(
-            trained_model_label=trained_model_label,
-            string_index_type="Utf16CodeUnit"
+            trained_model_label=trained_model_label, string_index_type="Utf16CodeUnit"
         )
 
         print("=== Model Evaluation Results ===")
@@ -74,8 +74,10 @@ async def sample_get_model_evaluation_results_async():
     finally:
         await client.close()
 
+
 async def main():
     await sample_get_model_evaluation_results_async()
+
 
 if __name__ == "__main__":
     asyncio.run(main())

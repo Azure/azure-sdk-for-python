@@ -22,6 +22,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.ai.language.conversations.authoring import ConversationAuthoringClient
 from azure.ai.language.conversations.authoring.models import CreateProjectOptions, ProjectKind, ProjectDetails
 
+
 def sample_create_project():
     # get secrets
     endpoint = os.environ["AZURE_CONVERSATIONS_AUTHORING_ENDPOINT"]
@@ -35,7 +36,7 @@ def sample_create_project():
     body = CreateProjectOptions(
         project_kind=ProjectKind.CONVERSATION,
         project_name=project_name,
-        language="<language-tag>",               # e.g. "en-us"
+        language="<language-tag>",  # e.g. "en-us"
         multilingual=True,
         description="Sample project created via Python SDK",
     )
@@ -50,6 +51,7 @@ def sample_create_project():
     print(f"Kind: {result.project_kind}")
     print(f"Multilingual: {result.multilingual}")
     print(f"Description: {result.description}")
+
 
 if __name__ == "__main__":
     sample_create_project()

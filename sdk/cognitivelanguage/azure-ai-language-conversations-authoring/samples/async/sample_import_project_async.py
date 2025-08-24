@@ -34,6 +34,7 @@ from azure.ai.language.conversations.authoring.models import (
     ExportedProjectFormat,
 )
 
+
 async def sample_import_project_async():
     # get secrets
     endpoint = os.environ["AZURE_CONVERSATIONS_AUTHORING_ENDPOINT"]
@@ -92,8 +93,8 @@ async def sample_import_project_async():
 
         metadata = CreateProjectOptions(
             project_kind=ProjectKind.CONVERSATION,
-            project_name=project_name,              # required
-            language="<language-tag>",              # required (e.g., "en-us")
+            project_name=project_name,  # required
+            language="<language-tag>",  # required (e.g., "en-us")
             settings=ProjectSettings(confidence_threshold=0.0),
             multilingual=False,
             description="",
@@ -127,8 +128,10 @@ async def sample_import_project_async():
     finally:
         await client.close()
 
+
 async def main():
     await sample_import_project_async()
+
 
 if __name__ == "__main__":
     asyncio.run(main())

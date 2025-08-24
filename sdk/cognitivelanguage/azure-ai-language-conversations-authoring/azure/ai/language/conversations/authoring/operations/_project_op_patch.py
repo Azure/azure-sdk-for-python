@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -225,6 +225,7 @@ class ProjectOperations(ProjectOperationsGenerated):
         return LROPoller[ImportProjectState](
             self._client, initial, get_long_running_output, polling_method  # type: ignore
         )
+
     @overload
     def begin_assign_deployment_resources(
         self, body: AssignDeploymentResourcesDetails, *, content_type: str = "application/json", **kwargs: Any
@@ -602,7 +603,7 @@ class ProjectOperations(ProjectOperationsGenerated):
         return LROPoller[DeploymentResourcesState](
             self._client, initial, get_long_running_output, polling_method  # type: ignore
         )
-    
+
     @distributed_trace
     def begin_cancel_training_job(  # type: ignore[override]
         self, job_id: str, **kwargs: Any

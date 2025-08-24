@@ -22,6 +22,7 @@ import os
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.language.conversations.authoring import ConversationAuthoringClient
 
+
 def sample_delete_trained_model():
     # get secrets
     endpoint = os.environ["AZURE_CONVERSATIONS_AUTHORING_ENDPOINT"]
@@ -48,6 +49,7 @@ def sample_delete_trained_model():
     # print response
     status = captured.get("status_code")
     print(f"Delete Trained Model Response Status: {status}")
+
 
 if __name__ == "__main__":
     sample_delete_trained_model()

@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -16,10 +17,8 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
 from typing import Any, Optional, Union, cast
 from azure.core.polling import AsyncLROPoller
-from ..models import (
-    ProjectDeletionState,
-    AsyncJobsPollingMethod
-)
+from ..models import ProjectDeletionState, AsyncJobsPollingMethod
+
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
@@ -30,6 +29,7 @@ from collections.abc import MutableMapping
 from azure.core.pipeline import PipelineResponse
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator_async import distributed_trace_async
+
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 _Unset: Any = object()
@@ -56,7 +56,7 @@ class ConversationAuthoringProjectClient(AuthoringProjectClientGenerated):
         credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
         *,
         project_name: str,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         self._project_name = project_name
         _endpoint = "{Endpoint}/language"
@@ -114,14 +114,14 @@ class ConversationAuthoringClient(AuthoringClientGenerated):
     ) -> None:
         """Create a ConversationAuthoringClient.
 
-        :param endpoint: Supported Cognitive Services endpoint.
-        :type endpoint: str
-        :param credential: Key or token credential.
-        :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.TokenCredential
-        :keyword api_version: The API version to use for this operation. Default value is
-     "2025-05-15-preview". Note that overriding this default value may result in unsupported
-     behavior.
-        :paramtype api_version: str`
+           :param endpoint: Supported Cognitive Services endpoint.
+           :type endpoint: str
+           :param credential: Key or token credential.
+           :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.TokenCredential
+           :keyword api_version: The API version to use for this operation. Default value is
+        "2025-05-15-preview". Note that overriding this default value may result in unsupported
+        behavior.
+           :paramtype api_version: str`
         """
         if api_version is not None:
             kwargs["api_version"] = api_version
@@ -183,6 +183,7 @@ class ConversationAuthoringClient(AuthoringClientGenerated):
             )
         elif polling is False:
             from azure.core.polling import AsyncNoPolling
+
             polling_method = cast("AsyncPollingMethod", AsyncNoPolling())  # type: ignore[name-defined]
         else:
             polling_method = polling
@@ -196,8 +197,9 @@ class ConversationAuthoringClient(AuthoringClientGenerated):
             )
 
         return AsyncLROPoller[ProjectDeletionState](  # type: ignore[index]
-            self._client, initial, get_long_running_output, polling_method # type: ignore
+            self._client, initial, get_long_running_output, polling_method  # type: ignore
         )
+
 
 def patch_sdk():
     """Do not remove from this file.

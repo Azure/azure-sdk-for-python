@@ -29,6 +29,7 @@ from azure.ai.language.conversations.authoring.models import (
     DeploymentResourcesState,
 )
 
+
 def sample_unassign_deployment_resources():
     # get secrets
     endpoint = os.environ["AZURE_CONVERSATIONS_AUTHORING_ENDPOINT"]

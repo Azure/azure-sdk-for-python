@@ -29,6 +29,7 @@ from azure.ai.language.conversations.authoring.models import (
     TrainingJobResult,
 )
 
+
 def sample_train():
     # get secrets
     endpoint = os.environ["AZURE_CONVERSATIONS_AUTHORING_ENDPOINT"]
@@ -66,6 +67,7 @@ def sample_train():
     print(f"Data Generation Status: {result.data_generation_status}")
     print(f"Evaluation Status: {result.evaluation_status}")
     print(f"Estimated End: {result.estimated_end_on}")
+
 
 if __name__ == "__main__":
     sample_train()

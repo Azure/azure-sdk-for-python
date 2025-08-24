@@ -48,9 +48,9 @@ class TestConversationsTrainSync(TestConversations):
         # Act: begin train (LRO)
         poller = project_client.project.begin_train(body=training_job_details)
 
-       # Wait for completion and get the TrainingJobResult
+        # Wait for completion and get the TrainingJobResult
         result: TrainingJobResult = poller.result()
-        
+
         # Prints for visibility
         print(f"Model Label: {result.model_label}")
         print(f"Training Config Version: {result.training_config_version}")

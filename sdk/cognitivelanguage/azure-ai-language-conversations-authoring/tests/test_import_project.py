@@ -62,9 +62,7 @@ class TestConversationsImportCase(TestConversations):
             intent="Buy",
             language="en-us",
             dataset="Train",
-            entities=[
-                ExportedUtteranceEntityLabel(category="product", offset=16, length=5)
-            ],
+            entities=[ExportedUtteranceEntityLabel(category="product", offset=16, length=5)],
         )
 
         u2 = ConversationExportedUtterance(
@@ -72,9 +70,7 @@ class TestConversationsImportCase(TestConversations):
             intent="Buy",
             language="en-us",
             dataset="Train",
-            entities=[
-                ExportedUtteranceEntityLabel(category="product", offset=14, length=11)
-            ],
+            entities=[ExportedUtteranceEntityLabel(category="product", offset=14, length=11)],
         )
 
         u3 = ConversationExportedUtterance(
@@ -82,9 +78,7 @@ class TestConversationsImportCase(TestConversations):
             intent="Buy",
             language="en-us",
             dataset="Train",
-            entities=[
-                ExportedUtteranceEntityLabel(category="product", offset=14, length=4)
-            ],
+            entities=[ExportedUtteranceEntityLabel(category="product", offset=14, length=4)],
         )
 
         assets = ConversationExportedProjectAsset(
@@ -95,8 +89,8 @@ class TestConversationsImportCase(TestConversations):
 
         metadata = CreateProjectOptions(
             project_kind=ProjectKind.CONVERSATION,
-            project_name=project_name,              # required
-            language="en-us",                       # required
+            project_name=project_name,  # required
+            language="en-us",  # required
             settings=ProjectSettings(confidence_threshold=0.0),
             multilingual=False,
             description="",

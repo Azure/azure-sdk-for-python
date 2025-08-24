@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
@@ -23,6 +24,7 @@ import os
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.language.conversations.authoring import ConversationAuthoringClient
 
+
 def sample_get_model_evaluation_summary():
     # get secrets
     endpoint = os.environ["AZURE_CONVERSATIONS_AUTHORING_ENDPOINT"]
@@ -43,22 +45,35 @@ def sample_get_model_evaluation_summary():
     # ----- Entities evaluation -----
     entities_eval = getattr(eval_summary, "entities_evaluation", None)
     if entities_eval:
-        print(f"Entities - Micro F1: {entities_eval.micro_f1}, Precision: {entities_eval.micro_precision}, Recall: {entities_eval.micro_recall}")
-        print(f"Entities - Macro F1: {entities_eval.macro_f1}, Precision: {entities_eval.macro_precision}, Recall: {entities_eval.macro_recall}")
+        print(
+            f"Entities - Micro F1: {entities_eval.micro_f1}, Precision: {entities_eval.micro_precision}, Recall: {entities_eval.micro_recall}"
+        )
+        print(
+            f"Entities - Macro F1: {entities_eval.macro_f1}, Precision: {entities_eval.macro_precision}, Recall: {entities_eval.macro_recall}"
+        )
 
         for name, summary in (entities_eval.entities or {}).items():
             print(f"Entity '{name}': F1 = {summary.f1}, Precision = {summary.precision}, Recall = {summary.recall}")
-            print(f"  TP: {summary.true_positive_count}, TN: {summary.true_negative_count}, FP: {summary.false_positive_count}, FN: {summary.false_negative_count}")
+            print(
+                f"  TP: {summary.true_positive_count}, TN: {summary.true_negative_count}, FP: {summary.false_positive_count}, FN: {summary.false_negative_count}"
+            )
 
     # ----- Intents evaluation -----
     intents_eval = getattr(eval_summary, "intents_evaluation", None)
     if intents_eval:
-        print(f"Intents - Micro F1: {intents_eval.micro_f1}, Precision: {intents_eval.micro_precision}, Recall: {intents_eval.micro_recall}")
-        print(f"Intents - Macro F1: {intents_eval.macro_f1}, Precision: {intents_eval.macro_precision}, Recall: {intents_eval.macro_recall}")
+        print(
+            f"Intents - Micro F1: {intents_eval.micro_f1}, Precision: {intents_eval.micro_precision}, Recall: {intents_eval.micro_recall}"
+        )
+        print(
+            f"Intents - Macro F1: {intents_eval.macro_f1}, Precision: {intents_eval.macro_precision}, Recall: {intents_eval.macro_recall}"
+        )
 
         for name, summary in (intents_eval.intents or {}).items():
             print(f"Intent '{name}': F1 = {summary.f1}, Precision = {summary.precision}, Recall = {summary.recall}")
-            print(f"  TP: {summary.true_positive_count}, TN: {summary.true_negative_count}, FP: {summary.false_positive_count}, FN: {summary.false_negative_count}")
+            print(
+                f"  TP: {summary.true_positive_count}, TN: {summary.true_negative_count}, FP: {summary.false_positive_count}, FN: {summary.false_negative_count}"
+            )
+
 
 if __name__ == "__main__":
     sample_get_model_evaluation_summary()

@@ -24,6 +24,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.ai.language.conversations.authoring import ConversationAuthoringClient
 from azure.ai.language.conversations.authoring.models import SwapDeploymentsDetails, SwapDeploymentsState
 
+
 def sample_swap_deployments():
     # get secrets
     endpoint = os.environ["AZURE_CONVERSATIONS_AUTHORING_ENDPOINT"]
@@ -58,6 +59,7 @@ def sample_swap_deployments():
     print(f"Expires on: {result.expires_on}")
     print(f"Warnings: {result.warnings}")
     print(f"Errors: {result.errors}")
+
 
 if __name__ == "__main__":
     sample_swap_deployments()

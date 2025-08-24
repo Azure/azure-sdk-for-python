@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -56,6 +56,7 @@ from collections.abc import MutableMapping
 from azure.core.pipeline import PipelineResponse
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator_async import distributed_trace_async
+
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 _Unset: Any = object()
@@ -224,20 +225,16 @@ class ProjectOperations(ProjectOperationsGenerated):
                 deserialization_callback=get_long_running_output,
             )
 
-        return AsyncLROPoller[ImportProjectState](  
+        return AsyncLROPoller[ImportProjectState](
             self._client,
-            initial, # type: ignore
+            initial,  # type: ignore
             get_long_running_output,
             polling_method,
         )
 
     @overload
     async def begin_assign_deployment_resources(
-        self,
-        body: AssignDeploymentResourcesDetails,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: AssignDeploymentResourcesDetails, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[DeploymentResourcesState]:
         """Assign new Azure resources to a project to allow deploying new deployments to them. This API is
         available only via AAD authentication and not supported via subscription key authentication.
@@ -257,11 +254,7 @@ class ProjectOperations(ProjectOperationsGenerated):
 
     @overload
     async def begin_assign_deployment_resources(
-        self,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[DeploymentResourcesState]:
         """Assign new Azure resources to a project to allow deploying new deployments to them. This API is
         available only via AAD authentication and not supported via subscription key authentication.
@@ -281,11 +274,7 @@ class ProjectOperations(ProjectOperationsGenerated):
 
     @overload
     async def begin_assign_deployment_resources(
-        self,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[DeploymentResourcesState]:
         """Assign new Azure resources to a project to allow deploying new deployments to them. This API is
         available only via AAD authentication and not supported via subscription key authentication.
@@ -305,9 +294,7 @@ class ProjectOperations(ProjectOperationsGenerated):
 
     @distributed_trace_async
     async def begin_assign_deployment_resources(
-        self,
-        body: Union[AssignDeploymentResourcesDetails, JSON, IO[bytes]],
-        **kwargs: Any
+        self, body: Union[AssignDeploymentResourcesDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[DeploymentResourcesState]:
         """Assign new Azure resources to a project to allow deploying new deployments to them.
         This API is available only via AAD authentication and not supported via subscription key authentication.
@@ -358,8 +345,8 @@ class ProjectOperations(ProjectOperationsGenerated):
                 AsyncPollingMethod,
                 AsyncJobsPollingMethod(
                     polling_interval=lro_delay,
-                    header_name="Operation-Location",   # service returns jobs URL here
-                    final_via_async_url=True,           # take final body from jobs URL
+                    header_name="Operation-Location",  # service returns jobs URL here
+                    final_via_async_url=True,  # take final body from jobs URL
                     path_format_arguments=path_format_arguments,
                     **kwargs,
                 ),
@@ -377,7 +364,7 @@ class ProjectOperations(ProjectOperationsGenerated):
                 deserialization_callback=get_long_running_output,
             )
 
-        return AsyncLROPoller[DeploymentResourcesState]( 
+        return AsyncLROPoller[DeploymentResourcesState](
             self._client,
             initial,  # type: ignore
             get_long_running_output,
@@ -386,11 +373,7 @@ class ProjectOperations(ProjectOperationsGenerated):
 
     @overload
     async def begin_swap_deployments(
-        self,
-        body: SwapDeploymentsDetails,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: SwapDeploymentsDetails, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[SwapDeploymentsState]:
         """Swaps two existing deployments with each other.
 
@@ -406,11 +389,7 @@ class ProjectOperations(ProjectOperationsGenerated):
 
     @overload
     async def begin_swap_deployments(
-        self,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[SwapDeploymentsState]:
         """Swaps two existing deployments with each other.
 
@@ -426,11 +405,7 @@ class ProjectOperations(ProjectOperationsGenerated):
 
     @overload
     async def begin_swap_deployments(
-        self,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[SwapDeploymentsState]:
         """Swaps two existing deployments with each other.
 
@@ -446,9 +421,7 @@ class ProjectOperations(ProjectOperationsGenerated):
 
     @distributed_trace_async
     async def begin_swap_deployments(
-        self,
-        body: Union[SwapDeploymentsDetails, JSON, IO[bytes]],
-        **kwargs: Any
+        self, body: Union[SwapDeploymentsDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[SwapDeploymentsState]:
         """Swaps two existing deployments with each other.
 
@@ -513,20 +486,16 @@ class ProjectOperations(ProjectOperationsGenerated):
                 deserialization_callback=get_long_running_output,
             )
 
-        return AsyncLROPoller[SwapDeploymentsState](  
+        return AsyncLROPoller[SwapDeploymentsState](
             self._client,
-            initial, # type: ignore
+            initial,  # type: ignore
             get_long_running_output,
             polling_method,
         )
 
     @overload
     async def begin_unassign_deployment_resources(
-        self,
-        body: UnassignDeploymentResourcesDetails,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: UnassignDeploymentResourcesDetails, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[DeploymentResourcesState]:
         """Unassign resources from a project. This disallows deploying new deployments to these resources,
         and deletes existing deployments assigned to them.
@@ -543,11 +512,7 @@ class ProjectOperations(ProjectOperationsGenerated):
 
     @overload
     async def begin_unassign_deployment_resources(
-        self,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[DeploymentResourcesState]:
         """Unassign resources from a project. This disallows deploying new deployments to these resources,
         and deletes existing deployments assigned to them.
@@ -564,11 +529,7 @@ class ProjectOperations(ProjectOperationsGenerated):
 
     @overload
     async def begin_unassign_deployment_resources(
-        self,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[DeploymentResourcesState]:
         """Unassign resources from a project. This disallows deploying new deployments to these resources,
         and deletes existing deployments assigned to them.
@@ -585,9 +546,7 @@ class ProjectOperations(ProjectOperationsGenerated):
 
     @distributed_trace_async
     async def begin_unassign_deployment_resources(
-        self,
-        body: Union[UnassignDeploymentResourcesDetails, JSON, IO[bytes]],
-        **kwargs: Any
+        self, body: Union[UnassignDeploymentResourcesDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[DeploymentResourcesState]:
         """Unassign resources from a project. This disallows deploying new deployments to these resources,
         and deletes existing deployments assigned to them.
@@ -653,13 +612,13 @@ class ProjectOperations(ProjectOperationsGenerated):
                 deserialization_callback=get_long_running_output,
             )
 
-        return AsyncLROPoller[DeploymentResourcesState](  
+        return AsyncLROPoller[DeploymentResourcesState](
             self._client,
-            initial, # type: ignore
+            initial,  # type: ignore
             get_long_running_output,
             polling_method,
         )
-    
+
     @distributed_trace
     async def begin_cancel_training_job(  # type: ignore[override]
         self, job_id: str, **kwargs: Any
@@ -669,11 +628,7 @@ class ProjectOperations(ProjectOperationsGenerated):
 
     @overload
     async def begin_copy_project(
-        self,
-        body: CopyProjectDetails,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: CopyProjectDetails, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[CopyProjectState]:
         """Copies an existing project to another Azure resource.
 
@@ -689,11 +644,7 @@ class ProjectOperations(ProjectOperationsGenerated):
 
     @overload
     async def begin_copy_project(
-        self,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[CopyProjectState]:
         """Copies an existing project to another Azure resource.
 
@@ -709,11 +660,7 @@ class ProjectOperations(ProjectOperationsGenerated):
 
     @overload
     async def begin_copy_project(
-        self,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[CopyProjectState]:
         """Copies an existing project to another Azure resource.
 
@@ -731,9 +678,7 @@ class ProjectOperations(ProjectOperationsGenerated):
 
     @distributed_trace_async
     async def begin_copy_project(
-        self,
-        body: Union[CopyProjectDetails, JSON, IO[bytes]],
-        **kwargs: Any
+        self, body: Union[CopyProjectDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[CopyProjectState]:
         """Copies an existing project to another Azure resource.
 
@@ -798,9 +743,9 @@ class ProjectOperations(ProjectOperationsGenerated):
                 deserialization_callback=get_long_running_output,
             )
 
-        return AsyncLROPoller[CopyProjectState](  
+        return AsyncLROPoller[CopyProjectState](
             self._client,
-            initial, # type: ignore
+            initial,  # type: ignore
             get_long_running_output,
             polling_method,
         )
@@ -864,7 +809,9 @@ class ProjectOperations(ProjectOperationsGenerated):
         self, body: Union[TrainingJobDetails, JSON, IO[bytes]], *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[TrainingJobResult]:
         """Begin training without requiring project_name explicitly."""
-        return await super()._begin_train(project_name=self._project_name, body=body, content_type=content_type, **kwargs)
+        return await super()._begin_train(
+            project_name=self._project_name, body=body, content_type=content_type, **kwargs
+        )
 
     @distributed_trace_async
     async def begin_export(
@@ -947,9 +894,9 @@ class ProjectOperations(ProjectOperationsGenerated):
                 deserialization_callback=get_long_running_output,
             )
 
-        return AsyncLROPoller[ExportProjectState](  
+        return AsyncLROPoller[ExportProjectState](
             self._client,
-            initial, # type: ignore
+            initial,  # type: ignore
             get_long_running_output,
             polling_method,
         )
@@ -1040,7 +987,9 @@ class ProjectOperations(ProjectOperationsGenerated):
     async def _get_assign_deployment_resources_status(  # type: ignore[override]
         self, job_id: str, **kwargs: Any
     ) -> DeploymentResourcesState:
-        return await super()._get_assign_deployment_resources_status(project_name=self._project_name, job_id=job_id, **kwargs)
+        return await super()._get_assign_deployment_resources_status(
+            project_name=self._project_name, job_id=job_id, **kwargs
+        )
 
     @distributed_trace
     async def _get_copy_project_status(self, job_id: str, **kwargs: Any) -> CopyProjectState:  # type: ignore[override]

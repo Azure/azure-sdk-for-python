@@ -22,6 +22,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.ai.language.conversations.authoring import ConversationAuthoringClient
 from azure.ai.language.conversations.authoring.models import ProjectDetails
 
+
 def sample_get_project():
     # get secrets
     endpoint = os.environ["AZURE_CONVERSATIONS_AUTHORING_ENDPOINT"]
@@ -45,6 +46,7 @@ def sample_get_project():
     print(f"Multilingual: {details.multilingual}")
     print(f"Description: {details.description}")
     print(f"Language: {details.language}")
+
 
 if __name__ == "__main__":
     sample_get_project()

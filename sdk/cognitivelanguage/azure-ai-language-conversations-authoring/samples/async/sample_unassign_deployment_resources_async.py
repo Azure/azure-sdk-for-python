@@ -27,6 +27,7 @@ from azure.ai.language.conversations.authoring.models import (
     DeploymentResourcesState,
 )
 
+
 async def sample_unassign_deployment_resources_async():
     # get secrets
     endpoint = os.environ["AZURE_CONVERSATIONS_AUTHORING_ENDPOINT"]
@@ -64,8 +65,10 @@ async def sample_unassign_deployment_resources_async():
     finally:
         await client.close()
 
+
 async def main():
     await sample_unassign_deployment_resources_async()
+
 
 if __name__ == "__main__":
     asyncio.run(main())

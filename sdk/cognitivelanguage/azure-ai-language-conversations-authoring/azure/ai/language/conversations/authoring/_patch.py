@@ -124,19 +124,19 @@ class ConversationAuthoringClient(AuthoringClientGenerated):
     ) -> None:
         """Create a ConversationAuthoringClient.
 
-        :param endpoint: Supported Cognitive Services endpoint.
-        :type endpoint: str
-        :param credential: Key or token credential.
-        :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.TokenCredential
-        :keyword api_version: The API version to use for this operation. Default value is
-     "2025-05-15-preview". Note that overriding this default value may result in unsupported
-     behavior.
-        :paramtype api_version: str`
+           :param endpoint: Supported Cognitive Services endpoint.
+           :type endpoint: str
+           :param credential: Key or token credential.
+           :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.TokenCredential
+           :keyword api_version: The API version to use for this operation. Default value is
+        "2025-05-15-preview". Note that overriding this default value may result in unsupported
+        behavior.
+           :paramtype api_version: str`
         """
         if api_version is not None:
             kwargs["api_version"] = api_version
         super().__init__(endpoint=endpoint, credential=credential, **kwargs)
-    
+
     def get_project_client(self, project_name: str) -> ConversationAuthoringProjectClient:
         return ConversationAuthoringProjectClient(
             endpoint=self._config.endpoint,

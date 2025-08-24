@@ -33,6 +33,7 @@ from azure.ai.language.conversations.authoring.models import (
     ExportedProjectFormat,
 )
 
+
 def sample_import_project():
     # get secrets
     endpoint = os.environ["AZURE_CONVERSATIONS_AUTHORING_ENDPOINT"]
@@ -60,7 +61,7 @@ def sample_import_project():
     u1 = ConversationExportedUtterance(
         text="<utterance-1>",
         intent="<intent-b>",
-        language="<language-tag>",              # e.g., "en-us"
+        language="<language-tag>",  # e.g., "en-us"
         dataset="Train",
         entities=[ExportedUtteranceEntityLabel(category="<entity-a>", offset=0, length=5)],
     )
@@ -89,8 +90,8 @@ def sample_import_project():
 
     metadata = CreateProjectOptions(
         project_kind=ProjectKind.CONVERSATION,
-        project_name=project_name,              # required
-        language="<language-tag>",              # required (e.g., "en-us")
+        project_name=project_name,  # required
+        language="<language-tag>",  # required (e.g., "en-us")
         settings=ProjectSettings(confidence_threshold=0.0),
         multilingual=False,
         description="",
@@ -121,6 +122,7 @@ def sample_import_project():
     print(f"Expires on: {getattr(result, 'expires_on', None)}")
     print(f"Warnings: {getattr(result, 'warnings', None)}")
     print(f"Errors: {getattr(result, 'errors', None)}")
+
 
 if __name__ == "__main__":
     sample_import_project()

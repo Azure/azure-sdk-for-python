@@ -22,6 +22,7 @@ import os
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.language.conversations.authoring import ConversationAuthoringClient
 
+
 def sample_cancel_training_job():
     # get secrets
     endpoint = os.environ["AZURE_CONVERSATIONS_AUTHORING_ENDPOINT"]
@@ -59,6 +60,7 @@ def sample_cancel_training_job():
 
     # you still have a poller object (NoPolling)
     assert poller is not None
+
 
 if __name__ == "__main__":
     sample_cancel_training_job()
