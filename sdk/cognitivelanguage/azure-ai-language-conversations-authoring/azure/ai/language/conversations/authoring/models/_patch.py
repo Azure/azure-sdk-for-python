@@ -121,8 +121,8 @@ class JobsPollingMethod(PollingMethod):
         self._client = client
         self._initial_response = initial_response
         self._deserialization_callback = deserialization_callback
-        self._resource: Optional[PipelineResponse] = None
-        self._status: str = "InProgress"
+        self._resource = None
+        self._status = "InProgress"
 
         # Extract operation-location (case-insensitive)
         headers = initial_response.http_response.headers
