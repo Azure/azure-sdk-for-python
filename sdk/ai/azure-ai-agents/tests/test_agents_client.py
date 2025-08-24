@@ -59,25 +59,30 @@ from azure.ai.agents.models import (
     RunStepBingCustomSearchToolCall,
     RunStepBingGroundingToolCall,
     RunStepBrowserAutomationToolCall,
+    RunStepCodeInterpreterToolCall,
     RunStepConnectedAgentToolCall,
     RunStepDeepResearchToolCall,
     RunStepDeltaAzureFunctionToolCall,
     RunStepDeltaAzureAISearchToolCall,
     RunStepDeltaChunk,
+    RunStepDeltaCodeInterpreterToolCall,
     RunStepDeltaCustomBingGroundingToolCall,
     RunStepDeltaBingGroundingToolCall,
     RunStepDeltaFileSearchToolCall,
     RunStepDeltaMicrosoftFabricToolCall,
     RunStepDeltaOpenAPIToolCall,
+    RunStepDeltaSharepointToolCall,
     RunStepDeltaToolCallObject,
     RunStepFileSearchToolCall,
     RunStepFileSearchToolCallResult,
     RunStepFileSearchToolCallResults,
     RunStepMicrosoftFabricToolCall,
     RunStepOpenAPIToolCall,
+    RunStepSharepointToolCall,
     RunStepToolCallDetails,
     RunStatus,
     RunStep,
+    SharepointTool,
     ThreadMessage,
     ThreadMessageOptions,
     ThreadRun,
@@ -647,7 +652,7 @@ class TestAgentClient(TestAgentClientBase):
     def test_list_messages(self, **kwargs):
         """test listing messages in a thread"""
         # create client
-        with self.create_client(**kwargs) as client:
+        with self.create_client(by_endpoint=True, **kwargs) as client:
             assert isinstance(client, AgentsClient)
 
             # create agent
@@ -678,14 +683,26 @@ class TestAgentClient(TestAgentClientBase):
             print("Created message, message ID", message2.id)
             messages2 = list(client.messages.list(thread_id=thread.id))
             assert len(messages2) == 2
-            assert messages2[0].id == message2.id or messages2[1].id == message2.id
+            assert any(msg.id == message2.id for msg in messages2)
 
             message3 = client.messages.create(thread_id=thread.id, role="user", content="Hello, tell me a third joke")
             assert message3.id
             print("Created message, message ID", message3.id)
             messages3 = list(client.messages.list(thread_id=thread.id))
             assert len(messages3) == 3
-            assert messages3[0].id == message3.id or messages3[1].id == message3.id or messages3[2].id == message3.id
+            assert any(msg.id == message3.id for msg in messages3)
+
+            client.messages.delete(thread_id=thread.id, message_id=message3.id)
+            messages4 = list(client.messages.list(thread_id=thread.id))
+            assert len(messages4) == 2
+            assert not any(msg.id == message3.id for msg in messages4)
+
+            # Check that we can add messages after deletion
+            message3 = client.messages.create(thread_id=thread.id, role="user", content="Bar")
+            assert message3.id
+            messages5 = list(client.messages.list(thread_id=thread.id))
+            assert len(messages5) == 3
+            assert any(msg.id == message3.id for msg in messages5)
 
             # delete agent and close client
             client.delete_agent(agent.id)
@@ -3553,6 +3570,84 @@ class TestAgentClient(TestAgentClientBase):
                 instructions="You are helpful agent",
                 prompt="What are top 3 weather events with largest revenue loss?",
                 expected_delta_class=RunStepDeltaMicrosoftFabricToolCall,
+            )
+
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_sharepoint_tool(self, **kwargs):
+        """Test SharePoint tool call in non-streaming Scenario."""
+        with self.create_client(by_endpoint=True, **kwargs) as client:
+            model_name = "gpt-4o"
+            sharepoint_tool = SharepointTool(connection_id=kwargs.get("azure_ai_agents_tests_sharepoint_connection_id"))
+
+            self._do_test_tool(
+                client=client,
+                model_name=model_name,
+                tool_to_test=sharepoint_tool,
+                instructions="You are helpful agent",
+                prompt="Hello, summarize the key points of the first document in the list.",
+                expected_class=RunStepSharepointToolCall,
+            )
+
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_sharepoint_tool_streaming(self, **kwargs):
+        """Test SharePoint tool call in streaming Scenario."""
+        with self.create_client(by_endpoint=True, **kwargs) as client:
+            model_name = "gpt-4o"
+            sharepoint_tool = SharepointTool(connection_id=kwargs.get("azure_ai_agents_tests_sharepoint_connection_id"))
+
+            self._do_test_tool_streaming(
+                client=client,
+                model_name=model_name,
+                tool_to_test=sharepoint_tool,
+                instructions="You are helpful agent",
+                prompt="Hello, summarize the key points of the first document in the list.",
+                expected_delta_class=RunStepDeltaSharepointToolCall,
+            )
+
+    def _get_code_interpreter_tool(self, **kwargs):
+        """Helper method to get the code interpreter."""
+        ds = [
+            VectorStoreDataSource(
+                asset_identifier=kwargs["azure_ai_agents_tests_data_path"],
+                asset_type=VectorStoreDataSourceAssetType.URI_ASSET,
+            )
+        ]
+        return CodeInterpreterTool(data_sources=ds)
+
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_code_interpreter_tool(self, **kwargs):
+        """Test file search tool."""
+        with self.create_client(**kwargs, by_endpoint=True) as client:
+            model_name = "gpt-4o"
+            code_iterpreter = self._get_code_interpreter_tool(**kwargs)
+
+            self._do_test_tool(
+                client=client,
+                model_name=model_name,
+                tool_to_test=code_iterpreter,
+                instructions="You are helpful agent",
+                prompt="What feature does Smart Eyewear offer?",
+                expected_class=RunStepCodeInterpreterToolCall,
+            )
+
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_code_interpreter_tool_streaming(self, **kwargs):
+        """Test file search tool."""
+        with self.create_client(**kwargs, by_endpoint=True) as client:
+            model_name = "gpt-4o"
+            code_iterpreter = self._get_code_interpreter_tool(**kwargs)
+
+            self._do_test_tool_streaming(
+                client=client,
+                model_name=model_name,
+                tool_to_test=code_iterpreter,
+                instructions="You are helpful agent",
+                prompt="What feature does Smart Eyewear offer?",
+                expected_delta_class=RunStepDeltaCodeInterpreterToolCall,
             )
 
     def _do_test_tool(

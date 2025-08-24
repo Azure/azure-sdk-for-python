@@ -44,29 +44,29 @@ except KeyError:
     exit()
 
 # Build a client through AAD
-client = WebPubSubServiceClient(endpoint=endpoint, hub='hub', credential=DefaultAzureCredential())
+client = WebPubSubServiceClient(endpoint=endpoint, hub="hub", credential=DefaultAzureCredential())
 
 # Send a json message to everybody on the given hub...
 try:
     # Raise an exception if the service rejected the call
-    client.send_to_all(message={'Hello': 'all'})
-    print('Successfully sent a JSON message')
+    client.send_to_all(message={"Hello": "all"})
+    print("Successfully sent a JSON message")
 except HttpResponseError as e:
-    print('Failed to send JSON message: {}'.format(e.response.json()))
+    print("Failed to send JSON message: {}".format(e.response.json()))
 
 # Send a text message to everybody on the given hub...
 try:
     # Raise an exception if the service rejected the call
-    client.send_to_all(message='hello, text!', content_type='text/plain')
-    print('Successfully sent a text message')
+    client.send_to_all(message="hello, text!", content_type="text/plain")
+    print("Successfully sent a text message")
 except HttpResponseError as e:
-    print('Failed to send text message: {}'.format(e.response.json()))
+    print("Failed to send text message: {}".format(e.response.json()))
 
 
 # Send a json message from a stream to everybody on the given hub...
 try:
     # Raise an exception if the service rejected the call
-    client.send_to_all(message=io.BytesIO(b'{ "hello": "world" }'), content_type='application/octet-stream')
-    print('Successfully sent a JSON message')
+    client.send_to_all(message=io.BytesIO(b'{ "hello": "world" }'), content_type="application/octet-stream")
+    print("Successfully sent a JSON message")
 except HttpResponseError as e:
-    print('Failed to send JSON message: {}'.format(e.response.json()))
+    print("Failed to send JSON message: {}".format(e.response.json()))

@@ -50,7 +50,9 @@ class TestRoutingMapEndToEnd(unittest.TestCase):
 
         routing_mp = PartitionKeyRangeCache(self.client.client_connection)
         overlapping_partition_key_ranges = routing_mp.get_overlapping_ranges(
-            self.collection_link, routing_range.Range("", "FF", True, False))
+            self.collection_link,
+            routing_range.Range("", "FF", True, False),
+            {})
         self.assertEqual(len(overlapping_partition_key_ranges), len(partition_key_ranges))
         self.assertEqual(overlapping_partition_key_ranges, partition_key_ranges)
 

@@ -296,7 +296,7 @@ def check_req_against_exclusion(req, req_to_exclude):
     This function evaluates a requirement from a dev_requirements file against a file name. Returns True
     if the requirement is for the same package listed in "req_to_exclude". False otherwise.
 
-    :param req: An incoming "req" looks like a requirement that appears in a dev_requirements file. EG: [ "../../../tools/azure-sdk-tools",
+    :param req: An incoming "req" looks like a requirement that appears in a dev_requirements file. EG: [ "../../../eng/tools/azure-sdk-tools",
         "https://docsupport.blob.core.windows.net/repackaged/cffi-1.14.6-cp310-cp310-win_amd64.whl; sys_platform=='win32' and python_version >= '3.10'",
         "msrestazure>=0.4.11", "pytest" ]
 
