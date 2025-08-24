@@ -1,5 +1,9 @@
 # Release History
 
+## 4.0.0b23 (2025-08-17)
+
+change log generation was timeout!!! You need to write it manually!!!
+
 ## 4.0.0b22 (2025-07-30)
 
 ### Features Added
