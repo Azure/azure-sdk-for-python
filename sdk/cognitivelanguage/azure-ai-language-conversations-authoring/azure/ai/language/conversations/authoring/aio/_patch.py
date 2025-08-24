@@ -130,16 +130,17 @@ class ConversationAuthoringClient(AuthoringClientGenerated):
         api_version: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
-        """Create a ConversationAuthoringClient.
+        """
+        Create a ConversationAuthoringClient.
 
-           :param endpoint: Supported Cognitive Services endpoint.
-           :type endpoint: str
-           :param credential: Key or token credential.
-           :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.TokenCredential
-           :keyword api_version: The API version to use for this operation. Default value is
-        "2025-05-15-preview". Note that overriding this default value may result in unsupported
-        behavior.
-           :paramtype api_version: str`
+        :param str endpoint: Supported Cognitive Services endpoint, e.g.
+            ``https://<resource-name>.api.cognitiveservices.azure.com``.
+        :param credential: Key or token credential.
+        :type credential: ~azure.core.credentials.AzureKeyCredential or
+            ~azure.core.credentials_async.AsyncTokenCredential
+        :keyword str api_version: The API version to use for this operation.
+            Default value is ``2025-05-15-preview``.
+            Note that overriding this default value may result in unsupported behavior.
         """
         if api_version is not None:
             kwargs["api_version"] = api_version
