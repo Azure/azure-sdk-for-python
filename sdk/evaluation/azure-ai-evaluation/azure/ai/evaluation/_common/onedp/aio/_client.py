@@ -20,7 +20,6 @@ from .operations import (
     ConnectionsOperations,
     DatasetsOperations,
     DeploymentsOperations,
-    EvaluationResultsOperations,
     EvaluationsOperations,
     IndexesOperations,
     RedTeamsOperations,
@@ -30,28 +29,28 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class AIProjectClient:  # pylint: disable=too-many-instance-attributes
+class AIProjectClient:
     """AIProjectClient.
 
     :ivar connections: ConnectionsOperations operations
-    :vartype connections: azure.ai.projects.onedp.aio.operations.ConnectionsOperations
+    :vartype connections: azure.ai.projects.aio.operations.ConnectionsOperations
     :ivar evaluations: EvaluationsOperations operations
-    :vartype evaluations: azure.ai.projects.onedp.aio.operations.EvaluationsOperations
+    :vartype evaluations: azure.ai.projects.aio.operations.EvaluationsOperations
     :ivar datasets: DatasetsOperations operations
-    :vartype datasets: azure.ai.projects.onedp.aio.operations.DatasetsOperations
+    :vartype datasets: azure.ai.projects.aio.operations.DatasetsOperations
     :ivar indexes: IndexesOperations operations
-    :vartype indexes: azure.ai.projects.onedp.aio.operations.IndexesOperations
+    :vartype indexes: azure.ai.projects.aio.operations.IndexesOperations
     :ivar deployments: DeploymentsOperations operations
-    :vartype deployments: azure.ai.projects.onedp.aio.operations.DeploymentsOperations
+    :vartype deployments: azure.ai.projects.aio.operations.DeploymentsOperations
     :ivar red_teams: RedTeamsOperations operations
-    :vartype red_teams: azure.ai.projects.onedp.aio.operations.RedTeamsOperations
-    :ivar evaluation_results: EvaluationResultsOperations operations
-    :vartype evaluation_results: azure.ai.projects.onedp.aio.operations.EvaluationResultsOperations
+    :vartype red_teams: azure.ai.projects.aio.operations.RedTeamsOperations
     :param endpoint: Project endpoint. In the form
-     "https://<your-ai-services-account-name>.services.ai.azure.com/api/projects/_project"
+     "`https://your-ai-services-account-name.services.ai.azure.com/api/projects/_project
+     <https://your-ai-services-account-name.services.ai.azure.com/api/projects/_project>`_"
      if your Foundry Hub has only one Project, or to use the default Project in your Hub. Or in the
      form
-     "https://<your-ai-services-account-name>.services.ai.azure.com/api/projects/<your-project-name>"
+     "`https://your-ai-services-account-name.services.ai.azure.com/api/projects/your-project-name
+     <https://your-ai-services-account-name.services.ai.azure.com/api/projects/your-project-name>`_"
      if you want to explicitly
      specify the Foundry Project name. Required.
     :type endpoint: str
@@ -95,9 +94,6 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes
         self.indexes = IndexesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.deployments = DeploymentsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.red_teams = RedTeamsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.evaluation_results = EvaluationResultsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
 
     def send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
