@@ -8,36 +8,30 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Any, Callable, Dict, IO, Iterator, List, Optional, TypeVar, Union, cast, overload
-from azure.core.polling import LROPoller, NoPolling, PollingMethod
-from azure.core.tracing.decorator import distributed_trace
+from collections.abc import MutableMapping # pylint:disable=import-error
+from typing import IO, Any, Callable, Dict, Optional, TypeVar, Union, cast, overload
 
-from ._operations import (
-    ExportedModelOperations as ExportedModelOperationsGenerated,
-)
-from ..._utils.model_base import SdkJSONEncoder, _deserialize
-from azure.core.utils import case_insensitive_dict
-from azure.core.polling.base_polling import LROBasePolling
-from ...models import (
-    ExportedTrainedModel,
-    ExportedModelDetails,
-    ExportedTrainedModel,
-    ExportedModelState,
-    JobsPollingMethod,
-    AsyncJobsPollingMethod,
-)
-from azure.core.paging import ItemPaged
-from collections.abc import MutableMapping
 from azure.core.pipeline import PipelineResponse
-from azure.core.rest import HttpRequest, HttpResponse
-from azure.core.polling.base_polling import LROBasePolling
 from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
+from azure.core.rest import HttpRequest, HttpResponse
+from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.utils import case_insensitive_dict
+
+from ..._utils.model_base import _deserialize
+from ...models import (
+    AsyncJobsPollingMethod,
+    ExportedModelDetails,
+    ExportedModelState,
+    ExportedTrainedModel,
+)
+from ._operations import ExportedModelOperations as ExportedModelOperationsGenerated
 
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
-_Unset: Any = object()
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[
+    Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]
+]
 
 
 class ExportedModelOperations(ExportedModelOperationsGenerated):

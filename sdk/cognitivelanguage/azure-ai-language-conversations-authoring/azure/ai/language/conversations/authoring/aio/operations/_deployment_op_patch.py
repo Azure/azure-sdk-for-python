@@ -8,44 +8,32 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Any, Callable, Dict, IO, Iterator, List, Optional, TypeVar, Union, cast, overload
-from azure.core.polling import LROPoller, NoPolling, PollingMethod
-from azure.core.tracing.decorator import distributed_trace
+from collections.abc import MutableMapping # pylint:disable=import-error
+from typing import IO, Any, Callable, Dict, Optional, TypeVar, Union, cast, overload
 
-from ._operations import (
-    ProjectOperations as ProjectOperationsGenerated,
-    DeploymentOperations as DeploymentOperationsGenerated,
-    ExportedModelOperations as ExportedModelOperationsGenerated,
-    TrainedModelOperations as TrainedModelOperationsGenerated,
-)
-from ..._utils.model_base import SdkJSONEncoder, _deserialize
-from azure.core.utils import case_insensitive_dict
-from azure.core.polling.base_polling import LROBasePolling
+from azure.core.pipeline import PipelineResponse
 from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
+from azure.core.rest import HttpRequest, HttpResponse
+from azure.core.tracing.decorator import distributed_trace
+from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.utils import case_insensitive_dict
+
+from ..._utils.model_base import _deserialize
 from ...models import (
-    ProjectDeployment,
-    ExportedTrainedModel,
-    ProjectTrainedModel,
-    DeleteDeploymentDetails,
+    AsyncJobsPollingMethod,
     CreateDeploymentDetails,
+    DeleteDeploymentDetails,
     DeploymentDeleteFromResourcesState,
     DeploymentState,
-    JobsPollingMethod,
-    DeploymentResourcesState,
-    ExportedProject,
-    ImportProjectState,
-    AsyncJobsPollingMethod,
+    ProjectDeployment,
 )
-from azure.core.paging import ItemPaged
-from collections.abc import MutableMapping
-from azure.core.pipeline import PipelineResponse
-from azure.core.rest import HttpRequest, HttpResponse
-from azure.core.tracing.decorator_async import distributed_trace_async
+from ._operations import DeploymentOperations as DeploymentOperationsGenerated
 
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
-_Unset: Any = object()
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[
+    Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]
+]
 
 
 class DeploymentOperations(DeploymentOperationsGenerated):
@@ -273,8 +261,6 @@ class DeploymentOperations(DeploymentOperationsGenerated):
     ) -> AsyncLROPoller[DeploymentState]:
         """Creates a new deployment or replaces an existing one.
 
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
         :param deployment_name: The name of the specific deployment of the project to use. Required.
         :type deployment_name: str
         :param body: The new deployment info. Required.
@@ -293,8 +279,6 @@ class DeploymentOperations(DeploymentOperationsGenerated):
     ) -> AsyncLROPoller[DeploymentState]:
         """Creates a new deployment or replaces an existing one.
 
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
         :param deployment_name: The name of the specific deployment of the project to use. Required.
         :type deployment_name: str
         :param body: The new deployment info. Required.
@@ -313,8 +297,6 @@ class DeploymentOperations(DeploymentOperationsGenerated):
     ) -> AsyncLROPoller[DeploymentState]:
         """Creates a new deployment or replaces an existing one.
 
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
         :param deployment_name: The name of the specific deployment of the project to use. Required.
         :type deployment_name: str
         :param body: The new deployment info. Required.

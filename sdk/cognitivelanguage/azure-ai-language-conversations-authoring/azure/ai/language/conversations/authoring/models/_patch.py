@@ -8,55 +8,57 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Optional, Any, MutableMapping
-from azure.core.polling.base_polling import LongRunningOperation, BadResponse, OperationFailed
-from azure.core.pipeline import PipelineResponse
+from collections.abc import MutableMapping, Awaitable # pylint:disable=import-error
+from typing import Any, Callable, Optional, Tuple, TypeVar, cast
+
+import base64
 import functools
 import time
-import base64
-import asyncio
-from typing import Any, Callable, Tuple, MutableMapping, Optional, cast
-from azure.core.polling import PollingMethod, AsyncPollingMethod
-from azure.core.pipeline import PipelineResponse
-from azure.core.rest import HttpRequest
-from azure.core.polling.base_polling import BadResponse
+
 from azure.core.exceptions import ResourceNotFoundError
+from azure.core.pipeline import PipelineResponse
+from azure.core.polling import AsyncPollingMethod, PollingMethod
+from azure.core.polling.base_polling import (
+    BadResponse,
+    LongRunningOperation,
+    OperationFailed,
+)
+from azure.core.rest import HttpRequest
+
+from ._enums import ExportedProjectFormat
 from ._models import (
     AssignDeploymentResourcesDetails,
-    AssignDeploymentResourcesDetails,
-    UnassignDeploymentResourcesDetails,
-    SwapDeploymentsDetails,
-    DeploymentResourcesState,
+    CopyProjectDetails,
     CopyProjectState,
-    ExportProjectState,
-    SwapDeploymentsState,
-    DeploymentResourcesState,
-    DeleteDeploymentDetails,
+    ConversationExportedEntity,
+    ConversationExportedIntent,
+    ConversationExportedProjectAsset,
+    ConversationExportedUtterance,
     CreateDeploymentDetails,
+    DeleteDeploymentDetails,
     DeploymentDeleteFromResourcesState,
-    DeploymentState,
-    ExportedModelDetails,
-    ExportedModelState,
-    LoadSnapshotState,
     DeploymentResourcesState,
-    ProjectDeletionState,
-    ExportedProject,
-    ImportProjectState,
-    CopyProjectDetails,
-    TrainingJobDetails,
-    CopyProjectDetails,
+    DeploymentState,
     EvaluationJobResult,
     EvaluationState,
-    ConversationExportedProjectAsset,
-    ConversationExportedIntent,
-    ConversationExportedEntity,
-    ConversationExportedUtterance,
+    ExportProjectState,
+    ExportedModelDetails,
+    ExportedModelState,
+    ExportedProject,
     ExportedUtteranceEntityLabel,
+    ImportProjectState,
+    LoadSnapshotState,
+    ProjectDeletionState,
     ResourceMetadata,
+    SwapDeploymentsDetails,
+    SwapDeploymentsState,
+    TrainingJobDetails,
+    UnassignDeploymentResourcesDetails,
 )
-from ._enums import ExportedProjectFormat
 
 JSON = MutableMapping[str, Any]
+T = TypeVar("T")
+
 
 
 class JobsStrategy(LongRunningOperation):
@@ -83,8 +85,8 @@ class JobsStrategy(LongRunningOperation):
         raise OperationFailed("Operation failed or canceled")
 
     # Map service statuses to core strings
-    def get_status(self, response: JSON) -> str:  # type: ignore
-        raw = str(response.get("status", "")).lower()
+    def get_status(self, pipeline_response: JSON) -> str:  # type: ignore
+        raw = str(pipeline_response.get("status", "")).lower()
         if raw in ("succeeded",):
             return "Succeeded"
         if raw in ("failed",):
@@ -104,6 +106,15 @@ class JobsPollingMethod(PollingMethod):
         self._polling_interval = polling_interval
         self._kwargs = kwargs
         self._path_format_arguments = path_format_arguments or {}
+
+        # predeclare attributes to satisfy pylint W0201
+        self._client: Any = None
+        self._initial_response: Optional[PipelineResponse] = None
+        self._deserialization_callback: Optional[Callable] = None
+        self._resource: Optional[PipelineResponse] = None
+        self._status: str = "NotStarted"
+        self._operation: Any = None                 # or a concrete type if available
+        self._command: Optional[Callable[[], PipelineResponse]] = None
 
     # ---- LRO lifecycle ----
     def initialize(self, client: Any, initial_response: PipelineResponse, deserialization_callback: Callable) -> None:
@@ -152,10 +163,15 @@ class JobsPollingMethod(PollingMethod):
         return self._status
 
     def resource(self) -> Any:
+        if self._deserialization_callback is None or self._initial_response is None:
+            raise RuntimeError("Polling method not initialized; call initialize() first.")
         # Return typed object using provided callback (expects PipelineResponse)
         return self._deserialization_callback(self._resource or self._initial_response)
 
     def update_status(self) -> None:
+        if self._command is None:
+            raise RuntimeError("Polling method not initialized; call initialize() first.")
+
         try:
             self._resource = self._command()
         except ResourceNotFoundError:
@@ -166,8 +182,8 @@ class JobsPollingMethod(PollingMethod):
         if self._resource is not None:
             try:
                 body = cast(JSON, self._resource.http_response.json())
-            except Exception:
-                raise BadResponse("Polling response is not JSON")
+            except Exception as exc:
+                raise BadResponse("Polling response is not JSON") from exc
         self._status = self._operation.get_status(body)
 
     # ---- Helpers ----
@@ -181,8 +197,8 @@ class JobsPollingMethod(PollingMethod):
         # Legacy pipeline fallback
         request = self._client.get(url)
         return cast(
-            PipelineResponse, self._client._pipeline.run(request, stream=False, **self._kwargs)
-        )  # pylint: disable=protected-access
+            PipelineResponse, self._client._pipeline.run(request, stream=False, **self._kwargs) # pylint: disable=protected-access
+        )
 
     # ---- Continuation token support (doc pattern) ----
     def get_continuation_token(self) -> str:
@@ -212,13 +228,22 @@ class AsyncJobsPollingMethod(AsyncPollingMethod):
         self._kwargs = kwargs
         self._path_format_arguments = path_format_arguments or {}
 
+        # Predeclare all attributes to satisfy pylint W0201
+        self._client: Any = None
+        self._initial_response: Optional[PipelineResponse] = None
+        self._deserialization_callback: Optional[Callable] = None
+        self._resource: Optional[PipelineResponse] = None
+        self._status: str = "NotStarted"
+        self._operation: Any = None
+        self._command: Optional[Callable[[], Awaitable[PipelineResponse]]] = None
+
     # ---- LRO lifecycle ----
     def initialize(self, client: Any, initial_response: PipelineResponse, deserialization_callback: Callable) -> None:
         self._client = client
         self._initial_response = initial_response
         self._deserialization_callback = deserialization_callback
-        self._resource: Optional[PipelineResponse] = None
-        self._status: str = "InProgress"
+        self._resource = None          # no type annotation here
+        self._status = "InProgress"    # no type annotation here
 
         # Operation-Location (case-insensitive)
         headers = initial_response.http_response.headers
@@ -243,12 +268,23 @@ class AsyncJobsPollingMethod(AsyncPollingMethod):
         while not self.finished():
             await self.update_status()
             if not self.finished():
-                await asyncio.sleep(self._polling_interval)
+                await self._sleep(self._polling_interval)
 
-        # Final GET (using jobs URL) if strategy requires it
         final_url = self._operation.get_final_get_url(self._initial_response)
         if final_url:
             self._resource = await self._do_get_async(final_url)
+
+    async def _sleep(self, seconds: float) -> None:
+        # Prefer the Azure Core transport's sleep (fast/no-op in playback)
+        transport = getattr(self._client, "_transport", None) or getattr(
+            getattr(self._client, "_pipeline", None), "_transport", None
+        )
+        if transport and hasattr(transport, "sleep"):
+            await transport.sleep(seconds)
+            return
+        # Fallback for non-Azure transports (allowed per rule text)
+        import asyncio  # pylint: disable=import-outside-toplevel, do-not-import-asyncio
+        await asyncio.sleep(seconds)
 
     def finished(self) -> bool:
         return self._status in ("Succeeded", "Failed", "Canceled")
@@ -257,22 +293,25 @@ class AsyncJobsPollingMethod(AsyncPollingMethod):
         return self._status
 
     def resource(self) -> Any:
-        # Return typed object via provided callback (expects PipelineResponse)
+        if self._deserialization_callback is None or self._initial_response is None:
+            raise RuntimeError("Polling method not initialized; call initialize() first.")
         return self._deserialization_callback(self._resource or self._initial_response)
 
     async def update_status(self) -> None:
+        if self._command is None:
+            raise RuntimeError("Polling method not initialized; call initialize() first.")
+
         try:
             self._resource = await self._command()
         except ResourceNotFoundError:
-            # Optional: services that briefly 404 while job is materializing
             self._resource = None
 
         body: dict = {}
         if self._resource is not None:
             try:
                 body = cast(dict, self._resource.http_response.json())
-            except Exception:
-                raise BadResponse("Polling response is not JSON")
+            except Exception as exc:  # be explicit so pylint sees the chain
+                raise BadResponse("Polling response is not JSON") from exc
         self._status = self._operation.get_status(body)
 
     # ---- Helpers ----

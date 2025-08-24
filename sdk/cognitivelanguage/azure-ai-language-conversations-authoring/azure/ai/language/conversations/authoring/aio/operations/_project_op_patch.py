@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression,too-many-lines
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,59 +8,51 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
-from azure.core.tracing.decorator import distributed_trace
-from ._operations import (
-    ProjectOperations as ProjectOperationsGenerated,
-)
-from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.polling.base_polling import LROBasePolling
-from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
-from ..._utils.model_base import SdkJSONEncoder, _deserialize
-from azure.core.utils import case_insensitive_dict
-from azure.core.polling.base_polling import LROBasePolling
-from ...models import (
-    AssignDeploymentResourcesDetails,
-    TrainingJobResult,
-    CopyProjectDetails,
-    TrainingJobDetails,
-    AssignDeploymentResourcesDetails,
-    UnassignDeploymentResourcesDetails,
-    SwapDeploymentsDetails,
-    CopyProjectDetails,
-    DeploymentResourcesState,
-    CopyProjectState,
-    ExportProjectState,
-    ProjectDetails,
-    ProjectDeletionState,
-    SwapDeploymentsState,
-    TrainingState,
-    DeploymentResourcesState,
-    AssignedDeploymentResource,
-    ProjectDeployment,
-    ExportedTrainedModel,
-    ProjectTrainedModel,
-    ExportedTrainedModel,
-    ProjectTrainedModel,
-    EvalSummary,
-    StringIndexType,
-    ExportedProjectFormat,
-    JobsPollingMethod,
-    DeploymentResourcesState,
-    ExportedProject,
-    ImportProjectState,
-    ProjectKind,
-    AsyncJobsPollingMethod,
-)
-from collections.abc import MutableMapping
+from collections.abc import MutableMapping # pylint:disable=import-error
+from typing import IO, Any, Callable, Dict, Optional, TypeVar, Union, cast, overload
+
+from azure.core.async_paging import AsyncItemPaged
 from azure.core.pipeline import PipelineResponse
+from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
 from azure.core.rest import HttpRequest, HttpResponse
+from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.utils import case_insensitive_dict
+
+from ..._utils.model_base import _deserialize
+from ...models import (
+    AssignedDeploymentResource,
+    AssignDeploymentResourcesDetails,
+    AsyncJobsPollingMethod,
+    CopyProjectDetails,
+    CopyProjectState,
+    DeploymentResourcesState,
+    ExportProjectState,
+    ExportedProject,
+    ExportedProjectFormat,
+    ExportedTrainedModel,
+    ImportProjectState,
+    ProjectDeletionState,
+    ProjectDeployment,
+    ProjectDetails,
+    ProjectKind,
+    ProjectTrainedModel,
+    StringIndexType,
+    SwapDeploymentsDetails,
+    SwapDeploymentsState,
+    TrainingJobDetails,
+    TrainingJobResult,
+    TrainingState,
+    UnassignDeploymentResourcesDetails,
+)
+from ._operations import ProjectOperations as ProjectOperationsGenerated
 
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 _Unset: Any = object()
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[
+    Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]
+]
 
 
 class ProjectOperations(ProjectOperationsGenerated):
@@ -619,11 +611,18 @@ class ProjectOperations(ProjectOperationsGenerated):
             polling_method,
         )
 
-    @distributed_trace
+    @distributed_trace_async
     async def begin_cancel_training_job(  # type: ignore[override]
         self, job_id: str, **kwargs: Any
     ) -> AsyncLROPoller[TrainingJobResult]:
-        """Cancel a training job without requiring project_name explicitly."""
+        """
+        :param job_id: The identifier of the training job to cancel. Required.
+        :type job_id: str
+        :return: An instance of AsyncLROPoller that returns TrainingJobResult.
+        :rtype: ~azure.core.polling.AsyncLROPoller[
+            ~azure.ai.language.conversations.authoring.models.TrainingJobResult
+        ]
+        """
         return await super().begin_cancel_training_job(project_name=self._project_name, job_id=job_id, **kwargs)
 
     @overload
@@ -673,8 +672,6 @@ class ProjectOperations(ProjectOperationsGenerated):
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.language.conversations.authoring.models.CopyProjectState]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-
-    # ---------- Implementation (async) ----------
 
     @distributed_trace_async
     async def begin_copy_project(
@@ -804,11 +801,21 @@ class ProjectOperations(ProjectOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace
+    @distributed_trace_async
     async def begin_train(  # type: ignore[override]
         self, body: Union[TrainingJobDetails, JSON, IO[bytes]], *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[TrainingJobResult]:
-        """Begin training without requiring project_name explicitly."""
+        """Begin training without requiring project_name explicitly.
+        
+        :param body: The training job request payload.
+        :type body: ~azure.ai.language.conversations.authoring.models.TrainingJobDetails or JSON or IO[bytes]
+        :keyword content_type: The content type of the request body. Default is ``"application/json"``.
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns TrainingJobResult.
+        :rtype: ~azure.core.polling.AsyncLROPoller[
+            ~azure.ai.language.conversations.authoring.models.TrainingJobResult
+        ]
+        """
         return await super()._begin_train(
             project_name=self._project_name, body=body, content_type=content_type, **kwargs
         )
@@ -962,7 +969,7 @@ class ProjectOperations(ProjectOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace
+    @distributed_trace_async
     async def copy_project_authorization(  # type: ignore[override]
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
@@ -983,7 +990,7 @@ class ProjectOperations(ProjectOperationsGenerated):
             **kwargs,
         )
 
-    @distributed_trace
+    @distributed_trace_async
     async def _get_assign_deployment_resources_status(  # type: ignore[override]
         self, job_id: str, **kwargs: Any
     ) -> DeploymentResourcesState:
@@ -991,31 +998,31 @@ class ProjectOperations(ProjectOperationsGenerated):
             project_name=self._project_name, job_id=job_id, **kwargs
         )
 
-    @distributed_trace
+    @distributed_trace_async
     async def _get_copy_project_status(self, job_id: str, **kwargs: Any) -> CopyProjectState:  # type: ignore[override]
         return await super()._get_copy_project_status(project_name=self._project_name, job_id=job_id, **kwargs)
 
-    @distributed_trace
+    @distributed_trace_async
     async def _get_export_status(self, job_id: str, **kwargs: Any) -> ExportProjectState:  # type: ignore[override]
         return await super()._get_export_status(project_name=self._project_name, job_id=job_id, **kwargs)
 
-    @distributed_trace
+    @distributed_trace_async
     async def get_project(self, **kwargs: Any) -> ProjectDetails:  # type: ignore[override]
         return await super()._get_project(project_name=self._project_name, **kwargs)
 
-    @distributed_trace
+    @distributed_trace_async
     async def _get_project_deletion_status(self, job_id: str, **kwargs: Any) -> ProjectDeletionState:  # type: ignore[override]
         return await super()._get_project_deletion_status(project_name=self._project_name, job_id=job_id, **kwargs)
 
-    @distributed_trace
+    @distributed_trace_async
     async def _get_swap_deployments_status(self, job_id: str, **kwargs: Any) -> SwapDeploymentsState:  # type: ignore[override]
         return await super()._get_swap_deployments_status(project_name=self._project_name, job_id=job_id, **kwargs)
 
-    @distributed_trace
+    @distributed_trace_async
     async def _get_training_status(self, job_id: str, **kwargs: Any) -> TrainingState:  # type: ignore[override]
         return await super()._get_training_status(project_name=self._project_name, job_id=job_id, **kwargs)
 
-    @distributed_trace
+    @distributed_trace_async
     async def _get_unassign_deployment_resources_status(  # type: ignore[override]
         self, job_id: str, **kwargs: Any
     ) -> DeploymentResourcesState:
@@ -1024,31 +1031,31 @@ class ProjectOperations(ProjectOperationsGenerated):
         )
 
     @distributed_trace
-    async def list_deployment_resources(  # type: ignore[override]
+    def list_deployment_resources(  # type: ignore[override]
         self, *, skip: Optional[int] = _Unset, top: Optional[int] = _Unset, **kwargs: Any
     ) -> AsyncItemPaged[AssignedDeploymentResource]:
         return super().list_deployment_resources(project_name=self._project_name, skip=skip, top=top, **kwargs)
 
     @distributed_trace
-    async def list_deployments(  # type: ignore[override]
+    def list_deployments(  # type: ignore[override]
         self, *, skip: Optional[int] = _Unset, top: Optional[int] = _Unset, **kwargs: Any
     ) -> AsyncItemPaged[ProjectDeployment]:
         return super().list_deployments(project_name=self._project_name, skip=skip, top=top, **kwargs)
 
     @distributed_trace
-    async def list_exported_models(  # type: ignore[override]
+    def list_exported_models(  # type: ignore[override]
         self, *, skip: Optional[int] = _Unset, top: Optional[int] = _Unset, **kwargs: Any
     ) -> AsyncItemPaged[ExportedTrainedModel]:
         return super().list_exported_models(project_name=self._project_name, skip=skip, top=top, **kwargs)
 
     @distributed_trace
-    async def list_trained_models(  # type: ignore[override]
+    def list_trained_models(  # type: ignore[override]
         self, *, skip: Optional[int] = _Unset, top: Optional[int] = _Unset, **kwargs: Any
     ) -> AsyncItemPaged[ProjectTrainedModel]:
         return super().list_trained_models(project_name=self._project_name, skip=skip, top=top, **kwargs)
 
     @distributed_trace
-    async def list_training_jobs(  # type: ignore[override]
+    def list_training_jobs(  # type: ignore[override]
         self, *, skip: Optional[int] = _Unset, top: Optional[int] = _Unset, **kwargs: Any
     ) -> AsyncItemPaged[TrainingState]:
         return super().list_training_jobs(project_name=self._project_name, skip=skip, top=top, **kwargs)

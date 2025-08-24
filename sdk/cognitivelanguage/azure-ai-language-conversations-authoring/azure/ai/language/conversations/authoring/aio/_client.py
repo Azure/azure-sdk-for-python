@@ -178,10 +178,10 @@ class ConversationAuthoringProjectClient:
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.deployment = DeploymentOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.project = ProjectOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.exported_model = ExportedModelOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.trained_model = TrainedModelOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.deployment = DeploymentOperations(self._client, self._config, self._serialize, self._deserialize)  # type: ignore # pylint: disable=line-too-long
+        self.project = ProjectOperations(self._client, self._config, self._serialize, self._deserialize)  # type: ignore # pylint: disable=line-too-long
+        self.exported_model = ExportedModelOperations(self._client, self._config, self._serialize, self._deserialize)  # type: ignore # pylint: disable=line-too-long
+        self.trained_model = TrainedModelOperations(self._client, self._config, self._serialize, self._deserialize)  # type: ignore # pylint: disable=line-too-long
 
     def send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any

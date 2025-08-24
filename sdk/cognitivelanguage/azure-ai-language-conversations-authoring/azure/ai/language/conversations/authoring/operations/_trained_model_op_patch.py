@@ -9,41 +9,34 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-from typing import Any, Callable, Dict, IO, Iterator, List, Optional, TypeVar, Union, cast, overload
+from collections.abc import MutableMapping # pylint:disable=import-error
+from typing import IO, Any, Callable, Dict, Optional, TypeVar, Union, cast, overload
+
+from azure.core.paging import ItemPaged
+from azure.core.pipeline import PipelineResponse
 from azure.core.polling import LROPoller, NoPolling, PollingMethod
+from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 
-from ._operations import (
-    ProjectOperations as ProjectOperationsGenerated,
-    DeploymentOperations as DeploymentOperationsGenerated,
-    ExportedModelOperations as ExportedModelOperationsGenerated,
-    TrainedModelOperations as TrainedModelOperationsGenerated,
-)
-from .._utils.model_base import SdkJSONEncoder, _deserialize
-from azure.core.utils import case_insensitive_dict
-from azure.core.polling.base_polling import LROBasePolling
+from .._utils.model_base import _deserialize
 from ..models import (
-    ProjectTrainedModel,
+    EvalSummary,
     EvaluationDetails,
     EvaluationJobResult,
     EvaluationState,
+    JobsPollingMethod,
     LoadSnapshotState,
     ProjectTrainedModel,
-    EvalSummary,
     StringIndexType,
     UtteranceEvaluationResult,
-    ExportedProjectFormat,
-    JobsPollingMethod,
 )
-from azure.core.paging import ItemPaged
-from collections.abc import MutableMapping
-from azure.core.pipeline import PipelineResponse
-from azure.core.rest import HttpRequest, HttpResponse
+from ._operations import TrainedModelOperations as TrainedModelOperationsGenerated
 
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
-_Unset: Any = object()
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[
+    Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]
+]
 
 
 class TrainedModelOperations(TrainedModelOperationsGenerated):

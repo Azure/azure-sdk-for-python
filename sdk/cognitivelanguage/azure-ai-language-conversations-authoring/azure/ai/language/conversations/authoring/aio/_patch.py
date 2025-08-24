@@ -8,35 +8,42 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, cast, TYPE_CHECKING
-from ._client import ConversationAuthoringClient as AuthoringClientGenerated
-from ._client import ConversationAuthoringProjectClient as AuthoringProjectClientGenerated
-from .operations._patch import ProjectOperations, DeploymentOperations, ExportedModelOperations, TrainedModelOperations
+from collections.abc import MutableMapping # pylint: disable=import-error
+from typing import TYPE_CHECKING, Any, Callable, Dict, Optional, TypeVar, Union, cast
+
 from azure.core import AsyncPipelineClient
 from azure.core.credentials import AzureKeyCredential
-from azure.core.pipeline import policies
-from typing import Any, Optional, Union, cast
+from azure.core.pipeline import PipelineResponse, policies
 from azure.core.polling import AsyncLROPoller
-from ..models import ProjectDeletionState, AsyncJobsPollingMethod
+from azure.core.rest import HttpRequest, HttpResponse
+from azure.core.tracing.decorator_async import distributed_trace_async
+
+from .._utils.model_base import _deserialize
+from .._utils.serialization import Deserializer, Serializer
+from ..models import AsyncJobsPollingMethod, ProjectDeletionState
+from ._configuration import ConversationAuthoringProjectClientConfiguration
+from ._client import (
+    ConversationAuthoringClient as AuthoringClientGenerated,
+    ConversationAuthoringProjectClient as AuthoringProjectClientGenerated,
+)
+from .operations._patch import (
+    DeploymentOperations,
+    ExportedModelOperations,
+    ProjectOperations,
+    TrainedModelOperations,
+)
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
-from ._configuration import ConversationAuthoringProjectClientConfiguration
-from .._utils.serialization import Deserializer, Serializer
-from .._utils.model_base import _deserialize
-from collections.abc import MutableMapping
-from azure.core.pipeline import PipelineResponse
-from azure.core.rest import HttpRequest, HttpResponse
-from azure.core.tracing.decorator_async import distributed_trace_async
-
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
-_Unset: Any = object()
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[
+    Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]
+]
 
 
-class ConversationAuthoringProjectClient(AuthoringProjectClientGenerated):
+class ConversationAuthoringProjectClient(AuthoringProjectClientGenerated): # pylint:disable=client-accepts-api-version-keyword
     """Custom ConversationAuthoringProjectClient that bypasses generated __init__
     and ensures project_name is mandatory.
     """
@@ -50,7 +57,7 @@ class ConversationAuthoringProjectClient(AuthoringProjectClientGenerated):
     #: Trained model operations group
     trained_model: TrainedModelOperations
 
-    def __init__(
+    def __init__( # pylint: disable=super-init-not-called, client-accepts-api-version-keyword
         self,
         endpoint: str,
         credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
@@ -58,6 +65,17 @@ class ConversationAuthoringProjectClient(AuthoringProjectClientGenerated):
         project_name: str,
         **kwargs: Any,
     ) -> None:
+        """Initialize a ConversationAuthoringProjectClient.
+
+        :param str endpoint: Supported Cognitive Services endpoint, e.g.
+            "https://<resource>.cognitiveservices.azure.com".
+        :param credential: Credential used to authenticate requests to the service.
+        :type credential: ~azure.core.credentials.AzureKeyCredential or
+            ~azure.core.credentials_async.AsyncTokenCredential
+        :keyword str project_name: The name of the project to scope operations. Required.
+        :keyword Any kwargs: Additional keyword arguments.
+        :rtype: None
+        """
         self._project_name = project_name
         _endpoint = "{Endpoint}/language"
         self._config = ConversationAuthoringProjectClientConfiguration(
@@ -136,11 +154,14 @@ class ConversationAuthoringClient(AuthoringClientGenerated):
 
     @distributed_trace_async
     async def begin_delete_project(self, project_name: str, **kwargs: Any) -> AsyncLROPoller[ProjectDeletionState]:
-        """Deletes a project.
+        """Delete a project.
 
+        :param project_name: The name of the project to delete. Required.
+        :type project_name: str
         :return: An instance of AsyncLROPoller that returns ProjectDeletionState.
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.language.conversations.authoring.models.ProjectDeletionState]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :rtype: ~azure.core.polling.AsyncLROPoller[
+            ~azure.ai.language.conversations.authoring.models.ProjectDeletionState
+        ]
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}

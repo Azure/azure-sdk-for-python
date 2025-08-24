@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression,too-many-lines
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,56 +8,50 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Any, Callable, Dict, IO, Iterator, List, Optional, TypeVar, Union, cast, overload
-from azure.core.polling import LROPoller, NoPolling, PollingMethod
-from azure.core.tracing.decorator import distributed_trace
-from ._operations import (
-    ProjectOperations as ProjectOperationsGenerated,
-)
-from .._utils.model_base import SdkJSONEncoder, _deserialize
-from azure.core.utils import case_insensitive_dict
-from azure.core.polling.base_polling import LROBasePolling
-from ..models import (
-    AssignDeploymentResourcesDetails,
-    TrainingJobResult,
-    CopyProjectDetails,
-    TrainingJobDetails,
-    AssignDeploymentResourcesDetails,
-    UnassignDeploymentResourcesDetails,
-    SwapDeploymentsDetails,
-    CopyProjectDetails,
-    DeploymentResourcesState,
-    CopyProjectState,
-    ExportProjectState,
-    ProjectDetails,
-    ProjectDeletionState,
-    SwapDeploymentsState,
-    TrainingState,
-    DeploymentResourcesState,
-    AssignedDeploymentResource,
-    ProjectDeployment,
-    ExportedTrainedModel,
-    ProjectTrainedModel,
-    ExportedTrainedModel,
-    ProjectTrainedModel,
-    EvalSummary,
-    StringIndexType,
-    ExportedProjectFormat,
-    JobsPollingMethod,
-    DeploymentResourcesState,
-    ExportedProject,
-    ImportProjectState,
-    ProjectKind,
-)
+from collections.abc import MutableMapping # pylint:disable=import-error
+from typing import IO, Any, Callable, Dict, Optional, TypeVar, Union, cast, overload
+
 from azure.core.paging import ItemPaged
-from collections.abc import MutableMapping
 from azure.core.pipeline import PipelineResponse
+from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.core.rest import HttpRequest, HttpResponse
+from azure.core.tracing.decorator import distributed_trace
+from azure.core.utils import case_insensitive_dict
+
+from .._utils.model_base import _deserialize
+from ..models import (
+    AssignedDeploymentResource,
+    AssignDeploymentResourcesDetails,
+    CopyProjectDetails,
+    CopyProjectState,
+    DeploymentResourcesState,
+    ExportProjectState,
+    ExportedProject,
+    ExportedProjectFormat,
+    ExportedTrainedModel,
+    ImportProjectState,
+    JobsPollingMethod,
+    ProjectDeletionState,
+    ProjectDeployment,
+    ProjectDetails,
+    ProjectKind,
+    ProjectTrainedModel,
+    StringIndexType,
+    SwapDeploymentsDetails,
+    SwapDeploymentsState,
+    TrainingJobDetails,
+    TrainingJobResult,
+    TrainingState,
+    UnassignDeploymentResourcesDetails,
+)
+from ._operations import ProjectOperations as ProjectOperationsGenerated
 
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 _Unset: Any = object()
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[
+    Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]
+]
 
 
 class ProjectOperations(ProjectOperationsGenerated):
@@ -608,7 +602,15 @@ class ProjectOperations(ProjectOperationsGenerated):
     def begin_cancel_training_job(  # type: ignore[override]
         self, job_id: str, **kwargs: Any
     ) -> LROPoller[TrainingJobResult]:
-        """Cancel a training job without requiring project_name explicitly."""
+        """Cancel a training job without requiring project_name explicitly.
+        
+        :param job_id: The identifier of the training job to cancel. Required.
+        :type job_id: str
+        :return: An instance of LROPoller that returns TrainingJobResult.
+        :rtype: ~azure.core.polling.LROPoller[
+            ~azure.ai.language.conversations.authoring.models.TrainingJobResult
+        ]
+        """
         return super().begin_cancel_training_job(project_name=self._project_name, job_id=job_id, **kwargs)
 
     @overload
@@ -788,7 +790,19 @@ class ProjectOperations(ProjectOperationsGenerated):
     def begin_train(  # type: ignore[override]
         self, body: Union[TrainingJobDetails, JSON, IO[bytes]], *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[TrainingJobResult]:
-        """Begin training without requiring project_name explicitly."""
+        """Triggers a training job for a project.
+
+        :param body: The training input parameters. Required.
+        :type body: Union[TrainingJobDetails, JSON, IO[bytes]]
+        :keyword content_type: Body Parameter content-type. Content type parameter for the request body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns TrainingJobResult. The TrainingJobResult is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.ai.language.conversations.authoring.models.TrainingJobResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
         return super()._begin_train(project_name=self._project_name, body=body, content_type=content_type, **kwargs)
 
     @distributed_trace

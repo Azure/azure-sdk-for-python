@@ -8,39 +8,41 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Any, Callable, Dict, Optional, TypeVar, Union, cast
-from azure.core.polling import LROPoller, NoPolling, PollingMethod
-from azure.core.tracing.decorator import distributed_trace
-from typing import Any, TYPE_CHECKING, Union
-from ._client import ConversationAuthoringClient as AuthoringClientGenerated
-from ._client import ConversationAuthoringProjectClient as AuthoringProjectClientGenerated
-from .operations._patch import ProjectOperations, DeploymentOperations, ExportedModelOperations, TrainedModelOperations
+from collections.abc import MutableMapping # pylint:disable=import-error
+from typing import TYPE_CHECKING, Any, Callable, Dict, Optional, TypeVar, Union, cast
+
 from azure.core import PipelineClient
 from azure.core.credentials import AzureKeyCredential
-from azure.core.pipeline import policies
-from .models import (
-    ProjectDeletionState,
-    JobsPollingMethod,
+from azure.core.pipeline import PipelineResponse, policies
+from azure.core.polling import LROPoller, NoPolling, PollingMethod
+from azure.core.rest import HttpRequest, HttpResponse
+from azure.core.tracing.decorator import distributed_trace
+
+from ._client import (
+    ConversationAuthoringClient as AuthoringClientGenerated,
+    ConversationAuthoringProjectClient as AuthoringProjectClientGenerated,
+)
+from ._configuration import ConversationAuthoringProjectClientConfiguration
+from ._utils.model_base import _deserialize
+from ._utils.serialization import Deserializer, Serializer
+from .models import JobsPollingMethod, ProjectDeletionState
+from .operations._patch import (
+    DeploymentOperations,
+    ExportedModelOperations,
+    ProjectOperations,
+    TrainedModelOperations,
 )
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
-from azure.core.utils import case_insensitive_dict
-from azure.core.pipeline import PipelineResponse
-from azure.core.rest import HttpRequest, HttpResponse
-from ._configuration import ConversationAuthoringProjectClientConfiguration
-from ._utils.serialization import Deserializer, Serializer
-from collections.abc import MutableMapping
-from azure.core.pipeline import PipelineResponse
-from azure.core.rest import HttpRequest, HttpResponse
-from ._utils.model_base import _deserialize
 
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[
+    Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]
+]
 
-
-class ConversationAuthoringProjectClient(AuthoringProjectClientGenerated):
+class ConversationAuthoringProjectClient(AuthoringProjectClientGenerated): # pylint: disable=client-accepts-api-version-keyword
     """Custom ConversationAuthoringProjectClient that bypasses generated __init__
     and ensures project_name is mandatory.
     """
@@ -54,7 +56,7 @@ class ConversationAuthoringProjectClient(AuthoringProjectClientGenerated):
     #: Trained model operations group
     trained_model: TrainedModelOperations
 
-    def __init__(
+    def __init__( # pylint: disable=super-init-not-called
         self,
         endpoint: str,
         credential: Union[AzureKeyCredential, "TokenCredential"],
@@ -62,6 +64,17 @@ class ConversationAuthoringProjectClient(AuthoringProjectClientGenerated):
         project_name: str,
         **kwargs: Any,
     ) -> None:
+        """Initialize a ConversationAuthoringProjectClient.
+
+        :param str endpoint: Supported Cognitive Services endpoint, e.g.
+            "https://<resource>.cognitiveservices.azure.com".
+        :param credential: Credential used to authenticate requests to the service.
+        :type credential: ~azure.core.credentials.AzureKeyCredential or
+            ~azure.core.credentials_async.AsyncTokenCredential
+        :keyword str project_name: The name of the project to scope operations. Required.
+        :keyword Any kwargs: Additional keyword arguments.
+        :rtype: None
+        """
         self._project_name = project_name
         _endpoint = f"{endpoint}/language"
 
@@ -145,9 +158,11 @@ class ConversationAuthoringClient(AuthoringClientGenerated):
         )
 
     @distributed_trace
-    def begin_delete_project(self, project_name: str, **kwargs: Any) -> LROPoller[ProjectDeletionState]:
+    def begin_delete_project(self, project_name: str, **kwargs: Any) -> LROPoller[ProjectDeletionState]: # pylint: disable=delete-operation-wrong-return-type
         """Deletes a project.
 
+        :param project_name: The name of the project to delete. Required.
+        :type project_name: str
         :return: An instance of LROPoller that returns ProjectDeletionState.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.language.conversations.authoring.models.ProjectDeletionState]
         :raises ~azure.core.exceptions.HttpResponseError:
