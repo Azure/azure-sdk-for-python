@@ -15,7 +15,7 @@ from azure.mgmt.hybridkubernetes import KubernetesClient
     pip install azure-identity
     pip install azure-mgmt-hybridkubernetes
 # USAGE
-    python get_clusters_by_resource_group_example.py
+    python create_cluster_agentless_kind_aws_example.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,13 +30,20 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.connected_cluster.list_by_resource_group(
+    response = client.connected_cluster.begin_create_or_replace(
         resource_group_name="k8sc-rg",
-    )
-    for item in response:
-        print(item)
+        cluster_name="testCluster",
+        connected_cluster={
+            "identity": {"type": "None"},
+            "kind": "AWS",
+            "location": "East US",
+            "properties": {"agentPublicKeyCertificate": "", "distribution": "eks", "infrastructure": "aws"},
+            "tags": {},
+        },
+    ).result()
+    print(response)
 
 
-# x-ms-original-file: 2025-08-01-preview/GetClustersByResourceGroupExample.json
+# x-ms-original-file: 2025-08-01-preview/CreateClusterAgentless_KindAWSExample.json
 if __name__ == "__main__":
     main()
