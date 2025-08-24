@@ -51,36 +51,58 @@ def sample_get_model_evaluation_summary():
 
     print("=== Model Evaluation Summary ===")
 
-    # ----- Entities evaluation -----
-    if eval_summary.entities_evaluation:
-        entities_eval = eval_summary.entities_evaluation
+     # ----- Entities evaluation (micro/macro) -----
+    entities_summary = eval_summary.entities_evaluation
+    if entities_summary is not None:
         print(
-            f"Entities - Micro F1: {entities_eval.micro_f1}, Precision: {entities_eval.micro_precision}, Recall: {entities_eval.micro_recall}"
+            f"Entities - Micro F1: {entities_summary.micro_f1}, "
+            f"Micro Precision: {entities_summary.micro_precision}, "
+            f"Micro Recall: {entities_summary.micro_recall}"
         )
         print(
-            f"Entities - Macro F1: {entities_eval.macro_f1}, Precision: {entities_eval.macro_precision}, Recall: {entities_eval.macro_recall}"
+            f"Entities - Macro F1: {entities_summary.macro_f1}, "
+            f"Macro Precision: {entities_summary.macro_precision}, "
+            f"Macro Recall: {entities_summary.macro_recall}"
         )
 
-        for name, summary in (entities_eval.entities or {}).items():
+        # Per-entity details
+        ent_map = entities_summary.entities or {}
+        for name, summary in ent_map.items():
             print(f"Entity '{name}': F1 = {summary.f1}, Precision = {summary.precision}, Recall = {summary.recall}")
             print(
-                f"  TP: {summary.true_positive_count}, TN: {summary.true_negative_count}, FP: {summary.false_positive_count}, FN: {summary.false_negative_count}"
+                f"  True Positives: {summary.true_positive_count}, "
+                f"True Negatives: {summary.true_negative_count}"
+            )
+            print(
+                f"  False Positives: {summary.false_positive_count}, "
+                f"False Negatives: {summary.false_negative_count}"
             )
 
-    # ----- Intents evaluation -----
-    if eval_summary.intents_evaluation:
-        intents_eval = eval_summary.intents_evaluation
+    # ----- Intents evaluation (micro/macro) -----
+    intents_summary = eval_summary.intents_evaluation
+    if intents_summary is not None:
         print(
-            f"Intents - Micro F1: {intents_eval.micro_f1}, Precision: {intents_eval.micro_precision}, Recall: {intents_eval.micro_recall}"
+            f"Intents - Micro F1: {intents_summary.micro_f1}, "
+            f"Micro Precision: {intents_summary.micro_precision}, "
+            f"Micro Recall: {intents_summary.micro_recall}"
         )
         print(
-            f"Intents - Macro F1: {intents_eval.macro_f1}, Precision: {intents_eval.macro_precision}, Recall: {intents_eval.macro_recall}"
+            f"Intents - Macro F1: {intents_summary.macro_f1}, "
+            f"Macro Precision: {intents_summary.macro_precision}, "
+            f"Macro Recall: {intents_summary.macro_recall}"
         )
 
-        for name, summary in (intents_eval.intents or {}).items():
+        # Per-intent details
+        intent_map = intents_summary.intents or {}
+        for name, summary in intent_map.items():
             print(f"Intent '{name}': F1 = {summary.f1}, Precision = {summary.precision}, Recall = {summary.recall}")
             print(
-                f"  TP: {summary.true_positive_count}, TN: {summary.true_negative_count}, FP: {summary.false_positive_count}, FN: {summary.false_negative_count}"
+                f"  True Positives: {summary.true_positive_count}, "
+                f"True Negatives: {summary.true_negative_count}"
+            )
+            print(
+                f"  False Positives: {summary.false_positive_count}, "
+                f"False Negatives: {summary.false_negative_count}"
             )
 
 # [END conversation_authoring_get_model_evaluation_summary]
