@@ -13,7 +13,6 @@
 
 [Source code][conversation_authoring_client_src]
 | [Package (PyPI)][conversation_authoring_pypi_package]
-| [API reference documentation][api_reference_authoring]
 | [Samples][conversation_authoring_samples]
 | [Product documentation][conversation_authoring_docs]
 | [REST API documentation][conversation_authoring_restdocs]
@@ -101,16 +100,16 @@ client = ConversationAuthoringClient(
 
 ### ConversationAuthoringClient
 
-The [ConversationAuthoringClient][conversation_authoring_client_class] is the primary entry point for interacting with the Conversation Authoring service.  
+The `ConversationAuthoringClient` is the primary entry point for interacting with the Conversation Authoring service.  
 It provides top-level APIs to **manage projects** (create, delete, list) and retrieve **project-scoped clients**.
 
-You can call `get_project_client(project_name)` to obtain a [ConversationAuthoringProjectClient][conversation_authoring_project_client_class], which exposes operations specific to a given project.
+You can call `get_project_client(project_name)` to obtain a `ConversationAuthoringProjectClient`, which exposes operations specific to a given project.
 
 For asynchronous operations, an async version of the client is available in the `azure.ai.language.conversations.authoring.aio` namespace.
 
 ### ConversationAuthoringProjectClient
 
-The [ConversationAuthoringProjectClient][conversation_authoring_project_client_class] is a **project-scoped client** returned by `ConversationAuthoringClient.get_project_client(project_name)`.  
+The `ConversationAuthoringProjectClient` is a **project-scoped client** returned by `ConversationAuthoringClient.get_project_client(project_name)`.  
 
 It organizes project functionality into operation groups:
 
@@ -319,12 +318,9 @@ For more information, see the [Code of Conduct FAQ][coc_faq] or contact [opencod
 [pip_link]: https://pypi.org/project/pip/
 [conversation_authoring_client_src]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations-authoring
 [conversation_authoring_pypi_package]: https://pypi.org/project/azure-ai-language-conversations-authoring/
-[api_reference_authoring]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-ai-language-conversations-authoring/latest/azure.ai.language.conversations.authoring.html
 [conversation_authoring_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations-authoring/samples/README.md
 [conversation_authoring_docs]: https://learn.microsoft.com/azure/ai-services/language-service/conversational-language-understanding/overview
 [conversation_authoring_restdocs]: https://learn.microsoft.com/rest/api/language/conversation-authoring-project?view=rest-language-2023-04-01
-[conversation_authoring_client_class]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-ai-language-conversations-authoring/latest/azure.ai.language.conversations.authoring.html#azure.ai.language.conversations.authoring.ConversationAuthoringClient
-[conversation_authoring_project_client_class]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-ai-language-conversations-authoring/latest/azure.ai.language.conversations.authoring.html#azure.ai.language.conversations.authoring.ConversationAuthoringProjectClient
 [azure_language_portal]: https://language.cognitive.azure.com/home
 [cognitive_authentication_aad]: https://learn.microsoft.com/azure/cognitive-services/authentication#authenticate-with-azure-active-directory
 [azure_identity_credentials]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#credentials
