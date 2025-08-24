@@ -153,7 +153,8 @@ def _build_call_recording_download_recording_request(
     if end:
         rangeHeader += "-" + str(end)
     # Construct headers
-    _headers["Range"] = _SERIALIZER.header("range", rangeHeader, "str")
+    if start is not None:
+        _headers["Range"] = _SERIALIZER.header("range", rangeHeader, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", "application/json", "str")
     _headers["x-ms-host"] = _SERIALIZER.header("x-ms-host", host, "str")
     return HttpRequest(method="GET", url=source_location, params=_params, headers=_headers, **kwargs)
