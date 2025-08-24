@@ -1,5 +1,11 @@
 # Release History
 
+## 4.23.0 (2025-06-23)
+
+### Other Changes
+
+- Regenerated SDK from latest TypeSpec definitions with updated emitter options and bug fixes.
+
 ## 4.22.0 (2025-05-14)
 
 ### Features Added
