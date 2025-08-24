@@ -18,8 +18,15 @@ from subprocess import check_call, CalledProcessError, Popen
 from argparse import Namespace
 from typing import Iterable
 
-# Assumes the presence of setuptools
-from pkg_resources import parse_version, parse_requirements, Requirement, WorkingSet, working_set
+# Modern packaging imports
+try:
+    import importlib.metadata as importlib_metadata
+except ImportError:
+    # Python < 3.8 fallback
+    import importlib_metadata
+
+from packaging.version import parse as parse_version
+from packaging.requirements import Requirement
 
 # this assumes the presence of "packaging"
 from packaging.specifiers import SpecifierSet
@@ -247,9 +254,37 @@ def find_tools_packages(root_path):
 
 def get_installed_packages(paths=None):
     """Find packages in default or given lib paths"""
-    # WorkingSet returns installed packages in given path
-    # working_set returns installed packages in default path
-    # if paths is set then find installed packages from given paths
-    ws = WorkingSet(paths) if paths else working_set
-    return ["{0}=={1}".format(p.project_name, p.version) for p in ws]
+    # Use importlib.metadata to get installed packages
+    if paths:
+        import sys
+        # For path-specific search, we need to create a new metadata finder
+        # that searches in the specified paths
+        packages = []
+        for path in paths:
+            if os.path.exists(path):
+                # Add the path temporarily to find distributions there
+                original_path = sys.path[:]
+                try:
+                    sys.path.insert(0, path)
+                    # Get distributions and filter by location
+                    for dist in importlib_metadata.distributions():
+                        try:
+                            # Check if the distribution is actually from this path
+                            dist_path = str(dist._path) if hasattr(dist, '_path') else ''
+                            if path in dist_path:
+                                package_name = dist.metadata['Name']
+                                package_version = dist.version
+                                package_str = "{0}=={1}".format(package_name, package_version)
+                                if package_str not in packages:
+                                    packages.append(package_str)
+                        except Exception:
+                            # Skip packages that can't be processed
+                            continue
+                finally:
+                    sys.path[:] = original_path
+        return packages
+    else:
+        # Get all distributions from default paths
+        distributions = importlib_metadata.distributions()
+        return ["{0}=={1}".format(dist.metadata['Name'], dist.version) for dist in distributions]
 
