@@ -4,6 +4,9 @@
 
 ### Features Added
 
+- `BearerTokenCredentialPolicy` and `AsyncBearerTokenCredentialPolicy` will now pass the response associated with a 401 claims challenge to the `get_token_info` method if available. #41739
+  - Added `challenge_response` field to `TokenRequestOptions` to facilitate this.
+
 ### Breaking Changes
 
 ### Bugs Fixed

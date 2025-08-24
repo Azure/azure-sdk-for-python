@@ -96,6 +96,7 @@ class _BearerTokenCredentialPolicyBase:
                     options[key] = kwargs.pop(key)  # type: ignore[literal-required]
 
             return cast(SupportsTokenInfo, self._credential).get_token_info(*scopes, options=options)
+        kwargs.pop("challenge_response", None)
         return cast(TokenCredential, self._credential).get_token(*scopes, **kwargs)
 
     def _request_token(self, *scopes: str, **kwargs: Any) -> None:
@@ -200,14 +201,11 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy[H
             encoded_claims = get_challenge_parameter(headers, "Bearer", "claims")
             if not encoded_claims:
                 return False
-            try:
-                padding_needed = -len(encoded_claims) % 4
-                claims = base64.urlsafe_b64decode(encoded_claims + "=" * padding_needed).decode("utf-8")
-                if claims:
-                    self.authorize_request(request, *self._scopes, claims=claims)
-                    return True
-            except Exception:  # pylint:disable=broad-except
-                return False
+            padding_needed = -len(encoded_claims) % 4
+            claims = base64.urlsafe_b64decode(encoded_claims + "=" * padding_needed).decode("utf-8")
+            if claims:
+                self.authorize_request(request, *self._scopes, claims=claims, challenge_response=response)
+                return True
         return False
 
     def on_response(

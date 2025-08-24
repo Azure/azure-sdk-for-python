@@ -837,3 +837,90 @@ def test_bearer_policy_on_challenge_caches_token_with_claims(http_request):
 
     # Verify the Authorization header was set correctly
     assert request.http_request.headers["Authorization"] == "Bearer claims_token"
+
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_bearer_policy_challenge_response_passed_to_get_token_info(http_request):
+    """Test that challenge_response is passed to get_token_info when handling claims challenges"""
+    # Setup credentials that capture the options passed to get_token_info
+    initial_token = AccessTokenInfo("initial_token", int(time.time()) + 3600)
+    claims_token = AccessTokenInfo("claims_token", int(time.time()) + 3600)
+
+    received_options = None
+
+    def mock_get_token_info(*scopes, options=None):
+        nonlocal received_options
+        received_options = options
+        if options and "claims" in options:
+            return claims_token
+        return initial_token
+
+    fake_credential = Mock(spec_set=["get_token_info"], get_token_info=mock_get_token_info)
+    policy = BearerTokenCredentialPolicy(fake_credential, "scope")
+
+    # Create request and 401 response with claims challenge
+    http_req = http_request("GET", "https://example.com")
+    request = PipelineRequest(http_req, PipelineContext(None))
+
+    test_claims = '{"access_token":{"foo":"bar"}}'
+    encoded_claims = base64.urlsafe_b64encode(test_claims.encode()).decode().rstrip("=")
+    challenge_header = f'Bearer error="insufficient_claims", claims="{encoded_claims}"'
+
+    response_mock = Mock(status_code=401, headers={"WWW-Authenticate": challenge_header})
+    response = PipelineResponse(request, response_mock, PipelineContext(None))
+
+    # Call on_challenge to handle the claims challenge
+    result = policy.on_challenge(request, response)
+
+    # Verify the challenge was handled successfully
+    assert result is True
+
+    # Verify that get_token_info was called with challenge_response
+    assert received_options is not None
+    assert "claims" in received_options
+    assert "challenge_response" in received_options
+    assert received_options["challenge_response"] is response
+    assert received_options["claims"] == test_claims
+
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_bearer_policy_challenge_response_not_passed_to_legacy_get_token(http_request):
+    """Test that challenge_response is NOT passed to legacy get_token when handling claims challenges"""
+    # Setup credentials that only support legacy get_token (no get_token_info)
+    initial_token = AccessToken("initial_token", int(time.time()) + 3600)
+    claims_token = AccessToken("claims_token", int(time.time()) + 3600)
+
+    received_kwargs = None
+
+    def mock_get_token(*scopes, **kwargs):
+        nonlocal received_kwargs
+        received_kwargs = kwargs
+        if "claims" in kwargs:
+            return claims_token
+        return initial_token
+
+    fake_credential = Mock(spec_set=["get_token"], get_token=mock_get_token)
+    policy = BearerTokenCredentialPolicy(fake_credential, "scope")
+
+    # Create request and 401 response with claims challenge
+    http_req = http_request("GET", "https://example.com")
+    request = PipelineRequest(http_req, PipelineContext(None))
+
+    test_claims = '{"access_token":{"foo":"bar"}}'
+    encoded_claims = base64.urlsafe_b64encode(test_claims.encode()).decode().rstrip("=")
+    challenge_header = f'Bearer error="insufficient_claims", claims="{encoded_claims}"'
+
+    response_mock = Mock(status_code=401, headers={"WWW-Authenticate": challenge_header})
+    response = PipelineResponse(request, response_mock, PipelineContext(None))
+
+    # Call on_challenge to handle the claims challenge
+    result = policy.on_challenge(request, response)
+
+    # Verify the challenge was handled successfully
+    assert result is True
+
+    # Verify that get_token was called with claims but NOT challenge_response
+    assert received_kwargs is not None
+    assert "claims" in received_kwargs
+    assert "challenge_response" not in received_kwargs  # Should be filtered out for legacy get_token
+    assert received_kwargs["claims"] == test_claims
