@@ -1219,7 +1219,7 @@ class TeamsPhoneSourceDetails:
             source=serialize_identifier(self.source),
             language=self.language,
             status=self.status,
-            intended_targets=[serialize_identifier(p) for p in self.intended_targets.values()]
+            intended_targets={k: serialize_identifier(v) for k, v in self.intended_targets.items()} if self.intended_targets else None
         )
 
 class SummarizationOptions:
