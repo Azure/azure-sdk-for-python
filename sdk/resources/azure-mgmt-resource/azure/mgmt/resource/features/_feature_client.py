@@ -20,13 +20,13 @@ from azure.mgmt.core.tools import get_arm_endpoints
 from . import models as _models
 from ._configuration import FeatureClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
-from .operations import FeatureClientOperationsMixin, FeaturesOperations, SubscriptionFeatureRegistrationsOperations
+from .operations import FeaturesOperations, SubscriptionFeatureRegistrationsOperations, _FeatureClientOperationsMixin
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class FeatureClient(FeatureClientOperationsMixin):
+class FeatureClient(_FeatureClientOperationsMixin):
     """Azure Feature Exposure Control (AFEC) provides a mechanism for the resource providers to
     control feature exposure to users. Resource providers typically use this mechanism to provide
     public/private preview for new features prior to making them generally available. Users need to
