@@ -129,6 +129,9 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
     # Instrumentations need to be setup last so to use the global providers
     # instanstiated in the other setup steps
     _setup_instrumentations(configurations)
+    
+    # Setup web snippet for supported frameworks
+    _setup_web_snippet(configurations)
 
 
 def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
@@ -348,3 +351,70 @@ def _setup_additional_azure_sdk_instrumentations(configurations: Dict[str, Confi
                     class_name,
                     exc_info=ex,
                 )
+
+
+def _setup_web_snippet(configurations: Dict[str, ConfigurationValue]):
+    """Setup web snippet for supported frameworks."""
+    try:
+        # Check if web snippet should be enabled
+        connection_string = configurations.get("connection_string")
+        if not connection_string or not isinstance(connection_string, str):
+            _logger.debug("No valid connection string provided - skipping web snippet setup")
+            return
+        
+        # Try to patch Django middleware if Django is available
+        _patch_django_middleware(connection_string)
+        
+        # Future: Add support for other frameworks like Flask, FastAPI, etc.
+        
+    except Exception as ex:  # pylint: disable=broad-except
+        _logger.debug("Failed to setup web snippet middleware: %s", ex, exc_info=True)
+
+
+def _patch_django_middleware(connection_string: str):
+    """Automatically patch Django middleware if Django is available and configured."""
+    try:
+        # Check if Django is available
+        import django  # type: ignore
+        from django.conf import settings  # type: ignore
+        
+        # Check if Django is configured
+        if not hasattr(settings, 'MIDDLEWARE'):
+            _logger.debug("Django not configured - skipping middleware patching")
+            return
+            
+        # Import our middleware
+        from azure.monitor.opentelemetry._web_snippet import DjangoWebSnippetMiddleware
+        
+        # Check if middleware is already in the middleware list
+        middleware_list = list(settings.MIDDLEWARE)
+        middleware_path = 'azure.monitor.opentelemetry._web_snippet._django_middleware.DjangoWebSnippetMiddleware'
+        
+        if middleware_path in middleware_list:
+            _logger.debug("DjangoWebSnippetMiddleware already configured")
+            return
+            
+        # Add our middleware to the end of the middleware list
+        middleware_list.append(middleware_path)
+        settings.MIDDLEWARE = middleware_list
+        
+        # Configure web snippet settings if not already present
+        if not hasattr(settings, 'AZURE_MONITOR_OPENTELEMETRY'):
+            settings.AZURE_MONITOR_OPENTELEMETRY = {}
+            
+        azure_config = settings.AZURE_MONITOR_OPENTELEMETRY
+        if not azure_config.get('connection_string'):
+            azure_config['connection_string'] = connection_string
+            
+        if 'web_snippet' not in azure_config:
+            azure_config['web_snippet'] = {'enabled': True}
+        elif not azure_config['web_snippet'].get('enabled'):
+            azure_config['web_snippet']['enabled'] = True
+            
+        _logger.info("DjangoWebSnippetMiddleware automatically configured for web snippet injection")
+        
+    except ImportError:
+        # Django not available - silently skip
+        _logger.debug("Django not available - skipping Django middleware patching")
+    except Exception as ex:  # pylint: disable=broad-except
+        _logger.debug("Failed to patch Django middleware: %s", ex, exc_info=True)

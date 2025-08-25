@@ -38,6 +38,9 @@ class TestConfigure(unittest.TestCase):
         "azure.monitor.opentelemetry._configure._send_attach_warning",
     )
     @patch(
+        "azure.monitor.opentelemetry._configure._setup_web_snippet",
+    )
+    @patch(
         "azure.monitor.opentelemetry._configure._setup_instrumentations",
     )
     @patch(
@@ -59,6 +62,7 @@ class TestConfigure(unittest.TestCase):
         metrics_mock,
         live_metrics_mock,
         instrumentation_mock,
+        web_snippet_mock,
         detect_attach_mock,
     ):
         kwargs = {
@@ -70,6 +74,7 @@ class TestConfigure(unittest.TestCase):
         metrics_mock.assert_called_once()
         live_metrics_mock.assert_not_called()
         instrumentation_mock.assert_called_once()
+        web_snippet_mock.assert_called_once()
         detect_attach_mock.assert_called_once()
 
     @patch(
@@ -706,3 +711,111 @@ class TestConfigure(unittest.TestCase):
         is_on_functions_mock.return_value = True
         _send_attach_warning()
         mock_diagnostics.warning.assert_not_called()
+
+    @patch("azure.monitor.opentelemetry._configure._patch_django_middleware")
+    @patch("azure.monitor.opentelemetry._configure._get_configurations")
+    def test_setup_web_snippet_with_connection_string(
+        self,
+        config_mock,
+        django_patch_mock,
+    ):
+        """Test that web snippet setup is called when connection string is provided."""
+        from azure.monitor.opentelemetry._configure import _setup_web_snippet
+        
+        # Mock configurations
+        config_mock.return_value = {
+            "connection_string": "InstrumentationKey=test-key;IngestionEndpoint=https://test.com/"
+        }
+        
+        configurations = config_mock.return_value
+        _setup_web_snippet(configurations)
+        
+        # Assert Django patching was attempted
+        django_patch_mock.assert_called_once_with("InstrumentationKey=test-key;IngestionEndpoint=https://test.com/")
+
+    @patch("azure.monitor.opentelemetry._configure._patch_django_middleware")
+    @patch("azure.monitor.opentelemetry._configure._get_configurations")
+    def test_setup_web_snippet_no_connection_string(
+        self,
+        config_mock,
+        django_patch_mock,
+    ):
+        """Test that web snippet setup is skipped when no connection string is provided."""
+        from azure.monitor.opentelemetry._configure import _setup_web_snippet
+        
+        # Mock configurations without connection string
+        config_mock.return_value = {}
+        
+        configurations = config_mock.return_value
+        _setup_web_snippet(configurations)
+        
+        # Assert Django patching was not called
+        django_patch_mock.assert_not_called()
+
+    @patch("django.conf.settings")
+    @patch("azure.monitor.opentelemetry._configure.django")
+    def test_patch_django_middleware_success(
+        self,
+        django_mock,
+        settings_mock,
+    ):
+        """Test successful Django middleware patching."""
+        from azure.monitor.opentelemetry._configure import _patch_django_middleware
+        
+        # Mock Django settings
+        settings_mock.MIDDLEWARE = [
+            'django.middleware.security.SecurityMiddleware',
+            'django.middleware.common.CommonMiddleware',
+        ]
+        settings_mock.AZURE_MONITOR_OPENTELEMETRY = {}
+        
+        # Call the patching function
+        _patch_django_middleware("InstrumentationKey=test-key;IngestionEndpoint=https://test.com/")
+        
+        # Assert middleware was added
+        expected_middleware = 'azure.monitor.opentelemetry._web_snippet._django_middleware.DjangoWebSnippetMiddleware'
+        self.assertIn(expected_middleware, settings_mock.MIDDLEWARE)
+        
+        # Assert settings were configured
+        self.assertEqual(settings_mock.AZURE_MONITOR_OPENTELEMETRY['connection_string'], 
+                        "InstrumentationKey=test-key;IngestionEndpoint=https://test.com/")
+        self.assertTrue(settings_mock.AZURE_MONITOR_OPENTELEMETRY['web_snippet']['enabled'])
+
+    @patch("azure.monitor.opentelemetry._configure.django")
+    def test_patch_django_middleware_django_not_available(
+        self,
+        django_mock,
+    ):
+        """Test Django middleware patching when Django is not available."""
+        from azure.monitor.opentelemetry._configure import _patch_django_middleware
+        
+        # Mock ImportError when importing Django
+        django_mock.side_effect = ImportError("Django not available")
+        
+        # This should not raise an exception
+        _patch_django_middleware("InstrumentationKey=test-key;IngestionEndpoint=https://test.com/")
+
+    @patch("django.conf.settings")
+    @patch("azure.monitor.opentelemetry._configure.django")
+    def test_patch_django_middleware_already_configured(
+        self,
+        django_mock,
+        settings_mock,
+    ):
+        """Test Django middleware patching when middleware is already configured."""
+        from azure.monitor.opentelemetry._configure import _patch_django_middleware
+        
+        # Mock Django settings with middleware already present
+        middleware_path = 'azure.monitor.opentelemetry._web_snippet._django_middleware.DjangoWebSnippetMiddleware'
+        settings_mock.MIDDLEWARE = [
+            'django.middleware.security.SecurityMiddleware',
+            middleware_path,
+            'django.middleware.common.CommonMiddleware',
+        ]
+        original_middleware_length = len(settings_mock.MIDDLEWARE)
+        
+        # Call the patching function
+        _patch_django_middleware("InstrumentationKey=test-key;IngestionEndpoint=https://test.com/")
+        
+        # Assert middleware list length didn't change (no duplicate addition)
+        self.assertEqual(len(settings_mock.MIDDLEWARE), original_middleware_length)

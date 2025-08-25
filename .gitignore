@@ -1,6 +1,9 @@
 # Default Assets restore directory
 .assets
 
+# Copilot developer settings
+.copilotignore
+
 # Python cache
 __pycache__/
 *.py[cod]
