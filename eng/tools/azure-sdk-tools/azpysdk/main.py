@@ -16,6 +16,7 @@ from subprocess import check_call
 from .whl import whl
 from .depends import depends
 
+from ci_tools.scenario import install_into_venv, get_venv_python
 from ci_tools.functions import get_venv_call
 from ci_tools.variables import discover_repo_root
 
@@ -83,10 +84,12 @@ def handle_venv(isolate: bool, args: argparse.Namespace) -> None:
 
         # now use the current virtual environment to install os.path.join(REPO_ROOT, eng/tools/azure-sdk-tools[build])
         # into the NEW virtual env
+        install_into_venv(venv_location, os.path.join(REPO_ROOT, "eng/tools/azure-sdk-tools"), False, "build")
+        venv_python_exe = get_venv_python(venv_location)
+        command_args = [venv_python_exe, "-m", "azpysdk.main"] + sys.argv[1:]
 
-        # then once that is done. call {new_venv_dir/scriptsOrBin/azpysdk {sys.argv[1:]}}
-        # at which point the new call of us will be from the correct venv and have the ENV var
-        # set to not recurse environment again.
+        breakpoint()
+        check_call(command_args)
 
 
 def main(argv: Optional[Sequence[str]] = None) -> int:#
