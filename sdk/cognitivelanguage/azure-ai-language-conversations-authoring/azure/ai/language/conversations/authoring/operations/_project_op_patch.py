@@ -70,7 +70,8 @@ class ProjectOperations(ProjectOperationsGenerated):
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[ImportProjectState]:
-        """Triggers a job to import a project. If a project with the same name already exists,
+        """
+        Triggers a job to import a project. If a project with the same name already exists,
         the data of that project is replaced.
 
         :param body: The project data to import. Required.
@@ -85,6 +86,7 @@ class ProjectOperations(ProjectOperationsGenerated):
         :return: An instance of LROPoller that returns ImportProjectState.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.language.conversations.authoring.models.ImportProjectState]
         :raises ~azure.core.exceptions.HttpResponseError:
+        
         """
 
     @overload
@@ -602,14 +604,14 @@ class ProjectOperations(ProjectOperationsGenerated):
     def begin_cancel_training_job(  # type: ignore[override]
         self, job_id: str, **kwargs: Any
     ) -> LROPoller[TrainingJobResult]:
-        """Cancel a training job without requiring project_name explicitly.
+        """
+        Cancel a training job without requiring project_name explicitly.
         
         :param job_id: The identifier of the training job to cancel. Required.
         :type job_id: str
         :return: An instance of LROPoller that returns TrainingJobResult.
-        :rtype: ~azure.core.polling.LROPoller[
-            ~azure.ai.language.conversations.authoring.models.TrainingJobResult
-        ]
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.language.conversations.authoring.models.TrainingJobResult]
+
         """
         return super().begin_cancel_training_job(project_name=self._project_name, job_id=job_id, **kwargs)
 

@@ -155,14 +155,14 @@ class ConversationAuthoringClient(AuthoringClientGenerated):
 
     @distributed_trace_async
     async def begin_delete_project(self, project_name: str, **kwargs: Any) -> AsyncLROPoller[ProjectDeletionState]:
-        """Delete a project.
+        """
+        Delete a project.
 
         :param project_name: The name of the project to delete. Required.
         :type project_name: str
         :return: An instance of AsyncLROPoller that returns ProjectDeletionState.
-        :rtype: ~azure.core.polling.AsyncLROPoller[
-            ~azure.ai.language.conversations.authoring.models.ProjectDeletionState
-        ]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.language.conversations.authoring.models.ProjectDeletionState]
+
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}

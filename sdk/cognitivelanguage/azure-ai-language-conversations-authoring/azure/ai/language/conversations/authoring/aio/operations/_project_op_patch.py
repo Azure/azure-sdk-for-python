@@ -71,21 +71,19 @@ class ProjectOperations(ProjectOperationsGenerated):
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[ImportProjectState]:
-        """Triggers a job to import a project. If a project with the same name already exists,
-        the data of that project is replaced.
+        """
+        Triggers a job to import a project. If a project with the same name already exists, the data of that project is replaced.
 
         :param body: The project data to import. Required.
         :type body: ~azure.ai.language.conversations.authoring.models.ExportedProject
-        :keyword exported_project_format: The format of the exported project file to use. Known values
-        are: "Conversation" and "Luis". Default value is None.
-        :paramtype exported_project_format: str or
-        ~azure.ai.language.conversations.authoring.models.ExportedProjectFormat
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-        Default value is "application/json".
+        :keyword exported_project_format: The format of the exported project file to use. Known values are: "Conversation" and "Luis". Default value is None.
+        :paramtype exported_project_format: str or ~azure.ai.language.conversations.authoring.models.ExportedProjectFormat
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body. Default value is "application/json".
         :paramtype content_type: str
         :return: An instance of AsyncLROPoller that returns ImportProjectState.
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.language.conversations.authoring.models.ImportProjectState]
         :raises ~azure.core.exceptions.HttpResponseError:
+
         """
 
     @overload
@@ -616,12 +614,13 @@ class ProjectOperations(ProjectOperationsGenerated):
         self, job_id: str, **kwargs: Any
     ) -> AsyncLROPoller[TrainingJobResult]:
         """
+        Cancel a training job.
+
         :param job_id: The identifier of the training job to cancel. Required.
         :type job_id: str
         :return: An instance of AsyncLROPoller that returns TrainingJobResult.
-        :rtype: ~azure.core.polling.AsyncLROPoller[
-            ~azure.ai.language.conversations.authoring.models.TrainingJobResult
-        ]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.language.conversations.authoring.models.TrainingJobResult]
+
         """
         return await super().begin_cancel_training_job(project_name=self._project_name, job_id=job_id, **kwargs)
 
@@ -751,7 +750,8 @@ class ProjectOperations(ProjectOperationsGenerated):
     async def begin_train(
         self, body: TrainingJobDetails, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[TrainingJobResult]:
-        """Triggers a training job for a project.
+        """
+        Triggers a training job for a project.
 
         :param body: The training input parameters. Required.
         :type body: ~azure.ai.language.conversations.authoring.models.TrainingJobDetails
@@ -763,6 +763,7 @@ class ProjectOperations(ProjectOperationsGenerated):
         :rtype:
          ~azure.core.polling.AsyncLROPoller[~azure.ai.language.conversations.authoring.models.TrainingJobResult]
         :raises ~azure.core.exceptions.HttpResponseError:
+        
         """
 
     @overload
