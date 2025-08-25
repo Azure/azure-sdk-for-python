@@ -9,7 +9,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, Callable, Dict, IO, Iterable, List, Optional, TypeVar, Union, overload
+from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core import PipelineClient
@@ -538,12 +538,9 @@ def build_key_vault_get_deleted_key_request(key_name: str, **kwargs: Any) -> Htt
 def build_key_vault_purge_deleted_key_request(  # pylint: disable=name-too-long
     key_name: str, **kwargs: Any
 ) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/deletedkeys/{key-name}"
     path_format_arguments = {
@@ -555,10 +552,7 @@ def build_key_vault_purge_deleted_key_request(  # pylint: disable=name-too-long
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
 def build_key_vault_recover_deleted_key_request(  # pylint: disable=name-too-long
@@ -691,7 +685,7 @@ def build_key_vault_get_key_attestation_request(  # pylint: disable=name-too-lon
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
+class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], KeyVaultClientConfiguration]
 ):
 
@@ -848,7 +842,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -916,7 +910,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -1082,7 +1076,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -1150,7 +1144,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -1334,7 +1328,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -1405,7 +1399,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -1421,7 +1415,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     @distributed_trace
     def get_key_versions(
         self, key_name: str, *, maxresults: Optional[int] = None, **kwargs: Any
-    ) -> Iterable["_models.KeyItem"]:
+    ) -> ItemPaged["_models.KeyItem"]:
         """Retrieves a list of individual key versions with the same key name.
 
         The full key identifier, attributes, and tags are provided in the response. This operation
@@ -1506,7 +1500,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+                error = _failsafe_deserialize(_models.KeyVaultError, response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -1514,7 +1508,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def get_keys(self, *, maxresults: Optional[int] = None, **kwargs: Any) -> Iterable["_models.KeyItem"]:
+    def get_keys(self, *, maxresults: Optional[int] = None, **kwargs: Any) -> ItemPaged["_models.KeyItem"]:
         """List keys in the specified vault.
 
         Retrieves a list of the keys in the Key Vault as JSON Web Key structures that contain the
@@ -1598,7 +1592,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+                error = _failsafe_deserialize(_models.KeyVaultError, response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -1667,7 +1661,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -1835,7 +1829,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -2035,7 +2029,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -2243,7 +2237,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -2422,7 +2416,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -2610,7 +2604,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -2802,7 +2796,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -2986,7 +2980,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -3166,7 +3160,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -3182,7 +3176,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     @distributed_trace
     def get_deleted_keys(
         self, *, maxresults: Optional[int] = None, **kwargs: Any
-    ) -> Iterable["_models.DeletedKeyItem"]:
+    ) -> ItemPaged["_models.DeletedKeyItem"]:
         """Lists the deleted keys in the specified vault.
 
         Retrieves a list of the keys in the Key Vault as JSON Web Key structures that contain the
@@ -3267,7 +3261,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+                error = _failsafe_deserialize(_models.KeyVaultError, response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -3328,7 +3322,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -3390,7 +3384,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -3451,7 +3445,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -3517,7 +3511,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -3667,7 +3661,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -3799,7 +3793,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -3814,8 +3808,9 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="7.6",
-        params_added_on={"7.6": ["api_version", "key_name", "key_version", "accept"]},
+        method_added_on="7.6-preview.2",
+        params_added_on={"7.6-preview.2": ["api_version", "key_name", "key_version", "accept"]},
+        api_versions_list=["7.6-preview.2", "7.6"],
     )
     def get_key_attestation(self, key_name: str, key_version: str, **kwargs: Any) -> _models.KeyBundle:
         """Gets the public part of a stored key along with its attestation blob.
@@ -3874,7 +3869,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:

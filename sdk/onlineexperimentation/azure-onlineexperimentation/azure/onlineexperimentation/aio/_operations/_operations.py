@@ -49,7 +49,7 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class OnlineExperimentationClientOperationsMixin(  # pylint: disable=name-too-long
+class _OnlineExperimentationClientOperationsMixin(
     ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], OnlineExperimentationClientConfiguration]
 ):
 
