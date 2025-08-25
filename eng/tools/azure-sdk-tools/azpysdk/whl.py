@@ -10,6 +10,7 @@ from .Check import Check
 
 from ci_tools.functions import discover_targeted_packages, is_error_code_5_allowed, pip_install
 from ci_tools.variables import set_envvar_defaults
+from ci_tools.parsing import ParsedSetup
 from ci_tools.scenario.generation import create_package_and_install
 
 
@@ -29,7 +30,6 @@ class whl(Check):
         p.set_defaults(func=self.run)
         # Add any additional arguments specific to WhlCheck here (do not re-add common handled by parents)
 
-    # todo: figure out venv abstraction mechanism via override
     def run(self, args: argparse.Namespace) -> int:
         """Run the whl check command."""
         print("Running whl check...")
@@ -44,13 +44,14 @@ class whl(Check):
         results: List[int] = []
 
         for pkg in targeted:
+            parsed = ParsedSetup.from_path(pkg)
+
             dev_requirements = os.path.join(pkg, "dev_requirements.txt")
 
             if os.path.exists(dev_requirements):
-                pip_install([f"-r", f"{dev_requirements}"], sys.executable)
+                pip_install([f"-r", f"{dev_requirements}"], True, sys.executable)
 
             staging_area = tempfile.mkdtemp()
-
             create_package_and_install(
                 distribution_directory=staging_area,
                 target_setup=pkg,
@@ -70,7 +71,7 @@ class whl(Check):
             )
 
             if exit_code != 0:
-                if exit_code == 5 and is_error_code_5_allowed():
+                if exit_code == 5 and is_error_code_5_allowed(parsed.folder, parsed.name):
                     logging.info("Exit code 5 is allowed, continuing execution.")
                 else:
                     logging.info(f"pytest failed with exit code {exit_code}.")

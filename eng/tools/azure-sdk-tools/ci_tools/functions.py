@@ -930,6 +930,24 @@ def verify_package_classifiers(package_name: str, package_version: str, package_
     return True, None
 
 
+def get_venv_call(python_exe: Optional[str] = None) -> List[str]:
+    """
+    Determine whether to use 'uv venv' or regular 'python -m venv' based on environment.
+
+    :param str python_exe: The Python executable to use (if not using the default).
+    :return: List of command arguments for venv.
+    :rtype: List[str]
+
+    """
+    # Check TOX_PIP_IMPL environment variable (aligns with tox.ini configuration)
+    pip_impl = os.environ.get('TOX_PIP_IMPL', 'pip').lower()
+
+    # soon we will change this to default to uv
+    if pip_impl == 'uv':
+        return ["uv", "venv"]
+    else:
+        return [python_exe if python_exe else sys.executable, "-m", "venv"]
+
 def get_pip_command(python_exe: Optional[str] = None) -> List[str]:
     """
     Determine whether to use 'uv pip' or regular 'pip' based on environment.
