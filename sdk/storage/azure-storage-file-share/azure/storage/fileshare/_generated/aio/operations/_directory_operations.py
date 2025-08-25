@@ -76,6 +76,7 @@ class DirectoryOperations:
         owner: Optional[str] = None,
         group: Optional[str] = None,
         file_mode: Optional[str] = None,
+        file_property_semantics: Optional[Union[str, _models.FilePropertySemantics]] = None,
         **kwargs: Any
     ) -> None:
         """Creates a new directory under the specified share or parent directory.
@@ -126,6 +127,11 @@ class DirectoryOperations:
         :param file_mode: Optional, NFS only. The file mode of the file or directory. Default value is
          None.
         :type file_mode: str
+        :param file_property_semantics: SMB only, default value is New.  New will forcefully add the
+         ARCHIVE attribute flag and alter the permissions specified in x-ms-file-permission to inherit
+         missing permissions from the parent.  Restore will apply changes without further modification.
+         Known values are: "New" and "Restore". Default value is None.
+        :type file_property_semantics: str or ~azure.storage.fileshare.models.FilePropertySemantics
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -158,6 +164,7 @@ class DirectoryOperations:
             owner=owner,
             group=group,
             file_mode=file_mode,
+            file_property_semantics=file_property_semantics,
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             restype=restype,
