@@ -5,7 +5,12 @@
 # license information.
 # --------------------------------------------------------------------------
 from devtools_testutils import AzureRecordedTestCase
-from azure.appconfiguration import AzureAppConfigurationClient, ConfigurationSetting, FeatureFlagConfigurationSetting
+from azure.appconfiguration import (
+    AzureAppConfigurationClient,
+    ConfigurationSetting,
+    FeatureFlagConfigurationSetting,
+    SecretReferenceConfigurationSetting,
+)
 from azure.appconfiguration.provider import load, AzureAppConfigurationKeyVaultOptions
 from azure.appconfiguration.provider._constants import NULL_CHAR
 from test_constants import FEATURE_MANAGEMENT_KEY, FEATURE_FLAG_KEY
@@ -22,7 +27,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
         else:
             client = AzureAppConfigurationClient(kwargs["endpoint"], credential)
 
-        setup_configs(client, kwargs.get("keyvault_secret_url"))
+        setup_configs(client, kwargs.get("keyvault_secret_url"), kwargs.get("keyvault_secret_url2"))
         kwargs["user_agent"] = "SDK/Integration"
 
         if "endpoint" in kwargs:
@@ -50,12 +55,12 @@ class AppConfigTestCase(AzureRecordedTestCase):
         return AzureAppConfigurationClient(appconfiguration_endpoint_string, cred, user_agent="SDK/Integration")
 
 
-def setup_configs(client, keyvault_secret_url):
-    for config in get_configs(keyvault_secret_url):
+def setup_configs(client, keyvault_secret_url, keyvault_secret_url2):
+    for config in get_configs(keyvault_secret_url, keyvault_secret_url2):
         client.set_configuration_setting(config)
 
 
-def get_configs(keyvault_secret_url):
+def get_configs(keyvault_secret_url, keyvault_secret_url2):
     configs = []
     configs.append(create_config_setting("message", NULL_CHAR, "hi"))
     configs.append(create_config_setting("message", "dev", "test"))
@@ -102,11 +107,18 @@ def get_configs(keyvault_secret_url):
     configs.append(create_config_setting("null_tag", NULL_CHAR, "null tag", tags={"tag": None}))
     if keyvault_secret_url:
         configs.append(
-            create_config_setting(
+            create_secret_config_setting(
                 "secret",
                 "prod",
-                '{"uri":"' + keyvault_secret_url + '"}',
-                "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8",
+                keyvault_secret_url,
+            )
+        )
+    if keyvault_secret_url2:
+        configs.append(
+            create_secret_config_setting(
+                "secret2",
+                "prod",
+                keyvault_secret_url2,
             )
         )
     return configs
@@ -114,6 +126,14 @@ def get_configs(keyvault_secret_url):
 
 def create_config_setting(key, label, value, content_type="text/plain", tags=None):
     return ConfigurationSetting(key=key, label=label, value=value, content_type=content_type, tags=tags)
+
+
+def create_secret_config_setting(key, label, value):
+    return SecretReferenceConfigurationSetting(
+        key=key,
+        label=label,
+        secret_id=value,
+    )
 
 
 def create_feature_flag_config_setting(key, label, enabled, tags=None):
