@@ -22,7 +22,7 @@
 """Interact with databases in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, Dict, List, Union, Optional, Mapping, Callable
+from typing import Any, Dict, List, Union, Optional, Mapping, Callable, overload, Literal
 
 import warnings
 from azure.core.tracing.decorator import distributed_trace
@@ -37,6 +37,7 @@ from .http_constants import StatusCodes as _StatusCodes
 from .exceptions import CosmosResourceNotFoundError
 from .user import UserProxy
 from .documents import IndexingMode
+from ._cosmos_responses import CosmosDict
 
 __all__ = ("DatabaseProxy",)
 
@@ -127,7 +128,7 @@ class DatabaseProxy(object):
         *,
         initial_headers: Optional[Dict[str, str]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> CosmosDict:
         """Read the database properties.
 
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
@@ -157,6 +158,52 @@ class DatabaseProxy(object):
         )
         return self._properties
 
+    @overload
+    def create_container(  # pylint:disable=docstring-missing-param
+            self,
+            id: str,
+            partition_key: PartitionKey,
+            indexing_policy: Optional[Dict[str, Any]] = None,
+            default_ttl: Optional[int] = None,
+            populate_query_metrics: Optional[bool] = None,
+            offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
+            unique_key_policy: Optional[Dict[str, Any]] = None,
+            conflict_resolution_policy: Optional[Dict[str, Any]] = None,
+            *,
+            initial_headers: Optional[Dict[str, str]] = None,
+            analytical_storage_ttl: Optional[int] = None,
+            computed_properties: Optional[List[Dict[str, str]]] = None,
+            vector_embedding_policy: Optional[Dict[str, Any]] = None,
+            change_feed_policy: Optional[Dict[str, Any]] = None,
+            full_text_policy: Optional[Dict[str, Any]] = None,
+            return_properties: Literal[False],
+            **kwargs: Any
+    ) -> ContainerProxy:
+        ...
+
+    @overload
+    def create_container(  # pylint:disable=docstring-missing-param
+            self,
+            id: str,
+            partition_key: PartitionKey,
+            indexing_policy: Optional[Dict[str, Any]] = None,
+            default_ttl: Optional[int] = None,
+            populate_query_metrics: Optional[bool] = None,
+            offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
+            unique_key_policy: Optional[Dict[str, Any]] = None,
+            conflict_resolution_policy: Optional[Dict[str, Any]] = None,
+            *,
+            initial_headers: Optional[Dict[str, str]] = None,
+            analytical_storage_ttl: Optional[int] = None,
+            computed_properties: Optional[List[Dict[str, str]]] = None,
+            vector_embedding_policy: Optional[Dict[str, Any]] = None,
+            change_feed_policy: Optional[Dict[str, Any]] = None,
+            full_text_policy: Optional[Dict[str, Any]] = None,
+            return_properties: Literal[True],
+            **kwargs: Any
+    ) -> tuple[ContainerProxy, CosmosDict]:
+        ...
+
     @distributed_trace
     def create_container(  # pylint:disable=docstring-missing-param
         self,
@@ -175,8 +222,9 @@ class DatabaseProxy(object):
         vector_embedding_policy: Optional[Dict[str, Any]] = None,
         change_feed_policy: Optional[Dict[str, Any]] = None,
         full_text_policy: Optional[Dict[str, Any]] = None,
+        return_properties: bool = False,
         **kwargs: Any
-    ) -> ContainerProxy:
+    ) -> Union[ContainerProxy, tuple[ContainerProxy, CosmosDict]]:
         """Create a new container with the given ID (name).
 
         If a container with the given ID already exists, a CosmosResourceExistsError is raised.
@@ -205,9 +253,12 @@ class DatabaseProxy(object):
         :keyword Dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
-        :returns: A `ContainerProxy` instance representing the new container.
+        :keyword bool return_properties: Specifies function to return either a ContainerProxy
+            or a Tuple of a ContainerProxy and CosmosDict instance.
+        :returns: A `ContainerProxy` instance representing the new container or a tuple of the ContainerProxy
+            and CosmosDict with the response headers.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container creation failed.
-        :rtype: ~azure.cosmos.ContainerProxy
+        :rtype: ~azure.cosmos.ContainerProxy or tuple[ ~azure.cosmos.ContainerProxy,  ~azure.cosmos.CosmosDict]
 
         .. admonition:: Example:
 
@@ -284,7 +335,55 @@ class DatabaseProxy(object):
             database_link=self.database_link, collection=definition, options=request_options, **kwargs
         )
 
-        return ContainerProxy(self.client_connection, self.database_link, result["id"], properties=result)
+        if not return_properties:
+            return ContainerProxy(self.client_connection, self.database_link, result["id"], properties=result)
+        return ContainerProxy(self.client_connection, self.database_link, result["id"], properties=result), result
+
+    @overload
+    def create_container_if_not_exists(  # pylint:disable=docstring-missing-param
+            self,
+            id: str,
+            partition_key: PartitionKey,
+            *,
+            indexing_policy: Optional[Dict[str, Any]] = None,
+            default_ttl: Optional[int] = None,
+            populate_query_metrics: Optional[bool] = None,
+            offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
+            unique_key_policy: Optional[Dict[str, Any]] = None,
+            conflict_resolution_policy: Optional[Dict[str, Any]] = None,
+            initial_headers: Optional[Dict[str, str]] = None,
+            analytical_storage_ttl: Optional[int] = None,
+            computed_properties: Optional[List[Dict[str, str]]] = None,
+            vector_embedding_policy: Optional[Dict[str, Any]] = None,
+            change_feed_policy: Optional[Dict[str, Any]] = None,
+            full_text_policy: Optional[Dict[str, Any]] = None,
+            return_properties: Literal[False],
+            **kwargs: Any
+    ) -> ContainerProxy:
+        ...
+
+    @overload
+    def create_container_if_not_exists(  # pylint:disable=docstring-missing-param
+            self,
+            id: str,
+            partition_key: PartitionKey,
+            *,
+            indexing_policy: Optional[Dict[str, Any]] = None,
+            default_ttl: Optional[int] = None,
+            populate_query_metrics: Optional[bool] = None,
+            offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
+            unique_key_policy: Optional[Dict[str, Any]] = None,
+            conflict_resolution_policy: Optional[Dict[str, Any]] = None,
+            initial_headers: Optional[Dict[str, str]] = None,
+            analytical_storage_ttl: Optional[int] = None,
+            computed_properties: Optional[List[Dict[str, str]]] = None,
+            vector_embedding_policy: Optional[Dict[str, Any]] = None,
+            change_feed_policy: Optional[Dict[str, Any]] = None,
+            full_text_policy: Optional[Dict[str, Any]] = None,
+            return_properties: Literal[True],
+            **kwargs: Any
+    ) -> tuple[ContainerProxy, CosmosDict]:
+        ...
 
     @distributed_trace
     def create_container_if_not_exists(  # pylint:disable=docstring-missing-param
@@ -304,8 +403,9 @@ class DatabaseProxy(object):
         vector_embedding_policy: Optional[Dict[str, Any]] = None,
         change_feed_policy: Optional[Dict[str, Any]] = None,
         full_text_policy: Optional[Dict[str, Any]] = None,
+        return_properties: bool = False,
         **kwargs: Any
-    ) -> ContainerProxy:
+    ) -> Union[ContainerProxy, tuple[ContainerProxy, CosmosDict]]:
         """Create a container if it does not exist already.
 
         If the container already exists, the existing settings are returned.
@@ -336,9 +436,12 @@ class DatabaseProxy(object):
         :keyword Dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
-        :returns: A `ContainerProxy` instance representing the container.
+        :keyword bool return_properties: Specifies function to return either a ContainerProxy
+            or a Tuple of a ContainerProxy and CosmosDict instance.
+        :returns: A `ContainerProxy` instance representing the new container or a tuple of the ContainerProxy
+            and CosmosDict with the response headers.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container read or creation failed.
-        :rtype: ~azure.cosmos.ContainerProxy
+        :rtype: ~azure.cosmos.ContainerProxy or tuple[ ~azure.cosmos.ContainerProxy,  ~azure.cosmos.CosmosDict]
         """
         session_token = kwargs.get('session_token')
         if session_token is not None:
@@ -361,12 +464,14 @@ class DatabaseProxy(object):
 
         try:
             container_proxy = self.get_container_client(id)
-            container_proxy.read(
+            properties = container_proxy.read(
                 populate_query_metrics=populate_query_metrics,
                 initial_headers=initial_headers,
                 **kwargs
             )
-            return container_proxy
+            if not return_properties:
+                return container_proxy
+            return container_proxy, properties
         except CosmosResourceNotFoundError:
             return self.create_container(
                 id=id,
@@ -383,6 +488,7 @@ class DatabaseProxy(object):
                 vector_embedding_policy=vector_embedding_policy,
                 change_feed_policy=change_feed_policy,
                 full_text_policy=full_text_policy,
+                return_properties=return_properties,
                 **kwargs
             )
 
@@ -570,6 +676,44 @@ class DatabaseProxy(object):
             response_hook(self.client_connection.last_response_headers, result)
         return result
 
+    @overload
+    def replace_container(  # pylint:disable=docstring-missing-param
+        self,
+        container: Union[str, ContainerProxy, Mapping[str, Any]],
+        partition_key: PartitionKey,
+        *,
+        indexing_policy: Optional[Dict[str, Any]] = None,
+        default_ttl: Optional[int] = None,
+        conflict_resolution_policy: Optional[Dict[str, Any]] = None,
+        populate_query_metrics: Optional[bool] = None,
+        initial_headers: Optional[Dict[str, str]] = None,
+        analytical_storage_ttl: Optional[int] = None,
+        computed_properties: Optional[List[Dict[str, str]]] = None,
+        full_text_policy: Optional[Dict[str, Any]] = None,
+        return_properties: Literal[False],
+        **kwargs: Any
+    ) -> ContainerProxy:
+        ...
+
+    @overload
+    def replace_container(  # pylint:disable=docstring-missing-param
+            self,
+            container: Union[str, ContainerProxy, Mapping[str, Any]],
+            partition_key: PartitionKey,
+            *,
+            indexing_policy: Optional[Dict[str, Any]] = None,
+            default_ttl: Optional[int] = None,
+            conflict_resolution_policy: Optional[Dict[str, Any]] = None,
+            populate_query_metrics: Optional[bool] = None,
+            initial_headers: Optional[Dict[str, str]] = None,
+            analytical_storage_ttl: Optional[int] = None,
+            computed_properties: Optional[List[Dict[str, str]]] = None,
+            full_text_policy: Optional[Dict[str, Any]] = None,
+            return_properties: Literal[True],
+            **kwargs: Any
+    ) -> tuple[ContainerProxy, CosmosDict]:
+        ...
+
     @distributed_trace
     def replace_container(  # pylint:disable=docstring-missing-param
         self,
@@ -584,8 +728,9 @@ class DatabaseProxy(object):
         analytical_storage_ttl: Optional[int] = None,
         computed_properties: Optional[List[Dict[str, str]]] = None,
         full_text_policy: Optional[Dict[str, Any]] = None,
+        return_properties: bool = False,
         **kwargs: Any
-    ) -> ContainerProxy:
+    ) -> Union[ContainerProxy, tuple[ContainerProxy, CosmosDict]]:
         """Reset the properties of the container.
 
         Property changes are persisted immediately. Any properties not specified
@@ -610,10 +755,13 @@ class DatabaseProxy(object):
         :keyword Dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
-        :returns: A `ContainerProxy` instance representing the container after replace completed.
+        :keyword bool return_properties: Specifies function to return either a ContainerProxy
+            or a Tuple of a ContainerProxy and CosmosDict instance.
+        :returns: A `ContainerProxy` instance representing the new container or a tuple of the ContainerProxy
+            and CosmosDict with the response headers.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be replaced.
             This includes if the container with given id does not exist.
-        :rtype: ~azure.cosmos.ContainerProxy
+        :rtype: ~azure.cosmos.ContainerProxy or tuple[ ~azure.cosmos.ContainerProxy,  ~azure.cosmos.CosmosDict]
 
         .. admonition:: Example:
 
@@ -672,8 +820,15 @@ class DatabaseProxy(object):
         container_properties = self.client_connection.ReplaceContainer(
             container_link, collection=parameters, options=request_options, **kwargs)
 
+        if not return_properties:
+            return ContainerProxy(
+                self.client_connection,
+                self.database_link, container_properties["id"],
+                properties=container_properties)
         return ContainerProxy(
-            self.client_connection, self.database_link, container_properties["id"], properties=container_properties)
+            self.client_connection,
+            self.database_link, container_properties["id"],
+            properties=container_properties), container_properties
 
     @distributed_trace
     def list_users(

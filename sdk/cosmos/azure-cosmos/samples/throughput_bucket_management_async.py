@@ -136,7 +136,7 @@ async def container_create_upsert_and_delete_item_throughput_bucket(client):
         created_item['id'],
         partition_key='mypk',
         throughput_bucket=5)
-    database.delete_container(created_container.id)
+    await database.delete_container(created_container.id)
 
 async def run_sample():
     async with CosmosClient(HOST, {'masterKey': MASTER_KEY} ) as client:
