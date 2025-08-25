@@ -211,12 +211,13 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
             # Assert
             assert destination_blob_data == source_data
         finally:
-            requests.delete(
-                url=base_url,
-                headers=_build_base_file_share_headers(bearer_token_string, 0),
-                params={'restype': 'share'}
-            )
-            blob_service_client.delete_container(self.source_container_name)
+            if self.is_live:
+                requests.delete(
+                    url=base_url,
+                    headers=_build_base_file_share_headers(bearer_token_string, 0),
+                    params={'restype': 'share'}
+                )
+                blob_service_client.delete_container(self.source_container_name)
 
     @BlobPreparer()
     @recorded_by_proxy

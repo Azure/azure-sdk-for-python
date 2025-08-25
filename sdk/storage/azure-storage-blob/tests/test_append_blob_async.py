@@ -1640,12 +1640,13 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
             # Assert
             assert destination_blob_data == source_data
         finally:
-            async with aiohttp.ClientSession() as session:
-                await session.delete(
-                    url=base_url,
-                    headers=_build_base_file_share_headers(bearer_token_string, 0),
-                    params={'restype': 'share'}
-                )
-            await bsc.delete_container(self.source_container_name)
+            if self.is_live:
+                async with aiohttp.ClientSession() as session:
+                    await session.delete(
+                        url=base_url,
+                        headers=_build_base_file_share_headers(bearer_token_string, 0),
+                        params={'restype': 'share'}
+                    )
+                await bsc.delete_container(self.source_container_name)
 
 # ------------------------------------------------------------------------------
