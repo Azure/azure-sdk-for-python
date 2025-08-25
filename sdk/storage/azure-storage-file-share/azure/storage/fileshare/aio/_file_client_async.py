@@ -442,7 +442,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
                 Restore - apply changes without further modification.
 
         :paramtype file_property_semantics: Literal["New", "Restore"]
-        :keyword IO[bytes] data: Initial data to upload. The limit is 4MB.
+        :keyword Union[IO[bytes], bytes] data: Initial data to upload. The limit is 4MB.
         :keyword int length: Specifies the number of bytes being uploaded in the initial data.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
