@@ -218,7 +218,7 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [application_insights_live_metrics]: https://learn.microsoft.com/azure/azure-monitor/app/live-stream
 [application_insights_namespace]: https://learn.microsoft.com/azure/azure-monitor/app/app-insights-overview
 [application_insights_sampling]: https://learn.microsoft.com/azure/azure-monitor/app/sampling
-[rate_limited_sampling]: https://learn.microsoft.com/en-us/azure/azure-monitor/app/opentelemetry-configuration?tabs=python
+[rate_limited_sampling]: https://learn.microsoft.com/azure/azure-monitor/app/opentelemetry-configuration?tabs=python
 [connection_string_doc]: https://learn.microsoft.com/azure/azure-monitor/app/sdk-connection-string
 [distro_feature_request]: https://github.com/Azure/azure-sdk-for-python/issues/new
 [exporter_configuration_docs]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry-exporter#configuration
