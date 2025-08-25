@@ -52,9 +52,9 @@ class InvokePolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
         :param request: The PipelineRequest object.
         :type request: ~azure.core.pipeline.PipelineRequest
         """
-        request_callback = request.context.options.pop("acquire_policy_token_hook", None)
-        if request_callback:
-            request.context["acquire_policy_token_hook"] = request_callback
-            request_callback(request)
-        elif self._request_callback:
-            self._request_callback(request)
+        _callback = request.context.options.pop("acquire_policy_token_hook", None)
+        if _callback:
+            request.context["acquire_policy_token_hook"] = _callback
+            _callback(request)
+        elif self._callback:
+            self._callback(request)
