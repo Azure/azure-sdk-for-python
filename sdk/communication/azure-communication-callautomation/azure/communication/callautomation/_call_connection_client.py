@@ -250,7 +250,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         """
         user_custom_context = (
             CustomCallingContext(voip_headers=voip_headers, sip_headers=sip_headers,
-                                 teams_phone_call_details=teams_phone_call_details)
+                                 teams_phone_call_details=teams_phone_call_details._to_generated() if teams_phone_call_details else None)
             if sip_headers or voip_headers or teams_phone_call_details
             else None
         )
@@ -320,8 +320,11 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
 
         user_custom_context = None
         if sip_headers or voip_headers or teams_phone_call_details:
-            user_custom_context = CustomCallingContext(voip_headers=voip_headers, sip_headers=sip_headers,
-                                                       teams_phone_call_details=teams_phone_call_details)
+            user_custom_context = CustomCallingContext(
+                voip_headers=voip_headers,
+                sip_headers=sip_headers,
+                teams_phone_call_details=teams_phone_call_details._to_generated() if teams_phone_call_details else None,
+            )
         add_participant_request = AddParticipantRequest(
             participant_to_add=serialize_identifier(target_participant),
             source_caller_id_number=serialize_phone_identifier(source_caller_id_number),
