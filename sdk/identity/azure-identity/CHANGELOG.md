@@ -4,7 +4,8 @@
 
 ### Features Added
 
-- `AzureDeveloperCliCredential` now supports `claims` in `get_token` and `get_token_info`.  ([#42568](https://github.com/Azure/azure-sdk-for-python/pull/42568))
+- `AzureDeveloperCliCredential` now supports `claims` in `get_token` and `get_token_info`. ([#42568](https://github.com/Azure/azure-sdk-for-python/pull/42568))
+- Added new keyword argument `require_envvar` to `DefaultAzureCredential` to enforce the presence of the `AZURE_TOKEN_CREDENTIALS` environment variable. ([#42660](https://github.com/Azure/azure-sdk-for-python/pull/42660))
 
 ### Breaking Changes
 
