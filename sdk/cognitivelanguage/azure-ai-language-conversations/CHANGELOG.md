@@ -9,7 +9,7 @@
 
 - Added three different type of Redaction Policy `CharacterMaskPolicyType`, `EntityMaskTypePolicyType` and `NoMaskPolicyType`.
 
-- Added AI Conversation Analyze(Multi-turn conversation prediction) feature.
+- Added AI Conversation Analyze (Multi-turn conversation prediction) feature.
 
 - Added tests and samples for new features.
 
