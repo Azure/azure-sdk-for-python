@@ -775,10 +775,12 @@ class RedTeam:
         :type parallel_execution: bool
         :param max_parallel_tasks: Maximum number of parallel orchestrator tasks to run (default: 5)
         :type max_parallel_tasks: int
-        :param timeout: The timeout in seconds for API calls (default: 120)
+        :param timeout: The timeout in seconds for API calls (default: 3600)
         :type timeout: int
         :param skip_evals: Whether to skip the evaluation process
         :type skip_evals: bool
+        :param user_agent: Optional custom user agent string for API calls
+        :type user_agent: Optional[str]
         :return: The output from the red team scan
         :rtype: RedTeamResult
         """
