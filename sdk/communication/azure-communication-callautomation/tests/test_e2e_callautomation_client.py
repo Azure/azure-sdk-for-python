@@ -12,7 +12,7 @@ from devtools_testutils import recorded_by_proxy
 
 from callautomation_test_case import CallAutomationRecordedTestCase
 from azure.communication.callautomation._shared.models import CommunicationUserIdentifier, identifier_from_raw_id
-
+from azure.communication.callautomation._generated.models._enums import RecordingState
 
 class TestCallAutomationClientAutomatedLiveTest(CallAutomationRecordedTestCase):
 
