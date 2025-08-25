@@ -2,7 +2,7 @@
 import functools
 import pytest
 
-from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer, recorded_by_proxy
+from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
 from azure.ai.language.conversations import ConversationAnalysisClient, AnalyzeConversationLROPoller
 from azure.core.paging import ItemPaged
 from azure.ai.language.conversations.models import (
@@ -30,7 +30,7 @@ import re
 from azure.core.credentials import AzureKeyCredential
 
 ConversationsPreparer = functools.partial(
-    PowerShellPreparer,
+    EnvironmentVariableLoader,
     "conversations",
     conversations_endpoint="https://Sanitized.cognitiveservices.azure.com/",
     conversations_key="fake_key",
