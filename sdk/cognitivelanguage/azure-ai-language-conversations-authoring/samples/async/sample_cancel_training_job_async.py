@@ -44,29 +44,24 @@ async def sample_cancel_training_job_async():
     async with ConversationAuthoringClient(endpoint, credential=credential) as client:
         project_client = client.get_project_client(project_name)
 
-        captured = {}
-
-        def capture_initial_response(pipeline_response):
-            # capture the raw HTTP response without polling
-            http_resp = pipeline_response.http_response
-            captured["status_code"] = http_resp.status_code
-            captured["headers"] = http_resp.headers
-
-        # send cancel request (no polling)
         poller = await project_client.project.begin_cancel_training_job(
             job_id=job_id,
-            polling=False,
-            raw_response_hook=capture_initial_response,
         )
 
-        # check initial status
-        status = captured.get("status_code")
-        print(f"Cancel Training Job Response Status: {status}")
-
-        # print headers (polling endpoints)
-        headers = captured.get("headers", {}) or {}
-        print(f"Operation-Location: {headers.get('Operation-Location') or headers.get('operation-location')}")
-        print(f"Location: {headers.get('Location') or headers.get('location')}")
+        result = await poller.result()  # TrainingJobResult
+        print(f"Model Label: {result.model_label}")
+        print(f"Training Config Version: {result.training_config_version}")
+        print(f"Training Mode: {result.training_mode}")
+        if result.data_generation_status is not None:
+            print(f"Data Generation Status: {result.data_generation_status.status}")
+            print(f"Data Generation %: {result.data_generation_status.percent_complete}")
+        if result.training_status is not None:
+            print(f"Training Status: {result.training_status.status}")
+            print(f"Training %: {result.training_status.percent_complete}")
+        if result.evaluation_status is not None:
+            print(f"Evaluation Status: {result.evaluation_status.status}")
+            print(f"Evaluation %: {result.evaluation_status.percent_complete}")
+        print(f"Estimated End: {result.estimated_end_on}")
 
 # [END conversation_authoring_cancel_training_job_async]
 
