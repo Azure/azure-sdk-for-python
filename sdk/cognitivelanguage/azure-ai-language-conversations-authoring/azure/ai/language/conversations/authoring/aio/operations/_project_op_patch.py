@@ -95,21 +95,19 @@ class ProjectOperations(ProjectOperationsGenerated):
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[ImportProjectState]:
-        """Triggers a job to import a project. If a project with the same name already exists,
-        the data of that project is replaced.
+        """
+        Triggers a job to import a project. If a project with the same name already exists, the data of that project is replaced.
 
         :param body: The project data to import. Required.
         :type body: JSON
-        :keyword exported_project_format: The format of the exported project file to use. Known values
-        are: "Conversation" and "Luis". Default value is None.
-        :paramtype exported_project_format: str or
-        ~azure.ai.language.conversations.authoring.models.ExportedProjectFormat
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-        Default value is "application/json".
+        :keyword exported_project_format: The format of the exported project file to use. Known values are: "Conversation" and "Luis". Default value is None.
+        :paramtype exported_project_format: str or ~azure.ai.language.conversations.authoring.models.ExportedProjectFormat
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body. Default value is "application/json".
         :paramtype content_type: str
         :return: An instance of AsyncLROPoller that returns ImportProjectState.
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.language.conversations.authoring.models.ImportProjectState]
         :raises ~azure.core.exceptions.HttpResponseError:
+
         """
 
     @overload
@@ -121,21 +119,19 @@ class ProjectOperations(ProjectOperationsGenerated):
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[ImportProjectState]:
-        """Triggers a job to import a project. If a project with the same name already exists,
-        the data of that project is replaced.
+        """
+        Triggers a job to import a project. If a project with the same name already exists, the data of that project is replaced.
 
         :param body: The project data to import. Required.
         :type body: IO[bytes]
-        :keyword exported_project_format: The format of the exported project file to use. Known values
-        are: "Conversation" and "Luis". Default value is None.
-        :paramtype exported_project_format: str or
-        ~azure.ai.language.conversations.authoring.models.ExportedProjectFormat
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-        Default value is "application/json".
+        :keyword exported_project_format: The format of the exported project file to use. Known values are: "Conversation" and "Luis". Default value is None.
+        :paramtype exported_project_format: str or ~azure.ai.language.conversations.authoring.models.ExportedProjectFormat
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body. Default value is "application/json".
         :paramtype content_type: str
         :return: An instance of AsyncLROPoller that returns ImportProjectState.
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.language.conversations.authoring.models.ImportProjectState]
         :raises ~azure.core.exceptions.HttpResponseError:
+
         """
 
     @distributed_trace_async
@@ -146,18 +142,17 @@ class ProjectOperations(ProjectOperationsGenerated):
         exported_project_format: Optional[Union[str, ExportedProjectFormat]] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[ImportProjectState]:
-        """Triggers a job to import a project. If a project with the same name already exists,
-        the data of that project is replaced.
+        """
+        Triggers a job to import a project. If a project with the same name already exists, the data of that project is replaced.
 
         :param body: The project data to import. Required.
         :type body: ~azure.ai.language.conversations.authoring.models.ExportedProject or JSON or IO[bytes]
-        :keyword exported_project_format: The format of the exported project file to use. Known values
-        are: "Conversation" and "Luis".
-        :paramtype exported_project_format: str or
-        ~azure.ai.language.conversations.authoring.models.ExportedProjectFormat
+        :keyword exported_project_format: The format of the exported project file to use. Known values are: "Conversation" and "Luis".
+        :paramtype exported_project_format: str or ~azure.ai.language.conversations.authoring.models.ExportedProjectFormat
         :return: An instance of AsyncLROPoller that returns ImportProjectState.
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.language.conversations.authoring.models.ImportProjectState]
         :raises ~azure.core.exceptions.HttpResponseError:
+
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
@@ -755,67 +750,63 @@ class ProjectOperations(ProjectOperationsGenerated):
 
         :param body: The training input parameters. Required.
         :type body: ~azure.ai.language.conversations.authoring.models.TrainingJobDetails
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body. Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns TrainingJobResult. The TrainingJobResult is
-         compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.ai.language.conversations.authoring.models.TrainingJobResult]
+        :return: An instance of AsyncLROPoller that returns TrainingJobResult. The TrainingJobResult is compatible with MutableMapping.
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.language.conversations.authoring.models.TrainingJobResult]
         :raises ~azure.core.exceptions.HttpResponseError:
-        
+
         """
 
     @overload
     async def begin_train(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[TrainingJobResult]:
-        """Triggers a training job for a project.
+        """
+        Triggers a training job for a project.
 
         :param body: The training input parameters. Required.
         :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body. Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns TrainingJobResult. The TrainingJobResult is
-         compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.ai.language.conversations.authoring.models.TrainingJobResult]
+        :return: An instance of AsyncLROPoller that returns TrainingJobResult. The TrainingJobResult is compatible with MutableMapping.
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.language.conversations.authoring.models.TrainingJobResult]
         :raises ~azure.core.exceptions.HttpResponseError:
+
         """
 
     @overload
     async def begin_train(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[TrainingJobResult]:
-        """Triggers a training job for a project.
+        """
+        Triggers a training job for a project.
 
         :param body: The training input parameters. Required.
         :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body. Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns TrainingJobResult. The TrainingJobResult is
-         compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.ai.language.conversations.authoring.models.TrainingJobResult]
+        :return: An instance of AsyncLROPoller that returns TrainingJobResult. The TrainingJobResult is compatible with MutableMapping.
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.language.conversations.authoring.models.TrainingJobResult]
         :raises ~azure.core.exceptions.HttpResponseError:
+
         """
 
     @distributed_trace_async
     async def begin_train(  # type: ignore[override]
         self, body: Union[TrainingJobDetails, JSON, IO[bytes]], *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[TrainingJobResult]:
-        """Begin training without requiring project_name explicitly.
-        
+        """
+        Triggers a training job for a project.
+
         :param body: The training job request payload.
         :type body: ~azure.ai.language.conversations.authoring.models.TrainingJobDetails or JSON or IO[bytes]
-        :keyword content_type: The content type of the request body. Default is ``"application/json"``.
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON or binary body. Default value is "application/json".
         :paramtype content_type: str
         :return: An instance of AsyncLROPoller that returns TrainingJobResult.
-        :rtype: ~azure.core.polling.AsyncLROPoller[
-            ~azure.ai.language.conversations.authoring.models.TrainingJobResult
-        ]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.language.conversations.authoring.models.TrainingJobResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
         """
         return await super()._begin_train(
             project_name=self._project_name, body=body, content_type=content_type, **kwargs

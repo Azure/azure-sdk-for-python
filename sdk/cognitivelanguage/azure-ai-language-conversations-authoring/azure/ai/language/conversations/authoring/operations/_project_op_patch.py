@@ -71,22 +71,18 @@ class ProjectOperations(ProjectOperationsGenerated):
         **kwargs: Any
     ) -> LROPoller[ImportProjectState]:
         """
-        Triggers a job to import a project. If a project with the same name already exists,
-        the data of that project is replaced.
+        Triggers a job to import a project. If a project with the same name already exists, the data of that project is replaced.
 
         :param body: The project data to import. Required.
         :type body: ~azure.ai.language.conversations.authoring.models.ExportedProject
-        :keyword exported_project_format: The format of the exported project file to use. Known values
-        are: "Conversation" and "Luis". Default value is None.
-        :paramtype exported_project_format: str or
-        ~azure.ai.language.conversations.authoring.models.ExportedProjectFormat
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-        Default value is "application/json".
+        :keyword exported_project_format: The format of the exported project file to use. Known values are: "Conversation" and "Luis". Default value is None.
+        :paramtype exported_project_format: str or ~azure.ai.language.conversations.authoring.models.ExportedProjectFormat
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body. Default value is "application/json".
         :paramtype content_type: str
         :return: An instance of LROPoller that returns ImportProjectState.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.language.conversations.authoring.models.ImportProjectState]
         :raises ~azure.core.exceptions.HttpResponseError:
-        
+
         """
 
     @overload
@@ -98,21 +94,19 @@ class ProjectOperations(ProjectOperationsGenerated):
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[ImportProjectState]:
-        """Triggers a job to import a project. If a project with the same name already exists,
-        the data of that project is replaced.
+        """
+        Triggers a job to import a project. If a project with the same name already exists, the data of that project is replaced.
 
         :param body: The project data to import. Required.
         :type body: JSON
-        :keyword exported_project_format: The format of the exported project file to use. Known values
-        are: "Conversation" and "Luis". Default value is None.
-        :paramtype exported_project_format: str or
-        ~azure.ai.language.conversations.authoring.models.ExportedProjectFormat
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-        Default value is "application/json".
+        :keyword exported_project_format: The format of the exported project file to use. Known values are: "Conversation" and "Luis". Default value is None.
+        :paramtype exported_project_format: str or ~azure.ai.language.conversations.authoring.models.ExportedProjectFormat
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body. Default value is "application/json".
         :paramtype content_type: str
         :return: An instance of LROPoller that returns ImportProjectState.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.language.conversations.authoring.models.ImportProjectState]
         :raises ~azure.core.exceptions.HttpResponseError:
+
         """
 
     @overload
@@ -124,21 +118,19 @@ class ProjectOperations(ProjectOperationsGenerated):
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[ImportProjectState]:
-        """Triggers a job to import a project. If a project with the same name already exists,
-        the data of that project is replaced.
+        """
+        Triggers a job to import a project. If a project with the same name already exists, the data of that project is replaced.
 
         :param body: The project data to import. Required.
         :type body: IO[bytes]
-        :keyword exported_project_format: The format of the exported project file to use. Known values
-        are: "Conversation" and "Luis". Default value is None.
-        :paramtype exported_project_format: str or
-        ~azure.ai.language.conversations.authoring.models.ExportedProjectFormat
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-        Default value is "application/json".
+        :keyword exported_project_format: The format of the exported project file to use. Known values are: "Conversation" and "Luis". Default value is None.
+        :paramtype exported_project_format: str or ~azure.ai.language.conversations.authoring.models.ExportedProjectFormat
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body. Default value is "application/json".
         :paramtype content_type: str
         :return: An instance of LROPoller that returns ImportProjectState.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.language.conversations.authoring.models.ImportProjectState]
         :raises ~azure.core.exceptions.HttpResponseError:
+
         """
 
     @distributed_trace
@@ -149,18 +141,17 @@ class ProjectOperations(ProjectOperationsGenerated):
         exported_project_format: Optional[Union[str, ExportedProjectFormat]] = None,
         **kwargs: Any
     ) -> LROPoller[ImportProjectState]:
-        """Triggers a job to import a project. If a project with the same name already exists,
-        the data of that project is replaced.
+        """
+        Triggers a job to import a project. If a project with the same name already exists, the data of that project is replaced.
 
         :param body: The project data to import. Required.
         :type body: ~azure.ai.language.conversations.authoring.models.ExportedProject or JSON or IO[bytes]
-        :keyword exported_project_format: The format of the exported project file to use. Known values
-        are: "Conversation" and "Luis".
-        :paramtype exported_project_format: str or
-        ~azure.ai.language.conversations.authoring.models.ExportedProjectFormat
+        :keyword exported_project_format: The format of the exported project file to use. Known values are: "Conversation" and "Luis".
+        :paramtype exported_project_format: str or ~azure.ai.language.conversations.authoring.models.ExportedProjectFormat
         :return: An instance of LROPoller that returns ImportProjectState.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.language.conversations.authoring.models.ImportProjectState]
         :raises ~azure.core.exceptions.HttpResponseError:
+
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
