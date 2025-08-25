@@ -67,6 +67,14 @@ from azure.monitor.opentelemetry._utils.instrumentation import (
     get_dist_dependency_conflicts,
 )
 
+# Django imports for middleware patching (can be mocked for testing)
+try:
+    import django
+    from django.conf import settings as django_settings
+except ImportError:
+    django = None
+    django_settings = None
+
 _logger = getLogger(__name__)
 
 
@@ -374,9 +382,41 @@ def _setup_web_snippet(configurations: Dict[str, ConfigurationValue]):
 def _patch_django_middleware(connection_string: str):
     """Automatically patch Django middleware if Django is available and configured."""
     try:
-        # Check if Django is available
-        import django  # type: ignore
-        from django.conf import settings  # type: ignore
+        _logger.debug("Starting Django middleware patching")
+        
+        # Check if Django is available (using module-level imports for mockability)
+        if django is None:
+            _logger.debug("Django not available - skipping Django middleware patching")
+            return
+        
+        _logger.debug("Django module available, trying to get settings")
+        
+        # For tests, django will be mocked and django.conf.settings will be available
+        # For production, django.conf.settings will be the real Django settings
+        # Try both approaches to support mocking and real Django
+        settings = None
+        try:
+            # First try to use mocked django.conf.settings (for tests)
+            if hasattr(django, 'conf') and hasattr(django.conf, 'settings'):
+                settings = django.conf.settings
+                _logger.debug("Using mocked django.conf.settings")
+        except Exception as e:
+            _logger.debug("Failed to get mocked settings: %s", e)
+            
+        if settings is None:
+            try:
+                # Fallback to importing django.conf.settings (for production)
+                from django.conf import settings  # pylint: disable=import-outside-toplevel
+                _logger.debug("Using real django.conf.settings")
+            except ImportError as e:
+                _logger.debug("Django not available - skipping Django middleware patching: %s", e)
+                return
+        
+        if settings is None:
+            _logger.debug("Django settings not available - skipping Django middleware patching")
+            return
+        
+        _logger.debug("Django settings obtained, checking configuration")
         
         # Check if Django is configured
         if not hasattr(settings, 'MIDDLEWARE'):

@@ -1,4 +1,5 @@
 -e ../../../tools/azure-sdk-tools
+setuptools
 pytest
 django
 fastapi-slim
@@ -6,3 +7,4 @@ flask
 psycopg2-binary
 requests
 urllib3
+brotli
