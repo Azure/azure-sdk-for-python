@@ -1,5 +1,13 @@
 # Release History
 
+## 2.1.0b4 (2025-08-14)
+
+### Features Added
+
+  - Model `ManagedClusterProperties` added property `enable_outbound_only_node_types`
+  - Model `NodeTypeProperties` added property `is_outbound_only`
+  - Model `ServiceEndpoint` added property `network_identifier`
+
 ## 2.1.0b3 (2025-06-26)
 
 ### Features Added
