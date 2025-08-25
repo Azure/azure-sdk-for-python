@@ -842,7 +842,6 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
         return AsyncItemPaged(
             command,
             prefix=name_starts_with,
-            start_from=start_from,
             results_per_page=results_per_page,
             container=self.container_name,
             page_iterator_class=BlobPropertiesPaged

@@ -855,7 +855,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         )
         return ItemPaged(
             command, prefix=name_starts_with, results_per_page=results_per_page, container=self.container_name,
-            start_from=start_from, page_iterator_class=BlobPropertiesPaged)
+           page_iterator_class=BlobPropertiesPaged)
 
     @distributed_trace
     def list_blob_names(self, **kwargs: Any) -> ItemPaged[str]:
