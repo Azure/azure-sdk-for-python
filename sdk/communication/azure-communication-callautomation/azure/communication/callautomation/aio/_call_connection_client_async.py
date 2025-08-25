@@ -253,7 +253,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         """
         user_custom_context = (
             CustomCallingContext(voip_headers=voip_headers, sip_headers=sip_headers,
-                                 teams_phone_call_details=teams_phone_call_details)
+                                 teams_phone_call_details=teams_phone_call_details._to_generated() if teams_phone_call_details else None)
             if sip_headers or voip_headers or teams_phone_call_details
             else None
         )
@@ -323,16 +323,19 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
 
         user_custom_context = None
         if sip_headers or voip_headers or teams_phone_call_details:
-            user_custom_context = CustomCallingContext(voip_headers=voip_headers, sip_headers=sip_headers,
-                                                       teams_phone_call_details=teams_phone_call_details)
+            user_custom_context = CustomCallingContext(
+                voip_headers=voip_headers,
+                sip_headers=sip_headers,
+                teams_phone_call_details=teams_phone_call_details._to_generated() if teams_phone_call_details else None,
+            )
         add_participant_request = AddParticipantRequest(
             participant_to_add=serialize_identifier(target_participant),
             source_caller_id_number=serialize_phone_identifier(source_caller_id_number),
             source_display_name=source_display_name,
-            invitation_timeout_in_seconds=invitation_timeout,
+            invitation_timeout_in_seconds=invitation_timeout,   
             operation_context=operation_context,
             operation_callback_uri=operation_callback_url,
-            custom_calling_context=user_custom_context,
+            custom_calling_context=user_custom_context, 
         )
         process_repeatability_first_sent(kwargs)
         response = await self._call_connection_client.add_participant(
