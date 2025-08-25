@@ -162,7 +162,7 @@ class PathPropertiesPaged(PageIterator):
         path: Optional[str] = None,
         max_results: Optional[int] = None,
         continuation_token: Optional[str] = None,
-        upn: Optional[str] = None,
+        upn: Optional[str] = None
     ) -> None:
         super(PathPropertiesPaged, self).__init__(
             get_next=self._get_next_cb,
