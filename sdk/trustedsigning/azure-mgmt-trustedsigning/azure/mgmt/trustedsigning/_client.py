@@ -72,6 +72,7 @@ class TrustedSigningMgmtClient:  # pylint: disable=client-accepts-api-version-ke
                 self._config.redirect_policy,
                 self._config.retry_policy,
                 self._config.authentication_policy,
+                policies.InvokePolicy(acquire_policy_token_hook=self._acquire_policy_token, **kwargs),
                 self._config.custom_hook_policy,
                 self._config.logging_policy,
                 policies.DistributedTracingPolicy(**kwargs),
@@ -79,6 +80,26 @@ class TrustedSigningMgmtClient:  # pylint: disable=client-accepts-api-version-ke
                 self._config.http_logging_policy,
             ]
         self._client: ARMPipelineClient = ARMPipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
+
+        self._internal_client: ARMPipelineClient = ARMPipelineClient(
+            base_url=base_url,
+            policies=[
+                policies.RequestIdPolicy(**kwargs),
+                self._config.headers_policy,
+                self._config.user_agent_policy,
+                self._config.proxy_policy,
+                policies.ContentDecodePolicy(**kwargs),
+                ARMAutoResourceProviderRegistrationPolicy(),
+                self._config.redirect_policy,
+                self._config.retry_policy,
+                self._config.authentication_policy,
+                self._config.logging_policy,
+                policies.DistributedTracingPolicy(**kwargs),
+                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
+                self._config.http_logging_policy,
+            ],
+            **kwargs
+        )
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
@@ -90,6 +111,50 @@ class TrustedSigningMgmtClient:  # pylint: disable=client-accepts-api-version-ke
         self.certificate_profiles = CertificateProfilesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+
+    def _acquire_policy_token(self, request: PipelineRequest) -> None:
+        import json
+
+        content = getattr(request.http_request, "content", None)
+        if content and isinstance(content, str):
+            try:
+                content = json.loads(content)
+            except Exception:
+                pass
+
+        # try to get subscriptionId from request.http_request.url
+        subscription_id = None
+        if "subscriptions/" in request.http_request.url:
+            subscription_id = request.http_request.url.split("subscriptions/")[1].split("/")[0]
+        if not subscription_id:
+            subscription_id = self._config.subscription_id
+
+        acquire_policy_request = HttpRequest(
+            method="POST",
+            url="/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/acquirePolicyToken".format(
+                subscriptionId=subscription_id
+            ),
+            params={"api-version": "2025-03-01"},
+            headers={"Accept": "application/json", "Content-Type": "application/json", "x-ms-force-sync": "true"},
+            content=json.dumps(
+                {
+                    "operations": {
+                        "uri": request.http_request.url,
+                        "method": request.http_request.method,
+                        "content": content,
+                    }
+                }
+            ),
+        )
+
+        policy_response = self._internal_client.send_request(acquire_policy_request)
+        if policy_response.status_code == 200:
+            result = policy_response.json()
+            if result.get("result") == "Succeeded" and result.get("token"):
+                request.http_request.headers["x-ms-policy-external-evaluations"] = result["token"]
+                return
+
+        raise Exception("Failed to acquire policy token: {}".format(policy_response.text()))
 
     def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
