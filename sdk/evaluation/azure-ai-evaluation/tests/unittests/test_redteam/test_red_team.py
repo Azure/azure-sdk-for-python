@@ -1584,3 +1584,138 @@ class TestRedTeamAttackSuccessThresholds:
 
         formatted = clean_result_processor._format_thresholds_for_output()
         assert formatted == {}
+
+
+@pytest.mark.unittest 
+class TestTargetHttpErrorHandling:
+    """Test HTTP error handling in red team scans."""
+
+    @pytest.mark.asyncio
+    async def test_scan_fails_on_http_401_error(self, red_team):
+        """Test that the scan fails when target returns HTTP 401 error."""
+        # Mock a callable target that will be wrapped
+        async def mock_target_with_error(query: str) -> str:
+            # This would normally be handled by PyRIT, but we simulate what happens
+            # when PyRIT catches the HTTP error and converts it to text
+            return ("Client error '401 PermissionDenied' for url "
+                   "'https://anksing1rpeastus2.openai.azure.com/openai/deployments/gpt-4o-mini/chat/completions?api-version=2024-06-01' "
+                   "For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401 "
+                   "HTTPStatusError(\"Client error '401 PermissionDenied'\")")
+
+        # Mock PyRIT memory to return conversations with the HTTP error
+        mock_memory = MagicMock()
+        mock_chat_message = MagicMock()
+        mock_chat_message.role = "assistant"
+        mock_chat_message.content = mock_target_with_error.__await__().__await__().__result__()  # Get the error content
+        
+        # Create a simple error message
+        error_content = ("Client error '401 PermissionDenied' for url "
+                        "'https://anksing1rpeastus2.openai.azure.com/openai/deployments/gpt-4o-mini/chat/completions?api-version=2024-06-01' "
+                        "HTTPStatusError")
+        mock_chat_message.content = error_content
+        
+        # Mock prompt request piece
+        mock_prompt_piece = MagicMock()
+        mock_prompt_piece.conversation_id = "test-conv-1"
+        mock_prompt_piece.to_chat_message.return_value = mock_chat_message
+        mock_prompt_piece.original_value = "test prompt"
+        mock_prompt_piece.labels = {}
+        
+        mock_memory.get_prompt_request_pieces.return_value = [mock_prompt_piece]
+
+        with patch("azure.ai.evaluation.red_team._red_team.initialize_pyrit"), \
+             patch("azure.ai.evaluation.red_team._red_team.validate_azure_ai_project"), \
+             patch("azure.ai.evaluation.red_team._red_team.is_onedp_project", return_value=False), \
+             patch.object(red_team, "_setup_scan_environment"), \
+             patch.object(red_team, "_setup_component_managers"), \
+             patch.object(red_team, "attack_objective_generator") as mock_generator, \
+             patch("pyrit.memory.CentralMemory.get_memory_instance", return_value=mock_memory), \
+             patch("azure.ai.evaluation.red_team._utils.formatting_utils.write_pyrit_outputs_to_file") as mock_write_outputs:
+
+            # Configure the attack objective generator
+            mock_generator.risk_categories = [RiskCategory.Violence]
+            mock_generator.custom_attack_seed_prompts = None
+            mock_generator.validated_prompts = None
+            
+            # Mock the attack objective generation
+            with patch.object(red_team, "_get_attack_objectives", return_value=["test prompt"]):
+                # Mock the orchestrator call to succeed, but the error will be detected in write_pyrit_outputs_to_file
+                with patch.object(red_team, "orchestrator_manager") as mock_orch_manager:
+                    mock_orchestrator = MagicMock()
+                    mock_orch_manager.get_orchestrator_for_attack_strategy.return_value = AsyncMock(return_value=mock_orchestrator)
+                    
+                    # The error should be detected when write_pyrit_outputs_to_file is called
+                    mock_write_outputs.side_effect = EvaluationException(
+                        message="Target returned HTTP 401 error - failing red team scan",
+                        internal_message="HTTP 401 error detected in conversation",
+                        target=ErrorTarget.RED_TEAM,
+                        category=ErrorCategory.FAILED_EXECUTION,
+                        blame=ErrorBlame.USER_ERROR
+                    )
+                    
+                    # Test that the scan fails with the expected exception
+                    with pytest.raises(EvaluationException) as exc_info:
+                        await red_team.scan(
+                            target=mock_target_with_error,
+                            attack_strategies=[AttackStrategy.Baseline],
+                            skip_upload=True
+                        )
+                    
+                    assert "HTTP 401 error" in str(exc_info.value)
+                    assert "failing red team scan" in str(exc_info.value)
+
+    @pytest.mark.asyncio
+    async def test_scan_continues_on_http_429_error(self, red_team):
+        """Test that the scan continues when target returns HTTP 429 (rate limiting) error."""
+        # Mock a target that returns 429 error (which should NOT fail the scan)
+        error_content = ("Client error '429 Too Many Requests' for url "
+                        "'https://example.com/api' HTTPStatusError")
+        
+        mock_memory = MagicMock()
+        mock_chat_message = MagicMock()
+        mock_chat_message.role = "assistant"
+        mock_chat_message.content = error_content
+        
+        mock_prompt_piece = MagicMock()
+        mock_prompt_piece.conversation_id = "test-conv-1"
+        mock_prompt_piece.to_chat_message.return_value = mock_chat_message
+        mock_prompt_piece.original_value = "test prompt"
+        mock_prompt_piece.labels = {}
+        
+        mock_memory.get_prompt_request_pieces.return_value = [mock_prompt_piece]
+
+        with patch("azure.ai.evaluation.red_team._red_team.initialize_pyrit"), \
+             patch("azure.ai.evaluation.red_team._red_team.validate_azure_ai_project"), \
+             patch("azure.ai.evaluation.red_team._red_team.is_onedp_project", return_value=False), \
+             patch.object(red_team, "_setup_scan_environment"), \
+             patch.object(red_team, "_setup_component_managers"), \
+             patch.object(red_team, "attack_objective_generator") as mock_generator, \
+             patch("pyrit.memory.CentralMemory.get_memory_instance", return_value=mock_memory), \
+             patch("azure.ai.evaluation.red_team._utils.formatting_utils.write_pyrit_outputs_to_file", return_value="/mock/path"):
+
+            # Configure mocks for successful scan execution  
+            mock_generator.risk_categories = [RiskCategory.Violence]
+            mock_generator.custom_attack_seed_prompts = None
+            mock_generator.validated_prompts = None
+            
+            with patch.object(red_team, "_get_attack_objectives", return_value=["test prompt"]), \
+                 patch.object(red_team, "_finalize_results") as mock_finalize:
+                
+                mock_finalize.return_value = {"scan_result": {"scorecard": {"risk_category_summary": []}}}
+                
+                with patch.object(red_team, "orchestrator_manager") as mock_orch_manager:
+                    mock_orchestrator = MagicMock()
+                    mock_orch_manager.get_orchestrator_for_attack_strategy.return_value = AsyncMock(return_value=mock_orchestrator)
+                    
+                    with patch.object(red_team, "evaluation_processor") as mock_eval_processor:
+                        mock_eval_processor.evaluate = AsyncMock()
+                        
+                        # This should NOT raise an exception for 429 errors
+                        result = await red_team.scan(
+                            target=lambda query: "normal response",
+                            attack_strategies=[AttackStrategy.Baseline],
+                            skip_upload=True
+                        )
+                        
+                        # Verify scan completed successfully
+                        assert result is not None

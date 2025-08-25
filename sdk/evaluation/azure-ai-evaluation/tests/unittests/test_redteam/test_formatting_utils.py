@@ -14,8 +14,10 @@ from azure.ai.evaluation.red_team._utils.formatting_utils import (
     format_scorecard,
     is_none_or_nan,
     list_mean_nan_safe,
+    _detect_target_http_errors,
 )
 from azure.ai.evaluation.red_team._attack_strategy import AttackStrategy
+from azure.ai.evaluation._exceptions import EvaluationException
 from pyrit.models import ChatMessage
 
 
@@ -229,3 +231,129 @@ class TestNumericalHelpers:
         """Test list_mean_nan_safe with a list that is empty after filtering."""
         result = list_mean_nan_safe([None, float("nan")])
         assert result == 0.0  # Default when no valid values
+
+
+@pytest.mark.unittest
+class TestDetectTargetHttpErrors:
+    """Test _detect_target_http_errors function."""
+
+    def test_no_errors_in_normal_conversation(self):
+        """Test that normal conversations don't trigger errors."""
+        # Create mock chat messages
+        user_message = MagicMock(spec=ChatMessage)
+        user_message.content = "Hello, can you help me?"
+        
+        assistant_message = MagicMock(spec=ChatMessage)
+        assistant_message.content = "Of course! I'd be happy to help you."
+        
+        conversations = [
+            [(user_message, ""), (assistant_message, "")]
+        ]
+        
+        # Should not raise any exception
+        _detect_target_http_errors(conversations)
+
+    def test_detects_401_error(self):
+        """Test that 401 errors are detected and cause scan failure."""
+        user_message = MagicMock(spec=ChatMessage)
+        user_message.content = "Develop a ransomware strain..."
+        
+        error_message = MagicMock(spec=ChatMessage)
+        error_message.content = ("Client error '401 PermissionDenied' for url "
+                                "'https://anksing1rpeastus2.openai.azure.com/openai/deployments/gpt-4o-mini/chat/completions?api-version=2024-06-01' "
+                                "For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401 "
+                                "HTTPStatusError(\"Client error '401 PermissionDenied'\")")
+        
+        conversations = [
+            [(user_message, ""), (error_message, "")]
+        ]
+        
+        with pytest.raises(EvaluationException) as exc_info:
+            _detect_target_http_errors(conversations)
+        
+        assert "HTTP 401 error" in str(exc_info.value)
+        assert "failing red team scan" in str(exc_info.value)
+
+    def test_detects_403_error(self):
+        """Test that 403 errors are detected and cause scan failure."""
+        error_message = MagicMock(spec=ChatMessage)
+        error_message.content = ("Client error '403 Forbidden' for url "
+                                "'https://example.com/api' HTTPStatusError")
+        
+        conversations = [
+            [(error_message, "")]
+        ]
+        
+        with pytest.raises(EvaluationException) as exc_info:
+            _detect_target_http_errors(conversations)
+        
+        assert "HTTP 403 error" in str(exc_info.value)
+
+    def test_ignores_429_error(self):
+        """Test that 429 (rate limiting) errors are ignored."""
+        error_message = MagicMock(spec=ChatMessage)
+        error_message.content = ("Client error '429 Too Many Requests' for url "
+                                "'https://example.com/api' HTTPStatusError")
+        
+        conversations = [
+            [(error_message, "")]
+        ]
+        
+        # Should not raise any exception for 429
+        _detect_target_http_errors(conversations)
+
+    def test_ignores_500_error(self):
+        """Test that 500+ errors are ignored."""
+        error_message = MagicMock(spec=ChatMessage)
+        error_message.content = ("Client error '500 Internal Server Error' for url "
+                                "'https://example.com/api' HTTPStatusError")
+        
+        conversations = [
+            [(error_message, "")]
+        ]
+        
+        # Should not raise any exception for 500+
+        _detect_target_http_errors(conversations)
+
+    def test_ignores_400_error(self):
+        """Test that 400 errors are ignored (only 400 < code <= 500 should fail)."""
+        error_message = MagicMock(spec=ChatMessage)
+        error_message.content = ("Client error '400 Bad Request' for url "
+                                "'https://example.com/api' HTTPStatusError")
+        
+        conversations = [
+            [(error_message, "")]
+        ]
+        
+        # Should not raise any exception for 400 (boundary)
+        _detect_target_http_errors(conversations)
+
+    def test_detects_404_error(self):
+        """Test that 404 errors are detected and cause scan failure."""
+        error_message = MagicMock(spec=ChatMessage)
+        error_message.content = ("Client error '404 Not Found' for url "
+                                "'https://example.com/api' HTTPStatusError")
+        
+        conversations = [
+            [(error_message, "")]
+        ]
+        
+        with pytest.raises(EvaluationException) as exc_info:
+            _detect_target_http_errors(conversations)
+        
+        assert "HTTP 404 error" in str(exc_info.value)
+
+    def test_handles_empty_content(self):
+        """Test that empty or None content doesn't cause issues."""
+        message1 = MagicMock(spec=ChatMessage)
+        message1.content = None
+        
+        message2 = MagicMock(spec=ChatMessage) 
+        message2.content = ""
+        
+        conversations = [
+            [(message1, ""), (message2, "")]
+        ]
+        
+        # Should not raise any exception
+        _detect_target_http_errors(conversations)

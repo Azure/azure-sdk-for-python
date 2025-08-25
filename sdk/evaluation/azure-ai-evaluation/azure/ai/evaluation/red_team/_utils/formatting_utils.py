@@ -7,12 +7,50 @@ import math
 import itertools
 import os
 import logging
+import re
 from typing import Dict, List, Union, Any
 from pathlib import Path
 from pyrit.models import ChatMessage
 from pyrit.memory import CentralMemory
 from .._attack_strategy import AttackStrategy
 from .._red_team_result import RedTeamResult
+from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
+
+
+def _detect_target_http_errors(conversations: List[List]) -> None:
+    """Detect HTTP errors in conversation content that should fail the scan.
+    
+    Checks conversation messages for HTTP errors with status codes 400 < code <= 500 
+    (except 429) and raises an exception to fail the scan.
+    
+    :param conversations: List of conversations to check
+    :type conversations: List[List]
+    :raises EvaluationException: When target HTTP errors are detected
+    """
+    # Pattern to match "Client error 'XXX" where XXX is the status code
+    client_error_pattern = re.compile(r"Client error '(\d{3})")
+    
+    for conversation in conversations:
+        for message, context in conversation:
+            content = message.content
+            if not content:
+                continue
+                
+            # Check if this looks like an HTTP error response
+            if "Client error '" in content and "HTTPStatusError" in content:
+                # Extract status code
+                match = client_error_pattern.search(content)
+                if match:
+                    status_code = int(match.group(1))
+                    # Fail scan for 4xx errors except 429 (rate limiting)
+                    if 400 < status_code <= 500 and status_code != 429:
+                        raise EvaluationException(
+                            message=f"Target returned HTTP {status_code} error - failing red team scan",
+                            internal_message=f"HTTP {status_code} error detected in conversation: {content[:200]}...",
+                            target=ErrorTarget.RED_TEAM,
+                            category=ErrorCategory.FAILED_EXECUTION, 
+                            blame=ErrorBlame.USER_ERROR
+                        )
 
 
 def message_to_dict(message: ChatMessage, context: str = None) -> Dict[str, str]:
@@ -199,6 +237,9 @@ def write_pyrit_outputs_to_file(
         ]
         for conv_id, group in itertools.groupby(prompts_request_pieces, key=lambda x: x.conversation_id)
     ]
+    
+    # Check for target HTTP errors that should fail the scan
+    _detect_target_http_errors(conversations)
 
     # Check if we should overwrite existing file with more conversations
     if os.path.exists(output_path):
