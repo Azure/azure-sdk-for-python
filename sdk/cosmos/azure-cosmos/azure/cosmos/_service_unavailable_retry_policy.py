@@ -1,35 +1,28 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
-"""Internal class for timeout failover retry policy implementation in the Azure
+"""Internal class for service unavailable retry policy implementation in the Azure
 Cosmos database service.
 """
 from azure.cosmos.documents import _OperationType
-from azure.cosmos._base import try_ppaf_failover_threshold
 
-# cspell:ignore PPAF, ppaf
+#cspell:ignore ppaf
 
-class _TimeoutFailoverRetryPolicy(object):
+class _ServiceUnavailableRetryPolicy(object):
 
     def __init__(self, connection_policy, global_endpoint_manager, pk_range_wrapper, *args):
         self.retry_after_in_milliseconds = 500
-        self.args = args
-        self.request = args[0] if args else None
-
         self.global_endpoint_manager = global_endpoint_manager
         self.pk_range_wrapper = pk_range_wrapper
-        # If an account only has 1 region, then we still want to retry once on the same region
-        # We want this to be the default retry attempts as paging through a query means there are requests without
-        # a request object
-        self._max_retry_attempt_count = max(2, len(self.global_endpoint_manager.location_cache
-                                            .read_regional_routing_contexts))
-       # If the request is a write operation, we only want to retry once if retry write is enabled
-        if self.request and _OperationType.IsWriteOperation(self.request.operation_type):
-            self._max_retry_attempt_count = max(2, len(
-                self.global_endpoint_manager.location_cache.write_regional_routing_contexts))
         self.retry_count = 0
         self.connection_policy = connection_policy
         self.request = args[0] if args else None
+        # If an account only has 1 region, then we still want to retry once on the same region
+        self._max_retry_attempt_count = max(2, len(self.global_endpoint_manager.location_cache
+                                                   .read_regional_routing_contexts))
+        if self.request and _OperationType.IsWriteOperation(self.request.operation_type):
+            self._max_retry_attempt_count = max(2, len(
+                self.global_endpoint_manager.location_cache.write_regional_routing_contexts))
 
     def ShouldRetry(self, _exception):
         """Returns true if the request should retry based on the passed-in exception.
@@ -38,12 +31,7 @@ class _TimeoutFailoverRetryPolicy(object):
         :returns: a boolean stating whether the request should be retried
         :rtype: bool
         """
-        try_ppaf_failover_threshold(self.global_endpoint_manager, self.pk_range_wrapper, self.request)
-
-        # we retry only if the request is a read operation or if it is a write operation with retry enabled
-        if self.request and not self.is_operation_retryable():
-            return False
-
+        # writes are retried for 503s
         if not self.connection_policy.EnableEndpointDiscovery:
             return False
 
@@ -52,10 +40,19 @@ class _TimeoutFailoverRetryPolicy(object):
         if self.retry_count >= self._max_retry_attempt_count:
             return False
 
-        # second check here ensures we only do cross-regional retries for read requests
-        # non-idempotent write retries should only be retried once, using preferred locations if available (MM)
-        if self.request and (self.is_operation_retryable()
-                             or self.global_endpoint_manager.can_use_multiple_write_locations(self.request)):
+        if self.request:
+            # If per partition automatic failover is applicable, we mark the current endpoint as unavailable
+            # and resolve the service endpoint for the partition range - otherwise, continue the default retry logic
+            if self.global_endpoint_manager.is_per_partition_automatic_failover_applicable(self.request):
+                partition_level_info = self.global_endpoint_manager.partition_range_to_failover_info[
+                    self.pk_range_wrapper]
+                location = self.global_endpoint_manager.location_cache.get_location_from_endpoint(
+                    str(self.request.location_endpoint_to_route))
+                regional_context = (self.global_endpoint_manager.location_cache.
+                                    account_read_regional_routing_contexts_by_location.get(location).primary_endpoint)
+                partition_level_info.unavailable_regional_endpoints[location] = regional_context
+                self.global_endpoint_manager.resolve_service_endpoint_for_partition(self.request, self.pk_range_wrapper)
+                return True
             location_endpoint = self.resolve_next_region_service_endpoint()
             self.request.route_to_location(location_endpoint)
         return True
@@ -72,8 +69,3 @@ class _TimeoutFailoverRetryPolicy(object):
         # Resolve the endpoint for the request and pin the resolution to the resolved endpoint
         # This enables marking the endpoint unavailability on endpoint failover/unreachability
         return self.global_endpoint_manager.resolve_service_endpoint_for_partition(self.request, self.pk_range_wrapper)
-
-    def is_operation_retryable(self):
-        if _OperationType.IsReadOnlyOperation(self.request.operation_type):
-            return True
-        return self.request.retry_write

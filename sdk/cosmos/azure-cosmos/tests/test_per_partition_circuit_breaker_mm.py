@@ -50,13 +50,22 @@ def read_operations_and_errors():
 
     return params
 
-def write_operations_and_errors():
+def write_operations_and_errors(error_list=None):
     write_operations = [CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH]
-    errors = create_errors()
+    errors = error_list or create_errors()
     params = []
     for write_operation in write_operations:
         for error in errors:
             params.append((write_operation, error))
+
+    return params
+
+def write_operations_and_boolean():
+    write_operations = [CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH]
+    params = []
+    for write_operation in write_operations:
+        for boolean in [True, False]:
+            params.append((write_operation, boolean))
 
     return params
 
@@ -69,9 +78,9 @@ def operations():
 
     return operations
 
-def create_errors():
+def create_errors(errors=None):
     errors = []
-    error_codes = [408, 500, 502, 503]
+    error_codes = [408, 500, 502, 504]
     for error_code in error_codes:
         errors.append(CosmosHttpResponseError(
             status_code=error_code,
@@ -97,7 +106,8 @@ def validate_unhealthy_partitions(global_endpoint_manager,
 def validate_response_uri(response, expected_uri):
     request = response.get_response_headers()["_request"]
     assert request.url.startswith(expected_uri)
-def perform_write_operation(operation, container, fault_injection_container, doc_id, pk, expected_uri):
+
+def perform_write_operation(operation, container, fault_injection_container, doc_id, pk, expected_uri=None):
     doc = {'id': doc_id,
            'pk': pk,
            'name': 'sample document',
@@ -107,7 +117,7 @@ def perform_write_operation(operation, container, fault_injection_container, doc
     elif operation == UPSERT:
         resp = fault_injection_container.upsert_item(body=doc)
     elif operation == REPLACE:
-        container.create_item(body=doc)
+        container.upsert_item(body=doc)
         sleep(1)
         new_doc = {'id': doc_id,
                    'pk': pk,
@@ -115,11 +125,11 @@ def perform_write_operation(operation, container, fault_injection_container, doc
                    'key': 'value'}
         resp = fault_injection_container.replace_item(item=doc['id'], body=new_doc)
     elif operation == DELETE:
-        container.create_item(body=doc)
+        container.upsert_item(body=doc)
         sleep(1)
         resp = fault_injection_container.delete_item(item=doc['id'], partition_key=doc['pk'])
     elif operation == PATCH:
-        container.create_item(body=doc)
+        container.upsert_item(body=doc)
         sleep(1)
         operations = [{"op": "incr", "path": "/company", "value": 3}]
         resp = fault_injection_container.patch_item(item=doc['id'], partition_key=doc['pk'], patch_operations=operations)
@@ -133,9 +143,9 @@ def perform_write_operation(operation, container, fault_injection_container, doc
         resp = fault_injection_container.execute_item_batch(batch_operations, partition_key=doc['pk'])
     # this will need to be emulator only
     elif operation == DELETE_ALL_ITEMS_BY_PARTITION_KEY:
-        container.create_item(body=doc)
+        container.upsert_item(body=doc)
         resp = fault_injection_container.delete_all_items_by_partition_key(pk)
-    if resp:
+    if resp and expected_uri:
         validate_response_uri(resp, expected_uri)
 
 def perform_read_operation(operation, container, doc_id, pk, expected_uri):

@@ -6,9 +6,11 @@ Cosmos database service. Exceptions caught in this policy have had some issue re
 from the service, and as such we do not know what the output of the operation was. As such, we
 only do cross regional retries for read operations.
 """
+#cspell:ignore PPAF, ppaf
 
 import logging
 from azure.cosmos.documents import _OperationType
+from azure.cosmos._base import try_ppaf_failover_threshold
 
 class ServiceResponseRetryPolicy(object):
 
@@ -47,7 +49,9 @@ class ServiceResponseRetryPolicy(object):
             return False
 
         if self.request:
-
+            # We track consecutive failures for per partition automatic failover, and only fail over at a partition
+            # level after the threshold is reached
+            try_ppaf_failover_threshold(self.global_endpoint_manager, self.pk_range_wrapper, self.request)
             if not _OperationType.IsReadOnlyOperation(self.request.operation_type) and not self.request.retry_write:
                 return False
             if self.request.retry_write and self.failover_retry_count + 1 >= self.max_write_retry_count:

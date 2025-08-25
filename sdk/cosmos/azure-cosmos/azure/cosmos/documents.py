@@ -78,6 +78,7 @@ class DatabaseAccount:  # pylint: disable=too-many-instance-attributes
         self._WritableLocations: List[dict] = []
         self._ReadableLocations: List[dict] = []
         self._EnableMultipleWritableLocations = False
+        self._EnablePerPartitionFailoverBehavior = False
 
     @property
     def WritableLocations(self) -> List[Dict[Any, Any]]:
@@ -360,7 +361,7 @@ class ConnectionPolicy:  # pylint: disable=too-many-instance-attributes
         self.ProxyConfiguration: Optional[ProxyConfiguration] = None
         self.EnableEndpointDiscovery: bool = True
         self.PreferredLocations: List[str] = []
-        self.ExcludedLocations: Optional[List[str]] = None
+        self.ExcludedLocations: List[str] = []
         self.RetryOptions: RetryOptions = RetryOptions()
         self.DisableSSLVerification: bool = False
         self.UseMultipleWriteLocations: bool = False

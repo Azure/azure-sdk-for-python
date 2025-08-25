@@ -23,7 +23,7 @@ from test_per_partition_circuit_breaker_mm import validate_stats
 
 COLLECTION = "created_collection"
 
-async def perform_write_operation(operation, container, fault_injection_container, doc_id, pk, expected_uri):
+async def perform_write_operation(operation, container, fault_injection_container, doc_id, pk, expected_uri=None):
     doc = {'id': doc_id,
            'pk': pk,
            'name': 'sample document',
@@ -33,7 +33,7 @@ async def perform_write_operation(operation, container, fault_injection_containe
     elif operation == UPSERT:
         resp = await fault_injection_container.upsert_item(body=doc)
     elif operation == REPLACE:
-        await container.create_item(body=doc)
+        await container.upsert_item(body=doc)
         new_doc = {'id': doc_id,
                    'pk': pk,
                    'name': 'sample document' + str(uuid),
@@ -41,11 +41,11 @@ async def perform_write_operation(operation, container, fault_injection_containe
         await asyncio.sleep(1)
         resp = await fault_injection_container.replace_item(item=doc['id'], body=new_doc)
     elif operation == DELETE:
-        await container.create_item(body=doc)
+        await container.upsert_item(body=doc)
         await asyncio.sleep(1)
         resp = await fault_injection_container.delete_item(item=doc['id'], partition_key=doc['pk'])
     elif operation == PATCH:
-        await container.create_item(body=doc)
+        await container.upsert_item(body=doc)
         await asyncio.sleep(1)
         operations = [{"op": "incr", "path": "/company", "value": 3}]
         resp = await fault_injection_container.patch_item(item=doc['id'], partition_key=doc['pk'], patch_operations=operations)
@@ -59,9 +59,9 @@ async def perform_write_operation(operation, container, fault_injection_containe
         resp = await fault_injection_container.execute_item_batch(batch_operations, partition_key=doc['pk'])
     # this will need to be emulator only
     elif operation == DELETE_ALL_ITEMS_BY_PARTITION_KEY:
-        await container.create_item(body=doc)
+        await container.upsert_item(body=doc)
         resp = await fault_injection_container.delete_all_items_by_partition_key(pk)
-    if resp:
+    if resp and expected_uri:
         validate_response_uri(resp, expected_uri)
 
 async def perform_read_operation(operation, container, doc_id, pk, expected_uri):
