@@ -9,7 +9,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, Callable, Dict, IO, Iterable, List, Optional, TypeVar, Union, overload
+from typing import Any, Callable, Dict, IO, Iterator, List, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import PipelineClient
@@ -25,15 +25,18 @@ from azure.core.exceptions import (
 )
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
+from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
+from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models
 from .._configuration import IoTFirmwareDefenseMgmtClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
+from .._validation import api_version_validation
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -47,7 +50,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-02"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -68,7 +71,7 @@ def build_firmwares_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-02"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -98,7 +101,7 @@ def build_firmwares_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-02"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -130,7 +133,7 @@ def build_firmwares_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-02"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -158,12 +161,9 @@ def build_firmwares_update_request(
 def build_firmwares_delete_request(
     resource_group_name: str, workspace_name: str, firmware_id: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-02"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.IoTFirmwareDefense/workspaces/{workspaceName}/firmwares/{firmwareId}"
     path_format_arguments = {
@@ -178,10 +178,7 @@ def build_firmwares_delete_request(
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
 def build_firmwares_list_by_workspace_request(  # pylint: disable=name-too-long
@@ -190,7 +187,7 @@ def build_firmwares_list_by_workspace_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-02"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -218,7 +215,7 @@ def build_workspaces_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-02"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -247,7 +244,7 @@ def build_workspaces_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-02"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -278,7 +275,7 @@ def build_workspaces_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-02"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -305,12 +302,9 @@ def build_workspaces_update_request(
 def build_workspaces_delete_request(
     resource_group_name: str, workspace_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-02"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.IoTFirmwareDefense/workspaces/{workspaceName}"
     path_format_arguments = {
@@ -324,10 +318,7 @@ def build_workspaces_delete_request(
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
 def build_workspaces_list_by_resource_group_request(  # pylint: disable=name-too-long
@@ -336,7 +327,7 @@ def build_workspaces_list_by_resource_group_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-02"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -363,7 +354,7 @@ def build_workspaces_list_by_subscription_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-02"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -390,7 +381,7 @@ def build_workspaces_generate_upload_url_request(  # pylint: disable=name-too-lo
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-02"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -420,7 +411,7 @@ def build_binary_hardening_list_by_firmware_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-02"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -449,7 +440,7 @@ def build_crypto_certificates_list_by_firmware_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-02"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -478,7 +469,7 @@ def build_crypto_keys_list_by_firmware_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-02"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -507,11 +498,11 @@ def build_cves_list_by_firmware_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-02"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.IoTFirmwareDefense/workspaces/{workspaceName}/firmwares/{firmwareId}/commonVulnerabilitiesAndExposures"
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.IoTFirmwareDefense/workspaces/{workspaceName}/firmwares/{firmwareId}/cves"
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
@@ -536,7 +527,7 @@ def build_password_hashes_list_by_firmware_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-02"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -565,7 +556,7 @@ def build_sbom_components_list_by_firmware_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-02"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -599,7 +590,7 @@ def build_summaries_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-02"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -629,7 +620,7 @@ def build_summaries_list_by_firmware_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-02"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -658,7 +649,7 @@ def build_usage_metrics_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-02"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -687,7 +678,7 @@ def build_usage_metrics_list_by_workspace_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-02"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -719,7 +710,7 @@ class Operations:
         :attr:`operations` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: IoTFirmwareDefenseMgmtClientConfiguration = (
@@ -729,7 +720,7 @@ class Operations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> Iterable["_models.Operation"]:
+    def list(self, **kwargs: Any) -> ItemPaged["_models.Operation"]:
         """List the operations for the provider.
 
         :return: An iterator like instance of Operation
@@ -804,7 +795,7 @@ class Operations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -822,7 +813,7 @@ class FirmwaresOperations:
         :attr:`firmwares` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: IoTFirmwareDefenseMgmtClientConfiguration = (
@@ -887,7 +878,7 @@ class FirmwaresOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -1066,7 +1057,7 @@ class FirmwaresOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -1246,7 +1237,7 @@ class FirmwaresOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -1312,7 +1303,7 @@ class FirmwaresOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -1321,7 +1312,7 @@ class FirmwaresOperations:
     @distributed_trace
     def list_by_workspace(
         self, resource_group_name: str, workspace_name: str, **kwargs: Any
-    ) -> Iterable["_models.Firmware"]:
+    ) -> ItemPaged["_models.Firmware"]:
         """Lists all of firmwares inside a workspace.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -1404,7 +1395,7 @@ class FirmwaresOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1422,7 +1413,7 @@ class WorkspacesOperations:
         :attr:`workspaces` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: IoTFirmwareDefenseMgmtClientConfiguration = (
@@ -1484,7 +1475,7 @@ class WorkspacesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -1650,7 +1641,7 @@ class WorkspacesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -1816,7 +1807,7 @@ class WorkspacesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -1829,21 +1820,12 @@ class WorkspacesOperations:
 
         return deserialized  # type: ignore
 
-    @distributed_trace
-    def delete(  # pylint: disable=inconsistent-return-statements
-        self, resource_group_name: str, workspace_name: str, **kwargs: Any
-    ) -> None:
-        """The operation to delete a firmware analysis workspace.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param workspace_name: The name of the firmware analysis workspace. Required.
-        :type workspace_name: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    @api_version_validation(
+        method_added_on="2025-08-02",
+        params_added_on={"2025-08-02": ["api_version", "subscription_id", "resource_group_name", "workspace_name"]},
+        api_versions_list=["2025-08-02"],
+    )
+    def _delete_initial(self, resource_group_name: str, workspace_name: str, **kwargs: Any) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -1855,7 +1837,7 @@ class WorkspacesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_workspaces_delete_request(
             resource_group_name=resource_group_name,
@@ -1870,23 +1852,98 @@ class WorkspacesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = False
+        _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 204]:
+        if response.status_code not in [202, 204]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes()
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace
-    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> Iterable["_models.Workspace"]:
+    @api_version_validation(
+        method_added_on="2025-08-02",
+        params_added_on={"2025-08-02": ["api_version", "subscription_id", "resource_group_name", "workspace_name"]},
+        api_versions_list=["2025-08-02"],
+    )
+    def begin_delete(self, resource_group_name: str, workspace_name: str, **kwargs: Any) -> LROPoller[None]:
+        """The operation to delete a firmware analysis workspace.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param workspace_name: The name of the firmware analysis workspace. Required.
+        :type workspace_name: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._delete_initial(
+                resource_group_name=resource_group_name,
+                workspace_name=workspace_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> ItemPaged["_models.Workspace"]:
         """Lists all of the firmware analysis workspaces in the specified resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -1966,7 +2023,7 @@ class WorkspacesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1974,7 +2031,7 @@ class WorkspacesOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_by_subscription(self, **kwargs: Any) -> Iterable["_models.Workspace"]:
+    def list_by_subscription(self, **kwargs: Any) -> ItemPaged["_models.Workspace"]:
         """Lists all of the firmware analysis workspaces in the specified subscription.
 
         :return: An iterator like instance of Workspace
@@ -2050,7 +2107,7 @@ class WorkspacesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2210,7 +2267,7 @@ class WorkspacesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -2234,7 +2291,7 @@ class BinaryHardeningOperations:
         :attr:`binary_hardening` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: IoTFirmwareDefenseMgmtClientConfiguration = (
@@ -2246,7 +2303,7 @@ class BinaryHardeningOperations:
     @distributed_trace
     def list_by_firmware(
         self, resource_group_name: str, workspace_name: str, firmware_id: str, **kwargs: Any
-    ) -> Iterable["_models.BinaryHardeningResource"]:
+    ) -> ItemPaged["_models.BinaryHardeningResource"]:
         """Lists binary hardening analysis results of a firmware.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -2333,7 +2390,7 @@ class BinaryHardeningOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2351,7 +2408,7 @@ class CryptoCertificatesOperations:
         :attr:`crypto_certificates` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: IoTFirmwareDefenseMgmtClientConfiguration = (
@@ -2363,7 +2420,7 @@ class CryptoCertificatesOperations:
     @distributed_trace
     def list_by_firmware(
         self, resource_group_name: str, workspace_name: str, firmware_id: str, **kwargs: Any
-    ) -> Iterable["_models.CryptoCertificateResource"]:
+    ) -> ItemPaged["_models.CryptoCertificateResource"]:
         """Lists crypto certificate analysis results of a firmware.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -2450,7 +2507,7 @@ class CryptoCertificatesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2468,7 +2525,7 @@ class CryptoKeysOperations:
         :attr:`crypto_keys` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: IoTFirmwareDefenseMgmtClientConfiguration = (
@@ -2480,7 +2537,7 @@ class CryptoKeysOperations:
     @distributed_trace
     def list_by_firmware(
         self, resource_group_name: str, workspace_name: str, firmware_id: str, **kwargs: Any
-    ) -> Iterable["_models.CryptoKeyResource"]:
+    ) -> ItemPaged["_models.CryptoKeyResource"]:
         """Lists crypto key analysis results of a firmware.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -2566,7 +2623,7 @@ class CryptoKeysOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2584,7 +2641,7 @@ class CvesOperations:
         :attr:`cves` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: IoTFirmwareDefenseMgmtClientConfiguration = (
@@ -2594,9 +2651,23 @@ class CvesOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-08-02",
+        params_added_on={
+            "2025-08-02": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "firmware_id",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-08-02"],
+    )
     def list_by_firmware(
         self, resource_group_name: str, workspace_name: str, firmware_id: str, **kwargs: Any
-    ) -> Iterable["_models.CveResource"]:
+    ) -> ItemPaged["_models.CveResource"]:
         """Lists CVE analysis results of a firmware.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -2682,7 +2753,7 @@ class CvesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2700,7 +2771,7 @@ class PasswordHashesOperations:
         :attr:`password_hashes` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: IoTFirmwareDefenseMgmtClientConfiguration = (
@@ -2712,7 +2783,7 @@ class PasswordHashesOperations:
     @distributed_trace
     def list_by_firmware(
         self, resource_group_name: str, workspace_name: str, firmware_id: str, **kwargs: Any
-    ) -> Iterable["_models.PasswordHashResource"]:
+    ) -> ItemPaged["_models.PasswordHashResource"]:
         """Lists password hash analysis results of a firmware.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -2799,7 +2870,7 @@ class PasswordHashesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2817,7 +2888,7 @@ class SbomComponentsOperations:
         :attr:`sbom_components` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: IoTFirmwareDefenseMgmtClientConfiguration = (
@@ -2829,7 +2900,7 @@ class SbomComponentsOperations:
     @distributed_trace
     def list_by_firmware(
         self, resource_group_name: str, workspace_name: str, firmware_id: str, **kwargs: Any
-    ) -> Iterable["_models.SbomComponentResource"]:
+    ) -> ItemPaged["_models.SbomComponentResource"]:
         """Lists sbom analysis results of a firmware.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -2916,7 +2987,7 @@ class SbomComponentsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2934,7 +3005,7 @@ class SummariesOperations:
         :attr:`summaries` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: IoTFirmwareDefenseMgmtClientConfiguration = (
@@ -3011,7 +3082,7 @@ class SummariesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -3027,7 +3098,7 @@ class SummariesOperations:
     @distributed_trace
     def list_by_firmware(
         self, resource_group_name: str, workspace_name: str, firmware_id: str, **kwargs: Any
-    ) -> Iterable["_models.SummaryResource"]:
+    ) -> ItemPaged["_models.SummaryResource"]:
         """Lists analysis result summary names of a firmware. To fetch the full summary data, get that
         summary by name.
 
@@ -3114,7 +3185,7 @@ class SummariesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -3132,7 +3203,7 @@ class UsageMetricsOperations:
         :attr:`usage_metrics` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: IoTFirmwareDefenseMgmtClientConfiguration = (
@@ -3197,7 +3268,7 @@ class UsageMetricsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -3213,7 +3284,7 @@ class UsageMetricsOperations:
     @distributed_trace
     def list_by_workspace(
         self, resource_group_name: str, workspace_name: str, **kwargs: Any
-    ) -> Iterable["_models.UsageMetric"]:
+    ) -> ItemPaged["_models.UsageMetric"]:
         """Lists monthly usage information for a workspace.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -3296,7 +3367,7 @@ class UsageMetricsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response

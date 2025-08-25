@@ -74,11 +74,11 @@ class TestIoTFirmwareDefenseMgmtWorkspacesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_workspaces_delete(self, resource_group):
-        response = self.client.workspaces.delete(
+    def test_workspaces_begin_delete(self, resource_group):
+        response = self.client.workspaces.begin_delete(
             resource_group_name=resource_group.name,
             workspace_name="str",
-        )
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...

@@ -75,7 +75,7 @@ class BinaryHardeningFeatures(_Model):
 
 
 class Resource(_Model):
-    """Common fields that are returned in the response for all Azure Resource Manager resources.
+    """Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -103,8 +103,7 @@ class Resource(_Model):
 
 
 class ProxyResource(Resource):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
-    tags and a location.
+    """Proxy Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -1000,6 +999,46 @@ class CryptoKeySummaryResource(SummaryResourceProperties, discriminator="CryptoK
         super().__init__(*args, summary_type=SummaryType.CRYPTO_KEY, **kwargs)
 
 
+class CveComponent(_Model):
+    """Legacy component of a CVE result.
+
+    :ivar component_id: ID of the SBOM component.
+    :vartype component_id: str
+    :ivar name: Name of the SBOM component.
+    :vartype name: str
+    :ivar version: Version of the SBOM component.
+    :vartype version: str
+    """
+
+    component_id: Optional[str] = rest_field(
+        name="componentId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ID of the SBOM component."""
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name of the SBOM component."""
+    version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Version of the SBOM component."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        component_id: Optional[str] = None,
+        name: Optional[str] = None,
+        version: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class CveLink(_Model):
     """Properties of a reference link for a CVE.
 
@@ -1061,6 +1100,11 @@ class CveResource(ProxyResource):
         "component_version",
         "severity",
         "cve_name",
+        "component",
+        "cvss_score",
+        "cvss_v2_score",
+        "cvss_v3_score",
+        "cvss_version",
         "effective_cvss_score",
         "effective_cvss_version",
         "cvss_scores",
@@ -1120,6 +1164,17 @@ class CveResult(_Model):
     :vartype severity: str
     :ivar cve_name: Name of the CVE.
     :vartype cve_name: str
+    :ivar component: Legacy property for what is now componentName.
+    :vartype component: ~azure.mgmt.iotfirmwaredefense.models.CveComponent
+    :ivar cvss_score: Legacy property for the effective CVE score.
+    :vartype cvss_score: str
+    :ivar cvss_v2_score: Legacy property for the CVE CVSS version 2 score, if one existed.
+    :vartype cvss_v2_score: str
+    :ivar cvss_v3_score: Legacy property for the CVE CVSS version 3 score, if one existed.
+    :vartype cvss_v3_score: str
+    :ivar cvss_version: Legacy property for the what CVSS version score was stored in the cvssScore
+     property.
+    :vartype cvss_version: str
     :ivar effective_cvss_score: The most recent CVSS score of the CVE.
     :vartype effective_cvss_score: float
     :ivar effective_cvss_version: The version of the effectiveCvssScore property.
@@ -1153,6 +1208,22 @@ class CveResult(_Model):
     """Severity of the CVE."""
     cve_name: Optional[str] = rest_field(name="cveName", visibility=["read", "create", "update", "delete", "query"])
     """Name of the CVE."""
+    component: Optional["_models.CveComponent"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Legacy property for what is now componentName."""
+    cvss_score: Optional[str] = rest_field(name="cvssScore", visibility=["read", "create", "update", "delete", "query"])
+    """Legacy property for the effective CVE score."""
+    cvss_v2_score: Optional[str] = rest_field(
+        name="cvssV2Score", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Legacy property for the CVE CVSS version 2 score, if one existed."""
+    cvss_v3_score: Optional[str] = rest_field(
+        name="cvssV3Score", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Legacy property for the CVE CVSS version 3 score, if one existed."""
+    cvss_version: Optional[str] = rest_field(
+        name="cvssVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Legacy property for the what CVSS version score was stored in the cvssScore property."""
     effective_cvss_score: Optional[float] = rest_field(
         name="effectiveCvssScore", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1185,6 +1256,11 @@ class CveResult(_Model):
         component_version: Optional[str] = None,
         severity: Optional[str] = None,
         cve_name: Optional[str] = None,
+        component: Optional["_models.CveComponent"] = None,
+        cvss_score: Optional[str] = None,
+        cvss_v2_score: Optional[str] = None,
+        cvss_v3_score: Optional[str] = None,
+        cvss_version: Optional[str] = None,
         effective_cvss_score: Optional[float] = None,
         effective_cvss_version: Optional[int] = None,
         cvss_scores: Optional[List["_models.CvssScore"]] = None,
@@ -1348,8 +1424,7 @@ class ErrorDetail(_Model):
 
 
 class ErrorResponse(_Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed
-    operations.
+    """Error response.
 
     :ivar error: The error object.
     :vartype error: ~azure.mgmt.iotfirmwaredefense.models.ErrorDetail
@@ -1694,7 +1769,7 @@ class GenerateUploadUrlRequest(_Model):
 
 
 class Operation(_Model):
-    """Details of a REST API operation, returned from the Resource Provider Operations API.
+    """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
      "Microsoft.Compute/virtualMachines/write", "Microsoft.Compute/virtualMachines/capture/action".
@@ -2281,8 +2356,7 @@ class SystemData(_Model):
 
 
 class TrackedResource(Resource):
-    """The resource model definition for an Azure Resource Manager tracked top level resource which
-    has 'tags' and a 'location'.
+    """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.

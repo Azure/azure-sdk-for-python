@@ -33,12 +33,12 @@ def main():
     response = client.summaries.get(
         resource_group_name="FirmwareAnalysisRG",
         workspace_name="default",
-        firmware_id="109a9886-50bf-85a8-9d75-000000000000",
+        firmware_id="00000000-0000-0000-0000-000000000000",
         summary_type="Firmware",
     )
     print(response)
 
 
-# x-ms-original-file: 2025-04-01-preview/Summaries_Get_MinimumSet_Gen.json
+# x-ms-original-file: 2025-08-02/Summaries_Get_MinimumSet_Gen.json
 if __name__ == "__main__":
     main()

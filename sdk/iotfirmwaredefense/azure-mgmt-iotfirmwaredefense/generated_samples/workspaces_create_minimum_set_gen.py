@@ -32,12 +32,12 @@ def main():
 
     response = client.workspaces.create(
         resource_group_name="rgworkspaces",
-        workspace_name="E___-3",
-        resource={"location": "emiscxuo", "properties": {}},
+        workspace_name="exampleWorkspaceName",
+        resource={"location": "East US", "properties": {}},
     )
     print(response)
 
 
-# x-ms-original-file: 2025-04-01-preview/Workspaces_Create_MinimumSet_Gen.json
+# x-ms-original-file: 2025-08-02/Workspaces_Create_MinimumSet_Gen.json
 if __name__ == "__main__":
     main()
