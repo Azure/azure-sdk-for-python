@@ -525,7 +525,11 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         :rtype: Union[DoEvalResult[T_EvalValue], AggregateResult[T_EvalValue]]
         """
         # Convert inputs into list of evaluable inputs.
-        eval_input_list = self._convert_kwargs_to_eval_input(**kwargs)
+        try:
+            eval_input_list = self._convert_kwargs_to_eval_input(**kwargs)
+        except Exception as e:
+            print(f"Error converting kwargs to eval_input_list: {e}")
+            raise e
         per_turn_results = []
         # Evaluate all inputs.
         for eval_input in eval_input_list:

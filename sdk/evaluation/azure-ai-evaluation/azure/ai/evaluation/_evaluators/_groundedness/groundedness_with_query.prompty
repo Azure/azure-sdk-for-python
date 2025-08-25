@@ -120,24 +120,21 @@ SCORING RUBRIC
 **Context:**
 **Response:** [{"role":"assistant","content":"You're welcome, anything else I can help with?"}]
 
+
 ## Groundedness - 4
 
 - Example 1: (Partially Correct Response)
-**Query:** What discount does the bookstore offer to students?
+**Query:** [{"role":"user","content":"What discount does the bookstore offer to students?"}]
 **Context:** The bookstore offers a 15% discount to students and a 10% discount to senior citizens.
-**Response:** Students get a discount at the bookstore.
+**Response:** [{"role":"assistant","content":"Students get a 15% discount at the bookstore."}]
 
-- Example 2: (Partially Correct Response)
-**Query:** Where are the company's headquarters?
-**Context:** The company's headquarters are located in Berlin, Germany.
-**Response:** The company's headquarters are in Germany.
 
 ## Groundedness - 5
 
 - Example 1: (Fully Correct and Complete Response)
-**Query:** When was 'The Silent Echo' released?
+**Query:** [{"role":"user","content":"When was 'The Silent Echo' released?"}]
 **Context:** The author released her latest novel, 'The Silent Echo', on September 1st.
-**Response:** 'The Silent Echo' was released on September 1st.
+**Response:** [{"role":"assistant","content":"The Silent Echo' was released on September 1st."}]
 
   **Context:** Participants must register by May 31st to be eligible for early bird pricing.
   **Query:** By what date must participants register to receive early bird pricing?
