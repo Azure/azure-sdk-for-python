@@ -38,7 +38,7 @@ class TestConfigure(unittest.TestCase):
         "azure.monitor.opentelemetry._configure._send_attach_warning",
     )
     @patch(
-        "azure.monitor.opentelemetry._configure._setup_web_snippet",
+        "azure.monitor.opentelemetry._configure._setup_browser_sdk_loader",
     )
     @patch(
         "azure.monitor.opentelemetry._configure._setup_instrumentations",
@@ -62,7 +62,7 @@ class TestConfigure(unittest.TestCase):
         metrics_mock,
         live_metrics_mock,
         instrumentation_mock,
-        web_snippet_mock,
+        browser_sdk_loader_mock,
         detect_attach_mock,
     ):
         kwargs = {
@@ -74,7 +74,7 @@ class TestConfigure(unittest.TestCase):
         metrics_mock.assert_called_once()
         live_metrics_mock.assert_not_called()
         instrumentation_mock.assert_called_once()
-        web_snippet_mock.assert_called_once()
+        browser_sdk_loader_mock.assert_called_once()
         detect_attach_mock.assert_called_once()
 
     @patch(
@@ -720,7 +720,7 @@ class TestConfigure(unittest.TestCase):
         django_patch_mock,
     ):
         """Test that web snippet setup is called when connection string is provided."""
-        from azure.monitor.opentelemetry._configure import _setup_web_snippet
+        from azure.monitor.opentelemetry._configure import _setup_browser_sdk_loader
         
         # Mock configurations
         config_mock.return_value = {
@@ -728,7 +728,7 @@ class TestConfigure(unittest.TestCase):
         }
         
         configurations = config_mock.return_value
-        _setup_web_snippet(configurations)
+        _setup_browser_sdk_loader(configurations)
         
         # Assert Django patching was attempted
         django_patch_mock.assert_called_once_with("InstrumentationKey=test-key;IngestionEndpoint=https://test.com/")
@@ -741,13 +741,13 @@ class TestConfigure(unittest.TestCase):
         django_patch_mock,
     ):
         """Test that web snippet setup is skipped when no connection string is provided."""
-        from azure.monitor.opentelemetry._configure import _setup_web_snippet
+        from azure.monitor.opentelemetry._configure import _setup_browser_sdk_loader
         
         # Mock configurations without connection string
         config_mock.return_value = {}
         
         configurations = config_mock.return_value
-        _setup_web_snippet(configurations)
+        _setup_browser_sdk_loader(configurations)
         
         # Assert Django patching was not called
         django_patch_mock.assert_not_called()
@@ -759,7 +759,7 @@ class TestConfigure(unittest.TestCase):
     ):
         """Test successful Django middleware patching."""
         from unittest.mock import MagicMock
-        from azure.monitor.opentelemetry._configure import _patch_django_middleware
+        from azure.monitor.opentelemetry._browser_sdk_loader import _setup_django_injection
         
         # Create a comprehensive django mock with conf.settings
         settings_mock = MagicMock()
@@ -775,10 +775,10 @@ class TestConfigure(unittest.TestCase):
         django_mock.conf = conf_mock
         
         # Call the patching function
-        _patch_django_middleware("InstrumentationKey=test-key;IngestionEndpoint=https://test.com/")
+        _setup_django_injection("InstrumentationKey=test-key;IngestionEndpoint=https://test.com/", {})
         
         # Assert middleware was added
-        expected_middleware = 'azure.monitor.opentelemetry._web_snippet._django_middleware.DjangoWebSnippetMiddleware'
+        expected_middleware = 'azure.monitor.opentelemetry._browser_sdk_loader._django_middleware.DjangoWebSnippetMiddleware'
         self.assertIn(expected_middleware, settings_mock.MIDDLEWARE)
         
         # Assert settings were configured
@@ -792,13 +792,13 @@ class TestConfigure(unittest.TestCase):
         django_mock,
     ):
         """Test Django middleware patching when Django is not available."""
-        from azure.monitor.opentelemetry._configure import _patch_django_middleware
+        from azure.monitor.opentelemetry._browser_sdk_loader import _setup_django_injection
         
         # Mock ImportError when importing Django
         django_mock.side_effect = ImportError("Django not available")
         
         # This should not raise an exception
-        _patch_django_middleware("InstrumentationKey=test-key;IngestionEndpoint=https://test.com/")
+        _setup_django_injection("InstrumentationKey=test-key;IngestionEndpoint=https://test.com/", {})
 
     @patch("azure.monitor.opentelemetry._configure.django")
     def test_patch_django_middleware_already_configured(
@@ -807,7 +807,7 @@ class TestConfigure(unittest.TestCase):
     ):
         """Test Django middleware patching when middleware is already configured."""
         from unittest.mock import MagicMock
-        from azure.monitor.opentelemetry._configure import _patch_django_middleware
+        from azure.monitor.opentelemetry._browser_sdk_loader import _setup_django_injection
         
         # Create a comprehensive django mock with conf.settings
         settings_mock = MagicMock()
@@ -823,7 +823,138 @@ class TestConfigure(unittest.TestCase):
         django_mock.conf.settings = settings_mock
         
         # Call the patching function
-        _patch_django_middleware("InstrumentationKey=test-key;IngestionEndpoint=https://test.com/")
+        _setup_django_injection("InstrumentationKey=test-key;IngestionEndpoint=https://test.com/", {})
         
         # Assert middleware list length didn't change (no duplicate addition)
         self.assertEqual(len(settings_mock.MIDDLEWARE), original_middleware_length)
+
+    @patch(
+        "azure.monitor.opentelemetry._configure._setup_browser_sdk_loader",
+    )
+    @patch(
+        "azure.monitor.opentelemetry._configure._get_configurations",
+    )
+    def test_configure_azure_monitor_browser_sdk_loader_config(
+        self,
+        config_mock,
+        browser_sdk_loader_mock,
+    ):
+        """Test configure_azure_monitor with browser_sdk_loader_config parameter."""
+        browser_config = {
+            "enabled": True,
+            "connection_string": "InstrumentationKey=frontend-key",
+            "instrument_user_interactions": True,
+        }
+        
+        expected_configurations = {
+            "connection_string": "InstrumentationKey=backend-key",
+            "browser_sdk_loader_config": browser_config,
+        }
+        
+        config_mock.return_value = expected_configurations
+        
+        configure_azure_monitor(
+            connection_string="InstrumentationKey=backend-key",
+            browser_sdk_loader_config=browser_config
+        )
+        
+        # Verify that _setup_browser_sdk_loader was called with configurations
+        browser_sdk_loader_mock.assert_called_once_with(expected_configurations)
+
+    @patch(
+        "azure.monitor.opentelemetry._configure._setup_browser_sdk_loader",
+    )
+    @patch(
+        "azure.monitor.opentelemetry._configure._get_configurations",
+    )
+    def test_configure_azure_monitor_browser_sdk_loader_disabled(
+        self,
+        config_mock,
+        browser_sdk_loader_mock,
+    ):
+        """Test configure_azure_monitor with browser_sdk_loader_config disabled."""
+        browser_config = {"enabled": False}
+        
+        expected_configurations = {
+            "connection_string": "InstrumentationKey=test-key",
+            "browser_sdk_loader_config": browser_config,
+        }
+        
+        config_mock.return_value = expected_configurations
+        
+        configure_azure_monitor(
+            connection_string="InstrumentationKey=test-key",
+            browser_sdk_loader_config=browser_config
+        )
+        
+        # Verify that _setup_browser_sdk_loader was still called (it handles the disabled check internally)
+        browser_sdk_loader_mock.assert_called_once_with(expected_configurations)
+
+    def test_setup_browser_sdk_loader_disabled(self):
+        """Test _setup_browser_sdk_loader when disabled via configuration."""
+        from azure.monitor.opentelemetry._configure import _setup_browser_sdk_loader
+        from azure.monitor.opentelemetry._constants import BROWSER_SDK_LOADER_CONFIG_ARG
+        
+        configurations = {
+            BROWSER_SDK_LOADER_CONFIG_ARG: {"enabled": False},
+            "connection_string": "InstrumentationKey=test-key"
+        }
+        
+        # Should not raise an exception and should return early
+        with patch("azure.monitor.opentelemetry._browser_sdk_loader.setup_snippet_injection") as mock_setup:
+            _setup_browser_sdk_loader(configurations)
+            mock_setup.assert_not_called()
+
+    def test_setup_browser_sdk_loader_no_connection_string(self):
+        """Test _setup_browser_sdk_loader when no connection string provided."""
+        from azure.monitor.opentelemetry._configure import _setup_browser_sdk_loader
+        from azure.monitor.opentelemetry._constants import BROWSER_SDK_LOADER_CONFIG_ARG
+        
+        configurations = {
+            BROWSER_SDK_LOADER_CONFIG_ARG: {"enabled": True},
+            # No connection_string provided
+        }
+        
+        # Should not raise an exception and should return early
+        with patch("azure.monitor.opentelemetry._browser_sdk_loader.setup_snippet_injection") as mock_setup:
+            _setup_browser_sdk_loader(configurations)
+            mock_setup.assert_not_called()
+
+    @patch("azure.monitor.opentelemetry._browser_sdk_loader.setup_snippet_injection")
+    def test_setup_browser_sdk_loader_with_separate_connection_string(self, mock_setup):
+        """Test _setup_browser_sdk_loader with separate connection string in config."""
+        from azure.monitor.opentelemetry._configure import _setup_browser_sdk_loader
+        from azure.monitor.opentelemetry._constants import BROWSER_SDK_LOADER_CONFIG_ARG
+        
+        browser_config = {
+            "enabled": True,
+            "connection_string": "InstrumentationKey=frontend-key"
+        }
+        
+        configurations = {
+            BROWSER_SDK_LOADER_CONFIG_ARG: browser_config,
+            "connection_string": "InstrumentationKey=backend-key"
+        }
+        
+        _setup_browser_sdk_loader(configurations)
+        
+        # Should be called with the frontend connection string from browser config
+        mock_setup.assert_called_once_with("InstrumentationKey=frontend-key", browser_config)
+
+    @patch("azure.monitor.opentelemetry._browser_sdk_loader.setup_snippet_injection")
+    def test_setup_browser_sdk_loader_fallback_connection_string(self, mock_setup):
+        """Test _setup_browser_sdk_loader falls back to main connection string."""
+        from azure.monitor.opentelemetry._configure import _setup_browser_sdk_loader
+        from azure.monitor.opentelemetry._constants import BROWSER_SDK_LOADER_CONFIG_ARG
+        
+        browser_config = {"enabled": True}  # No connection_string in browser config
+        
+        configurations = {
+            BROWSER_SDK_LOADER_CONFIG_ARG: browser_config,
+            "connection_string": "InstrumentationKey=backend-key"
+        }
+        
+        _setup_browser_sdk_loader(configurations)
+        
+        # Should be called with the main connection string as fallback
+        mock_setup.assert_called_once_with("InstrumentationKey=backend-key", browser_config)

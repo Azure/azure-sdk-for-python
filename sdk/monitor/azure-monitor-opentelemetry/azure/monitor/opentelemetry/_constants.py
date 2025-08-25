@@ -24,6 +24,7 @@ RESOURCE_ARG = "resource"
 SAMPLING_RATIO_ARG = "sampling_ratio"
 SPAN_PROCESSORS_ARG = "span_processors"
 VIEWS_ARG = "views"
+BROWSER_SDK_LOADER_CONFIG_ARG = "browser_sdk_loader_config"
 
 
 # --------------------Autoinstrumentation Configuration------------------------------------------
