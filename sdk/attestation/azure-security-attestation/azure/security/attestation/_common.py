@@ -37,7 +37,9 @@ def pem_from_base64(base64_value: str, header_type: str) -> str:
     return pem
 
 
-def validate_signing_keys(signing_key_pem: str, certificate_pem: str) -> Tuple[Union[RSAPrivateKey, EllipticCurvePrivateKey], Certificate]:
+def validate_signing_keys(
+    signing_key_pem: str, certificate_pem: str
+) -> Tuple[Union[RSAPrivateKey, EllipticCurvePrivateKey], Certificate]:
     """Validates the attestation signing key and certificates specified.
 
     :param str signing_key_pem: PEM encoded EC or RSA signing key.

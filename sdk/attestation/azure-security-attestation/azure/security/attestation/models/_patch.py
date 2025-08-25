@@ -198,25 +198,25 @@ class AttestationResult:  # pylint: disable=too-many-instance-attributes
         if not generated:
             return None
         return AttestationResult(
-            issuer=generated.get('iss', None),
-            unique_identifier=generated.get('jti', None),
-            nonce=generated.get('nonce', None),
-            version=generated.get('version', None),
-            runtime_claims=generated.get('runtime_claims', None),
-            inittime_claims=generated.get('inittime_claims', None),
-            policy_claims=generated.get('policy_claims', None),
-            verifier_type=generated.get('verifier_type', None),
+            issuer=generated.get("iss", None),
+            unique_identifier=generated.get("jti", None),
+            nonce=generated.get("nonce", None),
+            version=generated.get("version", None),
+            runtime_claims=generated.get("runtime_claims", None),
+            inittime_claims=generated.get("inittime_claims", None),
+            policy_claims=generated.get("policy_claims", None),
+            verifier_type=generated.get("verifier_type", None),
             policy_signer=AttestationSigner._from_generated(  # pylint: disable=protected-access
-                generated.get('policy_signer', None)
+                generated.get("policy_signer", None)
             ),
-            policy_hash=generated.get('policy_hash', None),
-            is_debuggable=generated.get('is_debuggable', None),
-            product_id=generated.get('product_id', None),
-            mr_enclave=generated.get('mr_enclave', None),
-            mr_signer=generated.get('mr_signer', None),
-            svn=generated.get('svn', None),
-            enclave_held_data=generated.get('enclave_held_data', None),
-            sgx_collateral=generated.get('sgx_collateral', None),
+            policy_hash=generated.get("policy_hash", None),
+            is_debuggable=generated.get("is_debuggable", None),
+            product_id=generated.get("product_id", None),
+            mr_enclave=generated.get("mr_enclave", None),
+            mr_signer=generated.get("mr_signer", None),
+            svn=generated.get("svn", None),
+            enclave_held_data=generated.get("enclave_held_data", None),
+            sgx_collateral=generated.get("sgx_collateral", None),
         )
 
     @property
