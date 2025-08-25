@@ -9,9 +9,9 @@ from dataclasses import dataclass
 
 
 @dataclass
-class WebSnippetConfig:
-    """Simplified configuration for Web Snippet Injection."""
-    
+class BrowserSDKLoaderConfig:
+    """Simplified configuration for Browser SDK Loader."""
+
     enabled: bool = False
     connection_string: Optional[str] = None
     instrument_user_interactions: bool = True
