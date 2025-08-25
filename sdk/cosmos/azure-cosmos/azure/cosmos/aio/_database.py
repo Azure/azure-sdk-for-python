@@ -261,7 +261,7 @@ class DatabaseProxy(object):
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container creation failed.
         :returns: A `ContainerProxy` instance representing the new container or a tuple of the ContainerProxy
             and CosmosDict with the response headers.
-        :rtype: ~azure.cosmos.aio.ContainerProxy or tuple[~azure.cosmos.aioContainerProxy, ~azure.cosmos.CosmosDict]
+        :rtype: ~azure.cosmos.aio.ContainerProxy or tuple[~azure.cosmos.aio.ContainerProxy, ~azure.cosmos.CosmosDict]
 
         .. admonition:: Example:
 
