@@ -12,6 +12,8 @@
 
 ### Other Changes
 
+- `BearerTokenCredentialPolicy` and `AsyncBearerTokenCredentialPolicy` will now properly surface credential exceptions when handling claims challenges. Previously, exceptions from credential token requests were suppressed; now they are raised and chained with the original 401 `HttpResponseError` response for better debugging visibility. #42536
+
 ## 1.35.0 (2025-07-02)
 
 ### Features Added
