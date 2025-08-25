@@ -114,23 +114,6 @@ def create_code_coverage_params(parsed_args: Namespace, package_path: str):
     return coverage_args
 
 
-# This function returns if error code 5 is allowed for a given package
-def is_error_code_5_allowed(target_pkg, pkg_name):
-    if (
-        all(
-            map(
-                lambda x: any([pkg_id in x for pkg_id in MANAGEMENT_PACKAGE_IDENTIFIERS]),
-                [target_pkg],
-            )
-        )
-        or pkg_name in MANAGEMENT_PACKAGE_IDENTIFIERS
-        or pkg_name in NO_TESTS_ALLOWED
-    ):
-        return True
-    else:
-        return False
-
-
 # This method installs package from a pre-built whl
 def install_package_from_whl(package_whl_path, working_dir, python_sym_link=sys.executable):
     commands = [
