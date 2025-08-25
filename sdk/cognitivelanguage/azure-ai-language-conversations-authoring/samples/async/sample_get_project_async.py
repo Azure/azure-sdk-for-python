@@ -10,34 +10,40 @@ DESCRIPTION:
     This sample demonstrates how to retrieve details of a Conversation Authoring project (async).
 USAGE:
     python sample_get_project_async.py
-REQUIRED ENV VARS:
+
+REQUIRED ENV VARS (for AAD / DefaultAzureCredential):
     AZURE_CONVERSATIONS_AUTHORING_ENDPOINT
-    AZURE_CONVERSATIONS_AUTHORING_KEY
-    (Optional) PROJECT_NAME   # defaults to "<project-name>"
+    AZURE_CLIENT_ID
+    AZURE_TENANT_ID
+    AZURE_CLIENT_SECRET
+
+NOTE:
+    If you want to use AzureKeyCredential instead, set:
+      - AZURE_CONVERSATIONS_AUTHORING_ENDPOINT
+      - AZURE_CONVERSATIONS_AUTHORING_KEY
+
+OPTIONAL ENV VARS:
+    PROJECT_NAME   # defaults to "<project-name>"
 """
 
 # [START conversation_authoring_get_project_async]
 import os
 import asyncio
-from azure.core.credentials import AzureKeyCredential
+from azure.identity import DefaultAzureCredential
 from azure.ai.language.conversations.authoring.aio import ConversationAuthoringClient
-from azure.ai.language.conversations.authoring.models import ProjectDetails
 
 
 async def sample_get_project_async():
-    # get secrets
+    # settings
     endpoint = os.environ["AZURE_CONVERSATIONS_AUTHORING_ENDPOINT"]
-    key = os.environ["AZURE_CONVERSATIONS_AUTHORING_KEY"]
     project_name = os.environ.get("PROJECT_NAME", "<project-name>")
 
-    # create an async client
-    client = ConversationAuthoringClient(endpoint, AzureKeyCredential(key))
+    credential = DefaultAzureCredential()
+    async with ConversationAuthoringClient(endpoint, credential=credential) as client:
+        # get project details (no explicit type variables)
+        details = await client.get_project(project_name=project_name)
 
-    try:
-        # get project details
-        details: ProjectDetails = await client.get_project(project_name=project_name)
-
-        # print result details
+        # print result details (direct attribute access)
         print("=== Project Details ===")
         print(f"Created DateTime: {details.created_on}")
         print(f"Last Modified DateTime: {details.last_modified_on}")
@@ -48,14 +54,13 @@ async def sample_get_project_async():
         print(f"Multilingual: {details.multilingual}")
         print(f"Description: {details.description}")
         print(f"Language: {details.language}")
-    finally:
-        await client.close()
 
+# [END conversation_authoring_get_project_async]
 
 async def main():
     await sample_get_project_async()
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
-# [END conversation_authoring_get_project_async]
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())

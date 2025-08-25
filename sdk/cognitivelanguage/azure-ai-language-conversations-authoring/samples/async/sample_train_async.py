@@ -11,36 +11,43 @@ DESCRIPTION:
     and print the final training result.
 USAGE:
     python sample_train_async.py
-REQUIRED ENV VARS:
+
+REQUIRED ENV VARS (for AAD / DefaultAzureCredential):
     AZURE_CONVERSATIONS_AUTHORING_ENDPOINT
-    AZURE_CONVERSATIONS_AUTHORING_KEY
-    (Optional) PROJECT_NAME  # defaults to "<project-name>"
+    AZURE_CLIENT_ID
+    AZURE_TENANT_ID
+    AZURE_CLIENT_SECRET
+
+NOTE:
+    If you want to use AzureKeyCredential instead, set:
+      - AZURE_CONVERSATIONS_AUTHORING_ENDPOINT
+      - AZURE_CONVERSATIONS_AUTHORING_KEY
+
+OPTIONAL ENV VARS:
+    PROJECT_NAME  # defaults to "<project-name>"
 """
 
 # [START conversation_authoring_train_async]
 import os
 import asyncio
-from azure.core.credentials import AzureKeyCredential
+from azure.identity import DefaultAzureCredential
 from azure.ai.language.conversations.authoring.aio import ConversationAuthoringClient
 from azure.ai.language.conversations.authoring.models import (
     TrainingJobDetails,
     TrainingMode,
     EvaluationDetails,
     EvaluationKind,
-    TrainingJobResult,
 )
 
 
 async def sample_train_async():
-    # get secrets
+    # settings
     endpoint = os.environ["AZURE_CONVERSATIONS_AUTHORING_ENDPOINT"]
-    key = os.environ["AZURE_CONVERSATIONS_AUTHORING_KEY"]
     project_name = os.environ.get("PROJECT_NAME", "<project-name>")
 
-    # create an async client
-    client = ConversationAuthoringClient(endpoint, AzureKeyCredential(key))
-
-    try:
+    # async client with AAD
+    credential = DefaultAzureCredential()
+    async with ConversationAuthoringClient(endpoint, credential=credential) as client:
         project_client = client.get_project_client(project_name)
 
         # build training request
@@ -58,10 +65,10 @@ async def sample_train_async():
         # start training job (async long-running operation)
         poller = await project_client.project.begin_train(body=details)
 
-        # wait for job completion and get the result
-        result: TrainingJobResult = await poller.result()
+        # wait for job completion and get the result (no explicit type variables)
+        result = await poller.result()
 
-        # print result details
+        # print result details (direct attribute access; no getattr)
         print("=== Training Result ===")
         print(f"Model Label: {result.model_label}")
         print(f"Training Config Version: {result.training_config_version}")
@@ -70,15 +77,13 @@ async def sample_train_async():
         print(f"Data Generation Status: {result.data_generation_status}")
         print(f"Evaluation Status: {result.evaluation_status}")
         print(f"Estimated End: {result.estimated_end_on}")
-    finally:
-        # close the client
-        await client.close()
 
+# [END conversation_authoring_train_async]
 
 async def main():
     await sample_train_async()
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
-# [END conversation_authoring_train_async]
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())

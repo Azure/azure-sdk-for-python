@@ -12,32 +12,38 @@ DESCRIPTION:
     in a Conversation Authoring project (async).
 USAGE:
     python sample_get_model_evaluation_summary_async.py
-REQUIRED ENV VARS:
+
+REQUIRED ENV VARS (for AAD / DefaultAzureCredential):
     AZURE_CONVERSATIONS_AUTHORING_ENDPOINT
-    AZURE_CONVERSATIONS_AUTHORING_KEY
-    (Optional) PROJECT_NAME   # defaults to "<project-name>"
-    (Optional) TRAINED_MODEL  # defaults to "<trained-model-label>"
+    AZURE_CLIENT_ID
+    AZURE_TENANT_ID
+    AZURE_CLIENT_SECRET
+
+NOTE:
+    If you want to use AzureKeyCredential instead, set:
+      - AZURE_CONVERSATIONS_AUTHORING_ENDPOINT
+      - AZURE_CONVERSATIONS_AUTHORING_KEY
+
+OPTIONAL ENV VARS:
+    PROJECT_NAME   # defaults to "<project-name>"
+    TRAINED_MODEL  # defaults to "<trained-model-label>"
 """
 
 # [START conversation_authoring_get_model_evaluation_summary_async]
 import os
 import asyncio
-from azure.core.credentials import AzureKeyCredential
+from azure.identity import DefaultAzureCredential
 from azure.ai.language.conversations.authoring.aio import ConversationAuthoringClient
 
 
 async def sample_get_model_evaluation_summary_async():
-    # get secrets
+    # settings
     endpoint = os.environ["AZURE_CONVERSATIONS_AUTHORING_ENDPOINT"]
-    key = os.environ["AZURE_CONVERSATIONS_AUTHORING_KEY"]
-
     project_name = os.environ.get("PROJECT_NAME", "<project-name>")
     trained_model_label = os.environ.get("TRAINED_MODEL", "<trained-model-label>")
 
-    # create an async client
-    client = ConversationAuthoringClient(endpoint, AzureKeyCredential(key))
-
-    try:
+    credential = DefaultAzureCredential()
+    async with ConversationAuthoringClient(endpoint, credential=credential) as client:
         project_client = client.get_project_client(project_name)
 
         # get evaluation summary for a trained model
@@ -45,45 +51,66 @@ async def sample_get_model_evaluation_summary_async():
 
         print("=== Model Evaluation Summary ===")
 
-        # ----- Entities evaluation -----
-        entities_eval = getattr(eval_summary, "entities_evaluation", None)
-        if entities_eval:
+        # ----- Entities evaluation (micro/macro) -----
+        entities_summary = eval_summary.entities_evaluation
+        if entities_summary is not None:
             print(
-                f"Entities - Micro F1: {entities_eval.micro_f1}, Precision: {entities_eval.micro_precision}, Recall: {entities_eval.micro_recall}"
+                f"Entities - Micro F1: {entities_summary.micro_f1}, "
+                f"Micro Precision: {entities_summary.micro_precision}, "
+                f"Micro Recall: {entities_summary.micro_recall}"
             )
             print(
-                f"Entities - Macro F1: {entities_eval.macro_f1}, Precision: {entities_eval.macro_precision}, Recall: {entities_eval.macro_recall}"
+                f"Entities - Macro F1: {entities_summary.macro_f1}, "
+                f"Macro Precision: {entities_summary.macro_precision}, "
+                f"Macro Recall: {entities_summary.macro_recall}"
             )
 
-            for name, summary in (entities_eval.entities or {}).items():
-                print(f"Entity '{name}': F1 = {summary.f1}, Precision = {summary.precision}, Recall = {summary.recall}")
+            # Per-entity details
+            ent_map = entities_summary.entities or {}
+            for entity_name, entity_summary in ent_map.items():
+                print(f"Entity '{entity_name}': F1 = {entity_summary.f1}, Precision = {entity_summary.precision}, Recall = {entity_summary.recall}")
                 print(
-                    f"  TP: {summary.true_positive_count}, TN: {summary.true_negative_count}, FP: {summary.false_positive_count}, FN: {summary.false_negative_count}"
+                    f"  True Positives: {entity_summary.true_positive_count}, "
+                    f"True Negatives: {entity_summary.true_negative_count}"
+                )
+                print(
+                    f"  False Positives: {entity_summary.false_positive_count}, "
+                    f"False Negatives: {entity_summary.false_negative_count}"
                 )
 
-        # ----- Intents evaluation -----
-        intents_eval = getattr(eval_summary, "intents_evaluation", None)
-        if intents_eval:
+        # ----- Intents evaluation (micro/macro) -----
+        intents_summary = eval_summary.intents_evaluation
+        if intents_summary is not None:
             print(
-                f"Intents - Micro F1: {intents_eval.micro_f1}, Precision: {intents_eval.micro_precision}, Recall: {intents_eval.micro_recall}"
+                f"Intents - Micro F1: {intents_summary.micro_f1}, "
+                f"Micro Precision: {intents_summary.micro_precision}, "
+                f"Micro Recall: {intents_summary.micro_recall}"
             )
             print(
-                f"Intents - Macro F1: {intents_eval.macro_f1}, Precision: {intents_eval.macro_precision}, Recall: {intents_eval.macro_recall}"
+                f"Intents - Macro F1: {intents_summary.macro_f1}, "
+                f"Macro Precision: {intents_summary.macro_precision}, "
+                f"Macro Recall: {intents_summary.macro_recall}"
             )
 
-            for name, summary in (intents_eval.intents or {}).items():
-                print(f"Intent '{name}': F1 = {summary.f1}, Precision = {summary.precision}, Recall = {summary.recall}")
+            # Per-intent details
+            intent_map = intents_summary.intents or {}
+            for intent_name, intent_summary in intent_map.items():
+                print(f"Intent '{intent_name}': F1 = {intent_summary.f1}, Precision = {intent_summary.precision}, Recall = {intent_summary.recall}")
                 print(
-                    f"  TP: {summary.true_positive_count}, TN: {summary.true_negative_count}, FP: {summary.false_positive_count}, FN: {summary.false_negative_count}"
+                    f"  True Positives: {intent_summary.true_positive_count}, "
+                    f"True Negatives: {intent_summary.true_negative_count}"
                 )
-    finally:
-        await client.close()
+                print(
+                    f"  False Positives: {intent_summary.false_positive_count}, "
+                    f"False Negatives: {intent_summary.false_negative_count}"
+                )
 
+# [END conversation_authoring_get_model_evaluation_summary_async]
 
 async def main():
     await sample_get_model_evaluation_summary_async()
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
-# [END conversation_authoring_get_model_evaluation_summary_async]
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())

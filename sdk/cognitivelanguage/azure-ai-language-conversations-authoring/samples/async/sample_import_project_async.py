@@ -10,16 +10,26 @@ DESCRIPTION:
     This sample demonstrates how to import a Conversation Authoring project (async).
 USAGE:
     python sample_import_project_async.py
-REQUIRED ENV VARS:
+
+REQUIRED ENV VARS (for AAD / DefaultAzureCredential):
     AZURE_CONVERSATIONS_AUTHORING_ENDPOINT
-    AZURE_CONVERSATIONS_AUTHORING_KEY
-    (Optional) PROJECT_NAME   # defaults to "<project-name>"
+    AZURE_CLIENT_ID
+    AZURE_TENANT_ID
+    AZURE_CLIENT_SECRET
+
+NOTE:
+    If you want to use AzureKeyCredential instead, set:
+      - AZURE_CONVERSATIONS_AUTHORING_ENDPOINT
+      - AZURE_CONVERSATIONS_AUTHORING_KEY
+
+OPTIONAL ENV VARS:
+    PROJECT_NAME   # defaults to "<project-name>"
 """
 
 # [START conversation_authoring_import_project_async]
 import os
 import asyncio
-from azure.core.credentials import AzureKeyCredential
+from azure.identity import DefaultAzureCredential
 from azure.ai.language.conversations.authoring.aio import ConversationAuthoringClient
 from azure.ai.language.conversations.authoring.models import (
     ConversationExportedIntent,
@@ -36,16 +46,13 @@ from azure.ai.language.conversations.authoring.models import (
 
 
 async def sample_import_project_async():
-    # get secrets
+    # settings
     endpoint = os.environ["AZURE_CONVERSATIONS_AUTHORING_ENDPOINT"]
-    key = os.environ["AZURE_CONVERSATIONS_AUTHORING_KEY"]
-
     project_name = os.environ.get("PROJECT_NAME", "<project-name>")
 
-    # create an async client
-    client = ConversationAuthoringClient(endpoint, AzureKeyCredential(key))
-
-    try:
+    # async client (AAD)
+    credential = DefaultAzureCredential()
+    async with ConversationAuthoringClient(endpoint, credential=credential) as client:
         project_client = client.get_project_client(project_name)
 
         # ----- Build assets using objects (placeholders) -----
@@ -64,7 +71,7 @@ async def sample_import_project_async():
         u1 = ConversationExportedUtterance(
             text="<utterance-1>",
             intent="<intent-b>",
-            language="<language-tag>",
+            language="<language-tag>",  # e.g., "en-us"
             dataset="Train",
             entities=[ExportedUtteranceEntityLabel(category="<entity-a>", offset=0, length=5)],
         )
@@ -113,26 +120,25 @@ async def sample_import_project_async():
             exported_project_format=ExportedProjectFormat.CONVERSATION,
         )
 
-        # wait for completion and get the result (ImportProjectState)
+        # wait for completion and get the result
         result = await poller.result()
 
-        # print result details
+        # print result details (direct attribute access)
         print("=== Import Project Result ===")
-        print(f"Job ID: {getattr(result, 'job_id', None)}")
-        print(f"Status: {getattr(result, 'status', None)}")
-        print(f"Created on: {getattr(result, 'created_on', None)}")
-        print(f"Last updated on: {getattr(result, 'last_updated_on', None)}")
-        print(f"Expires on: {getattr(result, 'expires_on', None)}")
-        print(f"Warnings: {getattr(result, 'warnings', None)}")
-        print(f"Errors: {getattr(result, 'errors', None)}")
-    finally:
-        await client.close()
+        print(f"Job ID: {result.job_id}")
+        print(f"Status: {result.status}")
+        print(f"Created on: {result.created_on}")
+        print(f"Last updated on: {result.last_updated_on}")
+        print(f"Expires on: {result.expires_on}")
+        print(f"Warnings: {result.warnings}")
+        print(f"Errors: {result.errors}")
 
+# [END conversation_authoring_import_project_async]
 
 async def main():
     await sample_import_project_async()
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
-# [END conversation_authoring_import_project_async]
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())
