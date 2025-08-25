@@ -39,6 +39,8 @@ extends:
     ServiceDirectory: storage
     TestProxy: true
     TestTimeoutInMinutes: 120
+    EnvVars:
+      AZURE_TEST_RUN_LIVE: "0"
     MatrixFilters:
       - PythonVersion=^(?!pypy3).*
     Artifacts:
