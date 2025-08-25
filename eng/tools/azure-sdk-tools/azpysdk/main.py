@@ -14,7 +14,7 @@ from typing import Sequence, Optional
 from subprocess import check_call
 
 from .whl import whl
-from .depends import depends
+from .import_all import import_all
 
 from ci_tools.scenario import install_into_venv, get_venv_python
 from ci_tools.functions import get_venv_call
@@ -57,7 +57,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     # register our checks with the common params as their parent
     whl().register(subparsers, [common])
-    depends().register(subparsers, [common])
+    import_all().register(subparsers, [common])
 
     return parser
 

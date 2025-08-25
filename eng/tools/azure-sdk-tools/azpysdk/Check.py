@@ -28,6 +28,4 @@ class Check(abc.ABC):
 
         Subclasses can override this to perform the actual work.
         """
-        print(f"Running check: {self.name} ...")
-        print(args)
         return 0

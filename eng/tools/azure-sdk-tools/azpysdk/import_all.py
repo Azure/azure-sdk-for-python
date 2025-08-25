@@ -22,26 +22,27 @@ excluded_packages = [
 def should_run_import_all(package_name: str) -> bool:
     return not (package_name in excluded_packages or "nspkg" in package_name)
 
-class depends(Check):
+class import_all(Check):
     def __init__(self) -> None:
         super().__init__()
 
     def register(self, subparsers: "argparse._SubParsersAction", parent_parsers: Optional[List[argparse.ArgumentParser]] = None) -> None:
-        """Register the `depends` check.
+        """Register the `import_all` check. The import_all check checks dependencies of a package
+        by installing just the package + its dependencies, then attempts to import * from the base namespace.
 
-        `subparsers` is the object returned by ArgumentParser.add_subparsers().
-        `parent_parsers` is an optional list of parent ArgumentParser objects
-        that contain common arguments. Avoid mutating default arguments.
+        If it fails, there is a dependency being imported somewhere in the package namespace that doesn't
+        exist in the `pyproject.toml`/`setup.py` dependencies. EG failure to import `isodate` within `azure.storage.blob.BlobClient`
+        because `isodate` is not listed as a dependency for the package..
         """
         parents = parent_parsers or []
-        p = subparsers.add_parser("depends", parents=parents, help="Run the depends check")
+        p = subparsers.add_parser("import_all", parents=parents, help="Run the import_all check")
         p.set_defaults(func=self.run)
         # Add any additional arguments specific to WhlCheck here (do not re-add common args)
 
     # todo: figure out venv abstraction mechanism via override
     def run(self, args: argparse.Namespace) -> int:
-        """Run the depends check command."""
-        print("Running depends check in isolated venv...")
+        """Run the import_all check command."""
+        print("Running import_all check in isolated venv...")
 
         # this is common. we should have an abstraction layer for this somehow
         if args.target == ".":

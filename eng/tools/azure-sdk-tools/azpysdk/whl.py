@@ -19,11 +19,8 @@ class whl(Check):
         super().__init__()
 
     def register(self, subparsers: "argparse._SubParsersAction", parent_parsers: Optional[List[argparse.ArgumentParser]] = None) -> None:
-        """Register the `whl` check.
-
-        `subparsers` is the object returned by ArgumentParser.add_subparsers().
-        `parent_parsers` is an optional list of parent ArgumentParser objects
-        that contain common arguments. Avoid mutating default arguments.
+        """Register the `whl` check. The `whl` check installs the wheel version of the target package + its dev_requirements.txt,
+        then invokes pytest. Failures indicate a test issue.
         """
         parents = parent_parsers or []
         p = subparsers.add_parser("whl", parents=parents, help="Run the whl check")
