@@ -80,7 +80,7 @@ def operations():
 
 def create_errors(errors=None):
     errors = []
-    error_codes = [408, 500, 502, 503]
+    error_codes = [408, 500, 502, 504]
     for error_code in error_codes:
         errors.append(CosmosHttpResponseError(
             status_code=error_code,
