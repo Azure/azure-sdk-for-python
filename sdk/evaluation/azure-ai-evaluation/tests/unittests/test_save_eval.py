@@ -57,7 +57,7 @@ class TestSaveEval:
         """Test regular evaluator saving."""
         # Use a test eval because save/load feature breaks, seemingly in multiple ways, when
         # evaluators have complex imports.
-        from test_evaluators.test_inputs_evaluators import EchoEval
+        from .test_evaluators.test_inputs_evaluators import EchoEval
 
         pf_client.flows.save(EchoEval, path=tmpdir)
         run = pf_client.run(tmpdir, data=data_file)
