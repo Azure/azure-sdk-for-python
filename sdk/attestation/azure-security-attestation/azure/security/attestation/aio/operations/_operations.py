@@ -365,7 +365,7 @@ class PolicyCertificatesOperations:
 
     @overload
     async def add(
-        self, *, certificate: str, content_type: str = "application/json", **kwargs: Any
+        self, *, policy_certificate_to_add: str, content_type: str = "application/json", **kwargs: Any
     ) -> _models.PolicyCertificatesModifyResponse:
         """Adds a new attestation policy certificate to the set of policy management
         certificates.
@@ -373,8 +373,9 @@ class PolicyCertificatesOperations:
         Adds a new attestation policy certificate to the set of policy management
         certificates.
 
-        :keyword certificate: The certificate to add, as a string (e.g., PEM or JWK). Required.
-        :paramtype certificate: str
+        :keyword policy_certificate_to_add: The certificate to add, as a string (e.g., PEM or JWK).
+         Required.
+        :paramtype policy_certificate_to_add: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -428,7 +429,7 @@ class PolicyCertificatesOperations:
 
     @distributed_trace_async
     async def add(
-        self, body: Union[JSON, IO[bytes]] = _Unset, *, certificate: str = _Unset, **kwargs: Any
+        self, body: Union[JSON, IO[bytes]] = _Unset, *, policy_certificate_to_add: str = _Unset, **kwargs: Any
     ) -> _models.PolicyCertificatesModifyResponse:
         """Adds a new attestation policy certificate to the set of policy management
         certificates.
@@ -438,8 +439,9 @@ class PolicyCertificatesOperations:
 
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword certificate: The certificate to add, as a string (e.g., PEM or JWK). Required.
-        :paramtype certificate: str
+        :keyword policy_certificate_to_add: The certificate to add, as a string (e.g., PEM or JWK).
+         Required.
+        :paramtype policy_certificate_to_add: str
         :return: PolicyCertificatesModifyResponse. The PolicyCertificatesModifyResponse is compatible
          with MutableMapping
         :rtype: ~azure.security.attestation.models.PolicyCertificatesModifyResponse
@@ -460,9 +462,9 @@ class PolicyCertificatesOperations:
         cls: ClsType[_models.PolicyCertificatesModifyResponse] = kwargs.pop("cls", None)
 
         if body is _Unset:
-            if certificate is _Unset:
-                raise TypeError("missing required argument: certificate")
-            body = {"certificate": certificate}
+            if policy_certificate_to_add is _Unset:
+                raise TypeError("missing required argument: policy_certificate_to_add")
+            body = {"policyCertificateToAdd": policy_certificate_to_add}
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
@@ -511,7 +513,7 @@ class PolicyCertificatesOperations:
 
     @overload
     async def remove(
-        self, *, certificate: str, content_type: str = "application/json", **kwargs: Any
+        self, *, policy_certificate_to_remove: str, content_type: str = "application/json", **kwargs: Any
     ) -> _models.PolicyCertificatesModifyResponse:
         """Removes the specified policy management certificate. Note that the final policy
         management certificate cannot be removed.
@@ -519,8 +521,9 @@ class PolicyCertificatesOperations:
         Removes the specified policy management certificate. Note that the final policy
         management certificate cannot be removed.
 
-        :keyword certificate: The certificate to remove, as a string (e.g., PEM or JWK). Required.
-        :paramtype certificate: str
+        :keyword policy_certificate_to_remove: The certificate to remove, as a string (e.g., PEM or
+         JWK). Required.
+        :paramtype policy_certificate_to_remove: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -574,7 +577,7 @@ class PolicyCertificatesOperations:
 
     @distributed_trace_async
     async def remove(
-        self, body: Union[JSON, IO[bytes]] = _Unset, *, certificate: str = _Unset, **kwargs: Any
+        self, body: Union[JSON, IO[bytes]] = _Unset, *, policy_certificate_to_remove: str = _Unset, **kwargs: Any
     ) -> _models.PolicyCertificatesModifyResponse:
         """Removes the specified policy management certificate. Note that the final policy
         management certificate cannot be removed.
@@ -584,8 +587,9 @@ class PolicyCertificatesOperations:
 
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword certificate: The certificate to remove, as a string (e.g., PEM or JWK). Required.
-        :paramtype certificate: str
+        :keyword policy_certificate_to_remove: The certificate to remove, as a string (e.g., PEM or
+         JWK). Required.
+        :paramtype policy_certificate_to_remove: str
         :return: PolicyCertificatesModifyResponse. The PolicyCertificatesModifyResponse is compatible
          with MutableMapping
         :rtype: ~azure.security.attestation.models.PolicyCertificatesModifyResponse
@@ -606,9 +610,9 @@ class PolicyCertificatesOperations:
         cls: ClsType[_models.PolicyCertificatesModifyResponse] = kwargs.pop("cls", None)
 
         if body is _Unset:
-            if certificate is _Unset:
-                raise TypeError("missing required argument: certificate")
-            body = {"certificate": certificate}
+            if policy_certificate_to_remove is _Unset:
+                raise TypeError("missing required argument: policy_certificate_to_remove")
+            body = {"policyCertificateToRemove": policy_certificate_to_remove}
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
