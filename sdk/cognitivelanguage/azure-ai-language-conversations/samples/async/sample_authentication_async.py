@@ -61,5 +61,7 @@ async def main():
     await sample_authentication_api_key_async()
     await sample_authentication_with_azure_active_directory()
 
-if __name__ == '__main__':
-    asyncio.run(main())
+
+if __name__ == "__main__":
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())

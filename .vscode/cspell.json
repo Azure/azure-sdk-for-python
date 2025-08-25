@@ -806,7 +806,7 @@
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-conversations/**",
-      "words": [ "conv", "summ" ],
+      "words": [ "conv", "summ", "Enviar", "presentación", "CLU's"],
       "caseSensitive": false
     },
     {
