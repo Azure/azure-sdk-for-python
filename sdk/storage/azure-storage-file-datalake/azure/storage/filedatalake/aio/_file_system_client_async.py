@@ -622,7 +622,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
                 :caption: List the blobs in the file system.
         """
         timeout = kwargs.pop('timeout', None)
-        begin_from = kwargs.pop("start_from")
+        begin_from = kwargs.pop("start_from", None)
         command = functools.partial(
             self._client.file_system.list_paths,
             path=path,
@@ -632,7 +632,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
         )
         return AsyncItemPaged(
             command, recursive, path=path, max_results=max_results,
-            begin_from=begin_from, page_iterator_class=PathPropertiesPaged, **kwargs
+            page_iterator_class=PathPropertiesPaged, **kwargs
         )
 
     @distributed_trace_async
