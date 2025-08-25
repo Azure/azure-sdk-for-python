@@ -1,0 +1,7 @@
+{
+  "apiVersion": "2025-05-15-preview",
+  "commit": "46a37c5495ef719e1318e4b88952e086de00101c",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/cognitiveservices/Language.AnalyzeText",
+  "emitterVersion": "0.48.2"
+}
