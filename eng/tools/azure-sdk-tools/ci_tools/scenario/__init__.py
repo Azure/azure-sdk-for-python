@@ -24,8 +24,6 @@ def install_into_venv(venv_path: str, package_path: str, editable: bool = True, 
     - Uses get_pip_command(get_venv_python) per request.
     - If get_pip_command returns the 'uv' wrapper, we fall back to get_venv_python -m pip
       so installation goes into the target venv reliably.
-    - Does NOT upgrade setuptools/wheel (per your instruction); installing
-      azure-sdk-tools[build] should bring needed extras.
     """
     py = get_venv_python(venv_path)
     pip_cmd = get_pip_command(py)
