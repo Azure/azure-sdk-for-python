@@ -9,7 +9,6 @@ from unittest.mock import patch
 import pandas as pd
 import pytest
 from pandas.testing import assert_frame_equal
-import test
 from azure.ai.evaluation._legacy._adapters.client import PFClient
 
 from azure.ai.evaluation._common.math import list_mean
