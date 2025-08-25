@@ -3,7 +3,7 @@
 # Azure Conversational Language Understanding client library for Python
 Conversational Language Understanding - aka **CLU** for short - is a cloud-based conversational AI service which provides many language understanding capabilities like:
 - Conversation App: It's used in extracting intents and entities in conversations
-- Workflow app: Acts like an orchestrator to select the best candidate to analyze conversations to get best response from apps like Qna, and Conversation App
+- Workflow app: Acts like an orchestrator to select the best candidate to analyze conversations to get best response from apps like Qna and Conversation App
 - Conversational Summarization: Used to analyze conversations in the form of issues/resolution, chapter title, and narrative summarizations
 
 [Source code][conversationallanguage_client_src]
