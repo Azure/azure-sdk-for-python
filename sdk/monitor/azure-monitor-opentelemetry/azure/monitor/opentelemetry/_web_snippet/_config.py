@@ -14,6 +14,9 @@ class WebSnippetConfig:
     
     enabled: bool = False
     connection_string: Optional[str] = None
+    instrument_user_interactions: bool = True
+    cors_correlation: bool = True
+    sdk_extension: str = "a"  # Python identifier
     
     def to_dict(self) -> Dict[str, Any]:
         """Convert configuration to dictionary for snippet generation."""
@@ -22,7 +25,7 @@ class WebSnippetConfig:
             "connectionString": self.connection_string,
             "cfg": {
                 "instrumentationKey": self._extract_instrumentation_key(),
-                "sdkExtension": "a",  # Python identifier
+                "sdkExtension": self.sdk_extension,
             }
         }
     

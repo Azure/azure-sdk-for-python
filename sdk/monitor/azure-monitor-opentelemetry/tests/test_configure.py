@@ -812,22 +812,27 @@ class TestConfigure(unittest.TestCase):
         # Assert Django patching was not called
         django_patch_mock.assert_not_called()
 
-    @patch("django.conf.settings")
     @patch("azure.monitor.opentelemetry._configure.django")
     def test_patch_django_middleware_success(
         self,
         django_mock,
-        settings_mock,
     ):
         """Test successful Django middleware patching."""
+        from unittest.mock import MagicMock
         from azure.monitor.opentelemetry._configure import _patch_django_middleware
         
-        # Mock Django settings
+        # Create a comprehensive django mock with conf.settings
+        settings_mock = MagicMock()
         settings_mock.MIDDLEWARE = [
             'django.middleware.security.SecurityMiddleware',
             'django.middleware.common.CommonMiddleware',
         ]
         settings_mock.AZURE_MONITOR_OPENTELEMETRY = {}
+        
+        # Set up the django mock structure properly
+        conf_mock = MagicMock()
+        conf_mock.settings = settings_mock
+        django_mock.conf = conf_mock
         
         # Call the patching function
         _patch_django_middleware("InstrumentationKey=test-key;IngestionEndpoint=https://test.com/")
@@ -855,17 +860,17 @@ class TestConfigure(unittest.TestCase):
         # This should not raise an exception
         _patch_django_middleware("InstrumentationKey=test-key;IngestionEndpoint=https://test.com/")
 
-    @patch("django.conf.settings")
     @patch("azure.monitor.opentelemetry._configure.django")
     def test_patch_django_middleware_already_configured(
         self,
         django_mock,
-        settings_mock,
     ):
         """Test Django middleware patching when middleware is already configured."""
+        from unittest.mock import MagicMock
         from azure.monitor.opentelemetry._configure import _patch_django_middleware
         
-        # Mock Django settings with middleware already present
+        # Create a comprehensive django mock with conf.settings
+        settings_mock = MagicMock()
         middleware_path = 'azure.monitor.opentelemetry._web_snippet._django_middleware.DjangoWebSnippetMiddleware'
         settings_mock.MIDDLEWARE = [
             'django.middleware.security.SecurityMiddleware',
@@ -873,6 +878,9 @@ class TestConfigure(unittest.TestCase):
             'django.middleware.common.CommonMiddleware',
         ]
         original_middleware_length = len(settings_mock.MIDDLEWARE)
+        
+        # Mock django.conf.settings to return our settings mock
+        django_mock.conf.settings = settings_mock
         
         # Call the patching function
         _patch_django_middleware("InstrumentationKey=test-key;IngestionEndpoint=https://test.com/")
