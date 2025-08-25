@@ -20,11 +20,11 @@ class TestContainerAppsAPIBuildsByBuilderResourceOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_builds_by_builder_resource_list(self, resource_group):
         response = self.client.builds_by_builder_resource.list(
             resource_group_name=resource_group.name,
             builder_name="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-02-02-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

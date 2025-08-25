@@ -6,21 +6,19 @@
 # pylint: disable=docstring-keyword-should-match-keyword-only
 
 import uuid
+from typing import Any, cast, Optional, Union, TYPE_CHECKING
 
-from typing import Union, Optional, Any, TYPE_CHECKING
-
-from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
-
-from ._shared.response_handlers import return_response_headers, process_storage_error
+from azure.core.tracing.decorator import distributed_trace
 from ._generated.operations import FileOperations, ShareOperations
+from ._shared.response_handlers import return_response_headers, process_storage_error
 
 if TYPE_CHECKING:
     from datetime import datetime
     from azure.storage.fileshare import ShareClient, ShareFileClient
 
 
-class ShareLeaseClient(object):  # pylint: disable=client-accepts-api-version-keyword
+class ShareLeaseClient:  # pylint: disable=client-accepts-api-version-keyword
     """Creates a new ShareLeaseClient.
 
     This client provides lease operations on a ShareClient or ShareFileClient.
@@ -248,4 +246,4 @@ class ShareLeaseClient(object):  # pylint: disable=client-accepts-api-version-ke
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
-        return response.get('lease_time')  # type: ignore
+        return cast(int, response.get('lease_time'))

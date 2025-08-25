@@ -36,6 +36,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2025-07-01-preview/PlaywrightWorkspaces_Delete.json
+# x-ms-original-file: 2025-09-01/PlaywrightWorkspaces_Delete.json
 if __name__ == "__main__":
     main()

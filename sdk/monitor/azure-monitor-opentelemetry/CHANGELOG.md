@@ -1,6 +1,6 @@
 # Release History
 
-## 1.6.14 (Unreleased)
+## 1.7.1 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,19 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.7.0 (2025-08-21)
+
+### Features Added
+- Updated README to specify the python version supported by the distro.
+  ([#42464](https://github.com/Azure/azure-sdk-for-python/pull/42464))
+
+### Bugs Fixed
+
+- Fixed issue #42337, removes warning messages for instrumentations that target multiple packages. The logic for dependency conflict detection has been enhanced by adding "instruments-any" feature. This feature is used when an instrumentation requires any of a set of dependencies rather than all. Follows upstream dependency conflict detection logic - https://github.com/open-telemetry/opentelemetry-python-contrib/blob/main/opentelemetry-instrumentation/src/opentelemetry/instrumentation/dependencies.py
+  ([#42342](https://github.com/Azure/azure-sdk-for-python/pull/42342))
+- Add error handling for diagnostic logging setup
+  ([#42505](https://github.com/Azure/azure-sdk-for-python/pull/42505))
 
 ## 1.6.13 (2025-07-30)
 
