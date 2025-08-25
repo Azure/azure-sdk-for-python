@@ -558,3 +558,45 @@ class TestConfigurations(TestCase):
         self.assertEqual(environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS], "custom_resource_detector")
         resource_create_mock.assert_called_once_with()
         self.assertEqual(configurations["sampling_ratio"], 0.9)
+
+    @patch.dict("os.environ", {}, clear=True)
+    @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
+    def test_get_configurations_browser_sdk_loader_defaults(self, resource_create_mock):
+        """Test that browser SDK loader gets default values."""
+        from azure.monitor.opentelemetry._constants import BROWSER_SDK_LOADER_CONFIG_ARG
+        
+        configurations = _get_configurations()
+
+        # Should have browser SDK loader enabled by default
+        self.assertTrue(configurations[BROWSER_SDK_LOADER_CONFIG_ARG])
+        self.assertEqual(configurations[BROWSER_SDK_LOADER_CONFIG_ARG], True)
+
+    @patch.dict("os.environ", {}, clear=True)
+    @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
+    def test_get_configurations_browser_sdk_loader_custom_config(self, resource_create_mock):
+        """Test browser SDK loader with custom configuration."""
+        from azure.monitor.opentelemetry._constants import BROWSER_SDK_LOADER_CONFIG_ARG
+        
+        browser_config = {
+            "enabled": True,
+            "connection_string": "InstrumentationKey=frontend-key",
+            "instrument_user_interactions": True,
+        }
+        
+        configurations = _get_configurations(browser_sdk_loader_config=browser_config)
+
+        # Should have the custom browser SDK loader configuration
+        self.assertEqual(configurations[BROWSER_SDK_LOADER_CONFIG_ARG], browser_config)
+
+    @patch.dict("os.environ", {}, clear=True)
+    @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
+    def test_get_configurations_browser_sdk_loader_disabled(self, resource_create_mock):
+        """Test browser SDK loader when explicitly disabled."""
+        from azure.monitor.opentelemetry._constants import BROWSER_SDK_LOADER_CONFIG_ARG
+        
+        browser_config = {"enabled": False}
+        
+        configurations = _get_configurations(browser_sdk_loader_config=browser_config)
+
+        # Should have the disabled configuration
+        self.assertEqual(configurations[BROWSER_SDK_LOADER_CONFIG_ARG], browser_config)

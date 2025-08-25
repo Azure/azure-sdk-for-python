@@ -24,9 +24,13 @@ from opentelemetry.util._importlib_metadata import (
     entry_points,
 )
 
+from azure.monitor.opentelemetry._browser_sdk_loader import (
+    setup_snippet_injection
+)
 from azure.monitor.opentelemetry._constants import (
     _ALL_SUPPORTED_INSTRUMENTED_LIBRARIES,
     _AZURE_SDK_INSTRUMENTATION_NAME,
+    BROWSER_SDK_LOADER_CONFIG_ARG,
     DISABLE_LOGGING_ARG,
     DISABLE_METRICS_ARG,
     DISABLE_TRACING_ARG,
@@ -69,14 +73,6 @@ from azure.monitor.opentelemetry._utils.instrumentation import (
     get_dist_dependency_conflicts,
 )
 
-# Django imports for middleware patching (can be mocked for testing)
-try:
-    import django
-    from django.conf import settings as django_settings
-except ImportError:
-    django = None
-    django_settings = None
-
 _logger = getLogger(__name__)
 
 
@@ -107,6 +103,9 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
      `<tempfile.gettempdir()>/Microsoft/AzureMonitor/opentelemetry-python-<your-instrumentation-key>`.
     :keyword list[~opentelemetry.sdk.metrics.view.View] views: List of `View` objects to configure and filter
      metric output.
+    :keyword dict browser_sdk_loader_config: Configuration dictionary for browser SDK loader behavior. Can include keys like
+     'connection_string' (separate connection string for browser SDK), 'enabled' (boolean), and
+     framework-specific options. Defaults to `{}`.
     :rtype: None
     """
 
@@ -377,97 +376,25 @@ def _setup_additional_azure_sdk_instrumentations(configurations: Dict[str, Confi
 def _setup_browser_sdk_loader(configurations: Dict[str, ConfigurationValue]):
     """Setup browser SDK loader for supported frameworks."""
     try:
-        # Check if browser SDK loader should be enabled
-        connection_string = configurations.get("connection_string")
+        # Get browser SDK loader configuration
+        browser_sdk_loader_config = configurations.get(BROWSER_SDK_LOADER_CONFIG_ARG, {})
+        if not isinstance(browser_sdk_loader_config, dict):
+            browser_sdk_loader_config = {}
+        
+        # Check if browser SDK loader should be enabled (default False)
+        enabled = browser_sdk_loader_config.get("enabled", False)
+        if not enabled:
+            _logger.debug("Browser SDK loader disabled via configuration")
+            return
+        
+        # Get connection string (use browser SDK config first, then main config)
+        connection_string = browser_sdk_loader_config.get("connection_string") or configurations.get("connection_string")
         if not connection_string or not isinstance(connection_string, str):
             _logger.debug("No valid connection string provided - skipping browser SDK loader setup")
             return
         
-        # Try to patch Django middleware if Django is available
-        _patch_django_middleware(connection_string)
-        
-        # Future: Add support for other frameworks like Flask, FastAPI, etc.
+        # Setup snippet injection for supported frameworks
+        setup_snippet_injection(connection_string, browser_sdk_loader_config)
         
     except Exception as ex:  # pylint: disable=broad-except
-        _logger.debug("Failed to setup web snippet middleware: %s", ex, exc_info=True)
-
-
-def _patch_django_middleware(connection_string: str):
-    """Automatically patch Django middleware if Django is available and configured."""
-    try:
-        _logger.debug("Starting Django middleware patching")
-        
-        # Check if Django is available (using module-level imports for mockability)
-        if django is None:
-            _logger.debug("Django not available - skipping Django middleware patching")
-            return
-        
-        _logger.debug("Django module available, trying to get settings")
-        
-        # For tests, django will be mocked and django.conf.settings will be available
-        # For production, django.conf.settings will be the real Django settings
-        # Try both approaches to support mocking and real Django
-        settings = None
-        try:
-            # First try to use mocked django.conf.settings (for tests)
-            if hasattr(django, 'conf') and hasattr(django.conf, 'settings'):
-                settings = django.conf.settings
-                _logger.debug("Using mocked django.conf.settings")
-        except Exception as e:
-            _logger.debug("Failed to get mocked settings: %s", e)
-            
-        if settings is None:
-            try:
-                # Fallback to importing django.conf.settings (for production)
-                from django.conf import settings  # pylint: disable=import-outside-toplevel
-                _logger.debug("Using real django.conf.settings")
-            except ImportError as e:
-                _logger.debug("Django not available - skipping Django middleware patching: %s", e)
-                return
-        
-        if settings is None:
-            _logger.debug("Django settings not available - skipping Django middleware patching")
-            return
-        
-        _logger.debug("Django settings obtained, checking configuration")
-        
-        # Check if Django is configured
-        if not hasattr(settings, 'MIDDLEWARE'):
-            _logger.debug("Django not configured - skipping middleware patching")
-            return
-            
-        # Import our middleware
-        from azure.monitor.opentelemetry._web_snippet import DjangoWebSnippetMiddleware
-        
-        # Check if middleware is already in the middleware list
-        middleware_list = list(settings.MIDDLEWARE)
-        middleware_path = 'azure.monitor.opentelemetry._web_snippet._django_middleware.DjangoWebSnippetMiddleware'
-        
-        if middleware_path in middleware_list:
-            _logger.debug("DjangoWebSnippetMiddleware already configured")
-            return
-            
-        # Add our middleware to the end of the middleware list
-        middleware_list.append(middleware_path)
-        settings.MIDDLEWARE = middleware_list
-        
-        # Configure web snippet settings if not already present
-        if not hasattr(settings, 'AZURE_MONITOR_OPENTELEMETRY'):
-            settings.AZURE_MONITOR_OPENTELEMETRY = {}
-            
-        azure_config = settings.AZURE_MONITOR_OPENTELEMETRY
-        if not azure_config.get('connection_string'):
-            azure_config['connection_string'] = connection_string
-            
-        if 'web_snippet' not in azure_config:
-            azure_config['web_snippet'] = {'enabled': True}
-        elif not azure_config['web_snippet'].get('enabled'):
-            azure_config['web_snippet']['enabled'] = True
-            
-        _logger.info("DjangoWebSnippetMiddleware automatically configured for web snippet injection")
-        
-    except ImportError:
-        # Django not available - silently skip
-        _logger.debug("Django not available - skipping Django middleware patching")
-    except Exception as ex:  # pylint: disable=broad-except
-        _logger.debug("Failed to patch Django middleware: %s", ex, exc_info=True)
+        _logger.debug("Failed to setup browser SDK loader: %s", ex, exc_info=True)
