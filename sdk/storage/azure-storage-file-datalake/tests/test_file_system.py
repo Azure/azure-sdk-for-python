@@ -919,6 +919,30 @@ class TestFileSystem(StorageRecordedTestCase):
 
     @DataLakePreparer()
     @recorded_by_proxy
+    def test_list_paths_start_from(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        # Arrange
+        file_system = self._create_file_system()
+        for i in range(0, 6):
+            dir = file_system.create_directory(f"dir{i}")
+
+            # create a subdirectory under the current directory
+            subdir = dir.create_sub_directory("subdir")
+            subdir.create_sub_directory("subsub")
+
+            # create a file under the current directory
+            subdir.create_file("file")
+
+        paths = list(file_system.get_paths(recursive=True, max_results=2, start_from="dir3"))
+
+        # there are 12 subpaths in total
+        assert len(paths) == 12
+
+    @DataLakePreparer()
+    @recorded_by_proxy
     def test_list_paths_pages_correctly(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")

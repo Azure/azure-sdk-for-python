@@ -1563,7 +1563,6 @@ class TestDirectoryAsync(AsyncStorageRecordedTestCase):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
 
-        # Arrange
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         directory_name = self._get_directory_reference()
         directory_client1 = self.dsc.get_directory_client(self.file_system_name, directory_name + '1')
@@ -1572,16 +1571,34 @@ class TestDirectoryAsync(AsyncStorageRecordedTestCase):
         directory_client2 = self.dsc.get_directory_client(self.file_system_name, directory_name + '2')
         directory_client2.get_file_client('file2').create_file()
 
-        # Act
         path_response = []
         async for path in directory_client1.get_paths():
             path_response.append(path)
 
-        # Assert
         assert len(path_response) == 2
-        assert path_response[0]['name'] == directory_name + '1' + '/' + 'file0'
-        assert path_response[1]['name'] == directory_name + '1' + '/' + 'file1'
+        assert path_response[0]['name'] == directory_name + '1/file0'
+        assert path_response[1]['name'] == directory_name + '1/file1'
 
+        subdir_client1 = await directory_client2.create_sub_directory("subdir1")
+        await subdir_client1.get_file_client('file3').create_file()
+        await subdir_client1.get_file_client('file4').create_file()
+        await subdir_client1.get_file_client('file5').create_file()
+        subdir_client2 = await directory_client2.create_sub_directory("subdir2")
+        await subdir_client2.get_file_client('file6').create_file()
+        await subdir_client2.get_file_client('file7').create_file()
+        await subdir_client2.get_file_client('file8').create_file()
+
+        path_response = []
+        async for path in directory_client2.get_paths(recursive=True, start_from="subdir1/file4", max_results=2):
+            path_response.append(path)
+
+        assert len(path_response) == 6
+        assert path_response[0]['name'] == directory_name + "2/subdir1/file4"
+        assert path_response[1]['name'] == directory_name + "2/subdir1/file5"
+        assert path_response[2]['name'] == directory_name + "2/subdir2"
+        assert path_response[3]['name'] == directory_name + "2/subdir2/file6"
+        assert path_response[4]['name'] == directory_name + "2/subdir2/file7"
+        assert path_response[5]['name'] == directory_name + "2/subdir2/file8"
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
