@@ -32,7 +32,7 @@ class import_all(Check):
 
         If it fails, there is a dependency being imported somewhere in the package namespace that doesn't
         exist in the `pyproject.toml`/`setup.py` dependencies. EG failure to import `isodate` within `azure.storage.blob.BlobClient`
-        because `isodate` is not listed as a dependency for the package..
+        because `isodate` is not listed as a dependency for the package.
         """
         parents = parent_parsers or []
         p = subparsers.add_parser("import_all", parents=parents, help="Run the import_all check")
