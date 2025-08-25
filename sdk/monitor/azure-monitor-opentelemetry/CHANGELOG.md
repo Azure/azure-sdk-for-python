@@ -3,6 +3,8 @@
 ## 1.7.1 (Unreleased)
 
 ### Features Added
+- Added configuration changes for RateLimited Sampler.
+  ([#41976](https://github.com/Azure/azure-sdk-for-python/pull/41976))
 
 ### Breaking Changes
 
@@ -15,8 +17,6 @@
 ### Features Added
 - Updated README to specify the python version supported by the distro.
   ([#42464](https://github.com/Azure/azure-sdk-for-python/pull/42464))
-- Added configuration changes for RateLimited Sampler.
-  ([#41976](https://github.com/Azure/azure-sdk-for-python/pull/41976))
 
 ### Bugs Fixed
 

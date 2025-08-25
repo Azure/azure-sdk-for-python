@@ -67,6 +67,7 @@ You can use `configure_azure_monitor` to set up instrumentation for your app to 
 | `resource` | Specifies the OpenTelemetry [Resource][ot_spec_resource] associated with your application. Passed in [Resource Attributes][ot_spec_resource_attributes] take priority over default attributes and those from [Resource Detectors][ot_python_resource_detectors]. | [OTEL_SERVICE_NAME][ot_spec_service_name], [OTEL_RESOURCE_ATTRIBUTES][ot_spec_resource_attributes], [OTEL_EXPERIMENTAL_RESOURCE_DETECTORS][ot_python_resource_detectors] |
 | `span_processors` | A list of [span processors][ot_span_processor] that will perform processing on each of your spans before they are exported. Useful for filtering/modifying telemetry. | `N/A` |
 | `views` | A list of [views][ot_view] that will be used to customize metrics exported by the SDK. | `N/A` |
+| `traces_per_second` | Configures the rate-limited sampler by specifying the maximum number of traces to sample per second. When set, this automatically enables the rate-limited sampler. Alternatively, you can configure sampling using the `OTEL_TRACES_SAMPLER` and `OTEL_TRACES_SAMPLER_ARG` environment variables as described in the table below. Please note that the sampling configuration via environment variables will have precedence over the sampling exporter/distro options. | `N/A`
 
 You can configure further with [OpenTelemetry environment variables][ot_env_vars].
 
@@ -217,7 +218,7 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [application_insights_live_metrics]: https://learn.microsoft.com/azure/azure-monitor/app/live-stream
 [application_insights_namespace]: https://learn.microsoft.com/azure/azure-monitor/app/app-insights-overview
 [application_insights_sampling]: https://learn.microsoft.com/azure/azure-monitor/app/sampling
-[rate_limited_sampling]: https://learn.microsoft.com/azure/azure-monitor/app/sampling
+[rate_limited_sampling]: https://learn.microsoft.com/en-us/azure/azure-monitor/app/opentelemetry-configuration
 [connection_string_doc]: https://learn.microsoft.com/azure/azure-monitor/app/sdk-connection-string
 [distro_feature_request]: https://github.com/Azure/azure-sdk-for-python/issues/new
 [exporter_configuration_docs]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry-exporter#configuration

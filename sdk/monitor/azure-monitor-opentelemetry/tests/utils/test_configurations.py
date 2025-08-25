@@ -417,6 +417,33 @@ class TestConfigurations(TestCase):
         resource_create_mock.assert_called_once_with()
         self.assertEqual(configurations["traces_per_second"], 0.5)
     
+    @patch.dict("os.environ", {}, clear=True)
+    @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
+    def test_get_configurations_rate_limited_sampler_param(self, resource_create_mock):
+        configurations = _get_configurations(traces_per_second=2.5)
+
+        self.assertTrue("connection_string" not in configurations)
+        self.assertEqual(configurations["disable_logging"], False)
+        self.assertEqual(configurations["disable_metrics"], False)
+        self.assertEqual(configurations["disable_tracing"], False)
+        self.assertEqual(
+            configurations["instrumentation_options"],
+            {
+                "azure_sdk": {"enabled": True},
+                "django": {"enabled": True},
+                "fastapi": {"enabled": True},
+                "flask": {"enabled": True},
+                "psycopg2": {"enabled": True},
+                "requests": {"enabled": True},
+                "urllib": {"enabled": True},
+                "urllib3": {"enabled": True},
+            },
+        )
+        self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
+        self.assertEqual(environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS], "azure_app_service,azure_vm")
+        resource_create_mock.assert_called_once_with()
+        self.assertEqual(configurations["traces_per_second"], 2.5)
+
     @patch.dict(
         "os.environ",
         {
