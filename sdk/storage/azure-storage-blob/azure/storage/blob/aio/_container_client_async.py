@@ -805,6 +805,9 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
         :keyword int results_per_page:
             Controls the maximum number of Blobs that will be included in each page of results if using
             `AsyncItemPaged.by_page()`.
+        :keyword str start_from:
+            Specifies the full path (inclusive) to list paths from.
+            Only one entity level is supported.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
@@ -831,12 +834,15 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
             include = [include]
 
         results_per_page = kwargs.pop('results_per_page', None)
+        start_from = kwargs.pop("start_from", None)
         timeout = kwargs.pop('timeout', None)
         command = functools.partial(
             self._client.container.list_blob_flat_segment,
             include=include,
+            start_from=start_from,
             timeout=timeout,
-            **kwargs)
+            **kwargs
+        )
         return AsyncItemPaged(
             command,
             prefix=name_starts_with,
@@ -861,6 +867,9 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
         :keyword int results_per_page:
             Controls the maximum number of Blobs that will be included in each page of results if using
             `AsyncItemPaged.by_page()`.
+        :keyword str start_from:
+            Specifies the full path (inclusive) to list paths from.
+            Only one entity level is supported.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
@@ -919,6 +928,8 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
             element in the response body that acts as a placeholder for all blobs whose
             names begin with the same substring up to the appearance of the delimiter
             character. The delimiter may be a single character or a string.
+        :keyword str start_from:
+            Specifies the full path (inclusive) to list paths from.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.

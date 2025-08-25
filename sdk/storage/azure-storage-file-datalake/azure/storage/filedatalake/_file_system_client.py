@@ -593,6 +593,12 @@ class FileSystemClient(StorageAccountHostsMixin):
             :class:`~azure.storage.filedatalake.PathProperties`. If False, the values will be returned
             as Azure Active Directory Object IDs. The default value is False. Note that group and application
             Object IDs are not translate because they do not have unique friendly names.
+        :keyword Optional[str] start_from: A relative path within the specified directory where the listing
+            will start from. For example, a recursive listing under directory folder1/folder2 with
+            beginFrom as folder3/readmefile.txt will start listing from folder1/folder2/folder3/readmefile.txt.
+            Multiple entity levels are supported for recursive listing.
+            Non-recursive listing supports only one entity level.
+            An error will appear if multiple entity levels are specified for non-recursive listing.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
@@ -612,14 +618,18 @@ class FileSystemClient(StorageAccountHostsMixin):
                 :caption: List the paths in the file system.
         """
         timeout = kwargs.pop('timeout', None)
+        begin_from = kwargs.pop("start_from", None)
         command = functools.partial(
             self._client.file_system.list_paths,
             path=path,
             timeout=timeout,
-            **kwargs)
+            begin_from=begin_from,
+            **kwargs
+        )
         return ItemPaged(
             command, recursive, path=path, max_results=max_results,
-            page_iterator_class=PathPropertiesPaged, **kwargs)
+            page_iterator_class=PathPropertiesPaged, **kwargs
+        )
 
     @distributed_trace
     def create_directory(
