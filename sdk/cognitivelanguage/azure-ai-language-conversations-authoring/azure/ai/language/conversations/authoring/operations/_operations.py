@@ -5371,7 +5371,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def begin_cancel_training_job(
+    def _begin_cancel_training_job(
         self, project_name: str, job_id: str, **kwargs: Any
     ) -> LROPoller[_models.TrainingJobResult]:
         """Triggers a cancellation for a running training job.

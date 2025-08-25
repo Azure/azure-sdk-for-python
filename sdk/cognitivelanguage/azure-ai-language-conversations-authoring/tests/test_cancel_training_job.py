@@ -26,33 +26,24 @@ class TestConversationsCancelTrainingSync(TestConversations):
 
         client = self.create_client(authoring_endpoint, authoring_key)
 
-        project_name = "Test-data-labels"
-        job_id = "b532b488-a546-4d25-a91c-89e21f056f62_638913312000000000"
-        project_client = client.get_project_client(project_name)
+        project_client = client.get_project_client("Test-data-labels")
+        job_id="9a859b20-4b05-45e0-856c-88a55ae928b6_638916768000000000"
 
-        captured = {}
-
-        def capture_initial_response(pipeline_response):
-            # This hook is called for every HTTP response on this call.
-            # Since polling=False, it will be the single initial response.
-            http_resp = pipeline_response.http_response
-            captured["status_code"] = http_resp.status_code
-            captured["headers"] = http_resp.headers
-
-        # Fire the cancel request but DO NOT poll; capture the initial response via hook.
         poller = project_client.project.begin_cancel_training_job(
             job_id=job_id,
-            polling=False,
-            raw_response_hook=capture_initial_response,
         )
 
-        # Assert initial HTTP status
-        assert captured.get("status_code") == 202, f"Expected 202, got {captured.get('status_code')}"
-
-        # Print polling endpoints from headers
-        headers = captured.get("headers", {})
-        print(f"Operation-Location: {headers.get('Operation-Location') or headers.get('operation-location')}")
-        print(f"Location: {headers.get('Location') or headers.get('location')}")
-
-        # Optional: you still have a poller (NoPolling). Don't call poller.result() in this test.
-        assert poller is not None
+        result = poller.result()  # TrainingJobResult
+        print(f"Model Label: {result.model_label}")
+        print(f"Training Config Version: {result.training_config_version}")
+        print(f"Training Mode: {result.training_mode}")
+        if result.data_generation_status is not None:
+            print(f"Data Generation Status: {result.data_generation_status.status}")
+            print(f"Data Generation %: {result.data_generation_status.percent_complete}")
+        if result.training_status is not None:
+            print(f"Training Status: {result.training_status.status}")
+            print(f"Training %: {result.training_status.percent_complete}")
+        if result.evaluation_status is not None:
+            print(f"Evaluation Status: {result.evaluation_status.status}")
+            print(f"Evaluation %: {result.evaluation_status.percent_complete}")
+        print(f"Estimated End: {result.estimated_end_on}")

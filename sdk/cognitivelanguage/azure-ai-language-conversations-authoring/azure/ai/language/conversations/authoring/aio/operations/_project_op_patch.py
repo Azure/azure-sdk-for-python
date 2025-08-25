@@ -606,7 +606,9 @@ class ProjectOperations(ProjectOperationsGenerated):
 
     @distributed_trace_async
     async def begin_cancel_training_job(  # type: ignore[override]
-        self, job_id: str, **kwargs: Any
+        self,
+        job_id: str,
+        **kwargs: Any
     ) -> AsyncLROPoller[TrainingJobResult]:
         """
         Cancel a training job.
@@ -617,7 +619,67 @@ class ProjectOperations(ProjectOperationsGenerated):
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.language.conversations.authoring.models.TrainingJobResult]
 
         """
-        return await super().begin_cancel_training_job(project_name=self._project_name, job_id=job_id, **kwargs)
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[TrainingJobResult] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+
+        if cont_token is None:
+            # Fire the initial cancel request; keep PipelineResponse for the poller
+            initial = await self._cancel_training_job_initial(  # returns PipelineResponse
+                project_name=self._project_name,
+                job_id=job_id,
+                cls=lambda x, y, z: x,  # passthrough PipelineResponse
+                headers=_headers,
+                params=_params,
+                **kwargs,
+            )
+            await initial.http_response.read()  # type: ignore[attr-defined]
+        kwargs.pop("error_map", None)
+
+        # Deserialization callback: map the nested "result" object to TrainingJobResult
+        def get_long_running_output(pipeline_response):
+            body = pipeline_response.http_response.json() or {}
+            result_dict = body.get("result", {}) or {}
+            obj = _deserialize(TrainingJobResult, result_dict)
+            if cls:
+                return cls(pipeline_response, obj, {})  # type: ignore[misc]
+            return obj
+
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod,
+                AsyncJobsPollingMethod(
+                    polling_interval=lro_delay,
+                    path_format_arguments=path_format_arguments,
+                ),
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+
+        if cont_token:
+            return AsyncLROPoller[TrainingJobResult].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+
+        return AsyncLROPoller[TrainingJobResult](
+            self._client,
+            initial, # type: ignore
+            get_long_running_output,
+            polling_method,  # type: ignore[arg-type]
+        )
 
     @overload
     async def begin_copy_project(

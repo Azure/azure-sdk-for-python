@@ -592,8 +592,10 @@ class ProjectOperations(ProjectOperationsGenerated):
         )
 
     @distributed_trace
-    def begin_cancel_training_job(  # type: ignore[override]
-        self, job_id: str, **kwargs: Any
+    def begin_cancel_training_job(  # pylint: disable=function-redefined
+        self,
+        job_id: str,
+        **kwargs: Any
     ) -> LROPoller[TrainingJobResult]:
         """
         Cancel a training job without requiring project_name explicitly.
@@ -604,7 +606,72 @@ class ProjectOperations(ProjectOperationsGenerated):
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.language.conversations.authoring.models.TrainingJobResult]
 
         """
-        return super().begin_cancel_training_job(project_name=self._project_name, job_id=job_id, **kwargs)
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[TrainingJobResult] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+
+        if cont_token is None:
+            # 1) Send initial cancel request; keep PipelineResponse for the poller
+            initial = self._cancel_training_job_initial(
+                project_name=self._project_name,
+                job_id=job_id,
+                cls=lambda x, y, z: x,  # return PipelineResponse unchanged
+                headers=_headers,
+                params=_params,
+                **kwargs,
+            )
+            initial.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        # 2) Deserializer: extract nested "result" as TrainingJobResult
+        def get_long_running_output(pipeline_response):
+            body = pipeline_response.http_response.json() or {}
+            result_dict = body.get("result", {}) or {}
+            obj = _deserialize(TrainingJobResult, result_dict)
+            if cls:
+                return cls(pipeline_response, obj, {})  # type: ignore
+            return obj
+
+        # 3) Resolve {Endpoint} in Operation-Location for your poller
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        # 4) Choose polling method: your JobsPollingMethod by default
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod,
+                JobsPollingMethod(
+                    polling_interval=lro_delay,
+                    path_format_arguments=path_format_arguments,
+                    # any extra kwargs your poller needs
+                ),
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+
+        # 5) Continuation-token path
+        if cont_token:
+            return LROPoller[TrainingJobResult].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+
+        # 6) Return the poller
+        return LROPoller[TrainingJobResult](
+            self._client,
+            initial, # type: ignore
+            get_long_running_output,
+            polling_method,  # type: ignore
+        )
 
     @overload
     def begin_copy_project(

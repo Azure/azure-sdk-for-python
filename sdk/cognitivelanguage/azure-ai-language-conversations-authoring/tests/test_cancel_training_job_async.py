@@ -29,31 +29,26 @@ class TestConversationsCancelTrainingAsync(TestConversationsAsync):
         client = await self.create_client(authoring_endpoint, authoring_key)
         try:
             project_name = "Test-data-labels"
-            job_id = "57fe7f38-7f74-4169-9133-95de6a223e6f_638913312000000000"
+            job_id = "f0f1760a-f9b9-4a7c-924d-57892aa75ebd_638916768000000000"
             project_client = client.get_project_client(project_name)
 
-            captured = {}
-
-            def capture_initial_response(pipeline_response):
-                http_resp = pipeline_response.http_response
-                captured["status_code"] = http_resp.status_code
-                captured["headers"] = http_resp.headers
-
-            # Start cancel; no polling; capture initial response via hook.
             poller = await project_client.project.begin_cancel_training_job(
                 job_id=job_id,
-                polling=False,
-                raw_response_hook=capture_initial_response,
             )
 
-            # Assert initial HTTP status
-            assert captured.get("status_code") == 202, f"Expected 202, got {captured.get('status_code')}"
-
-            # Print polling endpoints from headers
-            headers = captured.get("headers", {})
-            print(f"Operation-Location: {headers.get('Operation-Location') or headers.get('operation-location')}")
-            print(f"Location: {headers.get('Location') or headers.get('location')}")
-
-            assert poller is not None
+            result = await poller.result()  # TrainingJobResult
+            print(f"Model Label: {result.model_label}")
+            print(f"Training Config Version: {result.training_config_version}")
+            print(f"Training Mode: {result.training_mode}")
+            if result.data_generation_status is not None:
+                print(f"Data Generation Status: {result.data_generation_status.status}")
+                print(f"Data Generation %: {result.data_generation_status.percent_complete}")
+            if result.training_status is not None:
+                print(f"Training Status: {result.training_status.status}")
+                print(f"Training %: {result.training_status.percent_complete}")
+            if result.evaluation_status is not None:
+                print(f"Evaluation Status: {result.evaluation_status.status}")
+                print(f"Evaluation %: {result.evaluation_status.percent_complete}")
+            print(f"Estimated End: {result.estimated_end_on}")
         finally:
             await client.close()
