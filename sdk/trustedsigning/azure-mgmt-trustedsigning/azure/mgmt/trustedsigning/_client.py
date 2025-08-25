@@ -6,6 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+import functools
 from copy import deepcopy
 from typing import Any, TYPE_CHECKING
 from typing_extensions import Self
@@ -72,7 +73,9 @@ class TrustedSigningMgmtClient:  # pylint: disable=client-accepts-api-version-ke
                 self._config.redirect_policy,
                 self._config.retry_policy,
                 self._config.authentication_policy,
-                policies.InvokePolicy(acquire_policy_token_hook=self._acquire_policy_token, **kwargs),
+                policies.InvokePolicy(
+                    acquire_policy_token_hook=functools.partial(self._acquire_policy_token, self), **kwargs
+                ),
                 self._config.custom_hook_policy,
                 self._config.logging_policy,
                 policies.DistributedTracingPolicy(**kwargs),
