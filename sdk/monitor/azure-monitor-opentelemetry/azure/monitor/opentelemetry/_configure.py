@@ -137,9 +137,9 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
     # Instrumentations need to be setup last so to use the global providers
     # instanstiated in the other setup steps
     _setup_instrumentations(configurations)
-    
-    # Setup web snippet for supported frameworks
-    _setup_web_snippet(configurations)
+
+    # Setup browser SDK loader for supported frameworks
+    _setup_browser_sdk_loader(configurations)
 
 
 def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
@@ -361,13 +361,13 @@ def _setup_additional_azure_sdk_instrumentations(configurations: Dict[str, Confi
                 )
 
 
-def _setup_web_snippet(configurations: Dict[str, ConfigurationValue]):
-    """Setup web snippet for supported frameworks."""
+def _setup_browser_sdk_loader(configurations: Dict[str, ConfigurationValue]):
+    """Setup browser SDK loader for supported frameworks."""
     try:
-        # Check if web snippet should be enabled
+        # Check if browser SDK loader should be enabled
         connection_string = configurations.get("connection_string")
         if not connection_string or not isinstance(connection_string, str):
-            _logger.debug("No valid connection string provided - skipping web snippet setup")
+            _logger.debug("No valid connection string provided - skipping browser SDK loader setup")
             return
         
         # Try to patch Django middleware if Django is available

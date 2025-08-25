@@ -14,7 +14,7 @@ _logger = getLogger(__name__)
 
 
 class DjangoWebSnippetMiddleware:
-    """Django middleware for injecting Application Insights web snippet."""
+    """Django middleware for injecting Browser SDK snippet."""
     
     def __init__(self, get_response: Callable):
         self.get_response = get_response
