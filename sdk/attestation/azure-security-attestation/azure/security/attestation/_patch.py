@@ -18,6 +18,7 @@ from cryptography.x509 import load_pem_x509_certificate
 from azure.core.exceptions import raise_with_traceback
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.configuration import Configuration
+from azure.core.credentials import TokenCredential
 
 
 from ._client import AttestationClient as AzureAttestationRestClient
@@ -48,12 +49,6 @@ from .models import (
 )
 
 from ._common import pem_from_base64, validate_signing_keys, merge_validation_args
-
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from azure.core.credentials import TokenCredential
-
 
 class AttestationClient:
     # pylint: disable=protected-access
@@ -386,7 +381,7 @@ class AttestationClient:
             if not self._signing_certificates:
                 signing_certificates = self._client.signing_certificates.get(**kwargs)
                 self._signing_certificates = []
-                for key in signing_certificates['keys']:
+                for key in signing_certificates["keys"]:
                     # Convert the returned certificate chain into an array of X.509 Certificates.
                     self._signing_certificates.append(AttestationSigner._from_generated(key))
             signers = self._signing_certificates
@@ -535,7 +530,9 @@ class AttestationAdministrationClient:
         return actual_policy.decode("utf-8"), token
 
     @distributed_trace
-    def set_policy(self, attestation_type: Union[str, AttestationType], attestation_policy: str, **kwargs: Any) -> Tuple[AttestationPolicyResult, AttestationToken]:
+    def set_policy(
+        self, attestation_type: Union[str, AttestationType], attestation_policy: str, **kwargs: Any
+    ) -> Tuple[AttestationPolicyResult, AttestationToken]:
         """Sets the attestation policy for the specified attestation type.
 
         :param attestation_type: :class:`azure.security.attestation.AttestationType` for
@@ -634,7 +631,9 @@ class AttestationAdministrationClient:
         )
 
     @distributed_trace
-    def reset_policy(self, attestation_type: Union[str, AttestationType], **kwargs: Any) -> Tuple[AttestationPolicyResult, AttestationToken]:
+    def reset_policy(
+        self, attestation_type: Union[str, AttestationType], **kwargs: Any
+    ) -> Tuple[AttestationPolicyResult, AttestationToken]:
         """Resets the attestation policy for the specified attestation type to the default value.
 
         :param attestation_type: :class:`azure.security.attestation.AttestationType` for
@@ -775,13 +774,15 @@ class AttestationAdministrationClient:
 
         cert_list = token._get_body()
 
-        for key in cert_list.policy_certificates['keys']:
+        for key in cert_list.policy_certificates["keys"]:
             key_certs = [pem_from_base64(cert, "CERTIFICATE") for cert in key.x5_c]
             certificates.append(key_certs)
         return certificates, token
 
     @distributed_trace
-    def add_policy_management_certificate(self, *args: str, **kwargs: Any) -> Tuple[AttestationPolicyCertificateResult, AttestationToken]:
+    def add_policy_management_certificate(
+        self, *args: str, **kwargs: Any
+    ) -> Tuple[AttestationPolicyCertificateResult, AttestationToken]:
         """Adds a new policy management certificate to the set of policy management certificates for the instance.
 
         :param str certificate_to_add: Required. PEM encoded X.509 certificate to add to
@@ -881,7 +882,9 @@ class AttestationAdministrationClient:
         )
 
     @distributed_trace
-    def remove_policy_management_certificate(self, *args: str, **kwargs: Any) -> Tuple[AttestationPolicyCertificateResult, AttestationToken]:
+    def remove_policy_management_certificate(
+        self, *args: str, **kwargs: Any
+    ) -> Tuple[AttestationPolicyCertificateResult, AttestationToken]:
         """Removes a policy management certificate from the set of policy management certificates for the instance.
 
         :param str certificate_to_remove: Required. PEM encoded X.509 certificate to remove from
@@ -982,7 +985,7 @@ class AttestationAdministrationClient:
             if not self._signing_certificates:
                 signing_certificates = self._client.signing_certificates.get(**kwargs)
                 self._signing_certificates = []
-                for key in signing_certificates['keys']:
+                for key in signing_certificates["keys"]:
                     # Convert the returned certificate chain into an array of X.509 Certificates.
                     self._signing_certificates.append(AttestationSigner._from_generated(key))
             signers = self._signing_certificates
