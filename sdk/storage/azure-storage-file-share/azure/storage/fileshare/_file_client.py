@@ -438,6 +438,18 @@ class ShareFileClient(StorageAccountHostsMixin):
             NFS only. The owning group of the file.
         :keyword str file_mode:
             NFS only. The file mode of the file.
+        :keyword file_property_semantics:
+            SMB only. Specifies permissions to be configured. Default value is None.
+            If not specified or None is passed, New will be the default. Possible values are:
+
+                New - forcefully add the ARCHIVE attribute flag and alter the permissions specified in
+                x-ms-file-permission to inherit missing permissions from the parent.
+
+                Restore - apply changes without further modification.
+
+        :paramtype file_property_semantics: Literal["New", "Restore"]
+        :keyword Union[IO[bytes], bytes] data: Initial data to upload. The limit is 4MB.
+        :keyword int length: Specifies the number of bytes being uploaded in the initial data.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
@@ -485,6 +497,8 @@ class ShareFileClient(StorageAccountHostsMixin):
                 file_permission=file_permission,
                 file_permission_key=permission_key,
                 file_http_headers=file_http_headers,
+                optionalbody=kwargs.pop('data', None),
+                content_length=kwargs.pop('length', None),
                 lease_access_conditions=access_conditions,
                 headers=headers,
                 timeout=timeout,
