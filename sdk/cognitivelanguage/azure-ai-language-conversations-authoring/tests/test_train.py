@@ -1,7 +1,7 @@
 # pylint: disable=line-too-long,useless-suppression
 import functools
 
-from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer, recorded_by_proxy
+from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.language.conversations.authoring import ConversationAuthoringClient
 from azure.ai.language.conversations.authoring.models import (
@@ -13,7 +13,7 @@ from azure.ai.language.conversations.authoring.models import (
 )
 
 ConversationsPreparer = functools.partial(
-    PowerShellPreparer,
+    EnvironmentVariableLoader,
     "authoring",
     authoring_endpoint="https://Sanitized.cognitiveservices.azure.com/",
     authoring_key="fake_key",

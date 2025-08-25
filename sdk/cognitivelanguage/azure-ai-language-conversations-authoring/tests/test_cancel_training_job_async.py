@@ -2,14 +2,14 @@
 import functools
 import pytest
 
-from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer
+from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.language.conversations.authoring.aio import ConversationAuthoringClient
 from azure.ai.language.conversations.authoring.models import TrainingJobResult
 
 ConversationsPreparer = functools.partial(
-    PowerShellPreparer,
+    EnvironmentVariableLoader,
     "authoring",
     authoring_endpoint="https://Sanitized.cognitiveservices.azure.com/",
     authoring_key="fake_key",
