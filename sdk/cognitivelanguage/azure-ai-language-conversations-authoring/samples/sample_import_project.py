@@ -54,7 +54,7 @@ def sample_import_project():
     client = ConversationAuthoringClient(endpoint, credential=credential)
     project_client = client.get_project_client(project_name)
 
-    # ----- Build assets using objects (placeholders) -----
+    # ----- Build assets using objects -----
     intents = [
         ConversationExportedIntent(category="<intent-a>"),
         ConversationExportedIntent(category="<intent-b>"),

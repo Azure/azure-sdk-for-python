@@ -33,7 +33,6 @@ from azure.ai.language.conversations.authoring import ConversationAuthoringClien
 from azure.ai.language.conversations.authoring.models import (
     CreateProjectOptions,
     ProjectKind,
-    ProjectDetails,
 )
 
 
@@ -55,7 +54,7 @@ def sample_create_project():
         description="Sample project created via Python SDK",
     )
 
-    # create project (no explicit type variables)
+    # create project
     result = client.create_project(project_name=project_name, body=body)
 
     # print project details (direct attribute access; no getattr)

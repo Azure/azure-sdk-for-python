@@ -31,14 +31,14 @@
 Install the Azure Conversation Authoring client library for Python with [pip][pip_link]:
 
 ```bash
-pip install azure-ai-language-conversations
+pip install azure-ai-language-conversations-authoring
 ```
 
 > Note: This version of the client library defaults to the 2025-05-15-preview version of the service
 
 ### Authenticate the client
 
-To interact with the Conversation Authoring service, you'll need to create an instance of the [ConversationAuthoringClient][conversation_authoring_client_class]. You will need an **endpoint** and an **API key** to instantiate a client object. For more information regarding authenticating with Cognitive Services, see [Authenticate requests to Azure Cognitive Services][cognitive_auth].
+To interact with the Conversation Authoring service, you'll need to create an instance of the `ConversationAuthoringClient`. You will need an **endpoint** and an **API key** to instantiate a client object. For more information regarding authenticating with Cognitive Services, see [Authenticate requests to Azure Cognitive Services][cognitive_auth].
 
 #### Get an API key
 
@@ -149,12 +149,21 @@ client = ConversationAuthoringClient(endpoint, AzureKeyCredential(key))
 body = CreateProjectOptions(
     project_kind=ProjectKind.CONVERSATION,
     project_name=project_name,
-    language="<language-tag>",           # e.g., "en-us"
+    language="<language-tag>",  # e.g. "en-us"
     multilingual=True,
     description="Sample project created via Python SDK",
 )
+
+# create project
 result = client.create_project(project_name=project_name, body=body)
-print(f"Project: {result.project_name}, Language: {result.language}")
+
+# print project details (direct attribute access; no getattr)
+print("=== Create Project Result ===")
+print(f"Project Name: {result.project_name}")
+print(f"Language: {result.language}")
+print(f"Kind: {result.project_kind}")
+print(f"Multilingual: {result.multilingual}")
+print(f"Description: {result.description}")
 ```
 
 ### Import a Project
@@ -174,44 +183,107 @@ project_name = os.environ.get("PROJECT_NAME", "<project-name>")
 client = ConversationAuthoringClient(endpoint, AzureKeyCredential(key))
 project_client = client.get_project_client(project_name)
 
-exported_project = ExportedProject(
-    project_file_version="2025-05-15-preview",
-    string_index_type="Utf16CodeUnit",
-    metadata=CreateProjectOptions(
-        project_kind=ProjectKind.CONVERSATION,
-        project_name=project_name,
-        language="<language-tag>",
-        multilingual=True,
-        settings=ProjectSettings(confidence_threshold=0.7),
-    ),
-    assets={
-        "intents": [{"category": "<intent-a>"}, {"category": "<intent-b>"}],
-        "entities": [{"category": "<entity-a>"}],
-        "utterances": [
-            {"text": "<utterance-1>", "dataset": "Train", "intent": "<intent-a>"},
-            {"text": "<utterance-2>", "dataset": "Test", "intent": "<intent-b>"},
-        ],
-    },
+# Build assets using objects
+intents = [
+    ConversationExportedIntent(category="<intent-a>"),
+    ConversationExportedIntent(category="<intent-b>"),
+]
+
+entities = [
+    ConversationExportedEntity(
+        category="<entity-a>",
+        composition_mode="combineComponents",
+    )
+]
+
+u1 = ConversationExportedUtterance(
+    text="<utterance-1>",
+    intent="<intent-b>",
+    language="<language-tag>",  # e.g., "en-us"
+    dataset="Train",
+    entities=[ExportedUtteranceEntityLabel(category="<entity-a>", offset=0, length=5)],
 )
 
-poller = project_client.project.begin_import(body=exported_project)
+u2 = ConversationExportedUtterance(
+    text="<utterance-2>",
+    intent="<intent-b>",
+    language="<language-tag>",
+    dataset="Train",
+    entities=[ExportedUtteranceEntityLabel(category="<entity-a>", offset=0, length=5)],
+)
+
+u3 = ConversationExportedUtterance(
+    text="<utterance-3>",
+    intent="<intent-b>",
+    language="<language-tag>",
+    dataset="Train",
+    entities=[ExportedUtteranceEntityLabel(category="<entity-a>", offset=0, length=4)],
+)
+
+assets = ConversationExportedProjectAsset(
+    intents=intents,
+    entities=entities,
+    utterances=[u1, u2, u3],
+)
+
+metadata = CreateProjectOptions(
+    project_kind=ProjectKind.CONVERSATION,
+    project_name=project_name,  # required
+    language="<language-tag>",  # required (e.g., "en-us")
+    settings=ProjectSettings(confidence_threshold=0.0),
+    multilingual=False,
+    description="",
+)
+
+exported_project = ExportedProject(
+    project_file_version="<project-file-version>",  # e.g., "2025-05-15-preview"
+    string_index_type="Utf16CodeUnit",
+    metadata=metadata,
+    assets=assets,
+)
+
+# begin import (long-running operation)
+poller = project_client.project.begin_import(
+    body=exported_project,
+    exported_project_format=ExportedProjectFormat.CONVERSATION,
+)
+
+# wait for completion and get the result
 result = poller.result()
-print(f"Import Status: {result.status}")
+
+# print result details (direct attribute access; no getattr)
+print("=== Import Project Result ===")
+print(f"Job ID: {result.job_id}")
+print(f"Status: {result.status}")
+print(f"Created on: {result.created_on}")
+print(f"Last updated on: {result.last_updated_on}")
+print(f"Expires on: {result.expires_on}")
+print(f"Warnings: {result.warnings}")
+print(f"Errors: {result.errors}")
 ```
 
 ### Train a Model
 
 ```python
+import os
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.language.conversations.authoring import ConversationAuthoringClient
 from azure.ai.language.conversations.authoring.models import (
     TrainingJobDetails, TrainingMode, EvaluationDetails, EvaluationKind
 )
 
+endpoint = os.environ["AZURE_CONVERSATIONS_AUTHORING_ENDPOINT"]
+key = os.environ["AZURE_CONVERSATIONS_AUTHORING_KEY"]
+project_name = os.environ.get("PROJECT_NAME", "<project-name>")
+
+client = ConversationAuthoringClient(endpoint, AzureKeyCredential(key))
 project_client = client.get_project_client(project_name)
 
-details = TrainingJobDetails(
-    model_label="<trained-model-label>",
+# build training request
+training_job_details = TrainingJobDetails(
+    model_label="<model-label>",
     training_mode=TrainingMode.STANDARD,
-    training_config_version="2023-04-15",
+    training_config_version="<config-version>",
     evaluation_options=EvaluationDetails(
         kind=EvaluationKind.PERCENTAGE,
         testing_split_percentage=20,
@@ -219,9 +291,21 @@ details = TrainingJobDetails(
     ),
 )
 
-poller = project_client.project.begin_train(body=details)
+# start training job (long-running operation)
+poller = project_client.project.begin_train(body=training_job_details)
+
+# wait for job completion and get the result (no explicit type variables)
 result = poller.result()
+
+# print result details
+print("=== Training Result ===")
+print(f"Model Label: {result.model_label}")
+print(f"Training Config Version: {result.training_config_version}")
+print(f"Training Mode: {result.training_mode}")
 print(f"Training Status: {result.training_status}")
+print(f"Data Generation Status: {result.data_generation_status}")
+print(f"Evaluation Status: {result.evaluation_status}")
+print(f"Estimated End: {result.estimated_end_on}")
 ```
 
 ## Optional Configuration
