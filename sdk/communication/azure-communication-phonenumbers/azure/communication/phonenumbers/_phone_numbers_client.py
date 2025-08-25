@@ -216,21 +216,15 @@ class PhoneNumbersClient:
         :returns: A poller to wait on the search results.
         :rtype: ~azure.core.polling.LROPoller[~azure.communication.phonenumbers.PhoneNumberSearchResult]
         """
+        search_request = PhoneNumberSearchRequest(
+            phone_number_type=phone_number_type,
+            assignment_type=assignment_type,
+            capabilities=capabilities,
+            area_code=area_code,
+        )
         if quantity is not None:
-            search_request = PhoneNumberSearchRequest(
-                phone_number_type=phone_number_type,
-                assignment_type=assignment_type,
-                capabilities=capabilities,
-                area_code=area_code,
-                quantity=quantity,
-            )
-        else:
-            search_request = PhoneNumberSearchRequest(
-                phone_number_type=phone_number_type,
-                assignment_type=assignment_type,
-                capabilities=capabilities,
-                area_code=area_code,
-            )
+            search_request.quantity = quantity
+            
         return self._phone_number_client.phone_numbers.begin_search_available_phone_numbers(
             country_code,
             search_request,
