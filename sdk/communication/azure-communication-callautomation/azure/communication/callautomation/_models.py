@@ -1110,8 +1110,8 @@ class TeamsPhoneCallDetails:
 
     def _to_generated(self):
         return TeamsPhoneCallDetailsInternal(
-            teams_phone_caller_details=self.teams_phone_caller,
-            teams_phone_source_details=self.teams_phone_source,
+            teams_phone_caller_details=self.teams_phone_caller._to_generated() if self.teams_phone_caller else None,
+            teams_phone_source_details=self.teams_phone_source._to_generated() if self.teams_phone_source else None,
             session_id=self.session_id,
             intent=self.intent,
             call_topic=self.call_topic,
@@ -1173,7 +1173,7 @@ class TeamsPhoneCallerDetails:
 
     def _to_generated(self):
         return TeamsPhoneCallerDetailsInternal(
-            caller=self.caller,
+            caller=serialize_identifier(self.caller),
             name=self.name,
             phone_number=self.phone_number,
             record_id=self.record_id,
