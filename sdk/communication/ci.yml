@@ -31,6 +31,11 @@ extends:
   parameters:
     ServiceDirectory: communication
     TestProxy: true
+    MatrixConfigs:
+      - Name: communication_ci_matrix
+        Path: sdk/communication/platform-matrix.json
+        Selection: sparse
+        GenerateVMJobs: true
     Artifacts:
     - name: azure-communication-identity
       safeName: azurecommunicationidentity

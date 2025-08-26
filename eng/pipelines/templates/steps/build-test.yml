@@ -37,15 +37,6 @@ steps:
   - template: set-dev-build.yml
 
   - pwsh: |
-      # Install PortAudio system deps for PyAudio (non-Windows)
-      if ($IsLinux) {
-        sudo apt-get update
-        sudo apt-get install -y portaudio19-dev libasound2-dev
-      } elseif ($IsMacOS) {
-        brew update
-        brew install portaudio
-      }
-
       Write-Host (Get-Command python).Source
       $ErrorActionPreference = 'Stop'
       $PSNativeCommandUseErrorActionPreference = $true
