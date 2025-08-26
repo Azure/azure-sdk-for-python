@@ -87,10 +87,7 @@ def handle_venv(isolate: bool, args: argparse.Namespace) -> None:
         install_into_venv(venv_location, os.path.join(REPO_ROOT, "eng/tools/azure-sdk-tools"), False, "build")
         venv_python_exe = get_venv_python(venv_location)
         command_args = [venv_python_exe, "-m", "azpysdk.main"] + sys.argv[1:]
-
-        breakpoint()
         check_call(command_args)
-
 
 def main(argv: Optional[Sequence[str]] = None) -> int:#
     """CLI entrypoint.
@@ -120,7 +117,6 @@ def main(argv: Optional[Sequence[str]] = None) -> int:#
     except Exception as exc:  # pragma: no cover - simple top-level error handling
         print(f"Error: {exc}", file=sys.stderr)
         return 2
-
 
 if __name__ == "__main__":
     raise SystemExit(main())
