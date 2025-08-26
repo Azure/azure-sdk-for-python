@@ -10,7 +10,7 @@ class Check(abc.ABC):
     """
 
     def __init__(self) -> None:
-        self.isolated_namespace = False
+        pass
 
     @abc.abstractmethod
     def register(self, subparsers: "argparse._SubParsersAction", parent_parsers: Optional[List[argparse.ArgumentParser]] = None) -> None:
