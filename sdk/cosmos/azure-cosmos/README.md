@@ -942,7 +942,7 @@ requests to another region:
 
 ### Per Partition Automatic Failover (Public Preview)
 Per partition automatic failover enables the SDK to automatically redirect write requests at the partition level to another region based on service-side signals. This feature is available 
-only for single write region accounts that have at least one read-only region. When per partition automatic failover is enabled, per partition circuit breaker and hedging is enabled by default, meaning 
+only for single write region accounts that have at least one read-only region. When per partition automatic failover is enabled, per partition circuit breaker and cross-region hedging is enabled by default, meaning 
 all its configurable options also apply to per partition automatic failover. To enable this feature, follow the guide [here](https://learn.microsoft.com/azure/cosmos-db/how-to-configure-per-partition-automatic-failover).
 
 ## Troubleshooting
