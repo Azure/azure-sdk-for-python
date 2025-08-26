@@ -6,8 +6,6 @@ from typing import Any, Dict, List, Literal, TypedDict, Union
 
 from typing_extensions import NotRequired
 
-from azure.core.credentials import TokenCredential
-
 
 class AzureOpenAIModelConfiguration(TypedDict):
     """Model configuration for Azure OpenAI models
@@ -41,8 +39,6 @@ class AzureOpenAIModelConfiguration(TypedDict):
     api_key: NotRequired[str]
     """API key of Azure OpenAI resource"""
     api_version: NotRequired[str]
-    credential: NotRequired[TokenCredential]
-    """TokenCredential of the Azure OpenAI resource"""
 
 
 class OpenAIModelConfiguration(TypedDict):
