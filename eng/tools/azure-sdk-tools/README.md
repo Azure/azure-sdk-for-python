@@ -37,7 +37,7 @@ This package is intended for usage in direct combination with the azure-sdk-for-
 
 ## Usage in automation
 
-This package is used externally in two places. Changes to `azure-sdk-tools` especially location should follow-up to ensure these usages are NOT broken.
+This package is used externally in two places. Changes to `azure-sdk-tools`, especially location, should follow-up to ensure these usages are NOT broken.
 
 - In `typespec` package generation.
   - [This PR](https://github.com/microsoft/typespec/pull/8281) updates `packages/http-client-python/generator/pygen/codegen/templates/packaging_templates/dev_requirements.txt.jinja2` to match the expected location of `azure-sdk-tools`.
