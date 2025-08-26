@@ -1,5 +1,4 @@
--e ../../../tools/azure-sdk-tools
-setuptools
+-e ../../../eng/tools/azure-sdk-tools
 pytest
 django
 fastapi-slim

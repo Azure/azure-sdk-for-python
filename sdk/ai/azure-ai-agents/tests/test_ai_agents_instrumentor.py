@@ -9,7 +9,7 @@ import os
 import json
 import time
 import functools
-from typing import Set, Callable, Any
+from typing import Set, Callable, Any, Optional
 from azure.ai.agents.models import (
     AgentsResponseFormatMode,
     AgentsResponseFormat,
@@ -48,7 +48,7 @@ agentClientPreparer = functools.partial(
     azure_ai_agents_tests_data_path="azureml://subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg-resour-cegr-oupfoo1/workspaces/abcd-abcdabcdabcda-abcdefghijklm/datastores/workspaceblobstore/paths/LocalUpload/000000000000/product_info_1.md",
 )
 
-CONTENT_TRACING_ENV_VARIABLE = "AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED"
+CONTENT_TRACING_ENV_VARIABLE = "OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT"
 settings.tracing_implementation = "OpenTelemetry"
 _utils._span_impl_type = settings.tracing_implementation()
 
@@ -168,6 +168,58 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
             exception_caught = True
             print(e)
         assert exception_caught == False
+
+    @pytest.mark.parametrize(
+        "env1, env2, expected",
+        [
+            (None, None, False),
+            (None, False, False),
+            (None, True, True),
+            (False, None, False),
+            (False, False, False),
+            (False, True, False),
+            (True, None, True),
+            (True, False, False),
+            (True, True, True),
+        ],
+    )
+    def test_content_recording_enabled_with_old_and_new_environment_variables(
+        self, env1: Optional[bool], env2: Optional[bool], expected: bool
+    ):
+        """
+        Test content recording enablement with both old and new environment variables.
+        This test verifies the behavior of content recording when both the current
+        and legacy environment variables are set to different combinations of values.
+        The method tests all possible combinations of None, True, and False for both
+        environment variables to ensure backward compatibility and proper precedence.
+        Args:
+            env1: Value for the current content tracing environment variable.
+                  Can be None (unset), True, or False.
+            env2: Value for the old/legacy content tracing environment variable.
+                  Can be None (unset), True, or False.
+            expected: The expected result of is_content_recording_enabled() given
+                      the environment variable combination.
+        The test ensures that only if one or both of the environment variables are
+        defined and set to "true" content recording is enabled.
+        """
+
+        OLD_CONTENT_TRACING_ENV_VARIABLE = "AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED"  # Deprecated, undocumented.
+
+        def set_env_var(var_name, value):
+            if value is None:
+                os.environ.pop(var_name, None)
+            else:
+                os.environ[var_name] = "true" if value else "false"
+
+        set_env_var(CONTENT_TRACING_ENV_VARIABLE, env1)
+        set_env_var(OLD_CONTENT_TRACING_ENV_VARIABLE, env2)
+
+        self.setup_telemetry()
+        try:
+            assert AIAgentsInstrumentor().is_content_recording_enabled() == expected
+        finally:
+            self.cleanup()  # This also undefines CONTENT_TRACING_ENV_VARIABLE
+            os.environ.pop(OLD_CONTENT_TRACING_ENV_VARIABLE, None)
 
     @pytest.mark.usefixtures("instrument_with_content")
     @agentClientPreparer()

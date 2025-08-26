@@ -161,7 +161,7 @@ def process_credential_exclusions(credential_config: dict, exclude_flags: dict, 
 
     if token_credentials_env == "dev":
         # In dev mode, use only developer credentials
-        dev_credentials = {"cli", "developer_cli", "powershell", "shared_token_cache"}
+        dev_credentials = {"visual_studio_code", "cli", "developer_cli", "powershell", "shared_token_cache", "broker"}
         for cred_key in credential_config:
             exclude_flags[cred_key] = cred_key not in dev_credentials
     elif token_credentials_env == "prod":

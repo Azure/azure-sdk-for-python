@@ -34,15 +34,11 @@ def main():
     response = client.user_assigned_identities.update(
         resource_group_name="rgName",
         resource_name="resourceName",
-        parameters={
-            "location": "eastus",
-            "properties": {"isolationScope": "Regional"},
-            "tags": {"key1": "value1", "key2": "value2"},
-        },
+        parameters={"location": "eastus", "tags": {"key1": "value1", "key2": "value2"}},
     )
     print(response)
 
 
-# x-ms-original-file: specification/msi/resource-manager/Microsoft.ManagedIdentity/stable/2024-11-30/examples/IdentityUpdate.json
+# x-ms-original-file: specification/msi/resource-manager/Microsoft.ManagedIdentity/stable/2023-01-31/examples/IdentityUpdate.json
 if __name__ == "__main__":
     main()

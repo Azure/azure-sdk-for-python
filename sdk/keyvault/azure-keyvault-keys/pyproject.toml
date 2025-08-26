@@ -36,7 +36,7 @@ repository = "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk"
 
 [tool.setuptools.dynamic]
 version = {attr = "azure.keyvault.keys._version.VERSION"}
-readme = {file = ["README.md"], content-type = "text/markdown"}
+readme = {file = ["README.md", "CHANGELOG.md"], content-type = "text/markdown"}
 
 [tool.setuptools.packages.find]
 exclude = ["samples*", "tests*", "azure", "azure.keyvault"]
@@ -46,3 +46,20 @@ pytyped = ["py.typed"]
 
 [tool.azure-sdk-build]
 pyright = false
+
+[tool.uv.sources]
+azure-core = { path = "../../core/azure-core" }
+azure-keyvault-nspkg = { path = "../../nspkg/azure-keyvault-nspkg" }
+azure-sdk-tools = { path = "../../../eng/tools/azure-sdk-tools" }
+
+[dependency-groups]
+dev = [
+    "aiohttp>=3.0",
+    "azure-core",
+    "azure-identity>=1.24.0",
+    "azure-keyvault-nspkg",
+    "azure-mgmt-keyvault==10.1.0",
+    "azure-sdk-tools",
+    "parameterized>=0.7.3",
+    "python-dateutil>=2.8.0",
+]

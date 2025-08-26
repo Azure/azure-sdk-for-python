@@ -1,7 +1,6 @@
--e ../../../tools/azure-sdk-tools
+-e ../../../eng/tools/azure-sdk-tools
 ../../core/azure-core
 ../../identity/azure-identity
 aiohttp
 azure.ai.inference
 openai
-prompty
