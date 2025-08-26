@@ -34,6 +34,12 @@ servicePreparer = functools.partial(
 
 class TestBase(AzureRecordedTestCase):
 
+    test_redteams_params = {
+        "connection_name": "naposaniwestus3",
+        "connection_type": ConnectionType.AZURE_OPEN_AI,
+        "model_deployment_name": "gpt-4o-mini"
+    }
+
     test_connections_params = {
         "connection_name": "connection1",
         "connection_type": ConnectionType.AZURE_OPEN_AI,
@@ -115,6 +121,55 @@ class TestBase(AzureRecordedTestCase):
             if type(connection.credentials) == ApiKeyCredentials:
                 assert connection.credentials.type == CredentialType.API_KEY
                 assert connection.credentials.api_key is not None
+
+    @classmethod
+    def validate_red_team_response(cls, response, expected_attack_strategies: int = -1, expected_risk_categories: int = -1):
+        """Assert basic red team scan response properties."""
+        assert response is not None
+        assert hasattr(response, 'name')
+        assert hasattr(response, 'display_name')
+        assert hasattr(response, 'status')
+        assert hasattr(response, 'attack_strategies')
+        assert hasattr(response, 'risk_categories')
+        assert hasattr(response, 'target')
+        assert hasattr(response, 'properties')
+        
+        # Validate attack strategies and risk categories
+        if expected_attack_strategies != -1:
+            assert len(response.attack_strategies) == expected_attack_strategies
+        if expected_risk_categories != -1:
+            assert len(response.risk_categories) == expected_risk_categories
+        assert response.status is not None
+        cls._assert_azure_ml_properties(response)
+
+    @classmethod
+    def _assert_azure_ml_properties(cls, response):
+        """Assert Azure ML specific properties are present and valid."""
+        properties = response.properties
+        assert properties is not None, "Red team scan properties should not be None"
+        
+        required_properties = [
+            'runType',
+            'redteaming',
+            '_azureml.evaluation_run',
+            '_azureml.evaluate_artifacts',
+            'AiStudioEvaluationUri'
+        ]
+        
+        for prop in required_properties:
+            assert prop in properties, f"Missing required property: {prop}"
+        
+        # Validate specific property values
+        assert properties['runType'] == 'eval_run'
+        assert properties['_azureml.evaluation_run'] == 'evaluation.service'
+        assert 'instance_results.json' in properties['_azureml.evaluate_artifacts']
+        assert properties['redteaming'] == 'asr'
+
+        # Validate AI Studio URI format
+        ai_studio_uri = properties['AiStudioEvaluationUri']
+        assert ai_studio_uri.startswith('https://ai.azure.com/resource/build/redteaming/')
+        assert 'wsid=' in ai_studio_uri
+        assert 'tid=' in ai_studio_uri
 
     @classmethod
     def validate_deployment(
