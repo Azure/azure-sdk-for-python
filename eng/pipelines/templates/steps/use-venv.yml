@@ -43,3 +43,5 @@ steps:
           -RepoRoot "$(Build.SourcesDirectory)"
       displayName: Use ${{ parameters.VirtualEnvironmentName }} Virtual Environment
       condition: ${{ parameters.Condition }}
+
+    - template: install-portaudio.yml
