@@ -224,7 +224,7 @@ class PhoneNumbersClient:
         )
         if quantity is not None:
             search_request.quantity = quantity
-            
+
         return self._phone_number_client.phone_numbers.begin_search_available_phone_numbers(
             country_code,
             search_request,
