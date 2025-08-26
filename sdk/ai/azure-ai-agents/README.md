@@ -876,7 +876,7 @@ Here is an example:
 <!-- SNIPPET:sample_agents_browser_automation.create_agent_with_browser_automation -->
 
 ```python
-connection_id = os.environ["AZURE_PLAYWRIGHT_CONNECTION_ID"]
+connection_id = project_client.connections.get(os.environ["AZURE_PLAYWRIGHT_CONNECTION_NAME"]).id
 
 # Initialize Browser Automation tool and add the connection id
 browser_automation = BrowserAutomationTool(connection_id=connection_id)
@@ -911,7 +911,7 @@ Here is an example:
 <!-- SNIPPET:sample_agents_fabric.create_agent_with_fabric_tool -->
 
 ```python
-conn_id = os.environ["FABRIC_CONNECTION_ID"]
+conn_id = project_client.connections.get(os.environ["FABRIC_CONNECTION_NAME"]).id
 
 print(conn_id)
 

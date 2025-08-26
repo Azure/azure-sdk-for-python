@@ -10,8 +10,8 @@ import pytest
 from _fault_injection_transport_async import FaultInjectionTransportAsync
 import azure.cosmos.exceptions as exceptions
 import test_config
-from azure.cosmos.aio import CosmosClient, _retry_utility_async
-from azure.cosmos import DatabaseProxy, PartitionKey
+from azure.cosmos.aio import CosmosClient, _retry_utility_async, DatabaseProxy
+from azure.cosmos import PartitionKey
 from azure.cosmos.http_constants import StatusCodes, SubStatusCodes, HttpHeaders
 from azure.core.pipeline.transport._aiohttp import AioHttpTransportResponse
 from azure.core.rest import HttpRequest, AsyncHttpResponse
@@ -87,10 +87,37 @@ class TestSessionAsync(unittest.IsolatedAsyncioTestCase):
         assert self.created_db.client_connection.last_response_headers.get(HttpHeaders.SessionToken) is not None
         assert self.created_db.client_connection.last_response_headers.get(HttpHeaders.SessionToken) != batch_response_token
 
+    async def test_session_token_with_space_in_container_name_async(self):
+
+        # Session token should not be sent for control plane operations
+        test_container = await self.created_db.create_container(
+            "Container with space" + str(uuid.uuid4()),
+            PartitionKey(path="/pk"),
+            raw_response_hook=test_config.no_token_response_hook
+        )
+        try:
+            # Session token should be sent for document read/batch requests only - verify it is not sent for write requests
+            created_document = await test_container.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},
+                                                          raw_response_hook=test_config.no_token_response_hook)
+            response_session_token = created_document.get_response_headers().get(HttpHeaders.SessionToken)
+            read_item = await test_container.read_item(item=created_document['id'], partition_key='mypk',
+                                                 raw_response_hook=test_config.token_response_hook)
+            query_iterable = test_container.query_items(
+                "SELECT * FROM c WHERE c.id = '" + str(created_document['id']) + "'",
+                partition_key='mypk',
+                raw_response_hook=test_config.token_response_hook)
+
+            async for _ in query_iterable:
+                pass
+
+            assert (read_item.get_response_headers().get(HttpHeaders.SessionToken) ==
+                    response_session_token)
+        finally:
+            await self.created_db.delete_container(test_container)
+
     async def test_session_token_mwr_for_ops_async(self):
         # For multiple write regions, all document requests should send out session tokens
         # We will use fault injection to simulate the regions the emulator needs
-        first_region_uri: str = test_config.TestConfig.local_host.replace("localhost", "127.0.0.1")
         custom_transport = FaultInjectionTransportAsync()
 
         # Inject topology transformation that would make Emulator look like a multiple write region account
