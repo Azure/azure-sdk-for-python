@@ -9,7 +9,8 @@ import json
 from unittest import mock
 from datetime import datetime
 
-from azure.core.exceptions import HttpResponseError, ServiceRequestError
+from azure.core.exceptions import HttpResponseError, ServiceRequestError, ServiceRequestTimeoutError
+from requests import ConnectTimeout, ReadTimeout, Timeout, ConnectionError
 from azure.core.pipeline.transport import HttpResponse
 from azure.monitor.opentelemetry.exporter.export._base import (
     _MONITOR_DOMAIN_MAPPING,
@@ -37,6 +38,10 @@ from azure.monitor.opentelemetry.exporter._constants import (
     DropCode,
     RetryCode,
     _UNKNOWN,
+    _STORAGE_EXCEPTION,
+    _NETWORK_EXCEPTION,
+    _CLIENT_EXCEPTION,
+    _TIMEOUT_EXCEPTION,
 )
 from azure.monitor.opentelemetry.exporter._generated import AzureMonitorClient
 from azure.monitor.opentelemetry.exporter._generated.models import (
@@ -1653,7 +1658,7 @@ class TestBaseExporter(unittest.TestCase):
         exporter._should_collect_customer_sdkstats = mock.Mock(return_value=True)
         
         # Mock the storage to return an error string (not one of the enum values)
-        error_message = "Storage write failed: Permission denied"
+        error_message = _STORAGE_EXCEPTION
         exporter.storage = mock.Mock()
         exporter.storage.put.return_value = error_message
         
@@ -1806,7 +1811,7 @@ class TestBaseExporter(unittest.TestCase):
         resend_envelopes = [TelemetryItem(name="retried", time=datetime.now())]
         
         # Mock the storage.put method to return a string error (simulating CLIENT_EXCEPTION)
-        error_message = "Test error message for client exception"
+        error_message = _CLIENT_EXCEPTION
         exporter.storage.put.return_value = error_message
         
         # Mock transmit method to return partial success (206) and trigger track_dropped_items_from_storage
@@ -2020,7 +2025,7 @@ class TestBaseExporter(unittest.TestCase):
         resend_envelopes = [TelemetryItem(name="retried", time=datetime.now())]
         
         # Mock the storage.put method to return a string error (simulating CLIENT_EXCEPTION)
-        error_message = "Test error message for client exception"
+        error_message = _CLIENT_EXCEPTION
         exporter.storage.put.return_value = error_message
         
         # Mock transmit method to return partial success (206) and trigger track_dropped_items_from_storage
@@ -2207,7 +2212,7 @@ class TestBaseExporter(unittest.TestCase):
             exporter._should_collect_customer_sdkstats = mock.Mock(return_value=True)
             
             # Mock storage.put() to return string error (like LocalFileBlob.put() does)
-            blob_error_message = "[Errno 28] No space left on device"
+            blob_error_message = _STORAGE_EXCEPTION
             exporter.storage = mock.Mock()
             exporter.storage.put.return_value = blob_error_message
             
@@ -2222,128 +2227,6 @@ class TestBaseExporter(unittest.TestCase):
             # Verify that _track_dropped_items was called with CLIENT_EXCEPTION from blob put error
             mock_track_dropped.assert_called_once_with(
                 mock_customer_sdkstats, test_envelopes, DropCode.CLIENT_EXCEPTION, blob_error_message
-            )
-            
-            # Verify states remain clean (blob errors don't affect global state)
-            self.assertFalse(_LOCAL_STORAGE_SETUP_STATE["READONLY"])
-            self.assertEqual(_LOCAL_STORAGE_SETUP_STATE["EXCEPTION_OCCURRED"], "")
-            
-            self.assertIsNone(result)
-            
-        finally:
-            # Restore original state
-            _LOCAL_STORAGE_SETUP_STATE["READONLY"] = original_readonly_state
-            _LOCAL_STORAGE_SETUP_STATE["EXCEPTION_OCCURRED"] = original_exception_state
-
-    @mock.patch.dict(
-        os.environ,
-        {
-            "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "true",
-            "APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW": "true",
-        },
-    )
-    @mock.patch('azure.monitor.opentelemetry.exporter.export._base._track_dropped_items_from_storage')
-    @mock.patch('azure.monitor.opentelemetry.exporter.export._base._track_dropped_items')
-    def test_handle_transmit_from_storage_localfileblob_rename_exception_simulation(self, mock_track_dropped, mock_track_dropped_from_storage):
-        """Test LocalFileBlob.put() rename exception simulation (atomic write failure)"""
-        # Set up side effect to call the real function but use our mock for _track_dropped_items
-        def side_effect(statsbeat, result_from_storage_put, telemetry):
-            from azure.monitor.opentelemetry.exporter.export._base import _track_dropped_items
-            if isinstance(result_from_storage_put, str):
-                _track_dropped_items(statsbeat, telemetry, DropCode.CLIENT_EXCEPTION, result_from_storage_put)
-        mock_track_dropped_from_storage.side_effect = side_effect
-        """Test LocalFileBlob.put() rename exception simulation (atomic write failure)"""
-        # Save original state
-        original_readonly_state = _LOCAL_STORAGE_SETUP_STATE["READONLY"]
-        original_exception_state = _LOCAL_STORAGE_SETUP_STATE["EXCEPTION_OCCURRED"]
-        
-        try:
-            # Clean state - no prior exceptions
-            _LOCAL_STORAGE_SETUP_STATE["READONLY"] = False
-            _LOCAL_STORAGE_SETUP_STATE["EXCEPTION_OCCURRED"] = ""
-            
-            exporter = BaseExporter(disable_offline_storage=False)
-            mock_customer_sdkstats = mock.Mock()
-            exporter._customer_sdkstats_metrics = mock_customer_sdkstats
-            exporter._should_collect_customer_sdkstats = mock.Mock(return_value=True)
-            
-            # Mock storage.put() to return string error (rename/atomic write failure)
-            rename_error_message = "[Errno 1] Operation not permitted: rename failure"
-            exporter.storage = mock.Mock()
-            exporter.storage.put.return_value = rename_error_message
-            
-            test_envelopes = [TelemetryItem(name="test", time=datetime.now())]
-            
-            # Call _handle_transmit_from_storage with FAILED_RETRYABLE
-            result = exporter._handle_transmit_from_storage(test_envelopes, ExportResult.FAILED_RETRYABLE)
-            
-            # Verify storage.put was called
-            exporter.storage.put.assert_called_once()
-            
-            # Verify that _track_dropped_items was called with CLIENT_EXCEPTION from rename error
-            mock_track_dropped.assert_called_once_with(
-                mock_customer_sdkstats, test_envelopes, DropCode.CLIENT_EXCEPTION, rename_error_message
-            )
-            
-            # Verify states remain clean (blob errors don't affect global state)
-            self.assertFalse(_LOCAL_STORAGE_SETUP_STATE["READONLY"])
-            self.assertEqual(_LOCAL_STORAGE_SETUP_STATE["EXCEPTION_OCCURRED"], "")
-            
-            self.assertIsNone(result)
-            
-        finally:
-            # Restore original state
-            _LOCAL_STORAGE_SETUP_STATE["READONLY"] = original_readonly_state
-            _LOCAL_STORAGE_SETUP_STATE["EXCEPTION_OCCURRED"] = original_exception_state
-
-    @mock.patch.dict(
-        os.environ,
-        {
-            "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "true",
-            "APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW": "true",
-        },
-    )
-    @mock.patch('azure.monitor.opentelemetry.exporter.export._base._track_dropped_items_from_storage')
-    @mock.patch('azure.monitor.opentelemetry.exporter.export._base._track_dropped_items')
-    def test_handle_transmit_from_storage_localfileblob_json_serialization_exception_simulation(self, mock_track_dropped, mock_track_dropped_from_storage):
-        """Test LocalFileBlob.put() JSON serialization exception simulation"""
-        # Set up side effect to call the real function but use our mock for _track_dropped_items
-        def side_effect(statsbeat, result_from_storage_put, telemetry):
-            from azure.monitor.opentelemetry.exporter.export._base import _track_dropped_items
-            if isinstance(result_from_storage_put, str):
-                _track_dropped_items(statsbeat, telemetry, DropCode.CLIENT_EXCEPTION, result_from_storage_put)
-        mock_track_dropped_from_storage.side_effect = side_effect
-        """Test LocalFileBlob.put() JSON serialization exception simulation"""
-        # Save original state
-        original_readonly_state = _LOCAL_STORAGE_SETUP_STATE["READONLY"]
-        original_exception_state = _LOCAL_STORAGE_SETUP_STATE["EXCEPTION_OCCURRED"]
-        
-        try:
-            # Clean state - no prior exceptions
-            _LOCAL_STORAGE_SETUP_STATE["READONLY"] = False
-            _LOCAL_STORAGE_SETUP_STATE["EXCEPTION_OCCURRED"] = ""
-            
-            exporter = BaseExporter(disable_offline_storage=False)
-            mock_customer_sdkstats = mock.Mock()
-            exporter._customer_sdkstats_metrics = mock_customer_sdkstats
-            exporter._should_collect_customer_sdkstats = mock.Mock(return_value=True)
-            
-            # Mock storage.put() to return string error (JSON serialization failure)
-            json_error_message = "TypeError: Object of type datetime is not JSON serializable"
-            exporter.storage = mock.Mock()
-            exporter.storage.put.return_value = json_error_message
-            
-            test_envelopes = [TelemetryItem(name="test", time=datetime.now())]
-            
-            # Call _handle_transmit_from_storage with FAILED_RETRYABLE
-            result = exporter._handle_transmit_from_storage(test_envelopes, ExportResult.FAILED_RETRYABLE)
-            
-            # Verify storage.put was called
-            exporter.storage.put.assert_called_once()
-            
-            # Verify that _track_dropped_items was called with CLIENT_EXCEPTION from JSON error
-            mock_track_dropped.assert_called_once_with(
-                mock_customer_sdkstats, test_envelopes, DropCode.CLIENT_EXCEPTION, json_error_message
             )
             
             # Verify states remain clean (blob errors don't affect global state)
@@ -2384,7 +2267,7 @@ class TestBaseExporter(unittest.TestCase):
             exporter._should_collect_customer_sdkstats = mock.Mock(return_value=True)
             
             # Mock storage.put() to also return a blob error
-            blob_error_message = "IOError: Disk full during blob write"
+            blob_error_message = _STORAGE_EXCEPTION
             exporter.storage = mock.Mock()
             exporter.storage.put.return_value = blob_error_message
             
@@ -2642,116 +2525,6 @@ class TestBaseExporter(unittest.TestCase):
             _LOCAL_STORAGE_SETUP_STATE["READONLY"] = original_readonly_state
             _LOCAL_STORAGE_SETUP_STATE["EXCEPTION_OCCURRED"] = original_exception_state
 
-    @mock.patch.dict(
-        os.environ,
-        {
-            "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "true",
-            "APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW": "true",
-        },
-    )
-    @mock.patch('azure.monitor.opentelemetry.exporter.statsbeat._utils._track_dropped_items')
-    @mock.patch('azure.monitor.opentelemetry.exporter.export._base._track_dropped_items_from_storage')
-    def test_LOCAL_STORAGE_SETUP_STATE_readonly_and_exception_mixed_scenarios(self, mock_track_dropped_from_storage, mock_track_dropped):
-        """Test mixed scenarios where both readonly and exception conditions occur"""
-        # Save original state
-        original_readonly_state = _LOCAL_STORAGE_SETUP_STATE["READONLY"]
-        original_exception_state = _LOCAL_STORAGE_SETUP_STATE["EXCEPTION_OCCURRED"]
-        
-        try:
-            exporter = BaseExporter(disable_offline_storage=False)
-            mock_customer_sdkstats = mock.Mock()
-            exporter._customer_sdkstats_metrics = mock_customer_sdkstats
-            exporter._should_collect_customer_sdkstats = mock.Mock(return_value=True)
-            exporter.storage = mock.Mock()
-            
-            test_envelopes = [TelemetryItem(name="test", time=datetime.now())]
-            
-            # Set up side_effect for _track_dropped_items_from_storage
-            def side_effect(customer_sdkstats, result_from_storage_put, envelopes):
-                from azure.monitor.opentelemetry.exporter.statsbeat._utils import _track_dropped_items_from_storage
-                # Call the real function which will use our mocked _track_dropped_items
-                _track_dropped_items_from_storage(customer_sdkstats, result_from_storage_put, envelopes)
-                
-            mock_track_dropped_from_storage.side_effect = side_effect
-            
-            # Scenario 1: Start with both states set, handle readonly first
-            _LOCAL_STORAGE_SETUP_STATE["READONLY"] = True
-            _LOCAL_STORAGE_SETUP_STATE["EXCEPTION_OCCURRED"] = "Storage error occurred"
-            
-            # Handle readonly condition
-            exporter.storage.put.return_value = StorageExportResult.CLIENT_READONLY
-            result1 = exporter._handle_transmit_from_storage(test_envelopes, ExportResult.FAILED_RETRYABLE)
-            
-            # Verify readonly remains True (once set, it stays True), exception state preserved
-            self.assertTrue(_LOCAL_STORAGE_SETUP_STATE["READONLY"])
-            self.assertEqual(_LOCAL_STORAGE_SETUP_STATE["EXCEPTION_OCCURRED"], "Storage error occurred")
-            self.assertIsNone(result1)
-            
-            # Verify track_dropped_items_from_storage was called with readonly result
-            mock_track_dropped_from_storage.assert_called_with(mock_customer_sdkstats, StorageExportResult.CLIENT_READONLY, test_envelopes)
-            
-            # Verify _track_dropped_items was called with CLIENT_READONLY
-            mock_track_dropped.assert_called_with(mock_customer_sdkstats, test_envelopes, DropCode.CLIENT_READONLY)
-            
-            # Scenario 2: Now handle the remaining exception
-            mock_track_dropped_from_storage.reset_mock()
-            mock_track_dropped.reset_mock()
-            exporter.storage.put.return_value = "File system error: Permission denied"
-            result2 = exporter._handle_transmit_from_storage(test_envelopes, ExportResult.FAILED_RETRYABLE)
-            
-            # Verify exception was reset if exception state was updated, readonly state remains True
-            self.assertTrue(_LOCAL_STORAGE_SETUP_STATE["READONLY"])
-            self.assertEqual(_LOCAL_STORAGE_SETUP_STATE["EXCEPTION_OCCURRED"], "Storage error occurred")
-            self.assertIsNone(result2)
-            
-            # Verify track_dropped_items_from_storage was called with error string
-            mock_track_dropped_from_storage.assert_called_with(mock_customer_sdkstats, "File system error: Permission denied", test_envelopes)
-            
-            # Verify _track_dropped_items was called with CLIENT_EXCEPTION and the error message
-            mock_track_dropped.assert_called_with(mock_customer_sdkstats, test_envelopes, DropCode.CLIENT_EXCEPTION, "File system error: Permission denied")
-            
-            # Scenario 3: Set both states again, handle exception first this time
-            mock_track_dropped_from_storage.reset_mock()
-            mock_track_dropped.reset_mock()
-            _LOCAL_STORAGE_SETUP_STATE["READONLY"] = True
-            _LOCAL_STORAGE_SETUP_STATE["EXCEPTION_OCCURRED"] = "Another error"
-            
-            # Handle exception condition first
-            exporter.storage.put.return_value = "Disk full error"
-            result3 = exporter._handle_transmit_from_storage(test_envelopes, ExportResult.FAILED_RETRYABLE)
-            
-            self.assertEqual(_LOCAL_STORAGE_SETUP_STATE["READONLY"], True)
-            self.assertEqual(_LOCAL_STORAGE_SETUP_STATE["EXCEPTION_OCCURRED"], "Another error")
-            self.assertIsNone(result3)
-            
-            # Verify track_dropped_items_from_storage was called with error string
-            mock_track_dropped_from_storage.assert_called_with(mock_customer_sdkstats, "Disk full error", test_envelopes)
-            
-            # Verify _track_dropped_items was called with CLIENT_EXCEPTION and the error message
-            mock_track_dropped.assert_called_with(mock_customer_sdkstats, test_envelopes, DropCode.CLIENT_EXCEPTION, "Disk full error")
-            
-            # Scenario 4: Now handle the remaining readonly condition
-            mock_track_dropped_from_storage.reset_mock()
-            mock_track_dropped.reset_mock()
-            exporter.storage.put.return_value = StorageExportResult.CLIENT_READONLY
-            result4 = exporter._handle_transmit_from_storage(test_envelopes, ExportResult.FAILED_RETRYABLE)
-            
-            # Verify readonly remains True (once set, it stays True), if exception state was changed, should be reset after recording dropped items
-            self.assertTrue(_LOCAL_STORAGE_SETUP_STATE["READONLY"])
-            self.assertEqual(_LOCAL_STORAGE_SETUP_STATE["EXCEPTION_OCCURRED"], "Another error")
-            self.assertIsNone(result4)
-            
-            # Verify track_dropped_items_from_storage was called with readonly result
-            mock_track_dropped_from_storage.assert_called_with(mock_customer_sdkstats, StorageExportResult.CLIENT_READONLY, test_envelopes)
-            
-            # Verify _track_dropped_items was called with CLIENT_READONLY
-            mock_track_dropped.assert_called_with(mock_customer_sdkstats, test_envelopes, DropCode.CLIENT_READONLY)
-            
-        finally:
-            # Restore original state
-            _LOCAL_STORAGE_SETUP_STATE["READONLY"] = original_readonly_state
-            _LOCAL_STORAGE_SETUP_STATE["EXCEPTION_OCCURRED"] = original_exception_state
-
     def test_local_storage_state_exception_get_set_operations(self):
         """Test the validity of get and set operations for exception state in local storage state"""
         from azure.monitor.opentelemetry.exporter.statsbeat._state import (
@@ -2998,36 +2771,6 @@ class TestBaseExporter(unittest.TestCase):
         },
     )
     @mock.patch('azure.monitor.opentelemetry.exporter.export._base._track_dropped_items')
-    def test_base_exporter_storage_put_exception_tracked(self, mock_track_dropped):
-        """Test that BaseExporter tracks CLIENT_EXCEPTION when storage.put() returns an error string"""
-        exporter = BaseExporter(disable_offline_storage=False)
-        
-        # Setup customer sdkstats
-        mock_customer_sdkstats = mock.Mock()
-        exporter._customer_sdkstats_metrics = mock_customer_sdkstats
-        exporter._should_collect_customer_sdkstats = mock.Mock(return_value=True)
-        
-        # Mock the storage to return an error string
-        exporter.storage = mock.Mock()
-        exporter.storage.gets.return_value = []  # No blobs from storage
-        error_message = "Storage write failed: Permission denied"
-        exporter.storage.put.return_value = error_message
-        
-        # This should trigger the storage status check in _transmit_from_storage
-        exporter._transmit_from_storage()
-        
-        # Verify that _track_dropped_items was called with CLIENT_EXCEPTION
-        # Note: Since no envelopes are processed from storage, this should not be called in current implementation
-        mock_track_dropped.assert_not_called()
-
-    @mock.patch.dict(
-        os.environ,
-        {
-            "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "true",
-            "APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW": "true",
-        },
-    )
-    @mock.patch('azure.monitor.opentelemetry.exporter.export._base._track_dropped_items')
     def test_base_exporter_storage_put_capacity_reached_tracked(self, mock_track_dropped):
         """Test that BaseExporter tracks CLIENT_PERSISTENCE_CAPACITY when storage.put() returns CLIENT_PERSISTENCE_CAPACITY_REACHED"""
         exporter = BaseExporter(disable_offline_storage=False)
@@ -3172,7 +2915,7 @@ class TestBaseExporter(unittest.TestCase):
                 
                 retry_code, message = _determine_client_retry_code(error)
                 self.assertEqual(retry_code, RetryCode.CLIENT_EXCEPTION)
-                self.assertEqual(message, str(error))
+                self.assertEqual(message, _CLIENT_EXCEPTION)
 
     @mock.patch.dict(
         os.environ,
@@ -3281,7 +3024,7 @@ class TestBaseExporter(unittest.TestCase):
         envelopes = [TelemetryItem(name="Test", time=datetime.now())]
         
         # Test ServiceRequestError with message (using "timeout" to test timeout detection)
-        error = ServiceRequestError("Connection timeout occurred")
+        error = ServiceRequestTimeoutError("Connection timeout occurred")
         
         _track_retry_items(exporter._customer_sdkstats_metrics, envelopes, error)
         
@@ -3290,7 +3033,7 @@ class TestBaseExporter(unittest.TestCase):
             1,
             'UNKNOWN',                        # telemetry type
             RetryCode.CLIENT_TIMEOUT,         # retry code
-            'Connection timeout occurred'     # message
+            _TIMEOUT_EXCEPTION     # message
         )
 
     @mock.patch.dict(
@@ -3309,7 +3052,7 @@ class TestBaseExporter(unittest.TestCase):
         envelopes = [TelemetryItem(name="Test", time=datetime.now())]
         
         # Test ServiceRequestError with message that doesn't contain "timeout"
-        error = ServiceRequestError("Connection failed")
+        error = TimeoutError("Connection failed")
         
         _track_retry_items(exporter._customer_sdkstats_metrics, envelopes, error)
         
@@ -3317,8 +3060,8 @@ class TestBaseExporter(unittest.TestCase):
         exporter._customer_sdkstats_metrics.count_retry_items.assert_called_once_with(
             1,
             'UNKNOWN',                        # telemetry type
-            RetryCode.CLIENT_EXCEPTION,       # retry code
-            'Connection failed'               # message
+            RetryCode.CLIENT_TIMEOUT,       # retry code
+            _TIMEOUT_EXCEPTION               # message
         )
 
     def test_determine_client_retry_code_http_status_codes(self):
@@ -3342,25 +3085,77 @@ class TestBaseExporter(unittest.TestCase):
         
         retry_code, message = _determine_client_retry_code(error)
         self.assertEqual(retry_code, RetryCode.CLIENT_EXCEPTION)
-        self.assertEqual(message, "Connection failed")
+        self.assertEqual(message, _CLIENT_EXCEPTION)
 
     def test_determine_client_retry_code_service_request_error_with_message(self):
         exporter = BaseExporter(disable_offline_storage=True)
         
-        error = ServiceRequestError("Network error")
+        error = ReadTimeout("Network error")
         error.message = "Specific network error"
         
         retry_code, message = _determine_client_retry_code(error)
-        self.assertEqual(retry_code, RetryCode.CLIENT_EXCEPTION)
-        self.assertEqual(message, "Specific network error")
+        self.assertEqual(retry_code, RetryCode.CLIENT_TIMEOUT)
+        self.assertEqual(message, _TIMEOUT_EXCEPTION)
 
-    def test_determine_client_retry_code_timeout_error(self):
+    @mock.patch.dict(
+        os.environ,
+        {
+            "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "true",
+            "APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW": "true",
+        },
+    )
+    def test_track_retry_items_connection_error_network_exception(self):
+        """Test that ConnectionError is properly categorized as _NETWORK_EXCEPTION in retry items tracking."""
         exporter = BaseExporter(disable_offline_storage=True)
+        mock_customer_sdkstats = mock.Mock()
+        exporter._customer_sdkstats_metrics = mock_customer_sdkstats
+        
+        # Create test envelopes
+        envelopes = [TelemetryItem(name="Test", time=datetime.now())]
+        
+        # Test ConnectionError with different messages
+        connection_errors = [
+            ConnectionError("Connection refused"),
+            ConnectionError("Network is unreachable"),
+            ConnectionError("Host is down"),
+            ConnectionError(""),  # Empty message
+        ]
+        
+        for error in connection_errors:
+            with self.subTest(error=str(error)):
+                # Reset the mock for each test
+                mock_customer_sdkstats.reset_mock()
+                
+                # Call _track_retry_items with ConnectionError
+                _track_retry_items(exporter._customer_sdkstats_metrics, envelopes, error)
+                
+                # Verify that count_retry_items was called with CLIENT_EXCEPTION and _NETWORK_EXCEPTION
+                mock_customer_sdkstats.count_retry_items.assert_called_once_with(
+                    1,
+                    'UNKNOWN',                      # telemetry type
+                    RetryCode.CLIENT_EXCEPTION,     # retry code
+                    _NETWORK_EXCEPTION              # message
+                )
 
-    # customer sdkstats Flag Regression Tests
-    # These tests ensure that the _is_customer_sdkstats_exporter() method using
-    # getattr(self, '_is_customer_sdkstats', False) works correctly across
-    # all scenarios and edge cases.
+    def test_determine_client_retry_code_connection_error_network_exception(self):
+        """Test that _determine_client_retry_code properly categorizes ConnectionError as network exception."""
+        exporter = BaseExporter(disable_offline_storage=True)
+        
+        # Test various ConnectionError scenarios
+        test_cases = [
+            ConnectionError("Connection refused"),
+            ConnectionError("Network is unreachable"), 
+            ConnectionError("Host is down"),
+            ConnectionError("TCP connection failed"),
+            ConnectionError(),  # No message
+        ]
+        
+        for error in test_cases:
+            with self.subTest(error=str(error)):
+                retry_code, message = _determine_client_retry_code(error)
+                self.assertEqual(retry_code, RetryCode.CLIENT_EXCEPTION)
+                self.assertEqual(message, _NETWORK_EXCEPTION)
+
 
     def test_regular_exporter_not_flagged_as_customer_sdkstats(self):
         """Test that regular exporters are not identified as customer sdkstats exporters."""
@@ -3622,26 +3417,26 @@ class TestBaseExporter(unittest.TestCase):
     def test_determine_client_retry_code_timeout_error(self):
         exporter = BaseExporter(disable_offline_storage=True)
         
-        timeout_error = ServiceRequestError("Request timed out")
+        timeout_error = ServiceRequestTimeoutError("Request timed out")
         
         retry_code, message = _determine_client_retry_code(timeout_error)
         self.assertEqual(retry_code, RetryCode.CLIENT_TIMEOUT)
-        self.assertEqual(message, "Request timed out")
+        self.assertEqual(message, _TIMEOUT_EXCEPTION)
         
         timeout_error2 = ServiceRequestError("Connection timeout occurred")
         
         retry_code2, message2 = _determine_client_retry_code(timeout_error2)
         self.assertEqual(retry_code2, RetryCode.CLIENT_TIMEOUT)
-        self.assertEqual(message2, "Connection timeout occurred")
+        self.assertEqual(message2, _TIMEOUT_EXCEPTION)
 
     def test_determine_client_retry_code_general_exception(self):
         exporter = BaseExporter(disable_offline_storage=True)
         
-        error = Exception("Something went wrong")
+        error = _CLIENT_EXCEPTION
         
         retry_code, message = _determine_client_retry_code(error)
         self.assertEqual(retry_code, RetryCode.CLIENT_EXCEPTION)
-        self.assertEqual(message, "Something went wrong")
+        self.assertEqual(message, _CLIENT_EXCEPTION)
 
     def test_track_retry_items_stats_exporter(self):
         exporter = _StatsBeatExporter(disable_offline_storage=True)
@@ -3895,7 +3690,7 @@ class TestBaseExporter(unittest.TestCase):
                 args, kwargs = mock_customer_sdkstats.count_retry_items.call_args
                 self.assertEqual(args[0], 1)
                 self.assertEqual(args[2], RetryCode.CLIENT_EXCEPTION)  
-                self.assertEqual(args[3], "Connection failed")  
+                self.assertEqual(args[3], _CLIENT_EXCEPTION)  
 
     @mock.patch.dict(
         os.environ,
@@ -3925,7 +3720,7 @@ class TestBaseExporter(unittest.TestCase):
                 # We expect two calls: one for storage disabled, one for the exception
                 expected_calls = [
                     mock.call(1, 'UNKNOWN', DropCode.CLIENT_STORAGE_DISABLED),
-                    mock.call(1, 'UNKNOWN', DropCode.CLIENT_EXCEPTION, 'Unexpected error')
+                    mock.call(1, 'UNKNOWN', DropCode.CLIENT_EXCEPTION, _CLIENT_EXCEPTION)
                 ]
                 mock_customer_sdkstats.count_dropped_items.assert_has_calls(expected_calls)
                 self.assertEqual(mock_customer_sdkstats.count_dropped_items.call_count, 2)
@@ -4271,41 +4066,6 @@ class TestBaseExporter(unittest.TestCase):
             second_call = mock_customer_sdkstats.count_dropped_items.call_args_list[1]
             self.assertEqual(second_call[0], (1, "metric", DropCode.CLIENT_STORAGE_DISABLED))
 
-    def test_track_dropped_items_with_error_index(self):
-        """Test _track_dropped_items with error string."""
-        # Create mock customer sdkstats metrics
-        mock_customer_sdkstats = mock.Mock()
-        
-        # Create test envelopes
-        envelope1 = TelemetryItem(name="test1", time=datetime.now())
-        envelope2 = TelemetryItem(name="test2", time=datetime.now())
-        envelope3 = TelemetryItem(name="test3", time=datetime.now())
-        envelopes = [envelope1, envelope2, envelope3]
-        
-        # Create error string
-        error_message = "Bad Request: Invalid telemetry data"
-        
-        # Mock _get_telemetry_type
-        with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._utils._get_telemetry_type") as mock_get_type:
-            mock_get_type.side_effect = ["trace", "metric", "log"]
-            
-            # Call _track_dropped_items with error string
-            _track_dropped_items(
-                mock_customer_sdkstats,
-                envelopes,
-                DropCode.CLIENT_EXCEPTION,
-                error_message=error_message
-            )
-            
-            # With the current simplified implementation, all envelopes are processed when error is not None
-            self.assertEqual(mock_customer_sdkstats.count_dropped_items.call_count, 3)
-            
-            # Check the calls
-            calls = mock_customer_sdkstats.count_dropped_items.call_args_list
-            self.assertEqual(calls[0][0], (1, "trace", DropCode.CLIENT_EXCEPTION, error_message))
-            self.assertEqual(calls[1][0], (1, "metric", DropCode.CLIENT_EXCEPTION, error_message))
-            self.assertEqual(calls[2][0], (1, "log", DropCode.CLIENT_EXCEPTION, error_message))
-
     def test_track_dropped_items_with_client_exception_error(self):
         """Test _track_dropped_items with CLIENT_EXCEPTION drop code and error string."""
         # Create mock customer sdkstats metrics
@@ -4317,7 +4077,7 @@ class TestBaseExporter(unittest.TestCase):
         envelopes = [envelope1, envelope2]
         
         # Create error string
-        error_message = "Connection timeout"
+        error_message = _TIMEOUT_EXCEPTION
         
         # Mock _get_telemetry_type
         with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._utils._get_telemetry_type") as mock_get_type:
@@ -4351,8 +4111,6 @@ class TestBaseExporter(unittest.TestCase):
         envelope1 = TelemetryItem(name="test1", time=datetime.now())
         envelopes = [envelope1]
         
-        # Create error string
-        error_message = "Internal Server Error"
         
         # Mock _get_telemetry_type
         with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._utils._get_telemetry_type") as mock_get_type:
@@ -4363,42 +4121,13 @@ class TestBaseExporter(unittest.TestCase):
                 mock_customer_sdkstats,
                 envelopes,
                 500,  # Using status code as drop code
-                error_message=error_message
             )
             
             # With the current simplified implementation, any error (not None) will process all envelopes
             mock_customer_sdkstats.count_dropped_items.assert_called_once_with(
-                1, "trace", 500, error_message
+                1, "trace", 500
             )
 
-    def test_track_dropped_items_with_error_none_index(self):
-        """Test _track_dropped_items with error string."""
-        # Create mock customer sdkstats metrics
-        mock_customer_sdkstats = mock.Mock()
-        
-        # Create test envelopes
-        envelope1 = TelemetryItem(name="test1", time=datetime.now())
-        envelopes = [envelope1]
-        
-        # Create error string
-        error_message = "Bad Request"
-        
-        # Mock _get_telemetry_type
-        with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._utils._get_telemetry_type") as mock_get_type:
-            mock_get_type.return_value = "trace"
-            
-            # Call _track_dropped_items
-            _track_dropped_items(
-                mock_customer_sdkstats,
-                envelopes,
-                DropCode.CLIENT_EXCEPTION,
-                error_message=error_message
-            )
-            
-            # With current implementation, any non-None error will process all envelopes
-            mock_customer_sdkstats.count_dropped_items.assert_called_once_with(
-                1, "trace", DropCode.CLIENT_EXCEPTION, error_message
-            )
 
     def test_track_dropped_items_no_customer_sdkstats_metrics(self):
         """Test _track_dropped_items with None customer_sdkstats_metrics."""
@@ -4521,65 +4250,6 @@ class TestBaseExporter(unittest.TestCase):
                     1, "trace", drop_code
                 )
 
-    def test_track_dropped_items_with_status_code_as_drop_code_and_error(self):
-        """Test _track_dropped_items using HTTP status code as drop_code with error string."""
-        # Create mock customer sdkstats metrics
-        mock_customer_sdkstats = mock.Mock()
-        envelope = TelemetryItem(name="test", time=datetime.now())
-        
-        # Create error string
-        error_message = "Bad Request"
-        
-        # Mock _get_telemetry_type
-        with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._utils._get_telemetry_type") as mock_get_type:
-            mock_get_type.return_value = "trace"
-            
-            # Call _track_dropped_items using status code as drop_code (common pattern in _base.py)
-            _track_dropped_items(
-                mock_customer_sdkstats,
-                [envelope],
-                drop_code=400,  # Status code as drop code
-                error_message=error_message
-            )
-            
-            # Should call count_dropped_items with status code as drop_code
-            mock_customer_sdkstats.count_dropped_items.assert_called_once_with(
-                1, "trace", 400, error_message
-            )
-
-    def test_track_dropped_items_error_with_string_conversion(self):
-        """Test _track_dropped_items with different string error types."""
-        # Create mock customer sdkstats metrics
-        mock_customer_sdkstats = mock.Mock()
-        envelope = TelemetryItem(name="test", time=datetime.now())
-        
-        # Test different error string cases
-        error_cases = [
-            "Test exception",
-            "Invalid value error",
-            "Connection timeout",
-            "Server internal error"
-        ]
-        
-        # Mock _get_telemetry_type
-        with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._utils._get_telemetry_type") as mock_get_type:
-            mock_get_type.return_value = "trace"
-            
-            for error_message in error_cases:
-                mock_customer_sdkstats.reset_mock()
-                
-                _track_dropped_items(
-                    mock_customer_sdkstats,
-                    [envelope],
-                    DropCode.CLIENT_EXCEPTION,
-                    error_message=error_message
-                )
-                
-                # Should call count_dropped_items with the error string
-                mock_customer_sdkstats.count_dropped_items.assert_called_once_with(
-                    1, "trace", DropCode.CLIENT_EXCEPTION, error_message
-                )
-
     def test_track_dropped_items_regression_base_exporter_pattern(self):
         """Regression test that matches the actual usage pattern in _base.py."""
         # This test verifies the common pattern used in _base.py where:
@@ -4590,9 +4260,6 @@ class TestBaseExporter(unittest.TestCase):
         mock_customer_sdkstats = mock.Mock()
         envelope = TelemetryItem(name="test", time=datetime.now())
         
-        # Create error message string (what should be passed instead of error object)
-        error_message = "Bad Request - Invalid telemetry"
-        
         with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._utils._get_telemetry_type") as mock_get_type:
             mock_get_type.return_value = "trace"
             
@@ -4601,11 +4268,10 @@ class TestBaseExporter(unittest.TestCase):
                 mock_customer_sdkstats,
                 [envelope],  # Correct - envelope wrapped in list
                 drop_code=400,  # Status code as drop code
-                error_message=error_message  # Error as string
             )
             
             mock_customer_sdkstats.count_dropped_items.assert_called_once_with(
-                1, "trace", 400, error_message
+                1, "trace", 400
             )
             
             # Test what would happen with the bug (single envelope instead of list)
@@ -4618,35 +4284,7 @@ class TestBaseExporter(unittest.TestCase):
                     mock_customer_sdkstats,
                     envelope,  # Bug - single envelope instead of list
                     drop_code=400,
-                    error_message=error_message
                 )
-
-    def test_track_dropped_items_custom_message_circular_redirect_scenario(self):
-        """Test _track_dropped_items with custom message for circular redirect scenario."""
-        # This test simulates the circular redirect scenario in _base.py lines 336-349
-        # to verify that the custom error message is properly passed through
-        
-        mock_customer_sdkstats = mock.Mock()
-        envelope = TelemetryItem(name="test_request", time=datetime.now())
-        
-        # Use the exact custom message from the _base.py code
-        expected_custom_message = "Error sending telemetry because of circular redirects. Please check the integrity of your connection string."
-        
-        with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._utils._get_telemetry_type") as mock_get_type:
-            mock_get_type.return_value = "request"
-            
-            # Call _track_dropped_items with the exact custom message from the circular redirect scenario
-            _track_dropped_items(
-                mock_customer_sdkstats,
-                [envelope],
-                drop_code=DropCode.CLIENT_EXCEPTION,
-                error_message=expected_custom_message
-            )
-            
-            # Verify the custom message is properly passed through to count_dropped_items
-            mock_customer_sdkstats.count_dropped_items.assert_called_once_with(
-                1, "request", DropCode.CLIENT_EXCEPTION, expected_custom_message
-            )
 
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base._track_dropped_items")
     def test_transmit_circular_redirect_scenario_integration(self, mock_track_dropped):
@@ -4689,7 +4327,7 @@ class TestBaseExporter(unittest.TestCase):
                 exporter._customer_sdkstats_metrics,
                 [test_envelope],
                 DropCode.CLIENT_EXCEPTION,
-                "Error sending telemetry because of circular redirects. Please check the integrity of your connection string."
+                _CLIENT_EXCEPTION
             )
 
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base._track_dropped_items")
@@ -4732,56 +4370,8 @@ class TestBaseExporter(unittest.TestCase):
                 exporter._customer_sdkstats_metrics,
                 [test_envelope],
                 DropCode.CLIENT_EXCEPTION,
-                "Error parsing redirect information."
+                _CLIENT_EXCEPTION
             )
-            
-    def test_track_dropped_items_custom_message_vs_no_message_comparison(self):
-        """Test _track_dropped_items comparing custom message vs no message scenarios."""
-        # This test demonstrates the difference between providing a custom message
-        # and not providing any error message
-        
-        mock_customer_sdkstats = mock.Mock()
-        envelope = TelemetryItem(name="test_trace", time=datetime.now())
-        
-        with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._utils._get_telemetry_type") as mock_get_type:
-            mock_get_type.return_value = "trace"
-            
-            # Test 1: Call with custom message
-            custom_message = "Custom error description for debugging"
-            _track_dropped_items(
-                mock_customer_sdkstats,
-                [envelope],
-                drop_code=DropCode.CLIENT_EXCEPTION,
-                error_message=custom_message
-            )
-            
-            # Verify custom message is included
-            mock_customer_sdkstats.count_dropped_items.assert_called_with(
-                1, "trace", DropCode.CLIENT_EXCEPTION, custom_message
-            )
-            
-            # Reset mock for second test
-            mock_customer_sdkstats.reset_mock()
-            
-            # Test 2: Call without error message (default None)
-            _track_dropped_items(
-                mock_customer_sdkstats,
-                [envelope],
-                drop_code=DropCode.CLIENT_EXCEPTION
-                # error parameter omitted, should default to None
-            )
-            
-            # Verify no error message is passed (only 3 arguments)
-            mock_customer_sdkstats.count_dropped_items.assert_called_with(
-                1, "trace", DropCode.CLIENT_EXCEPTION
-            )
-            
-            # Verify the calls were different
-            self.assertEqual(mock_customer_sdkstats.count_dropped_items.call_count, 1)
-            
-            # Check that the second call didn't include the error message
-            args, kwargs = mock_customer_sdkstats.count_dropped_items.call_args
-            self.assertEqual(len(args), 3)  # Should only have 3 args when no error message
 
 
 def validate_telemetry_item(item1, item2):

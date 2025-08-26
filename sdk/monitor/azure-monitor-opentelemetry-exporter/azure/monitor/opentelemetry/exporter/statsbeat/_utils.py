@@ -2,7 +2,9 @@
 # Licensed under the MIT License.
 import os
 from typing import Optional, List, Tuple
-from azure.core.exceptions import ServiceRequestError
+
+from requests import ReadTimeout, Timeout
+from azure.core.exceptions import ServiceRequestTimeoutError
 from azure.monitor.opentelemetry.exporter._constants import (
     RetryCode,
     RetryCodeType,
@@ -28,6 +30,10 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _REQ_DURATION_NAME,
     _REQ_SUCCESS_NAME,
     _APPLICATIONINSIGHTS_SDKSTATS_EXPORT_INTERVAL,
+    _CLIENT_EXCEPTION,
+    _NETWORK_EXCEPTION,
+    _STORAGE_EXCEPTION,
+    _TIMEOUT_EXCEPTION,
 )
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     _REQUESTS_MAP_LOCK,
@@ -84,42 +90,55 @@ def _update_requests_map(type_name, value):
 
 def categorize_status_code(status_code: int) -> str:
     status_map = {
-        400: "bad_request",
-        401: "unauthorized",
-        402: "daily quota exceeded",
-        403: "forbidden",
-        404: "not_found",
-        408: "request_timeout",
-        413: "payload_too_large",
-        429: "too_many_requests",
-        500: "internal_server_error",
-        502: "bad_gateway",
-        503: "service_unavailable",
-        504: "gateway_timeout",
+        400: "Bad request",
+        401: "Unauthorized",
+        402: "Daily quota exceeded",
+        403: "Forbidden",
+        404: "Not found",
+        408: "Request timeout",
+        413: "Payload too large",
+        429: "Too many requests",
+        500: "Internal server error",
+        502: "Bad gateway",
+        503: "Service unavailable",
+        504: "Gateway timeout",
     }
     if status_code in status_map:
         return status_map[status_code]
     if 400 <= status_code < 500:
-        return "client_error_4xx"
+        return "Client error 4xx"
     if 500 <= status_code < 600:
-        return "server_error_5xx"
+        return "Server error 5xx"
     return f"status_{status_code}"
 
 def _determine_client_retry_code(error) -> Tuple[RetryCodeType, Optional[str]]:
+    timeout_exception_types = (
+        ServiceRequestTimeoutError,
+        ReadTimeout,
+        TimeoutError,
+        Timeout,
+    )
+    network_exception_types = (
+        ConnectionError,
+        OSError,
+    )
     if hasattr(error, 'status_code') and error.status_code in [401, 403, 408, 429, 500, 502, 503, 504]:
         # For specific status codes, preserve the custom message if available
         error_message = getattr(error, 'message', None) if hasattr(error, 'message') else None
         return (error.status_code, error_message or _UNKNOWN)
 
-    if isinstance(error, ServiceRequestError):
-        error_message = str(error.message) if error.message else ""
-    else:
-        error_message = str(error)
+    if isinstance(error, timeout_exception_types):
+        return (RetryCode.CLIENT_TIMEOUT, _TIMEOUT_EXCEPTION)
 
-    error_message_lower = error_message.lower()
-    if 'timeout' in error_message_lower or 'timed out' in error_message_lower:
-        return (RetryCode.CLIENT_TIMEOUT, error_message)
-    return (RetryCode.CLIENT_EXCEPTION, error_message)
+    if hasattr(error, 'message'):
+        error_message = getattr(error, 'message', None) if hasattr(error, 'message') else None
+        if error_message is not None and ('timeout' in error_message.lower() or 'timed out' in error_message.lower()):
+            return (RetryCode.CLIENT_TIMEOUT, _TIMEOUT_EXCEPTION)
+
+    if isinstance(error, network_exception_types):
+        return (RetryCode.CLIENT_EXCEPTION, _NETWORK_EXCEPTION)
+
+    return (RetryCode.CLIENT_EXCEPTION, _CLIENT_EXCEPTION)
 
 def _track_successful_items(customer_sdkstats_metrics, envelopes: List[TelemetryItem]):
     if customer_sdkstats_metrics:
@@ -196,10 +215,10 @@ def _track_dropped_items_from_storage(customer_sdkstats_metrics, result_from_sto
             _track_dropped_items(customer_sdkstats_metrics, envelopes, DropCode.CLIENT_PERSISTENCE_CAPACITY)
         elif get_local_storage_setup_state_exception() != "":
             # For exceptions caught in _check_and_set_folder_permissions during storage setup
-            _track_dropped_items(customer_sdkstats_metrics, envelopes, DropCode.CLIENT_EXCEPTION, result_from_storage_put) # pylint: disable=line-too-long
+            _track_dropped_items(customer_sdkstats_metrics, envelopes, DropCode.CLIENT_EXCEPTION, _STORAGE_EXCEPTION)
         elif isinstance(result_from_storage_put, str):
             # For any exceptions occurred in put method of either LocalFileStorage or LocalFileBlob, track dropped item with reason # pylint: disable=line-too-long
-            _track_dropped_items(customer_sdkstats_metrics, envelopes, DropCode.CLIENT_EXCEPTION, result_from_storage_put) # pylint: disable=line-too-long
+            _track_dropped_items(customer_sdkstats_metrics, envelopes, DropCode.CLIENT_EXCEPTION, _STORAGE_EXCEPTION) # pylint: disable=line-too-long
         else:
             # LocalFileBlob.put returns StorageExportResult.LOCAL_FILE_BLOB_SUCCESS here. Don't need to track anything in this case. # pylint: disable=line-too-long
             pass

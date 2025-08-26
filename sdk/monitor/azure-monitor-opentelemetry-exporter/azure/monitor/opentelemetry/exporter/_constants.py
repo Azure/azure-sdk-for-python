@@ -194,6 +194,12 @@ _TYPE_MAP = {
                 _AVAILABILITY_ENVELOPE_NAME: _AVAILABILITY,
             }
 
+# Exception categories
+_CLIENT_EXCEPTION = "Client exception"
+_STORAGE_EXCEPTION = "Storage exception"
+_NETWORK_EXCEPTION = "Network exception"
+_TIMEOUT_EXCEPTION = "Timeout exception"
+
 # Map RP names
 class _RP_Names(Enum):
     APP_SERVICE = "appsvc"

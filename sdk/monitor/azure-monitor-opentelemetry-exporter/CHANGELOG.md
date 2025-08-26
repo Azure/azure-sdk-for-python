@@ -13,6 +13,7 @@
   ([#42551](https://github.com/Azure/azure-sdk-for-python/pull/42551))
 - Rename Customer Statsbeat to Customer SDKStats as per [Spec] - https://github.com/aep-health-and-standards/Telemetry-Collection-Spec/pull/581
   ([#42573](https://github.com/Azure/azure-sdk-for-python/pull/42573))
+- Customer Facing SDKStats: Exception categorization as per [Spec] - https://github.com/aep-health-and-standards/Telemetry-Collection-Spec/blob/main/ApplicationInsights/sdkstats/customer_facing_sdk_stats.md
 
 ### Breaking Changes
 
