@@ -208,7 +208,9 @@ class ShareServiceClient(StorageAccountHostsMixin):
     ) -> "UserDelegationKey":
         """
         Obtain a user delegation key for the purpose of signing SAS tokens.
+
         A token credential must be present on the service object for this request to succeed.
+
         :param ~datetime.datetime key_start_time:
             A DateTime value. Indicates when the key becomes valid.
         :param ~datetime.datetime key_expiry_time:
