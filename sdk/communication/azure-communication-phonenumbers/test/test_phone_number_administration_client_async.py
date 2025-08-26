@@ -431,6 +431,41 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
                     items.append(item)
                 break
         assert len(items) > 0
+    
+    @recorded_by_proxy_async
+    async def test_list_mobile_area_codes_with_managed_identity(self):
+        phone_number_client = self._get_managed_identity_phone_number_client()
+        async with phone_number_client:
+            localities = phone_number_client.list_available_localities("IE", phone_number_type=PhoneNumberType.MOBILE)
+            async for first_locality in localities:
+                area_codes = self.phone_number_client.list_available_area_codes(
+                    "IE",
+                    PhoneNumberType.MOBILE,
+                    assignment_type=PhoneNumberAssignmentType.APPLICATION,
+                    locality=first_locality.localized_name,
+                )
+                items = []
+                async for item in area_codes:
+                    items.append(item)
+                break
+        assert len(items) > 0
+
+    @recorded_by_proxy_async
+    async def test_list_mobile_area_codes(self):
+        async with self.phone_number_client:
+            localities = self.phone_number_client.list_available_localities("IE", phone_number_type=PhoneNumberType.MOBILE)
+            async for first_locality in localities:
+                area_codes = self.phone_number_client.list_available_area_codes(
+                    "IE",
+                    PhoneNumberType.MOBILE,
+                    assignment_type=PhoneNumberAssignmentType.APPLICATION,
+                    locality=first_locality.localized_name,
+                )
+                items = []
+                async for item in area_codes:
+                    items.append(item)
+                break
+        assert len(items) > 0
 
     @recorded_by_proxy_async
     async def test_list_countries_with_managed_identity(self):
@@ -499,6 +534,16 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
                 async for item in localities:
                     items.append(item)
                 break
+        assert len(items) > 0
+    
+    @recorded_by_proxy_async
+    async def test_list_localities_with_number_type(self):
+        async with self.phone_number_client:
+            localities = self.phone_number_client.list_available_localities(
+                "IE", phone_number_type=PhoneNumberType.MOBILE)
+            items = []
+            async for item in localities:
+                items.append(item)
         assert len(items) > 0
 
     @recorded_by_proxy_async
