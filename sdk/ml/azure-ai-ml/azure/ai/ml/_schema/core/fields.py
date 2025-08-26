@@ -144,8 +144,29 @@ class StringTransformedEnum(Field):
         super().__init__(**filtered_kwargs)
         if isinstance(self.allowed_values, str):
             self.allowed_values = [self.allowed_values]
-        if self.allowed_values is not None:
-            self.allowed_values = [self.casing_transform(x) for x in self.allowed_values]
+        elif self.allowed_values is not None:
+            # Handle different types of allowed_values
+            try:
+                # Try to iterate over allowed_values - works for lists, tuples, enum values
+                self.allowed_values = [self.casing_transform(x) for x in self.allowed_values]
+            except TypeError:
+                # If it's not iterable, handle different types
+                if hasattr(self.allowed_values, '__members__'):
+                    # It's an enum class, get all enum values
+                    self.allowed_values = [self.casing_transform(x.value) for x in self.allowed_values.__members__.values()]
+                elif hasattr(self.allowed_values, '_value_'):
+                    # It's a single enum value
+                    self.allowed_values = [self.casing_transform(self.allowed_values.value)]
+                else:
+                    # It's a class with constants (like PublicNetworkAccess)
+                    # Get all uppercase string attributes as constants
+                    constants = [getattr(self.allowed_values, attr) for attr in dir(self.allowed_values) 
+                               if not attr.startswith('_') and isinstance(getattr(self.allowed_values, attr), str) and attr.isupper()]
+                    if constants:
+                        self.allowed_values = [self.casing_transform(x) for x in constants]
+                    else:
+                        # Fallback: convert to string and make it a list
+                        self.allowed_values = [self.casing_transform(str(self.allowed_values))]
 
     def _jsonschema_type_mapping(self):
         schema = {"type": "string", "enum": self.allowed_values}
