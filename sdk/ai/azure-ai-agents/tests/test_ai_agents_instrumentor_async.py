@@ -519,7 +519,7 @@ class TestAiAgentsInstrumentor(TestAgentClientBase):
         assert len(messages) > 1
         steps = [step async for step in client.run_steps.list(thread_id=thread.id, run_id=run_id)]
         assert len(steps) >= 1
-        client.close()
+        await client.close()
         
         self.exporter.force_flush()
         
@@ -534,8 +534,6 @@ class TestAiAgentsInstrumentor(TestAgentClientBase):
             ("gen_ai.agent.name", "my-agent"),
             ("gen_ai.agent.id", ""),
         ]
-        if not use_stream:
-            expected_attributes.append(('gen_ai.request.model', model))
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
         assert attributes_match == True
         

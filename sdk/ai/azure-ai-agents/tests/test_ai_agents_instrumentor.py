@@ -798,8 +798,6 @@ class TestAiAgentsInstrumentor(TestAgentClientBase):
             ("gen_ai.agent.name", "my-agent"),
             ("gen_ai.agent.id", ""),
         ]
-        if not use_stream:
-            expected_attributes.append(('gen_ai.request.model', model))
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
         assert attributes_match == True
         

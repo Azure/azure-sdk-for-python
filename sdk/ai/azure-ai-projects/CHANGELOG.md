@@ -14,6 +14,8 @@ not include preview features).
 
 ### Bugs Fixed
 
+* Fix the issue with logging Agent message, when the message has "in progress" status.
+
 ### Sample updates
 
 ## 1.1.0b2 (2025-08-05)
