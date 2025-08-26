@@ -70,10 +70,7 @@ __all__ = [
     "TcbBaseline",
     "TcbBaselineResult",
     "TpmAttestationResponse",
-    "AttestationType",
-    "CertificateModification",
     "DataType",
-    "PolicyModification",
     "SigningCertificatesContentType",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
