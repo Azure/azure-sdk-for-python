@@ -1615,7 +1615,8 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
             self.get_resource_name("file"),
             bearer_token_string,
             storage_account_name,
-            source_data
+            source_data,
+            self.is_live
         )
 
         # Set up destination blob without data
