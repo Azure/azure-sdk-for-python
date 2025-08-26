@@ -12,6 +12,7 @@ from azure.core import CaseInsensitiveEnumMeta
 
 class AttestationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """AttestationType.
+    
     .. no-index::
     """
 
@@ -31,6 +32,7 @@ class AttestationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class CertificateModification(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The result of the operation.
+    
     .. no-index::
     """
 
@@ -57,6 +59,7 @@ class DataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class PolicyModification(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The result of the operation.
+    
     .. no-index::
     """
 
