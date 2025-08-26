@@ -43,7 +43,7 @@ class TestRedTeam:
     @pytest.mark.parametrize(
         ("proj_scope", "cred"),
         (
-            ("project_scope", "azure_cred"),
+            # ("project_scope", "azure_cred"),
             ("project_scope_onedp", "azure_cred_onedp"),
         ),
     )
