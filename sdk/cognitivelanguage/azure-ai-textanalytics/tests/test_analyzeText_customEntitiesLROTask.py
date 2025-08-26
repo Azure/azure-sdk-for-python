@@ -1,5 +1,4 @@
 import functools
-import pytest
 
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
 from azure.core.credentials import AzureKeyCredential
@@ -8,9 +7,12 @@ from azure.ai.language.text.models import (
     MultiLanguageTextInput,
     MultiLanguageInput,
     AnalyzeTextOperationAction,
-    HealthcareLROTask,
-    HealthcareLROResult,
-    TextActions
+    CustomEntitiesActionContent,
+    CustomEntitiesLROTask,
+    TextActions,
+    CustomEntityRecognitionOperationResult,   # subclass of AnalyzeTextLROResult
+    CustomEntityActionResult,
+    NamedEntity,
 )
 
 from azure.core.credentials import AzureKeyCredential
@@ -37,24 +39,31 @@ class TestTextAnalysis(AzureRecordedTestCase):
 class TestTextAnalysisCase(TestTextAnalysis):
     @TextAnalysisPreparer()
     @recorded_by_proxy
-    def test_analyzeText_healthcareLROTask(self, text_analysis_endpoint, text_analysis_key):
+    def test_analyzeText_customEntitiesLROTask(self, text_analysis_endpoint, text_analysis_key):
         client = self.create_client(text_analysis_endpoint, text_analysis_key)
-
-        text_a = "Prescribed 100mg ibuprofen, taken twice daily."
-
-        text_input = MultiLanguageTextInput(
-            multi_language_inputs=[
-                MultiLanguageInput(id="A", text=text_a, language="en"),
-            ]
+        project_name = "your_project_name"
+        deployment_name = "your_deployment_name"
+        text_a = (
+            "We love this trail and make the trip every year. The views are breathtaking and well worth the hike! "
+            "Yesterday was foggy though, so we missed the spectacular views. We tried again today and it was "
+            "amazing. Everyone in my family liked the trail although it was too challenging for the less "
+            "athletic among us."
         )
 
+        text_input = MultiLanguageTextInput(
+            multi_language_inputs=[MultiLanguageInput(id="A", text=text_a, language="en")]
+        )
+
+        action_content = CustomEntitiesActionContent(project_name=project_name, deployment_name=deployment_name)
+
         actions: list[AnalyzeTextOperationAction] = [
-            HealthcareLROTask(
-                name="HealthcareOperationActionSample",
-            ),
+            CustomEntitiesLROTask(
+                name="CustomEntitiesOperationActionSample",
+                parameters=action_content,
+            )
         ]
 
-        # begin LRO (sync) – custom poller returns ItemPaged[TextActions]
+        # Start LRO (sync) – custom poller returns ItemPaged[TextActions]
         poller = client.begin_analyze_text_job(
             text_input=text_input,
             actions=actions,
@@ -68,45 +77,31 @@ class TestTextAnalysisCase(TestTextAnalysis):
         paged_actions = poller.result()
         assert paged_actions is not None
 
-        found_healthcare = False
+        found_custom_entities = False
 
         for actions_page in paged_actions:
+            # page payload container
             assert isinstance(actions_page, TextActions)
-            # NOTE: Python property is items_property (wire name "items")
-            assert actions_page.items_property is not None
+            assert actions_page.items_property is not None  # wire: "items"
 
-            for op_result in actions_page.items_property:
-                if isinstance(op_result, HealthcareLROResult):
-                    found_healthcare = True
-                    hc_result = op_result.results
-                    assert hc_result is not None
-                    assert hc_result.documents is not None
+            for op_result in actions_page.items_property: 
+                if isinstance(op_result, CustomEntityRecognitionOperationResult):
+                    found_custom_entities = True
+                    result = op_result.results
+                    assert result is not None
+                    assert result.documents is not None
 
-                    for doc in hc_result.documents:
+                    for doc in result.documents: 
+                        assert isinstance(doc, CustomEntityActionResult)
                         assert doc.id is not None
                         assert doc.entities is not None
-                        assert doc.relations is not None
 
-                        for entity in doc.entities:
-                            assert entity is not None
+                        for entity in doc.entities: 
+                            assert isinstance(entity, NamedEntity)
                             assert entity.text is not None
                             assert entity.category is not None
                             assert entity.offset is not None
                             assert entity.length is not None
                             assert entity.confidence_score is not None
 
-                            if entity.links is not None:
-                                for link in entity.links:
-                                    assert link is not None
-                                    assert link.id is not None
-                                    assert link.data_source is not None
-
-                        for relation in doc.relations:
-                            assert relation is not None
-                            assert relation.relation_type is not None
-                            assert relation.entities is not None
-                            for rel_entity in relation.entities:
-                                assert rel_entity.role is not None
-                                assert rel_entity.ref is not None
-
-        assert found_healthcare, "Expected a HealthcareLROResult in TextActions.items_property"
+        assert found_custom_entities, "Expected a CustomEntityRecognitionLROResult in TextActions.items_property"
