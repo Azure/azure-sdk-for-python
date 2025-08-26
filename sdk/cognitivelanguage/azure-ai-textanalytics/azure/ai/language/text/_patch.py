@@ -28,7 +28,6 @@ from . import models as _models
 from .models import AnalyzeTextOperationState, TextActions  # convenience re-exports if present
 from ._utils.serialization import Serializer
 from ._validation import api_version_validation
-
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     
@@ -343,3 +342,5 @@ def patch_sdk():
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
+
+__all__ = ["TextAnalysisClient", "AnalyzeTextLROPoller"]
