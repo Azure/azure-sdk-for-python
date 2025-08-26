@@ -24,7 +24,7 @@
 #
 # --------------------------------------------------------------------------
 import json
-from typing import TypeVar, Any, Optional, Union
+from typing import TypeVar, Any, Optional, Union, TYPE_CHECKING
 from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.transport import (
     HttpResponse as LegacyHttpResponse,
@@ -33,10 +33,12 @@ from azure.core.pipeline.transport import (
 from azure.core.rest import HttpResponse, HttpRequest, AsyncHttpResponse
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.exceptions import HttpResponseError
-from .._pipeline_client import ARMPipelineClient
 
 HTTPResponseType = TypeVar("HTTPResponseType", HttpResponse, LegacyHttpResponse)
 HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
+
+if TYPE_CHECKING:
+    from .._pipeline_client import ARMPipelineClient
 
 
 class _PolicyTokenHeaderPolicyBase:
@@ -105,7 +107,7 @@ class _PolicyTokenHeaderPolicyBase:
 
 class PolicyTokenHeaderPolicy(_PolicyTokenHeaderPolicyBase, SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
 
-    def __init__(self, client: ARMPipelineClient, **kwargs: Any):
+    def __init__(self, client: "ARMPipelineClient", **kwargs: Any):
         super().__init__(**kwargs)
         self._client = client
 

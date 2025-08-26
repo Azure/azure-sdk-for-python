@@ -95,7 +95,7 @@ def parse_resource_id(rid: str) -> Mapping[str, Union[str, int]]:
 
 
 def _populate_alternate_kwargs(
-    kwargs: MutableMapping[str, Union[None, str, int]]
+    kwargs: MutableMapping[str, Union[None, str, int]],
 ) -> Mapping[str, Union[None, str, int]]:
     """Translates the parsed arguments into a format used by generic ARM commands
     such as the resource and lock commands.

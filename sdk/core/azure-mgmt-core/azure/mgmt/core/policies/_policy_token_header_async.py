@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import TypeVar, Any
+from typing import TypeVar, Any, TYPE_CHECKING
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 
 from azure.core.pipeline.policies import AsyncHTTPPolicy
@@ -32,9 +32,11 @@ from azure.core.pipeline.transport import (
     AsyncHttpResponse as LegacyAsyncHttpResponse,
     HttpRequest as LegacyHttpRequest,
 )
-from .._async_pipeline_client import AsyncARMPipelineClient
 from ._policy_token_header import _PolicyTokenHeaderPolicyBase
 from ._authentication_async import await_result
+
+if TYPE_CHECKING:
+    from .._async_pipeline_client import AsyncARMPipelineClient
 
 AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType", AsyncHttpResponse, LegacyAsyncHttpResponse)
 HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
@@ -44,7 +46,7 @@ class AsyncPolicyTokenHeaderPolicy(
     _PolicyTokenHeaderPolicyBase, AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]
 ):
 
-    def __init__(self, client: AsyncARMPipelineClient, **kwargs: Any):
+    def __init__(self, client: "AsyncARMPipelineClient", **kwargs: Any):
         super().__init__(**kwargs)
         self._client = client
 
