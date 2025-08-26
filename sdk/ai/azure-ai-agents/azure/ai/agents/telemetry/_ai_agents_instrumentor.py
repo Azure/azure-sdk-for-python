@@ -30,6 +30,7 @@ from azure.ai.agents.models import (
     RunStepDeltaChunk,
     RunStepError,
     RunStepFunctionToolCall,
+    RunStepOpenAPIToolCall,
     RunStepToolCallDetails,
     RunStepCodeInterpreterToolCall,
     RunStepBingGroundingToolCall,
@@ -440,6 +441,12 @@ class _AIAgentsInstrumentorPreview:
                     "id": t.id,
                     "type": t.type,
                     t.type: t.bing_grounding,
+                }
+            elif isinstance(t, RunStepOpenAPIToolCall):
+                tool_call = {
+                    "id": t.id,
+                    "type": t.type,
+                    'function': t.as_dict().get('function', {})
                 }
             else:
                 tool_details = t.as_dict()[t.type]

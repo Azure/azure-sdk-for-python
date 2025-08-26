@@ -4,13 +4,12 @@
 # Licensed under the MIT License.
 # ------------------------------------
 # cSpell:disable
-import pytest
 import os
 import json
+import jsonref
 import time
 import pytest
-import functools
-from typing import Set, Callable, Any, List
+from typing import Set, Callable, Any, List, Optional
 from azure.ai.agents.models import (
     AgentsResponseFormatMode,
     AgentsResponseFormat,
@@ -18,11 +17,14 @@ from azure.ai.agents.models import (
     AsyncFunctionTool,
     MessageDeltaChunk,
     MessageDeltaTextContent,
+    OpenApiAnonymousAuthDetails,
+    OpenApiTool,
     RunStatus,
     RunStep,
     ThreadMessage,
     ThreadRun,
     AsyncToolSet,
+    Tool,
 )
 from azure.ai.agents.telemetry._ai_agents_instrumentor import _AIAgentsInstrumentorPreview
 from azure.ai.agents.telemetry import AIAgentsInstrumentor, _utils
@@ -474,13 +476,13 @@ class TestAiAgentsInstrumentor(TestAgentClientBase):
                 '{"tool_calls": [{"id": "*", "type": "function", "function": {"name": "fetch_weather", "arguments": {"location": "New York"}}}]}',
                 '{"content": {"text": {"value": "*"}}, "role": "assistant"}'
             ],
+            have_submit_tools=True,
             **kwargs
         )
 
     async def _do_test_run_steps_with_toolset_with_tracing_content_recording(
             self,
             expected_event_content: str,
-            toolset: AsyncToolSet,
             model: str,
             message: str,
             use_stream: bool,
@@ -488,16 +490,28 @@ class TestAiAgentsInstrumentor(TestAgentClientBase):
             tool_message_attribute_content: str,
             event_contents: List[str],
             instructions: str = "You are helpful agent",
+            toolset: Optional[AsyncToolSet] = None,
+            tool: Optional[Tool] = None,
+            have_submit_tools=False,
             **kwargs
         ):
         """The helper method to check the recordings."""
         client = self.create_client(**kwargs)
-        agent = await client.create_agent(
-            model=model, name="my-agent", instructions=instructions, toolset=toolset
-        )
-
-        # workaround for https://github.com/Azure/azure-sdk-for-python/issues/40086
-        client.enable_auto_function_calls(toolset)
+        if toolset is None == tool is None:
+            raise ValueError("Please provide at lease one of toolset or tool, but not both.")
+        elif toolset is not None:
+            agent = await client.create_agent(
+                model=model, name="my-agent", instructions=instructions, toolset=toolset
+            )
+    
+            # workaround for https://github.com/Azure/azure-sdk-for-python/issues/40086
+            client.enable_auto_function_calls(toolset)
+        elif tool is not None:
+            agent = await client.create_agent(
+                model=model, name="my-agent", instructions=instructions,
+                tools=tool.definitions,
+                tool_resources=tool.resources,
+            )
 
         thread = await client.threads.create()
         await client.messages.create(thread_id=thread.id, role="user", content=message)
@@ -590,22 +604,26 @@ class TestAiAgentsInstrumentor(TestAgentClientBase):
         assert events_match == True
 
         spans = self.exporter.get_spans_by_name("submit_tool_outputs")
-        assert len(spans) == 1
-        span = spans[0]
-        expected_attributes = [
-            ("gen_ai.system", "az.ai.agents"),
-            ("gen_ai.operation.name", "submit_tool_outputs"),
-            ("server.address", ""),
-            ("gen_ai.thread.id", ""),
-            ("gen_ai.thread.run.id", ""),
-        ]
-        if not use_stream:
-            expected_attributes.extend([
-                ('gen_ai.thread.run.status', ''),
-                ('gen_ai.response.model', model)
-            ])
-        attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
-        assert attributes_match == True
+        if have_submit_tools:
+            spans = self.exporter.get_spans_by_name("submit_tool_outputs")
+            assert len(spans) == 1
+            span = spans[0]
+            expected_attributes = [
+                ("gen_ai.system", "az.ai.agents"),
+                ("gen_ai.operation.name", "submit_tool_outputs"),
+                ("server.address", ""),
+                ("gen_ai.thread.id", ""),
+                ("gen_ai.thread.run.id", ""),
+            ]
+            if not use_stream:
+                expected_attributes.extend([
+                    ('gen_ai.thread.run.status', ''),
+                    ('gen_ai.response.model', model)
+                ])
+            attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
+            assert attributes_match == True
+        else:
+            assert len(spans) == 0
 
         if use_stream:
             spans = self.exporter.get_spans_by_name("process_thread_run")
@@ -785,6 +803,7 @@ class TestAiAgentsInstrumentor(TestAgentClientBase):
                 '{"tool_calls": [{"id": "*", "type": "function"}]}',
                 '{"role": "assistant"}'
             ],
+            have_submit_tools=True,
             **kwargs
         )
 
@@ -805,8 +824,36 @@ class TestAiAgentsInstrumentor(TestAgentClientBase):
                 '{"tool_calls": [{"id": "*", "type": "function", "function": {"name": "fetch_weather", "arguments": {"location": "New York"}}}]}',
                 '{"content": {"text": {"value": "*"}}, "role": "assistant"}'
             ],
+            have_submit_tools=True,
             **kwargs
         )
+
+    @pytest.mark.usefixtures("instrument_with_content")
+    @agentClientPreparer()
+    @recorded_by_proxy_async
+    async def test_telemetry_steps_with_openapi_tool(self, **kwargs):
+        """Test run steps with OpenAPI."""
+        weather_asset_file_path = os.path.join(os.path.dirname(__file__), "assets", "weather_openapi.json")
+        auth = OpenApiAnonymousAuthDetails()
+        with open(weather_asset_file_path, "r") as f:
+            openapi_weather = jsonref.load(f)
+        openapi_tool = OpenApiTool(
+            name="get_weather",
+            spec=openapi_weather,
+            description="Retrieve weather information for a location",
+            auth=auth,
+        )
+        await self._do_test_run_steps_with_toolset_with_tracing_content_recording(
+            expected_event_content='{"tool_calls": [{"id": "*", "type": "openapi", "function": {"name": "get_weather_GetCurrentWeather", "arguments": "*", "output": "*"}}]}',
+            tool=openapi_tool,
+            model="gpt-4o",
+            use_stream=False,
+            message="What is the weather in New York, NY?",
+            recording_enabled=True,
+            tool_message_attribute_content='',
+            event_contents=[],
+            **kwargs)
+
 
 class MyEventHandler(AsyncAgentEventHandler):
 
