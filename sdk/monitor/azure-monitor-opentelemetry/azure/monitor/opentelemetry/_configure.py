@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 from functools import cached_property
 from logging import getLogger, Formatter
-from typing import Dict, List, Optional, cast
+from typing import Dict, List, Optional, cast, Any, Union
 
 from opentelemetry.instrumentation.instrumentor import (  # type: ignore
     BaseInstrumentor,
@@ -103,9 +103,9 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
      `<tempfile.gettempdir()>/Microsoft/AzureMonitor/opentelemetry-python-<your-instrumentation-key>`.
     :keyword list[~opentelemetry.sdk.metrics.view.View] views: List of `View` objects to configure and filter
      metric output.
-    :keyword dict browser_sdk_loader_config: Configuration dictionary for browser SDK loader behavior. Can include keys like
-     'connection_string' (separate connection string for browser SDK), 'enabled' (boolean), and
-     framework-specific options. Defaults to `{}`.
+    :keyword dict browser_sdk_loader_config: Configuration dictionary for browser SDK loader
+     behavior. Can include keys like 'connection_string' (separate connection string for browser SDK),
+     'enabled' (boolean), and framework-specific options. Defaults to `{}`.
     :rtype: None
     """
 
@@ -314,9 +314,9 @@ def _setup_instrumentations(configurations: Dict[str, ConfigurationValue]):
                 )
                 continue
             # Load the instrumentor via entrypoint
-            instrumentor: BaseInstrumentor = entry_point.load()
+            instrumentor_class = entry_point.load()
             # tell instrumentation to not run dep checks again as we already did it above
-            instrumentor().instrument(skip_dep_check=True)
+            instrumentor_class().instrument(skip_dep_check=True)
         except Exception as ex:  # pylint: disable=broad-except
             _logger.warning(
                 "Exception occurred when instrumenting: %s.",
@@ -349,52 +349,55 @@ def _setup_additional_azure_sdk_instrumentations(configurations: Dict[str, Confi
     ]
 
     for module_path, class_name in instrumentors:
-        instrumentor_imported = False
         try:
             module = __import__(module_path, fromlist=[class_name])
-            instrumentor_imported = True
-        except Exception as ex:  # pylint: disable=broad-except
+            instrumentor_class = getattr(module, class_name)
+            instrumentor_class().instrument()
+        except ImportError as ex:  # pylint: disable=broad-except
             _logger.debug(
                 "Failed to import %s from %s",
                 class_name,
                 module_path,
                 exc_info=ex,
             )
-
-        if instrumentor_imported:
-            try:
-                instrumentor_class = getattr(module, class_name)
-                instrumentor_class().instrument()
-            except Exception as ex:  # pylint: disable=broad-except
-                _logger.warning(
-                    "Exception occurred when instrumenting using: %s.",
-                    class_name,
-                    exc_info=ex,
-                )
+        except Exception as ex:  # pylint: disable=broad-except
+            _logger.warning(
+                "Exception occurred when instrumenting using: %s.",
+                class_name,
+                exc_info=ex,
+            )
 
 
 def _setup_browser_sdk_loader(configurations: Dict[str, ConfigurationValue]):
-    """Setup browser SDK loader for supported frameworks."""
+    """Setup browser SDK loader for supported frameworks.
+
+    :param configurations: Configuration dictionary containing browser SDK loader settings.
+    :type configurations: Dict[str, ConfigurationValue]
+    """
     try:
-        # Get browser SDK loader configuration
-        browser_sdk_loader_config = configurations.get(BROWSER_SDK_LOADER_CONFIG_ARG, {})
-        if not isinstance(browser_sdk_loader_config, dict):
-            browser_sdk_loader_config = {}
-        
+        # Get browser SDK loader configuration  
+        browser_sdk_loader_config_value = configurations.get(BROWSER_SDK_LOADER_CONFIG_ARG)
+        if isinstance(browser_sdk_loader_config_value, dict):
+            browser_sdk_loader_config = browser_sdk_loader_config_value
+        else:
+            # Create typed empty dict to satisfy mypy
+            browser_sdk_loader_config = cast(Dict[str, Any], {})
+
         # Check if browser SDK loader should be enabled (default False)
         enabled = browser_sdk_loader_config.get("enabled", False)
         if not enabled:
             _logger.debug("Browser SDK loader disabled via configuration")
             return
-        
+
         # Get connection string (use browser SDK config first, then main config)
-        connection_string = browser_sdk_loader_config.get("connection_string") or configurations.get("connection_string")
+        connection_string = (browser_sdk_loader_config.get("connection_string") or
+                           cast(str, configurations.get("connection_string", "")))
         if not connection_string or not isinstance(connection_string, str):
-            _logger.debug("No valid connection string provided - skipping browser SDK loader setup")
+            _logger.debug("No valid connection string - skipping browser SDK loader setup")
             return
-        
+
         # Setup snippet injection for supported frameworks
         setup_snippet_injection(connection_string, browser_sdk_loader_config)
-        
+
     except Exception as ex:  # pylint: disable=broad-except
         _logger.debug("Failed to setup browser SDK loader: %s", ex, exc_info=True)
