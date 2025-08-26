@@ -34,7 +34,7 @@ servicePreparer = functools.partial(
 
 class TestBase(AzureRecordedTestCase):
 
-        "connection_name": os.environ.get("AZURE_AI_PROJECTS_TESTS_REDTEMS_CONNECTION_NAME", "naposaniwestus3"),
+        "connection_name": "naposaniwestus3",
         "connection_type": ConnectionType.AZURE_OPEN_AI,
         "model_deployment_name": "gpt-4o-mini"
     }
