@@ -98,9 +98,8 @@ class _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover(_GlobalPar
 
         # if the request is not a non-query plan document request
         # or if the request is not executing a stored procedure, return False
-        if ((request.resource_type != ResourceType.Document and
-                request.operation_type != _OperationType.ExecuteJavaScript) or
-                 request.operation_type == _OperationType.QueryPlan):
+        if (request.resource_type != ResourceType.Document and
+                request.operation_type != _OperationType.ExecuteJavaScript):
             return False
 
         return True

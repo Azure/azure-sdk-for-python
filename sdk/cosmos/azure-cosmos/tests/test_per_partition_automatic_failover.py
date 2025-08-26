@@ -162,10 +162,7 @@ class TestPerPartitionAutomaticFailover:
         pk_range_wrapper = list(global_endpoint_manager.partition_range_to_failover_info.keys())[0]
         initial_region = global_endpoint_manager.partition_range_to_failover_info[pk_range_wrapper].current_region
 
-        is_503 = hasattr(error, 'status_code') and error.status_code == 503
-        # Since 503 errors are retried by default, we each request counts as two failures
-        consecutive_failures = 3 if is_503 else 6
-
+        consecutive_failures = 6
         for i in range(consecutive_failures):
             # We perform the write operation multiple times to check the consecutive failures logic
             with pytest.raises((CosmosHttpResponseError, ServiceResponseError)) as exc_info:
@@ -179,7 +176,7 @@ class TestPerPartitionAutomaticFailover:
         pk_range_wrappers = list(global_endpoint_manager.ppaf_thresholds_tracker.pk_range_wrapper_to_failure_count.keys())
         assert len(pk_range_wrappers) == 1
         failure_count = global_endpoint_manager.ppaf_thresholds_tracker.pk_range_wrapper_to_failure_count[pk_range_wrappers[0]]
-        assert failure_count == 6
+        assert failure_count == consecutive_failures
         # Run some more requests to the same partition to trigger the failover logic
         for i in range(consecutive_failures):
             with pytest.raises((CosmosHttpResponseError, ServiceResponseError)) as exc_info:
@@ -199,7 +196,7 @@ class TestPerPartitionAutomaticFailover:
         # Since we are failing every request, even though we retried to the next region, that retry should have failed as well
         # This means we should have one extra failure - verify that the value makes sense
         failure_count = global_endpoint_manager.ppaf_thresholds_tracker.pk_range_wrapper_to_failure_count[pk_range_wrappers[0]]
-        assert failure_count == 1 if is_503 else 3
+        assert failure_count == 3
 
     @pytest.mark.parametrize("write_operation, exclude_client_regions", write_operations_and_boolean())
     def test_ppaf_exclude_regions(self, write_operation, exclude_client_regions):
