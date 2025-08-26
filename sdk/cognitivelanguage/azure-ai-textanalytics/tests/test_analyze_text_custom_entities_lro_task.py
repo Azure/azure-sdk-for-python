@@ -39,7 +39,7 @@ class TestTextAnalysis(AzureRecordedTestCase):
 class TestTextAnalysisCase(TestTextAnalysis):
     @TextAnalysisPreparer()
     @recorded_by_proxy
-    def test_analyzeText_customEntitiesLROTask(self, text_analysis_endpoint, text_analysis_key):
+    def test_analyze_text_custom_entities_lro_task(self, text_analysis_endpoint, text_analysis_key):
         client = self.create_client(text_analysis_endpoint, text_analysis_key)
         project_name = "your_project_name"
         deployment_name = "your_deployment_name"
