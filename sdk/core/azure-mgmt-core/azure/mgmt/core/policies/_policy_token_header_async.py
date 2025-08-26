@@ -45,12 +45,38 @@ HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
 class AsyncPolicyTokenHeaderPolicy(
     _PolicyTokenHeaderPolicyBase, AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]
 ):
+    """Async HTTP pipeline policy for adding policy token headers to Azure Resource Manager requests.
 
-    def __init__(self, client: "AsyncARMPipelineClient", **kwargs: Any):
+    This policy handles the acquisition and application of Azure Policy tokens for external
+    policy evaluation. It integrates with the Azure Policy service to obtain tokens that
+    enable policy evaluation during resource operations.
+
+    :param client: The async ARM pipeline client used for making policy token requests
+    :type client: ~azure.mgmt.core.AsyncARMPipelineClient
+    :param kwargs: Additional keyword arguments passed to the base policy
+    :type kwargs: Any
+    """
+
+    def __init__(self, client: "AsyncARMPipelineClient", **kwargs: Any) -> None:
+        """Initialize the async policy token header policy.
+
+        :param client: The async ARM pipeline client used for making policy token requests
+        :type client: ~azure.mgmt.core.AsyncARMPipelineClient
+        :param kwargs: Additional keyword arguments passed to the base policy
+        :type kwargs: Any
+        """
         super().__init__(**kwargs)
         self._client = client
 
     async def on_request(self, request: PipelineRequest[HTTPRequestType]) -> None:
+        """Process the request to add policy token headers if needed.
+
+        This method is called for each outgoing request. It checks if a policy token
+        is needed and if so, acquires one and adds it to the request headers.
+
+        :param request: The pipeline request to process
+        :type request: ~azure.core.pipeline.PipelineRequest
+        """
         acquire_policy_request = self._create_acquire_policy_request(request)
         if acquire_policy_request:
             acquire_policy_response = await self._client.send_request(acquire_policy_request, stream=False)
@@ -59,7 +85,10 @@ class AsyncPolicyTokenHeaderPolicy(
     async def send(
         self, request: PipelineRequest[HTTPRequestType]
     ) -> PipelineResponse[HTTPRequestType, AsyncHTTPResponseType]:
-        """Authorize request with a bearer token and send it to the next policy
+        """Authorize request with a bearer token and send it to the next policy.
+
+        This method processes the request by calling on_request to potentially add
+        policy token headers, then forwards the request to the next policy in the pipeline.
 
         :param request: The pipeline request object
         :type request: ~azure.core.pipeline.PipelineRequest
