@@ -33,7 +33,6 @@ class TestRedTeams(TestBase):
             credential=self.get_credential(AIProjectClient, is_async=True),
         ) as project_client:
 
-            
             # [START red_team_sample]
             print("Creating a Red Team scan for direct model testing")
 
