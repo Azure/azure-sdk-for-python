@@ -72,9 +72,15 @@ setup(
         "typing-extensions>=4.6.0",
     ],
     extras_require={
-        "websocket": [
-            "aiohttp>=3.9.0,<4.0.0",
+        "websockets": [
             "websockets>=12.0,<14.0",
+        ],
+        "aiohttp": [
+            "aiohttp>=3.9.0,<4.0.0",
+        ],
+        "all-websockets": [
+            "websockets>=12.0,<14.0",
+            "aiohttp>=3.9.0,<4.0.0",
         ],
     },
     python_requires=">=3.9",

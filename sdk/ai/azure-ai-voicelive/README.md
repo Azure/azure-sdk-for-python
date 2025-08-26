@@ -25,15 +25,21 @@ Getting started
 # Base install (core client only)
 python -m pip install azure-ai-voicelive
 
-# WebSocket streaming + sample helpers
-python -m pip install "azure-ai-voicelive[websocket]" pyaudio python-dotenv
+# For synchronous streaming (uses websockets)
+python -m pip install "azure-ai-voicelive[websockets]"
+
+# For asynchronous streaming (uses aiohttp)
+python -m pip install "azure-ai-voicelive[aiohttp]"
+
+# For both sync + async scenarios (recommended if unsure)
+python -m pip install "azure-ai-voicelive[all-websockets]" pyaudio python-dotenv
 ```
 
-The `[websocket]` extra installs `aiohttp` and `websockets` required for real-time streaming and async samples.  
-If you run streaming code without installing this extra, you'll get a clear error message:  
-    WebSocket streaming features require additional dependencies.  
-    Install them with:  
-        pip install 'azure-ai-voicelive[websocket]'
+WebSocket streaming features require additional dependencies.
+Install them with:
+    pip install "azure-ai-voicelive[websockets]"   # for sync
+    pip install "azure-ai-voicelive[aiohttp]"     # for async
+    pip install "azure-ai-voicelive[all-websockets]"  # for both
 
 ### Authenticate
 
@@ -106,9 +112,9 @@ Key concepts
 Examples
 --------
 
-### Basic Voice Assistant (Featured Sample)
+### Basic async Voice Assistant (Featured Sample)
 
-The Basic Voice Assistant sample demonstrates full-featured voice interaction with:
+The Basic async Voice Assistant sample demonstrates full-featured voice interaction with:
 
 - Real-time speech streaming
 - Server-side voice activity detection
@@ -116,11 +122,12 @@ The Basic Voice Assistant sample demonstrates full-featured voice interaction wi
 - High-quality audio processing
 
 ```bash
-# Run the sample (requires the websocket extra)
-python samples/basic_voice_assistant.py
+# Run the basic voice assistant sample
+# Requires [aiohttp] for async (easiest: [all-websockets])
+python samples/basic_voice_assistant_async.py
 
 # With custom parameters
-python samples/basic_voice_assistant.py --model gpt-4o-realtime-preview --voice alloy --instructions "You're a helpful assistant"
+python samples/basic_voice_assistant_async.py --model gpt-4o-realtime-preview --voice alloy --instructions "You're a helpful assistant"
 ```
 
 ### Minimal async example
@@ -275,8 +282,9 @@ Troubleshooting
   If you see:
     WebSocket streaming features require additional dependencies.
     Install them with:
-        pip install 'azure-ai-voicelive[websocket]'
-  you tried to run streaming code without the `[websocket]` extra installed.
+        pip install "azure-ai-voicelive[websockets]"   # for sync
+        pip install "azure-ai-voicelive[aiohttp]"     # for async
+        pip install "azure-ai-voicelive[all-websockets]"  # for both
 
 - **Auth failures:**  
   For API key, double-check `AZURE_VOICELIVE_API_KEY`. For AAD, ensure the identity is authorized.
@@ -309,8 +317,7 @@ Next steps
 ----------
 
 1. **Run the featured sample:**
-   - Try `samples/basic_voice_assistant.py` for a complete voice assistant implementation
-   - See the detailed documentation in `samples/BASIC_VOICE_ASSISTANT.md`
+   - Try `samples/basic_voice_assistant_async.py` for a complete voice assistant implementation
 
 2. **Customize your implementation:**
    - Experiment with different voices and parameters
