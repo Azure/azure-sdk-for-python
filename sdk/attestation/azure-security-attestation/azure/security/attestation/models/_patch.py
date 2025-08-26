@@ -38,7 +38,6 @@ from ._models import (
 from ._enums import (
     PolicyModification,
     CertificateModification,
-    AttestationType,
 )
 
 if TYPE_CHECKING:

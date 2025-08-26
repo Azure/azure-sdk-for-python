@@ -44,8 +44,6 @@ from .models import (
     PolicyCertificatesModificationResult as GeneratedPolicyCertificatesModificationResult,
     AttestationPolicyResult,
     AttestationPolicyCertificateResult,
-    PolicyModification,
-    CertificateModification,
 )
 
 from .models._patch import (
@@ -56,6 +54,7 @@ from .models._patch import (
 )
 
 from .models._enums import (
+    AttestationType,
     CertificateModification,
     PolicyModification,
 )
