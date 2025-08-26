@@ -95,16 +95,57 @@ module_logger = logging.getLogger(__name__)
 T = typing.TypeVar("T")
 
 
+def _filter_field_kwargs(**kwargs):
+    """Filter out kwargs that are not supported by marshmallow 4.x Field class.
+    
+    In marshmallow 4.x, many parameters that were previously accepted by Field
+    constructors are no longer supported and must be filtered out.
+    
+    :param kwargs: Keyword arguments to filter
+    :return: Filtered kwargs safe for marshmallow 4.x Field constructors
+    :rtype: dict
+    """
+    # Parameters that are NOT supported by marshmallow 4.x Field class
+    unsupported_params = {
+        # Custom parameters used in Azure ML field classes
+        'allowed_values', 'casing_transform', 'pass_original', 'azureml_type', 
+        'pattern', 'allow_default_version', 'is_strict', 'allow_dir', 'allow_file',
+        'upper_bound', 'lower_bound', 'type_sensitive_fields_dict', 
+        'plain_union_fields', 'allow_load_from_file', 'type_field_name',
+        'experimental_field', 'extra_fields', 'strict', 'as_string', 'allow_nan',
+        
+        # Parameters that were moved or deprecated in marshmallow 4.x
+        'unknown',  # Now handled at schema level, not field level
+    }
+    
+    # Create filtered kwargs by removing unsupported parameters
+    filtered_kwargs = {}
+    removed_kwargs = {}
+    
+    for key, value in kwargs.items():
+        if key in unsupported_params:
+            removed_kwargs[key] = value
+        else:
+            filtered_kwargs[key] = value
+    
+    return filtered_kwargs, removed_kwargs
+
+
 class StringTransformedEnum(Field):
     def __init__(self, **kwargs):
-        # pop marshmallow unknown args to avoid warnings
-        self.allowed_values = kwargs.pop("allowed_values", None)
-        self.casing_transform = kwargs.pop("casing_transform", lambda x: x.lower())
-        self.pass_original = kwargs.pop("pass_original", False)
-        super().__init__(**kwargs)
+        # Filter out marshmallow 4.x unsupported kwargs
+        filtered_kwargs, removed_kwargs = _filter_field_kwargs(**kwargs)
+        
+        # Store custom parameters before filtering
+        self.allowed_values = removed_kwargs.get("allowed_values", None)
+        self.casing_transform = removed_kwargs.get("casing_transform", lambda x: x.lower())
+        self.pass_original = removed_kwargs.get("pass_original", False)
+        
+        super().__init__(**filtered_kwargs)
         if isinstance(self.allowed_values, str):
             self.allowed_values = [self.allowed_values]
-        self.allowed_values = [self.casing_transform(x) for x in self.allowed_values]
+        if self.allowed_values is not None:
+            self.allowed_values = [self.casing_transform(x) for x in self.allowed_values]
 
     def _jsonschema_type_mapping(self):
         schema = {"type": "string", "enum": self.allowed_values}
@@ -130,8 +171,9 @@ class StringTransformedEnum(Field):
 class DumpableEnumField(StringTransformedEnum):
     def __init__(self, **kwargs):
         """Enum field that will raise exception when dumping."""
-        kwargs.pop("casing_transform", None)
-        super(DumpableEnumField, self).__init__(casing_transform=lambda x: x, **kwargs)
+        # Set casing_transform to identity function, removing any existing one
+        kwargs["casing_transform"] = lambda x: x
+        super(DumpableEnumField, self).__init__(**kwargs)
 
 
 class LocalPathField(fields.Str):
@@ -146,10 +188,15 @@ class LocalPathField(fields.Str):
     }
 
     def __init__(self, allow_dir=True, allow_file=True, **kwargs):
-        self._allow_dir = allow_dir
-        self._allow_file = allow_file
-        self._pattern = kwargs.get("pattern", None)
-        super().__init__()
+        # Filter out marshmallow 4.x unsupported kwargs
+        filtered_kwargs, removed_kwargs = _filter_field_kwargs(**kwargs)
+        
+        # Store custom parameters before filtering
+        self._allow_dir = removed_kwargs.get("allow_dir", allow_dir)
+        self._allow_file = removed_kwargs.get("allow_file", allow_file)
+        self._pattern = filtered_kwargs.get("pattern", None)
+        
+        super().__init__(**filtered_kwargs)
 
     def _jsonschema_type_mapping(self):
         schema = {"type": "string", "arm_type": LOCAL_PATH}
@@ -306,9 +353,14 @@ class ArmStr(Field):
     """A string represents an ARM ID for some AzureML resource."""
 
     def __init__(self, **kwargs):
-        self.azureml_type = kwargs.pop("azureml_type", None)
-        self.pattern = kwargs.pop("pattern", r"^azureml:.+")
-        super().__init__(**kwargs)
+        # Filter out marshmallow 4.x unsupported kwargs
+        filtered_kwargs, removed_kwargs = _filter_field_kwargs(**kwargs)
+        
+        # Store custom parameters before filtering
+        self.azureml_type = removed_kwargs.get("azureml_type", None)
+        self.pattern = removed_kwargs.get("pattern", r"^azureml:.+")
+        
+        super().__init__(**filtered_kwargs)
 
     def _jsonschema_type_mapping(self):
         schema = {
@@ -360,8 +412,13 @@ class ArmVersionedStr(ArmStr):
     """A string represents an ARM ID for some AzureML resource with version."""
 
     def __init__(self, **kwargs):
-        self.allow_default_version = kwargs.pop("allow_default_version", False)
-        super().__init__(**kwargs)
+        # Filter out marshmallow 4.x unsupported kwargs
+        filtered_kwargs, removed_kwargs = _filter_field_kwargs(**kwargs)
+        
+        # Store custom parameters before filtering
+        self.allow_default_version = removed_kwargs.get("allow_default_version", False)
+        
+        super().__init__(**filtered_kwargs)
 
     def _deserialize(self, value, attr, data, **kwargs):
         arm_id = super()._deserialize(value, attr, data, **kwargs)
@@ -480,13 +537,19 @@ class UnionField(fields.Field):
     """A field that can be one of multiple types."""
 
     def __init__(self, union_fields: List[fields.Field], is_strict=False, **kwargs):
-        super().__init__(**kwargs)
+        # Filter out marshmallow 4.x unsupported kwargs
+        filtered_kwargs, removed_kwargs = _filter_field_kwargs(**kwargs)
+        
+        # Store custom parameters before filtering
+        self.is_strict = removed_kwargs.get("is_strict", is_strict)
+        
+        super().__init__(**filtered_kwargs)
         try:
             # add the validation and make sure union_fields must be subclasses or instances of
             # marshmallow Field
             self._union_fields = [resolve_field_instance(cls_or_instance) for cls_or_instance in union_fields]
             # TODO: make serialization/de-serialization work in the same way as json schema when is_strict is True
-            self.is_strict = is_strict  # S\When True, combine fields with oneOf instead of anyOf at schema generation
+            # When True, combine fields with oneOf instead of anyOf at schema generation
         except MarshmallowError as error:
             raise ValueError(
                 'Elements of "union_fields" must be subclasses or instances of marshmallow Field.'
@@ -590,8 +653,14 @@ class TypeSensitiveUnionField(UnionField):
         from file, default to True type allow_load_from_file: bool param
         type_field_name: field name of type field, default value is "type" type
         type_field_name: str."""
+        
+        # Filter out marshmallow 4.x unsupported kwargs
+        filtered_kwargs, removed_kwargs = _filter_field_kwargs(**kwargs)
+        
+        # Store custom parameters before filtering
         self._type_sensitive_fields_dict = {}
-        self._allow_load_from_yaml = allow_load_from_file
+        self._allow_load_from_yaml = removed_kwargs.get("allow_load_from_file", allow_load_from_file)
+        self._type_field_name = removed_kwargs.get("type_field_name", type_field_name)
 
         union_fields = plain_union_fields or []
         for type_name, type_sensitive_fields in type_sensitive_fields_dict.items():
@@ -600,8 +669,7 @@ class TypeSensitiveUnionField(UnionField):
                 resolve_field_instance(cls_or_instance) for cls_or_instance in type_sensitive_fields
             ]
 
-        super(TypeSensitiveUnionField, self).__init__(union_fields, **kwargs)
-        self._type_field_name = type_field_name
+        super(TypeSensitiveUnionField, self).__init__(union_fields, **filtered_kwargs)
 
     def _bind_to_schema(self, field_name, schema):
         super()._bind_to_schema(field_name, schema)
@@ -747,7 +815,7 @@ def CodeField(**kwargs) -> Field:
     )
 
 
-def EnvironmentField(*, extra_fields: List[Field] = None, **kwargs):
+def EnvironmentField(*, extra_fields: Optional[List[Field]] = None, **kwargs):
     """Function to return a union field for environment.
 
     :keyword extra_fields: Extra fields to be added to the union field
@@ -826,7 +894,9 @@ class VersionField(Field):
     """
 
     def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
+        # Filter out marshmallow 4.x unsupported kwargs
+        filtered_kwargs, removed_kwargs = _filter_field_kwargs(**kwargs)
+        super().__init__(*args, **filtered_kwargs)
 
     def _jsonschema_type_mapping(self):
         schema = {"anyOf": [{"type": "string"}, {"type": "integer"}]}
@@ -863,9 +933,17 @@ class NumberVersionField(VersionField):
         lower_bound: Optional[str] = None,
         **kwargs,
     ) -> None:
+        # Filter out marshmallow 4.x unsupported kwargs
+        filtered_kwargs, removed_kwargs = _filter_field_kwargs(**kwargs)
+        
+        # Store custom parameters before filtering
+        upper_bound = removed_kwargs.get("upper_bound", upper_bound)
+        lower_bound = removed_kwargs.get("lower_bound", lower_bound)
+        
         self._upper = None if upper_bound is None else self._version_to_tuple(upper_bound)
         self._lower = None if lower_bound is None else self._version_to_tuple(lower_bound)
-        super().__init__(*args, **kwargs)
+        
+        super().__init__(*args, **filtered_kwargs)
 
     def _version_to_tuple(self, value: str):
         try:
@@ -885,7 +963,7 @@ class NumberVersionField(VersionField):
 class DumpableIntegerField(fields.Integer):
     """A int field that cannot serialize other type of values to int if self.strict."""
 
-    def _serialize(self, value, attr, obj, **kwargs) -> typing.Optional[typing.Union[str, T]]:
+    def _serialize(self, value, attr, obj, **kwargs):
         if self.strict and not isinstance(value, int):
             # this implementation can serialize bool to bool
             raise self.make_error("invalid", input=value)
@@ -903,22 +981,27 @@ class DumpableFloatField(fields.Float):
         as_string: bool = False,
         **kwargs,
     ):
-        self.strict = strict
-        super().__init__(allow_nan=allow_nan, as_string=as_string, **kwargs)
+        # Filter out marshmallow 4.x unsupported kwargs
+        filtered_kwargs, removed_kwargs = _filter_field_kwargs(**kwargs)
+        
+        # Store custom parameters before filtering
+        self.strict = removed_kwargs.get("strict", strict)
+        
+        super().__init__(allow_nan=allow_nan, as_string=as_string, **filtered_kwargs)
 
     def _validated(self, value):
         if self.strict and not isinstance(value, float):
             raise self.make_error("invalid", input=value)
         return super()._validated(value)
 
-    def _serialize(self, value, attr, obj, **kwargs) -> typing.Optional[typing.Union[str, T]]:
+    def _serialize(self, value, attr, obj, **kwargs):
         return super()._serialize(self._validated(value), attr, obj, **kwargs)
 
 
 class DumpableStringField(fields.String):
     """A string field that cannot serialize other type of values to string if self.strict."""
 
-    def _serialize(self, value, attr, obj, **kwargs) -> typing.Optional[typing.Union[str, T]]:
+    def _serialize(self, value, attr, obj, **kwargs):
         if not isinstance(value, str):
             raise ValidationError("Given value is not a string")
         return super()._serialize(value, attr, obj, **kwargs)
@@ -926,10 +1009,16 @@ class DumpableStringField(fields.String):
 
 class ExperimentalField(fields.Field):
     def __init__(self, experimental_field: fields.Field, **kwargs):
-        super().__init__(**kwargs)
+        # Filter out marshmallow 4.x unsupported kwargs
+        filtered_kwargs, removed_kwargs = _filter_field_kwargs(**kwargs)
+        
+        # Store custom parameters before filtering
+        self._experimental_field_arg = removed_kwargs.get("experimental_field", experimental_field)
+        
+        super().__init__(**filtered_kwargs)
         try:
-            self._experimental_field = resolve_field_instance(experimental_field)
-            self.required = experimental_field.required
+            self._experimental_field = resolve_field_instance(self._experimental_field_arg)
+            self.required = self._experimental_field.required
         except MarshmallowError as error:
             raise ValueError('"experimental_field" must be subclasses or instances of marshmallow Field.') from error
 
@@ -960,8 +1049,13 @@ class RegistryStr(Field):
     """A string represents a registry ID for some AzureML resource."""
 
     def __init__(self, **kwargs):
-        self.azureml_type = kwargs.pop("azureml_type", None)
-        super().__init__(**kwargs)
+        # Filter out marshmallow 4.x unsupported kwargs
+        filtered_kwargs, removed_kwargs = _filter_field_kwargs(**kwargs)
+        
+        # Store custom parameters before filtering
+        self.azureml_type = removed_kwargs.get("azureml_type", None)
+        
+        super().__init__(**filtered_kwargs)
 
     def _jsonschema_type_mapping(self):
         schema = {
