@@ -50,7 +50,6 @@ import asyncio
 if platform.system() == "Windows":
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
-
 def get_redacted_key(key):
     redacted_value = "redacted"
     digest = hashlib.sha256(six.ensure_binary(key)).digest()
@@ -85,56 +84,6 @@ class TestBatch(AzureMgmtRecordedTestCase):
                 pytest.fail("Inner BatchErrorException expected but not exist")
         except Exception as err:
             pytest.fail("Expected CreateTasksError, instead got: {!r}".format(err))
-
-    # @CachedResourceGroupPreparer(location=AZURE_LOCATION)
-    # @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
-    # @pytest.mark.parametrize("BatchClient", [SyncBatchClient, AsyncBatchClient], ids=["sync", "async"])
-    # @client_setup
-    # @recorded_by_proxy_async
-    # async def test_batch_certificates(self, client: BatchClient, **kwargs):
-    #     # Test Add Certificate
-    #     certificate = models.BatchCertificate(
-    #         thumbprint="cff2ab63c8c955aaf71989efa641b906558d9fb7",
-    #         thumbprint_algorithm="sha1",
-    #         data="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",
-    #         certificate_format=models.BatchCertificateFormat.PFX,
-    #         password="nodesdk",
-    #     )
-
-    #     response = await wrap_result(client.create_certificate(certificate))
-    #     assert response is None
-
-    #     # Test List Certificates
-    #     certs = await wrap_list_result(client.list_certificates())
-    #     test_cert = [c for c in certs if c.thumbprint == "cff2ab63c8c955aaf71989efa641b906558d9fb7"]
-    #     assert len(test_cert) == 1
-
-    #     # Test Get Certificate
-    #     cert = await wrap_result(client.get_certificate("sha1", "cff2ab63c8c955aaf71989efa641b906558d9fb7"))
-    #     assert cert.thumbprint == "cff2ab63c8c955aaf71989efa641b906558d9fb7"
-    #     assert cert.thumbprint_algorithm == "sha1"
-    #     assert cert.delete_certificate_error is None
-
-    #     # Test Cancel Certificate Delete
-    #     await self.assertBatchError(
-    #         "CertificateStateActive",
-    #         client.cancel_certificate_deletion,
-    #         "sha1",
-    #         "cff2ab63c8c955aaf71989efa641b906558d9fb7",
-    #     )
-
-    #     poller = await wrap_result(client.begin_delete_certificate("sha1", "cff2ab63c8c955aaf71989efa641b906558d9fb7"))
-    #     assert poller is not None
-
-    #     assert poller.result() is None
-    #     assert poller.done()
-    #     assert poller.status() == "Succeeded"
-
-
-
-        # Test Delete Certificate
-        # response = await wrap_result(client.delete_certificate("sha1", "cff2ab63c8c955aaf71989efa641b906558d9fb7"))
-        # assert response is None
 
     @CachedResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
@@ -195,7 +144,9 @@ class TestBatch(AzureMgmtRecordedTestCase):
             vm_size=DEFAULT_VM_SIZE,
             network_configuration=network_config,
             virtual_machine_configuration=models.VirtualMachineConfiguration(
-                image_reference=models.BatchVmImageReference(publisher="Canonical", offer="0001-com-ubuntu-server-jammy", sku="22_04-lts"),
+                image_reference=models.BatchVmImageReference(
+                    publisher="Canonical", offer="0001-com-ubuntu-server-jammy", sku="22_04-lts"
+                ),
                 node_agent_sku_id="batch.node.ubuntu 22.04",
             ),
         )
@@ -229,7 +180,9 @@ class TestBatch(AzureMgmtRecordedTestCase):
             id=self.get_resource_name("batch_disk_"),
             vm_size=DEFAULT_VM_SIZE,
             virtual_machine_configuration=models.VirtualMachineConfiguration(
-                image_reference=models.BatchVmImageReference(publisher="Canonical", offer="0001-com-ubuntu-server-jammy", sku="22_04-lts"),
+                image_reference=models.BatchVmImageReference(
+                    publisher="Canonical", offer="0001-com-ubuntu-server-jammy", sku="22_04-lts"
+                ),
                 node_agent_sku_id="batch.node.ubuntu 22.04",
                 data_disks=[data_disk],
             ),
@@ -249,7 +202,9 @@ class TestBatch(AzureMgmtRecordedTestCase):
             id=self.get_resource_name("batch_ade_"),
             vm_size=DEFAULT_VM_SIZE,
             virtual_machine_configuration=models.VirtualMachineConfiguration(
-                image_reference=models.BatchVmImageReference(publisher="Canonical", offer="0001-com-ubuntu-server-jammy", sku="22_04-lts"),
+                image_reference=models.BatchVmImageReference(
+                    publisher="Canonical", offer="0001-com-ubuntu-server-jammy", sku="22_04-lts"
+                ),
                 disk_encryption_configuration=models.DiskEncryptionConfiguration(
                     targets=[models.DiskEncryptionTarget.TEMPORARY_DISK]
                 ),
@@ -336,7 +291,9 @@ class TestBatch(AzureMgmtRecordedTestCase):
             vm_size=DEFAULT_VM_SIZE,
             virtual_machine_configuration=models.VirtualMachineConfiguration(
                 node_agent_sku_id="batch.node.ubuntu 22.04",
-                image_reference=models.BatchVmImageReference(publisher="Canonical", offer="0001-com-ubuntu-server-jammy", sku="22_04-lts"),
+                image_reference=models.BatchVmImageReference(
+                    publisher="Canonical", offer="0001-com-ubuntu-server-jammy", sku="22_04-lts"
+                ),
             ),
             start_task=models.BatchStartTask(
                 command_line='cmd.exe /c "echo hello world"',
@@ -393,9 +350,9 @@ class TestBatch(AzureMgmtRecordedTestCase):
 
         poller = await wrap_result(client.begin_delete_pool(pool_id=test_paas_pool.id, polling_interval=5))
         assert poller is not None
-        
+
         # Wait for LRO completion - handle both sync and async pollers
-        if hasattr(poller.result(), '__await__'):
+        if hasattr(poller.result(), "__await__"):
             # Async poller
             result = await poller.result()
         else:
@@ -455,12 +412,12 @@ class TestBatch(AzureMgmtRecordedTestCase):
             time.sleep(5)
             pool = await wrap_result(client.get_pool(batch_pool.name))
         params = models.BatchPoolResizeOptions(target_dedicated_nodes=0, target_low_priority_nodes=2)
-        
+
         # TODO: figure out separate test bc the resize + stop_pool_resize tests are working together
         # LRO for resizing
         poller = await wrap_result(client.begin_resize_pool(batch_pool.name, params, polling_interval=5))
         assert poller is not None
-        
+
         # response = await wrap_result(client.resize_pool(batch_pool.name, params))
         # assert response is None
 
@@ -472,7 +429,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert poller is not None
 
         # Wait for LRO completion
-        if hasattr(poller.result(), '__await__'):
+        if hasattr(poller.result(), "__await__"):
             # Async poller
             result = await poller.result()
         else:
@@ -554,9 +511,9 @@ class TestBatch(AzureMgmtRecordedTestCase):
         # Test Terminate Job Schedule using LRO
         poller = await wrap_result(client.begin_terminate_job_schedule(job_schedule_id=schedule_id, polling_interval=5))
         assert poller is not None
-        
+
         # Wait for LRO completion
-        if hasattr(poller.result(), '__await__'):
+        if hasattr(poller.result(), "__await__"):
             # Async poller
             result = await poller.result()
         else:
@@ -569,9 +526,9 @@ class TestBatch(AzureMgmtRecordedTestCase):
         # Test Delete Job using LRO
         poller = await wrap_result(client.begin_delete_job_schedule(job_schedule_id=schedule_id, polling_interval=5))
         assert poller is not None
-        
+
         # Wait for LRO completion
-        if hasattr(poller.result(), '__await__'):
+        if hasattr(poller.result(), "__await__"):
             # Async poller
             result = await poller.result()
         else:
@@ -580,7 +537,6 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert result is None
         assert poller.done()
         assert poller.status() == "Succeeded"
-
 
         # Test Delete Job Schedule
         # response = await wrap_result(client.delete_job_schedule(schedule_id))
@@ -615,7 +571,9 @@ class TestBatch(AzureMgmtRecordedTestCase):
         )
         virtual_machine_config = models.VirtualMachineConfiguration(
             node_agent_sku_id="batch.node.ubuntu 22.04",
-            image_reference=models.BatchVmImageReference(publisher="Canonical", offer="0001-com-ubuntu-server-jammy", sku="22_04-lts"),
+            image_reference=models.BatchVmImageReference(
+                publisher="Canonical", offer="0001-com-ubuntu-server-jammy", sku="22_04-lts"
+            ),
         )
         pool = models.BatchPoolCreateOptions(
             id=self.get_resource_name("batch_network_"),
@@ -698,14 +656,16 @@ class TestBatch(AzureMgmtRecordedTestCase):
         # Test LRO reboot node
         poller = await wrap_result(
             client.begin_reboot_node(
-                batch_pool.name, 
-                nodes[0].id, 
-                models.BatchNodeRebootKinds(node_reboot_kind=models.BatchNodeRebootKind.TERMINATE),
-                polling_interval=5))
+                batch_pool.name,
+                nodes[0].id,
+                models.BatchNodeRebootOptions(node_reboot_kind=models.BatchNodeRebootKind.TERMINATE),
+                polling_interval=5,
+            )
+        )
         assert poller is not None
 
         # Wait for LRO completion
-        if hasattr(poller.result(), '__await__'):
+        if hasattr(poller.result(), "__await__"):
             # Async poller
             result = await poller.result()
         else:
@@ -777,7 +737,9 @@ class TestBatch(AzureMgmtRecordedTestCase):
         virtual_machine_config = models.VirtualMachineConfiguration(
             node_agent_sku_id="batch.node.ubuntu 22.04",
             extensions=[extension],
-            image_reference=models.BatchVmImageReference(publisher="Canonical", offer="0001-com-ubuntu-server-jammy", sku="22_04-lts"),
+            image_reference=models.BatchVmImageReference(
+                publisher="Canonical", offer="0001-com-ubuntu-server-jammy", sku="22_04-lts"
+            ),
         )
         batch_pool = models.BatchPoolCreateOptions(
             id=self.get_resource_name("batch_network_"),
@@ -827,7 +789,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         user_name = "BatchPythonSDKUser"
         nodes = list(await wrap_list_result(client.list_nodes(batch_pool.name)))
         user = models.BatchNodeUserCreateOptions(name=user_name, password="secret", is_admin=False)
-        assert nodes[0].id is not None #TODO: get a better fix for this
+        assert nodes[0].id is not None  # TODO: get a better fix for this
         response = await wrap_result(client.create_node_user(batch_pool.name, nodes[0].id, user))
         assert response is None
 
@@ -1258,13 +1220,16 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert isinstance(jobs, Iterable)
         assert len(list(jobs)) == 2
 
-
         # Test LRO disable job
-        poller = await wrap_result(client.begin_disable_job(job_id=job_param.id, content=models.BatchJobDisableOptions(disable_tasks="requeue"), polling_interval=5))
+        poller = await wrap_result(
+            client.begin_disable_job(
+                job_id=job_param.id, disable_options=models.BatchJobDisableOptions(disable_tasks="requeue"), polling_interval=5
+            )
+        )
         assert poller is not None
 
         # Wait for LRO completion
-        if hasattr(poller.result(), '__await__'):
+        if hasattr(poller.result(), "__await__"):
             # Async poller
             result = await poller.result()
         else:
@@ -1288,7 +1253,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert poller is not None
 
         # Wait for LRO completion
-        if hasattr(poller.result(), '__await__'):
+        if hasattr(poller.result(), "__await__"):
             # Async poller
             result = await poller.result()
         else:
@@ -1315,7 +1280,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         poller = await wrap_result(client.begin_terminate_job(job_id=job_param.id, polling_interval=5))
         assert poller is not None
         # waiting for completion
-        if hasattr(poller.result(), '__await__'):
+        if hasattr(poller.result(), "__await__"):
             # Async poller
             result = await poller.result()
         else:
@@ -1328,9 +1293,9 @@ class TestBatch(AzureMgmtRecordedTestCase):
         # Test Delete Job using LRO
         poller = await wrap_result(client.begin_delete_job(job_id=job_auto_param.id, polling_interval=5))
         assert poller is not None
-        
+
         # Wait for LRO completion
-        if hasattr(poller.result(), '__await__'):
+        if hasattr(poller.result(), "__await__"):
             # Async poller
             result = await poller.result()
         else:
@@ -1346,11 +1311,10 @@ class TestBatch(AzureMgmtRecordedTestCase):
             self.fail("Expected ResourceNotFoundError but no exception was raised")
         except azure.core.exceptions.ResourceNotFoundError as e:
             assert e.response is not None
-            assert hasattr(e, 'model')
-            assert '(JobNotFound) The specified job does not exist.' in str(e)
+            assert hasattr(e, "model")
+            assert "(JobNotFound) The specified job does not exist." in str(e)
 
         # introduce artificial states or failures to test more (returning back deleting for 10 calls so make it longer and to test LRO)
-        
 
         # Test Delete Job
         # response = await wrap_result(client.delete_job(job_auto_param.id))
@@ -1368,10 +1332,10 @@ class TestBatch(AzureMgmtRecordedTestCase):
             self.fail("Expected ResourceNotFoundError but no exception was raised")
         except azure.core.exceptions.ResourceNotFoundError as e:
             assert e.response is not None
-            assert hasattr(e, 'model')
-            assert '(PoolNotFound) The specified pool does not exist.' in str(e)
-            if hasattr(e, 'error') and hasattr(e.error, 'code'):
-                assert e.error.code in ['PoolNotFound']
+            assert hasattr(e, "model")
+            assert "(PoolNotFound) The specified pool does not exist." in str(e)
+            if hasattr(e, "error") and hasattr(e.error, "code"):
+                assert e.error.code in ["PoolNotFound"]
 
         # Test Resource Exists Error (409)
         job_id = self.get_resource_name("batch_test_job_")
@@ -1382,7 +1346,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
                 virtual_machine_configuration=models.VirtualMachineConfiguration(
                     image_reference=models.BatchVmImageReference(
                         publisher="Canonical",
-                        offer="0001-com-ubuntu-server-jammy", 
+                        offer="0001-com-ubuntu-server-jammy",
                         sku="22_04-lts",
                         version="latest",
                     ),
@@ -1390,25 +1354,25 @@ class TestBatch(AzureMgmtRecordedTestCase):
                 ),
             ),
         )
-        
+
         job_param = models.BatchJobCreateOptions(
             id=job_id,
             pool_info=models.BatchPoolInfo(auto_pool_specification=auto_pool),
         )
-        
+
         # creating the job for the first time
         await wrap_result(client.create_job(job_param))
-        
+
         try:
             # trying to create the same job again but should fail
             await wrap_result(client.create_job(job_param))
             self.fail("Expected ResourceExistsError but no exception was raised")
         except azure.core.exceptions.ResourceExistsError as e:
             assert e.response is not None
-            assert hasattr(e, 'model')
-            assert '(JobExists) The specified job already exists.' in str(e)
-            if hasattr(e, 'error') and hasattr(e.error, 'code'):
-                assert e.error.code in ['JobExists']
+            assert hasattr(e, "model")
+            assert "(JobExists) The specified job already exists." in str(e)
+            if hasattr(e, "error") and hasattr(e.error, "code"):
+                assert e.error.code in ["JobExists"]
         finally:
             try:
                 await wrap_result(client.delete_job(job_id))
