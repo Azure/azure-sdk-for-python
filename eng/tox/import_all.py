@@ -43,7 +43,7 @@ if __name__ == "__main__":
     # get target package name from target package path
     pkg_dir = os.path.abspath(args.target_package)
     pkg_details = ParsedSetup.from_path(pkg_dir)
-    
+
     if should_run_import_all(pkg_details.name):
         # import all modules from current package
         logging.info(
