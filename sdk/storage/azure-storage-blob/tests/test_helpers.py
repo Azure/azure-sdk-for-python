@@ -16,6 +16,7 @@ from azure.storage.blob._serialize import get_api_version
 from requests import Response
 from urllib3 import HTTPResponse
 
+from devtools_testutils.helpers import is_live
 
 def _build_base_file_share_headers(bearer_token_string: str, content_length: int = 0) -> Dict[str, Any]:
     return {
@@ -35,6 +36,9 @@ def _create_file_share_oauth(
     data: bytes
 ) -> Tuple[str, str]:
     base_url = f"https://{storage_account_name}.file.core.windows.net/{share_name}"
+
+    if not is_live():
+        return file_name, base_url
 
     # Creates file share
     with requests.Session() as session:
