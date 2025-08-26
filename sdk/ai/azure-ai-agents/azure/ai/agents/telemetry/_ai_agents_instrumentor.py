@@ -2066,8 +2066,7 @@ class _AgentEventHandlerTraceWrapper(AgentEventHandler):
         else:
             retval = super().on_thread_message(message)  # pylint: disable=assignment-from-none # type: ignore
 
-        # Message status may be in progress, but for some models it may already contain contents.
-        # For some models (like gpt-4o) it may never be in COMPLETED state.
+        # Message status may be in progress, even if the thread.message.completed event has arrived.
         if message.status in {MessageStatus.COMPLETED, MessageStatus.INCOMPLETE} or (message.status == MessageStatus.IN_PROGRESS and message.content):
             self.last_message = message
 
@@ -2205,8 +2204,7 @@ class _AsyncAgentEventHandlerTraceWrapper(AsyncAgentEventHandler):
         else:
             retval = await super().on_thread_message(message)  # type: ignore
 
-        # Message status may be in progress, but for some models it may already contain contents.
-        # For some models (like gpt-4o) it may never be in COMPLETED state.
+        # Message status may be in progress, even if the thread.message.completed event has arrived.
         if message.status in {MessageStatus.COMPLETED, MessageStatus.INCOMPLETE} or (message.status == MessageStatus.IN_PROGRESS and message.content):
             self.last_message = message
 
