@@ -302,7 +302,9 @@ def redirect_openai_requests():
 
 
 @pytest.fixture
-def recorded_test(recorded_test, redirect_openai_requests, redirect_asyncio_requests_traffic, mock_azure_management_api):
+def recorded_test(
+    recorded_test, redirect_openai_requests, redirect_asyncio_requests_traffic, mock_azure_management_api
+):
     return recorded_test
 
 
@@ -630,6 +632,7 @@ def run_from_temp_dir(tmp_path):
     yield
     os.chdir(original_cwd)
 
+
 @pytest.fixture
 def mock_azure_management_api(project_scope: dict):
     """Mock Azure Management API calls for service discovery during playback mode."""
@@ -637,47 +640,49 @@ def mock_azure_management_api(project_scope: dict):
         # In live mode, let the real API calls go through
         yield
         return
-    
+
     # Mock response for the Azure Management API workspace discovery call
     mock_response_data = {
         "id": f"/subscriptions/{project_scope['subscription_id']}/resourceGroups/{project_scope['resource_group_name']}/providers/Microsoft.MachineLearningServices/workspaces/{project_scope['project_name']}",
-        "name": project_scope['project_name'],
+        "name": project_scope["project_name"],
         "type": "Microsoft.MachineLearningServices/workspaces",
         "location": "swedencentral",
         "properties": {
             "discoveryUrl": "https://swedencentral.api.azureml.ms",
             "mlFlowTrackingUri": f"https://swedencentral.api.azureml.ms/mlflow/v1.0/subscriptions/{project_scope['subscription_id']}/resourceGroups/{project_scope['resource_group_name']}/providers/Microsoft.MachineLearningServices/workspaces/{project_scope['project_name']}",
-            "workspaceId": project_scope['subscription_id'],
-            "friendlyName": project_scope['project_name'],
+            "workspaceId": project_scope["subscription_id"],
+            "friendlyName": project_scope["project_name"],
             "description": "Test workspace for Azure AI evaluation",
             "keyVault": f"/subscriptions/{project_scope['subscription_id']}/resourceGroups/{project_scope['resource_group_name']}/providers/Microsoft.KeyVault/vaults/kv-{project_scope['project_name']}",
             "applicationInsights": f"/subscriptions/{project_scope['subscription_id']}/resourceGroups/{project_scope['resource_group_name']}/providers/Microsoft.Insights/components/ai-{project_scope['project_name']}",
-            "storageAccount": f"/subscriptions/{project_scope['subscription_id']}/resourceGroups/{project_scope['resource_group_name']}/providers/Microsoft.Storage/storageAccounts/st{project_scope['project_name']}"
-        }
+            "storageAccount": f"/subscriptions/{project_scope['subscription_id']}/resourceGroups/{project_scope['resource_group_name']}/providers/Microsoft.Storage/storageAccounts/st{project_scope['project_name']}",
+        },
     }
-    
+
     class MockResponse:
         def __init__(self, json_data, status_code):
             self.json_data = json_data
             self.status_code = status_code
-            
+
         def json(self):
             return self.json_data
-    
+
     def mock_requests_get(url, **kwargs):
         # Check if this is an Azure Management API call for workspace discovery
-        if ("management.azure.com" in url and 
-            "Microsoft.MachineLearningServices/workspaces" in url and
-            "api-version=" in url):
+        if (
+            "management.azure.com" in url
+            and "Microsoft.MachineLearningServices/workspaces" in url
+            and "api-version=" in url
+        ):
             return MockResponse(mock_response_data, 200)
-        
+
         # For any other requests, call the original function
         # This preserves other functionality while only mocking the specific API we need
         return original_requests_get(url, **kwargs)
-    
+
     # Store the original requests.get function
     original_requests_get = requests.get
-    
+
     # Apply the mock
-    with patch('requests.get', side_effect=mock_requests_get):
+    with patch("requests.get", side_effect=mock_requests_get):
         yield
