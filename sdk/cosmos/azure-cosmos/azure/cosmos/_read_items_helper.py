@@ -23,7 +23,7 @@ import logging
 from collections.abc import Sequence
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Dict, List, Tuple, Any, Optional, TYPE_CHECKING,Mapping
-
+import time
 from azure.core.utils import CaseInsensitiveDict
 
 from azure.cosmos import _base, exceptions
@@ -60,6 +60,9 @@ class ReadItemsHelperSync:
         self.executor = executor
         self.max_concurrency = max_concurrency
         self.max_items_per_query = 1000
+        # Extract timeout from kwargs if present
+        self.timeout = kwargs.get('timeout')
+
 
     def read_items(self) -> CosmosList:
         """Reads many items synchronously using a query-based approach with a thread pool.
@@ -67,6 +70,11 @@ class ReadItemsHelperSync:
         :return: A list of the retrieved items in the same order as the input.
         :rtype: ~azure.cosmos.CosmosList
         """
+        # Set operation start time for timeout tracking
+        if self.timeout:
+            # Add to options for query iterator to use
+            self.options['timeout'] = self.timeout
+            self.options['_operation_start_time'] = time.time()
 
         if not self.items:
             return CosmosList([], response_headers=CaseInsensitiveDict())
@@ -102,6 +110,7 @@ class ReadItemsHelperSync:
         futures = []
         # Create a clear mapping of futures to chunks for better error handling
         future_to_chunk = {}
+
 
         for chunk in query_chunks:
             for partition_id, partition_items in chunk.items():
@@ -207,6 +216,7 @@ class ReadItemsHelperSync:
         :return: A tuple containing the list of query results with original indices and the request charge.
         :rtype: tuple[list[tuple[int, dict[str, any]]], float]
         """
+
         id_to_idx = {item[1]: item[0] for item in chunk_partition_items}
         items_for_query = [(item[1], item[2]) for item in chunk_partition_items]
         request_kwargs = self.kwargs.copy()

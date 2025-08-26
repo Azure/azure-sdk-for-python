@@ -23,6 +23,8 @@
 """
 from azure.core.paging import PageIterator  # type: ignore
 from azure.cosmos._execution_context import execution_dispatcher
+import time
+from azure.cosmos import exceptions
 
 # pylint: disable=protected-access
 
@@ -71,6 +73,11 @@ class QueryIterable(PageIterator):
         self._options = options
         if continuation_token:
             options['continuation'] = continuation_token
+        # Capture timeout and start time
+        self._client_timeout = options.get('timeout')
+        # Use passed start time if available, otherwise use current time
+        self._operation_start_time = options.get('_operation_start_time') or (
+            time.time() if self._client_timeout else None)
         self._fetch_function = fetch_function
         self._collection_link = collection_link
         self._database_link = database_link
@@ -99,7 +106,25 @@ class QueryIterable(PageIterator):
         :return: List of results.
         :rtype: list
         """
+        # Check timeout before fetching next block
+        if self._client_timeout:
+            elapsed = time.time() - self._operation_start_time
+            if elapsed >= self._client_timeout:
+                raise exceptions.CosmosClientTimeoutError()
+
+            # Update remaining timeout for this request
+            remaining_timeout = self._client_timeout - elapsed
+            if remaining_timeout <= 0:
+                raise exceptions.CosmosClientTimeoutError()
+
+            # Update options with remaining timeout
+            self._options['timeout'] = remaining_timeout
         block = self._ex_context.fetch_next_block()
+        # Check timeout after fetching block
+        if self._client_timeout:
+            elapsed = time.time() - self._operation_start_time
+            if elapsed >= self._client_timeout:
+                raise exceptions.CosmosClientTimeoutError()
         if not block:
             raise StopIteration
         return block
