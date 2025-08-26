@@ -44,14 +44,19 @@ class _PolicyTokenHeaderPolicyBase:
         self._acquire_policy_token: bool = kwargs.pop("acquire_policy_token", False)
 
     def _create_acquire_policy_request(self, request: PipelineRequest[HTTPRequestType]) -> Optional[HttpRequest]:
-        acquire_policy_token = request.context.options.pop("acquire_policy_token", False)
-        if not acquire_policy_token and not self._acquire_policy_token:
+        acquire_policy_token = request.context.options.pop("acquire_policy_token", None)
+        if acquire_policy_token is None:
+            if not self._acquire_policy_token:
+                return None
+        elif acquire_policy_token is False:
             return None
 
         # try to get subscriptionId from request.http_request.url
-        subscription_id = None
-        if "subscriptions/" in request.http_request.url:
-            subscription_id = request.http_request.url.split("subscriptions/")[1].split("/")[0]
+        subscription_id = (
+            request.http_request.url.split("subscriptions/")[1].split("/")[0]
+            if "subscriptions/" in request.http_request.url
+            else None
+        )
         if not subscription_id:
             raise HttpResponseError(
                 "Failed to get subscriptionId from request url: {}".format(request.http_request.url)

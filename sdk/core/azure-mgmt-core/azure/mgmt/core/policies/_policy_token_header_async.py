@@ -65,4 +65,4 @@ class AsyncPolicyTokenHeaderPolicy(
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
         await await_result(self.on_request, request)
-        await self.next.send(request)
+        return await self.next.send(request)
