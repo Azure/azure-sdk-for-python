@@ -110,7 +110,7 @@ def _filter_field_kwargs(**kwargs):
         # Custom parameters used in Azure ML field classes
         'allowed_values', 'casing_transform', 'pass_original', 'azureml_type', 
         'pattern', 'allow_default_version', 'is_strict', 'allow_dir', 'allow_file',
-        'upper_bound', 'lower_bound', 'type_sensitive_fields_dict', 
+        'upper_bound', 'lower_bound', 'type_sensitive_fields_dict', 'transform',
         'plain_union_fields', 'allow_load_from_file', 'type_field_name',
         'experimental_field', 'extra_fields', 'strict', 'as_string', 'allow_nan',
         
@@ -138,7 +138,7 @@ class StringTransformedEnum(Field):
         
         # Store custom parameters before filtering
         self.allowed_values = removed_kwargs.get("allowed_values", None)
-        self.casing_transform = removed_kwargs.get("casing_transform", lambda x: x.lower())
+        self.casing_transform = removed_kwargs.get("casing_transform", removed_kwargs.get("transform", lambda x: x.lower()))
         self.pass_original = removed_kwargs.get("pass_original", False)
         
         super().__init__(**filtered_kwargs)
@@ -219,7 +219,15 @@ class LocalPathField(fields.Str):
         """
         try:
             result = Path(value)
-            base_path = Path(self.context[BASE_PATH_CONTEXT_KEY])
+            # Access context through parent schema for marshmallow 4.x compatibility
+            if hasattr(self.parent, 'context') and self.parent.context:
+                base_path = Path(self.parent.context[BASE_PATH_CONTEXT_KEY])
+            elif hasattr(self.parent, '_ml_context') and self.parent._ml_context:
+                base_path = Path(self.parent._ml_context[BASE_PATH_CONTEXT_KEY])
+            else:
+                # Fallback to current working directory
+                base_path = Path.cwd()
+                
             if not result.is_absolute():
                 result = base_path / result
 
@@ -469,12 +477,20 @@ class FileRefField(Field):
 
     def _deserialize(self, value, attr, data, **kwargs):
         if isinstance(value, str) and not value.startswith(FILE_PREFIX):
-            base_path = Path(self.context[BASE_PATH_CONTEXT_KEY])
+            # Access context through parent schema for marshmallow 4.x compatibility
+            if hasattr(self.parent, 'context') and self.parent.context:
+                base_path = Path(self.parent.context[BASE_PATH_CONTEXT_KEY])
+            elif hasattr(self.parent, '_ml_context') and self.parent._ml_context:
+                base_path = Path(self.parent._ml_context[BASE_PATH_CONTEXT_KEY])
+            else:
+                # Fallback to current working directory
+                base_path = Path.cwd()
+                
             path = Path(value)
             if not path.is_absolute():
                 path = base_path / path
                 path.resolve()
-            data = load_file(path)
+            data = load_file(str(path))
             return data
         raise ValidationError(f"Not supporting non file for {attr}")
 
@@ -502,7 +518,14 @@ class RefField(Field):
         ):  # "Dockerfile" w/o file: prefix doesn't register as a path
             if value.startswith(FILE_PREFIX):
                 value = value[len(FILE_PREFIX) :]
-            base_path = Path(self.context[BASE_PATH_CONTEXT_KEY])
+            # Access context through parent schema for marshmallow 4.x compatibility
+            if hasattr(self.parent, 'context') and self.parent.context:
+                base_path = Path(self.parent.context[BASE_PATH_CONTEXT_KEY])
+            elif hasattr(self.parent, '_ml_context') and self.parent._ml_context:
+                base_path = Path(self.parent._ml_context[BASE_PATH_CONTEXT_KEY])
+            else:
+                # Fallback to current working directory
+                base_path = Path.cwd()
 
             path = Path(value)
             if not path.is_absolute():
@@ -511,7 +534,7 @@ class RefField(Field):
             if attr == CONDA_FILE:  # conda files should be loaded as dictionaries
                 data = load_yaml(path)
             else:
-                data = load_file(path)
+                data = load_file(str(path))
             return data
         raise ValidationError(f"Not supporting non file for {attr}")
 
@@ -624,7 +647,8 @@ class UnionField(fields.Field):
                     # use old base path to recover original base path
                     schema.schema.context[BASE_PATH_CONTEXT_KEY] = schema.schema.old_base_path
                     # recover base path of parent schema
-                    schema.context[BASE_PATH_CONTEXT_KEY] = schema.schema.context[BASE_PATH_CONTEXT_KEY]
+                    if hasattr(schema, "context") and schema.context is not None:
+                        schema.context[BASE_PATH_CONTEXT_KEY] = schema.schema.context[BASE_PATH_CONTEXT_KEY]
         raise ValidationError(errors, field_name=attr)
 
 
@@ -756,13 +780,26 @@ class TypeSensitiveUnionField(UnionField):
         try:
             import yaml
 
-            base_path = Path(self.context[BASE_PATH_CONTEXT_KEY])
+            # Access context through parent schema for marshmallow 4.x compatibility
+            if hasattr(self.parent, 'context') and self.parent.context:
+                base_path = Path(self.parent.context[BASE_PATH_CONTEXT_KEY])
+            elif hasattr(self.parent, '_ml_context') and self.parent._ml_context:
+                base_path = Path(self.parent._ml_context[BASE_PATH_CONTEXT_KEY])
+            else:
+                # Fallback to current working directory
+                base_path = Path.cwd()
+                
             target_path = Path(target_path)
             if not target_path.is_absolute():
                 target_path = base_path / target_path
                 target_path.resolve()
             if target_path.is_file():
-                self.context[BASE_PATH_CONTEXT_KEY] = target_path.parent
+                # Update parent context if possible
+                if hasattr(self.parent, 'context') and self.parent.context:
+                    self.parent.context[BASE_PATH_CONTEXT_KEY] = target_path.parent
+                elif hasattr(self.parent, '_ml_context') and self.parent._ml_context:
+                    self.parent._ml_context[BASE_PATH_CONTEXT_KEY] = target_path.parent
+                    
                 with target_path.open(encoding=DefaultOpenEncoding.READ) as f:
                     return yaml.safe_load(f)
         except Exception:  # pylint: disable=W0718
