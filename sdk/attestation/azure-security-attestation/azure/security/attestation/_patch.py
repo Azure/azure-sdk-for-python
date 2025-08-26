@@ -10,7 +10,11 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 import base64
 import json
-from typing import Dict, List, Any, TYPE_CHECKING, Tuple, Union, Self
+from typing import Dict, List, Any, TYPE_CHECKING, Tuple, Union
+try:
+    from typing import Self
+except ImportError:
+    from typing_extensions import Self
 from threading import Lock
 from cryptography.hazmat.primitives import serialization
 from cryptography.x509 import load_pem_x509_certificate
