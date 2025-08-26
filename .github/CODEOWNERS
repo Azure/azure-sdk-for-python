@@ -834,6 +834,12 @@
 
 /**/*mgmt*/                                                          @ChenxiJiang333 @msyyc
 
+# PRLabel: %Contoso
+/sdk/contoso/azure-mgmt-contoso/                                   @danieljurek @ronniegeraghty
+
+# ServiceLabel: %Contoso %Mgmt
+# ServiceOwners:                                                   @danieljurek @ronniegeraghty
+
 ###########
 # Eng Sys and other
 ###########
