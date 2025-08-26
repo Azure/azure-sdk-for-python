@@ -163,13 +163,13 @@ class DatabaseProxy(object):
             self,
             id: str,
             partition_key: PartitionKey,
+            *,
             indexing_policy: Optional[Dict[str, Any]] = None,
             default_ttl: Optional[int] = None,
             populate_query_metrics: Optional[bool] = None,
             offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
             unique_key_policy: Optional[Dict[str, Any]] = None,
             conflict_resolution_policy: Optional[Dict[str, Any]] = None,
-            *,
             initial_headers: Optional[Dict[str, str]] = None,
             analytical_storage_ttl: Optional[int] = None,
             computed_properties: Optional[List[Dict[str, str]]] = None,
@@ -186,13 +186,13 @@ class DatabaseProxy(object):
             self,
             id: str,
             partition_key: PartitionKey,
+            *,
             indexing_policy: Optional[Dict[str, Any]] = None,
             default_ttl: Optional[int] = None,
             populate_query_metrics: Optional[bool] = None,
             offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
             unique_key_policy: Optional[Dict[str, Any]] = None,
             conflict_resolution_policy: Optional[Dict[str, Any]] = None,
-            *,
             initial_headers: Optional[Dict[str, str]] = None,
             analytical_storage_ttl: Optional[int] = None,
             computed_properties: Optional[List[Dict[str, str]]] = None,
@@ -222,7 +222,7 @@ class DatabaseProxy(object):
         vector_embedding_policy: Optional[Dict[str, Any]] = None,
         change_feed_policy: Optional[Dict[str, Any]] = None,
         full_text_policy: Optional[Dict[str, Any]] = None,
-        return_properties: bool = False,
+        return_properties: Union[Literal[False], Literal[True]] = False,
         **kwargs: Any
     ) -> Union[ContainerProxy, tuple[ContainerProxy, CosmosDict]]:
         """Create a new container with the given ID (name).
@@ -473,7 +473,7 @@ class DatabaseProxy(object):
                 return container_proxy
             return container_proxy, properties
         except CosmosResourceNotFoundError:
-            return self.create_container(
+            return (self.create_container(
                 id=id,
                 partition_key=partition_key,
                 indexing_policy=indexing_policy,
@@ -490,7 +490,7 @@ class DatabaseProxy(object):
                 full_text_policy=full_text_policy,
                 return_properties=return_properties,
                 **kwargs
-            )
+            ))
 
     @distributed_trace
     def delete_container(  # pylint:disable=docstring-missing-param
