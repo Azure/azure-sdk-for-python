@@ -37,7 +37,7 @@ class TestTextAnalysis(AzureRecordedTestCase):
 class TestTextAnalysisCase(TestTextAnalysis):
     @TextAnalysisPreparer()
     @recorded_by_proxy
-    def test_analyzeText_healthcareLROTask(self, text_analysis_endpoint, text_analysis_key):
+    def test_analyze_text_health_care_lro_task(self, text_analysis_endpoint, text_analysis_key):
         client = self.create_client(text_analysis_endpoint, text_analysis_key)
 
         text_a = "Prescribed 100mg ibuprofen, taken twice daily."
