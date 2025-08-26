@@ -1,16 +1,32 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
-"""Internal class for service unavailable retry policy implementation in the Azure
-Cosmos database service.
+"""Internal class for service unavailable errors implementation in the Azure Cosmos database service.
+
+Service unavailable errors can occur when a request does not make it to the service, or when there is an issue with
+the service. In either case, we know the request did not get processed successfully, so service unavailable errors are
+ retried in the next available preferred region.
 """
-from azure.cosmos.documents import _OperationType
+from typing import Union
+from azure.cosmos.documents import _OperationType, ConnectionPolicy
+from azure.cosmos.exceptions import CosmosHttpResponseError
+from azure.cosmos._routing.routing_range import PartitionKeyRangeWrapper
+from azure.cosmos._global_partition_endpoint_manager_per_partition_automatic_failover import _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover # pylint: disable=line-too-long
+from azure.cosmos.aio._global_partition_endpoint_manager_per_partition_automatic_failover_async import _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailoverAsync # pylint: disable=line-too-long
+
+_GlobalEndpointManagerType = Union[_GlobalPartitionEndpointManagerForPerPartitionAutomaticFailoverAsync,
+                                    _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover]
 
 #cspell:ignore ppaf
 
 class _ServiceUnavailableRetryPolicy(object):
 
-    def __init__(self, connection_policy, global_endpoint_manager, pk_range_wrapper, *args):
+    def __init__(
+            self,
+            connection_policy: ConnectionPolicy,
+            global_endpoint_manager: _GlobalEndpointManagerType,
+            pk_range_wrapper: PartitionKeyRangeWrapper,
+            *args):
         self.retry_after_in_milliseconds = 500
         self.global_endpoint_manager = global_endpoint_manager
         self.pk_range_wrapper = pk_range_wrapper
@@ -24,7 +40,7 @@ class _ServiceUnavailableRetryPolicy(object):
             self._max_retry_attempt_count = max(2, len(
                 self.global_endpoint_manager.location_cache.write_regional_routing_contexts))
 
-    def ShouldRetry(self, _exception):
+    def ShouldRetry(self, _exception: CosmosHttpResponseError):
         """Returns true if the request should retry based on the passed-in exception.
 
         :param exceptions.CosmosHttpResponseError _exception:

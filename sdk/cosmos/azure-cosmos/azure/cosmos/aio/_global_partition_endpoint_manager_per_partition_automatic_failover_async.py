@@ -6,10 +6,12 @@ endpoint manager, since enabling per partition automatic failover also enables t
 """
 import logging
 import threading
+import os
 
 from typing import Dict, TYPE_CHECKING, Optional
 
 from azure.cosmos.http_constants import ResourceType
+from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos.aio._global_partition_endpoint_manager_circuit_breaker_async import \
     _GlobalPartitionEndpointManagerForCircuitBreakerAsync
 from azure.cosmos.documents import _OperationType
@@ -43,7 +45,7 @@ class PartitionLevelFailoverInfo:
             request: RequestObject) -> bool:
         with self._lock:
             if endpoint_region != self.current_region:
-                logger.info("PPAF - Moving to next available regional endpoint: %s", self.current_region)
+                logger.warning("PPAF - Moving to next available regional endpoint: %s", self.current_region)
                 # make the actual endpoint since the current_region is just West US
                 regional_endpoint = available_account_regional_endpoints[self.current_region]
                 request.route_to_location(regional_endpoint)
@@ -57,7 +59,7 @@ class PartitionLevelFailoverInfo:
                     continue
 
                 self.current_region = regional_endpoint
-                logger.info("PPAF - Moving to next available regional endpoint: %s", self.current_region)
+                logger.warning("PPAF - Moving to next available regional endpoint: %s", self.current_region)
                 regional_endpoint = available_account_regional_endpoints[self.current_region]
                 request.route_to_location(regional_endpoint)
                 return True
@@ -96,22 +98,62 @@ class _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailoverAsync(
         if len(available_regions) <= 1:
             return False
 
-        # if the request is not for a document or if the request is not executing a stored procedure, return False
-        if (request.resource_type != ResourceType.Document and
-                request.operation_type != _OperationType.ExecuteJavaScript):
+        # if the request is not a non-query plan document request
+        # or if the request is not executing a stored procedure, return False
+        if ((request.resource_type != ResourceType.Document and
+                request.operation_type != _OperationType.ExecuteJavaScript) or
+                 request.operation_type == _OperationType.QueryPlan):
             return False
 
         return True
+
+    def try_ppaf_failover_threshold(
+            self,
+            pk_range_wrapper: "PartitionKeyRangeWrapper",
+            request: "RequestObject"):
+        """Verifies whether the per-partition failover threshold has been reached for consecutive errors. If so,
+        it marks the current region as unavailable for the given partition key range, and moves to the next available
+        region for the request.
+
+        :param PartitionKeyRangeWrapper pk_range_wrapper: The wrapper containing the partition key range information
+            for the request.
+        :param RequestObject request: The request object containing the routing context.
+        :returns: None
+        """
+        # If PPAF is enabled, we track consecutive failures for certain exceptions, and only fail over at a partition
+        # level after the threshold is reached
+        if request and self.is_per_partition_automatic_failover_applicable(request):
+            if (self.ppaf_thresholds_tracker.get_pk_failures(pk_range_wrapper)
+                    >= int(os.environ.get(Constants.TIMEOUT_ERROR_THRESHOLD_PPAF,
+                                          Constants.TIMEOUT_ERROR_THRESHOLD_PPAF_DEFAULT))):
+                # If the PPAF threshold is reached, we reset the count and retry to the next region
+                self.ppaf_thresholds_tracker.clear_pk_failures(pk_range_wrapper)
+                partition_level_info = self.partition_range_to_failover_info[pk_range_wrapper]
+                location = self.location_cache.get_location_from_endpoint(
+                    str(request.location_endpoint_to_route))
+                regional_context = (self.location_cache.
+                                    account_read_regional_routing_contexts_by_location.get(location).primary_endpoint)
+                partition_level_info.unavailable_regional_endpoints[location] = regional_context
 
     def resolve_service_endpoint_for_partition(
             self,
             request: RequestObject,
             pk_range_wrapper: Optional[PartitionKeyRangeWrapper]
     ) -> str:
+        """Resolves the endpoint to be used for the request. In a PPAF-enabled account, this method checks whether
+        the partition key range has any unavailable regions, and if so, it tries to move to the next available region.
+        If all regions are unavailable, it invalidates the cache and starts once again from the main write region in the
+        account configurations.
+
+        :param PartitionKeyRangeWrapper pk_range_wrapper: The wrapper containing the partition key range information
+            for the request.
+        :param RequestObject request: The request object containing the routing context.
+        :returns: The regional endpoint to be used for the request.
+        :rtype: str
+        """
         if self.is_per_partition_automatic_failover_applicable(request) and pk_range_wrapper:
             # If per partition automatic failover is applicable, we check partition unavailability
             if pk_range_wrapper in self.partition_range_to_failover_info:
-                logger.info("Resolving service endpoint for partition with per partition automatic failover enabled.")
                 partition_failover_info = self.partition_range_to_failover_info[pk_range_wrapper]
                 if request.location_endpoint_to_route is not None:
                     endpoint_region = self.location_cache.get_location_from_endpoint(request.location_endpoint_to_route)
@@ -121,7 +163,7 @@ class _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailoverAsync(
                                 self.compute_available_preferred_regions(request),
                                 endpoint_region,
                                 request):
-                            logger.info("All available regions for partition are unavailable. Refreshing cache.")
+                            logger.warning("All available regions for partition are unavailable. Refreshing cache.")
                             # If no other region is available, we invalidate the cache and start once again from our
                             # main write region in the account configurations
                             self.partition_range_to_failover_info[pk_range_wrapper] = PartitionLevelFailoverInfo()

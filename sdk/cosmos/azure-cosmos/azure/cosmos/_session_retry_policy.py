@@ -104,16 +104,17 @@ class _SessionRetryPolicy(object):
         # For PPAF, the retry should happen to whatever the relevant write region is for the affected partition.
         if self.global_endpoint_manager.is_per_partition_automatic_failover_enabled():
             pk_failover_info = self.global_endpoint_manager.partition_range_to_failover_info.get(self.pk_range_wrapper)
-            location = self.global_endpoint_manager.location_cache.get_location_from_endpoint(
-                str(self.request.location_endpoint_to_route))
-            if location in pk_failover_info.unavailable_regional_endpoints:
-                # If the request endpoint is unavailable, we need to resolve the endpoint for the request using the
-                # partition-level failover info
-                location_endpoint = (self.global_endpoint_manager.location_cache.
-                                     account_read_regional_routing_contexts_by_location.
-                                     get(pk_failover_info.current_region).primary_endpoint)
-                self.request.route_to_location(location_endpoint)
-                return True
+            if pk_failover_info is not None:
+                location = self.global_endpoint_manager.location_cache.get_location_from_endpoint(
+                    str(self.request.location_endpoint_to_route))
+                if location in pk_failover_info.unavailable_regional_endpoints:
+                    # If the request endpoint is unavailable, we need to resolve the endpoint for the request using the
+                    # partition-level failover info
+                    location_endpoint = (self.global_endpoint_manager.location_cache.
+                                         account_read_regional_routing_contexts_by_location.
+                                         get(pk_failover_info.current_region).primary_endpoint)
+                    self.request.route_to_location(location_endpoint)
+                    return True
 
         # Resolve the endpoint for the request and pin the resolution to the resolved endpoint
         # This enables marking the endpoint unavailability on endpoint failover/unreachability

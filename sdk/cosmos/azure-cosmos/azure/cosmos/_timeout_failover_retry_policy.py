@@ -5,7 +5,6 @@
 Cosmos database service.
 """
 from azure.cosmos.documents import _OperationType
-from azure.cosmos._base import try_ppaf_failover_threshold
 
 # cspell:ignore PPAF, ppaf
 
@@ -38,7 +37,7 @@ class _TimeoutFailoverRetryPolicy(object):
         :returns: a boolean stating whether the request should be retried
         :rtype: bool
         """
-        try_ppaf_failover_threshold(self.global_endpoint_manager, self.pk_range_wrapper, self.request)
+        self.global_endpoint_manager.try_ppaf_failover_threshold(self.pk_range_wrapper, self.request)
 
         # we retry only if the request is a read operation or if it is a write operation with retry enabled
         if self.request and not self.is_operation_retryable():

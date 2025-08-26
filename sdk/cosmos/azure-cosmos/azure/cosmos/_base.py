@@ -28,7 +28,6 @@ import json
 import uuid
 import re
 import binascii
-import os
 from typing import Dict, Any, List, Mapping, Optional, Sequence, Union, Tuple, TYPE_CHECKING
 
 from urllib.parse import quote as urllib_quote
@@ -940,22 +939,3 @@ def _build_properties_cache(properties: Dict[str, Any], container_link: str) -> 
         "_self": properties.get("_self", None), "_rid": properties.get("_rid", None),
         "partitionKey": properties.get("partitionKey", None), "container_link": container_link
     }
-
-def try_ppaf_failover_threshold(
-        global_endpoint_manager: "_GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover",
-        pk_range_wrapper: "PartitionKeyRangeWrapper",
-        request: "RequestObject"):
-    # If PPAF is enabled, we track consecutive failures for certain exceptions, and only fail over at a partition
-    # level after the threshold is reached
-    if request and global_endpoint_manager.is_per_partition_automatic_failover_applicable(request):
-        if (global_endpoint_manager.ppaf_thresholds_tracker.get_pk_failures(pk_range_wrapper)
-                >= int(os.environ.get(Constants.TIMEOUT_ERROR_THRESHOLD_PPAF,
-                                      Constants.TIMEOUT_ERROR_THRESHOLD_PPAF_DEFAULT))):
-            # If the PPAF threshold is reached, we reset the count and retry to the next region
-            global_endpoint_manager.ppaf_thresholds_tracker.clear_pk_failures(pk_range_wrapper)
-            partition_level_info = global_endpoint_manager.partition_range_to_failover_info[pk_range_wrapper]
-            location = global_endpoint_manager.location_cache.get_location_from_endpoint(
-                str(request.location_endpoint_to_route))
-            regional_context = (global_endpoint_manager.location_cache.
-                                account_read_regional_routing_contexts_by_location.get(location).primary_endpoint)
-            partition_level_info.unavailable_regional_endpoints[location] = regional_context
