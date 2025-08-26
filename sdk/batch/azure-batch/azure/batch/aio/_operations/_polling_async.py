@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -30,10 +31,7 @@ class DeleteJobPollingMethodAsync(AsyncPollingMethod):
         self._polling_interval = polling_interval
 
     def initialize(
-        self, 
-        client: Any, 
-        initial_response: PipelineResponse, 
-        deserialization_callback: Optional[Callable]
+        self, client: Any, initial_response: PipelineResponse, deserialization_callback: Optional[Callable]
     ) -> None:
         """Set the initial status of this LRO, verify that we can poll, and
         initialize anything necessary for polling.
@@ -105,11 +103,11 @@ class DeleteJobPollingMethodAsync(AsyncPollingMethod):
             if job.state != _models.BatchJobState.DELETING:
                 self._status = "Succeeded"
                 self._finished = True
-            
+
         # testing an invalid job_id will throw a JobNotFound error before actually building the poller
         # probably don't need this?
 
-        except ResourceNotFoundError: 
+        except ResourceNotFoundError:
             # Job no longer exists, deletion is complete
             self._status = "Succeeded"
             self._finished = True
@@ -131,10 +129,7 @@ class DisableJobPollingMethodAsync(AsyncPollingMethod):
         self._polling_interval = polling_interval
 
     def initialize(
-        self, 
-        client: Any, 
-        initial_response: PipelineResponse, 
-        deserialization_callback: Optional[Callable]
+        self, client: Any, initial_response: PipelineResponse, deserialization_callback: Optional[Callable]
     ) -> None:
         """Set the initial status of this LRO, verify that we can poll, and
         initialize anything necessary for polling.
@@ -206,8 +201,8 @@ class DisableJobPollingMethodAsync(AsyncPollingMethod):
             if job.state != _models.BatchJobState.DISABLING:
                 self._status = "Succeeded"
                 self._finished = True
-            
-        except ResourceNotFoundError: 
+
+        except ResourceNotFoundError:
             # Job no longer exists, unexpected for disable operation
             self._status = "Failed"
             self._finished = True
@@ -219,7 +214,7 @@ class DisableJobPollingMethodAsync(AsyncPollingMethod):
 
 class EnableJobPollingMethodAsync(AsyncPollingMethod):
     """Polling method for job enable operation.
-    
+
     This class is used to poll the status of a job enable operation.
     It checks the status of the job until it is enabled or an error occurs.
     """
@@ -229,10 +224,7 @@ class EnableJobPollingMethodAsync(AsyncPollingMethod):
         self._polling_interval = polling_interval
 
     def initialize(
-        self, 
-        client: Any, 
-        initial_response: PipelineResponse, 
-        deserialization_callback: Optional[Callable]
+        self, client: Any, initial_response: PipelineResponse, deserialization_callback: Optional[Callable]
     ) -> None:
         """Set the initial status of this LRO, verify that we can poll, and
         initialize anything necessary for polling.
@@ -304,8 +296,8 @@ class EnableJobPollingMethodAsync(AsyncPollingMethod):
             if job.state != _models.BatchJobState.ENABLING:
                 self._status = "Succeeded"
                 self._finished = True
-            
-        except ResourceNotFoundError: 
+
+        except ResourceNotFoundError:
             # Job no longer exists, unexpected for enable operation
             self._status = "Failed"
             self._finished = True
@@ -317,7 +309,7 @@ class EnableJobPollingMethodAsync(AsyncPollingMethod):
 
 class DeleteJobSchedulePollingMethodAsync(AsyncPollingMethod):
     """Polling method for job schedule delete operation.
-    
+
     This class is used to poll the status of a job schedule deletion operation.
     It checks the status of the job schedule until it is deleted or an error occurs.
     """
@@ -328,10 +320,7 @@ class DeleteJobSchedulePollingMethodAsync(AsyncPollingMethod):
         self._polling_interval = polling_interval
 
     def initialize(
-        self, 
-        client: Any, 
-        initial_response: PipelineResponse, 
-        deserialization_callback: Optional[Callable]
+        self, client: Any, initial_response: PipelineResponse, deserialization_callback: Optional[Callable]
     ) -> None:
         """Set the initial status of this LRO, verify that we can poll, and
         initialize anything necessary for polling.
@@ -403,8 +392,8 @@ class DeleteJobSchedulePollingMethodAsync(AsyncPollingMethod):
             if job_schedule.state != _models.BatchJobScheduleState.DELETING:
                 self._status = "Succeeded"
                 self._finished = True
-            
-        except ResourceNotFoundError: 
+
+        except ResourceNotFoundError:
             # Job schedule no longer exists, deletion is complete
             self._status = "Succeeded"
             self._finished = True
@@ -419,16 +408,14 @@ class DeletePoolPollingMethodAsync(AsyncPollingMethod):
     This class is used to poll the status of a pool deletion operation.
     It checks the status of the pool until it is deleted or an error occurs.
     """
+
     def __init__(self, pool_id: str, polling_interval: int = 5):
         # remove client to keep in initialize
         self._pool_id = pool_id
         self._polling_interval = polling_interval
 
     def initialize(
-        self, 
-        client: Any, 
-        initial_response: PipelineResponse, 
-        deserialization_callback: Optional[Callable]
+        self, client: Any, initial_response: PipelineResponse, deserialization_callback: Optional[Callable]
     ) -> None:
         """Set the initial status of this LRO, verify that we can poll, and
         initialize anything necessary for polling.
@@ -445,7 +432,7 @@ class DeletePoolPollingMethodAsync(AsyncPollingMethod):
         self._deserialization_callback = deserialization_callback
         self._status = "InProgress"
         self._finished = False
-        
+
     def status(self) -> str:
         """Should return the current status as a string. The initial status is set by
         the polling strategy with set_initial_status() and then subsequently set by
@@ -513,7 +500,7 @@ class DeletePoolPollingMethodAsync(AsyncPollingMethod):
 
 class DeleteCertificatePollingMethodAsync(AsyncPollingMethod):
     """Polling method for certificate delete operation.
-    
+
     This class is used to poll the status of a certificate deletion operation.
     It checks the status of the certificate until it is deleted or an error occurs.
     """
@@ -524,10 +511,7 @@ class DeleteCertificatePollingMethodAsync(AsyncPollingMethod):
         self._polling_interval = polling_interval
 
     def initialize(
-        self, 
-        client: Any, 
-        initial_response: PipelineResponse, 
-        deserialization_callback: Optional[Callable]
+        self, client: Any, initial_response: PipelineResponse, deserialization_callback: Optional[Callable]
     ) -> None:
         """Set the initial status of this LRO, verify that we can poll, and
         initialize anything necessary for polling.
@@ -599,8 +583,8 @@ class DeleteCertificatePollingMethodAsync(AsyncPollingMethod):
             if certificate.state != _models.BatchCertificateState.DELETING:
                 self._status = "Succeeded"
                 self._finished = True
-            
-        except ResourceNotFoundError: 
+
+        except ResourceNotFoundError:
             # Certificate no longer exists, deletion is complete
             self._status = "Succeeded"
             self._finished = True
@@ -612,7 +596,7 @@ class DeleteCertificatePollingMethodAsync(AsyncPollingMethod):
 
 class DeallocateNodePollingMethodAsync(AsyncPollingMethod):
     """Polling method for node deallocate operation.
-    
+
     This class is used to poll the status of a node deallocation operation.
     It checks the status of the node until it is deallocated or an error occurs.
     """
@@ -623,10 +607,7 @@ class DeallocateNodePollingMethodAsync(AsyncPollingMethod):
         self._polling_interval = polling_interval
 
     def initialize(
-        self, 
-        client: Any, 
-        initial_response: PipelineResponse, 
-        deserialization_callback: Optional[Callable]
+        self, client: Any, initial_response: PipelineResponse, deserialization_callback: Optional[Callable]
     ) -> None:
         """Set the initial status of this LRO, verify that we can poll, and
         initialize anything necessary for polling.
@@ -699,8 +680,8 @@ class DeallocateNodePollingMethodAsync(AsyncPollingMethod):
             if node.state != _models.BatchNodeState.DEALLOCATING:
                 self._status = "Succeeded"
                 self._finished = True
-            
-        except ResourceNotFoundError: 
+
+        except ResourceNotFoundError:
             # Node no longer exists, might have been removed from pool
             self._status = "Succeeded"
             self._finished = True
@@ -712,7 +693,7 @@ class DeallocateNodePollingMethodAsync(AsyncPollingMethod):
 
 class RebootNodePollingMethodAsync(AsyncPollingMethod):
     """Polling method for node reboot operation.
-    
+
     This class is used to poll the status of a node reboot operation.
     It checks the status of the node until it is rebooted or an error occurs.
     """
@@ -723,10 +704,7 @@ class RebootNodePollingMethodAsync(AsyncPollingMethod):
         self._polling_interval = polling_interval
 
     def initialize(
-        self, 
-        client: Any, 
-        initial_response: PipelineResponse, 
-        deserialization_callback: Optional[Callable]
+        self, client: Any, initial_response: PipelineResponse, deserialization_callback: Optional[Callable]
     ) -> None:
         """Set the initial status of this LRO, verify that we can poll, and
         initialize anything necessary for polling.
@@ -798,8 +776,8 @@ class RebootNodePollingMethodAsync(AsyncPollingMethod):
             if node.state != _models.BatchNodeState.REBOOTING:
                 self._status = "Succeeded"
                 self._finished = True
-            
-        except ResourceNotFoundError: 
+
+        except ResourceNotFoundError:
             # Node no longer exists, unexpected for reboot operation
             self._status = "Failed"
             self._finished = True
@@ -811,7 +789,7 @@ class RebootNodePollingMethodAsync(AsyncPollingMethod):
 
 class ReimageNodePollingMethodAsync(AsyncPollingMethod):
     """Polling method for node reimage operation.
-    
+
     This class is used to poll the status of a node reimage operation.
     It checks the status of the node until it is reimaged or an error occurs.
     """
@@ -822,10 +800,7 @@ class ReimageNodePollingMethodAsync(AsyncPollingMethod):
         self._polling_interval = polling_interval
 
     def initialize(
-        self, 
-        client: Any, 
-        initial_response: PipelineResponse, 
-        deserialization_callback: Optional[Callable]
+        self, client: Any, initial_response: PipelineResponse, deserialization_callback: Optional[Callable]
     ) -> None:
         """Set the initial status of this LRO, verify that we can poll, and
         initialize anything necessary for polling.
@@ -897,8 +872,8 @@ class ReimageNodePollingMethodAsync(AsyncPollingMethod):
             if node.state != _models.BatchNodeState.REIMAGING:
                 self._status = "Succeeded"
                 self._finished = True
-            
-        except ResourceNotFoundError: 
+
+        except ResourceNotFoundError:
             # Node no longer exists, unexpected for reimage operation
             self._status = "Failed"
             self._finished = True
@@ -910,7 +885,7 @@ class ReimageNodePollingMethodAsync(AsyncPollingMethod):
 
 class RemoveNodePollingMethodAsync(AsyncPollingMethod):
     """Polling method for node remove operation.
-    
+
     This class is used to poll the status of a node removal operation.
     It checks the status of the node until it is removed or an error occurs.
     """
@@ -920,10 +895,7 @@ class RemoveNodePollingMethodAsync(AsyncPollingMethod):
         self._polling_interval = polling_interval
 
     def initialize(
-        self, 
-        client: Any, 
-        initial_response: PipelineResponse, 
-        deserialization_callback: Optional[Callable]
+        self, client: Any, initial_response: PipelineResponse, deserialization_callback: Optional[Callable]
     ) -> None:
         """Set the initial status of this LRO, verify that we can poll, and
         initialize anything necessary for polling.
@@ -996,8 +968,8 @@ class RemoveNodePollingMethodAsync(AsyncPollingMethod):
             if pool.allocation_state == _models.AllocationState.STEADY:
                 self._status = "Succeeded"
                 self._finished = True
-            
-        except ResourceNotFoundError: 
+
+        except ResourceNotFoundError:
             # Pool no longer exists, unexpected for remove node operation
             self._status = "Failed"
             self._finished = True
@@ -1009,7 +981,7 @@ class RemoveNodePollingMethodAsync(AsyncPollingMethod):
 
 class ResizePoolPollingMethodAsync(AsyncPollingMethod):
     """Polling method for pool resize operation.
-    
+
     This class is used to poll the status of a pool resize operation.
     It checks the status of the pool until it is resized or an error occurs.
     """
@@ -1019,10 +991,7 @@ class ResizePoolPollingMethodAsync(AsyncPollingMethod):
         self._polling_interval = polling_interval
 
     def initialize(
-        self, 
-        client: Any, 
-        initial_response: PipelineResponse, 
-        deserialization_callback: Optional[Callable]
+        self, client: Any, initial_response: PipelineResponse, deserialization_callback: Optional[Callable]
     ) -> None:
         """Set the initial status of this LRO, verify that we can poll, and
         initialize anything necessary for polling.
@@ -1095,8 +1064,8 @@ class ResizePoolPollingMethodAsync(AsyncPollingMethod):
             if pool.allocation_state == _models.AllocationState.STEADY:
                 self._status = "Succeeded"
                 self._finished = True
-            
-        except ResourceNotFoundError: 
+
+        except ResourceNotFoundError:
             # Pool no longer exists, unexpected for resize operation
             self._status = "Failed"
             self._finished = True
@@ -1108,7 +1077,7 @@ class ResizePoolPollingMethodAsync(AsyncPollingMethod):
 
 class StartNodePollingMethodAsync(AsyncPollingMethod):
     """Polling method for node start operation.
-    
+
     This class is used to poll the status of a node start operation.
     It checks the status of the node until it is started or an error occurs.
     """
@@ -1119,10 +1088,7 @@ class StartNodePollingMethodAsync(AsyncPollingMethod):
         self._polling_interval = polling_interval
 
     def initialize(
-        self, 
-        client: Any, 
-        initial_response: PipelineResponse, 
-        deserialization_callback: Optional[Callable]
+        self, client: Any, initial_response: PipelineResponse, deserialization_callback: Optional[Callable]
     ) -> None:
         """Set the initial status of this LRO, verify that we can poll, and
         initialize anything necessary for polling.
@@ -1194,8 +1160,8 @@ class StartNodePollingMethodAsync(AsyncPollingMethod):
             if node.state != _models.BatchNodeState.STARTING:
                 self._status = "Succeeded"
                 self._finished = True
-            
-        except ResourceNotFoundError: 
+
+        except ResourceNotFoundError:
             # Node no longer exists, unexpected for start operation
             self._status = "Failed"
             self._finished = True
@@ -1207,7 +1173,7 @@ class StartNodePollingMethodAsync(AsyncPollingMethod):
 
 class StopPoolResizePollingMethodAsync(AsyncPollingMethod):
     """Polling method for pool stop resize operation.
-    
+
     This class is used to poll the status of a pool stop resize operation.
     It checks the status of the pool until it is stopped or an error occurs.
     """
@@ -1217,10 +1183,7 @@ class StopPoolResizePollingMethodAsync(AsyncPollingMethod):
         self._polling_interval = polling_interval
 
     def initialize(
-        self, 
-        client: Any, 
-        initial_response: PipelineResponse, 
-        deserialization_callback: Optional[Callable]
+        self, client: Any, initial_response: PipelineResponse, deserialization_callback: Optional[Callable]
     ) -> None:
         """Set the initial status of this LRO, verify that we can poll, and
         initialize anything necessary for polling.
@@ -1293,8 +1256,8 @@ class StopPoolResizePollingMethodAsync(AsyncPollingMethod):
             if pool.allocation_state == _models.AllocationState.STEADY:
                 self._status = "Succeeded"
                 self._finished = True
-            
-        except ResourceNotFoundError: 
+
+        except ResourceNotFoundError:
             # Pool no longer exists, unexpected for stop resize operation
             self._status = "Failed"
             self._finished = True
@@ -1306,7 +1269,7 @@ class StopPoolResizePollingMethodAsync(AsyncPollingMethod):
 
 class TerminateJobPollingMethodAsync(AsyncPollingMethod):
     """Polling method for job termination operation.
-    
+
     This class is used to poll the status of a job termination operation.
     It checks the status of the job until it is terminated or an error occurs.
     """
@@ -1316,10 +1279,7 @@ class TerminateJobPollingMethodAsync(AsyncPollingMethod):
         self._polling_interval = polling_interval
 
     def initialize(
-        self, 
-        client: Any, 
-        initial_response: PipelineResponse, 
-        deserialization_callback: Optional[Callable]
+        self, client: Any, initial_response: PipelineResponse, deserialization_callback: Optional[Callable]
     ) -> None:
         """Set the initial status of this LRO, verify that we can poll, and
         initialize anything necessary for polling.
@@ -1391,8 +1351,8 @@ class TerminateJobPollingMethodAsync(AsyncPollingMethod):
             if job.state != _models.BatchJobState.TERMINATING:
                 self._status = "Succeeded"
                 self._finished = True
-            
-        except ResourceNotFoundError: 
+
+        except ResourceNotFoundError:
             # Job no longer exists, unexpected for terminate operation
             self._status = "Failed"
             self._finished = True
@@ -1404,7 +1364,7 @@ class TerminateJobPollingMethodAsync(AsyncPollingMethod):
 
 class TerminateJobSchedulePollingMethodAsync(AsyncPollingMethod):
     """Polling method for job schedule termination operation.
-    
+
     This class is used to poll the status of a job schedule termination operation.
     It checks the status of the job schedule until it is terminated or an error occurs.
     """
@@ -1414,10 +1374,7 @@ class TerminateJobSchedulePollingMethodAsync(AsyncPollingMethod):
         self._polling_interval = polling_interval
 
     def initialize(
-        self, 
-        client: Any, 
-        initial_response: PipelineResponse, 
-        deserialization_callback: Optional[Callable]
+        self, client: Any, initial_response: PipelineResponse, deserialization_callback: Optional[Callable]
     ) -> None:
         """Set the initial status of this LRO, verify that we can poll, and
         initialize anything necessary for polling.
@@ -1489,8 +1446,8 @@ class TerminateJobSchedulePollingMethodAsync(AsyncPollingMethod):
             if job_schedule.state != _models.BatchJobScheduleState.TERMINATING:
                 self._status = "Succeeded"
                 self._finished = True
-            
-        except ResourceNotFoundError: 
+
+        except ResourceNotFoundError:
             # Job schedule no longer exists, unexpected for terminate operation
             self._status = "Failed"
             self._finished = True

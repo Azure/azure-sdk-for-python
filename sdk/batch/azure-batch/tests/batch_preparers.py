@@ -299,7 +299,7 @@ class JobPreparer(AzureMgmtPreparer):
                         image_reference=azure.batch.models.BatchVmImageReference(
                             publisher="Canonical", offer="0001-com-ubuntu-server-jammy", sku="22_04-lts"
                         ),
-                        node_agent_sku_id="batch.node.ubuntu 22.04", # TODO: make it 22.04 after testing
+                        node_agent_sku_id="batch.node.ubuntu 22.04",  # TODO: make it 22.04 after testing
                     ),
                 ),
             )

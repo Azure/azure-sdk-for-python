@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -26,7 +27,7 @@ from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
-from ._polling import(
+from ._polling import (
     DeleteCertificatePollingMethod,
     DeallocateNodePollingMethod,
     DeleteJobPollingMethod,
@@ -41,14 +42,15 @@ from ._polling import(
     StartNodePollingMethod,
     StopPoolResizePollingMethod,
     TerminateJobPollingMethod,
-    TerminateJobSchedulePollingMethod
+    TerminateJobSchedulePollingMethod,
 )
 from ._operations import (
-    BatchClientOperationsMixin as BatchClientOperationsMixinGenerated,
+    _BatchClientOperationsMixin as BatchClientOperationsMixinGenerated,
 )
 
 # Type definitions
 from typing import Dict, TypeVar
+
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -58,6 +60,8 @@ _LOGGER = logging.getLogger(__name__)
 __all__: List[str] = [
     "BatchClientOperationsMixin",
 ]  # Add all objects you want publicly available to users at this package level
+
+
 class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
     """Customize generated code"""
 
@@ -122,8 +126,8 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
 
         def capture_pipeline_response(pipeline_response, deserialized, response_headers):
             return pipeline_response
-        
-        pipeline_response = self.delete_job(
+
+        pipeline_response = self._delete_job_internal(
             job_id,
             timeout=timeout,
             ocpdate=ocpdate,
@@ -143,7 +147,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
     def begin_disable_job(
         self,
         job_id: str,
-        content: _models.BatchJobDisableOptions,
+        disable_options: _models.BatchJobDisableOptions,
         *,
         timeout: Optional[int] = None,
         ocpdate: Optional[datetime.datetime] = None,
@@ -199,10 +203,10 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
 
         def capture_pipeline_response(pipeline_response, deserialized, response_headers):
             return pipeline_response
-        
-        pipeline_response = self.disable_job(
+
+        pipeline_response = self._disable_job_internal(
             job_id,
-            content=content,
+            disable_options=disable_options,
             timeout=timeout,
             ocpdate=ocpdate,
             if_modified_since=if_modified_since,
@@ -215,7 +219,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
 
         polling_method = DisableJobPollingMethod(job_id, polling_interval)
         return LROPoller(self, pipeline_response, lambda: None, polling_method, **kwargs)
-    
+
     @distributed_trace
     def begin_enable_job(
         self,
@@ -270,8 +274,8 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
 
         def capture_pipeline_response(pipeline_response, deserialized, response_headers):
             return pipeline_response
-        
-        pipeline_response = self.enable_job(
+
+        pipeline_response = self._enable_job_internal(
             job_id,
             timeout=timeout,
             ocpdate=ocpdate,
@@ -282,7 +286,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             cls=capture_pipeline_response,
             **kwargs,
         )
-        
+
         polling_method = EnableJobPollingMethod(job_id, polling_interval)
         return LROPoller(self, pipeline_response, lambda: None, polling_method, **kwargs)
 
@@ -341,8 +345,8 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
 
         def capture_pipeline_response(pipeline_response, deserialized, response_headers):
             return pipeline_response
-        
-        pipeline_response = self.delete_job_schedule(
+
+        pipeline_response = self._delete_job_schedule_internal(
             job_schedule_id,
             timeout=timeout,
             ocpdate=ocpdate,
@@ -356,7 +360,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
 
         polling_method = DeleteJobSchedulePollingMethod(job_schedule_id, polling_interval)
         return LROPoller(self, pipeline_response, lambda: None, polling_method, **kwargs)
-    
+
     @distributed_trace
     def begin_delete_pool(
         self,
@@ -372,7 +376,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         **kwargs: Any
     ) -> LROPoller[None]:
         """Deletes a Pool from specified Account with Long Running Operation support.
-        
+
         When you request that a Pool be deleted, the following actions occur: the Pool
         state is set to deleting; any ongoing resize operation on the Pool are stopped;
         the Batch service starts resizing the Pool to zero Compute Nodes; any Tasks
@@ -415,10 +419,11 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+
         def capture_pipeline_response(pipeline_response, deserialized, response_headers):
             return pipeline_response
-        
-        pipeline_response = self.delete_pool(
+
+        pipeline_response = self._delete_pool_internal(
             pool_id,
             timeout=timeout,
             ocpdate=ocpdate,
@@ -473,10 +478,11 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+
         def capture_pipeline_response(pipeline_response, deserialized, response_headers):
             return pipeline_response
-        
-        pipeline_response = self.delete_certificate(
+
+        pipeline_response = self._delete_certificate_internal(
             thumbprint_algorithm,
             thumbprint,
             timeout=timeout,
@@ -487,7 +493,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
 
         polling_method = DeleteCertificatePollingMethod(thumbprint_algorithm, thumbprint, polling_interval)
         return LROPoller(self, pipeline_response, lambda: None, polling_method, **kwargs)
-        
+
     @distributed_trace
     def begin_deallocate_node(
         self,
@@ -522,10 +528,11 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+
         def capture_pipeline_response(pipeline_response, deserialized, response_headers):
             return pipeline_response
-        
-        pipeline_response = self.deallocate_node(
+
+        pipeline_response = self._deallocate_node_internal(
             pool_id,
             node_id,
             parameters=parameters,
@@ -543,7 +550,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         self,
         pool_id: str,
         node_id: str,
-        parameters: Optional[_models.BatchNodeRebootKinds] = None,
+        parameters: Optional[_models.BatchNodeRebootOptions] = None,
         *,
         timeout: Optional[int] = None,
         ocpdate: Optional[datetime.datetime] = None,
@@ -559,7 +566,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :param node_id: The ID of the Compute Node that you want to restart. Required.
         :type node_id: str
         :param parameters: The options to use for rebooting the Compute Node. Default value is None.
-        :type parameters: ~azure.batch.models.BatchNodeRebootKinds
+        :type parameters: ~azure.batch.models.BatchNodeRebootOptions
         :keyword timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
@@ -572,10 +579,11 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+
         def capture_pipeline_response(pipeline_response, deserialized, response_headers):
             return pipeline_response
-        
-        pipeline_response = self.reboot_node(
+
+        pipeline_response = self._reboot_node_internal(
             pool_id,
             node_id,
             parameters=parameters,
@@ -599,7 +607,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         ocpdate: Optional[datetime.datetime] = None,
         polling_interval: int = 5,
         **kwargs: Any
-    )-> LROPoller[None]:
+    ) -> LROPoller[None]:
         """Reimages a Compute Node with Long Running Operation support.
 
         Reinstalls the operating system on the specified Compute Node
@@ -626,10 +634,11 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+
         def capture_pipeline_response(pipeline_response, deserialized, response_headers):
             return pipeline_response
-        
-        pipeline_response = self.reimage_node(
+
+        pipeline_response = self._reimage_node_internal(
             pool_id,
             node_id,
             parameters=parameters,
@@ -697,8 +706,8 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
 
         def capture_pipeline_response(pipeline_response, deserialized, response_headers):
             return pipeline_response
-        
-        pipeline_response = self.remove_nodes(
+
+        pipeline_response = self._remove_nodes_internal(
             pool_id,
             content=content,
             timeout=timeout,
@@ -773,8 +782,8 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
 
         def capture_pipeline_response(pipeline_response, deserialized, response_headers):
             return pipeline_response
-        
-        pipeline_response = self.resize_pool(
+
+        pipeline_response = self._resize_pool_internal(
             pool_id,
             content=content,
             timeout=timeout,
@@ -789,10 +798,10 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
 
         polling_method = ResizePoolPollingMethod(pool_id, polling_interval)
         return LROPoller(self, pipeline_response, lambda: None, polling_method, **kwargs)
-    
+
     @distributed_trace
     def begin_start_node(
-            self,
+        self,
         pool_id: str,
         node_id: str,
         *,
@@ -824,8 +833,8 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
 
         def capture_pipeline_response(pipeline_response, deserialized, response_headers):
             return pipeline_response
-        
-        pipeline_response = self.start_node(
+
+        pipeline_response = self._start_node_internal(
             pool_id,
             node_id,
             timeout=timeout,
@@ -836,7 +845,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
 
         polling_method = StartNodePollingMethod(pool_id, node_id, polling_interval)
         return LROPoller(self, pipeline_response, lambda: None, polling_method, **kwargs)
-    
+
     @distributed_trace
     def begin_stop_pool_resize(
         self,
@@ -893,8 +902,8 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
 
         def capture_pipeline_response(pipeline_response, deserialized, response_headers):
             return pipeline_response
-        
-        pipeline_response = self.stop_pool_resize(
+
+        pipeline_response = self._stop_pool_resize_internal(
             pool_id,
             timeout=timeout,
             ocpdate=ocpdate,
@@ -908,12 +917,12 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
 
         polling_method = StopPoolResizePollingMethod(pool_id, polling_interval)
         return LROPoller(self, pipeline_response, lambda: None, polling_method, **kwargs)
-    
+
     @distributed_trace
     def begin_terminate_job(
         self,
         job_id: str,
-        parameters: Optional[_models.BatchJobTerminateOptions] = None,
+        options: Optional[_models.BatchJobTerminateOptions] = None,
         *,
         timeout: Optional[int] = None,
         ocpdate: Optional[datetime.datetime] = None,
@@ -968,12 +977,13 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+
         def capture_pipeline_response(pipeline_response, deserialized, response_headers):
             return pipeline_response
-        
-        pipeline_response = self.terminate_job(
+
+        pipeline_response = self._terminate_job_internal(
             job_id,
-            parameters=parameters,
+            options=options,
             timeout=timeout,
             ocpdate=ocpdate,
             if_modified_since=if_modified_since,
@@ -987,7 +997,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
 
         polling_method = TerminateJobPollingMethod(job_id, polling_interval)
         return LROPoller(self, pipeline_response, lambda: None, polling_method, **kwargs)
-    
+
     @distributed_trace
     def begin_terminate_job_schedule(
         self,
@@ -1038,10 +1048,11 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+
         def capture_pipeline_response(pipeline_response, deserialized, response_headers):
             return pipeline_response
-        
-        pipeline_response = self.terminate_job_schedule(
+
+        pipeline_response = self._terminate_job_schedule_internal(
             job_schedule_id,
             timeout=timeout,
             ocpdate=ocpdate,
@@ -1274,7 +1285,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
             cls=cls,
-            **kwargs
+            **kwargs,
         )
 
         return get_response
@@ -1343,7 +1354,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
             cls=cls,
-            **kwargs
+            **kwargs,
         )
 
         return get_response
@@ -1463,8 +1474,8 @@ class _TaskWorkflowManager:
         self._kwargs = kwargs
 
     def _bulk_add_tasks(
-        self, 
-        results_queue: collections.deque, 
+        self,
+        results_queue: collections.deque,
         chunk_tasks_to_add: List[_models.BatchTaskCreateOptions],
     ):
         """Adds a chunk of tasks to the job
@@ -1483,7 +1494,7 @@ class _TaskWorkflowManager:
                 self._batch_client.create_task_collection(
                     job_id=self._job_id,
                     task_collection=_models.BatchTaskGroup(values_property=chunk_tasks_to_add),
-                    **self._kwargs
+                    **self._kwargs,
                 )
             )
         except HttpResponseError as e:

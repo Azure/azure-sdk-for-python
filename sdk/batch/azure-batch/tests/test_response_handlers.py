@@ -6,7 +6,7 @@ from azure.core.exceptions import (
     ClientAuthenticationError,
     ResourceNotFoundError,
     ResourceExistsError,
-    ResourceModifiedError
+    ResourceModifiedError,
 )
 from azure.batch._patch import BatchExceptionPolicy, BatchErrorFormat
 
@@ -15,41 +15,30 @@ class TestBatchErrorFormat(unittest.TestCase):
     def test_batch_error_format_with_values(self):
         odata_error = {
             "code": 401,
-            "message": {
-                "lang": "en-us",
-                "value": "Property value is invalid"
-            },
+            "message": {"lang": "en-us", "value": "Property value is invalid"},
             "values": [
                 {"key": "property1", "value": "error_details"},
-                {"key": "property2", "value": "more_error_details"}
-            ]
+                {"key": "property2", "value": "more_error_details"},
+            ],
         }
-        
+
         batch_error = BatchErrorFormat(odata_error)
         self.assertEqual(batch_error.details[0]["code"], "property1")
         self.assertEqual(batch_error.details[1]["code"], "property2")
 
     def test_batch_error_format_without_values(self):
         odata_error = {
-            "error": {
-                "code": "InvalidProperty",
-                "message": {
-                    "lang": "en-us",
-                    "value": "Property value is invalid"
-                }
-            }
+            "error": {"code": "InvalidProperty", "message": {"lang": "en-us", "value": "Property value is invalid"}}
         }
         batch_error = BatchErrorFormat(odata_error)
-        self.assertFalse(hasattr(batch_error, 'values'))
+        self.assertFalse(hasattr(batch_error, "values"))
 
     def test_invalid_odata_error(self):
-        odata_error = {
-            "code": "InvalidProperty",
-            "message": "This is not an object"
-        }
-        
+        odata_error = {"code": "InvalidProperty", "message": "This is not an object"}
+
         with self.assertRaises(TypeError):
             BatchErrorFormat(odata_error)
+
 
 class TestResponseHandler(unittest.TestCase):
     def test_client_authentication_error(self):
@@ -64,14 +53,14 @@ class TestResponseHandler(unittest.TestCase):
         mock_request_headers.get.return_value = None
         mock_http_request = Mock()
         mock_http_request.headers = mock_request_headers
-        
+
         mock_response = Mock()
         mock_response.http_response = mock_http_response
         mock_request = Mock()
         mock_request.http_request = mock_http_request
-        
+
         policy = BatchExceptionPolicy()
-        
+
         with self.assertRaises(ClientAuthenticationError):
             policy.on_response(mock_request, mock_response)
 
@@ -87,14 +76,14 @@ class TestResponseHandler(unittest.TestCase):
         mock_request_headers.get.return_value = None
         mock_http_request = Mock()
         mock_http_request.headers = mock_request_headers
-        
+
         mock_response = Mock()
         mock_response.http_response = mock_http_response
         mock_request = Mock()
         mock_request.http_request = mock_http_request
 
         policy = BatchExceptionPolicy()
-        
+
         with self.assertRaises(ResourceNotFoundError):
             policy.on_response(mock_request, mock_response)
 
@@ -110,14 +99,14 @@ class TestResponseHandler(unittest.TestCase):
         mock_request_headers.get.side_effect = lambda header: "*" if header == "If-Match" else None
         mock_http_request = Mock()
         mock_http_request.headers = mock_request_headers
-        
+
         mock_response = Mock()
         mock_response.http_response = mock_http_response
         mock_request = Mock()
         mock_request.http_request = mock_http_request
 
         policy = BatchExceptionPolicy()
-        
+
         with self.assertRaises(ResourceNotFoundError):
             policy.on_response(mock_request, mock_response)
 
@@ -133,14 +122,14 @@ class TestResponseHandler(unittest.TestCase):
         mock_request_headers.get.side_effect = lambda header: "*" if header == "If-None-Match" else None
         mock_http_request = Mock()
         mock_http_request.headers = mock_request_headers
-        
+
         mock_response = Mock()
         mock_response.http_response = mock_http_response
         mock_request = Mock()
         mock_request.http_request = mock_http_request
 
         policy = BatchExceptionPolicy()
-        
+
         with self.assertRaises(ResourceNotFoundError):
             policy.on_response(mock_request, mock_response)
 
@@ -153,23 +142,25 @@ class TestResponseHandler(unittest.TestCase):
         }
 
         mock_request_headers = Mock()
+
         def get_header(header):
             if header == "If-Match":
                 return "foobar"
             elif header == "If-None-Match":
                 return "*"
             return None
+
         mock_request_headers.get.side_effect = get_header
         mock_http_request = Mock()
         mock_http_request.headers = mock_request_headers
-        
+
         mock_response = Mock()
         mock_response.http_response = mock_http_response
         mock_request = Mock()
         mock_request.http_request = mock_http_request
 
         policy = BatchExceptionPolicy()
-        
+
         with self.assertRaises(ResourceModifiedError):
             policy.on_response(mock_request, mock_response)
 
@@ -185,13 +176,13 @@ class TestResponseHandler(unittest.TestCase):
         mock_request_headers.get.side_effect = lambda header: "*" if header == "If-Match" else None
         mock_http_request = Mock()
         mock_http_request.headers = mock_request_headers
-        
+
         mock_response = Mock()
         mock_response.http_response = mock_http_response
         mock_request = Mock()
         mock_request.http_request = mock_http_request
 
         policy = BatchExceptionPolicy()
-        
+
         with self.assertRaises(ResourceNotFoundError):
             policy.on_response(mock_request, mock_response)

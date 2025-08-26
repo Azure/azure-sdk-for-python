@@ -9,7 +9,7 @@
 from collections.abc import MutableMapping
 import datetime
 import json
-from typing import Any, Callable, Dict, Iterable, Iterator, List, Optional, TypeVar
+from typing import Any, Callable, Dict, Iterator, List, Optional, TypeVar
 import urllib.parse
 
 from azure.core import MatchConditions, PipelineClient
@@ -152,8 +152,6 @@ def build_batch_create_pool_request(
 
     content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/pools"
 
@@ -166,7 +164,6 @@ def build_batch_create_pool_request(
     if ocpdate is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -211,7 +208,7 @@ def build_batch_list_pools_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_batch_delete_pool_request(
+def build_batch_delete_pool_internal_request(
     pool_id: str,
     *,
     timeout: Optional[int] = None,
@@ -226,8 +223,6 @@ def build_batch_delete_pool_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/pools/{poolId}"
     path_format_arguments = {
@@ -248,7 +243,6 @@ def build_batch_delete_pool_request(
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
         _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if_match = prep_if_match(etag, match_condition)
     if if_match is not None:
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
@@ -274,8 +268,6 @@ def build_batch_pool_exists_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/pools/{poolId}"
     path_format_arguments = {
@@ -296,7 +288,6 @@ def build_batch_pool_exists_request(
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
         _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if_match = prep_if_match(etag, match_condition)
     if if_match is not None:
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
@@ -377,8 +368,6 @@ def build_batch_update_pool_request(
 
     content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/pools/{poolId}"
     path_format_arguments = {
@@ -400,7 +389,6 @@ def build_batch_update_pool_request(
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
         _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if_match = prep_if_match(etag, match_condition)
     if if_match is not None:
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
@@ -418,8 +406,6 @@ def build_batch_disable_pool_auto_scale_request(  # pylint: disable=name-too-lon
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/pools/{poolId}/disableautoscale"
     path_format_arguments = {
@@ -436,7 +422,6 @@ def build_batch_disable_pool_auto_scale_request(  # pylint: disable=name-too-lon
     # Construct headers
     if ocpdate is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -457,8 +442,6 @@ def build_batch_enable_pool_auto_scale_request(  # pylint: disable=name-too-long
 
     content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/pools/{poolId}/enableautoscale"
     path_format_arguments = {
@@ -480,7 +463,6 @@ def build_batch_enable_pool_auto_scale_request(  # pylint: disable=name-too-long
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
         _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if_match = prep_if_match(etag, match_condition)
     if if_match is not None:
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
@@ -523,7 +505,7 @@ def build_batch_evaluate_pool_auto_scale_request(  # pylint: disable=name-too-lo
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_batch_resize_pool_request(
+def build_batch_resize_pool_internal_request(
     pool_id: str,
     *,
     timeout: Optional[int] = None,
@@ -539,8 +521,6 @@ def build_batch_resize_pool_request(
 
     content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/pools/{poolId}/resize"
     path_format_arguments = {
@@ -562,7 +542,6 @@ def build_batch_resize_pool_request(
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
         _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if_match = prep_if_match(etag, match_condition)
     if if_match is not None:
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
@@ -573,7 +552,7 @@ def build_batch_resize_pool_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_batch_stop_pool_resize_request(
+def build_batch_stop_pool_resize_internal_request(  # pylint: disable=name-too-long
     pool_id: str,
     *,
     timeout: Optional[int] = None,
@@ -588,8 +567,6 @@ def build_batch_stop_pool_resize_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/pools/{poolId}/stopresize"
     path_format_arguments = {
@@ -610,7 +587,6 @@ def build_batch_stop_pool_resize_request(
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
         _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if_match = prep_if_match(etag, match_condition)
     if if_match is not None:
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
@@ -629,8 +605,6 @@ def build_batch_replace_pool_properties_request(  # pylint: disable=name-too-lon
 
     content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/pools/{poolId}/updateproperties"
     path_format_arguments = {
@@ -648,12 +622,11 @@ def build_batch_replace_pool_properties_request(  # pylint: disable=name-too-lon
     if ocpdate is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_batch_remove_nodes_request(
+def build_batch_remove_nodes_internal_request(  # pylint: disable=name-too-long
     pool_id: str,
     *,
     timeout: Optional[int] = None,
@@ -669,8 +642,6 @@ def build_batch_remove_nodes_request(
 
     content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/pools/{poolId}/removenodes"
     path_format_arguments = {
@@ -692,7 +663,6 @@ def build_batch_remove_nodes_request(
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
         _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if_match = prep_if_match(etag, match_condition)
     if if_match is not None:
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
@@ -771,7 +741,7 @@ def build_batch_list_pool_node_counts_request(  # pylint: disable=name-too-long
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_batch_delete_job_request(
+def build_batch_delete_job_internal_request(
     job_id: str,
     *,
     timeout: Optional[int] = None,
@@ -787,8 +757,6 @@ def build_batch_delete_job_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/jobs/{jobId}"
     path_format_arguments = {
@@ -811,7 +779,6 @@ def build_batch_delete_job_request(
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
         _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if_match = prep_if_match(etag, match_condition)
     if if_match is not None:
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
@@ -892,8 +859,6 @@ def build_batch_update_job_request(
 
     content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/jobs/{jobId}"
     path_format_arguments = {
@@ -915,7 +880,6 @@ def build_batch_update_job_request(
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
         _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if_match = prep_if_match(etag, match_condition)
     if if_match is not None:
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
@@ -942,8 +906,6 @@ def build_batch_replace_job_request(
 
     content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/jobs/{jobId}"
     path_format_arguments = {
@@ -965,7 +927,6 @@ def build_batch_replace_job_request(
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
         _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if_match = prep_if_match(etag, match_condition)
     if if_match is not None:
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
@@ -976,7 +937,7 @@ def build_batch_replace_job_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_batch_disable_job_request(
+def build_batch_disable_job_internal_request(
     job_id: str,
     *,
     timeout: Optional[int] = None,
@@ -992,8 +953,6 @@ def build_batch_disable_job_request(
 
     content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/jobs/{jobId}/disable"
     path_format_arguments = {
@@ -1015,7 +974,6 @@ def build_batch_disable_job_request(
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
         _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if_match = prep_if_match(etag, match_condition)
     if if_match is not None:
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
@@ -1026,7 +984,7 @@ def build_batch_disable_job_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_batch_enable_job_request(
+def build_batch_enable_job_internal_request(
     job_id: str,
     *,
     timeout: Optional[int] = None,
@@ -1041,8 +999,6 @@ def build_batch_enable_job_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/jobs/{jobId}/enable"
     path_format_arguments = {
@@ -1063,7 +1019,6 @@ def build_batch_enable_job_request(
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
         _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if_match = prep_if_match(etag, match_condition)
     if if_match is not None:
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
@@ -1074,7 +1029,7 @@ def build_batch_enable_job_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_batch_terminate_job_request(
+def build_batch_terminate_job_internal_request(  # pylint: disable=name-too-long
     job_id: str,
     *,
     timeout: Optional[int] = None,
@@ -1091,8 +1046,6 @@ def build_batch_terminate_job_request(
 
     content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/jobs/{jobId}/terminate"
     path_format_arguments = {
@@ -1116,7 +1069,6 @@ def build_batch_terminate_job_request(
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
         _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if_match = prep_if_match(etag, match_condition)
     if if_match is not None:
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
@@ -1135,8 +1087,6 @@ def build_batch_create_job_request(
 
     content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/jobs"
 
@@ -1149,7 +1099,6 @@ def build_batch_create_job_request(
     if ocpdate is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -1321,8 +1270,6 @@ def build_batch_create_certificate_request(
 
     content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/certificates"
 
@@ -1335,7 +1282,6 @@ def build_batch_create_certificate_request(
     if ocpdate is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -1389,8 +1335,6 @@ def build_batch_cancel_certificate_deletion_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/certificates(thumbprintAlgorithm={thumbprintAlgorithm},thumbprint={thumbprint})/canceldelete"
     path_format_arguments = {
@@ -1408,12 +1352,11 @@ def build_batch_cancel_certificate_deletion_request(  # pylint: disable=name-too
     # Construct headers
     if ocpdate is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_batch_delete_certificate_request(
+def build_batch_delete_certificate_internal_request(  # pylint: disable=name-too-long
     thumbprint_algorithm: str,
     thumbprint: str,
     *,
@@ -1425,8 +1368,6 @@ def build_batch_delete_certificate_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/certificates(thumbprintAlgorithm={thumbprintAlgorithm},thumbprint={thumbprint})"
     path_format_arguments = {
@@ -1444,7 +1385,6 @@ def build_batch_delete_certificate_request(
     # Construct headers
     if ocpdate is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -1503,8 +1443,6 @@ def build_batch_job_schedule_exists_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/jobschedules/{jobScheduleId}"
     path_format_arguments = {
@@ -1525,7 +1463,6 @@ def build_batch_job_schedule_exists_request(
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
         _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if_match = prep_if_match(etag, match_condition)
     if if_match is not None:
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
@@ -1536,7 +1473,7 @@ def build_batch_job_schedule_exists_request(
     return HttpRequest(method="HEAD", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_batch_delete_job_schedule_request(
+def build_batch_delete_job_schedule_internal_request(  # pylint: disable=name-too-long
     job_schedule_id: str,
     *,
     timeout: Optional[int] = None,
@@ -1552,8 +1489,6 @@ def build_batch_delete_job_schedule_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/jobschedules/{jobScheduleId}"
     path_format_arguments = {
@@ -1576,7 +1511,6 @@ def build_batch_delete_job_schedule_request(
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
         _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if_match = prep_if_match(etag, match_condition)
     if if_match is not None:
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
@@ -1657,8 +1591,6 @@ def build_batch_update_job_schedule_request(
 
     content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/jobschedules/{jobScheduleId}"
     path_format_arguments = {
@@ -1680,7 +1612,6 @@ def build_batch_update_job_schedule_request(
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
         _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if_match = prep_if_match(etag, match_condition)
     if if_match is not None:
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
@@ -1707,8 +1638,6 @@ def build_batch_replace_job_schedule_request(
 
     content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/jobschedules/{jobScheduleId}"
     path_format_arguments = {
@@ -1730,7 +1659,6 @@ def build_batch_replace_job_schedule_request(
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
         _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if_match = prep_if_match(etag, match_condition)
     if if_match is not None:
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
@@ -1756,8 +1684,6 @@ def build_batch_disable_job_schedule_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/jobschedules/{jobScheduleId}/disable"
     path_format_arguments = {
@@ -1778,7 +1704,6 @@ def build_batch_disable_job_schedule_request(
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
         _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if_match = prep_if_match(etag, match_condition)
     if if_match is not None:
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
@@ -1804,8 +1729,6 @@ def build_batch_enable_job_schedule_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/jobschedules/{jobScheduleId}/enable"
     path_format_arguments = {
@@ -1826,7 +1749,6 @@ def build_batch_enable_job_schedule_request(
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
         _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if_match = prep_if_match(etag, match_condition)
     if if_match is not None:
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
@@ -1837,7 +1759,7 @@ def build_batch_enable_job_schedule_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_batch_terminate_job_schedule_request(  # pylint: disable=name-too-long
+def build_batch_terminate_job_schedule_internal_request(  # pylint: disable=name-too-long
     job_schedule_id: str,
     *,
     timeout: Optional[int] = None,
@@ -1853,8 +1775,6 @@ def build_batch_terminate_job_schedule_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/jobschedules/{jobScheduleId}/terminate"
     path_format_arguments = {
@@ -1877,7 +1797,6 @@ def build_batch_terminate_job_schedule_request(  # pylint: disable=name-too-long
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
         _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if_match = prep_if_match(etag, match_condition)
     if if_match is not None:
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
@@ -1896,8 +1815,6 @@ def build_batch_create_job_schedule_request(
 
     content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/jobschedules"
 
@@ -1910,7 +1827,6 @@ def build_batch_create_job_schedule_request(
     if ocpdate is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -1963,8 +1879,6 @@ def build_batch_create_task_request(
 
     content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/jobs/{jobId}/tasks"
     path_format_arguments = {
@@ -1982,7 +1896,6 @@ def build_batch_create_task_request(
     if ocpdate is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -2081,8 +1994,6 @@ def build_batch_delete_task_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/jobs/{jobId}/tasks/{taskId}"
     path_format_arguments = {
@@ -2104,7 +2015,6 @@ def build_batch_delete_task_request(
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
         _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if_match = prep_if_match(etag, match_condition)
     if if_match is not None:
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
@@ -2188,8 +2098,6 @@ def build_batch_replace_task_request(
 
     content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/jobs/{jobId}/tasks/{taskId}"
     path_format_arguments = {
@@ -2212,7 +2120,6 @@ def build_batch_replace_task_request(
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
         _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if_match = prep_if_match(etag, match_condition)
     if if_match is not None:
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
@@ -2278,8 +2185,6 @@ def build_batch_terminate_task_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/jobs/{jobId}/tasks/{taskId}/terminate"
     path_format_arguments = {
@@ -2301,7 +2206,6 @@ def build_batch_terminate_task_request(
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
         _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if_match = prep_if_match(etag, match_condition)
     if if_match is not None:
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
@@ -2328,8 +2232,6 @@ def build_batch_reactivate_task_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/jobs/{jobId}/tasks/{taskId}/reactivate"
     path_format_arguments = {
@@ -2351,7 +2253,6 @@ def build_batch_reactivate_task_request(
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
         _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if_match = prep_if_match(etag, match_condition)
     if if_match is not None:
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
@@ -2376,8 +2277,6 @@ def build_batch_delete_task_file_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/jobs/{jobId}/tasks/{taskId}/files/{filePath}"
     path_format_arguments = {
@@ -2398,7 +2297,6 @@ def build_batch_delete_task_file_request(
     # Construct headers
     if ocpdate is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -2465,8 +2363,6 @@ def build_batch_get_task_file_properties_internal_request(  # pylint: disable=na
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/jobs/{jobId}/tasks/{taskId}/files/{filePath}"
     path_format_arguments = {
@@ -2489,7 +2385,6 @@ def build_batch_get_task_file_properties_internal_request(  # pylint: disable=na
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
         _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="HEAD", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -2552,8 +2447,6 @@ def build_batch_create_node_user_request(
 
     content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/pools/{poolId}/nodes/{nodeId}/users"
     path_format_arguments = {
@@ -2572,7 +2465,6 @@ def build_batch_create_node_user_request(
     if ocpdate is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -2590,8 +2482,6 @@ def build_batch_delete_node_user_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/pools/{poolId}/nodes/{nodeId}/users/{userName}"
     path_format_arguments = {
@@ -2610,7 +2500,6 @@ def build_batch_delete_node_user_request(
     # Construct headers
     if ocpdate is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -2629,8 +2518,6 @@ def build_batch_replace_node_user_request(
 
     content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/pools/{poolId}/nodes/{nodeId}/users/{userName}"
     path_format_arguments = {
@@ -2650,7 +2537,6 @@ def build_batch_replace_node_user_request(
     if ocpdate is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -2694,7 +2580,7 @@ def build_batch_get_node_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_batch_reboot_node_request(
+def build_batch_reboot_node_internal_request(
     pool_id: str,
     node_id: str,
     *,
@@ -2707,8 +2593,6 @@ def build_batch_reboot_node_request(
 
     content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/pools/{poolId}/nodes/{nodeId}/reboot"
     path_format_arguments = {
@@ -2727,12 +2611,11 @@ def build_batch_reboot_node_request(
     if ocpdate is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_batch_start_node_request(
+def build_batch_start_node_internal_request(
     pool_id: str,
     node_id: str,
     *,
@@ -2744,8 +2627,6 @@ def build_batch_start_node_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/pools/{poolId}/nodes/{nodeId}/start"
     path_format_arguments = {
@@ -2763,12 +2644,11 @@ def build_batch_start_node_request(
     # Construct headers
     if ocpdate is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_batch_reimage_node_request(
+def build_batch_reimage_node_internal_request(  # pylint: disable=name-too-long
     pool_id: str,
     node_id: str,
     *,
@@ -2781,8 +2661,6 @@ def build_batch_reimage_node_request(
 
     content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/pools/{poolId}/nodes/{nodeId}/reimage"
     path_format_arguments = {
@@ -2801,12 +2679,11 @@ def build_batch_reimage_node_request(
     if ocpdate is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_batch_deallocate_node_request(
+def build_batch_deallocate_node_internal_request(  # pylint: disable=name-too-long
     pool_id: str,
     node_id: str,
     *,
@@ -2819,8 +2696,6 @@ def build_batch_deallocate_node_request(
 
     content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/pools/{poolId}/nodes/{nodeId}/deallocate"
     path_format_arguments = {
@@ -2839,7 +2714,6 @@ def build_batch_deallocate_node_request(
     if ocpdate is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -2857,8 +2731,6 @@ def build_batch_disable_node_scheduling_request(  # pylint: disable=name-too-lon
 
     content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/pools/{poolId}/nodes/{nodeId}/disablescheduling"
     path_format_arguments = {
@@ -2877,7 +2749,6 @@ def build_batch_disable_node_scheduling_request(  # pylint: disable=name-too-lon
     if ocpdate is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -2894,8 +2765,6 @@ def build_batch_enable_node_scheduling_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/pools/{poolId}/nodes/{nodeId}/enablescheduling"
     path_format_arguments = {
@@ -2913,7 +2782,6 @@ def build_batch_enable_node_scheduling_request(  # pylint: disable=name-too-long
     # Construct headers
     if ocpdate is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -3132,8 +3000,6 @@ def build_batch_delete_node_file_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/pools/{poolId}/nodes/{nodeId}/files/{filePath}"
     path_format_arguments = {
@@ -3154,7 +3020,6 @@ def build_batch_delete_node_file_request(
     # Construct headers
     if ocpdate is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -3221,8 +3086,6 @@ def build_batch_get_node_file_properties_internal_request(  # pylint: disable=na
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/pools/{poolId}/nodes/{nodeId}/files/{filePath}"
     path_format_arguments = {
@@ -3245,7 +3108,6 @@ def build_batch_get_node_file_properties_internal_request(  # pylint: disable=na
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
         _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="HEAD", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -3295,8 +3157,8 @@ def build_batch_list_node_files_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
-    ClientMixinABC[PipelineClient, BatchClientConfiguration]
+class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
+    ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], BatchClientConfiguration]
 ):
 
     @distributed_trace
@@ -3307,7 +3169,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         ocpdate: Optional[datetime.datetime] = None,
         max_results: Optional[int] = None,
         **kwargs: Any
-    ) -> Iterable["_models.BatchApplication"]:
+    ) -> ItemPaged["_models.BatchApplication"]:
         """Lists all of the applications available in the specified Account.
 
         This operation returns only Applications and versions that are available for
@@ -3402,7 +3264,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response.json())
+                error = _failsafe_deserialize(_models.BatchError, response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -3480,7 +3342,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -3510,7 +3372,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         endtime: Optional[datetime.datetime] = None,
         filter: Optional[str] = None,
         **kwargs: Any
-    ) -> Iterable["_models.BatchPoolUsageMetrics"]:
+    ) -> ItemPaged["_models.BatchPoolUsageMetrics"]:
         """Lists the usage metrics, aggregated by Pool across individual time intervals,
         for the specified Account.
 
@@ -3625,7 +3487,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response.json())
+                error = _failsafe_deserialize(_models.BatchError, response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -3702,7 +3564,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -3726,7 +3588,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         select: Optional[List[str]] = None,
         expand: Optional[List[str]] = None,
         **kwargs: Any
-    ) -> Iterable["_models.BatchPool"]:
+    ) -> ItemPaged["_models.BatchPool"]:
         """Lists all of the Pools which be mounted.
 
         Lists all of the Pools which be mounted.
@@ -3829,7 +3691,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response.json())
+                error = _failsafe_deserialize(_models.BatchError, response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -3837,7 +3699,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def delete_pool(  # pylint: disable=inconsistent-return-statements
+    def _delete_pool_internal(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
         *,
@@ -3912,7 +3774,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_batch_delete_pool_request(
+        _request = build_batch_delete_pool_internal_request(
             pool_id=pool_id,
             timeout=timeout,
             ocpdate=ocpdate,
@@ -3938,7 +3800,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -4037,7 +3899,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -4153,7 +4015,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -4275,7 +4137,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -4345,7 +4207,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -4362,7 +4224,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
     def enable_pool_auto_scale(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
-        content: _models.BatchPoolEnableAutoScaleOptions,
+        enable_auto_scale_options: _models.BatchPoolEnableAutoScaleOptions,
         *,
         timeout: Optional[int] = None,
         ocpdate: Optional[datetime.datetime] = None,
@@ -4383,8 +4245,8 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param pool_id: The ID of the Pool to get. Required.
         :type pool_id: str
-        :param content: The options to use for enabling automatic scaling. Required.
-        :type content: ~azure.batch.models.BatchPoolEnableAutoScaleOptions
+        :param enable_auto_scale_options: The options to use for enabling automatic scaling. Required.
+        :type enable_auto_scale_options: ~azure.batch.models.BatchPoolEnableAutoScaleOptions
         :keyword timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
@@ -4434,7 +4296,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(content, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        _content = json.dumps(enable_auto_scale_options, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_batch_enable_pool_auto_scale_request(
             pool_id=pool_id,
@@ -4464,7 +4326,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -4481,7 +4343,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
     def evaluate_pool_auto_scale(
         self,
         pool_id: str,
-        content: _models.BatchPoolEvaluateAutoScaleOptions,
+        evaluate_auto_scale_options: _models.BatchPoolEvaluateAutoScaleOptions,
         *,
         timeout: Optional[int] = None,
         ocpdate: Optional[datetime.datetime] = None,
@@ -4496,8 +4358,9 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :param pool_id: The ID of the Pool on which to evaluate the automatic scaling formula.
          Required.
         :type pool_id: str
-        :param content: The options to use for evaluating the automatic scaling formula. Required.
-        :type content: ~azure.batch.models.BatchPoolEvaluateAutoScaleOptions
+        :param evaluate_auto_scale_options: The options to use for evaluating the automatic scaling
+         formula. Required.
+        :type evaluate_auto_scale_options: ~azure.batch.models.BatchPoolEvaluateAutoScaleOptions
         :keyword timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
@@ -4526,7 +4389,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         )
         cls: ClsType[_models.AutoScaleRun] = kwargs.pop("cls", None)
 
-        _content = json.dumps(content, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        _content = json.dumps(evaluate_auto_scale_options, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_batch_evaluate_pool_auto_scale_request(
             pool_id=pool_id,
@@ -4557,7 +4420,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -4578,10 +4441,10 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def resize_pool(  # pylint: disable=inconsistent-return-statements
+    def _resize_pool_internal(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
-        content: _models.BatchPoolResizeOptions,
+        resize_options: _models.BatchPoolResizeOptions,
         *,
         timeout: Optional[int] = None,
         ocpdate: Optional[datetime.datetime] = None,
@@ -4603,8 +4466,8 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param pool_id: The ID of the Pool to get. Required.
         :type pool_id: str
-        :param content: The options to use for resizing the pool. Required.
-        :type content: ~azure.batch.models.BatchPoolResizeOptions
+        :param resize_options: The options to use for resizing the pool. Required.
+        :type resize_options: ~azure.batch.models.BatchPoolResizeOptions
         :keyword timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
@@ -4654,9 +4517,9 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(content, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        _content = json.dumps(resize_options, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_batch_resize_pool_request(
+        _request = build_batch_resize_pool_internal_request(
             pool_id=pool_id,
             timeout=timeout,
             ocpdate=ocpdate,
@@ -4684,7 +4547,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -4698,7 +4561,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
-    def stop_pool_resize(  # pylint: disable=inconsistent-return-statements
+    def _stop_pool_resize_internal(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
         *,
@@ -4768,7 +4631,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_batch_stop_pool_resize_request(
+        _request = build_batch_stop_pool_resize_internal_request(
             pool_id=pool_id,
             timeout=timeout,
             ocpdate=ocpdate,
@@ -4794,7 +4657,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -4881,7 +4744,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -4895,10 +4758,10 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
-    def remove_nodes(  # pylint: disable=inconsistent-return-statements
+    def _remove_nodes_internal(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
-        content: _models.BatchNodeRemoveOptions,
+        remove_options: _models.BatchNodeRemoveOptions,
         *,
         timeout: Optional[int] = None,
         ocpdate: Optional[datetime.datetime] = None,
@@ -4916,8 +4779,8 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param pool_id: The ID of the Pool to get. Required.
         :type pool_id: str
-        :param content: The options to use for removing the node. Required.
-        :type content: ~azure.batch.models.BatchNodeRemoveOptions
+        :param remove_options: The options to use for removing the node. Required.
+        :type remove_options: ~azure.batch.models.BatchNodeRemoveOptions
         :keyword timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
@@ -4967,9 +4830,9 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(content, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        _content = json.dumps(remove_options, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_batch_remove_nodes_request(
+        _request = build_batch_remove_nodes_internal_request(
             pool_id=pool_id,
             timeout=timeout,
             ocpdate=ocpdate,
@@ -4997,7 +4860,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -5019,7 +4882,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         max_results: Optional[int] = None,
         filter: Optional[str] = None,
         **kwargs: Any
-    ) -> Iterable["_models.BatchSupportedImage"]:
+    ) -> ItemPaged["_models.BatchSupportedImage"]:
         """Lists all Virtual Machine Images supported by the Azure Batch service.
 
         Lists all Virtual Machine Images supported by the Azure Batch service.
@@ -5116,7 +4979,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response.json())
+                error = _failsafe_deserialize(_models.BatchError, response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -5132,7 +4995,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         max_results: Optional[int] = None,
         filter: Optional[str] = None,
         **kwargs: Any
-    ) -> Iterable["_models.BatchPoolNodeCounts"]:
+    ) -> ItemPaged["_models.BatchPoolNodeCounts"]:
         """Gets the number of Compute Nodes in each state, grouped by Pool. Note that the
         numbers returned may not always be up to date. If you need exact node counts,
         use a list query.
@@ -5229,7 +5092,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response.json())
+                error = _failsafe_deserialize(_models.BatchError, response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -5237,7 +5100,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def delete_job(  # pylint: disable=inconsistent-return-statements
+    def _delete_job_internal(  # pylint: disable=inconsistent-return-statements
         self,
         job_id: str,
         *,
@@ -5312,7 +5175,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_batch_delete_job_request(
+        _request = build_batch_delete_job_internal_request(
             job_id=job_id,
             timeout=timeout,
             ocpdate=ocpdate,
@@ -5339,7 +5202,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -5453,7 +5316,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -5575,7 +5438,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -5691,7 +5554,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -5705,10 +5568,10 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
-    def disable_job(  # pylint: disable=inconsistent-return-statements
+    def _disable_job_internal(  # pylint: disable=inconsistent-return-statements
         self,
         job_id: str,
-        content: _models.BatchJobDisableOptions,
+        disable_options: _models.BatchJobDisableOptions,
         *,
         timeout: Optional[int] = None,
         ocpdate: Optional[datetime.datetime] = None,
@@ -5731,8 +5594,8 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param job_id: The ID of the Job to disable. Required.
         :type job_id: str
-        :param content: The options to use for disabling the Job. Required.
-        :type content: ~azure.batch.models.BatchJobDisableOptions
+        :param disable_options: The options to use for disabling the Job. Required.
+        :type disable_options: ~azure.batch.models.BatchJobDisableOptions
         :keyword timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
@@ -5782,9 +5645,9 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(content, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        _content = json.dumps(disable_options, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_batch_disable_job_request(
+        _request = build_batch_disable_job_internal_request(
             job_id=job_id,
             timeout=timeout,
             ocpdate=ocpdate,
@@ -5812,7 +5675,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -5826,7 +5689,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
-    def enable_job(  # pylint: disable=inconsistent-return-statements
+    def _enable_job_internal(  # pylint: disable=inconsistent-return-statements
         self,
         job_id: str,
         *,
@@ -5895,7 +5758,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_batch_enable_job_request(
+        _request = build_batch_enable_job_internal_request(
             job_id=job_id,
             timeout=timeout,
             ocpdate=ocpdate,
@@ -5921,7 +5784,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -5935,10 +5798,10 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
-    def terminate_job(  # pylint: disable=inconsistent-return-statements
+    def _terminate_job_internal(  # pylint: disable=inconsistent-return-statements
         self,
         job_id: str,
-        parameters: Optional[_models.BatchJobTerminateOptions] = None,
+        options: Optional[_models.BatchJobTerminateOptions] = None,
         *,
         timeout: Optional[int] = None,
         ocpdate: Optional[datetime.datetime] = None,
@@ -5960,8 +5823,8 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param job_id: The ID of the Job to terminate. Required.
         :type job_id: str
-        :param parameters: The options to use for terminating the Job. Default value is None.
-        :type parameters: ~azure.batch.models.BatchJobTerminateOptions
+        :param options: The options to use for terminating the Job. Default value is None.
+        :type options: ~azure.batch.models.BatchJobTerminateOptions
         :keyword timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
@@ -6014,12 +5877,12 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        if parameters is not None:
-            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        if options is not None:
+            _content = json.dumps(options, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
         else:
             _content = None
 
-        _request = build_batch_terminate_job_request(
+        _request = build_batch_terminate_job_internal_request(
             job_id=job_id,
             timeout=timeout,
             ocpdate=ocpdate,
@@ -6048,7 +5911,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -6137,7 +6000,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -6161,7 +6024,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         select: Optional[List[str]] = None,
         expand: Optional[List[str]] = None,
         **kwargs: Any
-    ) -> Iterable["_models.BatchJob"]:
+    ) -> ItemPaged["_models.BatchJob"]:
         """Lists all of the Jobs in the specified Account.
 
         Lists all of the Jobs in the specified Account.
@@ -6264,7 +6127,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response.json())
+                error = _failsafe_deserialize(_models.BatchError, response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -6283,7 +6146,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         select: Optional[List[str]] = None,
         expand: Optional[List[str]] = None,
         **kwargs: Any
-    ) -> Iterable["_models.BatchJob"]:
+    ) -> ItemPaged["_models.BatchJob"]:
         """Lists the Jobs that have been created under the specified Job Schedule.
 
         Lists the Jobs that have been created under the specified Job Schedule.
@@ -6390,7 +6253,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response.json())
+                error = _failsafe_deserialize(_models.BatchError, response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -6408,7 +6271,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         filter: Optional[str] = None,
         select: Optional[List[str]] = None,
         **kwargs: Any
-    ) -> Iterable["_models.BatchJobPreparationAndReleaseTaskStatus"]:
+    ) -> ItemPaged["_models.BatchJobPreparationAndReleaseTaskStatus"]:
         """Lists the execution status of the Job Preparation and Job Release Task for the
         specified Job across the Compute Nodes where the Job has run.
 
@@ -6520,7 +6383,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response.json())
+                error = _failsafe_deserialize(_models.BatchError, response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -6592,7 +6455,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -6679,7 +6542,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -6702,7 +6565,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         filter: Optional[str] = None,
         select: Optional[List[str]] = None,
         **kwargs: Any
-    ) -> Iterable["_models.BatchCertificate"]:
+    ) -> ItemPaged["_models.BatchCertificate"]:
         """Lists all of the Certificates that have been added to the specified Account.
 
         Lists all of the Certificates that have been added to the specified Account.
@@ -6802,7 +6665,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response.json())
+                error = _failsafe_deserialize(_models.BatchError, response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -6882,7 +6745,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -6896,7 +6759,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
-    def delete_certificate(  # pylint: disable=inconsistent-return-statements
+    def _delete_certificate_internal(  # pylint: disable=inconsistent-return-statements
         self,
         thumbprint_algorithm: str,
         thumbprint: str,
@@ -6947,7 +6810,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_batch_delete_certificate_request(
+        _request = build_batch_delete_certificate_internal_request(
             thumbprint_algorithm=thumbprint_algorithm,
             thumbprint=thumbprint,
             timeout=timeout,
@@ -6970,7 +6833,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -7056,7 +6919,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -7166,7 +7029,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -7181,7 +7044,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         return 200 <= response.status_code <= 299
 
     @distributed_trace
-    def delete_job_schedule(  # pylint: disable=inconsistent-return-statements
+    def _delete_job_schedule_internal(  # pylint: disable=inconsistent-return-statements
         self,
         job_schedule_id: str,
         *,
@@ -7253,7 +7116,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_batch_delete_job_schedule_request(
+        _request = build_batch_delete_job_schedule_internal_request(
             job_schedule_id=job_schedule_id,
             timeout=timeout,
             ocpdate=ocpdate,
@@ -7280,7 +7143,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -7392,7 +7255,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -7516,7 +7379,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -7634,7 +7497,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -7738,7 +7601,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -7842,7 +7705,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -7856,7 +7719,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
-    def terminate_job_schedule(  # pylint: disable=inconsistent-return-statements
+    def _terminate_job_schedule_internal(  # pylint: disable=inconsistent-return-statements
         self,
         job_schedule_id: str,
         *,
@@ -7925,7 +7788,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_batch_terminate_job_schedule_request(
+        _request = build_batch_terminate_job_schedule_internal_request(
             job_schedule_id=job_schedule_id,
             timeout=timeout,
             ocpdate=ocpdate,
@@ -7952,7 +7815,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -8033,7 +7896,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -8057,7 +7920,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         select: Optional[List[str]] = None,
         expand: Optional[List[str]] = None,
         **kwargs: Any
-    ) -> Iterable["_models.BatchJobSchedule"]:
+    ) -> ItemPaged["_models.BatchJobSchedule"]:
         """Lists all of the Job Schedules in the specified Account.
 
         Lists all of the Job Schedules in the specified Account.
@@ -8160,7 +8023,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response.json())
+                error = _failsafe_deserialize(_models.BatchError, response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -8241,7 +8104,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -8266,7 +8129,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         select: Optional[List[str]] = None,
         expand: Optional[List[str]] = None,
         **kwargs: Any
-    ) -> Iterable["_models.BatchTask"]:
+    ) -> ItemPaged["_models.BatchTask"]:
         """Lists all of the Tasks that are associated with the specified Job.
 
         For multi-instance Tasks, information such as affinityId, executionInfo and
@@ -8374,7 +8237,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response.json())
+                error = _failsafe_deserialize(_models.BatchError, response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -8472,7 +8335,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -8590,7 +8453,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -8710,7 +8573,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -8833,7 +8696,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -8856,7 +8719,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         ocpdate: Optional[datetime.datetime] = None,
         select: Optional[List[str]] = None,
         **kwargs: Any
-    ) -> Iterable["_models.BatchSubtask"]:
+    ) -> ItemPaged["_models.BatchSubtask"]:
         """Lists all of the subtasks that are associated with the specified multi-instance
         Task.
 
@@ -8953,7 +8816,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response.json())
+                error = _failsafe_deserialize(_models.BatchError, response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -9057,7 +8920,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -9172,7 +9035,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -9263,7 +9126,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -9366,7 +9229,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -9472,7 +9335,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -9504,7 +9367,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         filter: Optional[str] = None,
         recursive: Optional[bool] = None,
         **kwargs: Any
-    ) -> Iterable["_models.BatchNodeFile"]:
+    ) -> ItemPaged["_models.BatchNodeFile"]:
         """Lists the files in a Task's directory on its Compute Node.
 
         Lists the files in a Task's directory on its Compute Node.
@@ -9612,7 +9475,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response.json())
+                error = _failsafe_deserialize(_models.BatchError, response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -9696,7 +9559,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -9780,7 +9643,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -9796,7 +9659,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         pool_id: str,
         node_id: str,
         user_name: str,
-        content: _models.BatchNodeUserUpdateOptions,
+        update_options: _models.BatchNodeUserUpdateOptions,
         *,
         timeout: Optional[int] = None,
         ocpdate: Optional[datetime.datetime] = None,
@@ -9815,8 +9678,8 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :type node_id: str
         :param user_name: The name of the user Account to update. Required.
         :type user_name: str
-        :param content: The options to use for updating the user. Required.
-        :type content: ~azure.batch.models.BatchNodeUserUpdateOptions
+        :param update_options: The options to use for updating the user. Required.
+        :type update_options: ~azure.batch.models.BatchNodeUserUpdateOptions
         :keyword timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
@@ -9845,7 +9708,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(content, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        _content = json.dumps(update_options, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_batch_replace_node_user_request(
             pool_id=pool_id,
@@ -9873,7 +9736,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -9961,7 +9824,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -9981,11 +9844,11 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def reboot_node(  # pylint: disable=inconsistent-return-statements
+    def _reboot_node_internal(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
         node_id: str,
-        parameters: Optional[_models.BatchNodeRebootKinds] = None,
+        options: Optional[_models.BatchNodeRebootOptions] = None,
         *,
         timeout: Optional[int] = None,
         ocpdate: Optional[datetime.datetime] = None,
@@ -9999,8 +9862,8 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :type pool_id: str
         :param node_id: The ID of the Compute Node that you want to restart. Required.
         :type node_id: str
-        :param parameters: The options to use for rebooting the Compute Node. Default value is None.
-        :type parameters: ~azure.batch.models.BatchNodeRebootKinds
+        :param options: The options to use for rebooting the Compute Node. Default value is None.
+        :type options: ~azure.batch.models.BatchNodeRebootOptions
         :keyword timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
@@ -10029,12 +9892,12 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        if parameters is not None:
-            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        if options is not None:
+            _content = json.dumps(options, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
         else:
             _content = None
 
-        _request = build_batch_reboot_node_request(
+        _request = build_batch_reboot_node_internal_request(
             pool_id=pool_id,
             node_id=node_id,
             timeout=timeout,
@@ -10059,7 +9922,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -10073,7 +9936,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
-    def start_node(  # pylint: disable=inconsistent-return-statements
+    def _start_node_internal(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
         node_id: str,
@@ -10115,7 +9978,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_batch_start_node_request(
+        _request = build_batch_start_node_internal_request(
             pool_id=pool_id,
             node_id=node_id,
             timeout=timeout,
@@ -10138,7 +10001,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -10152,11 +10015,11 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
-    def reimage_node(  # pylint: disable=inconsistent-return-statements
+    def _reimage_node_internal(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
         node_id: str,
-        parameters: Optional[_models.BatchNodeReimageOptions] = None,
+        options: Optional[_models.BatchNodeReimageOptions] = None,
         *,
         timeout: Optional[int] = None,
         ocpdate: Optional[datetime.datetime] = None,
@@ -10172,8 +10035,8 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :type pool_id: str
         :param node_id: The ID of the Compute Node that you want to restart. Required.
         :type node_id: str
-        :param parameters: The options to use for reimaging the Compute Node. Default value is None.
-        :type parameters: ~azure.batch.models.BatchNodeReimageOptions
+        :param options: The options to use for reimaging the Compute Node. Default value is None.
+        :type options: ~azure.batch.models.BatchNodeReimageOptions
         :keyword timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
@@ -10202,12 +10065,12 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        if parameters is not None:
-            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        if options is not None:
+            _content = json.dumps(options, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
         else:
             _content = None
 
-        _request = build_batch_reimage_node_request(
+        _request = build_batch_reimage_node_internal_request(
             pool_id=pool_id,
             node_id=node_id,
             timeout=timeout,
@@ -10232,7 +10095,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -10246,11 +10109,11 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
-    def deallocate_node(  # pylint: disable=inconsistent-return-statements
+    def _deallocate_node_internal(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
         node_id: str,
-        parameters: Optional[_models.BatchNodeDeallocateOptions] = None,
+        options: Optional[_models.BatchNodeDeallocateOptions] = None,
         *,
         timeout: Optional[int] = None,
         ocpdate: Optional[datetime.datetime] = None,
@@ -10264,8 +10127,8 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :type pool_id: str
         :param node_id: The ID of the Compute Node that you want to restart. Required.
         :type node_id: str
-        :param parameters: The options to use for deallocating the Compute Node. Default value is None.
-        :type parameters: ~azure.batch.models.BatchNodeDeallocateOptions
+        :param options: The options to use for deallocating the Compute Node. Default value is None.
+        :type options: ~azure.batch.models.BatchNodeDeallocateOptions
         :keyword timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
@@ -10294,12 +10157,12 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        if parameters is not None:
-            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        if options is not None:
+            _content = json.dumps(options, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
         else:
             _content = None
 
-        _request = build_batch_deallocate_node_request(
+        _request = build_batch_deallocate_node_internal_request(
             pool_id=pool_id,
             node_id=node_id,
             timeout=timeout,
@@ -10324,7 +10187,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -10342,7 +10205,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         self,
         pool_id: str,
         node_id: str,
-        parameters: Optional[_models.BatchNodeDisableSchedulingOptions] = None,
+        options: Optional[_models.BatchNodeDisableSchedulingOptions] = None,
         *,
         timeout: Optional[int] = None,
         ocpdate: Optional[datetime.datetime] = None,
@@ -10358,9 +10221,9 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :param node_id: The ID of the Compute Node on which you want to disable Task scheduling.
          Required.
         :type node_id: str
-        :param parameters: The options to use for disabling scheduling on the Compute Node. Default
-         value is None.
-        :type parameters: ~azure.batch.models.BatchNodeDisableSchedulingOptions
+        :param options: The options to use for disabling scheduling on the Compute Node. Default value
+         is None.
+        :type options: ~azure.batch.models.BatchNodeDisableSchedulingOptions
         :keyword timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
@@ -10389,8 +10252,8 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        if parameters is not None:
-            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        if options is not None:
+            _content = json.dumps(options, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
         else:
             _content = None
 
@@ -10419,7 +10282,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -10500,7 +10363,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -10587,7 +10450,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -10611,7 +10474,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         self,
         pool_id: str,
         node_id: str,
-        content: _models.UploadBatchServiceLogsOptions,
+        upload_options: _models.UploadBatchServiceLogsOptions,
         *,
         timeout: Optional[int] = None,
         ocpdate: Optional[datetime.datetime] = None,
@@ -10630,8 +10493,8 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :param node_id: The ID of the Compute Node for which you want to get the Remote Desktop
          Protocol file. Required.
         :type node_id: str
-        :param content: The Azure Batch service log files upload options. Required.
-        :type content: ~azure.batch.models.UploadBatchServiceLogsOptions
+        :param upload_options: The Azure Batch service log files upload options. Required.
+        :type upload_options: ~azure.batch.models.UploadBatchServiceLogsOptions
         :keyword timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
@@ -10661,7 +10524,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         )
         cls: ClsType[_models.UploadBatchServiceLogsResult] = kwargs.pop("cls", None)
 
-        _content = json.dumps(content, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        _content = json.dumps(upload_options, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_batch_upload_node_logs_request(
             pool_id=pool_id,
@@ -10693,7 +10556,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -10723,7 +10586,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         filter: Optional[str] = None,
         select: Optional[List[str]] = None,
         **kwargs: Any
-    ) -> Iterable["_models.BatchNode"]:
+    ) -> ItemPaged["_models.BatchNode"]:
         """Lists the Compute Nodes in the specified Pool.
 
         Lists the Compute Nodes in the specified Pool.
@@ -10826,7 +10689,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response.json())
+                error = _failsafe_deserialize(_models.BatchError, response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -10913,7 +10776,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -10943,7 +10806,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         max_results: Optional[int] = None,
         select: Optional[List[str]] = None,
         **kwargs: Any
-    ) -> Iterable["_models.BatchNodeVMExtension"]:
+    ) -> ItemPaged["_models.BatchNodeVMExtension"]:
         """Lists the Compute Nodes Extensions in the specified Pool.
 
         Lists the Compute Nodes Extensions in the specified Pool.
@@ -11043,7 +10906,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response.json())
+                error = _failsafe_deserialize(_models.BatchError, response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -11128,7 +10991,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -11231,7 +11094,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -11337,7 +11200,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -11369,7 +11232,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         filter: Optional[str] = None,
         recursive: Optional[bool] = None,
         **kwargs: Any
-    ) -> Iterable["_models.BatchNodeFile"]:
+    ) -> ItemPaged["_models.BatchNodeFile"]:
         """Lists all of the files in Task directories on the specified Compute Node.
 
         Lists all of the files in Task directories on the specified Compute Node.
@@ -11475,7 +11338,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response.json())
+                error = _failsafe_deserialize(_models.BatchError, response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response

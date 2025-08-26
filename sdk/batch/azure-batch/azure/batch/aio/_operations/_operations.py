@@ -9,7 +9,7 @@
 from collections.abc import MutableMapping
 import datetime
 import json
-from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, List, Optional, TypeVar
+from typing import Any, AsyncIterator, Callable, Dict, List, Optional, TypeVar
 import urllib.parse
 
 from azure.core import AsyncPipelineClient, MatchConditions
@@ -41,20 +41,20 @@ from ..._operations._operations import (
     build_batch_create_pool_request,
     build_batch_create_task_collection_request,
     build_batch_create_task_request,
-    build_batch_deallocate_node_request,
-    build_batch_delete_certificate_request,
-    build_batch_delete_job_request,
-    build_batch_delete_job_schedule_request,
+    build_batch_deallocate_node_internal_request,
+    build_batch_delete_certificate_internal_request,
+    build_batch_delete_job_internal_request,
+    build_batch_delete_job_schedule_internal_request,
     build_batch_delete_node_file_request,
     build_batch_delete_node_user_request,
-    build_batch_delete_pool_request,
+    build_batch_delete_pool_internal_request,
     build_batch_delete_task_file_request,
     build_batch_delete_task_request,
-    build_batch_disable_job_request,
+    build_batch_disable_job_internal_request,
     build_batch_disable_job_schedule_request,
     build_batch_disable_node_scheduling_request,
     build_batch_disable_pool_auto_scale_request,
-    build_batch_enable_job_request,
+    build_batch_enable_job_internal_request,
     build_batch_enable_job_schedule_request,
     build_batch_enable_node_scheduling_request,
     build_batch_enable_pool_auto_scale_request,
@@ -92,19 +92,19 @@ from ..._operations._operations import (
     build_batch_list_tasks_request,
     build_batch_pool_exists_request,
     build_batch_reactivate_task_request,
-    build_batch_reboot_node_request,
-    build_batch_reimage_node_request,
-    build_batch_remove_nodes_request,
+    build_batch_reboot_node_internal_request,
+    build_batch_reimage_node_internal_request,
+    build_batch_remove_nodes_internal_request,
     build_batch_replace_job_request,
     build_batch_replace_job_schedule_request,
     build_batch_replace_node_user_request,
     build_batch_replace_pool_properties_request,
     build_batch_replace_task_request,
-    build_batch_resize_pool_request,
-    build_batch_start_node_request,
-    build_batch_stop_pool_resize_request,
-    build_batch_terminate_job_request,
-    build_batch_terminate_job_schedule_request,
+    build_batch_resize_pool_internal_request,
+    build_batch_start_node_internal_request,
+    build_batch_stop_pool_resize_internal_request,
+    build_batch_terminate_job_internal_request,
+    build_batch_terminate_job_schedule_internal_request,
     build_batch_terminate_task_request,
     build_batch_update_job_request,
     build_batch_update_job_schedule_request,
@@ -119,8 +119,8 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
-    ClientMixinABC[AsyncPipelineClient, BatchClientConfiguration]
+class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
+    ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], BatchClientConfiguration]
 ):
 
     @distributed_trace
@@ -131,7 +131,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         ocpdate: Optional[datetime.datetime] = None,
         max_results: Optional[int] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.BatchApplication"]:
+    ) -> AsyncItemPaged["_models.BatchApplication"]:
         """Lists all of the applications available in the specified Account.
 
         This operation returns only Applications and versions that are available for
@@ -226,7 +226,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response.json())
+                error = _failsafe_deserialize(_models.BatchError, response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -304,7 +304,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -334,7 +334,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         endtime: Optional[datetime.datetime] = None,
         filter: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.BatchPoolUsageMetrics"]:
+    ) -> AsyncItemPaged["_models.BatchPoolUsageMetrics"]:
         """Lists the usage metrics, aggregated by Pool across individual time intervals,
         for the specified Account.
 
@@ -449,7 +449,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response.json())
+                error = _failsafe_deserialize(_models.BatchError, response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -526,7 +526,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -550,7 +550,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         select: Optional[List[str]] = None,
         expand: Optional[List[str]] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.BatchPool"]:
+    ) -> AsyncItemPaged["_models.BatchPool"]:
         """Lists all of the Pools which be mounted.
 
         Lists all of the Pools which be mounted.
@@ -653,7 +653,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response.json())
+                error = _failsafe_deserialize(_models.BatchError, response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -661,7 +661,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def delete_pool(
+    async def _delete_pool_internal(
         self,
         pool_id: str,
         *,
@@ -736,7 +736,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_batch_delete_pool_request(
+        _request = build_batch_delete_pool_internal_request(
             pool_id=pool_id,
             timeout=timeout,
             ocpdate=ocpdate,
@@ -762,7 +762,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -861,7 +861,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -977,7 +977,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1099,7 +1099,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1169,7 +1169,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1186,7 +1186,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
     async def enable_pool_auto_scale(
         self,
         pool_id: str,
-        content: _models.BatchPoolEnableAutoScaleOptions,
+        enable_auto_scale_options: _models.BatchPoolEnableAutoScaleOptions,
         *,
         timeout: Optional[int] = None,
         ocpdate: Optional[datetime.datetime] = None,
@@ -1207,8 +1207,8 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param pool_id: The ID of the Pool to get. Required.
         :type pool_id: str
-        :param content: The options to use for enabling automatic scaling. Required.
-        :type content: ~azure.batch.models.BatchPoolEnableAutoScaleOptions
+        :param enable_auto_scale_options: The options to use for enabling automatic scaling. Required.
+        :type enable_auto_scale_options: ~azure.batch.models.BatchPoolEnableAutoScaleOptions
         :keyword timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
@@ -1258,7 +1258,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(content, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        _content = json.dumps(enable_auto_scale_options, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_batch_enable_pool_auto_scale_request(
             pool_id=pool_id,
@@ -1288,7 +1288,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1305,7 +1305,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
     async def evaluate_pool_auto_scale(
         self,
         pool_id: str,
-        content: _models.BatchPoolEvaluateAutoScaleOptions,
+        evaluate_auto_scale_options: _models.BatchPoolEvaluateAutoScaleOptions,
         *,
         timeout: Optional[int] = None,
         ocpdate: Optional[datetime.datetime] = None,
@@ -1320,8 +1320,9 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :param pool_id: The ID of the Pool on which to evaluate the automatic scaling formula.
          Required.
         :type pool_id: str
-        :param content: The options to use for evaluating the automatic scaling formula. Required.
-        :type content: ~azure.batch.models.BatchPoolEvaluateAutoScaleOptions
+        :param evaluate_auto_scale_options: The options to use for evaluating the automatic scaling
+         formula. Required.
+        :type evaluate_auto_scale_options: ~azure.batch.models.BatchPoolEvaluateAutoScaleOptions
         :keyword timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
@@ -1350,7 +1351,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         )
         cls: ClsType[_models.AutoScaleRun] = kwargs.pop("cls", None)
 
-        _content = json.dumps(content, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        _content = json.dumps(evaluate_auto_scale_options, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_batch_evaluate_pool_auto_scale_request(
             pool_id=pool_id,
@@ -1381,7 +1382,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1402,10 +1403,10 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def resize_pool(
+    async def _resize_pool_internal(
         self,
         pool_id: str,
-        content: _models.BatchPoolResizeOptions,
+        resize_options: _models.BatchPoolResizeOptions,
         *,
         timeout: Optional[int] = None,
         ocpdate: Optional[datetime.datetime] = None,
@@ -1427,8 +1428,8 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param pool_id: The ID of the Pool to get. Required.
         :type pool_id: str
-        :param content: The options to use for resizing the pool. Required.
-        :type content: ~azure.batch.models.BatchPoolResizeOptions
+        :param resize_options: The options to use for resizing the pool. Required.
+        :type resize_options: ~azure.batch.models.BatchPoolResizeOptions
         :keyword timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
@@ -1478,9 +1479,9 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(content, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        _content = json.dumps(resize_options, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_batch_resize_pool_request(
+        _request = build_batch_resize_pool_internal_request(
             pool_id=pool_id,
             timeout=timeout,
             ocpdate=ocpdate,
@@ -1508,7 +1509,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1522,7 +1523,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def stop_pool_resize(
+    async def _stop_pool_resize_internal(
         self,
         pool_id: str,
         *,
@@ -1592,7 +1593,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_batch_stop_pool_resize_request(
+        _request = build_batch_stop_pool_resize_internal_request(
             pool_id=pool_id,
             timeout=timeout,
             ocpdate=ocpdate,
@@ -1618,7 +1619,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1705,7 +1706,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1719,10 +1720,10 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def remove_nodes(
+    async def _remove_nodes_internal(
         self,
         pool_id: str,
-        content: _models.BatchNodeRemoveOptions,
+        remove_options: _models.BatchNodeRemoveOptions,
         *,
         timeout: Optional[int] = None,
         ocpdate: Optional[datetime.datetime] = None,
@@ -1740,8 +1741,8 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param pool_id: The ID of the Pool to get. Required.
         :type pool_id: str
-        :param content: The options to use for removing the node. Required.
-        :type content: ~azure.batch.models.BatchNodeRemoveOptions
+        :param remove_options: The options to use for removing the node. Required.
+        :type remove_options: ~azure.batch.models.BatchNodeRemoveOptions
         :keyword timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
@@ -1791,9 +1792,9 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(content, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        _content = json.dumps(remove_options, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_batch_remove_nodes_request(
+        _request = build_batch_remove_nodes_internal_request(
             pool_id=pool_id,
             timeout=timeout,
             ocpdate=ocpdate,
@@ -1821,7 +1822,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1843,7 +1844,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         max_results: Optional[int] = None,
         filter: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.BatchSupportedImage"]:
+    ) -> AsyncItemPaged["_models.BatchSupportedImage"]:
         """Lists all Virtual Machine Images supported by the Azure Batch service.
 
         Lists all Virtual Machine Images supported by the Azure Batch service.
@@ -1940,7 +1941,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response.json())
+                error = _failsafe_deserialize(_models.BatchError, response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -1956,7 +1957,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         max_results: Optional[int] = None,
         filter: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.BatchPoolNodeCounts"]:
+    ) -> AsyncItemPaged["_models.BatchPoolNodeCounts"]:
         """Gets the number of Compute Nodes in each state, grouped by Pool. Note that the
         numbers returned may not always be up to date. If you need exact node counts,
         use a list query.
@@ -2053,7 +2054,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response.json())
+                error = _failsafe_deserialize(_models.BatchError, response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -2061,7 +2062,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def delete_job(
+    async def _delete_job_internal(
         self,
         job_id: str,
         *,
@@ -2136,7 +2137,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_batch_delete_job_request(
+        _request = build_batch_delete_job_internal_request(
             job_id=job_id,
             timeout=timeout,
             ocpdate=ocpdate,
@@ -2163,7 +2164,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2277,7 +2278,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2399,7 +2400,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2515,7 +2516,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2529,10 +2530,10 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def disable_job(
+    async def _disable_job_internal(
         self,
         job_id: str,
-        content: _models.BatchJobDisableOptions,
+        disable_options: _models.BatchJobDisableOptions,
         *,
         timeout: Optional[int] = None,
         ocpdate: Optional[datetime.datetime] = None,
@@ -2555,8 +2556,8 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param job_id: The ID of the Job to disable. Required.
         :type job_id: str
-        :param content: The options to use for disabling the Job. Required.
-        :type content: ~azure.batch.models.BatchJobDisableOptions
+        :param disable_options: The options to use for disabling the Job. Required.
+        :type disable_options: ~azure.batch.models.BatchJobDisableOptions
         :keyword timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
@@ -2606,9 +2607,9 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(content, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        _content = json.dumps(disable_options, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_batch_disable_job_request(
+        _request = build_batch_disable_job_internal_request(
             job_id=job_id,
             timeout=timeout,
             ocpdate=ocpdate,
@@ -2636,7 +2637,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2650,7 +2651,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def enable_job(
+    async def _enable_job_internal(
         self,
         job_id: str,
         *,
@@ -2719,7 +2720,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_batch_enable_job_request(
+        _request = build_batch_enable_job_internal_request(
             job_id=job_id,
             timeout=timeout,
             ocpdate=ocpdate,
@@ -2745,7 +2746,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2759,10 +2760,10 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def terminate_job(
+    async def _terminate_job_internal(
         self,
         job_id: str,
-        parameters: Optional[_models.BatchJobTerminateOptions] = None,
+        options: Optional[_models.BatchJobTerminateOptions] = None,
         *,
         timeout: Optional[int] = None,
         ocpdate: Optional[datetime.datetime] = None,
@@ -2784,8 +2785,8 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param job_id: The ID of the Job to terminate. Required.
         :type job_id: str
-        :param parameters: The options to use for terminating the Job. Default value is None.
-        :type parameters: ~azure.batch.models.BatchJobTerminateOptions
+        :param options: The options to use for terminating the Job. Default value is None.
+        :type options: ~azure.batch.models.BatchJobTerminateOptions
         :keyword timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
@@ -2838,12 +2839,12 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        if parameters is not None:
-            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        if options is not None:
+            _content = json.dumps(options, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
         else:
             _content = None
 
-        _request = build_batch_terminate_job_request(
+        _request = build_batch_terminate_job_internal_request(
             job_id=job_id,
             timeout=timeout,
             ocpdate=ocpdate,
@@ -2872,7 +2873,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2961,7 +2962,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2985,7 +2986,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         select: Optional[List[str]] = None,
         expand: Optional[List[str]] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.BatchJob"]:
+    ) -> AsyncItemPaged["_models.BatchJob"]:
         """Lists all of the Jobs in the specified Account.
 
         Lists all of the Jobs in the specified Account.
@@ -3088,7 +3089,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response.json())
+                error = _failsafe_deserialize(_models.BatchError, response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -3107,7 +3108,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         select: Optional[List[str]] = None,
         expand: Optional[List[str]] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.BatchJob"]:
+    ) -> AsyncItemPaged["_models.BatchJob"]:
         """Lists the Jobs that have been created under the specified Job Schedule.
 
         Lists the Jobs that have been created under the specified Job Schedule.
@@ -3214,7 +3215,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response.json())
+                error = _failsafe_deserialize(_models.BatchError, response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -3232,7 +3233,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         filter: Optional[str] = None,
         select: Optional[List[str]] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.BatchJobPreparationAndReleaseTaskStatus"]:
+    ) -> AsyncItemPaged["_models.BatchJobPreparationAndReleaseTaskStatus"]:
         """Lists the execution status of the Job Preparation and Job Release Task for the
         specified Job across the Compute Nodes where the Job has run.
 
@@ -3344,7 +3345,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response.json())
+                error = _failsafe_deserialize(_models.BatchError, response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -3416,7 +3417,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -3503,7 +3504,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -3526,7 +3527,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         filter: Optional[str] = None,
         select: Optional[List[str]] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.BatchCertificate"]:
+    ) -> AsyncItemPaged["_models.BatchCertificate"]:
         """Lists all of the Certificates that have been added to the specified Account.
 
         Lists all of the Certificates that have been added to the specified Account.
@@ -3626,7 +3627,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response.json())
+                error = _failsafe_deserialize(_models.BatchError, response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -3706,7 +3707,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -3720,7 +3721,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def delete_certificate(
+    async def _delete_certificate_internal(
         self,
         thumbprint_algorithm: str,
         thumbprint: str,
@@ -3771,7 +3772,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_batch_delete_certificate_request(
+        _request = build_batch_delete_certificate_internal_request(
             thumbprint_algorithm=thumbprint_algorithm,
             thumbprint=thumbprint,
             timeout=timeout,
@@ -3794,7 +3795,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -3880,7 +3881,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -3990,7 +3991,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -4005,7 +4006,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         return 200 <= response.status_code <= 299
 
     @distributed_trace_async
-    async def delete_job_schedule(
+    async def _delete_job_schedule_internal(
         self,
         job_schedule_id: str,
         *,
@@ -4077,7 +4078,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_batch_delete_job_schedule_request(
+        _request = build_batch_delete_job_schedule_internal_request(
             job_schedule_id=job_schedule_id,
             timeout=timeout,
             ocpdate=ocpdate,
@@ -4104,7 +4105,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -4216,7 +4217,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -4340,7 +4341,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -4458,7 +4459,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -4562,7 +4563,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -4666,7 +4667,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -4680,7 +4681,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def terminate_job_schedule(
+    async def _terminate_job_schedule_internal(
         self,
         job_schedule_id: str,
         *,
@@ -4749,7 +4750,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_batch_terminate_job_schedule_request(
+        _request = build_batch_terminate_job_schedule_internal_request(
             job_schedule_id=job_schedule_id,
             timeout=timeout,
             ocpdate=ocpdate,
@@ -4776,7 +4777,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -4857,7 +4858,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -4881,7 +4882,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         select: Optional[List[str]] = None,
         expand: Optional[List[str]] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.BatchJobSchedule"]:
+    ) -> AsyncItemPaged["_models.BatchJobSchedule"]:
         """Lists all of the Job Schedules in the specified Account.
 
         Lists all of the Job Schedules in the specified Account.
@@ -4984,7 +4985,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response.json())
+                error = _failsafe_deserialize(_models.BatchError, response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -5065,7 +5066,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -5090,7 +5091,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         select: Optional[List[str]] = None,
         expand: Optional[List[str]] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.BatchTask"]:
+    ) -> AsyncItemPaged["_models.BatchTask"]:
         """Lists all of the Tasks that are associated with the specified Job.
 
         For multi-instance Tasks, information such as affinityId, executionInfo and
@@ -5198,7 +5199,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response.json())
+                error = _failsafe_deserialize(_models.BatchError, response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -5296,7 +5297,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -5414,7 +5415,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -5534,7 +5535,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -5657,7 +5658,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -5680,7 +5681,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         ocpdate: Optional[datetime.datetime] = None,
         select: Optional[List[str]] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.BatchSubtask"]:
+    ) -> AsyncItemPaged["_models.BatchSubtask"]:
         """Lists all of the subtasks that are associated with the specified multi-instance
         Task.
 
@@ -5777,7 +5778,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response.json())
+                error = _failsafe_deserialize(_models.BatchError, response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -5881,7 +5882,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -5996,7 +5997,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -6087,7 +6088,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -6190,7 +6191,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -6296,7 +6297,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -6328,7 +6329,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         filter: Optional[str] = None,
         recursive: Optional[bool] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.BatchNodeFile"]:
+    ) -> AsyncItemPaged["_models.BatchNodeFile"]:
         """Lists the files in a Task's directory on its Compute Node.
 
         Lists the files in a Task's directory on its Compute Node.
@@ -6436,7 +6437,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response.json())
+                error = _failsafe_deserialize(_models.BatchError, response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -6520,7 +6521,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -6604,7 +6605,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -6620,7 +6621,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         pool_id: str,
         node_id: str,
         user_name: str,
-        content: _models.BatchNodeUserUpdateOptions,
+        update_options: _models.BatchNodeUserUpdateOptions,
         *,
         timeout: Optional[int] = None,
         ocpdate: Optional[datetime.datetime] = None,
@@ -6639,8 +6640,8 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :type node_id: str
         :param user_name: The name of the user Account to update. Required.
         :type user_name: str
-        :param content: The options to use for updating the user. Required.
-        :type content: ~azure.batch.models.BatchNodeUserUpdateOptions
+        :param update_options: The options to use for updating the user. Required.
+        :type update_options: ~azure.batch.models.BatchNodeUserUpdateOptions
         :keyword timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
@@ -6669,7 +6670,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(content, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        _content = json.dumps(update_options, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_batch_replace_node_user_request(
             pool_id=pool_id,
@@ -6697,7 +6698,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -6785,7 +6786,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -6805,11 +6806,11 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def reboot_node(
+    async def _reboot_node_internal(
         self,
         pool_id: str,
         node_id: str,
-        parameters: Optional[_models.BatchNodeRebootKinds] = None,
+        options: Optional[_models.BatchNodeRebootOptions] = None,
         *,
         timeout: Optional[int] = None,
         ocpdate: Optional[datetime.datetime] = None,
@@ -6823,8 +6824,8 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :type pool_id: str
         :param node_id: The ID of the Compute Node that you want to restart. Required.
         :type node_id: str
-        :param parameters: The options to use for rebooting the Compute Node. Default value is None.
-        :type parameters: ~azure.batch.models.BatchNodeRebootKinds
+        :param options: The options to use for rebooting the Compute Node. Default value is None.
+        :type options: ~azure.batch.models.BatchNodeRebootOptions
         :keyword timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
@@ -6853,12 +6854,12 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        if parameters is not None:
-            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        if options is not None:
+            _content = json.dumps(options, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
         else:
             _content = None
 
-        _request = build_batch_reboot_node_request(
+        _request = build_batch_reboot_node_internal_request(
             pool_id=pool_id,
             node_id=node_id,
             timeout=timeout,
@@ -6883,7 +6884,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -6897,7 +6898,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def start_node(
+    async def _start_node_internal(
         self,
         pool_id: str,
         node_id: str,
@@ -6939,7 +6940,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_batch_start_node_request(
+        _request = build_batch_start_node_internal_request(
             pool_id=pool_id,
             node_id=node_id,
             timeout=timeout,
@@ -6962,7 +6963,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -6976,11 +6977,11 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def reimage_node(
+    async def _reimage_node_internal(
         self,
         pool_id: str,
         node_id: str,
-        parameters: Optional[_models.BatchNodeReimageOptions] = None,
+        options: Optional[_models.BatchNodeReimageOptions] = None,
         *,
         timeout: Optional[int] = None,
         ocpdate: Optional[datetime.datetime] = None,
@@ -6996,8 +6997,8 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :type pool_id: str
         :param node_id: The ID of the Compute Node that you want to restart. Required.
         :type node_id: str
-        :param parameters: The options to use for reimaging the Compute Node. Default value is None.
-        :type parameters: ~azure.batch.models.BatchNodeReimageOptions
+        :param options: The options to use for reimaging the Compute Node. Default value is None.
+        :type options: ~azure.batch.models.BatchNodeReimageOptions
         :keyword timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
@@ -7026,12 +7027,12 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        if parameters is not None:
-            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        if options is not None:
+            _content = json.dumps(options, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
         else:
             _content = None
 
-        _request = build_batch_reimage_node_request(
+        _request = build_batch_reimage_node_internal_request(
             pool_id=pool_id,
             node_id=node_id,
             timeout=timeout,
@@ -7056,7 +7057,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -7070,11 +7071,11 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def deallocate_node(
+    async def _deallocate_node_internal(
         self,
         pool_id: str,
         node_id: str,
-        parameters: Optional[_models.BatchNodeDeallocateOptions] = None,
+        options: Optional[_models.BatchNodeDeallocateOptions] = None,
         *,
         timeout: Optional[int] = None,
         ocpdate: Optional[datetime.datetime] = None,
@@ -7088,8 +7089,8 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :type pool_id: str
         :param node_id: The ID of the Compute Node that you want to restart. Required.
         :type node_id: str
-        :param parameters: The options to use for deallocating the Compute Node. Default value is None.
-        :type parameters: ~azure.batch.models.BatchNodeDeallocateOptions
+        :param options: The options to use for deallocating the Compute Node. Default value is None.
+        :type options: ~azure.batch.models.BatchNodeDeallocateOptions
         :keyword timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
@@ -7118,12 +7119,12 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        if parameters is not None:
-            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        if options is not None:
+            _content = json.dumps(options, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
         else:
             _content = None
 
-        _request = build_batch_deallocate_node_request(
+        _request = build_batch_deallocate_node_internal_request(
             pool_id=pool_id,
             node_id=node_id,
             timeout=timeout,
@@ -7148,7 +7149,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -7166,7 +7167,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         self,
         pool_id: str,
         node_id: str,
-        parameters: Optional[_models.BatchNodeDisableSchedulingOptions] = None,
+        options: Optional[_models.BatchNodeDisableSchedulingOptions] = None,
         *,
         timeout: Optional[int] = None,
         ocpdate: Optional[datetime.datetime] = None,
@@ -7182,9 +7183,9 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :param node_id: The ID of the Compute Node on which you want to disable Task scheduling.
          Required.
         :type node_id: str
-        :param parameters: The options to use for disabling scheduling on the Compute Node. Default
-         value is None.
-        :type parameters: ~azure.batch.models.BatchNodeDisableSchedulingOptions
+        :param options: The options to use for disabling scheduling on the Compute Node. Default value
+         is None.
+        :type options: ~azure.batch.models.BatchNodeDisableSchedulingOptions
         :keyword timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
@@ -7213,8 +7214,8 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        if parameters is not None:
-            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        if options is not None:
+            _content = json.dumps(options, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
         else:
             _content = None
 
@@ -7243,7 +7244,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -7324,7 +7325,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -7411,7 +7412,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -7435,7 +7436,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         self,
         pool_id: str,
         node_id: str,
-        content: _models.UploadBatchServiceLogsOptions,
+        upload_options: _models.UploadBatchServiceLogsOptions,
         *,
         timeout: Optional[int] = None,
         ocpdate: Optional[datetime.datetime] = None,
@@ -7454,8 +7455,8 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :param node_id: The ID of the Compute Node for which you want to get the Remote Desktop
          Protocol file. Required.
         :type node_id: str
-        :param content: The Azure Batch service log files upload options. Required.
-        :type content: ~azure.batch.models.UploadBatchServiceLogsOptions
+        :param upload_options: The Azure Batch service log files upload options. Required.
+        :type upload_options: ~azure.batch.models.UploadBatchServiceLogsOptions
         :keyword timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
@@ -7485,7 +7486,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         )
         cls: ClsType[_models.UploadBatchServiceLogsResult] = kwargs.pop("cls", None)
 
-        _content = json.dumps(content, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        _content = json.dumps(upload_options, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_batch_upload_node_logs_request(
             pool_id=pool_id,
@@ -7517,7 +7518,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -7547,7 +7548,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         filter: Optional[str] = None,
         select: Optional[List[str]] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.BatchNode"]:
+    ) -> AsyncItemPaged["_models.BatchNode"]:
         """Lists the Compute Nodes in the specified Pool.
 
         Lists the Compute Nodes in the specified Pool.
@@ -7650,7 +7651,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response.json())
+                error = _failsafe_deserialize(_models.BatchError, response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -7737,7 +7738,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -7767,7 +7768,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         max_results: Optional[int] = None,
         select: Optional[List[str]] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.BatchNodeVMExtension"]:
+    ) -> AsyncItemPaged["_models.BatchNodeVMExtension"]:
         """Lists the Compute Nodes Extensions in the specified Pool.
 
         Lists the Compute Nodes Extensions in the specified Pool.
@@ -7867,7 +7868,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response.json())
+                error = _failsafe_deserialize(_models.BatchError, response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -7952,7 +7953,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -8055,7 +8056,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -8161,7 +8162,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.BatchError, response.json())
+            error = _failsafe_deserialize(_models.BatchError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -8193,7 +8194,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         filter: Optional[str] = None,
         recursive: Optional[bool] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.BatchNodeFile"]:
+    ) -> AsyncItemPaged["_models.BatchNodeFile"]:
         """Lists all of the files in Task directories on the specified Compute Node.
 
         Lists all of the files in Task directories on the specified Compute Node.
@@ -8299,7 +8300,7 @@ class BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.BatchError, response.json())
+                error = _failsafe_deserialize(_models.BatchError, response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response

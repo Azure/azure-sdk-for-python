@@ -610,7 +610,7 @@ class BatchCertificate(_Model):
     :vartype public_data: str
     :ivar delete_certificate_error: The error that occurred on the last attempt to delete this
      Certificate. This property is set only if the Certificate is in the DeleteFailed state.
-    :vartype delete_certificate_error: ~azure.batch.models.DeleteBatchCertificateError
+    :vartype delete_certificate_error: ~azure.batch.models.BatchCertificateDeleteError
     :ivar data: The base64-encoded contents of the Certificate. The maximum size is 10KB. Required.
     :vartype data: bytes
     :ivar certificate_format: The format of the Certificate data. Known values are: "pfx" and
@@ -648,7 +648,7 @@ class BatchCertificate(_Model):
      Certificate is in its initial Active state."""
     public_data: Optional[str] = rest_field(name="publicData", visibility=["read"])
     """The public part of the Certificate as a base-64 encoded .cer file."""
-    delete_certificate_error: Optional["_models.DeleteBatchCertificateError"] = rest_field(
+    delete_certificate_error: Optional["_models.BatchCertificateDeleteError"] = rest_field(
         name="deleteCertificateError", visibility=["read"]
     )
     """The error that occurred on the last attempt to delete this Certificate. This property is set
@@ -672,6 +672,56 @@ class BatchCertificate(_Model):
         data: bytes,
         certificate_format: Optional[Union[str, "_models.BatchCertificateFormat"]] = None,
         password: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class BatchCertificateDeleteError(_Model):
+    """An error encountered by the Batch service when deleting a Certificate.
+
+    :ivar code: An identifier for the Certificate deletion error. Codes are invariant and are
+     intended to be consumed programmatically.
+    :vartype code: str
+    :ivar message: A message describing the Certificate deletion error, intended to be suitable for
+     display in a user interface.
+    :vartype message: str
+    :ivar values_property: A list of additional error details related to the Certificate deletion
+     error. This list includes details such as the active Pools and Compute Nodes referencing this
+     Certificate. However, if a large number of resources reference the Certificate, the list
+     contains only about the first hundred.
+    :vartype values_property: list[~azure.batch.models.NameValuePair]
+    """
+
+    code: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """An identifier for the Certificate deletion error. Codes are invariant and are intended to be
+     consumed programmatically."""
+    message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A message describing the Certificate deletion error, intended to be suitable for display in a
+     user interface."""
+    values_property: Optional[List["_models.NameValuePair"]] = rest_field(
+        name="values", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A list of additional error details related to the Certificate deletion error. This list
+     includes details such as the active Pools and Compute Nodes referencing this Certificate.
+     However, if a large number of resources reference the Certificate, the list contains only about
+     the first hundred."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        code: Optional[str] = None,
+        message: Optional[str] = None,
+        values_property: Optional[List["_models.NameValuePair"]] = None,
     ) -> None: ...
 
     @overload
@@ -908,7 +958,7 @@ class BatchError(_Model):
     """An error response received from the Azure Batch service.
 
     :ivar code: An identifier for the error. Codes are invariant and are intended to be consumed
-     programmatically. Required.
+     programmatically.
     :vartype code: str
     :ivar message: A message describing the error, intended to be suitable for display in a user
      interface.
@@ -918,9 +968,9 @@ class BatchError(_Model):
     :vartype values_property: list[~azure.batch.models.BatchErrorDetail]
     """
 
-    code: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    code: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """An identifier for the error. Codes are invariant and are intended to be consumed
-     programmatically. Required."""
+     programmatically."""
     message: Optional["_models.BatchErrorMessage"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -934,7 +984,7 @@ class BatchError(_Model):
     def __init__(
         self,
         *,
-        code: str,
+        code: Optional[str] = None,
         message: Optional["_models.BatchErrorMessage"] = None,
         values_property: Optional[List["_models.BatchErrorDetail"]] = None,
     ) -> None: ...
@@ -2019,7 +2069,7 @@ class BatchJobNetworkConfiguration(_Model):
     :ivar skip_withdraw_from_vnet: Whether to withdraw Compute Nodes from the virtual network to
      DNC when the job is terminated or deleted.  If true, nodes will remain joined to the virtual
      network to DNC. If false, nodes will automatically withdraw when the job ends. Defaults to
-     false. Required.
+     false.
     :vartype skip_withdraw_from_vnet: bool
     """
 
@@ -2043,19 +2093,19 @@ class BatchJobNetworkConfiguration(_Model):
      `https://learn.microsoft.com/azure/batch/batch-api-basics#virtual-network-vnet-and-firewall-configuration
      <https://learn.microsoft.com/azure/batch/batch-api-basics#virtual-network-vnet-and-firewall-configuration>`_.
      Required."""
-    skip_withdraw_from_vnet: bool = rest_field(
+    skip_withdraw_from_vnet: Optional[bool] = rest_field(
         name="skipWithdrawFromVNet", visibility=["read", "create", "update", "delete", "query"]
     )
     """Whether to withdraw Compute Nodes from the virtual network to DNC when the job is terminated or
      deleted.  If true, nodes will remain joined to the virtual network to DNC. If false, nodes will
-     automatically withdraw when the job ends. Defaults to false. Required."""
+     automatically withdraw when the job ends. Defaults to false."""
 
     @overload
     def __init__(
         self,
         *,
         subnet_id: str,
-        skip_withdraw_from_vnet: bool,
+        skip_withdraw_from_vnet: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -4605,7 +4655,7 @@ class BatchNodePlacementConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchNodeRebootKinds(_Model):
+class BatchNodeRebootOptions(_Model):
     """Parameters for rebooting an Azure Batch Compute Node.
 
     :ivar node_reboot_kind: When to reboot the Compute Node and what to do with currently running
@@ -8892,6 +8942,44 @@ class BatchUserAssignedIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
+class BatchVmDiskSecurityProfile(_Model):
+    """Specifies the security profile settings for the managed disk. **Note**: It can only be set for
+    Confidential VMs and required when using Confidential VMs.
+
+    :ivar security_encryption_type: Specifies the EncryptionType of the managed disk. It is set to
+     VMGuestStateOnly for encryption of just the VMGuestState blob, and NonPersistedTPM for not
+     persisting firmware state in the VMGuestState blob. **Note**: It can be set for only
+     Confidential VMs and is required when using Confidential VMs. Known values are:
+     "NonPersistedTPM" and "VMGuestStateOnly".
+    :vartype security_encryption_type: str or ~azure.batch.models.SecurityEncryptionTypes
+    """
+
+    security_encryption_type: Optional[Union[str, "_models.SecurityEncryptionTypes"]] = rest_field(
+        name="securityEncryptionType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the EncryptionType of the managed disk. It is set to VMGuestStateOnly for encryption
+     of just the VMGuestState blob, and NonPersistedTPM for not persisting firmware state in the
+     VMGuestState blob. **Note**: It can be set for only Confidential VMs and is required when using
+     Confidential VMs. Known values are: \"NonPersistedTPM\" and \"VMGuestStateOnly\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        security_encryption_type: Optional[Union[str, "_models.SecurityEncryptionTypes"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class BatchVmImageReference(_Model):
     """A reference to an Azure Virtual Machines Marketplace Image or a Azure Compute Gallery Image.
     To get the list of all Azure Marketplace Image references verified by Azure Batch, see the
@@ -9205,56 +9293,6 @@ class DataDisk(_Model):
         disk_size_gb: int,
         caching: Optional[Union[str, "_models.CachingType"]] = None,
         storage_account_type: Optional[Union[str, "_models.StorageAccountType"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DeleteBatchCertificateError(_Model):
-    """An error encountered by the Batch service when deleting a Certificate.
-
-    :ivar code: An identifier for the Certificate deletion error. Codes are invariant and are
-     intended to be consumed programmatically.
-    :vartype code: str
-    :ivar message: A message describing the Certificate deletion error, intended to be suitable for
-     display in a user interface.
-    :vartype message: str
-    :ivar values_property: A list of additional error details related to the Certificate deletion
-     error. This list includes details such as the active Pools and Compute Nodes referencing this
-     Certificate. However, if a large number of resources reference the Certificate, the list
-     contains only about the first hundred.
-    :vartype values_property: list[~azure.batch.models.NameValuePair]
-    """
-
-    code: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """An identifier for the Certificate deletion error. Codes are invariant and are intended to be
-     consumed programmatically."""
-    message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """A message describing the Certificate deletion error, intended to be suitable for display in a
-     user interface."""
-    values_property: Optional[List["_models.NameValuePair"]] = rest_field(
-        name="values", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """A list of additional error details related to the Certificate deletion error. This list
-     includes details such as the active Pools and Compute Nodes referencing this Certificate.
-     However, if a large number of resources reference the Certificate, the list contains only about
-     the first hundred."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
-        values_property: Optional[List["_models.NameValuePair"]] = None,
     ) -> None: ...
 
     @overload
@@ -9774,7 +9812,7 @@ class ManagedDisk(_Model):
      "standard_lrs", "premium_lrs", and "standardssd_lrs".
     :vartype storage_account_type: str or ~azure.batch.models.StorageAccountType
     :ivar security_profile: Specifies the security profile settings for the managed disk.
-    :vartype security_profile: ~azure.batch.models.VmDiskSecurityProfile
+    :vartype security_profile: ~azure.batch.models.BatchVmDiskSecurityProfile
     """
 
     storage_account_type: Optional[Union[str, "_models.StorageAccountType"]] = rest_field(
@@ -9782,7 +9820,7 @@ class ManagedDisk(_Model):
     )
     """The storage account type for managed disk. Known values are: \"standard_lrs\", \"premium_lrs\",
      and \"standardssd_lrs\"."""
-    security_profile: Optional["_models.VmDiskSecurityProfile"] = rest_field(
+    security_profile: Optional["_models.BatchVmDiskSecurityProfile"] = rest_field(
         name="securityProfile", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies the security profile settings for the managed disk."""
@@ -9792,7 +9830,7 @@ class ManagedDisk(_Model):
         self,
         *,
         storage_account_type: Optional[Union[str, "_models.StorageAccountType"]] = None,
-        security_profile: Optional["_models.VmDiskSecurityProfile"] = None,
+        security_profile: Optional["_models.BatchVmDiskSecurityProfile"] = None,
     ) -> None: ...
 
     @overload
@@ -10751,19 +10789,17 @@ class SecurityProfile(_Model):
      on encryption at host requirements, please refer to
      `https://learn.microsoft.com/azure/virtual-machines/disk-encryption#supported-vm-sizes
      <https://learn.microsoft.com/azure/virtual-machines/disk-encryption#supported-vm-sizes>`_.
-     Required.
     :vartype encryption_at_host: bool
     :ivar security_type: Specifies the SecurityType of the virtual machine. It has to be set to any
-     specified value to enable UefiSettings. Required. Known values are: "trustedLaunch" and
-     "confidentialVM".
+     specified value to enable UefiSettings. Known values are: "trustedLaunch" and "confidentialVM".
     :vartype security_type: str or ~azure.batch.models.SecurityTypes
     :ivar uefi_settings: Specifies the security settings like secure boot and vTPM used while
      creating the virtual machine. Specifies the security settings like secure boot and vTPM used
-     while creating the virtual machine. Required.
+     while creating the virtual machine.
     :vartype uefi_settings: ~azure.batch.models.BatchUefiSettings
     """
 
-    encryption_at_host: bool = rest_field(
+    encryption_at_host: Optional[bool] = rest_field(
         name="encryptionAtHost", visibility=["read", "create", "update", "delete", "query"]
     )
     """This property can be used by user in the request to enable or disable the Host Encryption for
@@ -10771,27 +10807,26 @@ class SecurityProfile(_Model):
      disks including Resource/Temp disk at host itself. For more information on encryption at host
      requirements, please refer to
      `https://learn.microsoft.com/azure/virtual-machines/disk-encryption#supported-vm-sizes
-     <https://learn.microsoft.com/azure/virtual-machines/disk-encryption#supported-vm-sizes>`_.
-     Required."""
-    security_type: Union[str, "_models.SecurityTypes"] = rest_field(
+     <https://learn.microsoft.com/azure/virtual-machines/disk-encryption#supported-vm-sizes>`_."""
+    security_type: Optional[Union[str, "_models.SecurityTypes"]] = rest_field(
         name="securityType", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies the SecurityType of the virtual machine. It has to be set to any specified value to
-     enable UefiSettings. Required. Known values are: \"trustedLaunch\" and \"confidentialVM\"."""
-    uefi_settings: "_models.BatchUefiSettings" = rest_field(
+     enable UefiSettings. Known values are: \"trustedLaunch\" and \"confidentialVM\"."""
+    uefi_settings: Optional["_models.BatchUefiSettings"] = rest_field(
         name="uefiSettings", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies the security settings like secure boot and vTPM used while creating the virtual
      machine. Specifies the security settings like secure boot and vTPM used while creating the
-     virtual machine. Required."""
+     virtual machine."""
 
     @overload
     def __init__(
         self,
         *,
-        encryption_at_host: bool,
-        security_type: Union[str, "_models.SecurityTypes"],
-        uefi_settings: "_models.BatchUefiSettings",
+        encryption_at_host: Optional[bool] = None,
+        security_type: Optional[Union[str, "_models.SecurityTypes"]] = None,
+        uefi_settings: Optional["_models.BatchUefiSettings"] = None,
     ) -> None: ...
 
     @overload
@@ -11322,44 +11357,6 @@ class VirtualMachineInfo(_Model):
         *,
         image_reference: Optional["_models.BatchVmImageReference"] = None,
         scale_set_vm_resource_id: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class VmDiskSecurityProfile(_Model):
-    """Specifies the security profile settings for the managed disk. **Note**: It can only be set for
-    Confidential VMs and required when using Confidential VMs.
-
-    :ivar security_encryption_type: Specifies the EncryptionType of the managed disk. It is set to
-     VMGuestStateOnly for encryption of just the VMGuestState blob, and NonPersistedTPM for not
-     persisting firmware state in the VMGuestState blob. **Note**: It can be set for only
-     Confidential VMs and is required when using Confidential VMs. Known values are:
-     "NonPersistedTPM" and "VMGuestStateOnly".
-    :vartype security_encryption_type: str or ~azure.batch.models.SecurityEncryptionTypes
-    """
-
-    security_encryption_type: Optional[Union[str, "_models.SecurityEncryptionTypes"]] = rest_field(
-        name="securityEncryptionType", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Specifies the EncryptionType of the managed disk. It is set to VMGuestStateOnly for encryption
-     of just the VMGuestState blob, and NonPersistedTPM for not persisting firmware state in the
-     VMGuestState blob. **Note**: It can be set for only Confidential VMs and is required when using
-     Confidential VMs. Known values are: \"NonPersistedTPM\" and \"VMGuestStateOnly\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        security_encryption_type: Optional[Union[str, "_models.SecurityEncryptionTypes"]] = None,
     ) -> None: ...
 
     @overload
