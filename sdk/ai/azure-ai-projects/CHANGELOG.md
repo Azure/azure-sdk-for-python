@@ -10,12 +10,6 @@ via `pip install --pre azure-ai-projects` will install latest beta version of `a
 (which has features in preview) instead of latest stable version (which does
 not include preview features).
 
-### Bugs Fixed
-
-* Fix the issue with logging Agent message, when the message has "in progress" status (related to [issue](https://github.com/Azure/azure-sdk-for-python/issues/42645)).
-* Fix the issue with `RunStepOpenAPIToolCall` logging [issue](https://github.com/Azure/azure-sdk-for-python/issues/42645).
-
-
 ## 1.1.0b2 (2025-08-05)
 
 ### Bugs Fixed
