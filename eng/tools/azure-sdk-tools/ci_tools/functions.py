@@ -444,9 +444,9 @@ def pip_install(
     Attempts to invoke an install operation using the invoking python's pip. Empty requirements are auto-success.
     """
 
-    exe = python_executable or sys.executable
+    exe = get_pip_command(python_executable)
 
-    command = [exe, "-m", "pip", "install"]
+    command = exe + ["install"]
 
     if requirements:
         command.extend([req.strip() for req in requirements])
@@ -929,6 +929,25 @@ def verify_package_classifiers(package_name: str, package_version: str, package_
             return False, f"{package_name} has version {package_version} and is a GA release, but had development status '{c}'. Expecting a development classifier that is equal or greater than 'Development Status :: 5 - Production/Stable'."
     return True, None
 
+
+def get_venv_call(python_exe: Optional[str] = None) -> List[str]:
+    """
+    Determine whether to use 'uv venv' or regular 'python -m venv' based on environment.
+
+    :param str python_exe: The Python executable to use (if not using the default).
+    :return: List of command arguments for venv.
+    :rtype: List[str]
+
+    """
+    # Check TOX_PIP_IMPL environment variable (aligns with tox.ini configuration)
+    pip_impl = os.environ.get('TOX_PIP_IMPL', 'pip').lower()
+
+    # soon we will change this to default to uv
+    if pip_impl == 'uv':
+        return ["uv", "venv"]
+    else:
+        return [python_exe if python_exe else sys.executable, "-m", "venv"]
+
 def get_pip_command(python_exe: Optional[str] = None) -> List[str]:
     """
     Determine whether to use 'uv pip' or regular 'pip' based on environment.
@@ -941,7 +960,27 @@ def get_pip_command(python_exe: Optional[str] = None) -> List[str]:
     # Check TOX_PIP_IMPL environment variable (aligns with tox.ini configuration)
     pip_impl = os.environ.get('TOX_PIP_IMPL', 'pip').lower()
 
+    # soon we will change this to default to uv
     if pip_impl == 'uv':
         return ["uv", "pip"]
     else:
         return [python_exe if python_exe else sys.executable, "-m", "pip"]
+
+
+def is_error_code_5_allowed(target_pkg: str, pkg_name: str):
+    """
+    Determine if error code 5 (no pytests run) is allowed for the given package.
+    """
+    if (
+        all(
+            map(
+                lambda x: any([pkg_id in x for pkg_id in MANAGEMENT_PACKAGE_IDENTIFIERS]),
+                [target_pkg],
+            )
+        )
+        or pkg_name in MANAGEMENT_PACKAGE_IDENTIFIERS
+        or pkg_name in NO_TESTS_ALLOWED
+    ):
+        return True
+    else:
+        return False

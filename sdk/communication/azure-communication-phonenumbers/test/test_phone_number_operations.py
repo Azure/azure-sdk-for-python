@@ -23,7 +23,7 @@ def test_build_phone_numbers_get_search_result_request():
     assert isinstance(request, HttpRequest)
     assert request.method == "GET"
     assert test_id in request.url
-    assert "api-version=2025-04-01" in request.url
+    assert "api-version=2025-06-01" in request.url
     assert request.headers["Accept"] == "application/json"
 
 
@@ -59,6 +59,6 @@ def test_build_phone_numbers_operator_information_search_request():
 
     assert isinstance(request, HttpRequest)
     assert request.method == "POST"
-    assert "api-version=2025-04-01" in request.url
+    assert "api-version=2025-06-01" in request.url
     assert "operatorInformation/:search" in request.url
     assert request.headers["Accept"] == "application/json"
