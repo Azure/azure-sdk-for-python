@@ -39,6 +39,7 @@ class TestRedTeam:
             **{**model_config, "azure_endpoint": "https://Sanitized.openai.azure.com/"},
         )
 
+    @pytest.mark.azuretest
     @pytest.mark.parametrize(
         ("proj_scope", "cred"),
         (
