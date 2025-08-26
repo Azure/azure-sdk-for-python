@@ -172,6 +172,7 @@ class _PartitionHealthTracker(object):
                         # only one request should be used to recover
                         with self.stale_partition_lock:
                             if _should_mark_healthy_tentative(partition_health_info, current_time):
+                                logger.info("Attempting recovery for %s in %s where health info is %s.", pk_range_wrapper, location, partition_health_info)
                                 # this will trigger one attempt to recover
                                 partition_health_info.transition_health_status(UNHEALTHY, current_time)
                                 request.healthy_tentative_location = location
@@ -235,6 +236,9 @@ class _PartitionHealthTracker(object):
 
         # Retrieve the consecutive failure threshold from the environment.
         consecutive_failure_threshold = int(os.environ.get(env_key, default_consecutive_threshold))
+        # log the current stats
+        logger.info("Failure for partition %s in location %s has %s",
+                    pk_range_wrapper, location, self.pk_range_wrapper_to_health_info[pk_range_wrapper][location])
 
         # Call the threshold checker with the current stats.
         self._check_thresholds(
