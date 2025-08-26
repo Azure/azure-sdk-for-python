@@ -338,7 +338,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         self._on_refresh_error: Optional[Union[Callable[[Exception], Awaitable[None]], None]] = kwargs.pop(
             "on_refresh_error", None
         )
-        self._map: Optional[Callable[[ConfigurationSetting], Awaitable[None]]] = kwargs.pop("map", None)
+        self._configuration_mapper: Optional[Callable[[ConfigurationSetting], Awaitable[None]]] = kwargs.pop("configuration_mapper", None)
 
     async def refresh(self, **kwargs) -> None:  # pylint: disable=too-many-statements
         if not self._refresh_on and not self._feature_flag_refresh_enabled:
@@ -393,13 +393,9 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                                 self._feature_flag_selectors,
                                 headers,
                                 self._origin_endpoint,
-                                map=self._map,
                                 **kwargs,
                             )
                         )
-                        if self._map and feature_flags:
-                            for feature_flag in feature_flags:
-                                await self._map(feature_flag)
                         if refresh_on_feature_flags:
                             self._refresh_on_feature_flags = refresh_on_feature_flags
                         self._feature_filter_usage = filters_used
@@ -461,7 +457,6 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                         self._feature_flag_selectors,
                         self._feature_flag_refresh_enabled,
                         self._origin_endpoint,
-                        map=self._map,
                         headers=headers,
                         **kwargs,
                     )
@@ -511,8 +506,8 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
             if isinstance(config, FeatureFlagConfigurationSetting):
                 # Feature flags are not processed like other settings
                 continue
-            if self._map:
-                await self._map(config)
+            if self._configuration_mapper:
+                await self._configuration_mapper(config)
             key = self._process_key_name(config)
             value = await self._process_key_value(config)
             configuration_settings_processed[key] = value

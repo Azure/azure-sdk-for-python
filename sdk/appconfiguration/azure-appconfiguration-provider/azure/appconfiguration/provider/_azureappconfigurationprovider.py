@@ -323,7 +323,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         self._secret_clients: Dict[str, SecretClient] = {}
         self._on_refresh_success: Optional[Callable] = kwargs.pop("on_refresh_success", None)
         self._on_refresh_error: Optional[Callable[[Exception], None]] = kwargs.pop("on_refresh_error", None)
-        self._map: Optional[Callable] = kwargs.pop("map", None)
+        self._configuration_mapper: Optional[Callable] = kwargs.pop("configuration_mapper", None)
 
     def refresh(self, **kwargs) -> None:  # pylint: disable=too-many-statements
         if not self._refresh_on and not self._feature_flag_refresh_enabled:
@@ -376,13 +376,9 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                                 self._feature_flag_selectors,
                                 headers,
                                 self._origin_endpoint,
-                                map=self._map,
                                 **kwargs,
                             )
                         )
-                        if self._map and feature_flags:
-                            for feature_flag in feature_flags:
-                                self._map(feature_flag)
                         if refresh_on_feature_flags:
                             self._refresh_on_feature_flags = refresh_on_feature_flags
                         self._feature_filter_usage = filters_used
@@ -444,7 +440,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                         self._feature_flag_selectors,
                         self._feature_flag_refresh_enabled,
                         self._origin_endpoint,
-                        map=self._map,
+                        configuration_mapper=self._configuration_mapper,
                         headers=headers,
                         **kwargs,
                     )
@@ -489,9 +485,9 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
 
         configuration_settings_processed = {}
         for config in configuration_settings:
-            if self._map:
+            if self._configuration_mapper:
                 # If a map function is provided, use it to process the configuration setting
-                self._map(config)
+                self._configuration_mapper(config)
             if isinstance(config, FeatureFlagConfigurationSetting):
                 # Feature flags are not processed like other settings
                 continue
