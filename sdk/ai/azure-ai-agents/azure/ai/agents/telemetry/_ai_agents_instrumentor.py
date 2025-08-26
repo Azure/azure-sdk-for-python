@@ -18,7 +18,9 @@ from azure.ai.agents.models import AgentRunStream, AsyncAgentRunStream, RunStepM
 from azure.ai.agents.models._enums import (
     AgentsResponseFormatMode,
     MessageRole,
+    MessageStatus,
     RunStepStatus,
+    RunStepType,
 )
 from azure.ai.agents.models import (
     MessageAttachment,
@@ -28,6 +30,7 @@ from azure.ai.agents.models import (
     RunStepDeltaChunk,
     RunStepError,
     RunStepFunctionToolCall,
+    RunStepOpenAPIToolCall,
     RunStepToolCallDetails,
     RunStepCodeInterpreterToolCall,
     RunStepBingGroundingToolCall,
@@ -438,6 +441,12 @@ class _AIAgentsInstrumentorPreview:
                     "id": t.id,
                     "type": t.type,
                     t.type: t.bing_grounding,
+                }
+            elif isinstance(t, RunStepOpenAPIToolCall):
+                tool_call = {
+                    "id": t.id,
+                    "type": t.type,
+                    'function': t.as_dict().get('function', {})
                 }
             else:
                 tool_details = t.as_dict()[t.type]
@@ -2057,7 +2066,8 @@ class _AgentEventHandlerTraceWrapper(AgentEventHandler):
         else:
             retval = super().on_thread_message(message)  # pylint: disable=assignment-from-none # type: ignore
 
-        if message.status in {"completed", "incomplete"}:
+        # Message status may be in progress, even if the thread.message.completed event has arrived.
+        if message.status in {MessageStatus.COMPLETED, MessageStatus.INCOMPLETE} or (message.status == MessageStatus.IN_PROGRESS and message.content):
             self.last_message = message
 
         return retval  # type: ignore
@@ -2081,14 +2091,14 @@ class _AgentEventHandlerTraceWrapper(AgentEventHandler):
             retval = super().on_run_step(step)  # pylint: disable=assignment-from-none # type: ignore
 
         if (
-            step.type == "tool_calls"
+            step.type == RunStepType.TOOL_CALLS
             and isinstance(step.step_details, RunStepToolCallDetails)
             and step.status == RunStepStatus.COMPLETED
         ):
             self.instrumentor._add_tool_assistant_message_event(  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
                 self.span, step
             )
-        elif step.type == "message_creation" and step.status == RunStepStatus.COMPLETED:
+        elif step.type == RunStepType.MESSAGE_CREATION and step.status == RunStepStatus.COMPLETED:
             self.instrumentor.add_thread_message_event(self.span, cast(ThreadMessage, self.last_message), step.usage)
             if (
                 self.span
@@ -2194,7 +2204,8 @@ class _AsyncAgentEventHandlerTraceWrapper(AsyncAgentEventHandler):
         else:
             retval = await super().on_thread_message(message)  # type: ignore
 
-        if message.status in {"completed", "incomplete"}:
+        # Message status may be in progress, even if the thread.message.completed event has arrived.
+        if message.status in {MessageStatus.COMPLETED, MessageStatus.INCOMPLETE} or (message.status == MessageStatus.IN_PROGRESS and message.content):
             self.last_message = message
 
         return retval  # type: ignore
@@ -2218,14 +2229,14 @@ class _AsyncAgentEventHandlerTraceWrapper(AsyncAgentEventHandler):
             retval = await super().on_run_step(step)  # type: ignore
 
         if (
-            step.type == "tool_calls"
+            step.type == RunStepType.TOOL_CALLS
             and isinstance(step.step_details, RunStepToolCallDetails)
             and step.status == RunStepStatus.COMPLETED
         ):
             self.instrumentor._add_tool_assistant_message_event(  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
                 self.span, step
             )
-        elif step.type == "message_creation" and step.status == RunStepStatus.COMPLETED:
+        elif step.type == RunStepType.MESSAGE_CREATION and step.status == RunStepStatus.COMPLETED:
             self.instrumentor.add_thread_message_event(self.span, cast(ThreadMessage, self.last_message), step.usage)
             if (
                 self.span
