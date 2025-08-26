@@ -33,8 +33,6 @@ from .models import (
     DataType,
     AttestSgxEnclaveRequest,
     AttestOpenEnclaveRequest,
-    AttestationSigner,
-    AttestationToken,
     AttestationResult,
     TpmAttestationResult,
     AttestationType,
@@ -46,10 +44,20 @@ from .models import (
     PolicyCertificatesModificationResult as GeneratedPolicyCertificatesModificationResult,
     AttestationPolicyResult,
     AttestationPolicyCertificateResult,
-    AttestationTokenValidationException,
-    AttestationPolicyToken,
     PolicyModification,
     CertificateModification,
+)
+
+from .models._patch import (
+    AttestationTokenValidationException,
+    AttestationPolicyToken,
+    AttestationSigner,
+    AttestationToken,
+)
+
+from .models._enums import (
+    CertificateModification,
+    PolicyModification,
 )
 
 from ._common import pem_from_base64, validate_signing_keys, merge_validation_args

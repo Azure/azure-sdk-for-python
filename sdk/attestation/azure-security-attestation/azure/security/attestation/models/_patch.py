@@ -910,16 +910,9 @@ class TpmAttestationResult:
 
 
 __all__: List[str] = [
-    "AttestationSigner",
-    "AttestationType",
-    "AttestationToken",
     "AttestationPolicyResult",
     "AttestationPolicyCertificateResult",
     "AttestationResult",
-    "CertificateModification",
-    "PolicyModification",
-    "AttestationTokenValidationException",
-    "AttestationPolicyToken",
     "TpmAttestationResult",
 ]  # Add all objects you want publicly available to users at this package level
 

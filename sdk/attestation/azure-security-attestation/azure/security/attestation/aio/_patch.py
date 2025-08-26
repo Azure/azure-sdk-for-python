@@ -25,8 +25,6 @@ from ..models import (
     DataType,
     AttestSgxEnclaveRequest,
     AttestOpenEnclaveRequest,
-    AttestationSigner,
-    AttestationToken,
     AttestationResult,
     TpmAttestationResult,
     AttestationType,
@@ -39,6 +37,11 @@ from ..models import (
     StoredAttestationPolicy as GeneratedStoredAttestationPolicy,
     PolicyCertificatesModificationResult as GeneratedPolicyCertificatesModificationResult,
 )
+from ..models._patch import (
+    AttestationSigner,
+    AttestationToken,
+)
+
 from .._patch import AttestationClientConfiguration
 from .._common import pem_from_base64, validate_signing_keys, merge_validation_args
 
