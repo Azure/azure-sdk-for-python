@@ -159,15 +159,21 @@ def _default_instrumentation_options(configurations):
     otel_disabled_instrumentations = _get_otel_disabled_instrumentations()
 
     merged_instrumentation_options = {}
-    instrumentation_options = configurations.get(INSTRUMENTATION_OPTIONS_ARG, {})
+    instrumentation_options = configurations.get(INSTRUMENTATION_OPTIONS_ARG)
+    if not isinstance(instrumentation_options, dict):
+        instrumentation_options = {}
     for lib_name in _FULLY_SUPPORTED_INSTRUMENTED_LIBRARIES:
         disabled_by_env_var = lib_name in otel_disabled_instrumentations
         options = {"enabled": not disabled_by_env_var}
-        options.update(instrumentation_options.get(lib_name, {}))
+        lib_options = instrumentation_options.get(lib_name)
+        if isinstance(lib_options, dict):
+            options.update(lib_options)
         merged_instrumentation_options[lib_name] = options
     for lib_name in _PREVIEW_INSTRUMENTED_LIBRARIES:
         options = {"enabled": False}
-        options.update(instrumentation_options.get(lib_name, {}))
+        lib_options = instrumentation_options.get(lib_name)
+        if isinstance(lib_options, dict):
+            options.update(lib_options)
         merged_instrumentation_options[lib_name] = options
 
     configurations[INSTRUMENTATION_OPTIONS_ARG] = merged_instrumentation_options
@@ -186,8 +192,14 @@ def _default_views(configurations):
 
 
 def _default_browser_sdk_loader(configurations):
-    """Set default browser SDK loader configuration."""
-    configurations.setdefault(BROWSER_SDK_LOADER_CONFIG_ARG, {})
+    """Set default browser SDK loader configuration.
+
+    :param configurations: Configuration dictionary to update.
+    :type configurations: dict
+    """
+    # Use cast to Dict[str, Any] to avoid MyPy ConfigurationValue Union type issues
+    from typing import cast, Dict, Any
+    configurations.setdefault(BROWSER_SDK_LOADER_CONFIG_ARG, cast(Dict[str, Any], {}))
 
 
 def _get_otel_disabled_instrumentations():
@@ -202,7 +214,7 @@ def _is_instrumentation_enabled(configurations, lib_name):
     if INSTRUMENTATION_OPTIONS_ARG not in configurations:
         return False
     instrumentation_options = configurations[INSTRUMENTATION_OPTIONS_ARG]
-    if not lib_name in instrumentation_options:
+    if lib_name not in instrumentation_options:
         return False
     library_options = instrumentation_options[lib_name]
     if "enabled" not in library_options:

@@ -380,9 +380,9 @@ class TestConfigurations(TestCase):
         
         configurations = _get_configurations()
 
-        # Should have browser SDK loader enabled by default
-        self.assertTrue(configurations[BROWSER_SDK_LOADER_CONFIG_ARG])
-        self.assertEqual(configurations[BROWSER_SDK_LOADER_CONFIG_ARG], True)
+        # Should have browser SDK loader config key with empty dict as default
+        self.assertIn(BROWSER_SDK_LOADER_CONFIG_ARG, configurations)
+        self.assertEqual(configurations[BROWSER_SDK_LOADER_CONFIG_ARG], {})
 
     @patch.dict("os.environ", {}, clear=True)
     @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
