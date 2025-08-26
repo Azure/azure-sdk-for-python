@@ -145,236 +145,333 @@ class TestStatsbeat(unittest.TestCase):
         flush_mock.assert_called_once()
         mock_statsbeat_metrics_instance.init_non_initial_metrics.assert_called_once()
 
-#     def test_collect_statsbeat_metrics_exists(self):
-#         exporter = mock.Mock()
-#         exporter._endpoint = "test endpoint"
-#         exporter._instrumentation_key = "test ikey"
-#         exporter._disable_offline_storage = False
-#         exporter._credential = None
-#         exporter._distro_version = ""
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._StatsbeatMetrics")
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.MeterProvider")
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.PeriodicExportingMetricReader")
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._StatsBeatExporter")
+    def test_collect_statsbeat_metrics_exists(self, mock_exporter, mock_reader, mock_meter_provider, mock_statsbeat_metrics):
+        """Test that collect_statsbeat_metrics reuses existing configuration when called multiple times with same config."""
+        # Arrange
+        exporter = mock.Mock()
+        exporter._endpoint = "test endpoint"
+        exporter._instrumentation_key = "test ikey"
+        exporter._disable_offline_storage = False
+        exporter._credential = None
+        exporter._distro_version = ""
         
-#         manager = StatsbeatManager()
-#         self.assertFalse(manager._initialized)
+        # Set up mock returns
+        mock_exporter_instance = mock.Mock()
+        mock_exporter.return_value = mock_exporter_instance
         
-#         # Initialize first time
-#         _statsbeat.collect_statsbeat_metrics(exporter)
-#         first_metrics = manager._metrics
-#         self.assertTrue(manager._initialized)
+        mock_reader_instance = mock.Mock()
+        mock_reader.return_value = mock_reader_instance
         
-#         # Initialize second time - should reuse existing config since it's the same
-#         _statsbeat.collect_statsbeat_metrics(exporter)
-#         second_metrics = manager._metrics
-        
-#         self.assertTrue(manager._initialized)
-#         self.assertIsNotNone(second_metrics)
-#         # Should be the same metrics instance when config doesn't change
-#         self.assertEqual(first_metrics, second_metrics)
+        mock_meter_provider_instance = mock.Mock()
+        mock_meter_provider.return_value = mock_meter_provider_instance
+        flush_mock = mock.Mock()
+        mock_meter_provider_instance.force_flush = flush_mock
 
-#     @mock.patch.object(MeterProvider, "shutdown")
-#     @mock.patch.object(MeterProvider, "force_flush")
-#     @mock.patch.object(_StatsbeatMetrics, "init_non_initial_metrics")
-#     def test_collect_statsbeat_metrics_non_eu(self, non_init_mock, flush_mock, shutdown_mock):
-#         exporter = mock.Mock()
-#         exporter._instrumentation_key = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3333"
-#         exporter._endpoint = "https://westus-0.in.applicationinsights.azure.com/"
-#         exporter._disable_offline_storage = False
-#         exporter._credential = None
-#         exporter._distro_version = ""
+        mock_statsbeat_metrics_instance = mock.Mock()
+        mock_statsbeat_metrics.return_value = mock_statsbeat_metrics_instance
         
-#         manager = StatsbeatManager()
-#         self.assertFalse(manager._initialized)
+        manager = StatsbeatManager()
+        self.assertFalse(manager._initialized)
         
-#         with mock.patch.dict(
-#             os.environ,
-#             {
-#                 _APPLICATIONINSIGHTS_STATS_CONNECTION_STRING_ENV_NAME: "",
-#             },
-#         ):
-#             _statsbeat.collect_statsbeat_metrics(exporter)
+        # Act - Initialize first time
+        _statsbeat.collect_statsbeat_metrics(exporter)
+        first_metrics = manager._metrics
+        self.assertTrue(manager._initialized)
+        self.assertEqual(first_metrics, mock_statsbeat_metrics_instance)
         
-#         self.assertTrue(manager._initialized)
-#         metrics = manager._metrics
-#         self.assertIsNotNone(metrics)
+        # Verify first initialization called the mocks
+        self.assertEqual(mock_statsbeat_metrics.call_count, 1)
+        self.assertEqual(mock_meter_provider.call_count, 1)
         
-#         mp = metrics._meter_provider
-#         mr = mp._sdk_config.metric_readers[0]
-#         stats_exporter = mr._exporter
-#         self.assertEqual(
-#             stats_exporter._instrumentation_key, _DEFAULT_NON_EU_STATS_CONNECTION_STRING.split(";")[0].split("=")[1]
-#         )
-#         self.assertEqual(
-#             stats_exporter._endpoint, _DEFAULT_NON_EU_STATS_CONNECTION_STRING.split(";")[1].split("=")[1]  # noqa: E501
-#         )
+        # Act - Initialize second time with same config
+        _statsbeat.collect_statsbeat_metrics(exporter)
+        second_metrics = manager._metrics
+        
+        # Assert - should reuse existing config since it's the same
+        self.assertTrue(manager._initialized)
+        self.assertIsNotNone(second_metrics)
+        self.assertEqual(first_metrics, second_metrics)
+        
+        # Verify mocks were NOT called again since config is the same
+        self.assertEqual(mock_statsbeat_metrics.call_count, 1)  # Still only called once
+        self.assertEqual(mock_meter_provider.call_count, 1)     # Still only called once
+        
+        # Verify only one call to flush (from first initialization)
+        flush_mock.assert_called_once()
+        mock_statsbeat_metrics_instance.init_non_initial_metrics.assert_called_once()
 
-#     @mock.patch.object(MeterProvider, "shutdown")
-#     @mock.patch.object(MeterProvider, "force_flush")
-#     @mock.patch.object(_StatsbeatMetrics, "init_non_initial_metrics")
-#     def test_collect_statsbeat_metrics_eu(self, non_init_mock, flush_mock, shutdown_mock):
-#         exporter = mock.Mock()
-#         exporter._instrumentation_key = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3333"
-#         exporter._endpoint = "https://northeurope-0.in.applicationinsights.azure.com/"
-#         exporter._disable_offline_storage = False
-#         exporter._credential = None
-#         exporter._distro_version = ""
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._StatsbeatMetrics")
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.MeterProvider")
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.PeriodicExportingMetricReader")
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._StatsBeatExporter")
+    def test_collect_statsbeat_metrics_non_eu(self, mock_exporter, mock_reader, mock_meter_provider, mock_statsbeat_metrics):
+        """Test collect_statsbeat_metrics with non-EU endpoint uses correct connection string."""
+        # Arrange
+        exporter = mock.Mock()
+        exporter._instrumentation_key = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3333"
+        exporter._endpoint = "https://westus-0.in.applicationinsights.azure.com/"
+        exporter._disable_offline_storage = False
+        exporter._credential = None
+        exporter._distro_version = ""
         
-#         manager = StatsbeatManager()
-#         self.assertFalse(manager._initialized)
+        # Set up mock returns
+        mock_exporter_instance = mock.Mock()
+        mock_exporter.return_value = mock_exporter_instance
         
-#         with mock.patch.dict(
-#             os.environ,
-#             {
-#                 _APPLICATIONINSIGHTS_STATS_CONNECTION_STRING_ENV_NAME: "",
-#             },
-#         ):
-#             _statsbeat.collect_statsbeat_metrics(exporter)
+        mock_reader_instance = mock.Mock()
+        mock_reader.return_value = mock_reader_instance
         
-#         self.assertTrue(manager._initialized)
-#         metrics = manager._metrics
-#         self.assertIsNotNone(metrics)
-        
-#         mp = metrics._meter_provider
-#         mr = mp._sdk_config.metric_readers[0]
-#         stats_exporter = mr._exporter
-#         self.assertEqual(
-#             stats_exporter._instrumentation_key, _DEFAULT_EU_STATS_CONNECTION_STRING.split(";")[0].split("=")[1]
-#         )
-#         self.assertEqual(
-#             stats_exporter._endpoint, _DEFAULT_EU_STATS_CONNECTION_STRING.split(";")[1].split("=")[1]  # noqa: E501
-#         )
+        mock_meter_provider_instance = mock.Mock()
+        mock_meter_provider.return_value = mock_meter_provider_instance
+        flush_mock = mock.Mock()
+        mock_meter_provider_instance.force_flush = flush_mock
 
-#     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._StatsbeatMetrics")
-#     @mock.patch.dict(
-#         "os.environ",
-#         {
-#             _APPLICATIONINSIGHTS_STATS_SHORT_EXPORT_INTERVAL_ENV_NAME: "",
-#             _APPLICATIONINSIGHTS_STATS_LONG_EXPORT_INTERVAL_ENV_NAME: "",
-#         },
-#     )
-#     def test_collect_statsbeat_metrics_aad(
-#         self,
-#         mock_statsbeat_metrics,
-#     ):
-#         exporter = mock.Mock()
-#         TEST_ENDPOINT = "test endpoint"
-#         TEST_IKEY = "test ikey"
-#         TEST_CREDENTIAL = "test credential"
-#         exporter._endpoint = TEST_ENDPOINT
-#         exporter._instrumentation_key = TEST_IKEY
-#         exporter._disable_offline_storage = False
-#         exporter._credential = TEST_CREDENTIAL
-#         exporter._distro_version = ""
-#         _statsbeat.collect_statsbeat_metrics(exporter)
-#         mock_statsbeat_metrics.assert_called_once_with(
-#             mock.ANY,
-#             TEST_IKEY,
-#             TEST_ENDPOINT,
-#             False,
-#             _DEFAULT_STATS_LONG_EXPORT_INTERVAL / _DEFAULT_STATS_SHORT_EXPORT_INTERVAL,
-#             True,
-#             "",
-#         )
-
-#     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._StatsbeatMetrics")
-#     @mock.patch.dict(
-#         "os.environ",
-#         {
-#             _APPLICATIONINSIGHTS_STATS_SHORT_EXPORT_INTERVAL_ENV_NAME: "",
-#             _APPLICATIONINSIGHTS_STATS_LONG_EXPORT_INTERVAL_ENV_NAME: "",
-#         },
-#     )
-#     def test_collect_statsbeat_metrics_no_aad(
-#         self,
-#         mock_statsbeat_metrics,
-#     ):
-#         exporter = mock.Mock()
-#         TEST_ENDPOINT = "test endpoint"
-#         TEST_IKEY = "test ikey"
-#         TEST_CREDENTIAL = None
-#         exporter._endpoint = TEST_ENDPOINT
-#         exporter._instrumentation_key = TEST_IKEY
-#         exporter._disable_offline_storage = False
-#         exporter._credential = TEST_CREDENTIAL
-#         exporter._distro_version = ""
-#         _statsbeat.collect_statsbeat_metrics(exporter)
-#         mock_statsbeat_metrics.assert_called_once_with(
-#             mock.ANY,
-#             TEST_IKEY,
-#             TEST_ENDPOINT,
-#             False,
-#             _DEFAULT_STATS_LONG_EXPORT_INTERVAL / _DEFAULT_STATS_SHORT_EXPORT_INTERVAL,
-#             False,
-#             "",
-#         )
-
-#     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._StatsbeatMetrics")
-#     @mock.patch.dict(
-#         "os.environ",
-#         {
-#             _APPLICATIONINSIGHTS_STATS_SHORT_EXPORT_INTERVAL_ENV_NAME: "",
-#             _APPLICATIONINSIGHTS_STATS_LONG_EXPORT_INTERVAL_ENV_NAME: "",
-#         },
-#     )
-#     def test_collect_statsbeat_metrics_distro_version(
-#         self,
-#         mock_statsbeat_metrics,
-#     ):
-#         exporter = mock.Mock()
-#         TEST_ENDPOINT = "test endpoint"
-#         TEST_IKEY = "test ikey"
-#         TEST_CREDENTIAL = None
-#         exporter._endpoint = TEST_ENDPOINT
-#         exporter._instrumentation_key = TEST_IKEY
-#         exporter._disable_offline_storage = False
-#         exporter._credential = TEST_CREDENTIAL
-#         exporter._distro_version = "1.0.0"
-#         _statsbeat.collect_statsbeat_metrics(exporter)
-#         mock_statsbeat_metrics.assert_called_once_with(
-#             mock.ANY,
-#             TEST_IKEY,
-#             TEST_ENDPOINT,
-#             False,
-#             _DEFAULT_STATS_LONG_EXPORT_INTERVAL / _DEFAULT_STATS_SHORT_EXPORT_INTERVAL,
-#             False,
-#             "1.0.0",
-#         )
-
-#     def test_shutdown_statsbeat_metrics(self):
-#         # First initialize statsbeat
-#         exporter = mock.Mock()
-#         exporter._endpoint = "test endpoint"
-#         exporter._instrumentation_key = "test ikey"
-#         exporter._disable_offline_storage = False
-#         exporter._credential = None
-#         exporter._distro_version = ""
+        mock_statsbeat_metrics_instance = mock.Mock()
+        mock_statsbeat_metrics.return_value = mock_statsbeat_metrics_instance
         
-#         manager = StatsbeatManager()
+        manager = StatsbeatManager()
+        self.assertFalse(manager._initialized)
         
-#         # Initialize first
-#         _statsbeat.collect_statsbeat_metrics(exporter)
-#         self.assertTrue(manager._initialized)
-#         self.assertFalse(_STATSBEAT_STATE["SHUTDOWN"])
+        with mock.patch.dict(
+            os.environ,
+            {
+                _APPLICATIONINSIGHTS_STATS_CONNECTION_STRING_ENV_NAME: "",
+            },
+        ):
+            # Act
+            _statsbeat.collect_statsbeat_metrics(exporter)
         
-#         # Test shutdown
-#         result = _statsbeat.shutdown_statsbeat_metrics()
-#         self.assertTrue(result)
-#         self.assertFalse(manager._initialized)
-#         self.assertTrue(_STATSBEAT_STATE["SHUTDOWN"])
-
-#     def test_shutdown_statsbeat_metrics_not_initialized(self):
-#         """Test shutdown when statsbeat is not initialized."""
-#         manager = StatsbeatManager()
-#         self.assertFalse(manager._initialized)
+        # Assert
+        self.assertTrue(manager._initialized)
+        self.assertIsNotNone(manager._metrics)
         
-#         # Test shutdown when not initialized
-#         result = _statsbeat.shutdown_statsbeat_metrics()
-#         self.assertFalse(result)  # Should return False when not initialized
-#         self.assertFalse(manager._initialized)
+        # Verify that _StatsBeatExporter was called with the correct connection string
+        mock_exporter.assert_called_once()
+        call_args = mock_exporter.call_args
+        # The connection string should be the non-EU default since the endpoint is non-EU
+        expected_connection_string = call_args[1]['connection_string']
+        self.assertIn(_DEFAULT_NON_EU_STATS_CONNECTION_STRING.split(";")[0].split("=")[1], expected_connection_string)
 
 
-# _StatsbeatMetrics_COMMON_ATTRS = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
-# _StatsbeatMetrics_NETWORK_ATTRS = dict(_StatsbeatMetrics._NETWORK_ATTRIBUTES)
-# _StatsbeatMetrics_FEATURE_ATTRIBUTES = dict(_StatsbeatMetrics._FEATURE_ATTRIBUTES)
-# _StatsbeatMetrics_INSTRUMENTATION_ATTRIBUTES = dict(_StatsbeatMetrics._INSTRUMENTATION_ATTRIBUTES)
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._StatsbeatMetrics")
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.MeterProvider")
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.PeriodicExportingMetricReader")
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._StatsBeatExporter")
+    def test_collect_statsbeat_metrics_eu(self, mock_exporter, mock_reader, mock_meter_provider, mock_statsbeat_metrics):
+        """Test collect_statsbeat_metrics with EU endpoint uses correct connection string."""
+        # Arrange
+        exporter = mock.Mock()
+        exporter._instrumentation_key = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3333"
+        exporter._endpoint = "https://northeurope-0.in.applicationinsights.azure.com/"
+        exporter._disable_offline_storage = False
+        exporter._credential = None
+        exporter._distro_version = ""
+        
+        # Set up mock returns
+        mock_exporter_instance = mock.Mock()
+        mock_exporter.return_value = mock_exporter_instance
+        
+        mock_reader_instance = mock.Mock()
+        mock_reader.return_value = mock_reader_instance
+        
+        mock_meter_provider_instance = mock.Mock()
+        mock_meter_provider.return_value = mock_meter_provider_instance
+        flush_mock = mock.Mock()
+        mock_meter_provider_instance.force_flush = flush_mock
+
+        mock_statsbeat_metrics_instance = mock.Mock()
+        mock_statsbeat_metrics.return_value = mock_statsbeat_metrics_instance
+        
+        manager = StatsbeatManager()
+        self.assertFalse(manager._initialized)
+        
+        with mock.patch.dict(
+            os.environ,
+            {
+                _APPLICATIONINSIGHTS_STATS_CONNECTION_STRING_ENV_NAME: "",
+            },
+        ):
+            # Act
+            _statsbeat.collect_statsbeat_metrics(exporter)
+        
+        # Assert
+        self.assertTrue(manager._initialized)
+        self.assertIsNotNone(manager._metrics)
+        
+        # Verify that _StatsBeatExporter was called with the correct connection string
+        mock_exporter.assert_called_once()
+        call_args = mock_exporter.call_args
+        # The connection string should be the EU default since the endpoint is EU
+        expected_connection_string = call_args[1]['connection_string']
+        self.assertIn(_DEFAULT_EU_STATS_CONNECTION_STRING.split(";")[0].split("=")[1], expected_connection_string)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._StatsbeatMetrics")
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.MeterProvider")
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.PeriodicExportingMetricReader")
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._StatsBeatExporter")
+    def test_collect_statsbeat_metrics_aad(self, mock_exporter, mock_reader, mock_meter_provider, mock_statsbeat_metrics):
+        """Test collect_statsbeat_metrics with AAD credentials."""
+        # Arrange
+        exporter = mock.Mock()
+        TEST_ENDPOINT = "test endpoint"
+        TEST_IKEY = "test ikey"
+        TEST_CREDENTIAL = "test credential"
+        exporter._endpoint = TEST_ENDPOINT
+        exporter._instrumentation_key = TEST_IKEY
+        exporter._disable_offline_storage = False
+        exporter._credential = TEST_CREDENTIAL
+        exporter._distro_version = ""
+        mp_mock = mock.Mock()
+        mock_meter_provider.return_value = mp_mock
+        
+        # Act
+        _statsbeat.collect_statsbeat_metrics(exporter)
+        
+        # Assert - Verify _StatsbeatMetrics was called with correct parameters
+        mock_statsbeat_metrics.assert_called_once_with(
+            mp_mock,
+            TEST_IKEY,
+            TEST_ENDPOINT,
+            False,
+            2,  # Expected threshold from setUp env vars (30/15 = 2)
+            True,  # has_credential should be True
+            "",
+        )
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._StatsbeatMetrics")
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.MeterProvider")
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.PeriodicExportingMetricReader")
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._StatsBeatExporter")
+    def test_collect_statsbeat_metrics_no_aad(self, mock_exporter, mock_reader, mock_meter_provider, mock_statsbeat_metrics):
+        """Test collect_statsbeat_metrics without AAD credentials."""
+        # Arrange
+        exporter = mock.Mock()
+        TEST_ENDPOINT = "test endpoint"
+        TEST_IKEY = "test ikey"
+        TEST_CREDENTIAL = None
+        exporter._endpoint = TEST_ENDPOINT
+        exporter._instrumentation_key = TEST_IKEY
+        exporter._disable_offline_storage = False
+        exporter._credential = TEST_CREDENTIAL
+        exporter._distro_version = ""
+        mp_mock = mock.Mock()
+        mock_meter_provider.return_value = mp_mock
+        
+        # Act
+        _statsbeat.collect_statsbeat_metrics(exporter)
+        
+        # Assert - Verify _StatsbeatMetrics was called with correct parameters
+        mock_statsbeat_metrics.assert_called_once_with(
+            mp_mock,
+            TEST_IKEY,
+            TEST_ENDPOINT,
+            False,
+            2,  # Expected threshold from setUp env vars (30/15 = 2)
+            False,  # has_credential should be False
+            "",
+        )
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._StatsbeatMetrics")
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.MeterProvider")
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.PeriodicExportingMetricReader")
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._StatsBeatExporter")
+    def test_collect_statsbeat_metrics_distro_version(self, mock_exporter, mock_reader, mock_meter_provider, mock_statsbeat_metrics):
+        """Test collect_statsbeat_metrics with distribution version."""
+        # Arrange
+        exporter = mock.Mock()
+        TEST_ENDPOINT = "test endpoint"
+        TEST_IKEY = "test ikey"
+        TEST_CREDENTIAL = None
+        exporter._endpoint = TEST_ENDPOINT
+        exporter._instrumentation_key = TEST_IKEY
+        exporter._disable_offline_storage = False
+        exporter._credential = TEST_CREDENTIAL
+        exporter._distro_version = "1.0.0"
+        mp_mock = mock.Mock()
+        mock_meter_provider.return_value = mp_mock
+        
+        # Act
+        _statsbeat.collect_statsbeat_metrics(exporter)
+        
+        # Assert - Verify _StatsbeatMetrics was called with correct parameters
+        mock_statsbeat_metrics.assert_called_once_with(
+            mp_mock,
+            TEST_IKEY,
+            TEST_ENDPOINT,
+            False,
+            2,  # Expected threshold from setUp env vars (30/15 = 2)
+            False,  # has_credential should be False
+            "1.0.0",  # distro_version should be passed through
+        )
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._StatsbeatMetrics")
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.MeterProvider")
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.PeriodicExportingMetricReader")
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._StatsBeatExporter")
+    def test_shutdown_statsbeat_metrics(self, mock_exporter, mock_reader, mock_meter_provider, mock_statsbeat_metrics):
+        """Test shutdown_statsbeat_metrics after initialization."""
+        # Arrange - First initialize statsbeat
+        exporter = mock.Mock()
+        exporter._endpoint = "test endpoint"
+        exporter._instrumentation_key = "test ikey"
+        exporter._disable_offline_storage = False
+        exporter._credential = None
+        exporter._distro_version = ""
+        
+        # Set up mock returns
+        mock_exporter_instance = mock.Mock()
+        mock_exporter.return_value = mock_exporter_instance
+        
+        mock_reader_instance = mock.Mock()
+        mock_reader.return_value = mock_reader_instance
+        
+        mock_meter_provider_instance = mock.Mock()
+        mock_meter_provider.return_value = mock_meter_provider_instance
+        flush_mock = mock.Mock()
+        shutdown_mock = mock.Mock(return_value=True)
+        mock_meter_provider_instance.force_flush = flush_mock
+        mock_meter_provider_instance.shutdown = shutdown_mock
+
+        mock_statsbeat_metrics_instance = mock.Mock()
+        mock_statsbeat_metrics.return_value = mock_statsbeat_metrics_instance
+        
+        manager = StatsbeatManager()
+        
+        # Act - Initialize first
+        _statsbeat.collect_statsbeat_metrics(exporter)
+        self.assertTrue(manager._initialized)
+        self.assertFalse(_STATSBEAT_STATE["SHUTDOWN"])
+        
+        # Act - Test shutdown
+        result = _statsbeat.shutdown_statsbeat_metrics()
+        
+        # Assert
+        self.assertTrue(result)
+        self.assertFalse(manager._initialized)
+        self.assertTrue(_STATSBEAT_STATE["SHUTDOWN"])
+
+    def test_shutdown_statsbeat_metrics_not_initialized(self):
+        """Test shutdown when statsbeat is not initialized."""
+        # Arrange
+        manager = StatsbeatManager()
+        self.assertFalse(manager._initialized)
+        
+        # Act - Test shutdown when not initialized
+        result = _statsbeat.shutdown_statsbeat_metrics()
+        
+        # Assert
+        self.assertFalse(result)  # Should return False when not initialized
+        self.assertFalse(manager._initialized)
+
+
+_StatsbeatMetrics_COMMON_ATTRS = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
+_StatsbeatMetrics_NETWORK_ATTRS = dict(_StatsbeatMetrics._NETWORK_ATTRIBUTES)
+_StatsbeatMetrics_FEATURE_ATTRIBUTES = dict(_StatsbeatMetrics._FEATURE_ATTRIBUTES)
+_StatsbeatMetrics_INSTRUMENTATION_ATTRIBUTES = dict(_StatsbeatMetrics._INSTRUMENTATION_ATTRIBUTES)
 
 
 # # pylint: disable=protected-access
@@ -687,7 +784,7 @@ class TestStatsbeat(unittest.TestCase):
 #         observations = metric._get_attach_metric(options=None)
 #         for obs in observations:
 #             self.assertEqual(obs.value, 1)
-#             self.assertEqual(obs.attributes["rp"], _RP_Names.UNKNOWN.value)
+#             self.assertEqual(obs.attributes, attributes)
 
 #     def test_get_azure_compute_metadata(self):
 #         mp = MeterProvider()
