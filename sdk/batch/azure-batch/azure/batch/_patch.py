@@ -129,6 +129,7 @@ class BatchSharedKeyAuthPolicy(SansIOHTTPPolicy):
 
         return base64.b64encode(digest).decode("utf-8")
 
+
 class BatchErrorFormat(ODataV4Format):
     def __init__(self, odata_error):
         try:
@@ -137,11 +138,13 @@ class BatchErrorFormat(ODataV4Format):
             self.message = odata_error["message"]["value"]
             if "values" in odata_error:
                 for item in odata_error["values"]:
-                    self.details.append( {"code": item["key"], "message": item["value"] })
+                    self.details.append({"code": item["key"], "message": item["value"]})
         except KeyError as e:
             super().__init__(odata_error)
+
+
 class BatchExceptionPolicy(SansIOHTTPPolicy):
-    
+
     def __init__(self):
         super().__init__()
 
@@ -179,6 +182,7 @@ class BatchExceptionPolicy(SansIOHTTPPolicy):
                 raise_error = ResourceModifiedError
 
             raise raise_error(response=res, model=error, error_format=BatchErrorFormat)
+
 
 class BatchClient(GenerateBatchClient):
     """BatchClient.
