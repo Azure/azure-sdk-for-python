@@ -11,10 +11,7 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class AttestationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """AttestationType.
-    
-    .. no-index::
-    """
+    """AttestationType."""
 
     SGX_ENCLAVE = "SgxEnclave"
     """Intel Software Guard eXtensions"""
@@ -31,10 +28,7 @@ class AttestationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class CertificateModification(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The result of the operation.
-    
-    .. no-index::
-    """
+    """The result of the operation."""
 
     IS_PRESENT = "IsPresent"
     """After the operation was performed, the certificate is in the set of
@@ -58,10 +52,7 @@ class DataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class PolicyModification(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The result of the operation.
-    
-    .. no-index::
-    """
+    """The result of the operation."""
 
     UPDATED = "Updated"
     """The specified policy object was updated."""
