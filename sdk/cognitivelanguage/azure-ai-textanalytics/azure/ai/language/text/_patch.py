@@ -27,7 +27,6 @@ from ._client import TextAnalysisClient as AnalysisTextClientGenerated
 from . import models as _models
 from .models import AnalyzeTextOperationState, TextActions  # convenience re-exports if present
 from ._utils.serialization import Serializer
-from ._validation import api_version_validation
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     
@@ -206,11 +205,6 @@ class TextAnalysisClient(AnalysisTextClientGenerated):
         """
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2023-04-01",
-        params_added_on={"2023-04-01": ["api_version", "content_type", "accept"]},
-        api_versions_list=["2023-04-01", "2024-05-01", "2024-11-01", "2024-11-15-preview", "2025-05-15-preview"],
-    )
     def begin_analyze_text_job(  # type: ignore[override]
         self,
         body: Union[JSON, IO[bytes]] = _Unset,  # use serializer sentinel like generator outputs
