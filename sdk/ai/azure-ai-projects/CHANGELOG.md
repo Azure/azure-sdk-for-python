@@ -10,12 +10,6 @@ via `pip install --pre azure-ai-projects` will install latest beta version of `a
 (which has features in preview) instead of latest stable version (which does
 not include preview features).
 
-### Breaking changes
-
-### Bugs Fixed
-
-### Sample updates
-
 ## 1.1.0b2 (2025-08-05)
 
 ### Bugs Fixed
