@@ -11,7 +11,7 @@ from azure.ai.projects.models import (
     RiskCategory,
 )
 from test_base import TestBase, servicePreparer
-from devtools_testutils import recorded_by_proxy
+from devtools_testutils.aio import recorded_by_proxy_async
 
 
 class TestRedTeams(TestBase):
@@ -19,7 +19,7 @@ class TestRedTeams(TestBase):
     # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:
     # cls & pytest tests\test_redteams.py::TestRedTeams::test_red_teams_async -s
     @servicePreparer()
-    @recorded_by_proxy
+    @recorded_by_proxy_async
     async def test_red_teams_async(self, **kwargs):
 
         endpoint = kwargs.pop("azure_ai_projects_tests_project_endpoint")
