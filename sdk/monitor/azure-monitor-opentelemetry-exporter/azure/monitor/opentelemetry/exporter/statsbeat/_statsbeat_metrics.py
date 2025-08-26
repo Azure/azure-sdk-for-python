@@ -72,11 +72,11 @@ class _FEATURE_TYPES:
 
 class _StatsbeatFeature:
     NONE = 0
-    DISK_RETRY = 1 << 0     # = 1
-    AAD = 1 << 1            # = 2  
-    DISTRO = 1 << 2         # = 4
-    CUSTOM_EVENTS_EXTENSION = 1 << 3  # = 8
-    LIVE_METRICS = 1 << 4   # = 16
+    DISK_RETRY = 1
+    AAD = 2
+    CUSTOM_EVENTS_EXTENSION = 4
+    DISTRO = 8
+    LIVE_METRICS = 16
 
 
 class _AttachTypes:
