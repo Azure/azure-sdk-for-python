@@ -7,25 +7,17 @@ Service unavailable errors can occur when a request does not make it to the serv
 the service. In either case, we know the request did not get processed successfully, so service unavailable errors are
  retried in the next available preferred region.
 """
-from typing import Union
-from azure.cosmos.documents import _OperationType, ConnectionPolicy
+from azure.cosmos.documents import _OperationType
 from azure.cosmos.exceptions import CosmosHttpResponseError
-from azure.cosmos._routing.routing_range import PartitionKeyRangeWrapper
-from azure.cosmos._global_partition_endpoint_manager_per_partition_automatic_failover import _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover # pylint: disable=line-too-long
-from azure.cosmos.aio._global_partition_endpoint_manager_per_partition_automatic_failover_async import _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailoverAsync # pylint: disable=line-too-long
-
-_GlobalEndpointManagerType = Union[_GlobalPartitionEndpointManagerForPerPartitionAutomaticFailoverAsync,
-                                    _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover]
 
 #cspell:ignore ppaf
 
 class _ServiceUnavailableRetryPolicy(object):
-
     def __init__(
             self,
-            connection_policy: ConnectionPolicy,
-            global_endpoint_manager: _GlobalEndpointManagerType,
-            pk_range_wrapper: PartitionKeyRangeWrapper,
+            connection_policy,
+            global_endpoint_manager,
+            pk_range_wrapper,
             *args):
         self.retry_after_in_milliseconds = 500
         self.global_endpoint_manager = global_endpoint_manager
