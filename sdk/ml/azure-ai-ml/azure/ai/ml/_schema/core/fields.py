@@ -48,14 +48,9 @@ except ImportError:
         :return: The resolved field instance
         :rtype: marshmallow.fields.Field
         """
-        # Import Field locally to avoid redefinition warning
-        from marshmallow.fields import Field as MarshmallowField
-
-        if isinstance(cls_or_instance, MarshmallowField):
+        if isinstance(cls_or_instance, Field):
             return cls_or_instance
-        if isinstance(cls_or_instance, type) and issubclass(
-            cls_or_instance, MarshmallowField
-        ):
+        if isinstance(cls_or_instance, type) and issubclass(cls_or_instance, Field):
             return cls_or_instance()
         raise MarshmallowError(
             f"Object {cls_or_instance!r} is not a field instance or a field class."
@@ -122,24 +117,14 @@ class StringTransformedEnum(Field):
     def _serialize(self, value, attr, obj, **kwargs):
         if not value:
             return None
-        if (
-            isinstance(value, str)
-            and self.casing_transform(value) in self.allowed_values
-        ):
+        if isinstance(value, str) and self.casing_transform(value) in self.allowed_values:
             return value if self.pass_original else self.casing_transform(value)
-        raise ValidationError(
-            f"Value {value!r} passed is not in set {self.allowed_values}"
-        )
+        raise ValidationError(f"Value {value!r} passed is not in set {self.allowed_values}")
 
     def _deserialize(self, value, attr, data, **kwargs):
-        if (
-            isinstance(value, str)
-            and self.casing_transform(value) in self.allowed_values
-        ):
+        if isinstance(value, str) and self.casing_transform(value) in self.allowed_values:
             return value if self.pass_original else self.casing_transform(value)
-        raise ValidationError(
-            f"Value {value!r} passed is not in set {self.allowed_values}"
-        )
+        raise ValidationError(f"Value {value!r} passed is not in set {self.allowed_values}")
 
 
 class DumpableEnumField(StringTransformedEnum):
@@ -194,15 +179,11 @@ class LocalPathField(fields.Str):
             # for non-path string like "azureml:/xxx", OSError can be raised in either
             # resolve() or is_dir() or is_file()
             result = result.resolve()
-            if (self._allow_dir and result.is_dir()) or (
-                self._allow_file and result.is_file()
-            ):
+            if (self._allow_dir and result.is_dir()) or (self._allow_file and result.is_file()):
                 return result
         except OSError as e:
             raise self.make_error("invalid_path") from e
-        raise self.make_error(
-            "path_not_exist", path=result.as_posix(), allow_type=self.allowed_path_type
-        )
+        raise self.make_error("path_not_exist", path=result.as_posix(), allow_type=self.allowed_path_type)
 
     @property
     def allowed_path_type(self) -> str:
@@ -225,9 +206,7 @@ class LocalPathField(fields.Str):
         if value is None:
             return None
         # always dump path as absolute path in string as base_path will be dropped after serialization
-        return super(LocalPathField, self)._serialize(
-            self._resolve_path(value).as_posix(), attr, obj, **kwargs
-        )
+        return super(LocalPathField, self)._serialize(self._resolve_path(value).as_posix(), attr, obj, **kwargs)
 
 
 class SerializeValidatedUrl(fields.Url):
@@ -320,9 +299,7 @@ class DateTimeStr(fields.Str):
         try:
             from_iso_datetime(value)
         except Exception as e:
-            raise ValidationError(
-                f"Not a valid ISO8601-formatted datetime string: {value}"
-            ) from e
+            raise ValidationError(f"Not a valid ISO8601-formatted datetime string: {value}") from e
 
 
 class ArmStr(Field):
@@ -347,9 +324,7 @@ class ArmStr(Field):
 
     def _serialize(self, value, attr, obj, **kwargs):
         if isinstance(value, str):
-            serialized_value = (
-                value if value.startswith(ARM_ID_PREFIX) else f"{ARM_ID_PREFIX}{value}"
-            )
+            serialized_value = value if value.startswith(ARM_ID_PREFIX) else f"{ARM_ID_PREFIX}{value}"
             return serialized_value
         if value is None and not self.required:
             return None
@@ -368,9 +343,7 @@ class ArmStr(Field):
         if self.azureml_type is not None:
             azureml_type_suffix = self.azureml_type
         else:
-            azureml_type_suffix = (
-                "<asset_type>" + "/<resource_name>/<version-if applicable>)"
-            )
+            azureml_type_suffix = "<asset_type>" + "/<resource_name>/<version-if applicable>)"
         raise ValidationError(
             f"In order to specify an existing {self.azureml_type if self.azureml_type is not None else 'asset'}, "
             "please provide either of the following prefixed with 'azureml:':\n"
@@ -416,9 +389,7 @@ class ArmVersionedStr(ArmStr):
         if not (label or version):
             if self.allow_default_version:
                 return name
-            raise ValidationError(
-                f"Either version or label is not provided for {attr} or the id is not valid."
-            )
+            raise ValidationError(f"Either version or label is not provided for {attr} or the id is not valid.")
 
         if version:
             return f"{name}:{version}"
@@ -513,10 +484,7 @@ class UnionField(fields.Field):
         try:
             # add the validation and make sure union_fields must be subclasses or instances of
             # marshmallow Field
-            self._union_fields = [
-                resolve_field_instance(cls_or_instance)
-                for cls_or_instance in union_fields
-            ]
+            self._union_fields = [resolve_field_instance(cls_or_instance) for cls_or_instance in union_fields]
             # TODO: make serialization/de-serialization work in the same way as json schema when is_strict is True
             self.is_strict = is_strict  # S\When True, combine fields with oneOf instead of anyOf at schema generation
         except MarshmallowError as error:
@@ -591,13 +559,9 @@ class UnionField(fields.Field):
                     and isinstance(schema.schema, PathAwareSchema)
                 ):
                     # use old base path to recover original base path
-                    schema.schema.context[BASE_PATH_CONTEXT_KEY] = (
-                        schema.schema.old_base_path
-                    )
+                    schema.schema.context[BASE_PATH_CONTEXT_KEY] = schema.schema.old_base_path
                     # recover base path of parent schema
-                    schema.context[BASE_PATH_CONTEXT_KEY] = schema.schema.context[
-                        BASE_PATH_CONTEXT_KEY
-                    ]
+                    schema.context[BASE_PATH_CONTEXT_KEY] = schema.schema.context[BASE_PATH_CONTEXT_KEY]
         raise ValidationError(errors, field_name=attr)
 
 
@@ -633,8 +597,7 @@ class TypeSensitiveUnionField(UnionField):
         for type_name, type_sensitive_fields in type_sensitive_fields_dict.items():
             union_fields.extend(type_sensitive_fields)
             self._type_sensitive_fields_dict[type_name] = [
-                resolve_field_instance(cls_or_instance)
-                for cls_or_instance in type_sensitive_fields
+                resolve_field_instance(cls_or_instance) for cls_or_instance in type_sensitive_fields
             ]
 
         super(TypeSensitiveUnionField, self).__init__(union_fields, **kwargs)
@@ -646,9 +609,7 @@ class TypeSensitiveUnionField(UnionField):
             type_name,
             type_sensitive_fields,
         ) in self._type_sensitive_fields_dict.items():
-            self._type_sensitive_fields_dict[type_name] = self._create_bind_fields(
-                type_sensitive_fields, field_name
-            )
+            self._type_sensitive_fields_dict[type_name] = self._create_bind_fields(type_sensitive_fields, field_name)
 
     @property
     def type_field_name(self) -> str:
@@ -683,9 +644,7 @@ class TypeSensitiveUnionField(UnionField):
         if value_type not in self.allowed_types:
             # if value has type field but its value doesn't match any allowed value, raise ValidationError directly
             return ValidationError(
-                message={
-                    self.type_field_name: f"Value {value_type!r} passed is not in set {self.allowed_types}"
-                },
+                message={self.type_field_name: f"Value {value_type!r} passed is not in set {self.allowed_types}"},
                 field_name=attr,
             )
         filtered_messages = []
@@ -716,9 +675,7 @@ class TypeSensitiveUnionField(UnionField):
             self._union_fields = target_fields
 
         try:
-            return super(TypeSensitiveUnionField, self)._serialize(
-                value, attr, obj, **kwargs
-            )
+            return super(TypeSensitiveUnionField, self)._serialize(value, attr, obj, **kwargs)
         except ValidationError as e:
             raise self._simplified_error_base_on_type(e, value, attr)
         finally:
@@ -746,9 +703,7 @@ class TypeSensitiveUnionField(UnionField):
 
     def _deserialize(self, value, attr, data, **kwargs):
         try:
-            return super(TypeSensitiveUnionField, self)._deserialize(
-                value, attr, data, **kwargs
-            )
+            return super(TypeSensitiveUnionField, self)._deserialize(value, attr, data, **kwargs)
         except ValidationError as e:
             if isinstance(value, str) and self._allow_load_from_yaml:
                 value = self._try_load_from_yaml(value)
@@ -787,9 +742,7 @@ def CodeField(**kwargs) -> Field:
             # put arm versioned string at last order as it can deserialize any string into "azureml:<origin>"
             ArmVersionedStr(azureml_type=AzureMLResourceType.CODE),
         ],
-        metadata={
-            "description": "A local path or http:, https:, azureml: url pointing to a remote location."
-        },
+        metadata={"description": "A local path or http:, https:, azureml: url pointing to a remote location."},
         **kwargs,
     )
 
@@ -810,9 +763,7 @@ def EnvironmentField(*, extra_fields: List[Field] = None, **kwargs):
         [
             NestedField(AnonymousEnvironmentSchema),
             RegistryStr(azureml_type=AzureMLResourceType.ENVIRONMENT),
-            ArmVersionedStr(
-                azureml_type=AzureMLResourceType.ENVIRONMENT, allow_default_version=True
-            ),
+            ArmVersionedStr(azureml_type=AzureMLResourceType.ENVIRONMENT, allow_default_version=True),
         ]
         + extra_fields,
         **kwargs,
@@ -912,12 +863,8 @@ class NumberVersionField(VersionField):
         lower_bound: Optional[str] = None,
         **kwargs,
     ) -> None:
-        self._upper = (
-            None if upper_bound is None else self._version_to_tuple(upper_bound)
-        )
-        self._lower = (
-            None if lower_bound is None else self._version_to_tuple(lower_bound)
-        )
+        self._upper = None if upper_bound is None else self._version_to_tuple(upper_bound)
+        self._lower = None if lower_bound is None else self._version_to_tuple(lower_bound)
         super().__init__(*args, **kwargs)
 
     def _version_to_tuple(self, value: str):
@@ -938,9 +885,7 @@ class NumberVersionField(VersionField):
 class DumpableIntegerField(fields.Integer):
     """A int field that cannot serialize other type of values to int if self.strict."""
 
-    def _serialize(
-        self, value, attr, obj, **kwargs
-    ) -> typing.Optional[typing.Union[str, T]]:
+    def _serialize(self, value, attr, obj, **kwargs) -> typing.Optional[typing.Union[str, T]]:
         if self.strict and not isinstance(value, int):
             # this implementation can serialize bool to bool
             raise self.make_error("invalid", input=value)
@@ -966,18 +911,14 @@ class DumpableFloatField(fields.Float):
             raise self.make_error("invalid", input=value)
         return super()._validated(value)
 
-    def _serialize(
-        self, value, attr, obj, **kwargs
-    ) -> typing.Optional[typing.Union[str, T]]:
+    def _serialize(self, value, attr, obj, **kwargs) -> typing.Optional[typing.Union[str, T]]:
         return super()._serialize(self._validated(value), attr, obj, **kwargs)
 
 
 class DumpableStringField(fields.String):
     """A string field that cannot serialize other type of values to string if self.strict."""
 
-    def _serialize(
-        self, value, attr, obj, **kwargs
-    ) -> typing.Optional[typing.Union[str, T]]:
+    def _serialize(self, value, attr, obj, **kwargs) -> typing.Optional[typing.Union[str, T]]:
         if not isinstance(value, str):
             raise ValidationError("Given value is not a string")
         return super()._serialize(value, attr, obj, **kwargs)
@@ -990,9 +931,7 @@ class ExperimentalField(fields.Field):
             self._experimental_field = resolve_field_instance(experimental_field)
             self.required = experimental_field.required
         except MarshmallowError as error:
-            raise ValueError(
-                '"experimental_field" must be subclasses or instances of marshmallow Field.'
-            ) from error
+            raise ValueError('"experimental_field" must be subclasses or instances of marshmallow Field.') from error
 
     @property
     def experimental_field(self):
@@ -1010,9 +949,7 @@ class ExperimentalField(fields.Field):
 
     def _deserialize(self, value, attr, data, **kwargs):
         if value is not None:
-            message = "Field '{0}': {1} {2}".format(
-                attr, EXPERIMENTAL_FIELD_MESSAGE, EXPERIMENTAL_LINK_MESSAGE
-            )
+            message = "Field '{0}': {1} {2}".format(attr, EXPERIMENTAL_FIELD_MESSAGE, EXPERIMENTAL_LINK_MESSAGE)
             if not _is_warning_cached(message):
                 module_logger.warning(message)
 
@@ -1141,6 +1078,4 @@ class GitStr(fields.Str):
     def _deserialize(self, value, attr, data, **kwargs):
         if isinstance(value, str) and value.startswith("git+"):
             return value
-        raise ValidationError(
-            "In order to specify a git path, please provide the correct path prefixed with 'git+\n"
-        )
+        raise ValidationError("In order to specify a git path, please provide the correct path prefixed with 'git+\n")
