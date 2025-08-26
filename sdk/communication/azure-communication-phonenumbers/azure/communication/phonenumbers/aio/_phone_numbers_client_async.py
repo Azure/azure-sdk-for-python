@@ -60,9 +60,12 @@ class PhoneNumbersClient:
     :param Union[AsyncTokenCredential, AzureKeyCredential] credential:
         The credential we use to authenticate against the service.
     :keyword api_version: Azure Communication Phone Number API version.
-        The default value is "2022-01-11-preview2".
+        The default value is "2025-06-01".
         Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
+    :keyword accepted_language: The locale to display in the localized fields in responses. e.g.
+        'en-US'. Default value is None.
+    :paramtype accepted_language: str
     """
 
     def __init__(
@@ -342,11 +345,8 @@ class PhoneNumbersClient:
          ~azure.core.async_paging.AsyncItemPaged[~azure.communication.phonenumbers.PhoneNumberCountry]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return cast(
-            AsyncItemPaged[PhoneNumberCountry],
-            self._phone_number_client.phone_numbers.list_available_countries(
-                accept_language=self._accepted_language, skip=skip, **kwargs
-            )
+        return self._phone_number_client.phone_numbers.list_available_countries(
+            skip=skip, accept_language=self._accepted_language, **kwargs
         )
 
     @distributed_trace
@@ -354,6 +354,7 @@ class PhoneNumbersClient:
         self,
         country_code: str,
         *,
+        phone_number_type: Optional[Union[PhoneNumberType, str]] = None,
         administrative_division: Optional[str] = None,
         skip: int = 0,
         **kwargs: Any
@@ -364,6 +365,9 @@ class PhoneNumbersClient:
 
         :param country_code: The ISO 3166-2 country/region code, e.g. US. Required.
         :type country_code: str
+        :keyword phone_number_type: An optional parameter for the type of phone numbers, 
+         e.g. geographic, tollFree, mobile. Default value is None.
+        :paramtype phone_number_type: str or ~azure.communication.phonenumbers.PhoneNumberType
         :keyword administrative_division: An optional parameter for the name of the state or province
          in which to search for the area code. e.g. California. Default value is None.
         :paramtype administrative_division: str
@@ -375,15 +379,13 @@ class PhoneNumbersClient:
          ~azure.core.async_paging.AsyncItemPaged[~azure.communication.phonenumbers.PhoneNumberLocality]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return cast(
-            AsyncItemPaged[PhoneNumberLocality],
-            self._phone_number_client.phone_numbers.list_available_localities(
-                country_code,
-                administrative_division=administrative_division,
-                accept_language=self._accepted_language,
-                skip=skip,
-                **kwargs
-            )
+        return self._phone_number_client.phone_numbers.list_available_localities(
+            country_code,
+            administrative_division=administrative_division,
+            accept_language=self._accepted_language,
+            phone_number_type=phone_number_type,
+            skip=skip,
+            **kwargs
         )
 
     @distributed_trace
@@ -391,8 +393,8 @@ class PhoneNumbersClient:
         self,
         country_code: str,
         *,
-        phone_number_type: Optional[PhoneNumberType] = None,
-        assignment_type: Optional[PhoneNumberAssignmentType] = None,
+        phone_number_type: Optional[Union[PhoneNumberType, str]] = None,
+        assignment_type: Optional[Union[PhoneNumberAssignmentType, str]] = None,
         skip: int = 0,
         **kwargs: Any
     ) -> AsyncItemPaged[PhoneNumberOffering]:
@@ -402,12 +404,12 @@ class PhoneNumbersClient:
 
         :param country_code: The ISO 3166-2 country/region code, e.g. US. Required.
         :type country_code: str
-        :keyword phone_number_type: Filter by phoneNumberType, e.g. Geographic, TollFree. Known values
-         are: "geographic" and "tollFree". Default value is None.
-        :paramtype phone_number_type: ~azure.communication.phonenumbers.PhoneNumberType
+        :keyword phone_number_type: Filter by phone number type, e.g. geographic, tollFree, mobile.
+         Default value is None.
+        :paramtype phone_number_type: str or ~azure.communication.phonenumbers.PhoneNumberType
         :keyword assignment_type: Filter by assignmentType, e.g. User, Application. Known values are:
          "person" and "application". Default value is None.
-        :paramtype assignment_type: ~azure.communication.phonenumbers.PhoneNumberAssignmentType
+        :paramtype assignment_type: str or ~azure.communication.phonenumbers.PhoneNumberAssignmentType
         :keyword skip: An optional parameter for how many entries to skip, for pagination purposes. The
          default value is 0. Default value is 0.
         :paramtype skip: int
@@ -420,6 +422,7 @@ class PhoneNumbersClient:
             country_code,
             phone_number_type=phone_number_type,
             assignment_type=assignment_type,
+            accept_language=self._accepted_language,
             skip=skip,
             **kwargs
         ))
@@ -428,11 +431,11 @@ class PhoneNumbersClient:
     def list_available_area_codes(
         self,
         country_code: str,
-        phone_number_type: PhoneNumberType,
+        phone_number_type: Union[PhoneNumberType, str],
         *,
-        assignment_type: Optional[PhoneNumberAssignmentType] = None,
-        locality: Optional[str] = None,
         administrative_division: Optional[str] = None,
+        assignment_type: Optional[Union[PhoneNumberAssignmentType, str]] = None,
+        locality: Optional[str] = None,
         skip: int = 0,
         **kwargs: Any
     ) -> AsyncItemPaged[PhoneNumberAreaCode]:
@@ -440,12 +443,12 @@ class PhoneNumbersClient:
 
         :param country_code: The ISO 3166-2 country/region two letter code, e.g. US. Required.
         :type country_code: str
-        :param phone_number_type: Filter by phone number type, e.g. Geographic, TollFree. Known values are:
-         "geographic" and "tollFree". Required.
-        :type phone_number_type: ~azure.communication.phonenumbers.PhoneNumberType
+        :param phone_number_type: Filter by phone number type, e.g. geographic, tollFree, mobile.
+         Required.
+        :type phone_number_type: str or ~azure.communication.phonenumbers.PhoneNumberType
         :keyword assignment_type: Filter by assignmentType, e.g. User, Application. Known values are:
          "person" and "application". Default value is None.
-        :paramtype assignment_type: ~azure.communication.phonenumbers.PhoneNumberAssignmentType
+        :paramtype assignment_type: str or ~azure.communication.phonenumbers.PhoneNumberAssignmentType
         :keyword locality: The name of locality in which to search for the area code. e.g. Seattle.
          This is required if the phone number type is Geographic. Default value is None.
         :paramtype locality: str
@@ -462,6 +465,7 @@ class PhoneNumbersClient:
         return cast(AsyncItemPaged[PhoneNumberAreaCode], self._phone_number_client.phone_numbers.list_area_codes(
             country_code,
             phone_number_type=phone_number_type,
+            accept_language=self._accepted_language,
             assignment_type=assignment_type,
             locality=locality,
             administrative_division=administrative_division,

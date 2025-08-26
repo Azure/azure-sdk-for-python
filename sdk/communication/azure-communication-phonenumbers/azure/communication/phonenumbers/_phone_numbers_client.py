@@ -59,9 +59,12 @@ class PhoneNumbersClient:
     :param Union[TokenCredential, AzureKeyCredential] credential:
         The credential we use to authenticate against the service.
     :keyword api_version: Azure Communication Phone Number API version.
-        The default value is "2022-01-11-preview2".
+        The default value is "2025-06-01".
         Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
+    :keyword accepted_language: The locale to display in the localized fields in responses. e.g.
+        'en-US'. Default value is None.
+    :paramtype accepted_language: str
     """
 
     def __init__(self, endpoint: str, credential: Union[TokenCredential, AzureKeyCredential], **kwargs: Any) -> None:
@@ -344,20 +347,19 @@ class PhoneNumbersClient:
          default value is 0. Default value is 0.
         :paramtype skip: int
         :return: An iterator like instance of PhoneNumberCountry
-        :rtype:
-         ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.PhoneNumberCountry]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.PhoneNumberCountry]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return cast(ItemPaged[PhoneNumberCountry],
-                   self._phone_number_client.phone_numbers.list_available_countries(
-                       accept_language=self._accepted_language, skip=skip, **kwargs
-                   ))
+        return self._phone_number_client.phone_numbers.list_available_countries(
+            skip=skip, accept_language=self._accepted_language, **kwargs
+        )
 
     @distributed_trace
     def list_available_localities(
         self,
         country_code: str,
         *,
+        phone_number_type: Optional[Union[PhoneNumberType, str]] = None,
         administrative_division: Optional[str] = None,
         skip: int = 0,
         **kwargs: Any
@@ -368,6 +370,9 @@ class PhoneNumbersClient:
 
         :param country_code: The ISO 3166-2 country/region two letter code, e.g. US. Required.
         :type country_code: str
+        :keyword phone_number_type: An optional parameter for the type of phone numbers, 
+         e.g. geographic, tollFree, mobile. Default value is None.
+        :paramtype phone_number_type: str or ~azure.communication.phonenumbers.PhoneNumberType
         :keyword administrative_division: An optional parameter for the name of the state or province
          in which to search for the area code. e.g. California. Default value is None.
         :paramtype administrative_division: str
@@ -375,26 +380,25 @@ class PhoneNumbersClient:
          default value is 0. Default value is 0.
         :paramtype skip: int
         :return: An iterator like instance of PhoneNumberLocality
-        :rtype:
-         ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.PhoneNumberLocality]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.PhoneNumberLocality]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return cast(ItemPaged[PhoneNumberLocality],
-                   self._phone_number_client.phone_numbers.list_available_localities(
-                       country_code,
-                       administrative_division=administrative_division,
-                       accept_language=self._accepted_language,
-                       skip=skip,
-                       **kwargs
-                   ))
+        return self._phone_number_client.phone_numbers.list_available_localities(
+            country_code,
+            administrative_division=administrative_division,
+            accept_language=self._accepted_language,
+            phone_number_type=phone_number_type,
+            skip=skip,
+            **kwargs
+        )
 
     @distributed_trace
     def list_available_offerings(
         self,
         country_code: str,
         *,
-        phone_number_type: Optional[PhoneNumberType] = None,
-        assignment_type: Optional[PhoneNumberAssignmentType] = None,
+        phone_number_type: Optional[Union[PhoneNumberType, str]] = None,
+        assignment_type: Optional[Union[PhoneNumberAssignmentType, str]] = None,
         skip: int = 0,
         **kwargs: Any
     ) -> ItemPaged[PhoneNumberOffering]:
@@ -404,38 +408,37 @@ class PhoneNumbersClient:
 
         :param country_code: The ISO 3166-2 country/region two letter code, e.g. US. Required.
         :type country_code: str
-        :keyword phone_number_type: Filter by phoneNumberType, e.g. Geographic, TollFree. Known values
-         are: "geographic" and "tollFree". Default value is None.
-        :paramtype phone_number_type: ~azure.communication.phonenumbers.PhoneNumberType
-        :keyword assignment_type: Filter by assignmentType, e.g. User, Application. Known values are:
+        :keyword phone_number_type: Filter by phone number type, e.g. geographic, tollFree, mobile.
+         Default value is None.
+        :paramtype phone_number_type: str or ~azure.communication.phonenumbers.PhoneNumberType
+        :keyword assignment_type: Filter by assignment type, e.g. person, application. Known values are:
          "person" and "application". Default value is None.
-        :paramtype assignment_type: ~azure.communication.phonenumbers.PhoneNumberAssignmentType
+        :paramtype assignment_type: str or ~azure.communication.phonenumbers.PhoneNumberAssignmentType
         :keyword skip: An optional parameter for how many entries to skip, for pagination purposes. The
          default value is 0. Default value is 0.
         :paramtype skip: int
         :return: An iterator like instance of PhoneNumberOffering
-        :rtype:
-         ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.PhoneNumberOffering]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.PhoneNumberOffering]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return cast(ItemPaged[PhoneNumberOffering],
-                   self._phone_number_client.phone_numbers.list_offerings(
-                       country_code,
-                       phone_number_type=phone_number_type,
-                       assignment_type=assignment_type,
-                       skip=skip,
-                       **kwargs
-                   ))
+        return self._phone_number_client.phone_numbers.list_offerings(
+            country_code,
+            phone_number_type=phone_number_type,
+            assignment_type=assignment_type,
+            accept_language=self._accepted_language,
+            skip=skip,
+            **kwargs
+        )
 
     @distributed_trace
     def list_available_area_codes(
         self,
         country_code: str,
-        phone_number_type: PhoneNumberType,
+        phone_number_type: Union[PhoneNumberType, str],
         *,
-        assignment_type: Optional[PhoneNumberAssignmentType] = None,
-        locality: Optional[str] = None,
         administrative_division: Optional[str] = None,
+        assignment_type: Optional[Union[PhoneNumberAssignmentType, str]] = None,
+        locality: Optional[str] = None,
         skip: int = 0,
         **kwargs: Any
     ) -> ItemPaged[PhoneNumberAreaCode]:
@@ -443,12 +446,12 @@ class PhoneNumbersClient:
 
         :param country_code: The ISO 3166-2 country/region two letter code, e.g. US. Required.
         :type country_code: str
-        :param phone_number_type: Filter by phone number type, e.g. Geographic, TollFree. Known values are:
-         "geographic" and "tollFree". Required.
-        :type phone_number_type: ~azure.communication.phonenumbers.PhoneNumberType
-        :keyword assignment_type: Filter by assignmentType, e.g. User, Application. Known values are:
+        :param phone_number_type: Filter by phone number type, e.g. geographic, tollFree, mobile.
+         Required.
+        :type phone_number_type: str or ~azure.communication.phonenumbers.PhoneNumberType
+        :keyword assignment_type: Filter by assignment type, e.g. User, Application. Known values are:
          "person" and "application". Default value is None.
-        :paramtype assignment_type: ~azure.communication.phonenumbers.PhoneNumberAssignmentType
+        :paramtype assignment_type: str or ~azure.communication.phonenumbers.PhoneNumberAssignmentType
         :keyword locality: The name of locality in which to search for the area code. e.g. Seattle.
          This is required if the phone number type is Geographic. Default value is None.
         :paramtype locality: str
@@ -462,20 +465,24 @@ class PhoneNumbersClient:
         :rtype: ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.PhoneNumberAreaCode]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return cast(ItemPaged[PhoneNumberAreaCode],
-                   self._phone_number_client.phone_numbers.list_area_codes(
-                       country_code,
-                       phone_number_type=phone_number_type,
-                       assignment_type=assignment_type,
-                       locality=locality,
-                       administrative_division=administrative_division,
-                       skip=skip,
-                       **kwargs
-                   ))
+        return self._phone_number_client.phone_numbers.list_area_codes(
+            country_code,
+            phone_number_type=phone_number_type,
+            accept_language=self._accepted_language,
+            assignment_type=assignment_type,
+            locality=locality,
+            administrative_division=administrative_division,
+            skip=skip,
+            **kwargs
+        )
 
     @distributed_trace
     def search_operator_information(
-        self, phone_numbers: Union[str, List[str]], *, options: Optional[OperatorInformationOptions] = None, **kwargs: Any  # pylint: disable=line-too-long
+        self,
+        phone_numbers: Union[str, List[str]],
+        *,
+        options: Optional[OperatorInformationOptions] = None,
+        **kwargs: Any
     ) -> OperatorInformationResult:
         """Searches for operator information for a given list of phone numbers.
 
@@ -525,8 +532,7 @@ class PhoneNumbersClient:
          purposes. The default value is 100. Default value is 100.
         :paramtype max_page_size: int
         :return: An iterator like instance of PhoneNumbersReservation
-        :rtype:
-         ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.PhoneNumbersReservation]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.PhoneNumbersReservation]
         """
 
         # This allows mapping the generated model to the public model.
@@ -539,7 +545,8 @@ class PhoneNumbersClient:
 
     @distributed_trace
     def create_or_update_reservation(
-        self, *,
+        self,
+        *,
         reservation_id: str,
         numbers_to_add: Optional[List[AvailablePhoneNumber]] = None,
         numbers_to_remove: Optional[List[str]] = None,
