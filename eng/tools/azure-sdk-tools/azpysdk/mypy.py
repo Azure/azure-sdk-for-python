@@ -19,6 +19,7 @@ from ci_tools.environment_exclusions import (
 logging.getLogger().setLevel(logging.INFO)
 
 PYTHON_VERSION = "3.9"
+MYPY_VERSION = "1.14.1"
 
 class mypy(Check):
     def __init__(self) -> None:
@@ -70,9 +71,10 @@ class mypy(Check):
             )
 
             # TODO ?
+            # need to use next flag to specify which version of mypy to install?
             # Ensure mypy is installed in the current environment
             try:
-                check_call([sys.executable, "-m", "pip", "install", "mypy"])
+                check_call([sys.executable, "-m", "pip", "install", f"mypy=={MYPY_VERSION}"])
             except CalledProcessError as e:
                 print("Failed to install mypy:", e)
                 return e.returncode
