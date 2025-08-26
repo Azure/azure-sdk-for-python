@@ -378,6 +378,7 @@ class TestConfigurations(TestCase):
 
         # Should not have logging_formatter key when no env var is set
         self.assertNotIn("logging_formatter", configurations)
+
     @patch.dict(
         "os.environ",
         {
