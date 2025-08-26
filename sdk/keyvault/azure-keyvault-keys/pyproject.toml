@@ -46,3 +46,20 @@ pytyped = ["py.typed"]
 
 [tool.azure-sdk-build]
 pyright = false
+
+[tool.uv.sources]
+azure-core = { path = "../../core/azure-core" }
+azure-keyvault-nspkg = { path = "../../nspkg/azure-keyvault-nspkg" }
+azure-sdk-tools = { path = "../../../eng/tools/azure-sdk-tools" }
+
+[dependency-groups]
+dev = [
+    "aiohttp>=3.0",
+    "azure-core",
+    "azure-identity>=1.24.0",
+    "azure-keyvault-nspkg",
+    "azure-mgmt-keyvault==10.1.0",
+    "azure-sdk-tools",
+    "parameterized>=0.7.3",
+    "python-dateutil>=2.8.0",
+]
