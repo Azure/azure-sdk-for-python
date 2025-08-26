@@ -1,0 +1,7 @@
+{
+  "apiVersion": "2025-06-05",
+  "commit": "4bf96d0b0334d1f2e95205ca8f0d7495f7db2f0f",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/compute/resource-manager/Microsoft.Compute/RecommenderRP",
+  "emitterVersion": "0.48.2"
+}
