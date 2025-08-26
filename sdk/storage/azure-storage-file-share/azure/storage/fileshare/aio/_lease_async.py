@@ -16,6 +16,7 @@ from .._shared.response_handlers import return_response_headers, process_storage
 from .._generated.aio.operations import FileOperations, ShareOperations
 
 if TYPE_CHECKING:
+    from datetime import datetime
     from azure.storage.fileshare.aio import ShareClient, ShareFileClient
 
 
