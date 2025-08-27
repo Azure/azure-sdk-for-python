@@ -15,10 +15,10 @@ from typing import List, Any, TYPE_CHECKING, Tuple, Union, Dict
 from cryptography.hazmat.primitives import serialization
 from cryptography.x509.base import load_pem_x509_certificate
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.core.exceptions import raise_with_traceback
+from azure.core.exceptions import raise_with_traceback # pylint: disable=no-raise-with-traceback
 
 from ._client import AttestationClient as AzureAttestationRestClient
-from ..models import (
+from ..models import ( # pylint: disable=reimported
     AttestationResult as GeneratedAttestationResult,
     RuntimeData,
     InitTimeData,
@@ -74,6 +74,7 @@ class AttestationClient:
         to help account for clock drift between the issuer and the current machine.
     :keyword bool validate_issuer: If True, validate that the issuer of the token matches the expected issuer.
     :keyword bool validate_not_before_time: If true, validate the "Not Before" time in the token.
+    :keyword str api_version: The API version to use for the request.
 
     .. tip::
         The `validate_token`, `validation_callback`, `validate_signature`,

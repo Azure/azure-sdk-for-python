@@ -622,7 +622,9 @@ class AttestationToken:
         return None
 
     def _json_web_key(self) -> Optional[JSONWebKey]:
-        """
+        """Extract and deserialize the JSON Web Key from the token header.
+        
+        :return: The JSON Web Key from the token header, or None if not present.
         :rtype: JSONWebKey or None
         """
         jwk = self._header.get("jwk")
@@ -631,6 +633,7 @@ class AttestationToken:
     def to_jwt_string(self) -> str:
         """Returns a string serializing the JSON Web Token
 
+        :return: The JSON Web Token as a string.
         :rtype: str
         """
         return self._token
@@ -685,6 +688,7 @@ class AttestationToken:
         method, :meth:get_body will call that method to convert the object from
         the wire format for the object into the expected model type.
 
+        :return: The deserialized body of the attestation token.
         :rtype: Any
         """
         try:
@@ -755,7 +759,11 @@ class AttestationToken:
         return None
 
     def _validate_static_properties(self, **kwargs: Any) -> bool:
-        """Validate the static properties in the attestation token."""
+        """Validate the static properties in the attestation token.
+        
+        :return: True if all validations pass.
+        :rtype: bool
+        """
         if self._body:
             time_now = datetime.now()
             if kwargs.get("validate_expiration", True) and self.expires is not None:
@@ -787,8 +795,10 @@ class AttestationToken:
 
     @staticmethod
     def _create_unsecured_jwt(body: Any) -> str:
-        """
-        Return an unsecured JWT expressing the body.
+        """Return an unsecured JWT expressing the body.
+        
+        :param Any body: The body of the token to be serialized.
+        :return: An unsecured JWT token as a string.
         :rtype: str
         """
         # Base64url encoded '{"alg":"none"}'. See https://www.rfc-editor.org/rfc/rfc7515.html#appendix-A.5 for
@@ -813,12 +823,14 @@ class AttestationToken:
     @staticmethod
     def _create_secured_jwt(body, **kwargs) -> str:
         """Return a secured JWT expressing the body, secured with the specified signing key.
+        
         :param Any body: The body of the token to be serialized.
         :keyword key: Signing key used to sign the token.
         :kwtype key: cryptography.hazmat.primitives.asymmetric.ec or cryptography.hazmat.primitives.asymmetric.rsa
         :keyword certificate: Certificate to be transmitted to attestation service
             used to validate the token.
         :kwtype certificate: Certificate
+        :return: A secured JWT token as a string.
         :rtype: str
         """
         key = kwargs.pop("key", None)

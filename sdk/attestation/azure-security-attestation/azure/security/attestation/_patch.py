@@ -79,6 +79,7 @@ class AttestationClient:
         to help account for clock drift between the issuer and the current machine.
     :keyword bool validate_issuer: If True, validate that the issuer of the token matches the expected issuer.
     :keyword bool validate_not_before_time: If true, validate the "Not Before" time in the token.
+    :keyword str api_version: The API version to use for the request.
 
     .. tip::
         The `validate_token`, `validation_callback`, `validate_signature`,
@@ -434,6 +435,7 @@ class AttestationAdministrationClient:
         to help account for clock drift between the issuer and the current machine.
     :keyword bool validate_issuer: If True, validate that the issuer of the token matches the expected issuer.
     :keyword bool validate_not_before_time: If true, validate the "Not Before" time in the token.
+    :keyword str api_version: The API version to use for the request.
 
     If the `signing_key` and `signing_certificate` parameters
     are provided, they will be applied to the following APIs:
