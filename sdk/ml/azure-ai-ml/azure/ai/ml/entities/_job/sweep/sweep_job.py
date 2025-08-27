@@ -138,8 +138,6 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
     :paramtype queue_settings: ~azure.ai.ml.entities.QueueSettings
     :keyword resources: Compute Resource configuration for the job.
     :paramtype resources: Optional[Union[~azure.ai.ml.entities.ResourceConfiguration]
-    :keyword kwargs: A dictionary of additional configuration parameters.
-    :paramtype kwargs: dict
 
 
     .. admonition:: Example:
