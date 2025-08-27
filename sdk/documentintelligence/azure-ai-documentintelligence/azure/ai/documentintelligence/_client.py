@@ -47,7 +47,7 @@ class DocumentIntelligenceClient(DocumentIntelligenceClientOperationsMixin):
 
     def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], **kwargs: Any) -> None:
         _endpoint = "{endpoint}/documentintelligence"
-        self._config = DocumentIntelligenceClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
+        self._config = DocumentIntelligenceClientConfiguration(endpoint=2, credential=credential, **kwargs)
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [
