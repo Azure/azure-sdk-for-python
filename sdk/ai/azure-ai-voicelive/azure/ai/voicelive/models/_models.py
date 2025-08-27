@@ -255,7 +255,7 @@ class AudioInputTranscriptionSettings(_Model):
     :ivar model: The model used for transcription. E.g., 'whisper-1', 'azure-fast-transcription',
      's2s-ingraph'. Required. Is one of the following types: Literal["whisper-1"],
      Literal["azure-fast-transcription"], Literal["s2s-ingraph"]
-    :vartype model: str or str or str
+    :vartype model: str
     :ivar language: The language code to use for transcription, if specified.
     :vartype language: str
     :ivar enabled: Whether transcription is enabled. Required.
@@ -401,9 +401,9 @@ class AzureVoice(_Model):
 class AzureCustomVoice(AzureVoice, discriminator="azure-custom"):
     """Azure custom voice configuration (preferred).
 
-    :ivar type: Discriminator for this voice. Defaults to ``"azure-custom"``.
+    :ivar type: Required. Defaults to ``"azure-custom"``.
         The legacy alias ``"custom"`` is accepted but **deprecated**.
-    :vartype type: Literal["azure-custom", "custom"]
+    :vartype type: str
     :ivar name: Voice name. Must be non-empty.
     :vartype name: str
     :ivar endpoint_id: Endpoint ID. Must be non-empty.
@@ -426,11 +426,6 @@ class AzureCustomVoice(AzureVoice, discriminator="azure-custom"):
     :vartype volume: str | None
     """
 
-    # Accept legacy "custom" for back-compat; default to "azure-custom".
-    type: Literal["azure-custom", "custom"] = rest_discriminator(
-        name="type",
-        visibility=["read", "create", "update", "delete", "query"],
-    )  # type: ignore
 
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     endpoint_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -463,14 +458,9 @@ class AzureCustomVoice(AzureVoice, discriminator="azure-custom"):
     def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        # Respect caller-provided 'type'; default to "azure-custom".
         type_value = kwargs.pop("type", "azure-custom")
         if type_value == "custom":
-            warnings.warn(
-                "The 'custom' voice type is deprecated; use 'azure-custom' instead.",
-                DeprecationWarning,
-                stacklevel=2,
-            )
+            type_value = "azure-custom"
         super().__init__(*args, type=type_value, **kwargs)
 
 
@@ -483,7 +473,7 @@ class TurnDetection(_Model):
     :ivar type: Required. Is one of the following types: Literal["none"], Literal["server_vad"],
      Literal["azure_semantic_vad"], Literal["azure_semantic_vad_en"], Literal["server_sd"],
      Literal["azure_semantic_vad_multilingual"]
-    :vartype type: str or str or str or str or str or str
+    :vartype type: str
     """
 
     __mapping__: Dict[str, _Model] = {}
@@ -599,7 +589,7 @@ class AzurePersonalVoice(AzureVoice, discriminator="azure-personal"):
     :ivar model: Underlying neural model to use for personal voice. Required. Is one of the
      following types: Literal["DragonLatestNeural"], Literal["PhoenixLatestNeural"],
      Literal["PhoenixV2Neural"]
-    :vartype model: str or str or str
+    :vartype model: str
     """
 
     type: Literal["azure-personal"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -642,7 +632,7 @@ class EOUDetection(_Model):
 
     :ivar model: Required. Is one of the following types: Literal["semantic_detection_v1"],
      Literal["semantic_detection_v1_en"], Literal["semantic_detection_v1_multilingual"]
-    :vartype model: str or str or str
+    :vartype model: str
     """
 
     __mapping__: Dict[str, _Model] = {}
@@ -677,7 +667,7 @@ class AzureSemanticDetection(EOUDetection, discriminator="semantic_detection_v1"
 
     :ivar model: Discriminator for this EOU model. Defaults to
         ``"semantic_detection_v1"``; may also be ``"semantic_detection_v1_en"``.
-    :vartype model: Literal["semantic_detection_v1", "semantic_detection_v1_en"]
+    :vartype model: str
     :ivar threshold: Primary detection threshold (0.0–1.0).
     :vartype threshold: float | None
     :ivar timeout: Primary timeout in seconds.
@@ -696,11 +686,6 @@ class AzureSemanticDetection(EOUDetection, discriminator="semantic_detection_v1"
     :vartype extra_imend_check: bool | None
     """
 
-    # Allow either label; default is the non-_en one.
-    model: Literal["semantic_detection_v1", "semantic_detection_v1_en"] = rest_discriminator(
-        name="model",
-        visibility=["read", "create", "update", "delete", "query"],
-    )  # type: ignore
     threshold: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     timeout: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     secondary_threshold: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -726,8 +711,9 @@ class AzureSemanticDetection(EOUDetection, discriminator="semantic_detection_v1"
     def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        # Respect a caller-provided model; default to "semantic_detection_v1".
         model_value = kwargs.pop("model", "semantic_detection_v1")
+        if model_value not in ("semantic_detection_v1", "semantic_detection_v1_en"):
+            raise ValueError("model must be 'semantic_detection_v1' or 'semantic_detection_v1_en'")
         super().__init__(*args, model=model_value, **kwargs)
 
 
@@ -794,8 +780,8 @@ class AzureSemanticVad(TurnDetection, discriminator="azure_semantic_vad"):
     (legacy alias) for compatibility; the field set is the same.
 
     :ivar type: Discriminator for this VAD. Defaults to ``"azure_semantic_vad"``.
-        May also be ``"azure_semantic_vad_en"`` or ``"server_sd"``.
-    :vartype type: Literal["azure_semantic_vad", "azure_semantic_vad_en", "server_sd"]
+        May also be ``"azure_semantic_vad_en"`` or (legacy) ``"server_sd"``.
+    :vartype type: str
     :ivar threshold: Primary detection threshold (0.0–1.0).
     :vartype threshold: float | None
     :ivar prefix_padding_ms: Audio kept before detected speech (ms).
@@ -822,11 +808,6 @@ class AzureSemanticVad(TurnDetection, discriminator="azure_semantic_vad"):
     :vartype auto_truncate: bool | None
     """
 
-    # Allow any of the three labels; default is the non-_en one.
-    type: Literal["azure_semantic_vad", "azure_semantic_vad_en", "server_sd"] = rest_discriminator(
-        name="type",
-        visibility=["read", "create", "update", "delete", "query"],
-    )  # type: ignore
     threshold: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     prefix_padding_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     silence_duration_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -862,9 +843,16 @@ class AzureSemanticVad(TurnDetection, discriminator="azure_semantic_vad"):
     ) -> None: ...
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        # Respect a caller-provided type; default to "azure_semantic_vad".
         type_value = kwargs.pop("type", "azure_semantic_vad")
+        if type_value == "server_sd":
+            # normalize legacy alias to canonical discriminator
+            type_value = "azure_semantic_vad"
+        elif type_value not in ("azure_semantic_vad", "azure_semantic_vad_en"):
+            raise ValueError(
+                "type must be 'azure_semantic_vad', 'azure_semantic_vad_en', or legacy 'server_sd'"
+            )
         super().__init__(*args, type=type_value, **kwargs)
 
 
@@ -873,7 +861,7 @@ class AzureStandardVoice(AzureVoice, discriminator="azure-standard"):
 
     :ivar type: Discriminator for this voice. Defaults to ``"azure-standard"``.
         The variant ``"azure-platform"`` is also accepted.
-    :vartype type: Literal["azure-standard", "azure-platform"]
+    :vartype type: str
     :ivar name: Voice name. Must be non-empty.
     :vartype name: str
     :ivar temperature: Generation temperature (0.0–1.0).
@@ -893,12 +881,6 @@ class AzureStandardVoice(AzureVoice, discriminator="azure-standard"):
     :ivar volume: Optional volume directive.
     :vartype volume: str | None
     """
-
-    # Allow "azure-standard" (default) or "azure-platform".
-    type: Literal["azure-standard", "azure-platform"] = rest_discriminator(
-        name="type",
-        visibility=["read", "create", "update", "delete", "query"],
-    )  # type: ignore
 
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     temperature: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -927,9 +909,11 @@ class AzureStandardVoice(AzureVoice, discriminator="azure-standard"):
     ) -> None: ...
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        # Respect caller-provided 'type'; default to "azure-standard".
         type_value = kwargs.pop("type", "azure-standard")
+        if type_value not in ("azure-standard", "azure-platform"):
+            raise ValueError("type must be 'azure-standard' or 'azure-platform'")
         super().__init__(*args, type=type_value, **kwargs)
 
 
@@ -2492,11 +2476,11 @@ class Response(_Model):
      modalities,
      the model will pick one, for example if ``modalities`` is ``["text", "audio"]``, the model
      could be responding in either text or audio.
-    :vartype modalities: list[str or str]
+    :vartype modalities: list[str]
     :ivar output_audio_format: The format of output audio. Options are ``pcm16``, ``g711_ulaw``, or
      ``g711_alaw``. Is one of the following types: Literal["pcm16"], Literal["g711_ulaw"],
      Literal["g711_alaw"]
-    :vartype output_audio_format: str or str or str
+    :vartype output_audio_format: str
     :ivar temperature: Sampling temperature for the model, limited to [0.6, 1.2]. Defaults to 0.8.
     :vartype temperature: float
     :ivar max_output_tokens: Maximum number of output tokens for a single assistant response,
@@ -2660,7 +2644,7 @@ class ResponseCancelledDetails(ResponseStatusDetails, discriminator="cancelled")
     :vartype type: str
     :ivar reason: Required. Is either a Literal["turn_detected"] type or a
      Literal["client_cancelled"] type.
-    :vartype reason: str or str
+    :vartype reason: str
     """
 
     type: Literal["cancelled"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -3003,7 +2987,7 @@ class ResponseIncompleteDetails(ResponseStatusDetails, discriminator="incomplete
     :vartype type: str
     :ivar reason: Required. Is either a Literal["max_output_tokens"] type or a
      Literal["content_filter"] type.
-    :vartype reason: str or str
+    :vartype reason: str
     """
 
     type: Literal["incomplete"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -3342,15 +3326,6 @@ class ServerEvent(_Model):
 class ServerEventConversationItemCreated(ServerEvent, discriminator="conversation.item.created"):
     """Returned when a conversation item is created. There are several scenarios that produce this
     event:
-
-    * The server is generating a Response, which if successful will produce
-    either one or two Items, which will be of type `message`
-    (role `assistant`) or type `function_call`.
-    * The input audio buffer has been committed, either by the client or the
-    server (in `server_vad` mode). The server will take the content of the
-    input audio buffer and add it to a new user message Item.
-    * The client has sent a `conversation.item.create` event to add a new Item
-    to the Conversation.
 
     :ivar event_id:
     :vartype event_id: str
