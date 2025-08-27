@@ -1026,6 +1026,15 @@ class NumberVersionField(VersionField):
 class DumpableIntegerField(fields.Integer):
     """A int field that cannot serialize other type of values to int if self.strict."""
 
+    def __init__(self, *, strict: bool = False, **kwargs):
+        # Filter out marshmallow 4.x unsupported kwargs
+        filtered_kwargs, removed_kwargs = _filter_field_kwargs(**kwargs)
+        
+        # Store custom parameters before filtering
+        self.strict = removed_kwargs.get("strict", strict)
+        
+        super().__init__(**filtered_kwargs)
+
     def _serialize(self, value, attr, obj, **kwargs):
         if self.strict and not isinstance(value, int):
             # this implementation can serialize bool to bool
