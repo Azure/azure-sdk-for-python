@@ -203,6 +203,10 @@ jobs:
     dependsOn:
       - 'Build_Extended'
 
+    variables:
+      # default to true just in this job until #42714 can be completed
+      InstallPortAudio: true
+
     pool:
       name: $(LINUXPOOL)
       image: $(LINUXVMIMAGE)
