@@ -1572,7 +1572,7 @@ class BaseToolSet:
         ...
     @overload
     def remove(self, tool_type: Type[Tool]) -> None: 
-        """Remove any any toolset."""
+        """Remove any tool from the toolset."""
         ...
     def remove(self, tool_type: Type[Tool], **kwargs) -> None:
         """
