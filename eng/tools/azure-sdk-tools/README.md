@@ -210,16 +210,14 @@ class my_check(Check):
         """This is the recommended """
         set_envvar_defaults()
 
-        if args.target == ".":
-            targeted = [os.getcwd()]
-        else:
-            target_dir = os.getcwd()
-            targeted = discover_targeted_packages(args.target, target_dir)
+        targeted = self.get_targeted_directories(args)
+
         results: List[int] = []
 
-        for pkg in targeted:
-            parsed = ParsedSetup.from_path(pkg)
-            print(f"Processing {pkg.name} for my_check")
+        for parsed in targeted:
+            pkg_dir = parsed.folder
+            pkg_name = parsed.name
+            print(f"Processing {pkg_name} for my_check")
 ```
 
 - Once the new check has been created, register it in `azpysdk/main.py` on line 58. This will likely be automated by decorator in the near future but this is out how it should be done for now.

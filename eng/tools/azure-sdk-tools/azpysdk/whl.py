@@ -33,15 +33,12 @@ class whl(Check):
 
         set_envvar_defaults()
 
-        if args.target == ".":
-            targeted = [os.getcwd()]
-        else:
-            target_dir = os.getcwd()
-            targeted = discover_targeted_packages(args.target, target_dir)
+        targeted = self.get_targeted_directories(args)
+
         results: List[int] = []
 
-        for pkg in targeted:
-            parsed = ParsedSetup.from_path(pkg)
+        for parsed in targeted:
+            pkg = parsed.folder
 
             dev_requirements = os.path.join(pkg, "dev_requirements.txt")
 
