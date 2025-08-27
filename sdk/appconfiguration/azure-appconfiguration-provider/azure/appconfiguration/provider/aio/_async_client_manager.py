@@ -8,7 +8,7 @@ import json
 import time
 import random
 from dataclasses import dataclass
-from typing import Tuple, Union, Dict, List, Any, Optional, Mapping, TYPE_CHECKING, Callable, Awaitable
+from typing import Tuple, Union, Dict, List, Any, Optional, Mapping, TYPE_CHECKING
 from typing_extensions import Self
 from azure.core import MatchConditions
 from azure.core.tracing.decorator import distributed_trace

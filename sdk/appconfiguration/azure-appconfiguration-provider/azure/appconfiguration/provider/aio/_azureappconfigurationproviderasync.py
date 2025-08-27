@@ -338,7 +338,9 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         self._on_refresh_error: Optional[Union[Callable[[Exception], Awaitable[None]], None]] = kwargs.pop(
             "on_refresh_error", None
         )
-        self._configuration_mapper: Optional[Callable[[ConfigurationSetting], Awaitable[None]]] = kwargs.pop("configuration_mapper", None)
+        self._configuration_mapper: Optional[Callable[[ConfigurationSetting], Awaitable[None]]] = kwargs.pop(
+            "configuration_mapper", None
+        )
 
     async def refresh(self, **kwargs) -> None:  # pylint: disable=too-many-statements
         if not self._refresh_on and not self._feature_flag_refresh_enabled:
