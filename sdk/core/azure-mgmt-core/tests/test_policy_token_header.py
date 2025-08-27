@@ -82,7 +82,7 @@ def test_policy_token_header_policy_no_subscription_id():
     policy = PolicyTokenHeaderPolicy(mock_client, acquire_policy_token=True)
 
     # Test with a URL without subscription ID
-    request = HttpRequest("GET", "https://management.azure.com/providers/Microsoft.Resources")
+    request = HttpRequest("POST", "https://management.azure.com/providers/Microsoft.Resources")
     pipeline_request = Mock()
     pipeline_request.http_request = request
     pipeline_request.context.options = {}
@@ -197,3 +197,22 @@ def test_policy_token_header_policy_with_content():
 
     # Verify the header was added
     assert request.headers["x-ms-policy-external-evaluations"] == "content-token-789"
+
+
+def test_policy_token_header_policy_get_request_no_token():
+    """Test that the policy does not acquire tokens for GET requests even if acquire_policy_token is True."""
+
+    mock_response = MockHttpResponse(200, {"token": "test-token-123", "result": "Succeeded"})
+    mock_client = MockARMPipelineClient(mock_response)
+
+    policy = PolicyTokenHeaderPolicy(mock_client, acquire_policy_token=True)
+
+    request = HttpRequest("GET", "https://management.azure.com/providers/Microsoft.Resources")
+    pipeline_request = Mock()
+    pipeline_request.http_request = request
+    pipeline_request.context.options = {}
+
+    policy.on_request(pipeline_request)
+
+    # Verify no header was added
+    assert "x-ms-policy-external-evaluations" not in request.headers

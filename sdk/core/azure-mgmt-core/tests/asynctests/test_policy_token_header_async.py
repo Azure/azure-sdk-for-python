@@ -88,7 +88,7 @@ async def test_async_policy_token_header_policy_no_subscription_id():
     policy = AsyncPolicyTokenHeaderPolicy(mock_client, acquire_policy_token=True)
 
     # Test with a URL without subscription ID
-    request = HttpRequest("GET", "https://management.azure.com/providers/Microsoft.Resources")
+    request = HttpRequest("POST", "https://management.azure.com/providers/Microsoft.Resources")
     pipeline_request = Mock()
     pipeline_request.http_request = request
     pipeline_request.context.options = {}
@@ -239,3 +239,22 @@ async def test_async_policy_token_header_policy_send_method():
 
     # Verify the response is forwarded
     assert response == mock_pipeline_response
+
+
+async def test_policy_token_header_policy_get_request_no_token():
+    """Test that the policy does not acquire tokens for GET requests even if acquire_policy_token is True."""
+
+    mock_response = MockHttpResponse(200, {"token": "get-token-000", "result": "Succeeded"})
+    mock_client = cast("AsyncARMPipelineClient", MockAsyncARMPipelineClient(mock_response))
+
+    policy = AsyncPolicyTokenHeaderPolicy(mock_client, acquire_policy_token=True)
+
+    request = HttpRequest("GET", "https://management.azure.com/providers/Microsoft.Resources")
+    pipeline_request = Mock()
+    pipeline_request.http_request = request
+    pipeline_request.context.options = {}
+
+    await policy.on_request(pipeline_request)
+
+    # Verify no header was added
+    assert "x-ms-policy-external-evaluations" not in request.headers
