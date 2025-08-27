@@ -15,6 +15,7 @@
 
 #### Other Changes
 * Added session token false progress merge logic. See [42393](https://github.com/Azure/azure-sdk-for-python/pull/42393)
+* Added a fallback mechanism to AAD scope override. See [PR 42731](https://github.com/Azure/azure-sdk-for-python/pull/42731).
 
 ### 4.14.0b2 (2025-08-12)
 
