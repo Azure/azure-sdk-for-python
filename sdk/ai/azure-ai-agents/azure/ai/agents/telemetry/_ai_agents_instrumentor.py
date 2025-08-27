@@ -30,6 +30,7 @@ from azure.ai.agents.models import (
     RunStepDeltaChunk,
     RunStepError,
     RunStepFunctionToolCall,
+    RunStepMcpToolCall,
     RunStepOpenAPIToolCall,
     RunStepToolCallDetails,
     RunStepCodeInterpreterToolCall,
@@ -447,6 +448,15 @@ class _AIAgentsInstrumentorPreview:
                     "id": t.id,
                     "type": t.type,
                     'function': t.as_dict().get('function', {})
+                }
+            elif isinstance(t, RunStepMcpToolCall):
+                tool_call = {
+                    "id": t.id,
+                    "type": t.type,
+                    "arguments": t.arguments,
+                    "name": t.name,
+                    "output": t.output,
+                    "server_label": t.server_label or ""
                 }
             else:
                 tool_details = t.as_dict()[t.type]
@@ -2066,7 +2076,10 @@ class _AgentEventHandlerTraceWrapper(AgentEventHandler):
         else:
             retval = super().on_thread_message(message)  # pylint: disable=assignment-from-none # type: ignore
 
-        # Message status may be in progress, even if the thread.message.completed event has arrived.
+        # TODO: Workaround for issue where message.status may be IN_PROGRESS even after a thread.message.completed event has arrived.
+        # See work item 4636299 for details: https://dev.azure.com/your-org/your-project/_workitems/edit/4636299
+        # When the work item is resolved, change this code back to:
+        # if message.status in {MessageStatus.COMPLETED, MessageStatus.INCOMPLETE}
         if message.status in {MessageStatus.COMPLETED, MessageStatus.INCOMPLETE} or (message.status == MessageStatus.IN_PROGRESS and message.content):
             self.last_message = message
 
@@ -2204,7 +2217,10 @@ class _AsyncAgentEventHandlerTraceWrapper(AsyncAgentEventHandler):
         else:
             retval = await super().on_thread_message(message)  # type: ignore
 
-        # Message status may be in progress, even if the thread.message.completed event has arrived.
+        # TODO: Workaround for issue where message.status may be IN_PROGRESS even after a thread.message.completed event has arrived.
+        # See work item 4636299 for details: https://dev.azure.com/your-org/your-project/_workitems/edit/4636299
+        # When the work item is resolved, change this code back to:
+        # if message.status in {MessageStatus.COMPLETED, MessageStatus.INCOMPLETE}
         if message.status in {MessageStatus.COMPLETED, MessageStatus.INCOMPLETE} or (message.status == MessageStatus.IN_PROGRESS and message.content):
             self.last_message = message
 

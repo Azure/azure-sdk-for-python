@@ -9,77 +9,50 @@ import json
 import jsonref
 import time
 import pytest
-from typing import Set, Callable, Any, List, Optional
+from typing import Any, Callable, Dict, List, Optional, Set 
 from azure.ai.agents.models import (
     AgentsResponseFormatMode,
     AgentsResponseFormat,
     AsyncAgentEventHandler,
     AsyncFunctionTool,
+    McpTool,
     MessageDeltaChunk,
     MessageDeltaTextContent,
     OpenApiAnonymousAuthDetails,
     OpenApiTool,
+    RequiredMcpToolCall,
     RunStatus,
     RunStep,
+    RunStepActivityDetails,
+    RunStepMcpToolCall,
+    RunStepToolCallDetails,
+    SubmitToolApprovalAction,
     ThreadMessage,
     ThreadRun,
+    ToolApproval,
     AsyncToolSet,
     Tool,
 )
 from azure.ai.agents.telemetry._ai_agents_instrumentor import _AIAgentsInstrumentorPreview
-from azure.ai.agents.telemetry import AIAgentsInstrumentor, _utils
+from azure.ai.agents.telemetry import _utils
 from azure.core.settings import settings
-from memory_trace_exporter import MemoryTraceExporter
 from gen_ai_trace_verifier import GenAiTraceVerifier
-from opentelemetry import trace
-from opentelemetry.sdk.trace import TracerProvider
-from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 from azure.ai.agents.aio import AgentsClient
 
 from devtools_testutils.aio import recorded_by_proxy_async
 
-from test_agents_client_base import (
-    TestAgentClientBase,
-    agentClientPreparer,
-)
+from test_agents_client_base import agentClientPreparer
+from test_ai_instrumentor_base import TestAiAgentsInstrumentorBase
 
-CONTENT_TRACING_ENV_VARIABLE = "OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT"
 settings.tracing_implementation = "OpenTelemetry"
 _utils._span_impl_type = settings.tracing_implementation()
 
 
-class TestAiAgentsInstrumentor(TestAgentClientBase):
+class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
     """Tests for AI agents instrumentor."""
 
-    @pytest.fixture(scope="function")
-    def instrument_with_content(self):
-        os.environ.update({CONTENT_TRACING_ENV_VARIABLE: "True"})
-        self.setup_telemetry()
-        yield
-        self.cleanup()
-
-    @pytest.fixture(scope="function")
-    def instrument_without_content(self):
-        os.environ.update({CONTENT_TRACING_ENV_VARIABLE: "False"})
-        self.setup_telemetry()
-        yield
-        self.cleanup()
-
-    def setup_telemetry(self):
-        trace._TRACER_PROVIDER = TracerProvider()
-        self.exporter = MemoryTraceExporter()
-        span_processor = SimpleSpanProcessor(self.exporter)
-        trace.get_tracer_provider().add_span_processor(span_processor)
-        AIAgentsInstrumentor().instrument()
-
-    def cleanup(self):
-        self.exporter.shutdown()
-        AIAgentsInstrumentor().uninstrument()
-        trace._TRACER_PROVIDER = None
-        os.environ.pop(CONTENT_TRACING_ENV_VARIABLE, None)
-
-    # helper function: create client and using environment variables
     def create_client(self, **kwargs):
+        """helper function: create client and using environment variables"""
         # fetch environment variables
         endpoint = kwargs.pop("azure_ai_agents_tests_project_endpoint")
         credential = self.get_credential(AgentsClient, is_async=False)
@@ -465,7 +438,6 @@ class TestAiAgentsInstrumentor(TestAgentClientBase):
     async def test_agent_streaming_with_toolset_with_tracing_content_recording_enabled(self, **kwargs):
         """Test running functions with streaming and tracing content recording."""
         await self._do_test_run_steps_with_toolset_with_tracing_content_recording(
-            expected_event_content='{"tool_calls": [{"id": "*", "type": "function", "function": {"name": "fetch_weather", "arguments": {"location": "New York"}}}]}',
             toolset=self._get_function_toolset(),
             model="gpt-4o",
             use_stream=True,
@@ -477,12 +449,12 @@ class TestAiAgentsInstrumentor(TestAgentClientBase):
                 '{"content": {"text": {"value": "*"}}, "role": "assistant"}'
             ],
             have_submit_tools=True,
+            run_step_events=self.get_expected_fn_spans(True),
             **kwargs
         )
 
     async def _do_test_run_steps_with_toolset_with_tracing_content_recording(
             self,
-            expected_event_content: str,
             model: str,
             message: str,
             use_stream: bool,
@@ -493,6 +465,7 @@ class TestAiAgentsInstrumentor(TestAgentClientBase):
             toolset: Optional[AsyncToolSet] = None,
             tool: Optional[Tool] = None,
             have_submit_tools=False,
+            run_step_events: List[List[Dict[str, Any]]] = None,
             **kwargs
         ):
         """The helper method to check the recordings."""
@@ -536,263 +509,23 @@ class TestAiAgentsInstrumentor(TestAgentClientBase):
         await client.close()
         
         self.exporter.force_flush()
-        
-        spans = self.exporter.get_spans_by_name("create_agent my-agent")
-        assert len(spans) == 1
-        span = spans[0]
-        expected_attributes = [
-            ("gen_ai.system", "az.ai.agents"),
-            ("gen_ai.operation.name", "create_agent"),
-            ("server.address", ""),
-            ("gen_ai.request.model", model),
-            ("gen_ai.agent.name", "my-agent"),
-            ("gen_ai.agent.id", ""),
-        ]
-        attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
-        assert attributes_match == True
-        
-        content = f'{{"content": "{instructions}"}}' if recording_enabled else "{}"
-        expected_events = [
-            {
-                "name": "gen_ai.system.message",
-                "attributes": {
-                    "gen_ai.system": "az.ai.agents",
-                    "gen_ai.event.content": content,
-                },
-            }
-        ]
-        events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
-        assert events_match == True
-        
-        spans = self.exporter.get_spans_by_name("create_thread")
-        assert len(spans) == 1
-        span = spans[0]
-        expected_attributes = [
-            ("gen_ai.system", "az.ai.agents"),
-            ("gen_ai.operation.name", "create_thread"),
-            ("server.address", ""),
-            ("gen_ai.thread.id", ""),
-        ]
-        attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
-        assert attributes_match == True
-
-        spans = self.exporter.get_spans_by_name("create_message")
-        assert len(spans) == 1
-        span = spans[0]
-        expected_attributes = [
-            ("gen_ai.system", "az.ai.agents"),
-            ("gen_ai.operation.name", "create_message"),
-            ("server.address", ""),
-            ("gen_ai.thread.id", ""),
-            ("gen_ai.message.id", ""),
-        ]
-        attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
-        assert attributes_match == True
-
-        content = f'{{"content": "{message}", "role": "user"}}' if recording_enabled else '{"role": "user"}'
-        expected_events = [
-            {
-                "name": "gen_ai.user.message",
-                "attributes": {
-                    "gen_ai.system": "az.ai.agents",
-                    "gen_ai.thread.id": "*",
-                    "gen_ai.event.content": content,
-                },
-            }
-        ]
-        events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
-        assert events_match == True
-
-        spans = self.exporter.get_spans_by_name("submit_tool_outputs")
-        if have_submit_tools:
-            spans = self.exporter.get_spans_by_name("submit_tool_outputs")
-            assert len(spans) == 1
-            span = spans[0]
-            expected_attributes = [
-                ("gen_ai.system", "az.ai.agents"),
-                ("gen_ai.operation.name", "submit_tool_outputs"),
-                ("server.address", ""),
-                ("gen_ai.thread.id", ""),
-                ("gen_ai.thread.run.id", ""),
-            ]
-            if not use_stream:
-                expected_attributes.extend([
-                    ('gen_ai.thread.run.status', ''),
-                    ('gen_ai.response.model', model)
-                ])
-            attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
-            assert attributes_match == True
-        else:
-            assert len(spans) == 0
-
-        if use_stream:
-            spans = self.exporter.get_spans_by_name("process_thread_run")
-            assert len(spans) == 1
-            span = spans[0]
-            expected_attributes = [
-                ("gen_ai.system", "az.ai.agents"),
-                ("gen_ai.operation.name", "process_thread_run"),
-                ("server.address", ""),
-                ("gen_ai.thread.id", ""),
-                ("gen_ai.agent.id", ""),
-                ("gen_ai.thread.run.id", ""),
-                ("gen_ai.message.id", ""),
-                ("gen_ai.thread.run.status", "completed"),
-                ("gen_ai.response.model", model),
-                ("gen_ai.usage.input_tokens", "+"),
-                ("gen_ai.usage.output_tokens", "+"),
-            ]
-            attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
-            assert attributes_match == True
-    
-            tool_attr = tool_message_attribute_content if recording_enabled else ""
-            expected_events = [
-                {
-                    "name": "gen_ai.tool.message",
-                    "attributes": {"gen_ai.event.content": f'{{"content": "{tool_attr}", "id": "*"}}'},
-                },
-                {
-                    "name": "gen_ai.assistant.message",
-                    "attributes": {
-                        "gen_ai.system": "az.ai.agents",
-                        "gen_ai.thread.id": "*",
-                        "gen_ai.agent.id": "*",
-                        "gen_ai.thread.run.id": "*",
-                        "gen_ai.message.status": "completed",
-                        "gen_ai.run_step.start.timestamp": "*",
-                        "gen_ai.run_step.end.timestamp": "*",
-                        "gen_ai.usage.input_tokens": "+",
-                        "gen_ai.usage.output_tokens": "+",
-                        "gen_ai.event.content": event_contents[0],
-                    },
-                },
-                {
-                    "name": "gen_ai.assistant.message",
-                    "attributes": {
-                        "gen_ai.system": "az.ai.agents",
-                        "gen_ai.thread.id": "*",
-                        "gen_ai.agent.id": "*",
-                        "gen_ai.thread.run.id": "*",
-                        "gen_ai.message.id": "*",
-                        "gen_ai.message.status": "*",  # In some cases the message may be "in progress"
-                        "gen_ai.usage.input_tokens": "+",
-                        "gen_ai.usage.output_tokens": "+",
-                        "gen_ai.event.content": event_contents[1],
-                    },
-                },
-            ]
-            events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
-            assert events_match == True
-        
-        spans = self.exporter.get_spans_by_name("list_messages")
-        assert len(spans) == 2
-        span = spans[0]
-        expected_attributes = [
-            ("gen_ai.system", "az.ai.agents"),
-            ("gen_ai.operation.name", "list_messages"),
-            ("server.address", ""),
-            ("gen_ai.thread.id", ""),
-        ]
-        attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
-        assert attributes_match == True
-        content = '{"content": {"text": {"value": "*"}}, "role": "assistant"}' if recording_enabled else '{"role": "assistant"}'
-        expected_events = [
-            {
-                "name": "gen_ai.assistant.message",
-                "timestamp": "*",
-                "attributes": {
-                    "gen_ai.system": "az.ai.agents",
-                    "gen_ai.thread.id": "*",
-                    "gen_ai.agent.id": "*",
-                    "gen_ai.thread.run.id": "*",
-                    "gen_ai.message.id": "*",
-                    "gen_ai.event.content": content,
-                },
-            },
-        ]
-        events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
-        assert events_match == True
-
-        span = spans[1]
-        attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
-        assert attributes_match == True
-        content = f'{{"content": {{"text": {{"value": "{message}"}}}}, "role": "user"}}'  if recording_enabled else '{"role": "user"}'
-        expected_events = [
-            {
-                "name": "gen_ai.user.message",
-                "attributes": {
-                    "gen_ai.system": "az.ai.agents",
-                    "gen_ai.thread.id": "*",
-                    "gen_ai.message.id": "*",
-                    "gen_ai.event.content": content,
-                },
-            },
-        ]
-        events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
-        assert events_match == True
-        
-        spans = self.exporter.get_spans_by_name("list_run_steps")
-        assert len(spans) == 2
-        span = spans[0]
-        expected_attributes = [
-            ("gen_ai.system", "az.ai.agents"),
-            ("gen_ai.operation.name", "list_run_steps"),
-            ("server.address", ""),
-            ("gen_ai.thread.id", ""),
-            ("gen_ai.thread.run.id", ""),
-        ]
-        attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
-        assert attributes_match == True
-        
-        expected_events = [
-            {
-                "name": "gen_ai.run_step.message_creation",
-                "attributes": {
-                    "gen_ai.system": "az.ai.agents",
-                    "gen_ai.thread.id": "*",
-                    "gen_ai.agent.id": "*",
-                    "gen_ai.thread.run.id": "*",
-                    "gen_ai.message.id": "*",
-                    "gen_ai.run_step.status": "completed",
-                    "gen_ai.run_step.start.timestamp": "*",
-                    "gen_ai.run_step.end.timestamp": "*",
-                    "gen_ai.usage.input_tokens": "+",
-                    "gen_ai.usage.output_tokens": "+",
-                },
-            },
-        ]
-        events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
-        assert events_match == True
-
-        span = spans[1]
-        attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
-        assert attributes_match == True
-        expected_events = [
-            {
-                "name": "gen_ai.run_step.tool_calls",
-                "attributes": {
-                    "gen_ai.system": "az.ai.agents",
-                    "gen_ai.thread.id": "*",
-                    "gen_ai.agent.id": "*",
-                    "gen_ai.thread.run.id": "*",
-                    "gen_ai.run_step.status": "completed",
-                    "gen_ai.run_step.start.timestamp": "*",
-                    "gen_ai.run_step.end.timestamp": "*",
-                    "gen_ai.usage.input_tokens": "+",
-                    "gen_ai.usage.output_tokens": "+",
-                    "gen_ai.event.content": expected_event_content
-                },
-            },
-        ]
-        events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
-        assert events_match == True
+        self._check_spans(
+            model=model,
+            recording_enabled=recording_enabled,
+            instructions=instructions,
+            message=message,
+            have_submit_tools=have_submit_tools,
+            use_stream=use_stream,
+            tool_message_attribute_content=tool_message_attribute_content,
+            event_contents=event_contents,
+            run_step_events=run_step_events,
+        )
 
     @pytest.mark.usefixtures("instrument_without_content")
     @agentClientPreparer()
     @recorded_by_proxy_async
     async def test_agent_streaming_with_toolset_with_tracing_content_recording_disabled(self, **kwargs):
         await self._do_test_run_steps_with_toolset_with_tracing_content_recording(
-            expected_event_content='{"tool_calls": [{"id": "*", "type": "function"}]}',
             toolset=self._get_function_toolset(),
             model="gpt-4o",
             use_stream=True,
@@ -804,6 +537,7 @@ class TestAiAgentsInstrumentor(TestAgentClientBase):
                 '{"role": "assistant"}'
             ],
             have_submit_tools=True,
+            run_step_events=self.get_expected_fn_spans(False),
             **kwargs
         )
 
@@ -813,7 +547,6 @@ class TestAiAgentsInstrumentor(TestAgentClientBase):
     async def test_telemetry_steps_with_fn_tool(self, **kwargs):
         """Test running functions with streaming and tracing content recording."""
         await self._do_test_run_steps_with_toolset_with_tracing_content_recording(
-            expected_event_content='{"tool_calls": [{"id": "*", "type": "function", "function": {"name": "fetch_weather", "arguments": {"location": "New York"}}}]}',
             toolset=self._get_function_toolset(),
             model="gpt-4o",
             use_stream=False,
@@ -825,6 +558,7 @@ class TestAiAgentsInstrumentor(TestAgentClientBase):
                 '{"content": {"text": {"value": "*"}}, "role": "assistant"}'
             ],
             have_submit_tools=True,
+            run_step_events=self.get_expected_fn_spans(True),
             **kwargs
         )
 
@@ -844,7 +578,6 @@ class TestAiAgentsInstrumentor(TestAgentClientBase):
             auth=auth,
         )
         await self._do_test_run_steps_with_toolset_with_tracing_content_recording(
-            expected_event_content='{"tool_calls": [{"id": "*", "type": "openapi", "function": {"name": "get_weather_GetCurrentWeather", "arguments": "*", "output": "*"}}]}',
             tool=openapi_tool,
             model="gpt-4o",
             use_stream=False,
@@ -852,7 +585,98 @@ class TestAiAgentsInstrumentor(TestAgentClientBase):
             recording_enabled=True,
             tool_message_attribute_content='',
             event_contents=[],
+            run_step_events=self.get_expected_openapi_spans(),
             **kwargs)
+
+    @pytest.mark.usefixtures("instrument_with_content")
+    @agentClientPreparer()
+    @recorded_by_proxy_async
+    async def test_telemetry_steps_with_mcp_tool(self, **kwargs):
+        """Test run steps with OpenAPI."""
+        mcp_tool = McpTool(
+            server_label="github",
+            server_url="https://gitmcp.io/Azure/azure-rest-api-specs",
+            allowed_tools=["search_azure_rest_api_code"],  # Optional: specify allowed tools
+        )
+        model = "gpt-4o"
+        instructions = "You are a helpful agent that can use MCP tools to assist users. Use the available MCP tools to answer questions and perform tasks."
+        recording_enabled = True
+        message = "Please summarize the Azure REST API specifications Readme"
+        async with self.create_client(**kwargs, by_endpoint=True) as agents_client:
+            agent = await agents_client.create_agent(
+                model=model,
+                name="my-agent",
+                instructions=instructions,
+                tools=mcp_tool.definitions,
+            )
+            thread = await agents_client.threads.create()
+            try:
+                await agents_client.messages.create(
+                    thread_id=thread.id,
+                    role="user",
+                    content=message,
+                )
+                mcp_tool.update_headers("SuperSecret", "123456")
+                run = await agents_client.runs.create(thread_id=thread.id, agent_id=agent.id, tool_resources=mcp_tool.resources)
+                was_approved = False
+                while run.status in [RunStatus.QUEUED, RunStatus.IN_PROGRESS, RunStatus.REQUIRES_ACTION]:
+                    time.sleep(self._sleep_time())
+                    run = await agents_client.runs.get(thread_id=thread.id, run_id=run.id)
+    
+                    if run.status == RunStatus.REQUIRES_ACTION and isinstance(run.required_action, SubmitToolApprovalAction):
+                        tool_calls = run.required_action.submit_tool_approval.tool_calls
+                        assert tool_calls, "No tool calls to approve."
+    
+                        tool_approvals = []
+                        for tool_call in tool_calls:
+                            if isinstance(tool_call, RequiredMcpToolCall):
+                                tool_approvals.append(
+                                    ToolApproval(
+                                        tool_call_id=tool_call.id,
+                                        approve=True,
+                                        headers=mcp_tool.headers,
+                                    )
+                                )
+    
+                        if tool_approvals:
+                            was_approved = True
+                            await agents_client.runs.submit_tool_outputs(
+                                thread_id=thread.id, run_id=run.id, tool_approvals=tool_approvals
+                            )
+                assert was_approved, "The run was never approved."
+                assert run.status != RunStatus.FAILED, run.last_error
+    
+                is_activity_step_found = False
+                is_tool_call_step_found = False
+                async for run_step in agents_client.run_steps.list(thread_id=thread.id, run_id=run.id):
+                    if isinstance(run_step.step_details, RunStepActivityDetails):
+                        is_activity_step_found = True
+                    if isinstance(run_step.step_details, RunStepToolCallDetails):
+                        for tool_call in run_step.step_details.tool_calls:
+                            if isinstance(tool_call, RunStepMcpToolCall):
+                                is_tool_call_step_found = True
+                                break
+                assert is_activity_step_found, "RunStepMcpToolCall was not found."
+                assert is_tool_call_step_found, "No RunStepMcpToolCall"
+                messages = [msg async for msg in agents_client.messages.list(thread_id=thread.id)]
+                assert len(messages) > 1
+            finally:
+                await agents_client.threads.delete(thread.id)
+                await agents_client.delete_agent(agent.id)
+    
+        self.exporter.force_flush()
+        # Check the actual telemetry.
+        self._check_spans(
+            model=model,
+            recording_enabled=recording_enabled,
+            instructions=instructions,
+            message=message,
+            have_submit_tools=True,
+            use_stream=False,
+            tool_message_attribute_content="",
+            event_contents=[],
+            run_step_events=self.get_expected_mcp_spans(),
+        )
 
 
 class MyEventHandler(AsyncAgentEventHandler):
