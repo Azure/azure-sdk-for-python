@@ -9,11 +9,11 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import base64
+import json
+from threading import Lock
 from typing import List, Any, TYPE_CHECKING, Tuple, Union, Dict
 from cryptography.hazmat.primitives import serialization
 from cryptography.x509.base import load_pem_x509_certificate
-import json
-from threading import Lock
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.exceptions import raise_with_traceback
 

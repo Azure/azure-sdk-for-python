@@ -10,7 +10,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 import base64
 import json
-from typing import Dict, List, Any, TYPE_CHECKING, Tuple, Union
+from typing import Dict, List, Any, Tuple, Union
 try:
     from typing import Self
 except ImportError:
@@ -19,14 +19,14 @@ from threading import Lock
 from cryptography.hazmat.primitives import serialization
 from cryptography.x509 import load_pem_x509_certificate
 
-from azure.core.exceptions import raise_with_traceback
+from azure.core.exceptions import raise_with_traceback  # pylint: disable=no-raise-with-traceback
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.configuration import Configuration
 from azure.core.credentials import TokenCredential
 
 
 from ._client import AttestationClient as AzureAttestationRestClient
-from .models import (
+from .models import (  # pylint: disable=reimported
     AttestationResult as GeneratedAttestationResult,
     RuntimeData,
     InitTimeData,
@@ -35,7 +35,6 @@ from .models import (
     AttestOpenEnclaveRequest,
     AttestationResult,
     TpmAttestationResult,
-    AttestationType,
     PolicyResult as GeneratedPolicyResult,
     PolicyCertificatesResult as GeneratedPolicyCertificatesResult,
     JsonWebKey as JSONWebKey,
