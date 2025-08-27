@@ -732,7 +732,7 @@ class OpenApiTool(Tool[OpenApiToolDefinition]):
     def add_definition(
         self,
         name: str,
-        description: str,
+        description: Optional[str],
         spec: Any,
         auth: Optional[OpenApiAuthDetails] = None,
         default_parameters: Optional[List[str]] = None,
@@ -1612,18 +1612,64 @@ class BaseToolSet:
         :raises ValueError: If a tool of the same type already exists.
         """
         self.validate_tool_type(tool)
-
+        
+        # Special handling for OpenApiTool - add definitions to existing tool instead of raising error
+        if isinstance(tool, OpenApiTool):
+            # Find existing OpenApiTool if any
+            existing_openapi_tool = next((t for t in self._tools if isinstance(t, OpenApiTool)), None)
+            if existing_openapi_tool:
+                # Add all definitions from the new tool to the existing one
+                for definition in tool.definitions:
+                    existing_openapi_tool.add_definition(
+                        name=definition.openapi.name,
+                        description=definition.openapi.description,
+                        spec=definition.openapi.spec,
+                        auth=definition.openapi.auth,
+                        default_parameters=definition.openapi.default_params
+                    )
+                return  # Early return since we added to existing tool
+            
         if any(isinstance(existing_tool, type(tool)) for existing_tool in self._tools):
             raise ValueError("Tool of type {type(tool).__name__} already exists in the ToolSet.")
         self._tools.append(tool)
 
-    def remove(self, tool_type: Type[Tool]) -> None:
+    @overload
+    def remove(self, tool_type: Type[OpenApiTool], *, name: str) -> None: 
+        """Remove a specific API definition from OpenApiTool by name."""
+        ...
+    @overload  
+    def remove(self, tool_type: Type[OpenApiTool]) -> None:
+        """Remove the entire OpenApiTool from the toolset."""
+        ...
+    @overload
+    def remove(self, tool_type: Type[Tool]) -> None: 
+        """Remove any any toolset."""
+        ...
+    def remove(self, tool_type: Type[Tool], **kwargs) -> None:
         """
         Remove a tool of the specified type from the tool set.
+        For OpenApiTool, if 'name' is provided, removes a specific API definition by name.
+        Otherwise, removes the entire tool from the toolset.
 
         :param Type[Tool] tool_type: The type of tool to remove.
+        :param str name: (Optional) For OpenApiTool - the name of the specific API definition to remove.
         :raises ValueError: If a tool of the specified type is not found.
         """
+        # Special handling for OpenApiTool with name parameter
+        if tool_type == OpenApiTool and "name" in kwargs:
+            definition_name = kwargs["name"]
+            for i, tool in enumerate(self._tools):
+                if isinstance(tool, OpenApiTool):
+                    tool.remove_definition(definition_name)  # This will raise ValueError if definition not found
+                    logger.info("API definition '%s' removed from OpenApiTool.", definition_name)
+                    # Check if OpenApiTool has any definitions left
+                    if not tool.definitions:
+                        del self._tools[i]
+                        logger.info("OpenApiTool removed from ToolSet as it has no remaining definitions.")
+                    return
+            raise ValueError(f"Tool of type {tool_type.__name__} not found in the ToolSet.")
+        
+        # Standard tool removal
         for i, tool in enumerate(self._tools):
             if isinstance(tool, tool_type):
                 del self._tools[i]
