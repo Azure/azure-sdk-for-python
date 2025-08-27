@@ -1609,7 +1609,7 @@ class BaseToolSet:
         Add a tool to the tool set.
 
         :param Tool tool: The tool to add.
-        :raises ValueError: If a tool of the same type already exists.
+        :raises ValueError: If a tool of the same type already exists, or if an MCP tool with the same server label already exists.
         """
         self.validate_tool_type(tool)
         
@@ -1628,31 +1628,90 @@ class BaseToolSet:
                         default_parameters=definition.openapi.default_params
                     )
                 return  # Early return since we added to existing tool
+        
+        # Special handling for McpTool - check for same server label
+        if isinstance(tool, McpTool):
+            # Check if there's already an MCP tool with the same server label
+            for existing_tool in self._tools:
+                if isinstance(existing_tool, McpTool) and existing_tool.server_label == tool.server_label:
+                    raise ValueError(f"McpTool with server label '{tool.server_label}' already exists in the ToolSet.")
+            # Allow multiple MCP tools (with different server labels)
+            self._tools.append(tool)
+            return
             
         if any(isinstance(existing_tool, type(tool)) for existing_tool in self._tools):
-            raise ValueError("Tool of type {type(tool).__name__} already exists in the ToolSet.")
+            raise ValueError(f"Tool of type {type(tool).__name__} already exists in the ToolSet.")
         self._tools.append(tool)
 
     @overload
     def remove(self, tool_type: Type[OpenApiTool], *, name: str) -> None: 
-        """Remove a specific API definition from OpenApiTool by name."""
+        """
+        Remove a specific API definition from an OpenApiTool by name.
+
+        :param tool_type: The tool class to target. Must be OpenApiTool.
+        :type tool_type: Type[OpenApiTool]
+        :param name: The name of the OpenAPI definition to remove from the tool.
+        :type name: str
+        :raises ValueError: If the OpenApiTool isn't found or the named definition doesn't exist.
+        """
         ...
     @overload  
     def remove(self, tool_type: Type[OpenApiTool]) -> None:
-        """Remove the entire OpenApiTool from the toolset."""
+        """
+        Remove the OpenApiTool from the toolset.
+
+        If multiple definitions exist within the OpenApiTool, the entire tool is removed.
+
+        :param tool_type: The tool class to target. Must be OpenApiTool.
+        :type tool_type: Type[OpenApiTool]
+        :raises ValueError: If no OpenApiTool is found in the toolset.
+        """
+        ...
+    @overload
+    def remove(self, tool_type: Type[McpTool], *, server_label: str) -> None: 
+        """
+        Remove a specific McpTool from the toolset by its server label.
+
+        :param tool_type: The tool class to target. Must be McpTool.
+        :type tool_type: Type[McpTool]
+        :param server_label: The unique server label identifying the MCP tool to remove.
+        :type server_label: str
+        :raises ValueError: If no McpTool with the given server label is found.
+        """
+        ...
+    @overload  
+    def remove(self, tool_type: Type[McpTool]) -> None:
+        """
+        Remove all McpTool instances from the toolset.
+
+        :param tool_type: The tool class to target. Must be McpTool.
+        :type tool_type: Type[McpTool]
+        :raises ValueError: If there are no McpTool instances in the toolset.
+        """
         ...
     @overload
     def remove(self, tool_type: Type[Tool]) -> None: 
-        """Remove any any toolset."""
+        """
+        Remove a tool of the specified type from the toolset.
+
+        This removes the first matching tool instance of the given type.
+
+        :param tool_type: The tool class to remove.
+        :type tool_type: Type[Tool]
+        :raises ValueError: If a tool of the specified type is not found.
+        """
         ...
     def remove(self, tool_type: Type[Tool], **kwargs) -> None:
         """
         Remove a tool of the specified type from the tool set.
         For OpenApiTool, if 'name' is provided, removes a specific API definition by name.
+        For McpTool, if 'server_label' is provided, removes a specific MCP tool by server label.
+        For McpTool without server_label, removes ALL MCP tools from the toolset.
         Otherwise, removes the entire tool from the toolset.
 
         :param Type[Tool] tool_type: The type of tool to remove.
         :param str name: (Optional) For OpenApiTool - the name of the specific API definition to remove.
+        :param str server_label: (Optional) For McpTool - the server label of the specific MCP tool to remove.
         :raises ValueError: If a tool of the specified type is not found.
         """
         # Special handling for OpenApiTool with name parameter
@@ -1668,6 +1727,34 @@ class BaseToolSet:
                         logger.info("OpenApiTool removed from ToolSet as it has no remaining definitions.")
                     return
             raise ValueError(f"Tool of type {tool_type.__name__} not found in the ToolSet.")
+        
+        # Special handling for McpTool with server_label parameter
+        if tool_type == McpTool and "server_label" in kwargs:
+            server_label = kwargs["server_label"]
+            for i, tool in enumerate(self._tools):
+                if isinstance(tool, McpTool) and tool.server_label == server_label:
+                    del self._tools[i]
+                    logger.info("McpTool with server label '%s' removed from the ToolSet.", server_label)
+                    return
+            raise ValueError(f"McpTool with server label '{server_label}' not found in the ToolSet.")
+        
+        # Special handling for McpTool without server_label - remove ALL MCP tools
+        if tool_type == McpTool:
+            removed_count = 0
+            # Iterate backwards to avoid index issues when removing items
+            for i in range(len(self._tools) - 1, -1, -1):
+                if isinstance(self._tools[i], McpTool):
+                    mcp_tool = cast(McpTool, self._tools[i])
+                    server_label = mcp_tool.server_label
+                    del self._tools[i]
+                    logger.info("McpTool with server label '%s' removed from the ToolSet.", server_label)
+                    removed_count += 1
+            
+            if removed_count == 0:
+                raise ValueError(f"No tools of type {tool_type.__name__} found in the ToolSet.")
+            else:
+                logger.info("Removed %d MCP tools from the ToolSet.", removed_count)
+                return
         
         # Standard tool removal
         for i, tool in enumerate(self._tools):
@@ -1701,8 +1788,14 @@ class BaseToolSet:
             resources = tool.resources
             for key, value in resources.items():
                 if key in tool_resources:
-                    if isinstance(tool_resources[key], dict) and isinstance(value, dict):
+                    # Special handling for MCP resources - they need to be merged into a single list
+                    if key == "mcp" and isinstance(tool_resources[key], list) and isinstance(value, list):
+                        tool_resources[key].extend(value)
+                    elif isinstance(tool_resources[key], dict) and isinstance(value, dict):
                         tool_resources[key].update(value)
+                    else:
+                        # For other types, the new value overwrites the old one
+                        tool_resources[key] = value
                 else:
                     tool_resources[key] = value
         return self._create_tool_resources_from_dict(tool_resources)
@@ -1735,15 +1828,49 @@ class BaseToolSet:
             "tools": self.definitions,
         }
 
-    def get_tool(self, tool_type: Type[ToolT]) -> ToolT:
+    @overload
+    def get_tool(self, tool_type: Type[McpTool]) -> McpTool: ...
+    @overload
+    def get_tool(self, tool_type: Type[McpTool], *, server_label: str) -> McpTool: ...
+    @overload
+    def get_tool(self, tool_type: Type[ToolT]) -> ToolT: ...
+    def get_tool(self, tool_type: Type[ToolT], **kwargs) -> ToolT:
         """
         Get a tool of the specified type from the tool set.
+        For McpTool, if 'server_label' is provided, returns the MCP tool with that specific server label.
+        If there are multiple MCP tools and no server_label is provided, raises an error.
+        Otherwise, returns the first (or only) tool of the specified type.
 
         :param Type[Tool] tool_type: The type of tool to get.
+        :param str server_label: (Optional) For McpTool - the server label of the specific MCP tool to get.
         :return: The tool of the specified type.
         :rtype: Tool
-        :raises ValueError: If a tool of the specified type is not found.
+        :raises ValueError: If a tool of the specified type is not found, if no McpTool with the specified server_label is found, or if there are multiple MCP tools but no server_label is provided.
         """
+        # Special handling for McpTool with server_label parameter
+        if tool_type == McpTool and "server_label" in kwargs:
+            server_label = kwargs["server_label"]
+            for tool in self._tools:
+                if isinstance(tool, McpTool) and tool.server_label == server_label:
+                    return cast(ToolT, tool)
+            raise ValueError(f"McpTool with server label '{server_label}' not found in the ToolSet.")
+        
+        # Special handling for McpTool without server_label - check if there are multiple
+        if tool_type == McpTool:
+            mcp_tools = [tool for tool in self._tools if isinstance(tool, McpTool)]
+            if len(mcp_tools) == 0:
+                raise ValueError(f"Tool of type {tool_type.__name__} not found in the ToolSet.")
+            elif len(mcp_tools) > 1:
+                server_labels = [tool.server_label for tool in mcp_tools]
+                raise ValueError(
+                    f"Multiple McpTool instances found with server labels: {server_labels}. "
+                    f"Please specify 'server_label' parameter to identify which MCP tool to retrieve."
+                )
+            else:
+                # Only one MCP tool found, return it
+                return cast(ToolT, mcp_tools[0])
+        
+        # Standard tool retrieval - return first tool of specified type
         for tool in self._tools:
             if isinstance(tool, tool_type):
                 return cast(ToolT, tool)
