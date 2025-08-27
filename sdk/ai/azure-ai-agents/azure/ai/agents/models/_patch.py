@@ -1559,7 +1559,7 @@ class BaseToolSet:
                 return  # Early return since we added to existing tool
             
         if any(isinstance(existing_tool, type(tool)) for existing_tool in self._tools):
-            raise ValueError("Tool of type {type(tool).__name__} already exists in the ToolSet.")
+            raise ValueError(f"Tool of type {type(tool).__name__} already exists in the ToolSet.")
         self._tools.append(tool)
 
     @overload
