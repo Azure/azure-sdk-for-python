@@ -835,10 +835,10 @@
 /**/*mgmt*/                                                          @ChenxiJiang333 @msyyc
 
 # PRLabel: %Contoso
-/sdk/contoso/azure-mgmt-contoso/                                   @danieljurek @ronniegeraghty
+/sdk/contoso/                                                      @shirelmr @michiisai
 
 # ServiceLabel: %Contoso %Mgmt
-# ServiceOwners:                                                   @danieljurek @ronniegeraghty
+# ServiceOwners:                                                   @shirelmr @michiisai
 
 ###########
 # Eng Sys and other
