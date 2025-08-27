@@ -4,7 +4,7 @@ import sys
 import logging
 import tempfile
 
-from typing import Optional,List
+from typing import Optional, List
 from subprocess import CalledProcessError, check_call
 
 from .Check import Check
@@ -122,7 +122,7 @@ class mypy(Check):
                 if not samples and not generated_samples:
                     logging.info(
                         f"Package {package_name} does not have a samples directory."
-                 )
+                    )
                 else:
                     sample_code = [
                         *commands,
