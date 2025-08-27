@@ -35,6 +35,15 @@ This package is intended for usage in direct combination with the azure-sdk-for-
 
 **PLEASE NOTE.** For the "script" entrypoints provided by the package, all should either be run from somewhere **within** the azure-sdk-for-python repository. Barring that, an argument `--repo` should be provided that points to the repo root if a user must start the command from a different CWD.
 
+## Usage in automation
+
+This package is used externally in two places. Changes to `azure-sdk-tools`, especially location, should follow-up to ensure these usages are NOT broken.
+
+- In `typespec` package generation.
+  - [This PR](https://github.com/microsoft/typespec/pull/8281) updates `packages/http-client-python/generator/pygen/codegen/templates/packaging_templates/dev_requirements.txt.jinja2` to match the expected location of `azure-sdk-tools`.
+- As part of `azure-rest-api-specs` verification automation.
+  - [This build](https://dev.azure.com/azure-sdk/internal/_build?definitionId=7423) calls the azure-sdk-for-python script `scripts/automation_generate.sh`, which calls into `scripts/dev_setup.py`.
+
 ## Building Azure SDK Packages
 
 After installing azure-sdk-tools, package build functionality is available through `sdk_build`.
