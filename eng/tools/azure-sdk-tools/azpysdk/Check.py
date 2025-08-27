@@ -47,8 +47,6 @@ class Check(abc.ABC):
                 print("Error: Current directory does not appear to be a Python package (no setup.py or setup.cfg found). Remove '.' argument to run on child directories.")
                 return []
         else:
-            # TODO
-            print("target: ", args.target)
             targeted_packages = discover_targeted_packages(args.target, targeted_dir)
             for pkg in targeted_packages:
                 try:
