@@ -1222,10 +1222,8 @@ class AccountProperties(_serialization.Model):
     :vartype abuse_penalty: ~azure.mgmt.cognitiveservices.models.AbusePenalty
     :ivar rai_monitor_config: Cognitive Services Rai Monitor Config.
     :vartype rai_monitor_config: ~azure.mgmt.cognitiveservices.models.RaiMonitorConfig
-    :ivar network_injections: Specifies in AI Foundry where virtual network injection occurs to
-     secure scenarios like Agents entirely within the user's private network, eliminating public
-     internet exposure while maintaining control over network configurations and resources.
-    :vartype network_injections: ~azure.mgmt.cognitiveservices.models.NetworkInjections
+    :ivar network_injections:
+    :vartype network_injections: list[~azure.mgmt.cognitiveservices.models.NetworkInjection]
     :ivar allow_project_management: Specifies whether this resource support project management as
      child resources, used as containers for access management, data isolation and cost in AI
      Foundry.
@@ -1287,7 +1285,7 @@ class AccountProperties(_serialization.Model):
         "commitment_plan_associations": {"key": "commitmentPlanAssociations", "type": "[CommitmentPlanAssociation]"},
         "abuse_penalty": {"key": "abusePenalty", "type": "AbusePenalty"},
         "rai_monitor_config": {"key": "raiMonitorConfig", "type": "RaiMonitorConfig"},
-        "network_injections": {"key": "networkInjections", "type": "NetworkInjections"},
+        "network_injections": {"key": "networkInjections", "type": "[NetworkInjection]"},
         "allow_project_management": {"key": "allowProjectManagement", "type": "bool"},
         "default_project": {"key": "defaultProject", "type": "str"},
         "associated_projects": {"key": "associatedProjects", "type": "[str]"},
@@ -1311,7 +1309,7 @@ class AccountProperties(_serialization.Model):
         restore: Optional[bool] = None,
         locations: Optional["_models.MultiRegionSettings"] = None,
         rai_monitor_config: Optional["_models.RaiMonitorConfig"] = None,
-        network_injections: Optional["_models.NetworkInjections"] = None,
+        network_injections: Optional[List["_models.NetworkInjection"]] = None,
         allow_project_management: Optional[bool] = None,
         default_project: Optional[str] = None,
         associated_projects: Optional[List[str]] = None,
@@ -1351,10 +1349,8 @@ class AccountProperties(_serialization.Model):
         :paramtype locations: ~azure.mgmt.cognitiveservices.models.MultiRegionSettings
         :keyword rai_monitor_config: Cognitive Services Rai Monitor Config.
         :paramtype rai_monitor_config: ~azure.mgmt.cognitiveservices.models.RaiMonitorConfig
-        :keyword network_injections: Specifies in AI Foundry where virtual network injection occurs to
-         secure scenarios like Agents entirely within the user's private network, eliminating public
-         internet exposure while maintaining control over network configurations and resources.
-        :paramtype network_injections: ~azure.mgmt.cognitiveservices.models.NetworkInjections
+        :keyword network_injections:
+        :paramtype network_injections: list[~azure.mgmt.cognitiveservices.models.NetworkInjection]
         :keyword allow_project_management: Specifies whether this resource support project management
          as child resources, used as containers for access management, data isolation and cost in AI
          Foundry.
@@ -4861,7 +4857,7 @@ class MultiRegionSettings(_serialization.Model):
         self.regions = regions
 
 
-class NetworkInjections(_serialization.Model):
+class NetworkInjection(_serialization.Model):
     """Specifies in AI Foundry where virtual network injection occurs to secure scenarios like Agents
     entirely within the user's private network, eliminating public internet exposure while
     maintaining control over network configurations and resources.

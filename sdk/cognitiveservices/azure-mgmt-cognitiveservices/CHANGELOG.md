@@ -1,5 +1,16 @@
 # Release History
 
+## 14.0.0 (2025-09-22)
+
+### Features Added
+
+  - Added model `NetworkInjection`
+
+### Breaking Changes
+
+  - Deleted or renamed model `NetworkInjections`
+  - Deleted or renamed model `CognitiveServicesManagementClientOperationsMixin`
+
 ## 13.7.0 (2025-07-21)
 
 ### Features Added
