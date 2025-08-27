@@ -1936,6 +1936,7 @@ class RunsOperations:
         content_type: str = "application/json",
         tool_outputs: Optional[List[_models.ToolOutput]] = None,
         tool_approvals: Optional[List[_models.ToolApproval]] = None,
+        tool_resources: Optional[_models.ToolResources] = None,
         stream_parameter: Optional[bool] = None,
         **kwargs: Any
     ) -> _models.ThreadRun:
@@ -1954,6 +1955,9 @@ class RunsOperations:
         :keyword tool_approvals: A list of tool approvals allowing data to be sent to tools. Default
          value is None.
         :paramtype tool_approvals: list[~azure.ai.agents.models.ToolApproval]
+        :keyword tool_resources: The overridden enabled tool resources that the agent should use to run
+         the thread. Default value is None.
+        :paramtype tool_resources: ~azure.ai.agents.models.ToolResources
         :keyword stream_parameter: If true, returns a stream of events that happen during the Run as
          SSE, terminating at ``[DONE]``. Default value is None.
         :paramtype stream_parameter: bool
@@ -2011,6 +2015,7 @@ class RunsOperations:
         *,
         tool_outputs: Optional[List[_models.ToolOutput]] = None,
         tool_approvals: Optional[List[_models.ToolApproval]] = None,
+        tool_resources: Optional[_models.ToolResources] = None,
         stream_parameter: Optional[bool] = None,
         **kwargs: Any
     ) -> _models.ThreadRun:
@@ -2028,6 +2033,9 @@ class RunsOperations:
         :keyword tool_approvals: A list of tool approvals allowing data to be sent to tools. Default
          value is None.
         :paramtype tool_approvals: list[~azure.ai.agents.models.ToolApproval]
+        :keyword tool_resources: The overridden enabled tool resources that the agent should use to run
+         the thread. Default value is None.
+        :paramtype tool_resources: ~azure.ai.agents.models.ToolResources
         :keyword stream_parameter: If true, returns a stream of events that happen during the Run as
          SSE, terminating at ``[DONE]``. Default value is None.
         :paramtype stream_parameter: bool
@@ -2050,7 +2058,12 @@ class RunsOperations:
         cls: ClsType[_models.ThreadRun] = kwargs.pop("cls", None)
 
         if body is _Unset:
-            body = {"stream": stream_parameter, "tool_approvals": tool_approvals, "tool_outputs": tool_outputs}
+            body = {
+                "stream": stream_parameter,
+                "tool_approvals": tool_approvals,
+                "tool_outputs": tool_outputs,
+                "tool_resources": tool_resources,
+            }
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None

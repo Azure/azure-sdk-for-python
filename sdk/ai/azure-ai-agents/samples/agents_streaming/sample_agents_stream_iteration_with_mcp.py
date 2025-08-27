@@ -152,6 +152,7 @@ with project_client:
                             thread_id=event_data.thread_id,
                             run_id=event_data.id,
                             tool_approvals=tool_approvals,
+                            tool_resources=mcp_tool.resources,
                             event_handler=stream,
                         )
 

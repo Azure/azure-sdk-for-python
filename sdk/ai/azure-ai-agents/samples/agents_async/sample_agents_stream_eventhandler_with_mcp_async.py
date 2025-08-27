@@ -102,7 +102,7 @@ class MyEventHandler(AsyncAgentEventHandler[str]):
                 # Once we receive 'requires_action' status, the next event will be DONE.
                 # Here we associate our existing event handler to the next stream.
                 await self.agents_client.runs.submit_tool_outputs_stream(
-                    thread_id=run.thread_id, run_id=run.id, tool_approvals=tool_approvals, event_handler=self
+                    thread_id=run.thread_id, run_id=run.id, tool_approvals=tool_approvals, tool_resources=mcp_tool.resources, event_handler=self
                 )
 
     async def on_run_step(self, step: "RunStep") -> None:

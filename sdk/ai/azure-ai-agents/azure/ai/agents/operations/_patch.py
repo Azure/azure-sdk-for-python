@@ -1068,6 +1068,7 @@ class RunsOperations(RunsOperationsGenerated):
         *,
         tool_outputs: Optional[List[_models.ToolOutput]] = None,
         tool_approvals: Optional[List[_models.ToolApproval]] = None,
+        tool_resources: Optional[_models.ToolResources] = None,
         content_type: str = "application/json",
         event_handler: Optional[_models.AgentEventHandler] = None,
         **kwargs: Any,
@@ -1086,6 +1087,8 @@ class RunsOperations(RunsOperationsGenerated):
         :keyword tool_approvals: A list of tool approvals allowing data to be sent to tools. Default
          value is None.
         :paramtype tool_approvals: list[~azure.ai.agents.models.ToolApproval]
+        :keyword tool_resources: A list of tool resources required for the tool approvals. Default value is None.
+        :paramtype tool_resources: ~azure.ai.agents.models.ToolResources
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1150,6 +1153,7 @@ class RunsOperations(RunsOperationsGenerated):
         *,
         tool_outputs: Optional[List[_models.ToolOutput]] = _Unset,
         tool_approvals: Optional[List[_models.ToolApproval]] = _Unset,
+        tool_resources: Optional[_models.ToolResources] = _Unset,
         **kwargs: Any,
     ) -> _models.ThreadRun:
         """Submits outputs from tools as requested by tool calls in a run. Runs that need submitted tool
@@ -1169,6 +1173,8 @@ class RunsOperations(RunsOperationsGenerated):
          value is None.
         :paramtype tool_approvals: list[~azure.ai.agents.models.ToolApproval]
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
+        :keyword tool_resources: A list of tool resources required for the tool approvals. Default value is None.
+        :paramtype tool_resources: ~azure.ai.agents.models.ToolResources
         :rtype: ~azure.ai.agents.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -1192,6 +1198,7 @@ class RunsOperations(RunsOperationsGenerated):
                 thread_id,
                 run_id,
                 tool_approvals=tool_approvals,
+                tool_resources=tool_resources,
                 stream_parameter=False,
                 stream=False,
                 **kwargs,
@@ -1243,6 +1250,7 @@ class RunsOperations(RunsOperationsGenerated):
         *,
         tool_outputs: Optional[List[_models.ToolOutput]] = None,
         tool_approvals: Optional[List[_models.ToolApproval]] = None,
+        tool_resources: Optional[_models.ToolResources] = None,
         content_type: str = "application/json",
         event_handler: _models.BaseAgentEventHandler,
         **kwargs: Any,
@@ -1261,6 +1269,8 @@ class RunsOperations(RunsOperationsGenerated):
         :keyword tool_approvals: A list of tool approvals allowing data to be sent to tools. Default
          value is None.
         :paramtype tool_approvals: list[~azure.ai.agents.models.ToolApproval]
+        :keyword tool_resources: A list of tool resources required for the tool approvals. Default value is None.
+        :paramtype tool_resources: ~azure.ai.agents.models.ToolResources
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1278,6 +1288,7 @@ class RunsOperations(RunsOperationsGenerated):
         *,
         tool_outputs: Optional[List[_models.ToolOutput]] = _Unset,
         tool_approvals: Optional[List[_models.ToolApproval]] = _Unset,
+        tool_resources: Optional[_models.ToolResources] = _Unset,
         event_handler: _models.BaseAgentEventHandler,
         **kwargs: Any,
     ) -> None:
@@ -1297,6 +1308,8 @@ class RunsOperations(RunsOperationsGenerated):
         :keyword tool_approvals: A list of tool approvals allowing data to be sent to tools. Default
          value is None.
         :paramtype tool_approvals: list[~azure.ai.agents.models.ToolApproval]
+        :keyword tool_resources: A list of tool resources required for the tool approvals. Default value is None.
+        :paramtype tool_resources: ~azure.ai.agents.models.ToolResources
         :keyword event_handler: The event handler to use for processing events during the run.
         :paramtype event_handler: ~azure.ai.agents.models.BaseAgentEventHandler
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1313,7 +1326,7 @@ class RunsOperations(RunsOperationsGenerated):
 
         elif tool_approvals is not _Unset:
             response = super().submit_tool_outputs(
-                thread_id, run_id, tool_approvals=tool_approvals, stream_parameter=True, stream=True, **kwargs
+                thread_id, run_id, tool_approvals=tool_approvals, tool_resources=tool_resources, stream_parameter=True, stream=True, **kwargs
             )
 
         elif isinstance(body, io.IOBase):

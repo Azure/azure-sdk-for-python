@@ -124,7 +124,7 @@ async def main() -> None:
                 print(f"tool_approvals: {tool_approvals}")
                 if tool_approvals:
                     await agents_client.runs.submit_tool_outputs(
-                        thread_id=thread.id, run_id=run.id, tool_approvals=tool_approvals
+                        thread_id=thread.id, run_id=run.id, tool_approvals=tool_approvals, tool_resources=mcp_tool.resources
                     )
 
             print(f"Current run status: {run.status}")
