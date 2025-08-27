@@ -39,16 +39,16 @@ class Check(abc.ABC):
         """
         targeted: List[ParsedSetup] = []
         targeted_dir = os.getcwd()
-
+ 
         if args.target == ".":
             try:
                 targeted.append(ParsedSetup.from_path(targeted_dir))
             except:
                 print("Error: Current directory does not appear to be a Python package (no setup.py or setup.cfg found). Remove '.' argument to run on child directories.")
                 return []
-            
         else:
-            targeted_packages = discover_targeted_packages(args.target, targeted_dir)
+            print("target is ", args.target)
+            targeted_packages = discover_targeted_packages(f"{args.target}/*", targeted_dir)
             for pkg in targeted_packages:
                 try:
                     targeted.append(ParsedSetup.from_path(pkg))
