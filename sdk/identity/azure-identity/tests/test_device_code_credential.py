@@ -236,6 +236,60 @@ def test_device_code_credential(get_token_method):
 @pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
 def test_tenant_id(get_token_method):
     client_id = "client-id"
+    tenant_id = "tenant-id"
+    expected_token = "access-token"
+    user_code = "user-code"
+    verification_uri = "verification-uri"
+    expires_in = 42
+
+    transport = validating_transport(
+        requests=[Request()] * 3,  # not validating requests because they're formed by MSAL
+        responses=[
+            # expected requests: discover tenant, start device code flow, poll for completion
+            get_discovery_response(),
+            mock_response(
+                json_payload={
+                    "device_code": "_",
+                    "user_code": user_code,
+                    "verification_uri": verification_uri,
+                    "expires_in": expires_in,
+                }
+            ),
+            mock_response(
+                json_payload=dict(
+                    build_aad_response(
+                        access_token=expected_token,
+                        expires_in=expires_in,
+                        refresh_token="_",
+                        id_token=build_id_token(aud=client_id),
+                    ),
+                    scope="scope",
+                ),
+            ),
+        ],
+    )
+
+    callback = Mock()
+    credential = DeviceCodeCredential(
+        client_id=client_id,
+        tenant_id=tenant_id,
+        prompt_callback=callback,
+        transport=transport,
+        disable_instance_discovery=True,
+        additionally_allowed_tenants=["*"],
+    )
+
+    kwargs = {"tenant_id": "tenant-id-2"}
+    if get_token_method == "get_token_info":
+        kwargs = {"options": kwargs}
+    token = getattr(credential, get_token_method)("scope", **kwargs)
+    assert token.token == expected_token
+
+
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+def test_default_tenant_id(get_token_method):
+    """If no tenant_id is provided, token request tenants should be allowed"""
+    client_id = "client-id"
     expected_token = "access-token"
     user_code = "user-code"
     verification_uri = "verification-uri"
@@ -274,7 +328,6 @@ def test_tenant_id(get_token_method):
         prompt_callback=callback,
         transport=transport,
         disable_instance_discovery=True,
-        additionally_allowed_tenants=["*"],
     )
 
     kwargs = {"tenant_id": "tenant_id"}
