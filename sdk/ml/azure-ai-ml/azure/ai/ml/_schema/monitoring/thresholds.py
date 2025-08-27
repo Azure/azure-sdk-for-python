@@ -12,14 +12,14 @@ from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 
 
 class MetricThresholdSchema(metaclass=PatchedSchemaMeta):
-    threshold = fields.Number()
+    threshold = fields.Float()
 
 
 class NumericalDriftMetricsSchema(metaclass=PatchedSchemaMeta):
-    jensen_shannon_distance = fields.Number()
-    normalized_wasserstein_distance = fields.Number()
-    population_stability_index = fields.Number()
-    two_sample_kolmogorov_smirnov_test = fields.Number()
+    jensen_shannon_distance = fields.Float()
+    normalized_wasserstein_distance = fields.Float()
+    population_stability_index = fields.Float()
+    two_sample_kolmogorov_smirnov_test = fields.Float()
 
     @post_load
     def make(self, data, **kwargs):
@@ -29,9 +29,9 @@ class NumericalDriftMetricsSchema(metaclass=PatchedSchemaMeta):
 
 
 class CategoricalDriftMetricsSchema(metaclass=PatchedSchemaMeta):
-    jensen_shannon_distance = fields.Number()
-    population_stability_index = fields.Number()
-    pearsons_chi_squared_test = fields.Number()
+    jensen_shannon_distance = fields.Float()
+    population_stability_index = fields.Float()
+    pearsons_chi_squared_test = fields.Float()
 
     @post_load
     def make(self, data, **kwargs):
@@ -54,9 +54,9 @@ class DataDriftMetricThresholdSchema(MetricThresholdSchema):
 
 
 class DataQualityMetricsNumericalSchema(metaclass=PatchedSchemaMeta):
-    null_value_rate = fields.Number()
-    data_type_error_rate = fields.Number()
-    out_of_bounds_rate = fields.Number()
+    null_value_rate = fields.Float()
+    data_type_error_rate = fields.Float()
+    out_of_bounds_rate = fields.Float()
 
     @post_load
     def make(self, data, **kwargs):
@@ -66,9 +66,9 @@ class DataQualityMetricsNumericalSchema(metaclass=PatchedSchemaMeta):
 
 
 class DataQualityMetricsCategoricalSchema(metaclass=PatchedSchemaMeta):
-    null_value_rate = fields.Number()
-    data_type_error_rate = fields.Number()
-    out_of_bounds_rate = fields.Number()
+    null_value_rate = fields.Float()
+    data_type_error_rate = fields.Float()
+    out_of_bounds_rate = fields.Float()
 
     @post_load
     def make(self, data, **kwargs):
@@ -103,7 +103,7 @@ class PredictionDriftMetricThresholdSchema(MetricThresholdSchema):
 
 # pylint: disable-next=name-too-long
 class FeatureAttributionDriftMetricThresholdSchema(MetricThresholdSchema):
-    normalized_discounted_cumulative_gain = fields.Number()
+    normalized_discounted_cumulative_gain = fields.Float()
 
     @post_load
     def make(self, data, **kwargs):
@@ -113,9 +113,9 @@ class FeatureAttributionDriftMetricThresholdSchema(MetricThresholdSchema):
 
 
 class ModelPerformanceClassificationThresholdsSchema(metaclass=PatchedSchemaMeta):
-    accuracy = fields.Number()
-    precision = fields.Number()
-    recall = fields.Number()
+    accuracy = fields.Float()
+    precision = fields.Float()
+    recall = fields.Float()
 
     @post_load
     def make(self, data, **kwargs):
@@ -125,9 +125,9 @@ class ModelPerformanceClassificationThresholdsSchema(metaclass=PatchedSchemaMeta
 
 
 class ModelPerformanceRegressionThresholdsSchema(metaclass=PatchedSchemaMeta):
-    mae = fields.Number()
-    mse = fields.Number()
-    rmse = fields.Number()
+    mae = fields.Float()
+    mse = fields.Float()
+    rmse = fields.Float()
 
     @post_load
     def make(self, data, **kwargs):
@@ -162,31 +162,31 @@ class GenerationSafetyQualityMetricThresholdSchema(metaclass=PatchedSchemaMeta):
         keys=StringTransformedEnum(
             allowed_values=["aggregated_groundedness_pass_rate", "acceptable_groundedness_score_per_instance"]
         ),
-        values=fields.Number(),
+        values=fields.Float(),
     )
     relevance = fields.Dict(
         keys=StringTransformedEnum(
             allowed_values=["aggregated_relevance_pass_rate", "acceptable_relevance_score_per_instance"]
         ),
-        values=fields.Number(),
+        values=fields.Float(),
     )
     coherence = fields.Dict(
         keys=StringTransformedEnum(
             allowed_values=["aggregated_coherence_pass_rate", "acceptable_coherence_score_per_instance"]
         ),
-        values=fields.Number(),
+        values=fields.Float(),
     )
     fluency = fields.Dict(
         keys=StringTransformedEnum(
             allowed_values=["aggregated_fluency_pass_rate", "acceptable_fluency_score_per_instance"]
         ),
-        values=fields.Number(),
+        values=fields.Float(),
     )
     similarity = fields.Dict(
         keys=StringTransformedEnum(
             allowed_values=["aggregated_similarity_pass_rate", "acceptable_similarity_score_per_instance"]
         ),
-        values=fields.Number(),
+        values=fields.Float(),
     )
 
     @post_load
@@ -201,7 +201,7 @@ class GenerationTokenStatisticsMonitorMetricThresholdSchema(
 ):  # pylint: disable=name-too-long
     totaltoken = fields.Dict(
         keys=StringTransformedEnum(allowed_values=["total_token_count", "total_token_count_per_group"]),
-        values=fields.Number(),
+        values=fields.Float(),
     )
 
     @post_load

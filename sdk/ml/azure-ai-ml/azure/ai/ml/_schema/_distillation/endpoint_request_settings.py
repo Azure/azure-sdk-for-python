@@ -11,7 +11,7 @@ from azure.ai.ml._utils._experimental import experimental
 @experimental
 class EndpointRequestSettingsSchema(metaclass=PatchedSchemaMeta):
     request_batch_size = fields.Int()
-    min_endpoint_success_ratio = fields.Number()
+    min_endpoint_success_ratio = fields.Float()
 
     @post_load
     def make(self, data, **kwargs):  # pylint: disable=unused-argument

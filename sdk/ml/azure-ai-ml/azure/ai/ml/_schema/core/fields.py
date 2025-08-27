@@ -102,8 +102,8 @@ def _filter_field_kwargs(**kwargs):
     constructors are no longer supported and must be filtered out.
     
     :param kwargs: Keyword arguments to filter
-    :return: Filtered kwargs safe for marshmallow 4.x Field constructors
-    :rtype: dict
+    :return: Tuple of (filtered_kwargs, removed_kwargs) 
+    :rtype: tuple[dict, dict]
     """
     # Parameters that are NOT supported by marshmallow 4.x Field class
     unsupported_params = {
@@ -114,8 +114,13 @@ def _filter_field_kwargs(**kwargs):
         'plain_union_fields', 'allow_load_from_file', 'type_field_name',
         'experimental_field', 'extra_fields', 'strict', 'as_string', 'allow_nan',
         
-        # Parameters that were moved or deprecated in marshmallow 4.x
+        # marshmallow 4.x removed/deprecated parameters
         'unknown',  # Now handled at schema level, not field level
+        'missing',  # Replaced with load_default in marshmallow 3.13+
+        'default',  # Replaced with dump_default in marshmallow 3.13+
+        
+        # Field metadata should now be passed via metadata= parameter
+        'description', 'example', 'format', 
     }
     
     # Create filtered kwargs by removing unsupported parameters
@@ -607,8 +612,8 @@ class UnionField(fields.Field):
         self._union_fields.insert(0, field)
 
     # This sets the parent for the schema and also handles nesting.
-    def _bind_to_schema(self, field_name, schema):
-        super()._bind_to_schema(field_name, schema)
+    def _bind_to_schema(self, field_name, parent):
+        super()._bind_to_schema(field_name, parent)
         self._union_fields = self._create_bind_fields(self._union_fields, field_name)
 
     def _create_bind_fields(self, _fields, field_name):
@@ -716,8 +721,8 @@ class TypeSensitiveUnionField(UnionField):
 
         super(TypeSensitiveUnionField, self).__init__(union_fields, **filtered_kwargs)
 
-    def _bind_to_schema(self, field_name, schema):
-        super()._bind_to_schema(field_name, schema)
+    def _bind_to_schema(self, field_name, parent):
+        super()._bind_to_schema(field_name, parent)
         for (
             type_name,
             type_sensitive_fields,
@@ -1085,9 +1090,9 @@ class ExperimentalField(fields.Field):
         return self._experimental_field
 
     # This sets the parent for the schema and also handles nesting.
-    def _bind_to_schema(self, field_name, schema):
-        super()._bind_to_schema(field_name, schema)
-        self._experimental_field._bind_to_schema(field_name, schema)
+    def _bind_to_schema(self, field_name, parent):
+        super()._bind_to_schema(field_name, parent)
+        self._experimental_field._bind_to_schema(field_name, parent)
 
     def _serialize(self, value, attr, obj, **kwargs):
         if value is None:

@@ -27,7 +27,7 @@ class RandomSamplingAlgorithmSchema(metaclass=PatchedSchemaMeta):
 
     logbase = UnionField(
         [
-            fields.Number(),
+            fields.Float(),
             fields.Str(),
         ],
         data_key="logbase",

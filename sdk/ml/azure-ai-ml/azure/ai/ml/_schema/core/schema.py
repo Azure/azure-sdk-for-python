@@ -27,6 +27,11 @@ class PathAwareSchema(PatchedBaseSchema, metaclass=PatchedSchemaMeta):
     def __init__(self, *args, **kwargs):
         # Extract context from kwargs for marshmallow 4.x compatibility
         context = kwargs.pop("context", None)
+        
+        # Filter out any other parameters that might not be supported in marshmallow 4.x
+        unsupported_schema_params = {'strict', 'prefix'}  # These were removed in marshmallow 4.x
+        filtered_kwargs = {k: v for k, v in kwargs.items() if k not in unsupported_schema_params}
+        
         if context is None:
             # Provide a default context with current working directory
             from pathlib import Path
@@ -39,7 +44,7 @@ class PathAwareSchema(PatchedBaseSchema, metaclass=PatchedSchemaMeta):
         # Store context for internal use
         self._ml_context = context
         self.old_base_path = context.get(BASE_PATH_CONTEXT_KEY)
-        super().__init__(*args, **kwargs)
+        super().__init__(*args, **filtered_kwargs)
 
     def get_context(self):
         """Get the ML context for this schema."""

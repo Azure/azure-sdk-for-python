@@ -119,8 +119,8 @@ class ParameterSchema(metaclass=PatchedSchemaMeta):
         required=True,
     )
     optional = fields.Bool()
-    default = UnionField([fields.Str(), fields.Number(), fields.Bool()])
+    default = UnionField([fields.Str(), fields.Float(), fields.Bool()])
     description = fields.Str()
-    max = UnionField([fields.Str(), fields.Number()])
-    min = UnionField([fields.Str(), fields.Number()])
+    max = UnionField([fields.Str(), fields.Float()])
+    min = UnionField([fields.Str(), fields.Float()])
     enum = fields.List(fields.Str())
