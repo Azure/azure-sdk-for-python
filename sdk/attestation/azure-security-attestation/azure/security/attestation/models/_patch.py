@@ -10,7 +10,11 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import base64
 from datetime import datetime
 import json
-from typing import TYPE_CHECKING, TypeVar, List
+from typing import Optional, TypeVar, List, Any, Dict, Type, Union
+try:
+    from typing import Self
+except ImportError:
+    from typing_extensions import Self
 
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives.hashes import SHA256
@@ -40,9 +44,6 @@ from ._enums import (
     CertificateModification,
 )
 
-if TYPE_CHECKING:
-    from typing import Any, Dict, List, Type, Union
-
 T = TypeVar("T")
 
 
@@ -60,14 +61,12 @@ class AttestationSigner:
 
     """
 
-    def __init__(self, certificates, key_id):
-        # type: (list[str], str) -> None
+    def __init__(self, certificates: list[str], key_id: str) -> None:
         self.certificates = [pem_from_base64(cert, "CERTIFICATE") for cert in certificates]
         self.key_id = key_id
 
     @classmethod
-    def _from_generated(cls, generated):
-        # type: (JSONWebKey) -> AttestationSigner
+    def _from_generated(cls, generated: JSONWebKey) -> Self:
         if not generated:
             return None
         return cls(generated.x5_c, generated.kid)
@@ -83,14 +82,16 @@ class AttestationPolicyCertificateResult:
      ~azure.security.attestation._generated.models.CertificateModification
     """
 
-    def __init__(self, certificate_thumbprint, certificate_resolution):
-        # type: (str, Union[str, CertificateModification]) -> None
+    def __init__(
+            self,
+            certificate_thumbprint: str,
+            certificate_resolution: Union[str, CertificateModification]
+    ) -> None:
         self.certificate_thumbprint = certificate_thumbprint
         self.certificate_resolution = certificate_resolution
 
     @classmethod
-    def _from_generated(cls, generated):
-        # type: (GeneratedPolicyCertificatesModificationResult) -> AttestationPolicyCertificateResult
+    def _from_generated(cls, generated: GeneratedPolicyCertificatesModificationResult) -> Self:
         if not generated:
             return None
         return cls(generated.certificate_thumbprint, generated.certificate_resolution)
@@ -116,15 +117,18 @@ class AttestationPolicyResult:
 
     """
 
-    def __init__(self, policy_resolution, policy_signer, policy_token_hash):
-        # type: (PolicyModification, AttestationSigner, str) -> None
+    def __init__(
+            self,
+            policy_resolution: PolicyModification,
+            policy_signer: AttestationSigner,
+            policy_token_hash: str
+    ) -> None:
         self.policy_resolution = policy_resolution
         self.policy_signer = policy_signer
         self.policy_token_hash = policy_token_hash
 
     @classmethod
-    def _from_generated(cls, generated):
-        # type: (GeneratedPolicyResult, str) -> AttestationPolicyResult
+    def _from_generated(cls, generated: GeneratedPolicyResult) -> 'AttestationPolicyResult':
         # If we have a generated policy result or policy text, return that.
         if not generated:
             return None
@@ -171,8 +175,7 @@ class AttestationResult:  # pylint: disable=too-many-instance-attributes
 
     """
 
-    def __init__(self, **kwargs):
-        # type: (**Any) -> None
+    def __init__(self, **kwargs: Any) -> None:
         self._issuer = kwargs.pop("issuer")  # type:str
         self._unique_identifier = kwargs.pop("unique_identifier", None)  # type: Union[str, None]
         self._nonce = kwargs.pop("nonce", None)  # type: Union[str, None]
@@ -192,8 +195,7 @@ class AttestationResult:  # pylint: disable=too-many-instance-attributes
         self._sgx_collateral = kwargs.pop("sgx_collateral")  # type: Dict
 
     @classmethod
-    def _from_generated(cls, generated):
-        # type: (GeneratedAttestationResult) -> AttestationResult
+    def _from_generated(cls, generated: GeneratedAttestationResult) -> 'AttestationResult':
         if not generated:
             return None
         return AttestationResult(
@@ -219,8 +221,7 @@ class AttestationResult:  # pylint: disable=too-many-instance-attributes
         )
 
     @property
-    def issuer(self):
-        # type: () -> str
+    def issuer(self) -> str:
         """Returns the issuer of the attestation token.
 
         The issuer for the token MUST be the same as the `endpoint` associated
@@ -235,8 +236,7 @@ class AttestationResult:  # pylint: disable=too-many-instance-attributes
         return self._issuer
 
     @property
-    def unique_id(self):
-        # type: () -> Union[str, None]
+    def unique_id(self) -> Optional[str]:
         """Returns a unique ID claim for the attestation token.
 
         If present, the unique_id property can be used to distinguish between
@@ -250,8 +250,7 @@ class AttestationResult:  # pylint: disable=too-many-instance-attributes
         return self._unique_identifier
 
     @property
-    def nonce(self):
-        # type: () -> Union[str, None]
+    def nonce(self) -> Optional[str]:
         """Returns the value of the "nonce" input to the attestation request.
 
         :rtype: str or None
@@ -259,8 +258,7 @@ class AttestationResult:  # pylint: disable=too-many-instance-attributes
         return self._nonce
 
     @property
-    def version(self):
-        # type: () -> str
+    def version(self) -> str:
         """Returns the version of the information returned in the token.
 
         :rtype: str
@@ -268,8 +266,7 @@ class AttestationResult:  # pylint: disable=too-many-instance-attributes
         return self._version
 
     @property
-    def runtime_claims(self):
-        # type: () -> Union[Dict[str, Any], None]
+    def runtime_claims(self) -> Optional[dict[str, Any]]:
         """Returns the runtime claims in the token.
 
         This value will match the input `runtime_json` property to the
@@ -286,8 +283,7 @@ class AttestationResult:  # pylint: disable=too-many-instance-attributes
         return self._runtime_claims
 
     @property
-    def inittime_claims(self):
-        # type: () -> Union[Dict[str, Any], None]
+    def inittime_claims(self) -> Optional[dict[str, Any]]:
         """Returns the inittime claims in the token.
 
         This value will match the input `inittime_json` property to the
@@ -305,8 +301,7 @@ class AttestationResult:  # pylint: disable=too-many-instance-attributes
         return self._inittime_claims
 
     @property
-    def policy_claims(self):
-        # type: () -> Union[Dict[str, Any], None]
+    def policy_claims(self) -> Optional[dict[str, Any]]:
         """Returns the claims for the token generated by attestation policy.
 
         :rtype: dict[str, Any] or None
@@ -315,8 +310,7 @@ class AttestationResult:  # pylint: disable=too-many-instance-attributes
         return self._policy_claims
 
     @property
-    def verifier_type(self):
-        # type: () -> str
+    def verifier_type(self) -> str:
         """Returns the verifier which generated this attestation token.
 
         :rtype: str
@@ -324,8 +318,7 @@ class AttestationResult:  # pylint: disable=too-many-instance-attributes
         return self._verifier_type
 
     @property
-    def policy_signer(self):
-        # type: () -> Union[AttestationSigner, None]
+    def policy_signer(self) -> Optional[AttestationSigner]:
         """Returns the signing certificate which was used to sign the policy
         which was applied when the token was generated.
 
@@ -334,8 +327,7 @@ class AttestationResult:  # pylint: disable=too-many-instance-attributes
         return AttestationSigner._from_generated(self._policy_signer)  # pylint: disable=protected-access
 
     @property
-    def policy_hash(self):
-        # type: () -> str
+    def policy_hash(self) -> str:
         """Returns the base64url encoded SHA256 hash of the base64url encoded
         attestation policy which was applied when generating this token.
 
@@ -344,8 +336,7 @@ class AttestationResult:  # pylint: disable=too-many-instance-attributes
         return self._policy_hash
 
     @property
-    def is_debuggable(self):
-        # type: () -> bool
+    def is_debuggable(self) -> bool:
         """Returns "True" if the source evidence being attested indicates
         that the TEE has debugging enabled.
 
@@ -354,8 +345,7 @@ class AttestationResult:  # pylint: disable=too-many-instance-attributes
         return self._is_debuggable
 
     @property
-    def product_id(self):
-        # type: () -> float
+    def product_id(self) -> float:
         """Returns the product id associated with the SGX enclave being attested.
 
         :rtype: float
@@ -364,8 +354,7 @@ class AttestationResult:  # pylint: disable=too-many-instance-attributes
         return self._product_id
 
     @property
-    def mr_enclave(self):
-        # type: () -> str
+    def mr_enclave(self) -> str:
         """Returns HEX encoded `mr-enclave` value of the SGX enclave being attested.
 
         :rtype: str
@@ -373,8 +362,7 @@ class AttestationResult:  # pylint: disable=too-many-instance-attributes
         return self._mr_enclave
 
     @property
-    def mr_signer(self):
-        # type: () -> str
+    def mr_signer(self) -> str:
         """Returns HEX encoded `mr-signer` value of the SGX enclave being attested.
 
         :rtype: str
@@ -382,8 +370,7 @@ class AttestationResult:  # pylint: disable=too-many-instance-attributes
         return self._mr_signer
 
     @property
-    def svn(self):
-        # type: () -> int
+    def svn(self) -> int:
         """Returns the `svn` value of the SGX enclave being attested.
 
         :rtype: int
@@ -391,8 +378,7 @@ class AttestationResult:  # pylint: disable=too-many-instance-attributes
         return self._svn
 
     @property
-    def enclave_held_data(self):
-        # type: () -> Union[bytes, None]
+    def enclave_held_data(self) -> Optional[bytes]:
         """Returns the value of the runtime_data field specified as an input
         to the :meth:`azure.security.attestation.AttestationClient.attest_sgx_enclave` or
         :meth:`azure.security.attestation.AttestationClient.attest_open_enclave` API.
@@ -405,8 +391,7 @@ class AttestationResult:  # pylint: disable=too-many-instance-attributes
         return self._enclave_held_data
 
     @property
-    def sgx_collateral(self):
-        # type: () -> Dict[str, Any]
+    def sgx_collateral(self) -> dict[str, Any]:
         """Returns a set of information describing the complete set of inputs
         to the `oe_verify_evidence`
 
@@ -424,20 +409,17 @@ class StoredAttestationPolicy:
 
     """
 
-    def __init__(self, policy):
-        # type: (str) -> None
+    def __init__(self, policy: str) -> None:
         """
         :param str policy: Policy to be saved.
         """
         self._policy = policy.encode("ascii")
 
-    def serialize(self, **kwargs):
-        # type: (Any) -> str
+    def serialize(self, **kwargs: Any) -> str:
         return GeneratedStoredAttestationPolicy(attestation_policy=self._policy).serialize(**kwargs)
 
     @classmethod
-    def _from_generated(cls, generated):
-        # type: (GeneratedStoredAttestationPolicy) -> StoredAttestationPolicy
+    def _from_generated(cls, generated: GeneratedStoredAttestationPolicy) -> 'StoredAttestationPolicy':
         if not generated:
             return None
         return StoredAttestationPolicy(generated.attestation_policy)
@@ -500,151 +482,160 @@ class AttestationToken:
         return self._token
 
     @property
-    def algorithm(self):
-        # type: () -> Union[str, None]
+    def algorithm(self) -> Optional[str]:
         """Json Web Token Header "alg".
 
         See `RFC 7515 Section 4.1.1 <https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.1>`_ for details.
 
         If the value of algorithm is "none" it indicates that the token is unsecured.
+        
+        :rtype: str or None
         """
         return self._header.get("alg")
 
     @property
-    def key_id(self):
-        # type: () -> Union[str, None]
+    def key_id(self) -> Optional[str]:
         """Json Web Token Header "kid".
 
         See `RFC 7515 Section 4.1.4 <https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.4>`_ for details.
+        :rtype: str or None
         """
         return self._header.get("kid")
 
     @property
-    def expires(self):
-        # type: () -> Union[datetime, None]
-        """Expiration time for the token."""
+    def expires(self) -> Optional[datetime]:
+        """
+        Expiration time for the token.
+        :rtype: datetime or None
+        """
         exp = self._body.get("exp")
         if exp:
             return datetime.fromtimestamp(exp)
         return None
 
     @property
-    def not_before(self):
-        # type: () -> Union[datetime, None]
-        """Time before which the token is invalid."""
+    def not_before(self) -> Optional[datetime]:
+        """
+        Time before which the token is invalid.
+        :rtype: datetime or None
+        """
         nbf = self._body.get("nbf")
         if nbf:
             return datetime.fromtimestamp(nbf)
         return None
 
     @property
-    def issued(self):
-        # type: () -> Union[datetime, None]
-        """Time when the token was issued."""
+    def issued(self) -> Optional[datetime]:
+        """
+        Time when the token was issued.
+        :rtype: datetime or None
+        """
         iat = self._body.get("iat")
         if iat:
             return datetime.fromtimestamp(iat)
         return None
 
     @property
-    def content_type(self):
-        # type: () -> Union[str, None]
-        """Json Web Token Header "content type".
+    def content_type(self) -> Optional[str]:
+        """
+        Json Web Token Header "content type".
 
         See `RFC 7515 Section 4.1.10 <https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.10>`_ for details.
+        :rtype: str or None
         """
         return self._header.get("cty")
 
     @property
-    def critical(self):
-        # type: () -> Union[bool, None]
+    def critical(self) -> Optional[bool]:
         """Json Web Token Header "Critical".
 
         See `RFC 7515 Section 4.1.11 <https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.11>`_ for details.
+        :rtype: bool or None
         """
         return self._header.get("crit")
 
     @property
-    def key_url(self):
-        # type: () -> Union[str, None]
+    def key_url(self) -> Optional[str]:
         """Json Web Token Header "Key URL".
 
         See `RFC 7515 Section 4.1.2 <https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.2>`_ for details.
+        :rtype: str or None
         """
         return self._header.get("jku")
 
     @property
-    def x509_url(self):
-        # type: () -> Union[str, None]
+    def x509_url(self) -> Optional[str]:
         """Json Web Token Header "X509 URL".
 
         See `RFC 7515 Section 4.1.5 <https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.5>`_ for details.
+
+        :rtype: str or None
         """
         return self._header.get("x5u")
 
     @property
-    def type(self):
-        # type: () -> Union[str, None]
+    def type(self) -> Optional[str]:
         """Json Web Token Header "typ".
 
         `RFC 7515 Section 4.1.9 <https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.9>`_ for details.
+        :rtype: str or None
         """
         return self._header.get("typ")
 
     @property
-    def certificate_thumbprint(self):
-        # type: () -> Union[str, None]
+    def certificate_thumbprint(self) -> Optional[str]:
         """The "thumbprint" of the certificate used to sign the request.
 
         `RFC 7515 Section 4.1.7 <https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.7>`_ for details.
+        :rtype: str or None
         """
         return self._header.get("x5t")
 
     @property
-    def certificate_sha256_thumbprint(self):
-        # type: () -> Union[str, None]
+    def certificate_sha256_thumbprint(self) -> Optional[str]:
         """The "thumbprint" of the certificate used to sign the request generated using the SHA256 algorithm.
 
         `RFC 7515 Section 4.1.8 <https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.8>`_ for details.
+        :rtype: str or None
         """
         return self._header.get("x5t#256")
 
     @property
-    def issuer(self):
-        # type: () -> Union[str, None]
+    def issuer(self) -> Optional[str]:
         """Json Web Token "iss" claim.
 
         `RFC 7519 Section 4.1.1 <https://www.rfc-editor.org/rfc/rfc7519.html#section-4.1.1>`_ for details.
+        :rtype: str or None
         """
         return self._body.get("iss")
 
     @property
-    def x509_certificate_chain(self):
-        # type: () -> Union[list[str], None]
+    def x509_certificate_chain(self) -> Optional[list[str]]:
         """An array of Base64 encoded X.509 certificates which represent a certificate chain used to sign the token.
 
         See `RFC 7515 Section 4.1.6 <https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.6>`_ for details.
+        :rtype: list[str] or None
         """
         x5c = self._header.get("x5c")
         if x5c is not None:
             return x5c
         return None
 
-    def _json_web_key(self):
-        # type: () -> Union[JSONWebKey, None]
+    def _json_web_key(self) -> Optional[JSONWebKey]:
+        """
+        :rtype: JSONWebKey or None
+        """
         jwk = self._header.get("jwk")
         return JSONWebKey._deserialize(jwk, [])
 
-    def to_jwt_string(self):
-        # type: () -> str
+    def to_jwt_string(self) -> str:
         """Returns a string serializing the JSON Web Token
 
         :rtype: str
         """
         return self._token
 
-    def _validate_token(self, signers=None, **kwargs):
-        # type: (List[AttestationSigner], **Any) -> None
+    def _validate_token(self, signers: Optional[List[AttestationSigner]] = None, **kwargs: Any) -> None:
         """Validate the attestation token based on the options specified in the
          :class:`TokenValidationOptions`.
 
@@ -687,8 +678,7 @@ class AttestationToken:
         if "validation_callback" in kwargs:
             kwargs.get("validation_callback")(self, signer)
 
-    def _get_body(self):
-        # type: () -> Any
+    def _get_body(self) -> Any:
         """Returns the body of the attestation token as an object.
 
         If the `body_type` parameter to :py:class:AttestationToken has a `deserialize`
@@ -702,9 +692,10 @@ class AttestationToken:
         except AttributeError:
             return self._body
 
-    def _get_candidate_signing_certificates(self, signing_certificates):
-        # type: (List[AttestationSigner]) -> List[AttestationSigner]
-
+    def _get_candidate_signing_certificates(
+            self,
+            signing_certificates: List[AttestationSigner]
+        ) -> List[AttestationSigner]:
         candidates = []
         desired_key_id = self.key_id
         if desired_key_id is not None:
@@ -738,12 +729,10 @@ class AttestationToken:
         return candidates
 
     @staticmethod
-    def _get_certificates_from_x5c(x5clist):
-        # type: (list[str]) -> list[Certificate]
+    def _get_certificates_from_x5c(x5clist: list[str]) -> list[Certificate]:
         return [base64.b64decode(b64cert) for b64cert in x5clist]
 
-    def _validate_signature(self, candidate_certificates):
-        # type: (list[AttestationSigner]) -> AttestationSigner
+    def _validate_signature(self, candidate_certificates: list[AttestationSigner]) -> AttestationSigner:
         signed_data = base64url_encode(self.header_bytes) + "." + base64url_encode(self.body_bytes)
         for signer in candidate_certificates:
             cert = load_pem_x509_certificate(signer.certificates[0].encode("ascii"), backend=default_backend())
@@ -765,8 +754,7 @@ class AttestationToken:
                 raise AttestationTokenValidationException("Could not verify signature of attestation token.") from ex
         return None
 
-    def _validate_static_properties(self, **kwargs):
-        # type: (Any, **Any) -> bool
+    def _validate_static_properties(self, **kwargs: Any) -> bool:
         """Validate the static properties in the attestation token."""
         if self._body:
             time_now = datetime.now()
@@ -798,9 +786,11 @@ class AttestationToken:
         return True
 
     @staticmethod
-    def _create_unsecured_jwt(body):
-        # type: (Any) -> str
-        """Return an unsecured JWT expressing the body."""
+    def _create_unsecured_jwt(body: Any) -> str:
+        """
+        Return an unsecured JWT expressing the body.
+        :rtype: str
+        """
         # Base64url encoded '{"alg":"none"}'. See https://www.rfc-editor.org/rfc/rfc7515.html#appendix-A.5 for
         # more information.
         return_value = "eyJhbGciOiJub25lIn0."
@@ -821,8 +811,7 @@ class AttestationToken:
         return return_value
 
     @staticmethod
-    def _create_secured_jwt(body, **kwargs):
-        # type: (Any, **Any) -> str
+    def _create_secured_jwt(body, **kwargs) -> str:
         """Return a secured JWT expressing the body, secured with the specified signing key.
         :param Any body: The body of the token to be serialized.
         :keyword key: Signing key used to sign the token.
@@ -830,6 +819,7 @@ class AttestationToken:
         :keyword certificate: Certificate to be transmitted to attestation service
             used to validate the token.
         :kwtype certificate: Certificate
+        :rtype: str
         """
         key = kwargs.pop("key", None)
         certificate = kwargs.pop("certificate", None)
@@ -879,8 +869,7 @@ class AttestationPolicyToken(AttestationToken):
 
     """
 
-    def __init__(self, policy, **kwargs):
-        # type: (str, Dict[str, Any]) -> None
+    def __init__(self, policy: str, **kwargs: Any) -> None:
         super(AttestationPolicyToken, self).__init__(  # pylint: disable=super-with-arguments
             body=StoredAttestationPolicy(policy), **kwargs
         )
