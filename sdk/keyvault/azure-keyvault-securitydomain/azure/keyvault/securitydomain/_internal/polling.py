@@ -116,7 +116,14 @@ class SecurityDomainDownloadPolling(OperationResourcePolling):
         return self._polling_url
 
     def get_final_get_url(self, pipeline_response: "PipelineResponse") -> None:
-        """Returns None instead of a URL because the final result includes a status monitor but no resource URL."""
+        """Returns None instead of a URL because the final result includes a status monitor but no resource URL.
+
+        :param pipeline_response: The response object. Unused here.
+        :type pipeline_response: ~azure.core.pipeline.PipelineResponse
+
+        :rtype: None
+        :return: None
+        """
         return None
 
     def set_initial_status(self, pipeline_response: "PipelineResponse") -> str:
@@ -124,6 +131,12 @@ class SecurityDomainDownloadPolling(OperationResourcePolling):
 
         This is necessary because the initial response includes the security domain object -- which would usually be the
         result fetched from a final resource URL -- but no status monitor.
+
+        :param pipeline_response: The response object.
+        :type pipeline_response: ~azure.core.pipeline.PipelineResponse
+
+        :rtype: str
+        :return: The initial status, which is always "InProgress".
         """
         response: HttpResponse = pipeline_response.http_response
         self._polling_url = response.headers["azure-asyncoperation"]
@@ -182,8 +195,6 @@ class SecurityDomainDownloadPollingMethod(PollingTerminationMixin, LROBasePollin
 
 class SecurityDomainDownloadNoPolling(SecurityDomainDownloadPollingMethod, NoPollingMixin):
     """Polling method for security domain download operations that bypass polling."""
-
-    pass
 
 
 class SecurityDomainUploadPolling(SecurityDomainDownloadPolling):
@@ -246,5 +257,3 @@ class SecurityDomainUploadPollingMethod(PollingTerminationMixin, LROBasePolling)
 
 class SecurityDomainUploadNoPolling(SecurityDomainUploadPollingMethod, NoPollingMixin):
     """Polling method for security domain upload operations that bypass polling."""
-
-    pass

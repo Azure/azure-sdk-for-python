@@ -135,8 +135,6 @@ class AsyncSecurityDomainDownloadPollingMethod(AsyncPollingTerminationMixin, Asy
 class AsyncSecurityDomainDownloadNoPolling(AsyncSecurityDomainDownloadPollingMethod, AsyncNoPollingMixin):
     """Polling method for security domain download operations that bypass polling."""
 
-    pass
-
 
 class AsyncSecurityDomainUploadPolling(SecurityDomainDownloadPolling):
     """Polling logic for security domain upload operations.
@@ -198,5 +196,3 @@ class AsyncSecurityDomainUploadPollingMethod(AsyncPollingTerminationMixin, Async
 
 class AsyncSecurityDomainUploadNoPolling(AsyncSecurityDomainUploadPollingMethod, AsyncNoPollingMixin):
     """Polling method for security domain upload operations that bypass polling."""
-
-    pass
