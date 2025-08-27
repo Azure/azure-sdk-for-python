@@ -2077,7 +2077,7 @@ class _AgentEventHandlerTraceWrapper(AgentEventHandler):
             retval = super().on_thread_message(message)  # pylint: disable=assignment-from-none # type: ignore
 
         # TODO: Workaround for issue where message.status may be IN_PROGRESS even after a thread.message.completed event has arrived.
-        # See work item 4636299 for details: https://dev.azure.com/your-org/your-project/_workitems/edit/4636299
+        # See work item 4636616 and 4636299 for details.
         # When the work item is resolved, change this code back to:
         # if message.status in {MessageStatus.COMPLETED, MessageStatus.INCOMPLETE}
         if message.status in {MessageStatus.COMPLETED, MessageStatus.INCOMPLETE} or (message.status == MessageStatus.IN_PROGRESS and message.content):
@@ -2218,7 +2218,7 @@ class _AsyncAgentEventHandlerTraceWrapper(AsyncAgentEventHandler):
             retval = await super().on_thread_message(message)  # type: ignore
 
         # TODO: Workaround for issue where message.status may be IN_PROGRESS even after a thread.message.completed event has arrived.
-        # See work item 4636299 for details: https://dev.azure.com/your-org/your-project/_workitems/edit/4636299
+        # See work item 4636616 and 4636299 for details.
         # When the work item is resolved, change this code back to:
         # if message.status in {MessageStatus.COMPLETED, MessageStatus.INCOMPLETE}
         if message.status in {MessageStatus.COMPLETED, MessageStatus.INCOMPLETE} or (message.status == MessageStatus.IN_PROGRESS and message.content):
