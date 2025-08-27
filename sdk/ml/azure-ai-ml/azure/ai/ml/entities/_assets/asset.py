@@ -30,8 +30,6 @@ class Asset(Resource):
     :type tags: Optional[dict[str, str]]
     :param properties: The asset property dictionary. Defaults to None.
     :type properties: Optional[dict[str, str]]
-    :keyword kwargs: A dictionary of additional configuration parameters.
-    :paramtype kwargs: Optional[dict]
     """
 
     def __init__(
