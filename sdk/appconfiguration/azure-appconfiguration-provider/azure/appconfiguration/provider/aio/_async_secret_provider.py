@@ -3,10 +3,10 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+import inspect
 from typing import Mapping, Any, TypeVar, Dict
 from azure.appconfiguration import SecretReferenceConfigurationSetting  # type:ignore # pylint:disable=no-name-in-module
 from azure.keyvault.secrets.aio import SecretClient
-from azure.keyvault.secrets import KeyVaultSecretIdentifier
 from .._secret_provider_base import _SecretProviderBase
 
 JSON = Mapping[str, Any]
@@ -23,23 +23,9 @@ class SecretProvider(_SecretProviderBase):
         self._keyvault_client_configs = kwargs.pop("keyvault_client_configs", {})
 
     async def resolve_keyvault_reference(self, config: SecretReferenceConfigurationSetting) -> str:
-        # pylint:disable=protected-access
         if config.key in self._secret_cache:
             return self._secret_cache[config.key]
-        if not self.uses_key_vault:
-            raise ValueError(
-                """
-                Either a credential to Key Vault, custom Key Vault client, or a secret resolver must be set to resolve
-                Key Vault references.
-                """
-            )
-
-        if config.secret_id is None:
-            raise ValueError("Key Vault reference must have a uri value.")
-
-        keyvault_identifier = KeyVaultSecretIdentifier(config.secret_id)
-
-        vault_url = keyvault_identifier.vault_url + "/"
+        keyvault_identifier, vault_url = self.resolve_keyvault_reference_base(config)
 
         # pylint:disable=protected-access
         referenced_client = self._secret_clients.get(vault_url, None)
@@ -51,25 +37,25 @@ class SecretProvider(_SecretProviderBase):
             referenced_client = SecretClient(vault_url=vault_url, credential=credential, **vault_config)
             self._secret_clients[vault_url] = referenced_client
 
+        secret_value = None
+
         if referenced_client:
             secret_value = (
                 await referenced_client.get_secret(keyvault_identifier.name, version=keyvault_identifier.version)
             ).value
-            if secret_value is not None:
-                self._secret_cache[config.key] = secret_value
-                return secret_value
 
-        if self._secret_resolver:
-            resolved = self._secret_resolver(config.secret_id)
-            try:
+        if self._secret_resolver and secret_value is None:
+            result = self._secret_resolver(config.secret_id)
+            if inspect.isawaitable(result):
                 # Secret resolver was async
-                value = await resolved
-                self._secret_cache[config.key] = value
-                return value
-            except TypeError:
+                secret_value = await result
+            else:
                 # Secret resolver was sync
-                self._secret_cache[config.key] = resolved
-                return resolved
+                secret_value = result
+
+        if secret_value:
+            self._secret_cache[config.key] = secret_value
+            return secret_value
 
         raise ValueError("No Secret Client found for Key Vault reference %s" % (vault_url))
 

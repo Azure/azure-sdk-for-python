@@ -3,7 +3,22 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from typing import Mapping, Union, Any, Iterator, KeysView, ItemsView, ValuesView, TypeVar, overload, Optional, Dict
+from typing import (
+    Mapping,
+    Union,
+    Any,
+    Iterator,
+    KeysView,
+    ItemsView,
+    ValuesView,
+    TypeVar,
+    overload,
+    Optional,
+    Dict,
+    Tuple,
+)
+from azure.appconfiguration import SecretReferenceConfigurationSetting  # type:ignore # pylint:disable=no-name-in-module
+from azure.keyvault.secrets import KeyVaultSecretIdentifier
 from ._azureappconfigurationproviderbase import _RefreshTimer
 
 JSON = Mapping[str, Any]
@@ -30,6 +45,26 @@ class _SecretProviderBase(Mapping[str, Union[str, JSON]]):
         Clears the secret cache.
         """
         self._secret_cache = {}
+
+    def resolve_keyvault_reference_base(
+        self, config: SecretReferenceConfigurationSetting
+    ) -> Tuple[KeyVaultSecretIdentifier, str]:
+        if not self.uses_key_vault:
+            raise ValueError(
+                """
+                Either a credential to Key Vault, custom Key Vault client, or a secret resolver must be set to resolve
+                Key Vault references.
+                """
+            )
+
+        if config.secret_id is None:
+            raise ValueError("Key Vault reference must have a uri value.")
+
+        keyvault_identifier = KeyVaultSecretIdentifier(config.secret_id)
+
+        vault_url = keyvault_identifier.vault_url + "/"
+
+        return keyvault_identifier, vault_url
 
     def __getitem__(self, key: str) -> Any:
         # pylint:disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
