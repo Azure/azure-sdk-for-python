@@ -60,16 +60,13 @@ class CustomerSdkStatsMetrics(metaclass=Singleton): # pylint: disable=too-many-i
         from azure.monitor.opentelemetry.exporter.export.metrics._exporter import AzureMonitorMetricExporter
         from azure.monitor.opentelemetry.exporter import VERSION
 
-        exporter_config = {
-            "connection_string": connection_string,
-            "instrumentation_collection": True,  # Prevent circular dependency
-        }
-
-        self._customer_sdkstats_exporter = AzureMonitorMetricExporter(**exporter_config)
-        self._customer_sdkstats_exporter._is_customer_sdkstats = True
+        self._customer_sdkstats_exporter = AzureMonitorMetricExporter(
+            connection_string=connection_string,
+            is_customer_sdkstats=True,
+        )
         metric_reader_options = {
             "exporter": self._customer_sdkstats_exporter,
-            "export_interval_millis": _get_customer_sdkstats_export_interval()
+            "export_interval_millis": _get_customer_sdkstats_export_interval() * 1000  # Default 15m
         }
         self._customer_sdkstats_metric_reader = PeriodicExportingMetricReader(**metric_reader_options)
         self._customer_sdkstats_meter_provider = MeterProvider(

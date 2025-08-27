@@ -187,7 +187,7 @@ def _track_dropped_items_from_storage(customer_sdkstats_metrics, result_from_sto
     if customer_sdkstats_metrics:
         # Use delayed import to avoid circular import
         from azure.monitor.opentelemetry.exporter._storage import StorageExportResult
-        
+
         if result_from_storage_put == StorageExportResult.CLIENT_STORAGE_DISABLED:
             # Track items that would have been retried but are dropped since client has local storage disabled
             _track_dropped_items(customer_sdkstats_metrics, envelopes, DropCode.CLIENT_STORAGE_DISABLED)

@@ -8,7 +8,6 @@ from opentelemetry.sdk.metrics import MeterProvider
 from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
 from opentelemetry.sdk.resources import Resource
 
-from azure.monitor.opentelemetry.exporter.statsbeat._exporter import _StatsBeatExporter
 from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics import _StatsbeatMetrics
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     _STATSBEAT_STATE,
@@ -99,11 +98,15 @@ class StatsbeatManager(metaclass=Singleton):
         """Internal initialization method."""
         try:
             # Create statsbeat exporter
-            statsbeat_exporter = _StatsBeatExporter(
+            # Use delayed import to avoid circular import
+            from azure.monitor.opentelemetry.exporter.export.metrics._exporter import AzureMonitorMetricExporter
+
+            statsbeat_exporter = AzureMonitorMetricExporter(
                 connection_string=config.connection_string,
                 disable_offline_storage=config.disable_offline_storage,
+                is_sdkstats=True,
             )
-            
+
             # Create metric reader
             reader = PeriodicExportingMetricReader(
                 statsbeat_exporter,

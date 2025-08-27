@@ -1040,7 +1040,7 @@ class TestBaseExporter(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base._get_authentication_credential")
     def test_statsbeat_no_credential(self, mock_get_authentication_credential):
         mock_get_authentication_credential.return_value = "TEST_CREDENTIAL_ENV_VAR"
-        statsbeat_exporter = _StatsBeatExporter()
+        statsbeat_exporter = AzureMonitorMetricExporter(is_sdkstats=True)
         self.assertIsNone(statsbeat_exporter._credential)
         mock_get_authentication_credential.assert_not_called()
     

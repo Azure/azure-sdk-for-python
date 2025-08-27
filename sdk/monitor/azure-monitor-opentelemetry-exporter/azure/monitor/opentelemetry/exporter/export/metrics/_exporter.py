@@ -75,13 +75,15 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
     """Azure Monitor Metric exporter for OpenTelemetry."""
 
     def __init__(self, **kwargs: Any) -> None:
+        self._is_sdkstats = kwargs.get("is_sdkstats", False)
+        self._is_customer_sdkstats = kwargs.get("is_customer_sdkstats", False)
+        self._metrics_to_log_analytics = self._determine_metrics_to_log_analytics()
         BaseExporter.__init__(self, **kwargs)
         MetricExporter.__init__(
             self,
             preferred_temporality=APPLICATION_INSIGHTS_METRIC_TEMPORALITIES,  # type: ignore
             preferred_aggregation=kwargs.get("preferred_aggregation"),  # type: ignore
         )
-        self._metrics_to_log_analytics = self._determine_metrics_to_log_analytics()
 
     # pylint: disable=R1702
     def export(
@@ -182,8 +184,11 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
         :return: False if metrics should not be sent to Log Analytics, True otherwise.
         :rtype: bool
         """
+        # If sdkStats exporter, always send to LA
+        if self._is_sdkstats:
+            return True
         # Disabling metrics to Log Analytics via env var is currently only specified for AKS Attach scenarios.
-        if not _utils._is_on_aks() or not _utils._is_attach_enabled() or self._is_stats_exporter():
+        if not _utils._is_on_aks() or not _utils._is_attach_enabled():
             return True
         env_var = os.environ.get(_APPLICATIONINSIGHTS_METRICS_TO_LOGANALYTICS_ENABLED)
         if not env_var:

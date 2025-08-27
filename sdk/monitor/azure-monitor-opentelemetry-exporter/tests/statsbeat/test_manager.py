@@ -41,7 +41,7 @@ class TestStatsbeat(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._StatsbeatMetrics")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.MeterProvider")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.PeriodicExportingMetricReader")
-    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._StatsBeatExporter")
+    @mock.patch("azure.monitor.opentelemetry.exporter.AzureMonitorMetricExporter")
     def test_collect_statsbeat_metrics(self, mock_exporter, mock_reader, mock_meter_provider, mock_statsbeat_metrics):
         """Test that collect_statsbeat_metrics properly initializes statsbeat collection."""
         # Arrange
@@ -106,7 +106,7 @@ class TestStatsbeat(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._StatsbeatMetrics")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.MeterProvider")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.PeriodicExportingMetricReader")
-    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._StatsBeatExporter")
+    @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter.AzureMonitorMetricExporter")
     def test_collect_statsbeat_metrics_exists(self, mock_exporter, mock_reader, mock_meter_provider, mock_statsbeat_metrics):
         """Test that collect_statsbeat_metrics reuses existing configuration when called multiple times with same config."""
         # Arrange
@@ -165,7 +165,7 @@ class TestStatsbeat(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._StatsbeatMetrics")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.MeterProvider")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.PeriodicExportingMetricReader")
-    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._StatsBeatExporter")
+    @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter.AzureMonitorMetricExporter")
     def test_collect_statsbeat_metrics_non_eu(self, mock_exporter, mock_reader, mock_meter_provider, mock_statsbeat_metrics):
         """Test collect_statsbeat_metrics with non-EU endpoint uses correct connection string."""
         # Arrange
@@ -207,7 +207,7 @@ class TestStatsbeat(unittest.TestCase):
         self.assertTrue(manager._initialized)
         self.assertIsNotNone(manager._metrics)
         
-        # Verify that _StatsBeatExporter was called with the correct connection string
+        # Verify that AzureMonitorMetricExporter was called with the correct connection string
         mock_exporter.assert_called_once()
         call_args = mock_exporter.call_args
         # The connection string should be the non-EU default since the endpoint is non-EU
@@ -218,7 +218,7 @@ class TestStatsbeat(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._StatsbeatMetrics")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.MeterProvider")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.PeriodicExportingMetricReader")
-    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._StatsBeatExporter")
+    @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter.AzureMonitorMetricExporter")
     def test_collect_statsbeat_metrics_eu(self, mock_exporter, mock_reader, mock_meter_provider, mock_statsbeat_metrics):
         """Test collect_statsbeat_metrics with EU endpoint uses correct connection string."""
         # Arrange
@@ -260,7 +260,7 @@ class TestStatsbeat(unittest.TestCase):
         self.assertTrue(manager._initialized)
         self.assertIsNotNone(manager._metrics)
         
-        # Verify that _StatsBeatExporter was called with the correct connection string
+        # Verify that AzureMonitorMetricExporter was called with the correct connection string
         mock_exporter.assert_called_once()
         call_args = mock_exporter.call_args
         # The connection string should be the EU default since the endpoint is EU
@@ -270,7 +270,7 @@ class TestStatsbeat(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._StatsbeatMetrics")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.MeterProvider")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.PeriodicExportingMetricReader")
-    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._StatsBeatExporter")
+    @mock.patch("azure.monitor.opentelemetry.exporter.AzureMonitorMetricExporter")
     def test_collect_statsbeat_metrics_aad(self, mock_exporter, mock_reader, mock_meter_provider, mock_statsbeat_metrics):
         """Test collect_statsbeat_metrics with AAD credentials."""
         # Arrange
@@ -303,7 +303,7 @@ class TestStatsbeat(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._StatsbeatMetrics")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.MeterProvider")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.PeriodicExportingMetricReader")
-    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._StatsBeatExporter")
+    @mock.patch("azure.monitor.opentelemetry.exporter.AzureMonitorMetricExporter")
     def test_collect_statsbeat_metrics_no_aad(self, mock_exporter, mock_reader, mock_meter_provider, mock_statsbeat_metrics):
         """Test collect_statsbeat_metrics without AAD credentials."""
         # Arrange
@@ -336,7 +336,7 @@ class TestStatsbeat(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._StatsbeatMetrics")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.MeterProvider")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.PeriodicExportingMetricReader")
-    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._StatsBeatExporter")
+    @mock.patch("azure.monitor.opentelemetry.exporter.AzureMonitorMetricExporter")
     def test_collect_statsbeat_metrics_distro_version(self, mock_exporter, mock_reader, mock_meter_provider, mock_statsbeat_metrics):
         """Test collect_statsbeat_metrics with distribution version."""
         # Arrange
@@ -369,7 +369,7 @@ class TestStatsbeat(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._StatsbeatMetrics")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.MeterProvider")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.PeriodicExportingMetricReader")
-    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._StatsBeatExporter")
+    @mock.patch("azure.monitor.opentelemetry.exporter.AzureMonitorMetricExporter")
     def test_shutdown_statsbeat_metrics(self, mock_exporter, mock_reader, mock_meter_provider, mock_statsbeat_metrics):
         """Test shutdown_statsbeat_metrics after initialization."""
         # Arrange - First initialize statsbeat
