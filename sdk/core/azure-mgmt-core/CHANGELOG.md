@@ -1,5 +1,11 @@
 # Release History
 
+## 1.7.0 (Unreleased)
+
+### Features Added
+
+- Add new policy `PolicyTokenHeaderPolicy` to acquire policy token before mutate azure resources
+
 ## 1.6.0 (2025-07-02)
 
 ### Other Changes
