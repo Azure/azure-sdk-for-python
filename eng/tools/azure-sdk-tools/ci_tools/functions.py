@@ -163,19 +163,21 @@ def glob_packages(glob_string: str, target_root_dir: str) -> List[str]:
     collected_top_level_directories = []
 
     for glob_string in individual_globs:
-        globbed = glob.glob(os.path.join(target_root_dir, glob_string, "setup.py")) + glob.glob(
-            os.path.join(target_root_dir, "sdk/*/", glob_string, "setup.py")
-        )
+        globbed = glob.glob(os.path.join(target_root_dir, glob_string, "setup.py"), recursive=True)
         collected_top_level_directories.extend([os.path.dirname(p) for p in globbed])
 
     # handle pyproject.toml separately, as we need to filter them by the presence of a `[project]` section
     for glob_string in individual_globs:
-        globbed = glob.glob(os.path.join(target_root_dir, glob_string, "pyproject.toml")) + glob.glob(
-            os.path.join(target_root_dir, "sdk/*/", glob_string, "pyproject.toml")
-        )
+        globbed = glob.glob(os.path.join(target_root_dir, glob_string, "pyproject.toml"), recursive=True)
         for p in globbed:
             if get_pyproject(os.path.dirname(p)):
                 collected_top_level_directories.append(os.path.dirname(p))
+
+    # drop any packages that exist within a tests or test directory
+    collected_top_level_directories = [
+        p for p in collected_top_level_directories
+        if not any(part in ("test", "tests") for part in p.split(os.sep))
+    ]
 
     # deduplicate, in case we have double coverage from the glob strings. Example: "azure-mgmt-keyvault,azure-mgmt-*"
     return list(set(collected_top_level_directories))
