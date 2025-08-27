@@ -26,7 +26,7 @@ class TestDataMigrationManagementDatabaseMigrationsSqlDbOperationsAsync(AzureMgm
             resource_group_name=resource_group.name,
             sql_db_instance_name="str",
             target_db_name="str",
-            api_version="2025-03-15-preview",
+            api_version="2025-06-30",
         )
 
         # please add some check logic here by yourself
@@ -105,7 +105,7 @@ class TestDataMigrationManagementDatabaseMigrationsSqlDbOperationsAsync(AzureMgm
                     },
                     "type": "str",
                 },
-                api_version="2025-03-15-preview",
+                api_version="2025-06-30",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -120,7 +120,7 @@ class TestDataMigrationManagementDatabaseMigrationsSqlDbOperationsAsync(AzureMgm
                 resource_group_name=resource_group.name,
                 sql_db_instance_name="str",
                 target_db_name="str",
-                api_version="2025-03-15-preview",
+                api_version="2025-06-30",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -136,7 +136,23 @@ class TestDataMigrationManagementDatabaseMigrationsSqlDbOperationsAsync(AzureMgm
                 sql_db_instance_name="str",
                 target_db_name="str",
                 parameters={"migrationOperationId": "str"},
-                api_version="2025-03-15-preview",
+                api_version="2025-06-30",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_database_migrations_sql_db_begin_retry(self, resource_group):
+        response = await (
+            await self.client.database_migrations_sql_db.begin_retry(
+                resource_group_name=resource_group.name,
+                sql_db_instance_name="str",
+                target_db_name="str",
+                migration_operation_input={"migrationOperationId": "str"},
+                api_version="2025-06-30",
             )
         ).result()  # call '.result()' to poll until service return final result
 

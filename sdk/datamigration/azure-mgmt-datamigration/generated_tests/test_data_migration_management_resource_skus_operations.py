@@ -22,7 +22,7 @@ class TestDataMigrationManagementResourceSkusOperations(AzureMgmtRecordedTestCas
     @recorded_by_proxy
     def test_resource_skus_list_skus(self, resource_group):
         response = self.client.resource_skus.list_skus(
-            api_version="2025-03-15-preview",
+            api_version="2025-06-30",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

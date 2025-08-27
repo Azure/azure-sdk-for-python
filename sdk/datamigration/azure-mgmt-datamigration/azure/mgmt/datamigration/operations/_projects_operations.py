@@ -42,7 +42,7 @@ def build_list_request(group_name: str, service_name: str, subscription_id: str,
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-30"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -73,7 +73,7 @@ def build_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-30"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -108,7 +108,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-30"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -146,7 +146,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-30"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -180,7 +180,7 @@ def build_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-30"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 

@@ -22,7 +22,7 @@ class TestDataMigrationManagementOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_operations_list(self, resource_group):
         response = self.client.operations.list(
-            api_version="2025-03-15-preview",
+            api_version="2025-06-30",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

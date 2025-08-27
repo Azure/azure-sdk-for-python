@@ -25,7 +25,7 @@ class TestDataMigrationManagementMigrationServicesOperationsAsync(AzureMgmtRecor
         response = await self.client.migration_services.get(
             resource_group_name=resource_group.name,
             migration_service_name="str",
-            api_version="2025-03-15-preview",
+            api_version="2025-06-30",
         )
 
         # please add some check logic here by yourself
@@ -55,7 +55,7 @@ class TestDataMigrationManagementMigrationServicesOperationsAsync(AzureMgmtRecor
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-03-15-preview",
+                api_version="2025-06-30",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -69,7 +69,7 @@ class TestDataMigrationManagementMigrationServicesOperationsAsync(AzureMgmtRecor
             await self.client.migration_services.begin_delete(
                 resource_group_name=resource_group.name,
                 migration_service_name="str",
-                api_version="2025-03-15-preview",
+                api_version="2025-06-30",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -84,7 +84,7 @@ class TestDataMigrationManagementMigrationServicesOperationsAsync(AzureMgmtRecor
                 resource_group_name=resource_group.name,
                 migration_service_name="str",
                 parameters={"tags": {"str": "str"}},
-                api_version="2025-03-15-preview",
+                api_version="2025-06-30",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -96,7 +96,7 @@ class TestDataMigrationManagementMigrationServicesOperationsAsync(AzureMgmtRecor
     async def test_migration_services_list_by_resource_group(self, resource_group):
         response = self.client.migration_services.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-03-15-preview",
+            api_version="2025-06-30",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -106,7 +106,7 @@ class TestDataMigrationManagementMigrationServicesOperationsAsync(AzureMgmtRecor
     @recorded_by_proxy_async
     async def test_migration_services_list_by_subscription(self, resource_group):
         response = self.client.migration_services.list_by_subscription(
-            api_version="2025-03-15-preview",
+            api_version="2025-06-30",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -118,7 +118,7 @@ class TestDataMigrationManagementMigrationServicesOperationsAsync(AzureMgmtRecor
         response = self.client.migration_services.list_migrations(
             resource_group_name=resource_group.name,
             migration_service_name="str",
-            api_version="2025-03-15-preview",
+            api_version="2025-06-30",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

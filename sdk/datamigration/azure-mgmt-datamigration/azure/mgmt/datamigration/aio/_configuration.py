@@ -27,13 +27,13 @@ class DataMigrationManagementClientConfiguration:  # pylint: disable=too-many-in
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: Subscription ID that identifies an Azure subscription. Required.
     :type subscription_id: str
-    :keyword api_version: Api Version. Default value is "2025-03-15-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2025-06-30". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, credential: "AsyncTokenCredential", subscription_id: str, **kwargs: Any) -> None:
-        api_version: str = kwargs.pop("api_version", "2025-03-15-preview")
+        api_version: str = kwargs.pop("api_version", "2025-06-30")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
