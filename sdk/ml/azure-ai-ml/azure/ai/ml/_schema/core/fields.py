@@ -10,6 +10,7 @@ import os
 import re
 import traceback
 import typing
+import yaml
 from abc import abstractmethod
 from pathlib import Path
 from typing import List, Optional, Union
@@ -804,7 +805,6 @@ class TypeSensitiveUnionField(UnionField):
         if target_path.startswith(FILE_PREFIX):
             target_path = target_path[len(FILE_PREFIX) :]
         try:
-            import yaml
 
             # Access context through parent schema for marshmallow 4.x compatibility
             if hasattr(self.parent, 'context') and self.parent.context:

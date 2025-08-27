@@ -10,7 +10,6 @@ from pathlib import Path
 from typing import Optional
 
 from marshmallow import fields, post_load, pre_load
-from marshmallow.experimental.context import Context
 from pydash import objects
 
 from azure.ai.ml._schema.core.schema_meta import PatchedBaseSchema, PatchedSchemaMeta
