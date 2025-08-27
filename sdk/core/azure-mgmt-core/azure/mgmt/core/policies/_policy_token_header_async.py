@@ -82,6 +82,7 @@ class AsyncPolicyTokenHeaderPolicy(
             acquire_policy_request.url = self._client.format_url(acquire_policy_request.url)
             acquire_policy_response = await self._client.send_request(acquire_policy_request, stream=False)
             self._update_request_with_policy_token(request, acquire_policy_request, acquire_policy_response)
+            request.context.options.pop("acquire_policy_token", None)
 
     async def send(
         self, request: PipelineRequest[HTTPRequestType]

@@ -73,7 +73,7 @@ class _PolicyTokenHeaderPolicyBase:
         :rtype: Optional[~azure.core.rest.HttpRequest]
         :raises ~azure.core.exceptions.HttpResponseError: If subscription ID cannot be extracted from request URL
         """
-        acquire_policy_token = request.context.options.pop("acquire_policy_token", None)
+        acquire_policy_token = request.context.options.get("acquire_policy_token", None)
         if (
             (acquire_policy_token is None and not self._acquire_policy_token)
             or acquire_policy_token is False
@@ -188,3 +188,4 @@ class PolicyTokenHeaderPolicy(_PolicyTokenHeaderPolicyBase, SansIOHTTPPolicy[HTT
             acquire_policy_request.url = self._client.format_url(acquire_policy_request.url)
             acquire_policy_response = self._client.send_request(acquire_policy_request, stream=False)
             self._update_request_with_policy_token(request, acquire_policy_request, acquire_policy_response)
+            request.context.options.pop("acquire_policy_token", None)
