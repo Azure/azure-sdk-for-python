@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from copy import deepcopy
+from copy import deepcopy, copy
 from typing import Any, Awaitable, Optional, TYPE_CHECKING, cast
 from typing_extensions import Self
 
@@ -14,7 +14,7 @@ from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.settings import settings
 from azure.mgmt.core import AsyncARMPipelineClient
-from azure.mgmt.core.policies import AsyncARMAutoResourceProviderRegistrationPolicy
+from azure.mgmt.core.policies import AsyncARMAutoResourceProviderRegistrationPolicy, AsyncPolicyTokenHeaderPolicy
 from azure.mgmt.core.tools import get_arm_endpoints
 
 from .. import models as _models
@@ -73,25 +73,38 @@ class ResourceManagementClient:
         self._config = ResourceManagementClientConfiguration(
             credential=credential, subscription_id=subscription_id, credential_scopes=credential_scopes, **kwargs
         )
+        _policies_part1 = [
+            policies.RequestIdPolicy(**kwargs),
+            self._config.headers_policy,
+            self._config.user_agent_policy,
+            self._config.proxy_policy,
+            policies.ContentDecodePolicy(**kwargs),
+            AsyncARMAutoResourceProviderRegistrationPolicy(),
+            self._config.redirect_policy,
+            self._config.retry_policy,
+            self._config.authentication_policy,
+        ]
+        _policies_part2 = [
+            self._config.logging_policy,
+            policies.DistributedTracingPolicy(**kwargs),
+            policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
+            self._config.http_logging_policy,
+        ]
+        _internal_polices = [copy(p) for p in _policies_part1 + _policies_part2]
+        _internal_client: AsyncARMPipelineClient = AsyncARMPipelineClient(
+            base_url=cast(str, base_url), policies=_internal_polices, **kwargs
+        )
 
         _policies = kwargs.pop("policies", None)
         if _policies is None:
-            _policies = [
-                policies.RequestIdPolicy(**kwargs),
-                self._config.headers_policy,
-                self._config.user_agent_policy,
-                self._config.proxy_policy,
-                policies.ContentDecodePolicy(**kwargs),
-                AsyncARMAutoResourceProviderRegistrationPolicy(),
-                self._config.redirect_policy,
-                self._config.retry_policy,
-                self._config.authentication_policy,
-                self._config.custom_hook_policy,
-                self._config.logging_policy,
-                policies.DistributedTracingPolicy(**kwargs),
-                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
-                self._config.http_logging_policy,
-            ]
+            _policies = (
+                _policies_part1
+                + [
+                    AsyncPolicyTokenHeaderPolicy(_internal_client, **kwargs),
+                    self._config.custom_hook_policy,
+                ]
+                + _policies_part2
+            )
         self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(
             base_url=cast(str, base_url), policies=_policies, **kwargs
         )
