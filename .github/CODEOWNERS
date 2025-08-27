@@ -35,6 +35,12 @@
 # PRLabel: %AI
 /sdk/ai/                                                             @luigiw @needuv @paulshealy1 @singankit @dargilco @jhakulin
 
+# PRLabel: %contosowidgetmanager
+/sdk/contoso/                                                      @danieljurek @ronniegeraghty
+
+# ServiceLabel: %contosowidgetmanager
+# ServiceOwners:                                                   @danieljurek @ronniegeraghty
+
 # ServiceOwners: @luigiw @needuv @singankit
 # ServiceLabel: %Evaluation
 
@@ -833,12 +839,6 @@
 ####################
 
 /**/*mgmt*/                                                          @ChenxiJiang333 @msyyc
-
-# PRLabel: %contosowidgetmanager
-/sdk/contoso/                                                      @shirelmr @michiisai
-
-# ServiceLabel: %contosowidgetmanager %Mgmt
-# ServiceOwners:                                                   @shirelmr @michiisai
 
 ###########
 # Eng Sys and other
