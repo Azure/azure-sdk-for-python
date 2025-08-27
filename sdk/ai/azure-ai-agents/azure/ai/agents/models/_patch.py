@@ -1691,15 +1691,7 @@ class BaseToolSet:
         ...
     @overload
     def remove(self, tool_type: Type[Tool]) -> None: 
-        """
-        Remove a tool of the specified type from the toolset.
-
-        This removes the first matching tool instance of the given type.
-
-        :param tool_type: The tool class to remove.
-        :type tool_type: Type[Tool]
-        :raises ValueError: If a tool of the specified type is not found.
-        """
+        """Remove any tool from the toolset."""
         ...
     def remove(self, tool_type: Type[Tool], **kwargs) -> None:
         """
