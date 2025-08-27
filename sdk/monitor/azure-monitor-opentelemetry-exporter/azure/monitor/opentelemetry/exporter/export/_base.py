@@ -169,6 +169,7 @@ class BaseExporter:
         self._instrumentation_collection = kwargs.get("instrumentation_collection", False)
 
         # statsbeat initialization
+        self._stats_exporter = kwargs.get("is_stats_exporter", False)
         if self._should_collect_stats():
             try:
                 # Import here to avoid circular dependencies
@@ -479,7 +480,7 @@ class BaseExporter:
         return self._is_stats_exporter() and not get_statsbeat_shutdown() and not get_statsbeat_initial_success()
 
     def _is_stats_exporter(self):
-        return self.__class__.__name__ == "_StatsBeatExporter"
+        return getattr(self, "_stats_exporter", False)
 
     def _is_customer_sdkstats_exporter(self):
         return getattr(self, '_is_customer_sdkstats', False)

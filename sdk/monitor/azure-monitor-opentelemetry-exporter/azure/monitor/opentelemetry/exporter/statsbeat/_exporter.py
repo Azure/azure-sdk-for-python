@@ -14,6 +14,7 @@ class _StatsBeatExporter:
         # Create the actual exporter using delayed import
         from azure.monitor.opentelemetry.exporter import AzureMonitorMetricExporter
 
+        kwargs['is_stats_exporter'] = True
         self._exporter = AzureMonitorMetricExporter(**kwargs)
 
     def _point_to_envelope(
