@@ -54,5 +54,5 @@ class Check(abc.ABC):
                 except:
                     print(f"Error: {pkg} does not appear to be a Python package (no setup.py or setup.cfg found).")
     
-        return targeted 
+        return targeted
     
