@@ -43,8 +43,8 @@ def build_parser() -> argparse.ArgumentParser:
     common.add_argument(
         "target",
         nargs="?",
-        default=".",
-        help="Glob pattern for packages. Defaults to '.', but will match patterns below CWD if a value is provided."
+        default="*",
+        help="Glob pattern for packages. Defaults to '*', but will match patterns below CWD if a value is provided."
     )
     # allow --isolate to be specified after the subcommand as well
     common.add_argument(

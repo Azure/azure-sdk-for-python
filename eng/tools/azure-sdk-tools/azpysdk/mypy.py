@@ -45,16 +45,12 @@ class mypy(Check):
 
         set_envvar_defaults()
 
-        if args.target == ".":
-            targeted = [os.getcwd()]
-        else:
-            target_dir = os.getcwd()
-            targeted = discover_targeted_packages(args.target, target_dir)
+        targeted = self.get_targeted_directories(args)
 
         results: List[int] = []
 
-        for package_dir in targeted:
-            parsed = ParsedSetup.from_path(package_dir)
+        for parsed in targeted:
+            package_dir = parsed.folder
             package_name = parsed.name
             print(f"Processing {package_name} for mypy check")
 
