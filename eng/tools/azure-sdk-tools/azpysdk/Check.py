@@ -1,6 +1,7 @@
 import abc
 import os
 import argparse
+import traceback
 from typing import Sequence, Optional, List, Any
 from ci_tools.parsing import ParsedSetup
 from ci_tools.functions import discover_targeted_packages
@@ -43,16 +44,18 @@ class Check(abc.ABC):
         if args.target == ".":
             try:
                 targeted.append(ParsedSetup.from_path(targeted_dir))
-            except:
+            except Exception as e:
                 print("Error: Current directory does not appear to be a Python package (no setup.py or setup.cfg found). Remove '.' argument to run on child directories.")
+                print(f"Exception: {e}")
                 return []
         else:
             targeted_packages = discover_targeted_packages(args.target, targeted_dir)
             for pkg in targeted_packages:
                 try:
                     targeted.append(ParsedSetup.from_path(pkg))
-                except:
-                    print(f"Error: {pkg} does not appear to be a Python package (no setup.py or setup.cfg found).")
-    
-        return targeted 
-    
+                except Exception as e:
+                    print(f"Unable to parse {pkg} as a Python package. Dumping exception detail and skipping.")
+                    print(f"Exception: {e}")
+                    print(traceback.format_exc())
+
+        return targeted
