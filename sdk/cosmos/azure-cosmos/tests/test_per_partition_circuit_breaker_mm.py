@@ -405,10 +405,11 @@ class TestPerPartitionCircuitBreakerMM:
         return container, doc, expected_uri, uri_down, fault_injection_container, custom_transport, predicate
 
     def test_stat_reset(self):
+        status_code = 500
         error_lambda = lambda r: FaultInjectionTransport.error_after_delay(
             0,
             CosmosHttpResponseError(
-                status_code=503,
+                status_code=status_code,
                 message="Some injected error.")
         )
         container, doc, expected_uri, uri_down, fault_injection_container, custom_transport, predicate = \
@@ -435,7 +436,7 @@ class TestPerPartitionCircuitBreakerMM:
                                             PK_VALUE,
                                             expected_uri)
                 except CosmosHttpResponseError as e:
-                    assert e.status_code == 503
+                    assert e.status_code == status_code
             validate_unhealthy_partitions(global_endpoint_manager, 0)
             validate_stats(global_endpoint_manager, 2,  2, 2, 2, 0, 0)
             sleep(25)
