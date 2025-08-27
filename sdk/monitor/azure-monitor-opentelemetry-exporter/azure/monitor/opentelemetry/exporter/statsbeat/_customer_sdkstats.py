@@ -43,9 +43,9 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
 
 class _CustomerSdkStatsTelemetryCounters:
     def __init__(self):
-        self.total_item_success_count: Dict[str, Any] = {}
-        self.total_item_drop_count: Dict[str, Dict[DropCodeType, Dict[str, int]]] = {}
-        self.total_item_retry_count: Dict[str, Dict[RetryCodeType, Dict[str, int]]] = {}
+        self.total_item_success_count: Dict[str, Any] = {}  # type: ignore
+        self.total_item_drop_count: Dict[str, Dict[DropCodeType, Dict[str, int]]] = {}  # type: ignore
+        self.total_item_retry_count: Dict[str, Dict[RetryCodeType, Dict[str, int]]] = {}  # type: ignore
 
 
 class CustomerSdkStatsMetrics(metaclass=Singleton): # pylint: disable=too-many-instance-attributes

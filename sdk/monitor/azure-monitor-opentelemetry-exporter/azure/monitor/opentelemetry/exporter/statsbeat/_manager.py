@@ -75,10 +75,10 @@ class StatsbeatManager(metaclass=Singleton):
         """Initialize instance attributes. Called only once due to Singleton metaclass."""
         # Instance-level attributes
         self._lock = threading.Lock()
-        self._initialized: bool = False
-        self._metrics: Optional[_StatsbeatMetrics] = None
-        self._meter_provider: Optional[MeterProvider] = None
-        self._config: Optional[StatsbeatConfig] = None
+        self._initialized: bool = False  # type: ignore
+        self._metrics: Optional[_StatsbeatMetrics] = None  # type: ignore
+        self._meter_provider: Optional[MeterProvider] = None  # type: ignore
+        self._config: Optional[StatsbeatConfig] = None  # type: ignore
     
     def initialize(self, config: StatsbeatConfig) -> bool:
         """Initialize statsbeat collection with thread safety."""

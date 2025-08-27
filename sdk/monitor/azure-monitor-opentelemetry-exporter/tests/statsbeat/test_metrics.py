@@ -895,4 +895,4 @@ class TestStatsbeatMetrics(unittest.TestCase):
         url = "http://fakehost-5/"
         self.assertEqual(_shorten_host(url), "fakehost-5")
 
-# # cSpell:enable
+# cSpell:enable

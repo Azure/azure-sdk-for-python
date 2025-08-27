@@ -26,7 +26,7 @@ class _StatsBeatExporter:
     ) -> Optional[TelemetryItem]:
         # map statsbeat name from OpenTelemetry name
         name = _STATSBEAT_METRIC_NAME_MAPPINGS[name]
-        return self._exporter._point_to_envelope(
+        return self._exporter._point_to_envelope(  # type: ignore
             point,
             name,
             resource,
