@@ -145,7 +145,7 @@ class _ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
         lro_delay = kwargs.pop("polling_interval", 0.5)
 
         def operation() -> JSON:
-            return super(ConfidentialLedgerClientOperationsMixin, self).get_ledger_entry(
+            return super(_ConfidentialLedgerClientOperationsMixin, self).get_ledger_entry(
                 transaction_id, collection_id=collection_id, **kwargs
             )
 
@@ -173,7 +173,7 @@ class _ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
         lro_delay = kwargs.pop("polling_interval", 0.5)
 
         def operation() -> JSON:
-            return super(ConfidentialLedgerClientOperationsMixin, self).get_receipt(
+            return super(_ConfidentialLedgerClientOperationsMixin, self).get_receipt(
                 transaction_id=transaction_id, **kwargs
             )
 
@@ -276,7 +276,7 @@ class _ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
             return x if post_result is None else post_result
 
         def operation() -> JSON:
-            return super(ConfidentialLedgerClientOperationsMixin, self).get_transaction_status(
+            return super(_ConfidentialLedgerClientOperationsMixin, self).get_transaction_status(
                 transaction_id=transaction_id, **kwargs
             )
 
