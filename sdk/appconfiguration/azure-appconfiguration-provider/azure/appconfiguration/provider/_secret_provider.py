@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from typing import Mapping, Union, Any, Iterator, KeysView, ItemsView, ValuesView, TypeVar, overload, Optional, Dict
+from typing import Mapping, Any, TypeVar, Dict
 from azure.appconfiguration import SecretReferenceConfigurationSetting  # type:ignore # pylint:disable=no-name-in-module
 from azure.keyvault.secrets import SecretClient, KeyVaultSecretIdentifier
 from ._secret_provider_base import _SecretProviderBase
