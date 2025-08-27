@@ -44,20 +44,16 @@ class import_all(Check):
         """Run the import_all check command."""
         print("Running import_all check in isolated venv...")
 
-        # this is common. we should have an abstraction layer for this somehow
-        if args.target == ".":
-            targeted = [os.getcwd()]
-        else:
-            target_dir = os.getcwd()
-            targeted = discover_targeted_packages(args.target, target_dir)
+        targeted = self.get_targeted_directories(args)
 
         # {[tox]pip_command} freeze
         # python {repository_root}/eng/tox/import_all.py -t {tox_root}
 
         outcomes: List[int] = []
 
-        for pkg in targeted:
-            parsed = ParsedSetup.from_path(pkg)
+        for parsed in targeted:
+            pkg = parsed.folder
+                
 
             staging_area = tempfile.mkdtemp()
             create_package_and_install(
