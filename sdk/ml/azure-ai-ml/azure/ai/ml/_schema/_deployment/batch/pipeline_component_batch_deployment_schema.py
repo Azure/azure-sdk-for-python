@@ -10,11 +10,11 @@ from marshmallow import INCLUDE, fields, post_load
 
 from azure.ai.ml._schema import ArmStr, ArmVersionedStr, NestedField, RegistryStr, UnionField
 from azure.ai.ml._schema.core.fields import (
-    PathAwareSchema,
     PipelineNodeNameStr,
     StringTransformedEnum,
     TypeSensitiveUnionField,
 )
+from azure.ai.ml._schema.core.schema import PathAwareSchema
 from azure.ai.ml._schema.pipeline.pipeline_component import PipelineComponentFileRefField
 from azure.ai.ml.constants._common import AzureMLResourceType
 from azure.ai.ml.constants._component import NodeType

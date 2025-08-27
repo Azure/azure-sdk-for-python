@@ -70,8 +70,11 @@ class PathAwareSchema(PatchedBaseSchema, metaclass=PatchedSchemaMeta):
     def add_param_overrides(self, data, **kwargs):
         # Removing params override from context so that overriding is done once on the yaml
         # child schema should not override the params.
-        params_override = self._ml_context.pop(PARAMS_OVERRIDE_KEY, None)
+        # Use get() instead of pop() to avoid permanently modifying the context
+        params_override = self._ml_context.get(PARAMS_OVERRIDE_KEY, None)
         if params_override is not None:
+            # Remove it from the context copy to prevent re-processing
+            self._ml_context.pop(PARAMS_OVERRIDE_KEY, None)
             for override in params_override:
                 for param, val in override.items():
                     # Check that none of the intermediary levels are string references (azureml/file)

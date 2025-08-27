@@ -5,6 +5,7 @@
 # pylint: disable=protected-access,too-many-lines
 
 import copy
+import datetime
 import logging
 import os
 import re
@@ -90,7 +91,6 @@ from ...constants._common import (
 )
 from ...entities._job.pipeline._attr_dict import try_get_non_arbitrary_attr
 from ...exceptions import MlException, ValidationException
-from ..core.schema import PathAwareSchema
 
 module_logger = logging.getLogger(__name__)
 T = typing.TypeVar("T")
@@ -185,13 +185,30 @@ class StringTransformedEnum(Field):
     def _serialize(self, value, attr, obj, **kwargs):
         if not value:
             return None
-        if isinstance(value, str) and self.casing_transform(value) in self.allowed_values:
-            return value if self.pass_original else self.casing_transform(value)
+        
+        # Handle enum objects
+        if hasattr(value, '_value_'):
+            # It's an enum object, get its value
+            str_value = value.value
+        else:
+            # It's already a string
+            str_value = value
+        
+        if isinstance(str_value, str) and self.casing_transform(str_value) in self.allowed_values:
+            return str_value if self.pass_original else self.casing_transform(str_value)
         raise ValidationError(f"Value {value!r} passed is not in set {self.allowed_values}")
 
     def _deserialize(self, value, attr, data, **kwargs):
-        if isinstance(value, str) and self.casing_transform(value) in self.allowed_values:
-            return value if self.pass_original else self.casing_transform(value)
+        # Handle enum objects
+        if hasattr(value, '_value_'):
+            # It's an enum object, get its value
+            str_value = value.value
+        else:
+            # It's already a string
+            str_value = value
+            
+        if isinstance(str_value, str) and self.casing_transform(str_value) in self.allowed_values:
+            return str_value if self.pass_original else self.casing_transform(str_value)
         raise ValidationError(f"Value {value!r} passed is not in set {self.allowed_values}")
 
 
@@ -246,13 +263,20 @@ class LocalPathField(fields.Str):
         """
         try:
             result = Path(value)
+            base_path = None
+            
             # Access context through parent schema for marshmallow 4.x compatibility
             if hasattr(self.parent, 'context') and self.parent.context:
-                base_path = Path(self.parent.context[BASE_PATH_CONTEXT_KEY])
+                base_path_value = self.parent.context.get(BASE_PATH_CONTEXT_KEY)
+                if base_path_value is not None:
+                    base_path = Path(base_path_value)
             elif hasattr(self.parent, '_ml_context') and self.parent._ml_context:
-                base_path = Path(self.parent._ml_context[BASE_PATH_CONTEXT_KEY])
-            else:
-                # Fallback to current working directory
+                base_path_value = self.parent._ml_context.get(BASE_PATH_CONTEXT_KEY)
+                if base_path_value is not None:
+                    base_path = Path(base_path_value)
+            
+            # If we couldn't get a valid base path from context, use current working directory
+            if base_path is None:
                 base_path = Path.cwd()
                 
             if not result.is_absolute():
@@ -504,13 +528,20 @@ class FileRefField(Field):
 
     def _deserialize(self, value, attr, data, **kwargs):
         if isinstance(value, str) and not value.startswith(FILE_PREFIX):
+            base_path = None
+            
             # Access context through parent schema for marshmallow 4.x compatibility
             if hasattr(self.parent, 'context') and self.parent.context:
-                base_path = Path(self.parent.context[BASE_PATH_CONTEXT_KEY])
+                base_path_value = self.parent.context.get(BASE_PATH_CONTEXT_KEY)
+                if base_path_value is not None:
+                    base_path = Path(base_path_value)
             elif hasattr(self.parent, '_ml_context') and self.parent._ml_context:
-                base_path = Path(self.parent._ml_context[BASE_PATH_CONTEXT_KEY])
-            else:
-                # Fallback to current working directory
+                base_path_value = self.parent._ml_context.get(BASE_PATH_CONTEXT_KEY)
+                if base_path_value is not None:
+                    base_path = Path(base_path_value)
+            
+            # If we couldn't get a valid base path from context, use current working directory
+            if base_path is None:
                 base_path = Path.cwd()
                 
             path = Path(value)
@@ -545,13 +576,21 @@ class RefField(Field):
         ):  # "Dockerfile" w/o file: prefix doesn't register as a path
             if value.startswith(FILE_PREFIX):
                 value = value[len(FILE_PREFIX) :]
+            
+            base_path = None
+            
             # Access context through parent schema for marshmallow 4.x compatibility
             if hasattr(self.parent, 'context') and self.parent.context:
-                base_path = Path(self.parent.context[BASE_PATH_CONTEXT_KEY])
+                base_path_value = self.parent.context.get(BASE_PATH_CONTEXT_KEY)
+                if base_path_value is not None:
+                    base_path = Path(base_path_value)
             elif hasattr(self.parent, '_ml_context') and self.parent._ml_context:
-                base_path = Path(self.parent._ml_context[BASE_PATH_CONTEXT_KEY])
-            else:
-                # Fallback to current working directory
+                base_path_value = self.parent._ml_context.get(BASE_PATH_CONTEXT_KEY)
+                if base_path_value is not None:
+                    base_path = Path(base_path_value)
+            
+            # If we couldn't get a valid base path from context, use current working directory
+            if base_path is None:
                 base_path = Path.cwd()
 
             path = Path(value)
@@ -669,13 +708,15 @@ class UnionField(fields.Field):
                     hasattr(schema, "name")
                     and schema.name == "jobs"
                     and hasattr(schema, "schema")
-                    and isinstance(schema.schema, PathAwareSchema)
                 ):
-                    # use old base path to recover original base path
-                    schema.schema.context[BASE_PATH_CONTEXT_KEY] = schema.schema.old_base_path
-                    # recover base path of parent schema
-                    if hasattr(schema, "context") and schema.context is not None:
-                        schema.context[BASE_PATH_CONTEXT_KEY] = schema.schema.context[BASE_PATH_CONTEXT_KEY]
+                    # Import PathAwareSchema locally to avoid circular imports
+                    from ..core.schema import PathAwareSchema
+                    if isinstance(schema.schema, PathAwareSchema):
+                        # use old base path to recover original base path
+                        schema.schema.context[BASE_PATH_CONTEXT_KEY] = schema.schema.old_base_path
+                        # recover base path of parent schema
+                        if hasattr(schema, "context") and schema.context is not None:
+                            schema.context[BASE_PATH_CONTEXT_KEY] = schema.schema.context[BASE_PATH_CONTEXT_KEY]
         raise ValidationError(errors, field_name=attr)
 
 
@@ -805,14 +846,20 @@ class TypeSensitiveUnionField(UnionField):
         if target_path.startswith(FILE_PREFIX):
             target_path = target_path[len(FILE_PREFIX) :]
         try:
-
+            base_path = None
+            
             # Access context through parent schema for marshmallow 4.x compatibility
             if hasattr(self.parent, 'context') and self.parent.context:
-                base_path = Path(self.parent.context[BASE_PATH_CONTEXT_KEY])
+                base_path_value = self.parent.context.get(BASE_PATH_CONTEXT_KEY)
+                if base_path_value is not None:
+                    base_path = Path(base_path_value)
             elif hasattr(self.parent, '_ml_context') and self.parent._ml_context:
-                base_path = Path(self.parent._ml_context[BASE_PATH_CONTEXT_KEY])
-            else:
-                # Fallback to current working directory
+                base_path_value = self.parent._ml_context.get(BASE_PATH_CONTEXT_KEY)
+                if base_path_value is not None:
+                    base_path = Path(base_path_value)
+            
+            # If we couldn't get a valid base path from context, use current working directory
+            if base_path is None:
                 base_path = Path.cwd()
                 
             target_path = Path(target_path)
@@ -1213,9 +1260,9 @@ class PipelineNodeNameStr(fields.Str):
         name = super()._deserialize(value, attr, data, **kwargs)
         if not is_valid_node_name(name):
             raise ValidationError(
-                f"{self._get_field_name()} name should be a valid python identifier"
-                "(lower letters, numbers, underscore and start with a letter or underscore). "
-                "Currently got {name}."
+                f"{self._get_field_name()} name should be a valid python identifier "
+                f"(lower letters, numbers, underscore and start with a letter or underscore). "
+                f"Currently got {name}."
             )
         return name
 
@@ -1244,4 +1291,4 @@ class GitStr(fields.Str):
     def _deserialize(self, value, attr, data, **kwargs):
         if isinstance(value, str) and value.startswith("git+"):
             return value
-        raise ValidationError("In order to specify a git path, please provide the correct path prefixed with 'git+\n")
+        raise ValidationError("In order to specify a git path, please provide the correct path prefixed with 'git+'")
