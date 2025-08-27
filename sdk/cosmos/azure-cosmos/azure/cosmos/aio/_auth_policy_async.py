@@ -18,6 +18,13 @@ HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
 
 
 class AsyncCosmosBearerTokenCredentialPolicy(AsyncBearerTokenCredentialPolicy):
+    AadDefaultScope = "https://cosmos.azure.com/.default"
+
+    def __init__(self, credential, account_scope: str, override_scope: str):
+        self._account_scope = account_scope
+        self._override_scope = override_scope
+        self._current_scope = override_scope or account_scope
+        super().__init__(credential, self._current_scope)
 
     @staticmethod
     def _update_headers(headers: MutableMapping[str, str], token: str) -> None:
@@ -35,6 +42,7 @@ class AsyncCosmosBearerTokenCredentialPolicy(AsyncBearerTokenCredentialPolicy):
         :type request: ~azure.core.pipeline.PipelineRequest
         :raises: :class:`~azure.core.exceptions.ServiceRequestError`
         """
+        await self.authorize_request(request)
         await super().on_request(request)
         # The None-check for self._token is done in the parent on_request
         self._update_headers(request.http_request.headers, cast(AccessToken, self._token).token)
@@ -48,6 +56,22 @@ class AsyncCosmosBearerTokenCredentialPolicy(AsyncBearerTokenCredentialPolicy):
         :param ~azure.core.pipeline.PipelineRequest request: the request
         :param str scopes: required scopes of authentication
         """
-        await super().authorize_request(request, *scopes, **kwargs)
-        # The None-check for self._token is done in the parent authorize_request
-        self._update_headers(request.http_request.headers, cast(AccessToken, self._token).token)
+        tried_fallback = False
+        while True:
+            try:
+                await super().authorize_request(request, self._current_scope, **kwargs)
+                # The None-check for self._token is done in the parent authorize_request
+                self._update_headers(request.http_request.headers, cast(AccessToken, self._token).token)
+                break
+            except Exception as ex:
+                # Only fallback if not using override, not already tried, and error is AADSTS500011
+                if (
+                        not self._override_scope and
+                        not tried_fallback and
+                        self._current_scope != self.AadDefaultScope and
+                        "AADSTS500011" in str(ex)
+                ):
+                    self._current_scope = self.AadDefaultScope
+                    tried_fallback = True
+                    continue
+                raise
