@@ -99,7 +99,9 @@ class _PolicyTokenHeaderPolicyBase:
             except Exception:  # pylint: disable=broad-except
                 pass
 
-        body: Dict[str, Any] = {"operation": {"uri": request.http_request.url, "method": request.http_request.method}}
+        body: Dict[str, Any] = {
+            "operation": {"uri": request.http_request.url, "httpMethod": request.http_request.method}
+        }
         if content:
             body["operation"]["content"] = content
         change_reference = request.context.options.pop("change_reference", None)
@@ -136,7 +138,9 @@ class _PolicyTokenHeaderPolicyBase:
         """
         if acquire_policy_response.status_code != 200:
             raise HttpResponseError(
-                "status code is not 200 when trying call {} to get policy token".format(acquire_policy_request.url)
+                "status code is {} instead of expected 200 when trying call {} to get policy token: {}".format(
+                    acquire_policy_response.status_code, acquire_policy_request.url, acquire_policy_response.text()
+                )
             )
 
         result = acquire_policy_response.json()
@@ -181,5 +185,6 @@ class PolicyTokenHeaderPolicy(_PolicyTokenHeaderPolicyBase, SansIOHTTPPolicy[HTT
         """
         acquire_policy_request = self._create_acquire_policy_request(request)
         if acquire_policy_request:
+            acquire_policy_request.url = self._client.format_url(acquire_policy_request.url)
             acquire_policy_response = self._client.send_request(acquire_policy_request, stream=False)
             self._update_request_with_policy_token(request, acquire_policy_request, acquire_policy_response)
