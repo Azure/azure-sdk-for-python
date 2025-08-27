@@ -25,7 +25,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     package_name = args.package_name.replace("_", "-")
-    path_to_setup = os.path.join(root_dir, "sdk", args.service, package_name, "setup.py")
+    path_to_setup = os.path.join(root_dir, "sdk", args.service, package_name)
 
     missing_packages = find_packages_missing_on_pypi(path_to_setup)
 
