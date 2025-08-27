@@ -296,6 +296,65 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         assert "only_second_tag" not in client
         assert "complex_tag" in client
 
+    # method: load
+    @recorded_by_proxy
+    @app_config_decorator
+    def test_configuration_mapper(self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url):
+        def test_mapper(setting):
+            if setting.key == "message":
+                setting.value = "mapped"
+
+        client = self.create_client(
+            connection_string=appconfiguration_connection_string,
+            keyvault_secret_url=appconfiguration_keyvault_secret_url,
+            feature_flag_enabled=True,
+            configuration_mapper=test_mapper,
+        )
+        assert client["message"] == "mapped"
+        assert client["refresh_message"] == "original value"
+
+    # method: load
+    @recorded_by_proxy
+    @app_config_decorator
+    def test_configuration_mapper_with_trimming(self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url):
+        def test_mapper(setting):
+            if setting.key == "message":
+                setting.value = "mapped"
+
+        client = self.create_client(
+            connection_string=appconfiguration_connection_string,
+            keyvault_secret_url=appconfiguration_keyvault_secret_url,
+            configuration_mapper=test_mapper,
+            trim_prefixes=["refresh_"]
+        )
+
+        # Because our processing happens after mapping and refresh_message is alphabetically after message the override
+        # value isn't used, as the mapped value is overridden by the first value.
+        assert client["message"] == "original value"
+        assert "refresh_message" not in client
+
+    # method: load
+    @recorded_by_proxy
+    @app_config_decorator
+    def test_configuration_mapper_with_feature_flags(self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url):
+        def test_mapper(setting):
+            if setting.key == ".appconfig.featureflag/Alpha":
+                setting.content_type = "application/json"
+
+        client = self.create_client(
+            connection_string=appconfiguration_connection_string,
+            keyvault_secret_url=appconfiguration_keyvault_secret_url,
+            feature_flag_enabled=True,
+            configuration_mapper=test_mapper,
+            trim_prefixes=[".appconfig.featureflag/"]
+        )
+
+        assert "Alpha" in client
+        assert client["Alpha"]["enabled"] is False
+        assert ".appconfig.featureflag/Alpha" not in client
+        assert "feature_management" in client
+        assert "feature_flags" in client["feature_management"]
+        assert "Alpha" == client["feature_management"]["feature_flags"][0]["id"]
 
 def secret_resolver(secret_id):
     return "Resolver Value"

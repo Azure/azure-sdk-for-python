@@ -440,7 +440,6 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                         self._feature_flag_selectors,
                         self._feature_flag_refresh_enabled,
                         self._origin_endpoint,
-                        configuration_mapper=self._configuration_mapper,
                         headers=headers,
                         **kwargs,
                     )
@@ -488,7 +487,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
             if self._configuration_mapper:
                 # If a map function is provided, use it to process the configuration setting
                 self._configuration_mapper(config)
-            if isinstance(config, FeatureFlagConfigurationSetting):
+            if FeatureFlagConfigurationSetting._feature_flag_content_type == config.content_type:
                 # Feature flags are not processed like other settings
                 continue
             key = self._process_key_name(config)
@@ -499,9 +498,9 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         return configuration_settings_processed
 
     def _process_key_value(self, config):
-        if isinstance(config, SecretReferenceConfigurationSetting):
+        if SecretReferenceConfigurationSetting._secret_reference_content_type == config.content_type:
             return _resolve_keyvault_reference(config, self)
-        if is_json_content_type(config.content_type) and not isinstance(config, FeatureFlagConfigurationSetting):
+        if is_json_content_type(config.content_type) and not FeatureFlagConfigurationSetting._feature_flag_content_type == config.content_type:
             # Feature flags are of type json, but don't treat them as such
             try:
                 if APP_CONFIG_AI_MIME_PROFILE in config.content_type:
