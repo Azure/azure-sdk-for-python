@@ -176,7 +176,7 @@ class DatabaseProxy(object):
             vector_embedding_policy: Optional[Dict[str, Any]] = None,
             change_feed_policy: Optional[Dict[str, Any]] = None,
             full_text_policy: Optional[Dict[str, Any]] = None,
-            return_properties: Literal[False],
+            return_properties: Literal[False] = False,
             **kwargs: Any
     ) -> ContainerProxy:
         ...
@@ -207,22 +207,7 @@ class DatabaseProxy(object):
     @distributed_trace
     def create_container(  # pylint:disable=docstring-missing-param
         self,
-        id: str,
-        partition_key: PartitionKey,
-        indexing_policy: Optional[Dict[str, Any]] = None,
-        default_ttl: Optional[int] = None,
-        populate_query_metrics: Optional[bool] = None,
-        offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
-        unique_key_policy: Optional[Dict[str, Any]] = None,
-        conflict_resolution_policy: Optional[Dict[str, Any]] = None,
-        *,
-        initial_headers: Optional[Dict[str, str]] = None,
-        analytical_storage_ttl: Optional[int] = None,
-        computed_properties: Optional[List[Dict[str, str]]] = None,
-        vector_embedding_policy: Optional[Dict[str, Any]] = None,
-        change_feed_policy: Optional[Dict[str, Any]] = None,
-        full_text_policy: Optional[Dict[str, Any]] = None,
-        return_properties: Union[Literal[False], Literal[True]] = False,
+        *args: Any,
         **kwargs: Any
     ) -> Union[ContainerProxy, tuple[ContainerProxy, CosmosDict]]:
         """Create a new container with the given ID (name).
@@ -276,6 +261,21 @@ class DatabaseProxy(object):
                 :dedent: 0
                 :caption: Create a container with specific settings; in this case, a custom partition key:
         """
+        id = args[0] if len(args) > 0 else kwargs.pop('id', None)
+        partition_key = args[1] if len(args) > 1 else kwargs.pop('partition_key', None)
+        indexing_policy = args[2] if len(args) > 2 else kwargs.pop('indexing_policy', None)
+        default_ttl = args[3] if len(args) > 3 else kwargs.pop('default_ttl', None)
+        populate_query_metrics = args[4] if len(args) > 4 else kwargs.pop('populate_query_metrics', None)
+        offer_throughput = args[5] if len(args) > 5 else kwargs.pop('offer_throughput', None)
+        unique_key_policy = args[6] if len(args) > 6 else kwargs.pop('unique_key_policy', None)
+        conflict_resolution_policy = args[7] if len(args) > 7 else kwargs.pop('conflict_resolution_policy', None)
+        analytical_storage_ttl = kwargs.pop('analytical_storage_ttl', None)
+        vector_embedding_policy = kwargs.pop('vector_embedding_policy', None)
+        computed_properties = kwargs.pop('computed_properties', None)
+        change_feed_policy = kwargs.pop('change_feed_policy', None)
+        full_text_policy = kwargs.pop('full_text_policy', None)
+        return_properties = kwargs.pop('return_properties', False)
+
         session_token = kwargs.get('session_token')
         if session_token is not None:
             warnings.warn(
@@ -327,8 +327,6 @@ class DatabaseProxy(object):
             definition["changeFeedPolicy"] = change_feed_policy
         if full_text_policy is not None:
             definition["fullTextPolicy"] = full_text_policy
-        if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
         request_options = build_options(kwargs)
         _set_throughput_options(offer=offer_throughput, request_options=request_options)
         result = self.client_connection.CreateContainer(
@@ -357,7 +355,7 @@ class DatabaseProxy(object):
             vector_embedding_policy: Optional[Dict[str, Any]] = None,
             change_feed_policy: Optional[Dict[str, Any]] = None,
             full_text_policy: Optional[Dict[str, Any]] = None,
-            return_properties: Literal[False],
+            return_properties: Literal[False] = False,
             **kwargs: Any
     ) -> ContainerProxy:
         ...
@@ -388,22 +386,7 @@ class DatabaseProxy(object):
     @distributed_trace
     def create_container_if_not_exists(  # pylint:disable=docstring-missing-param
         self,
-        id: str,
-        partition_key: PartitionKey,
-        indexing_policy: Optional[Dict[str, Any]] = None,
-        default_ttl: Optional[int] = None,
-        populate_query_metrics: Optional[bool] = None,
-        offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
-        unique_key_policy: Optional[Dict[str, Any]] = None,
-        conflict_resolution_policy: Optional[Dict[str, Any]] = None,
-        *,
-        initial_headers: Optional[Dict[str, str]] = None,
-        analytical_storage_ttl: Optional[int] = None,
-        computed_properties: Optional[List[Dict[str, str]]] = None,
-        vector_embedding_policy: Optional[Dict[str, Any]] = None,
-        change_feed_policy: Optional[Dict[str, Any]] = None,
-        full_text_policy: Optional[Dict[str, Any]] = None,
-        return_properties: bool = False,
+        *args: Any,
         **kwargs: Any
     ) -> Union[ContainerProxy, tuple[ContainerProxy, CosmosDict]]:
         """Create a container if it does not exist already.
@@ -443,6 +426,23 @@ class DatabaseProxy(object):
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container read or creation failed.
         :rtype: ~azure.cosmos.ContainerProxy or tuple[ ~azure.cosmos.ContainerProxy,  ~azure.cosmos.CosmosDict]
         """
+
+        id = args[0] if len(args) > 0 else kwargs.pop('id', None)
+        partition_key = args[1] if len(args) > 1 else kwargs.pop('partition_key', None)
+        indexing_policy = args[2] if len(args) > 2 else kwargs.pop('indexing_policy', None)
+        default_ttl = args[3] if len(args) > 3 else kwargs.pop('default_ttl', None)
+        populate_query_metrics = args[4] if len(args) > 4 else kwargs.pop('populate_query_metrics', None)
+        offer_throughput = args[5] if len(args) > 5 else kwargs.pop('offer_throughput', None)
+        unique_key_policy = args[6] if len(args) > 6 else kwargs.pop('unique_key_policy', None)
+        conflict_resolution_policy = args[7] if len(args) > 7 else kwargs.pop('conflict_resolution_policy', None)
+        initial_headers = kwargs.pop('initial_headers', None)
+        analytical_storage_ttl = kwargs.pop('analytical_storage_ttl', None)
+        vector_embedding_policy = kwargs.pop('vector_embedding_policy', None)
+        computed_properties = kwargs.pop('computed_properties', None)
+        change_feed_policy = kwargs.pop('change_feed_policy', None)
+        full_text_policy = kwargs.pop('full_text_policy', None)
+        return_properties = kwargs.pop('return_properties', False)
+
         session_token = kwargs.get('session_token')
         if session_token is not None:
             warnings.warn(
@@ -690,7 +690,7 @@ class DatabaseProxy(object):
         analytical_storage_ttl: Optional[int] = None,
         computed_properties: Optional[List[Dict[str, str]]] = None,
         full_text_policy: Optional[Dict[str, Any]] = None,
-        return_properties: Literal[False],
+        return_properties: Literal[False] = False,
         **kwargs: Any
     ) -> ContainerProxy:
         ...
@@ -717,18 +717,7 @@ class DatabaseProxy(object):
     @distributed_trace
     def replace_container(  # pylint:disable=docstring-missing-param
         self,
-        container: Union[str, ContainerProxy, Mapping[str, Any]],
-        partition_key: PartitionKey,
-        indexing_policy: Optional[Dict[str, Any]] = None,
-        default_ttl: Optional[int] = None,
-        conflict_resolution_policy: Optional[Dict[str, Any]] = None,
-        populate_query_metrics: Optional[bool] = None,
-        *,
-        initial_headers: Optional[Dict[str, str]] = None,
-        analytical_storage_ttl: Optional[int] = None,
-        computed_properties: Optional[List[Dict[str, str]]] = None,
-        full_text_policy: Optional[Dict[str, Any]] = None,
-        return_properties: bool = False,
+        *args: Any,
         **kwargs: Any
     ) -> Union[ContainerProxy, tuple[ContainerProxy, CosmosDict]]:
         """Reset the properties of the container.
@@ -772,6 +761,19 @@ class DatabaseProxy(object):
                 :dedent: 0
                 :caption: Reset the TTL property on a container, and display the updated properties:
         """
+
+        container = args[0] if len(args) > 0 else kwargs.pop('container', None)
+        partition_key = args[1] if len(args) > 1 else kwargs.pop('partition_key', None)
+        indexing_policy = args[2] if len(args) > 2 else kwargs.pop('indexing_policy', None)
+        default_ttl = args[3] if len(args) > 3 else kwargs.pop('default_ttl', None)
+        conflict_resolution_policy = args[4] if len(args) > 4 else kwargs.pop('conflict_resolution_policy', None)
+        populate_query_metrics = args[5] if len(args) > 5 else kwargs.pop('populate_query_metrics', None)
+        initial_headers = kwargs.pop('initial_headers', None)
+        analytical_storage_ttl = kwargs.pop('analytical_storage_ttl', None)
+        computed_properties = kwargs.pop('computed_properties', None)
+        full_text_policy = kwargs.pop('full_text_policy', None)
+        return_properties = kwargs.pop('return_properties', False)
+
         session_token = kwargs.get('session_token')
         if session_token is not None:
             warnings.warn(
