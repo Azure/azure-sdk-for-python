@@ -32,7 +32,7 @@ from azure.core.pipeline.transport import (
     AsyncHttpResponse as LegacyAsyncHttpResponse,
     HttpRequest as LegacyHttpRequest,
 )
-from ._policy_token_header import _PolicyTokenHeaderPolicyBase
+from ._policy_token_header import _create_acquire_policy_request, _update_request_with_policy_token
 from ._authentication_async import await_result
 
 if TYPE_CHECKING:
@@ -42,9 +42,7 @@ AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType", AsyncHttpResponse, Lega
 HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
 
 
-class AsyncPolicyTokenHeaderPolicy(
-    _PolicyTokenHeaderPolicyBase, AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]
-):
+class AsyncPolicyTokenHeaderPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]):
     """Async HTTP pipeline policy for adding policy token headers to Azure Resource Manager requests.
 
     This policy handles the acquisition and application of Azure Policy tokens for external
@@ -57,7 +55,7 @@ class AsyncPolicyTokenHeaderPolicy(
     :type kwargs: Any
     """
 
-    def __init__(self, client: "AsyncARMPipelineClient", **kwargs: Any) -> None:
+    def __init__(self, client: "AsyncARMPipelineClient", **kwargs: Any) -> None:  # pylint: disable=unused-argument
         """Initialize the async policy token header policy.
 
         :param client: The async ARM pipeline client used for making policy token requests
@@ -65,7 +63,6 @@ class AsyncPolicyTokenHeaderPolicy(
         :param kwargs: Additional keyword arguments passed to the base policy
         :type kwargs: Any
         """
-        super().__init__(**kwargs)
         self._client = client
 
     async def on_request(self, request: PipelineRequest[HTTPRequestType]) -> None:
@@ -77,12 +74,12 @@ class AsyncPolicyTokenHeaderPolicy(
         :param request: The pipeline request to process
         :type request: ~azure.core.pipeline.PipelineRequest
         """
-        acquire_policy_request = self._create_acquire_policy_request(request)
+        acquire_policy_request = _create_acquire_policy_request(request)
         if acquire_policy_request:
             try:
                 acquire_policy_request.url = self._client.format_url(acquire_policy_request.url)
                 acquire_policy_response = await self._client.send_request(acquire_policy_request, stream=False)
-                self._update_request_with_policy_token(request, acquire_policy_request, acquire_policy_response)
+                _update_request_with_policy_token(request, acquire_policy_request, acquire_policy_response)
             except Exception as e:
                 request.context.options["acquire_policy_token"] = True
                 raise e

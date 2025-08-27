@@ -45,6 +45,10 @@ class MockAsyncARMPipelineClient:
     async def send_request(self, request, stream=False):
         return self._response
 
+    def format_url(self, url):
+        """Mock format_url method to return the URL as-is."""
+        return url
+
 
 class MockHttpResponse:
     def __init__(self, status_code, json_data):
@@ -65,13 +69,13 @@ async def test_async_policy_token_header_policy_adds_header():
     mock_response = MockHttpResponse(200, {"token": "test-token-123", "result": "Succeeded"})
     mock_client = cast("AsyncARMPipelineClient", MockAsyncARMPipelineClient(mock_response))
 
-    policy = AsyncPolicyTokenHeaderPolicy(mock_client, acquire_policy_token=True)
+    policy = AsyncPolicyTokenHeaderPolicy(mock_client)
 
     # Test with a subscription URL
     request = HttpRequest("PUT", "https://management.azure.com/subscriptions/12345/resourceGroups/test")
     pipeline_request = Mock()
     pipeline_request.http_request = request
-    pipeline_request.context.options = {}
+    pipeline_request.context.options = {"acquire_policy_token": True}
 
     await policy.on_request(pipeline_request)
 
@@ -85,13 +89,13 @@ async def test_async_policy_token_header_policy_no_subscription_id():
     mock_response = MockHttpResponse(200, {"token": "test-token-123", "result": "Succeeded"})
     mock_client = cast("AsyncARMPipelineClient", MockAsyncARMPipelineClient(mock_response))
 
-    policy = AsyncPolicyTokenHeaderPolicy(mock_client, acquire_policy_token=True)
+    policy = AsyncPolicyTokenHeaderPolicy(mock_client)
 
     # Test with a URL without subscription ID
     request = HttpRequest("POST", "https://management.azure.com/providers/Microsoft.Resources")
     pipeline_request = Mock()
     pipeline_request.http_request = request
-    pipeline_request.context.options = {}
+    pipeline_request.context.options = {"acquire_policy_token": True}
 
     with pytest.raises(HttpResponseError, match="Failed to get subscriptionId from request url"):
         await policy.on_request(pipeline_request)
@@ -104,14 +108,14 @@ async def test_async_policy_token_header_policy_failed_response():
     mock_response = MockHttpResponse(500, {"error": "Internal server error"})
     mock_client = cast("AsyncARMPipelineClient", MockAsyncARMPipelineClient(mock_response))
 
-    policy = AsyncPolicyTokenHeaderPolicy(mock_client, acquire_policy_token=True)
+    policy = AsyncPolicyTokenHeaderPolicy(mock_client)
 
     request = HttpRequest("PUT", "https://management.azure.com/subscriptions/12345/resourceGroups/test")
     pipeline_request = Mock()
     pipeline_request.http_request = request
-    pipeline_request.context.options = {}
+    pipeline_request.context.options = {"acquire_policy_token": True}
 
-    with pytest.raises(HttpResponseError, match="status code is not 200"):
+    with pytest.raises(HttpResponseError, match="status code is 500 instead of expected 200"):
         await policy.on_request(pipeline_request)
 
 
@@ -122,12 +126,12 @@ async def test_async_policy_token_header_policy_unsuccessful_result():
     mock_response = MockHttpResponse(200, {"result": "Failed", "error": "Token acquisition failed"})
     mock_client = cast("AsyncARMPipelineClient", MockAsyncARMPipelineClient(mock_response))
 
-    policy = AsyncPolicyTokenHeaderPolicy(mock_client, acquire_policy_token=True)
+    policy = AsyncPolicyTokenHeaderPolicy(mock_client)
 
     request = HttpRequest("PUT", "https://management.azure.com/subscriptions/12345/resourceGroups/test")
     pipeline_request = Mock()
     pipeline_request.http_request = request
-    pipeline_request.context.options = {}
+    pipeline_request.context.options = {"acquire_policy_token": True}
 
     with pytest.raises(HttpResponseError, match="Failed to acquire policy token"):
         await policy.on_request(pipeline_request)
@@ -153,26 +157,6 @@ async def test_async_policy_token_header_policy_disabled_by_default():
     assert "x-ms-policy-external-evaluations" not in request.headers
 
 
-async def test_async_policy_token_header_policy_context_option_override():
-    """Test that context options can override the async policy's acquire_policy_token setting."""
-
-    mock_response = MockHttpResponse(200, {"token": "context-token-456", "result": "Succeeded"})
-    mock_client = cast("AsyncARMPipelineClient", MockAsyncARMPipelineClient(mock_response))
-
-    # Policy with acquire_policy_token=False
-    policy = AsyncPolicyTokenHeaderPolicy(mock_client, acquire_policy_token=False)
-
-    request = HttpRequest("PUT", "https://management.azure.com/subscriptions/12345/resourceGroups/test")
-    pipeline_request = Mock()
-    pipeline_request.http_request = request
-    pipeline_request.context.options = {"acquire_policy_token": True}
-
-    await policy.on_request(pipeline_request)
-
-    # Verify the header was added despite the policy default being False
-    assert request.headers["x-ms-policy-external-evaluations"] == "context-token-456"
-
-
 async def test_async_policy_token_header_policy_with_content():
     """Test that the async policy handles request content properly when creating the policy request."""
 
@@ -182,14 +166,15 @@ async def test_async_policy_token_header_policy_with_content():
 
         body = json.loads(request.content)
         assert body["operation"]["uri"] == "https://management.azure.com/subscriptions/12345/resourceGroups/test"
-        assert body["operation"]["method"] == "PUT"
+        assert body["operation"]["httpMethod"] == "PUT"
         assert "content" in body["operation"]
         return MockHttpResponse(200, {"token": "content-token-789", "result": "Succeeded"})
 
     mock_client = cast("AsyncARMPipelineClient", Mock())
     mock_client.send_request = verify_policy_request
+    mock_client.format_url = lambda url: url  # Add format_url method
 
-    policy = AsyncPolicyTokenHeaderPolicy(mock_client, acquire_policy_token=True)
+    policy = AsyncPolicyTokenHeaderPolicy(mock_client)
 
     request_content = '{"properties": {"location": "eastus"}}'
     request = HttpRequest("PUT", "https://management.azure.com/subscriptions/12345/resourceGroups/test")
@@ -197,7 +182,7 @@ async def test_async_policy_token_header_policy_with_content():
 
     pipeline_request = Mock()
     pipeline_request.http_request = request
-    pipeline_request.context.options = {}
+    pipeline_request.context.options = {"acquire_policy_token": True}
 
     await policy.on_request(pipeline_request)
 
@@ -211,7 +196,7 @@ async def test_async_policy_token_header_policy_send_method():
     mock_response = MockHttpResponse(200, {"token": "send-token-999", "result": "Succeeded"})
     mock_client = cast("AsyncARMPipelineClient", MockAsyncARMPipelineClient(mock_response))
 
-    policy = AsyncPolicyTokenHeaderPolicy(mock_client, acquire_policy_token=True)
+    policy = AsyncPolicyTokenHeaderPolicy(mock_client)
 
     # Mock the next policy
     mock_next_policy = Mock()
@@ -226,7 +211,7 @@ async def test_async_policy_token_header_policy_send_method():
     request = HttpRequest("PUT", "https://management.azure.com/subscriptions/12345/resourceGroups/test")
     pipeline_request = Mock()
     pipeline_request.http_request = request
-    pipeline_request.context.options = {}
+    pipeline_request.context.options = {"acquire_policy_token": True}
 
     # Call the send method
     response = await policy.send(pipeline_request)
@@ -247,12 +232,12 @@ async def test_policy_token_header_policy_get_request_no_token():
     mock_response = MockHttpResponse(200, {"token": "get-token-000", "result": "Succeeded"})
     mock_client = cast("AsyncARMPipelineClient", MockAsyncARMPipelineClient(mock_response))
 
-    policy = AsyncPolicyTokenHeaderPolicy(mock_client, acquire_policy_token=True)
+    policy = AsyncPolicyTokenHeaderPolicy(mock_client)
 
     request = HttpRequest("GET", "https://management.azure.com/providers/Microsoft.Resources")
     pipeline_request = Mock()
     pipeline_request.http_request = request
-    pipeline_request.context.options = {}
+    pipeline_request.context.options = {"acquire_policy_token": True}
 
     await policy.on_request(pipeline_request)
 
