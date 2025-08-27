@@ -6,18 +6,9 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING, Literal, Union
+from typing import TYPE_CHECKING, Union
 
 if TYPE_CHECKING:
     from . import models as _models
-Voice = Union[
-    str,
-    "_models.OAIVoice",
-    "_models.AzureStandardVoice",
-    "_models.AzureCustomVoice",
-    "_models.AzurePersonalVoice",
-    str,
-    "_models.Phi4mmVoice",
-]
+Voice = Union[str, "_models.OAIVoice", "_models.OpenAIVoice", "_models.AzureVoice", str, "_models.Phi4mmVoice"]
 ToolChoice = Union[str, "_models.ToolChoiceLiteral", "_models.ToolChoiceObject"]
-ReasoningEffort = Literal["minimal", "low", "medium", "high"]
