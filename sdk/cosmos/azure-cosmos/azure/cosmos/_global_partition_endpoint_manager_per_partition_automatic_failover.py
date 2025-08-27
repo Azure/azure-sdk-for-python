@@ -131,6 +131,7 @@ class _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover(_GlobalPar
                 regional_context = (self.location_cache.
                                     account_read_regional_routing_contexts_by_location.get(location).primary_endpoint)
                 partition_level_info.unavailable_regional_endpoints[location] = regional_context
+                print(3)
 
     def resolve_service_endpoint_for_partition(
             self,
@@ -169,8 +170,6 @@ class _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover(_GlobalPar
                                                                                                 pk_range_wrapper)
                     else:
                         # Update the current regional endpoint to whatever the request is routing to
-                        endpoint_region = self.location_cache.get_location_from_endpoint(
-                            request.location_endpoint_to_route)
                         partition_failover_info.current_region = endpoint_region
             else:
                 partition_failover_info = PartitionLevelFailoverInfo()

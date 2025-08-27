@@ -26,11 +26,11 @@ class _ServiceUnavailableRetryPolicy(object):
         self.connection_policy = connection_policy
         self.request = args[0] if args else None
         # If an account only has 1 region, then we still want to retry once on the same region
-        self._max_retry_attempt_count = max(2, len(self.global_endpoint_manager.location_cache
-                                                   .read_regional_routing_contexts))
+        self._max_retry_attempt_count = len(self.global_endpoint_manager.
+                                            location_cache.read_regional_routing_contexts) + 1
         if self.request and _OperationType.IsWriteOperation(self.request.operation_type):
-            self._max_retry_attempt_count = max(2, len(
-                self.global_endpoint_manager.location_cache.write_regional_routing_contexts))
+            self._max_retry_attempt_count = len(self.global_endpoint_manager.location_cache.
+                                                write_regional_routing_contexts) + 1
 
     def ShouldRetry(self, _exception: CosmosHttpResponseError):
         """Returns true if the request should retry based on the passed-in exception.

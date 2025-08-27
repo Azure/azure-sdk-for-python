@@ -66,8 +66,8 @@ class TestPerPartitionAutomaticFailover:
         # two documents targeted to same partition, one will always fail and the other will succeed
         doc_fail_id = str(uuid.uuid4())
         doc_success_id = str(uuid.uuid4())
-        predicate = lambda r: (FaultInjectionTransport.predicate_req_for_document_with_id(r, doc_fail_id)
-                               and FaultInjectionTransport.predicate_is_write_operation(r, "west"))
+        predicate = lambda r: (FaultInjectionTransport.predicate_req_for_document_with_id(r, doc_fail_id) and
+                               FaultInjectionTransport.predicate_is_write_operation(r, "com"))
         # The MockRequest only gets used to create the MockHttpResponse
         mock_request = FaultInjectionTransport.MockHttpRequest(url=self.host)
         if is_batch:
@@ -177,8 +177,19 @@ class TestPerPartitionAutomaticFailover:
         assert len(pk_range_wrappers) == 1
         failure_count = global_endpoint_manager.ppaf_thresholds_tracker.pk_range_wrapper_to_failure_count[pk_range_wrappers[0]]
         assert failure_count == consecutive_failures
-        # Run some more requests to the same partition to trigger the failover logic
-        for i in range(consecutive_failures):
+
+        # Verify that a single success to the same partition resets the consecutive failures count
+        perform_write_operation(write_operation,
+                                container,
+                                fault_injection_container,
+                                str(uuid.uuid4()),
+                                PK_VALUE)
+
+        failure_count = global_endpoint_manager.ppaf_thresholds_tracker.pk_range_wrapper_to_failure_count.get(pk_range_wrappers[0], 0)
+        assert failure_count == 0
+
+        # Run enough failed requests to the partition to trigger the failover logic
+        for i in range(12):
             with pytest.raises((CosmosHttpResponseError, ServiceResponseError)) as exc_info:
                 perform_write_operation(write_operation,
                                         container,
@@ -193,10 +204,9 @@ class TestPerPartitionAutomaticFailover:
         assert initial_region in partition_info.unavailable_regional_endpoints
         assert initial_region != partition_info.current_region # west us 3 != west us
 
-        # Since we are failing every request, even though we retried to the next region, that retry should have failed as well
-        # This means we should have one extra failure - verify that the value makes sense
+        # 12 failures - 10 to trigger failover, 2 more to start counting again
         failure_count = global_endpoint_manager.ppaf_thresholds_tracker.pk_range_wrapper_to_failure_count[pk_range_wrappers[0]]
-        assert failure_count == 3
+        assert failure_count == 2
 
     @pytest.mark.parametrize("write_operation, exclude_client_regions", write_operations_and_boolean())
     def test_ppaf_exclude_regions(self, write_operation, exclude_client_regions):
@@ -255,9 +265,10 @@ class TestPerPartitionAutomaticFailover:
         fault_injection_container.read_item(doc_fail_id, PK_VALUE, raw_response_hook=session_retry_hook)
 
 def session_retry_hook(raw_response):
-    # This hook is used to verify the request routing that happens after the session retry logic
-    region_string = "-" + REGION_2.replace(' ', '').lower() + "."
-    assert region_string in raw_response.http_request.url
+    if raw_response.http_request.headers.get('x-ms-thinclient-proxy-resource-type') != 'databaseaccount':
+        # This hook is used to verify the request routing that happens after the session retry logic
+        region_string = "-" + REGION_2.replace(' ', '').lower() + "."
+        assert region_string in raw_response.http_request.url
 
 if __name__ == '__main__':
     unittest.main()
