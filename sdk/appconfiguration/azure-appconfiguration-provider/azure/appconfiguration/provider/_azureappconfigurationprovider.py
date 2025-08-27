@@ -301,7 +301,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         error_message = """
                         Failed to refresh configuration settings from Azure App Configuration.
                         """
-        exception: Exception = RuntimeError(error_message)
+        exception: Optional[Exception] = None
         is_failover_request = False
         self._replica_client_manager.refresh_clients()
         self._replica_client_manager.find_active_clients()
@@ -332,6 +332,8 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 is_failover_request = True
 
         if not success:
+            if exception is None:
+                exception = RuntimeError(error_message)
             timer.backoff()
             if self._on_refresh_error:
                 self._on_refresh_error(exception)
