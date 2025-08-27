@@ -54,7 +54,6 @@ class Check(abc.ABC):
                     targeted.append(ParsedSetup.from_path(pkg))
                 except:
                     print(f"Error: {pkg} does not appear to be a Python package (no setup.py or setup.cfg found).")
-                    continue
     
         return targeted 
     

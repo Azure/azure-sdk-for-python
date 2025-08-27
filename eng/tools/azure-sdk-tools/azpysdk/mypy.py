@@ -66,11 +66,13 @@ class mypy(Check):
                 pre_download_disabled=False,
             )
 
-            # TODO ?
-            # need to use next flag to specify which version of mypy to install?
-            # Ensure mypy is installed in the current environment
+            # install mypy
             try:
-                check_call([sys.executable, "-m", "pip", "install", f"mypy=={MYPY_VERSION}"])
+                if (args.next):
+                    # use latest version of mypy
+                    check_call([sys.executable, "-m", "pip", "install", "mypy"])
+                else:
+                    check_call([sys.executable, "-m", "pip", "install", f"mypy=={MYPY_VERSION}"])
             except CalledProcessError as e:
                 print("Failed to install mypy:", e)
                 return e.returncode
@@ -82,8 +84,6 @@ class mypy(Check):
                     logging.info(
                         f"Package {package_name} opts-out of mypy check. See https://aka.ms/python/typing-guide for information."
                     )
-                    # TODO ??
-                    # exit(0)
                     continue
 
             top_level_module = parsed.namespace.split(".")[0]
@@ -108,14 +108,12 @@ class mypy(Check):
                 logging.info("Verified mypy, no issues found")
             except CalledProcessError as src_error:
                 src_code_error = src_error 
-                # TODO ???
                 results.append(src_error.returncode)
             
             if not args.next and in_ci() and not is_check_enabled(package_dir, "type_check_samples", True):
                 logging.info(
                     f"Package {package_name} opts-out of mypy check on samples."
                 )
-                # TODO ??
                 continue
             else:
                 # check if sample dirs exists, if not, skip sample code check
@@ -147,19 +145,6 @@ class mypy(Check):
                     create_vnext_issue(package_dir, "mypy")
                 else:
                     close_vnext_issue(package_name, "mypy")
-
-            # ??
-            # if src_code_error and sample_code_error:
-            #     raise Exception(
-            #         [
-            #             src_code_error,
-            #             sample_code_error
-            #         ]
-            #     )
-            # if src_code_error:
-            #     raise src_code_error
-            # if sample_code_error:
-            #     raise sample_code_error
             
         return max(results) if results else 0
         
