@@ -281,12 +281,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     @distributed_trace_async
     async def create_database(
         self,
-        id: str,
-        *,
-        offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
-        initial_headers: Optional[Dict[str, str]] = None,
-        throughput_bucket: Optional[int] = None,
-        return_properties: bool = False,
+        *args: Any,
         **kwargs: Any
     ) -> Union[DatabaseProxy, tuple[DatabaseProxy, CosmosDict]]:
         """
@@ -334,10 +329,11 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
-        if initial_headers is not None:
-            kwargs["initial_headers"] = initial_headers
-        if throughput_bucket is not None:
-            kwargs["throughput_bucket"] = throughput_bucket
+
+        id = args[0] if args else kwargs.pop("id")
+        offer_throughput = kwargs.pop("offer_throughput", None)
+        return_properties = kwargs.pop("return_properties", False)
+
         request_options = _build_options(kwargs)
         _set_throughput_options(offer=offer_throughput, request_options=request_options)
 
@@ -354,7 +350,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
         initial_headers: Optional[Dict[str, str]] = None,
         throughput_bucket: Optional[int] = None,
-        return_properties: Literal[False],
+        return_properties: Literal[False] = False,
         **kwargs: Any
     ) -> DatabaseProxy:
         ...
@@ -376,12 +372,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     @distributed_trace_async
     async def create_database_if_not_exists(  # pylint: disable=redefined-builtin
         self,
-        id: str,
-        *,
-        offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
-        initial_headers: Optional[Dict[str, str]] = None,
-        throughput_bucket: Optional[int] = None,
-        return_properties: bool = False,
+        *args: Any,
         **kwargs: Any
     ) -> Union[DatabaseProxy, tuple[DatabaseProxy, CosmosDict]]:
 
@@ -426,10 +417,11 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
-        if throughput_bucket is not None:
-            kwargs["throughput_bucket"] = throughput_bucket
-        if initial_headers is not None:
-            kwargs["initial_headers"] = initial_headers
+
+        id = args[0] if args else kwargs.pop("id")
+        offer_throughput = kwargs.pop("offer_throughput", None)
+        return_properties = kwargs.pop("return_properties", False)
+
         try:
             database_proxy = self.get_database_client(id)
             result = await database_proxy.read(**kwargs)

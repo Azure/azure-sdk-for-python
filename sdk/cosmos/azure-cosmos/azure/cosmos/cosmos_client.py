@@ -38,7 +38,7 @@ from .database import DatabaseProxy, _get_database_link
 from .documents import ConnectionPolicy, DatabaseAccount
 from .exceptions import CosmosResourceNotFoundError
 from ._cosmos_responses import CosmosDict
-
+from . import _utils as utils
 
 __all__ = ("CosmosClient",)
 
@@ -294,14 +294,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     @distributed_trace
     def create_database(  # pylint:disable=docstring-missing-param
         self,
-        id: str,
-        populate_query_metrics: Optional[bool] = None,
-        offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
-        *,
-        initial_headers: Optional[Dict[str, str]] = None,
-        response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
-        throughput_bucket: Optional[int] = None,
-        return_properties: bool = False,
+        *args: Any,
         **kwargs: Any
     ) -> Union[DatabaseProxy, tuple[DatabaseProxy, CosmosDict]]:
         """
@@ -348,8 +341,17 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 UserWarning)
-        if throughput_bucket is not None:
-            kwargs["throughput_bucket"] = throughput_bucket
+        # if throughput_bucket is not None:
+        #     kwargs["throughput_bucket"] = throughput_bucket
+
+        # if initial_headers is not None:
+        #     kwargs["initial_headers"] = initial_headers
+        offer_throughput = kwargs.pop("offer_throughput", None)
+        id = args[0] if args else kwargs.pop("id")
+        return_properties = kwargs.pop("return_properties", False)
+        response_hook = kwargs.pop("response_hook", None)
+        populate_query_metrics = kwargs.pop("populate_query_metrics", None)
+
         if populate_query_metrics is not None:
             warnings.warn(
                 "The 'populate_query_metrics' flag does not apply to this method"
@@ -357,8 +359,6 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 UserWarning,
             )
 
-        if initial_headers is not None:
-            kwargs["initial_headers"] = initial_headers
         request_options = build_options(kwargs)
         _set_throughput_options(offer=offer_throughput, request_options=request_options)
         result = self.client_connection.CreateDatabase(database={"id": id}, options=request_options, **kwargs)
@@ -377,7 +377,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
         initial_headers: Optional[Dict[str, str]] = None,
         throughput_bucket: Optional[int] = None,
-        return_properties: Literal[False],
+        return_properties: Literal[False] = False,
         **kwargs: Any
     ) -> DatabaseProxy:
         ...
@@ -400,13 +400,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     @distributed_trace
     def create_database_if_not_exists(  # pylint:disable=docstring-missing-param
         self,
-        id: str,
-        populate_query_metrics: Optional[bool] = None,
-        offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
-        *,
-        initial_headers: Optional[Dict[str, str]] = None,
-        throughput_bucket: Optional[int] = None,
-        return_properties: bool = False,
+        *args: Any,
         **kwargs: Any
     ) -> Union[DatabaseProxy, tuple[DatabaseProxy, CosmosDict]]:
         """
@@ -431,6 +425,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :rtype: ~azure.cosmos.DatabaseProxy or tuple [~azure.cosmos.DatabaseProxy, ~azure.cosmos.CosmosDict]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The database read or creation failed.
         """
+
         session_token = kwargs.get('session_token')
         if session_token is not None:
             warnings.warn(
@@ -449,10 +444,11 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 UserWarning)
-        if throughput_bucket is not None:
-            kwargs["throughput_bucket"] = throughput_bucket
-        if initial_headers is not None:
-            kwargs["initial_headers"] = initial_headers
+
+        id = args[0] if args else kwargs.pop("id")
+        offer_throughput = kwargs.pop("offer_throughput", None)
+        populate_query_metrics = kwargs.pop("populate_query_metrics", None)
+        return_properties = kwargs.pop("return_properties", False)
         try:
             database_proxy = self.get_database_client(id)
             result = database_proxy.read(
