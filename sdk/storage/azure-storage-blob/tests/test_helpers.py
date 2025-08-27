@@ -33,7 +33,7 @@ def _create_file_share_oauth(
     bearer_token_string: str,
     storage_account_name: str,
     data: bytes,
-    is_live=False
+    is_live: bool
 ) -> Tuple[str, str]:
     base_url = f"https://{storage_account_name}.file.core.windows.net/{share_name}"
 
