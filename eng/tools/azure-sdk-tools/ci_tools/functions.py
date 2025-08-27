@@ -163,12 +163,16 @@ def glob_packages(glob_string: str, target_root_dir: str) -> List[str]:
     collected_top_level_directories = []
 
     for glob_string in individual_globs:
-        globbed = glob.glob(os.path.join(target_root_dir, glob_string, "setup.py"), recursive=True)
+        globbed = glob.glob(os.path.join(target_root_dir, glob_string, "setup.py"), recursive=True) + glob.glob(
+            os.path.join(target_root_dir, "sdk/*/", glob_string, "setup.py")
+        )
         collected_top_level_directories.extend([os.path.dirname(p) for p in globbed])
 
     # handle pyproject.toml separately, as we need to filter them by the presence of a `[project]` section
     for glob_string in individual_globs:
-        globbed = glob.glob(os.path.join(target_root_dir, glob_string, "pyproject.toml"), recursive=True)
+        globbed = glob.glob(os.path.join(target_root_dir, glob_string, "pyproject.toml"), recursive=True) + glob.glob(
+            os.path.join(target_root_dir, "sdk/*/", glob_string, "pyproject.toml")
+        )
         for p in globbed:
             if get_pyproject(os.path.dirname(p)):
                 collected_top_level_directories.append(os.path.dirname(p))
