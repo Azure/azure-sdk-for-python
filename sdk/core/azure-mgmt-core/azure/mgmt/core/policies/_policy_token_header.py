@@ -24,7 +24,7 @@
 #
 # --------------------------------------------------------------------------
 import json
-from typing import TypeVar, Any, Optional, Union, TYPE_CHECKING, Dict
+from typing import TypeVar, Any, Union, TYPE_CHECKING, Dict
 from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.transport import (
     HttpResponse as LegacyHttpResponse,
@@ -41,7 +41,7 @@ if TYPE_CHECKING:
     from .._pipeline_client import ARMPipelineClient
 
 
-def _create_acquire_policy_request(request: PipelineRequest[HTTPRequestType]) -> Optional[HttpRequest]:
+def _create_acquire_policy_request(request: PipelineRequest[HTTPRequestType]) -> HttpRequest:
     """Create a request to acquire a policy token.
 
     This method creates an HTTP request to the Azure Policy service to acquire
@@ -50,14 +50,10 @@ def _create_acquire_policy_request(request: PipelineRequest[HTTPRequestType]) ->
 
     :param request: The pipeline request for which to acquire a policy token
     :type request: ~azure.core.pipeline.PipelineRequest
-    :return: The HTTP request to acquire policy token, or None if not needed
-    :rtype: Optional[~azure.core.rest.HttpRequest]
+    :return: The HTTP request to acquire policy token
+    :rtype: ~azure.core.rest.HttpRequest
     :raises ~azure.core.exceptions.HttpResponseError: If subscription ID cannot be extracted from request URL
     """
-    acquire_policy_token = request.context.options.pop("acquire_policy_token", False)
-    if not acquire_policy_token or request.http_request.method.upper() == "GET":
-        return None
-
     # try to get subscriptionId from request.http_request.url
     subscription_id = (
         request.http_request.url.split("subscriptions/")[1].split("/")[0]
@@ -155,12 +151,14 @@ class PolicyTokenHeaderPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType
         :param request: The pipeline request to process
         :type request: ~azure.core.pipeline.PipelineRequest
         """
-        acquire_policy_request = _create_acquire_policy_request(request)
-        if acquire_policy_request:
-            try:
-                acquire_policy_request.url = self._client.format_url(acquire_policy_request.url)
-                acquire_policy_response = self._client.send_request(acquire_policy_request, stream=False)
-                _update_request_with_policy_token(request, acquire_policy_request, acquire_policy_response)
-            except Exception as e:
-                request.context.options["acquire_policy_token"] = True
-                raise e
+        acquire_policy_token = request.context.options.pop("acquire_policy_token", False)
+        if not acquire_policy_token or request.http_request.method.upper() == "GET":
+            return
+        try:
+            acquire_policy_request = _create_acquire_policy_request(request)
+            acquire_policy_request.url = self._client.format_url(acquire_policy_request.url)
+            acquire_policy_response = self._client.send_request(acquire_policy_request, stream=False)
+            _update_request_with_policy_token(request, acquire_policy_request, acquire_policy_response)
+        except Exception as e:
+            request.context.options["acquire_policy_token"] = True
+            raise e

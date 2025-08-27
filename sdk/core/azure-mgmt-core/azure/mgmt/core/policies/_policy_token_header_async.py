@@ -74,15 +74,17 @@ class AsyncPolicyTokenHeaderPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPRes
         :param request: The pipeline request to process
         :type request: ~azure.core.pipeline.PipelineRequest
         """
-        acquire_policy_request = _create_acquire_policy_request(request)
-        if acquire_policy_request:
-            try:
-                acquire_policy_request.url = self._client.format_url(acquire_policy_request.url)
-                acquire_policy_response = await self._client.send_request(acquire_policy_request, stream=False)
-                _update_request_with_policy_token(request, acquire_policy_request, acquire_policy_response)
-            except Exception as e:
-                request.context.options["acquire_policy_token"] = True
-                raise e
+        acquire_policy_token = request.context.options.pop("acquire_policy_token", False)
+        if not acquire_policy_token or request.http_request.method.upper() == "GET":
+            return
+        try:
+            acquire_policy_request = _create_acquire_policy_request(request)
+            acquire_policy_request.url = self._client.format_url(acquire_policy_request.url)
+            acquire_policy_response = await self._client.send_request(acquire_policy_request, stream=False)
+            _update_request_with_policy_token(request, acquire_policy_request, acquire_policy_response)
+        except Exception as e:
+            request.context.options["acquire_policy_token"] = True
+            raise e
 
     async def send(
         self, request: PipelineRequest[HTTPRequestType]
