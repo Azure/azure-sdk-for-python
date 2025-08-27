@@ -10,7 +10,7 @@ from azure.ai.language.text.models import (
     CustomEntitiesActionContent,
     CustomEntitiesLROTask,
     TextActions,
-    CustomEntityRecognitionOperationResult,   # subclass of AnalyzeTextLROResult
+    CustomEntityRecognitionOperationResult,  # subclass of AnalyzeTextLROResult
     CustomEntityActionResult,
     NamedEntity,
 )
@@ -84,19 +84,19 @@ class TestTextAnalysisCase(TestTextAnalysis):
             assert isinstance(actions_page, TextActions)
             assert actions_page.items_property is not None  # wire: "items"
 
-            for op_result in actions_page.items_property: 
+            for op_result in actions_page.items_property:
                 if isinstance(op_result, CustomEntityRecognitionOperationResult):
                     found_custom_entities = True
                     result = op_result.results
                     assert result is not None
                     assert result.documents is not None
 
-                    for doc in result.documents: 
+                    for doc in result.documents:
                         assert isinstance(doc, CustomEntityActionResult)
                         assert doc.id is not None
                         assert doc.entities is not None
 
-                        for entity in doc.entities: 
+                        for entity in doc.entities:
                             assert isinstance(entity, NamedEntity)
                             assert entity.text is not None
                             assert entity.category is not None

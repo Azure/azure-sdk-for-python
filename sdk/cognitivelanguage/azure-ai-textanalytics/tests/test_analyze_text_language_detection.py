@@ -40,9 +40,7 @@ class TestTextAnalysisCase(TestTextAnalysis):
         )
 
         body = TextLanguageDetectionInput(
-            text_input=LanguageDetectionTextInput(
-                language_inputs=[LanguageInput(id="A", text=text_a)]
-            )
+            text_input=LanguageDetectionTextInput(language_inputs=[LanguageInput(id="A", text=text_a)])
         )
 
         result = client.analyze_text(body=body)

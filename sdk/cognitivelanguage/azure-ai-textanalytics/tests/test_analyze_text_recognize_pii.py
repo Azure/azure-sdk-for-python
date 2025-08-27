@@ -57,7 +57,7 @@ class TestTextAnalysisCase(TestTextAnalysis):
             assert doc.id is not None
             assert doc.entities is not None
 
-            for entity in doc.entities: 
+            for entity in doc.entities:
                 assert isinstance(entity, PiiEntity)
                 assert entity.text is not None
                 assert entity.category is not None

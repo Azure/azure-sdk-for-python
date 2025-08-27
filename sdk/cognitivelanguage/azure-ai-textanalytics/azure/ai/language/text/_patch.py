@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -27,9 +28,10 @@ from ._client import TextAnalysisClient as AnalysisTextClientGenerated
 from . import models as _models
 from .models import AnalyzeTextOperationState, TextActions  # convenience re-exports if present
 from ._utils.serialization import Serializer
+
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
-    
+
 # Match Conversation Inference style
 JSON = MutableMapping[str, Any]
 _Unset: Any = object()
@@ -49,7 +51,9 @@ def _parse_operation_id(op_loc: Optional[str]) -> Optional[str]:
         return None
     return path.rsplit("/", 1)[-1]
 
+
 PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
+
 
 class AnalyzeTextLROPoller(LROPoller[PollingReturnType_co], Generic[PollingReturnType_co]):
     """Custom poller that returns PollingReturnType_co and exposes operation metadata."""
@@ -207,7 +211,7 @@ class TextAnalysisClient(AnalysisTextClientGenerated):
     @distributed_trace
     def begin_analyze_text_job(  # type: ignore[override]
         self,
-        body: Union[JSON, IO[bytes]] = _Unset,  # use serializer sentinel like generator outputs
+        body: Union[JSON, IO[bytes]] = _Unset,
         *,
         text_input: _models.MultiLanguageTextInput = _Unset,
         actions: list[_models.AnalyzeTextOperationAction] = _Unset,
@@ -218,7 +222,6 @@ class TextAnalysisClient(AnalysisTextClientGenerated):
     ) -> AnalyzeTextLROPoller[ItemPaged["TextActions"]]:
         """Submit a collection of text documents for analysis. Specify one or more unique tasks to be
         executed as a long-running operation.
-
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
         :keyword text_input: Contains the input to be analyzed. Required.
@@ -249,7 +252,7 @@ class TextAnalysisClient(AnalysisTextClientGenerated):
         kwargs.pop("error_map", None)
 
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         def _fetch_state_by_next_link(next_link: str) -> AnalyzeTextOperationState:
@@ -263,7 +266,7 @@ class TextAnalysisClient(AnalysisTextClientGenerated):
         def _build_pager_from_state(state: AnalyzeTextOperationState) -> ItemPaged["TextActions"]:
             def extract_data(s: AnalyzeTextOperationState):
                 next_link = s.next_link
-                actions_payload: TextActions = s.actions  # ✅ payload
+                actions_payload: TextActions = s.actions
                 return next_link, [actions_payload]
 
             def get_next(token: Optional[str]) -> Optional[AnalyzeTextOperationState]:
@@ -282,11 +285,8 @@ class TextAnalysisClient(AnalysisTextClientGenerated):
             if final_response.status_code == 200:
                 data = json.loads(final_response.text())
                 op_state = AnalyzeTextOperationState(data)
-
-                # stash on the poller so `.details` can read it
                 poller_ref = poller_holder["poller"]
                 poller_ref._record_state_for_details(op_state)  # pylint: disable=protected-access
-
                 paged = _build_pager_from_state(op_state)
                 return cls(pipeline_response, paged, {}) if cls else paged
             raise HttpResponseError(response=final_response)
@@ -307,19 +307,22 @@ class TextAnalysisClient(AnalysisTextClientGenerated):
                 continuation_token=cont_token,
             )
 
-        raw_result = self._analyze_text_job_initial(
-            body=body,
+        initial_kwargs = dict(
             text_input=text_input,
             actions=actions,
             display_name=display_name,
             default_language=default_language,
             cancel_after=cancel_after,
             content_type=content_type,
-            cls=lambda x, y, z: x,  # return raw pipeline response here
+            cls=lambda x, y, z: x,  # passthrough raw pipeline response
             headers=_headers,
             params=_params,
-            **kwargs
+            **kwargs,
         )
+        if body is not _Unset and body is not None:
+            initial_kwargs["body"] = body
+
+        raw_result = self._analyze_text_job_initial(**initial_kwargs)
         raw_result.http_response.read()  # type: ignore[attr-defined]
 
         lro: AnalyzeTextLROPoller[ItemPaged["TextActions"]] = AnalyzeTextLROPoller(
@@ -336,5 +339,6 @@ def patch_sdk():
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
+
 
 __all__ = ["TextAnalysisClient", "AnalyzeTextLROPoller"]

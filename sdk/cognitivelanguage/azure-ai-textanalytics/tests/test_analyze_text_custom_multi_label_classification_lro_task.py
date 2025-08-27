@@ -30,9 +30,7 @@ class TestTextAnalysis(AzureRecordedTestCase):
 class TestTextAnalysisCase(TestTextAnalysis):
     @TextAnalysisPreparer()
     @recorded_by_proxy
-    def test_analyze_text_custom_multi_label_classification_lro_task(
-        self, text_analysis_endpoint, text_analysis_key
-    ):
+    def test_analyze_text_custom_multi_label_classification_lro_task(self, text_analysis_endpoint, text_analysis_key):
         client = self.create_client(text_analysis_endpoint, text_analysis_key)
 
         project_name = "your_cmc_project_name"
@@ -83,13 +81,13 @@ class TestTextAnalysisCase(TestTextAnalysis):
                     assert result is not None
                     assert result.documents is not None
 
-                    for doc in result.documents:  
+                    for doc in result.documents:
                         assert isinstance(doc, ClassificationActionResult)
                         assert doc.id is not None
                         # Multi-label returns a list of classifications
                         assert getattr(doc, "classifications", None) is not None
 
-                        for cls_item in doc.class_property:  
+                        for cls_item in doc.class_property:
                             assert isinstance(cls_item, ClassificationResult)
                             assert cls_item.category is not None
                             assert cls_item.confidence_score is not None

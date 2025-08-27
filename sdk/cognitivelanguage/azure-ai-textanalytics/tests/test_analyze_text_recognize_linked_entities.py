@@ -56,12 +56,12 @@ class TestTextAnalysisCase(TestTextAnalysis):
         assert result.results is not None
         assert result.results.documents is not None
 
-        for doc in result.results.documents: 
+        for doc in result.results.documents:
             assert isinstance(doc, EntityLinkingActionResult)
             assert doc.id is not None
             assert doc.entities is not None
 
-            for linked in doc.entities: 
+            for linked in doc.entities:
                 assert isinstance(linked, LinkedEntity)
                 assert linked.name is not None
                 assert linked.language is not None

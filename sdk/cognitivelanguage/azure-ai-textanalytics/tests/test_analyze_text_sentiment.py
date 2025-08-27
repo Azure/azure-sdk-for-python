@@ -52,7 +52,7 @@ class TestTextAnalysisCase(TestTextAnalysis):
         assert result.results is not None
         assert result.results.documents is not None
 
-        for doc in result.results.documents: 
+        for doc in result.results.documents:
             assert isinstance(doc, SentimentActionResult)
             assert doc.id is not None
             assert doc.sentiment is not None
@@ -62,7 +62,7 @@ class TestTextAnalysisCase(TestTextAnalysis):
             assert doc.confidence_scores.negative is not None
             assert doc.sentences is not None
 
-            for sentence in doc.sentences: 
+            for sentence in doc.sentences:
                 assert isinstance(sentence, SentenceSentiment)
                 assert sentence.text is not None
                 assert sentence.sentiment is not None

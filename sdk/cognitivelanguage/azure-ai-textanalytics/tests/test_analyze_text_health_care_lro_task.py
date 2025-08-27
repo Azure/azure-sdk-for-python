@@ -10,7 +10,7 @@ from azure.ai.language.text.models import (
     AnalyzeTextOperationAction,
     HealthcareLROTask,
     HealthcareLROResult,
-    TextActions
+    TextActions,
 )
 
 from azure.core.credentials import AzureKeyCredential
