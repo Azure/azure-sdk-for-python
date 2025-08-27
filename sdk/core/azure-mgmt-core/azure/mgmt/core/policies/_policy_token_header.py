@@ -74,10 +74,11 @@ class _PolicyTokenHeaderPolicyBase:
         :raises ~azure.core.exceptions.HttpResponseError: If subscription ID cannot be extracted from request URL
         """
         acquire_policy_token = request.context.options.pop("acquire_policy_token", None)
-        if acquire_policy_token is None:
-            if not self._acquire_policy_token:
-                return None
-        elif acquire_policy_token is False:
+        if (
+            (acquire_policy_token is None and not self._acquire_policy_token)
+            or acquire_policy_token is False
+            or request.http_request.method.upper() == "GET"
+        ):
             return None
 
         # try to get subscriptionId from request.http_request.url
