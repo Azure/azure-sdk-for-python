@@ -4,7 +4,7 @@ import argparse
 import traceback
 import sys
 
-from typing import Sequence, Optional, List, Any
+from typing import Sequence, Optional, List, Any, Tuple
 from subprocess import check_call
 
 from ci_tools.parsing import ParsedSetup
@@ -45,11 +45,9 @@ class Check(abc.ABC):
         """
         return 0
 
-    def handle_venv(self, isolate: bool, args: argparse.Namespace, venv_location: Optional[str]) -> str:
-        """Handle virtual environment commands."""
-        # if we have to isolate, return the new python exe that the rest of the checks should use
+    def create_venv(self, isolate: bool,venv_location: Optional[str]) -> str:
+        """Abstraction for creating a virtual environment."""
         if (isolate):
-            # os.environ["AZURE_SDK_TOOLS_VENV"] = "1"
 
             venv_cmd = get_venv_call()
             if not venv_location:
@@ -75,6 +73,18 @@ class Check(abc.ABC):
 
         # if we don't need to isolate, just return the python executable that we're invoking
         return sys.executable
+
+    def get_executable(self, isolate: bool, check_name: str, executable: str, package_folder: str) -> Tuple[str, str]:
+        """Get the Python executable that should be used for this check."""
+        venv_location = os.path.join(package_folder, f".venv_{check_name}")
+
+        # if isolation is required, the executable we get back will align with the venv
+        # otherwise we'll just get sys.executable and install in current
+        executable = self.create_venv(isolate, venv_location)
+        staging_directory = os.path.join(venv_location, ".staging")
+        os.makedirs(staging_directory, exist_ok=True)
+        return executable, staging_directory
+
 
     def get_targeted_directories(self, args: argparse.Namespace) -> List[ParsedSetup]:
         """

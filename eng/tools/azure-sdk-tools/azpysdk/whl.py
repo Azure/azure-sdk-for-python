@@ -8,7 +8,7 @@ from subprocess import check_call
 
 from .Check import Check
 
-from ci_tools.functions import discover_targeted_packages, is_error_code_5_allowed, pip_install
+from ci_tools.functions import is_error_code_5_allowed, pip_install
 from ci_tools.variables import set_envvar_defaults
 from ci_tools.parsing import ParsedSetup
 from ci_tools.scenario.generation import create_package_and_install
@@ -39,12 +39,7 @@ class whl(Check):
 
         for parsed in targeted:
             pkg = parsed.folder
-            venv_location = os.path.join(parsed.folder, f".venv_{args.command}")
-            # if isolation is required, the executable we get back will align with the venv
-            # otherwise we'll just get sys.executable and install in current
-            executable = self.handle_venv(args.isolate, args, venv_location=venv_location)
-            staging_directory = os.path.join(venv_location, ".staging")
-            os.makedirs(staging_directory, exist_ok=True)
+            executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, pkg)
 
             print(f"Invoking check with {executable}")
             dev_requirements = os.path.join(pkg, "dev_requirements.txt")
