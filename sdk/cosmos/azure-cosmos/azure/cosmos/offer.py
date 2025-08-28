@@ -54,6 +54,8 @@ class ThroughputProperties:
         :return: Dict of response headers
         :rtype: ~azure.core.CaseInsensitiveDict
         """
+        if self.properties is None:
+            return {}
         try:
             return self.properties.get_response_headers()
         except AttributeError:
