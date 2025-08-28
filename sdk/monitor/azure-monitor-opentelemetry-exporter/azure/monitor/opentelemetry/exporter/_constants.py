@@ -90,14 +90,15 @@ _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS = 3600  # 60 minutes
 
 # Statsbeat
 # (OpenTelemetry metric name, Statsbeat metric name)
+# Note: OpenTelemetry SDK normalizes metric names to lowercase, so first element should be lowercase
 _ATTACH_METRIC_NAME = ("attach", "Attach")
 _FEATURE_METRIC_NAME = ("feature", "Feature")
-_REQ_EXCEPTION_NAME = ("statsbeat_exception_count", "Exception_Count")
-_REQ_DURATION_NAME = ("statsbeat_duration", "Request_Duration")
-_REQ_FAILURE_NAME = ("statsbeat_failure_count", "Request_Failure_Count")
-_REQ_RETRY_NAME = ("statsbeat_retry_count", "Retry_Count")
-_REQ_SUCCESS_NAME = ("statsbeat_success_count", "Request_Success_Count")
-_REQ_THROTTLE_NAME = ("statsbeat_throttle_count", "Throttle_Count")
+_REQ_EXCEPTION_NAME = ("exception_count", "Exception_Count")
+_REQ_DURATION_NAME = ("request_duration", "Request_Duration")
+_REQ_FAILURE_NAME = ("request_failure_count", "Request_Failure_Count")
+_REQ_RETRY_NAME = ("retry_count", "Retry_Count")
+_REQ_SUCCESS_NAME = ("request_success_count", "Request_Success_Count")
+_REQ_THROTTLE_NAME = ("throttle_count", "Throttle_Count")
 
 _STATSBEAT_METRIC_NAME_MAPPINGS = dict(
     [
