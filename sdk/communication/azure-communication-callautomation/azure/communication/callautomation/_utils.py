@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING, Dict, Any, List, Optional, Union
+from typing import TYPE_CHECKING, Dict, Any, List, Optional, Union, cast
 from datetime import datetime
 
 from ._shared.models import (
@@ -36,8 +36,8 @@ if TYPE_CHECKING:
 )
 
 def build_external_storage(
-    recording_storage: Union['AzureCommunicationsRecordingStorage',
-                             'AzureBlobContainerRecordingStorage'] = None
+    recording_storage: Optional[Union['AzureCommunicationsRecordingStorage',
+                                      'AzureBlobContainerRecordingStorage']] = None
 ) -> Optional[ExternalStorage]:
     request: Optional[ExternalStorage] = None
     if recording_storage:
@@ -58,7 +58,7 @@ def build_call_locator(
     server_call_id: Optional[str],
     group_call_id: Optional[str],
     room_id: Optional[str],
-    args: List[Union['ServerCallLocator', 'GroupCallLocator','RoomCallLocator']] = None,
+    args: Optional[List[Union['ServerCallLocator', 'GroupCallLocator','RoomCallLocator']]] = None,
 ) -> CallLocator:
     """Build the generated callLocator object from args in kwargs with support for legacy models.
 
@@ -109,6 +109,11 @@ def build_call_locator(
                 "Please provide either 'group_call_id' or 'server_call_id' or 'room_id'."
             )
         request = CallLocator(room_id=room_id, kind="roomCallLocator")
+
+    if request is None:
+        raise ValueError(
+            "No call locator provided. Please provide either 'group_call_id', 'server_call_id', or 'room_id'."
+        )
     return request
 
 def process_repeatability_first_sent(keywords: Dict[str, Any]) -> None:
@@ -132,9 +137,9 @@ def serialize_identifier(identifier: CommunicationIdentifier) -> Dict[str, Any]:
     :rtype: dict[str, any]
     """
     try:
-        request_model = {"raw_id": identifier.raw_id}
+        request_model: Dict[str, Any] = {"raw_id": identifier.raw_id}
         if identifier.kind and identifier.kind != CommunicationIdentifierKind.UNKNOWN:
-            request_model[identifier.kind] = dict(identifier.properties)
+            request_model[str(identifier.kind)] = dict(identifier.properties)
         return request_model
     except AttributeError:
         raise TypeError(f"Unsupported identifier type: {identifier.__class__.__name__}") from None
@@ -213,31 +218,31 @@ def deserialize_identifier(identifier_model: CommunicationIdentifierModel) -> Co
     raw_id = identifier_model.raw_id
 
     if identifier_model.communication_user:
-        return CommunicationUserIdentifier(raw_id, raw_id=raw_id)
+        return cast(CommunicationIdentifier, CommunicationUserIdentifier(id=identifier_model.communication_user.id, raw_id=raw_id))
     if identifier_model.phone_number:
-        return PhoneNumberIdentifier(identifier_model.phone_number.value, raw_id=raw_id)
+        return cast(CommunicationIdentifier, PhoneNumberIdentifier(identifier_model.phone_number.value, raw_id=raw_id))
     if identifier_model.microsoft_teams_user:
-        return MicrosoftTeamsUserIdentifier(
+        return cast(CommunicationIdentifier, MicrosoftTeamsUserIdentifier(
             raw_id=raw_id,
             user_id=identifier_model.microsoft_teams_user.user_id,
             is_anonymous=identifier_model.microsoft_teams_user.is_anonymous,
             cloud=identifier_model.microsoft_teams_user.cloud,
-        )
+        ))
     if identifier_model.microsoft_teams_app:
-        return MicrosoftTeamsAppIdentifier(
+        return cast(CommunicationIdentifier, MicrosoftTeamsAppIdentifier(
             raw_id=raw_id,
             app_id=identifier_model.microsoft_teams_app.app_id,
             cloud=identifier_model.microsoft_teams_app.cloud,
-        )
+        ))
     if identifier_model.teams_extension_user:
-        return TeamsExtensionUserIdentifier(
+        return cast(CommunicationIdentifier, TeamsExtensionUserIdentifier(
             raw_id=raw_id,
             user_id=identifier_model.teams_extension_user.user_id,
             tenant_id= identifier_model.teams_extension_user.tenant_id,
             resource_id=identifier_model.teams_extension_user.resource_id,
             cloud=identifier_model.teams_extension_user.cloud,
-        )
-    return UnknownIdentifier(raw_id)
+        ))
+    return cast(CommunicationIdentifier, UnknownIdentifier(raw_id if raw_id is not None else ""))
 
 
 def deserialize_phone_identifier(identifier_model: PhoneNumberIdentifierModel) -> Union[PhoneNumberIdentifier, None]:

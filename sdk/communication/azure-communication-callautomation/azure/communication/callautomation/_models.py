@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import List, Optional, Union, TYPE_CHECKING
+from typing import List, Optional, Union, TYPE_CHECKING, cast
 from typing_extensions import Literal
 from ._generated.models import (
     CallLocator,
@@ -644,22 +644,22 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
     """The phone identifier that answered the call"""
 
     def __init__(
-        self,
-        *,
-        call_connection_id: Optional[str] = None,
-        server_call_id: Optional[str] = None,
-        targets: Optional[List[CommunicationIdentifier]] = None,
-        call_connection_state: Optional[Union[str, "CallConnectionState"]] = None,
-        callback_url: Optional[str] = None,
-        source_caller_id_number: Optional[PhoneNumberIdentifier] = None,
-        source_display_name: Optional[str] = None,
-        source: Optional[CommunicationIdentifier] = None,
-        correlation_id: Optional[str] = None,
-        answered_by: Optional[CommunicationUserIdentifier] = None,
-        media_streaming_subscription: Optional[MediaStreamingSubscription] = None,
-        transcription_subscription: Optional[TranscriptionSubscription] = None,
-        answered_for: Optional[PhoneNumberIdentifier] = None,
-    ):
+            self,
+            *,
+            call_connection_id: Optional[str] = None,
+            server_call_id: Optional[str] = None,
+            targets: Optional[List[CommunicationIdentifier]] = None,
+            call_connection_state: Optional[Union[str, "CallConnectionState"]] = None,
+            callback_url: Optional[str] = None,
+            source_caller_id_number: Optional[PhoneNumberIdentifier] = None,
+            source_display_name: Optional[str] = None,
+            source: Optional[CommunicationIdentifier] = None,
+            correlation_id: Optional[str] = None,
+            answered_by: Optional[CommunicationUserIdentifier] = None,
+            media_streaming_subscription: Optional[MediaStreamingSubscription] = None,
+            transcription_subscription: Optional[TranscriptionSubscription] = None,
+            answered_for: Optional[PhoneNumberIdentifier] = None,
+        ):
         self.call_connection_id = call_connection_id
         self.server_call_id = server_call_id
         self.targets = targets
@@ -669,7 +669,8 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
         self.source_display_name = source_display_name
         self.source = source
         self.correlation_id = correlation_id
-        self.answered_by = answered_by
+        # Protocol expects CommunicationIdentifier, but we may get CommunicationUserIdentifier.
+        self.answered_by = cast(Optional[CommunicationIdentifier], answered_by)
         self.media_streaming_subscription = media_streaming_subscription
         self.transcription_subscription = transcription_subscription
         self.answered_for = answered_for
@@ -677,8 +678,9 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
     @classmethod
     def _from_generated(cls, call_connection_properties_generated: "CallConnectionPropertiesRest"):
         target_models = []
-        for target in call_connection_properties_generated.targets:
-            target_models.append(deserialize_identifier(target))
+        if call_connection_properties_generated.targets:
+            for target in call_connection_properties_generated.targets:
+                target_models.append(deserialize_identifier(target))
 
         return cls(
             call_connection_id=call_connection_properties_generated.call_connection_id,
@@ -701,8 +703,17 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
                 call_connection_properties_generated.answered_by)
             if call_connection_properties_generated.answered_by
             else None,
-            media_streaming_subscription=call_connection_properties_generated.media_streaming_subscription,
-            transcription_subscription=call_connection_properties_generated.transcription_subscription,
+            media_streaming_subscription=MediaStreamingSubscription(
+                id=call_connection_properties_generated.media_streaming_subscription.id if call_connection_properties_generated.media_streaming_subscription else None,
+                state=call_connection_properties_generated.media_streaming_subscription.state if call_connection_properties_generated.media_streaming_subscription else None,
+                subscribed_content_types=call_connection_properties_generated.media_streaming_subscription.subscribed_content_types if call_connection_properties_generated.media_streaming_subscription else None
+            ) if call_connection_properties_generated.media_streaming_subscription else None,
+            transcription_subscription=TranscriptionSubscription(
+                id=call_connection_properties_generated.transcription_subscription.id if call_connection_properties_generated.transcription_subscription else None,
+                state=call_connection_properties_generated.transcription_subscription.state if call_connection_properties_generated.transcription_subscription else None,
+                subscribed_result_types=call_connection_properties_generated.transcription_subscription.subscribed_result_types if call_connection_properties_generated.transcription_subscription else None,
+                locale=call_connection_properties_generated.transcription_subscription.locale if call_connection_properties_generated.transcription_subscription else None
+            ) if call_connection_properties_generated.transcription_subscription else None,
             answered_for=deserialize_phone_identifier(
             call_connection_properties_generated.answered_for)
             if call_connection_properties_generated.answered_for
@@ -779,9 +790,9 @@ class CallParticipant:
     @classmethod
     def _from_generated(cls, call_participant_generated: "CallParticipantRest"):
         return cls(
-            identifier=deserialize_identifier(call_participant_generated.identifier),
-            is_muted=call_participant_generated.is_muted,
-            is_on_hold=call_participant_generated.is_on_hold,
+            identifier=deserialize_identifier(call_participant_generated.identifier) if call_participant_generated.identifier else None,
+            is_muted=call_participant_generated.is_muted or False,
+            is_on_hold=call_participant_generated.is_on_hold or False,
         )
 
 
@@ -815,10 +826,10 @@ class AddParticipantResult:
     @classmethod
     def _from_generated(cls, add_participant_result_generated: "AddParticipantResultRest"):
         return cls(
-            invitation_id=add_participant_result_generated.invitation_id,
+            invitation_id=add_participant_result_generated.invitation_id or "",
             participant=CallParticipant._from_generated(  # pylint:disable=protected-access
                 add_participant_result_generated.participant
-            ),
+            ) if add_participant_result_generated.participant else None,
             operation_context=add_participant_result_generated.operation_context,
         )
 
@@ -944,6 +955,6 @@ class CancelAddParticipantOperationResult:
     @classmethod
     def _from_generated(cls, cancel_add_participant_operation_result_generated: "CancelAddParticipantResultRest"):
         return cls(
-            invitation_id=cancel_add_participant_operation_result_generated.invitation_id,
+            invitation_id=cancel_add_participant_operation_result_generated.invitation_id or "",
             operation_context=cancel_add_participant_operation_result_generated.operation_context,
         )

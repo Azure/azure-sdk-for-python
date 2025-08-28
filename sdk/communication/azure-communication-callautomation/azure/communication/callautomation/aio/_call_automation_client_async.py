@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import List, Union, Optional, TYPE_CHECKING, AsyncIterable, overload
+from typing import List, Union, Optional, TYPE_CHECKING, AsyncIterable, cast, overload
 from urllib.parse import urlparse
 import warnings
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -109,7 +109,7 @@ class CallAutomationClient:
 
         self._client = AzureCommunicationCallAutomationService(
             endpoint,
-            credential,
+            credential,  # type: ignore[arg-type]
             api_version=api_version or DEFAULT_VERSION,
             authentication_policy=get_authentication_policy(endpoint, credential, is_async=True),
             sdk_moniker=SDK_MONIKER,
@@ -130,7 +130,7 @@ class CallAutomationClient:
         :rtype: ~azure.communication.callautomation.CallAutomationClient
         """
         endpoint, access_key = parse_connection_str(conn_str)
-        return cls(endpoint, access_key, **kwargs)
+        return cls(endpoint, access_key, **kwargs)  # type: ignore[arg-type]
 
     def get_call_connection(  # pylint: disable=client-method-missing-tracing-decorator
         self, call_connection_id: str, **kwargs
@@ -147,7 +147,8 @@ class CallAutomationClient:
             raise ValueError("call_connection_id can not be None")
 
         return CallConnectionClient._from_callautomation_client(  # pylint:disable=protected-access
-            callautomation_client=self._client, call_connection_id=call_connection_id, **kwargs
+            callautomation_client=cast("CallAutomationClient", self._client),
+            call_connection_id=call_connection_id, **kwargs
         )
 
     @overload
@@ -257,8 +258,7 @@ class CallAutomationClient:
         self,
         callback_url: str,
         **kwargs
-    ) -> CallConnectionProperties:
-
+    ) -> CallConnectionProperties:  # type: ignore[override]
         cognitive_services_endpoint=kwargs.pop("cognitive_services_endpoint", None)
         call_intelligence_options = CallIntelligenceOptions(
             cognitive_services_endpoint=cognitive_services_endpoint
@@ -281,13 +281,11 @@ class CallAutomationClient:
             media_streaming_options=media_streaming_options._to_generated() if media_streaming_options else None, # pylint:disable=protected-access
             transcription_options=transcription_options._to_generated() if transcription_options else None # pylint:disable=protected-access
         )
-
         process_repeatability_first_sent(kwargs)
         result = await self._client.connect(
             connect_request=connect_call_request,
             **kwargs
         )
-
         return CallConnectionProperties._from_generated(result)  # pylint:disable=protected-access
 
     @distributed_trace_async
@@ -349,14 +347,16 @@ class CallAutomationClient:
             else None
         )
 
-        try:
-            targets = [serialize_identifier(p) for p in target_participant]
-        except TypeError:
-            targets = [serialize_identifier(target_participant)]
+        if isinstance(target_participant, list):
+            if target_participant:  # Check if the list is not empty
+                targets = [serialize_identifier(p) for p in target_participant]
+        else:
+            targets = [serialize_identifier(cast("CommunicationIdentifier", target_participant))]
+
         media_config = media_streaming._to_generated() if media_streaming else None # pylint:disable=protected-access
         transcription_config = transcription._to_generated() if transcription else None # pylint:disable=protected-access
         create_call_request = CreateCallRequest(
-            targets=targets,
+            targets=cast(list, targets),
             callback_uri=callback_url,
             source_caller_id_number=serialize_phone_identifier(source_caller_id_number),
             source_display_name=source_display_name,
@@ -503,7 +503,7 @@ class CallAutomationClient:
 
         redirect_call_request = RedirectCallRequest(
             incoming_call_context=incoming_call_context,
-            target=serialize_identifier(target_participant)
+            target=serialize_identifier(cast("CommunicationIdentifier", target_participant))  # type: ignore[arg-type]
         )
 
         process_repeatability_first_sent(kwargs)
@@ -753,7 +753,7 @@ class CallAutomationClient:
             kwargs.pop("server_call_id", None),
             kwargs.pop("group_call_id", None),
             kwargs.pop("room_id", None),
-            args
+            cast(list, list(args))
         )
         call_connection_id = kwargs.pop("call_connection_id", None)
         if not call_locator and not call_connection_id:
@@ -831,7 +831,7 @@ class CallAutomationClient:
 
     @distributed_trace_async
     async def download_recording(
-        self, recording_url: str, *, offset: int = None, length: int = None, **kwargs
+        self, recording_url: str, *, offset: Optional[int] = None, length: Optional[int] = None, **kwargs
     ) -> AsyncIterable[bytes]:
         """Download a stream of the call recording.
 
@@ -847,10 +847,18 @@ class CallAutomationClient:
         :rtype: AsyncIterable[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        stream = await self._downloader.download_streaming(
-            source_location=recording_url, offset=offset, length=length, **kwargs
+        response = await self._downloader.download_streaming(
+            source_location=recording_url,
+            offset=cast(int, offset or 0),
+            length=cast(int, length or 0),
+            **kwargs
         )
-        return stream
+        
+        async def async_iterator():
+            for chunk in response.iter_bytes():
+                yield chunk
+        
+        return async_iterator()
 
     @distributed_trace_async
     async def delete_recording(self, recording_url: str, **kwargs) -> None:

@@ -100,7 +100,9 @@ class CommunicationUserProperties(TypedDict):
 class CommunicationUserIdentifier:
     """Represents a user in Azure Communication Service."""
 
-    kind: Literal[CommunicationIdentifierKind.COMMUNICATION_USER] = CommunicationIdentifierKind.COMMUNICATION_USER
+    # Protocol expects CommunicationIdentifierKind, but we use Literal for discrimination.
+    # This cast is safe because CommunicationIdentifierKind.COMMUNICATION_USER == "communication_user".
+    kind: Literal["communication_user"] = cast(Literal["communication_user"], CommunicationIdentifierKind.COMMUNICATION_USER)
     """The type of identifier."""
     properties: CommunicationUserProperties
     """The properties of the identifier."""
@@ -139,7 +141,8 @@ class PhoneNumberProperties(TypedDict):
 class PhoneNumberIdentifier:
     """Represents a phone number."""
 
-    kind: Literal[CommunicationIdentifierKind.PHONE_NUMBER] = CommunicationIdentifierKind.PHONE_NUMBER
+    # Protocol expects CommunicationIdentifierKind, but we use Literal for discrimination.
+    kind: Literal["phone_number"] = cast(Literal["phone_number"], CommunicationIdentifierKind.PHONE_NUMBER)
     """The type of identifier."""
     properties: PhoneNumberProperties
     """The properties of the identifier."""
@@ -195,7 +198,8 @@ class UnknownIdentifier:
     as it could become a new or existing distinct type in the future.
     """
 
-    kind: Literal[CommunicationIdentifierKind.UNKNOWN] = CommunicationIdentifierKind.UNKNOWN
+    # Protocol expects CommunicationIdentifierKind, but we use Literal for discrimination.
+    kind: Literal["unknown"] = cast(Literal["unknown"], CommunicationIdentifierKind.UNKNOWN)
     """The type of identifier."""
     properties: Mapping[str, Any]
     """The properties of the identifier."""
@@ -230,7 +234,8 @@ class MicrosoftTeamsUserProperties(TypedDict):
 class MicrosoftTeamsUserIdentifier:
     """Represents an identifier for a Microsoft Teams user."""
 
-    kind: Literal[CommunicationIdentifierKind.MICROSOFT_TEAMS_USER] = CommunicationIdentifierKind.MICROSOFT_TEAMS_USER
+    # Protocol expects CommunicationIdentifierKind, but we use Literal for discrimination.
+    kind: Literal["microsoft_teams_user"] = cast(Literal["microsoft_teams_user"], CommunicationIdentifierKind.MICROSOFT_TEAMS_USER)
     """The type of identifier."""
     properties: MicrosoftTeamsUserProperties
     """The properties of the identifier."""
@@ -302,7 +307,8 @@ class _botbackcompatdict(dict):
 class MicrosoftTeamsAppIdentifier:
     """Represents an identifier for a Microsoft Teams application."""
 
-    kind: Literal[CommunicationIdentifierKind.MICROSOFT_TEAMS_APP] = CommunicationIdentifierKind.MICROSOFT_TEAMS_APP
+    # Protocol expects CommunicationIdentifierKind, but we use Literal for discrimination.
+    kind: Literal["microsoft_teams_app"] = cast(Literal["microsoft_teams_app"], CommunicationIdentifierKind.MICROSOFT_TEAMS_APP)
     """The type of identifier."""
     properties: MicrosoftTeamsAppProperties
     """The properties of the identifier."""
@@ -382,7 +388,8 @@ class TeamsExtensionUserProperties(TypedDict):
 class TeamsExtensionUserIdentifier:
     """Represents an identifier for a Teams Extension user."""
 
-    kind: Literal[CommunicationIdentifierKind.TEAMS_EXTENSION_USER] = CommunicationIdentifierKind.TEAMS_EXTENSION_USER
+    # Protocol expects CommunicationIdentifierKind, but we use Literal for discrimination.
+    kind: Literal["teams_extension_user"] = cast(Literal["teams_extension_user"], CommunicationIdentifierKind.TEAMS_EXTENSION_USER)
     """The type of identifier."""
     properties: TeamsExtensionUserProperties
     """The properties of the identifier."""
@@ -460,57 +467,57 @@ def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:  # pylint: d
     :rtype: CommunicationIdentifier
     """
     if raw_id.startswith(PHONE_NUMBER_PREFIX):
-        return PhoneNumberIdentifier(value=raw_id[len(PHONE_NUMBER_PREFIX) :], raw_id=raw_id)
+        return PhoneNumberIdentifier(value=raw_id[len(PHONE_NUMBER_PREFIX) :], raw_id=raw_id)  # type: ignore[return-value]
 
     segments = raw_id.split(":", maxsplit=2)
     if len(segments) < 3:
-        return UnknownIdentifier(identifier=raw_id)
+        return UnknownIdentifier(identifier=raw_id)  # type: ignore[return-value]
 
     prefix = f"{segments[0]}:{segments[1]}:"
     suffix = segments[2]
     if prefix == TEAMS_USER_ANONYMOUS_PREFIX:
-        return MicrosoftTeamsUserIdentifier(user_id=suffix, is_anonymous=True, raw_id=raw_id)
+        return MicrosoftTeamsUserIdentifier(user_id=suffix, is_anonymous=True, raw_id=raw_id)  # type: ignore[return-value]
     if prefix == TEAMS_USER_PUBLIC_CLOUD_PREFIX:
-        return MicrosoftTeamsUserIdentifier(
+        return MicrosoftTeamsUserIdentifier(  # type: ignore[return-value]
             user_id=suffix,
             is_anonymous=False,
             cloud=CommunicationCloudEnvironment.PUBLIC,
             raw_id=raw_id,
         )
     if prefix == TEAMS_USER_DOD_CLOUD_PREFIX:
-        return MicrosoftTeamsUserIdentifier(
+        return MicrosoftTeamsUserIdentifier(  # type: ignore[return-value]
             user_id=suffix,
             is_anonymous=False,
             cloud=CommunicationCloudEnvironment.DOD,
             raw_id=raw_id,
         )
     if prefix == TEAMS_USER_GCCH_CLOUD_PREFIX:
-        return MicrosoftTeamsUserIdentifier(
+        return MicrosoftTeamsUserIdentifier(  # type: ignore[return-value]
             user_id=suffix,
             is_anonymous=False,
             cloud=CommunicationCloudEnvironment.GCCH,
             raw_id=raw_id,
         )
     if prefix == TEAMS_APP_PUBLIC_CLOUD_PREFIX:
-        return MicrosoftTeamsAppIdentifier(
+        return MicrosoftTeamsAppIdentifier(  # type: ignore[return-value]
             app_id=suffix,
             cloud=CommunicationCloudEnvironment.PUBLIC,
             raw_id=raw_id,
         )
     if prefix == TEAMS_APP_DOD_CLOUD_PREFIX:
-        return MicrosoftTeamsAppIdentifier(
+        return MicrosoftTeamsAppIdentifier(  # type: ignore[return-value]
             app_id=suffix,
             cloud=CommunicationCloudEnvironment.DOD,
             raw_id=raw_id,
         )
     if prefix == TEAMS_APP_GCCH_CLOUD_PREFIX:
-        return MicrosoftTeamsAppIdentifier(
+        return MicrosoftTeamsAppIdentifier(  # type: ignore[return-value]
             app_id=suffix,
             cloud=CommunicationCloudEnvironment.GCCH,
             raw_id=raw_id,
         )
     if prefix == SPOOL_USER_PREFIX:
-        return CommunicationUserIdentifier(id=raw_id, raw_id=raw_id)
+        return CommunicationUserIdentifier(id=raw_id, raw_id=raw_id)  # type: ignore[return-value]
 
     if prefix in [
         ACS_USER_PREFIX,
@@ -519,6 +526,6 @@ def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:  # pylint: d
     ]:
         identifier = try_create_teams_extension_user(prefix, suffix)
         if identifier is not None:
-            return identifier
-        return CommunicationUserIdentifier(id=raw_id, raw_id=raw_id)
-    return UnknownIdentifier(identifier=raw_id)
+            return identifier  # type: ignore[return-value]
+        return CommunicationUserIdentifier(id=raw_id, raw_id=raw_id)  # type: ignore[return-value]
+    return UnknownIdentifier(identifier=raw_id)  # type: ignore[return-value]

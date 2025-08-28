@@ -72,7 +72,7 @@ class ContentDownloader(object):
             params=_params,
             start=offset,
             end=length,
-            host=parsedEndpoint.hostname,
+            host=parsedEndpoint.hostname or "",
         )
 
         pipeline_response: PipelineResponse = (
@@ -115,11 +115,11 @@ class ContentDownloader(object):
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
         request = _build_call_recording_delete_recording_request(
-            recording_location=recording_location, headers=_headers, params=_params, host=parsed_endpoint.hostname
+            recording_location=recording_location, headers=_headers, params=_params, host=parsed_endpoint.hostname or ""
         )
 
         pipeline_response: PipelineResponse = (
-            await self._call_recording_client.await_client._pipeline.run(  # pylint: disable=protected-access
+            await self._call_recording_client._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
         )
