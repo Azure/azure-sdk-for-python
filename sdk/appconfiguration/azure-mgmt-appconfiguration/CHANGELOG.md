@@ -44,7 +44,7 @@
 
 ### Other Changes
 
-  - Changed to multiapi package(please refer to https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/mgmt/multiapi.md for more info)
+  - Changed to multiapi package
 
 ## 2.1.0 (2022-06-08)
 

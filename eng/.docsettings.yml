@@ -147,7 +147,6 @@ known_content_issues:
 
   # dev tools
   - ['doc/dev/mgmt/swagger/single_api/readme.md', 'dev readme']
-  - ['doc/dev/mgmt/swagger/multi_api/readme.md', 'dev readme']
   - ['doc/dev/mgmt/README.md', 'dev readme']
   - ['doc/dev/README.md', dev readme']
   - ['doc/README.md', 'dev readme']

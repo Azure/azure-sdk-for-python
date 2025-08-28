@@ -14,7 +14,7 @@ Make sure your target tag is defined in `readme.md` and **default tag is same wi
 
 If there is no `Python multi-api` in `readme.python.md`(i.e.  [datadog](https://github.com/Azure/azure-rest-api-specs/blob/main/specification/datadog/resource-manager/readme.python.md)), skip this step.
 
-If there is `Python multi-api` in `readme.python.md` (i.e. [network](https://github.com/Azure/azure-rest-api-specs/blob/main/specification/network/resource-manager/readme.python.md#python-multi-api)), you need additional configuration: [Python Multiapi Configuration](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/private_package/python_multiapi_configuration.md)
+If there is `Python multi-api` in `readme.python.md` (i.e. [network](https://github.com/Azure/azure-rest-api-specs/blob/main/specification/network/resource-manager/readme.python.md#python-multi-api)), this is no longer supported.
 
 ## 3.Trigger pipeline
 
