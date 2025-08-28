@@ -1,17 +1,13 @@
-from subprocess import check_call, CalledProcessError
 import argparse
 import os
 import logging
 import sys
-import tempfile
 
 from typing import Optional, List
-from ci_tools.scenario.generation import create_package_and_install
 from subprocess import CalledProcessError, check_call
 
 from .Check import Check
-from ci_tools.variables import discover_repo_root, in_ci, set_envvar_defaults
-from ci_tools.variables import in_ci, set_envvar_defaults
+from ci_tools.variables import discover_repo_root, in_ci, set_envvar_defaults, in_ci, set_envvar_defaults
 from ci_tools.environment_exclusions import is_check_enabled
 
 REPO_ROOT = discover_repo_root()
@@ -65,7 +61,7 @@ class pylint(Check):
 
             # install pylint
             try:
-                if (args.next):
+                if args.next:
                     # use latest version of pylint
                     check_call([sys.executable, "-m", "pip", "install", "pylint"])
                 else:
