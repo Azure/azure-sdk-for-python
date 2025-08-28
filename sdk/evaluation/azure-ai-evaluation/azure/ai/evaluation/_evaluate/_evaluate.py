@@ -331,12 +331,79 @@ def _aggregate_metrics(df: pd.DataFrame, evaluators: Dict[str, Callable]) -> Dic
     return metrics
 
 
+def _convert_column_types_for_target(df: pd.DataFrame, signature: inspect.Signature) -> None:
+    """
+    Convert DataFrame column types to match target function parameter types.
+    
+    :param df: The data frame to be modified in place.
+    :type df: pd.DataFrame
+    :param signature: The target function signature.
+    :type signature: inspect.Signature
+    """
+    for param_name, param in signature.parameters.items():
+        if param_name in df.columns and param.annotation != inspect.Parameter.empty:
+            try:
+                # Get the expected type from the annotation
+                expected_type = param.annotation
+                
+                # Skip conversion if annotation is not a basic type we can handle
+                if expected_type not in (str, int, float, bool):
+                    continue
+                
+                # Check if conversion is needed by comparing with first non-null value
+                if len(df) == 0:
+                    continue
+                    
+                # Find first non-null value to check current type
+                series = df[param_name]
+                non_null_values = series.dropna()
+                if len(non_null_values) == 0:
+                    continue
+                    
+                first_value = non_null_values.iloc[0]
+                current_type = type(first_value)
+                
+                # Only convert if types don't match and conversion is safe
+                if current_type != expected_type:
+                    # Convert the entire column to the expected type
+                    if expected_type == str:
+                        # Convert to string, handling NaN values
+                        df[param_name] = df[param_name].astype(str)
+                        # Replace 'nan' strings with actual NaN for consistency
+                        df[param_name] = df[param_name].replace('nan', pd.NA)
+                    elif expected_type == int:
+                        # Only convert if all non-null values can be safely converted to int
+                        try:
+                            df[param_name] = pd.to_numeric(df[param_name], errors='raise').astype('Int64')
+                        except (ValueError, TypeError):
+                            # If conversion fails, leave as is
+                            pass
+                    elif expected_type == float:
+                        try:
+                            df[param_name] = pd.to_numeric(df[param_name], errors='raise').astype(float)
+                        except (ValueError, TypeError):
+                            # If conversion fails, leave as is
+                            pass
+                    elif expected_type == bool:
+                        # Convert to boolean, handling common string representations
+                        try:
+                            df[param_name] = df[param_name].astype(bool)
+                        except (ValueError, TypeError):
+                            # If conversion fails, leave as is
+                            pass
+                            
+            except Exception:
+                # If any conversion fails, just continue - we don't want to break
+                # existing functionality for edge cases
+                continue
+
+
 def _validate_columns_for_target(
     df: pd.DataFrame,
     target: Callable,
 ) -> None:
     """
-    Check that all columns needed by target function are present.
+    Check that all columns needed by target function are present and convert types if necessary.
 
     :param df: The data frame to be validated.
     :type df: pd.DataFrame
@@ -357,9 +424,10 @@ def _validate_columns_for_target(
     # several columns and hence we cannot check the availability of columns
     # without knowing target function semantics.
     # Instead, here we will validate the columns, taken by target.
+    signature = inspect.signature(target)
     required_inputs = [
         param.name
-        for param in inspect.signature(target).parameters.values()
+        for param in signature.parameters.values()
         if param.default == inspect.Parameter.empty and param.name not in ["kwargs", "args", "self"]
     ]
 
@@ -372,6 +440,9 @@ def _validate_columns_for_target(
             category=ErrorCategory.MISSING_FIELD,
             blame=ErrorBlame.USER_ERROR,
         )
+
+    # Convert column types to match target function parameter types
+    _convert_column_types_for_target(df, signature)
 
 
 def _validate_columns_for_evaluators(
