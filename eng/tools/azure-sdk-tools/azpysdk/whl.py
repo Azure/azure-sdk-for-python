@@ -4,7 +4,7 @@ import tempfile
 import os
 from typing import Optional, List, Any
 import sys
-from subprocess import check_call
+from subprocess import run
 
 from .Check import Check
 
@@ -65,7 +65,7 @@ class whl(Check):
             # TODO: split sys.argv[1:] on -- and pass in everything after the -- as additional arguments
             # TODO: handle mark_args
             logging.info(f"Invoke pytest for {pkg}")
-            exit_code = check_call(
+            exit_code = run(
                 [executable, "-m", "pytest", "."] + [
                     "-rsfE",
                     f"--junitxml={pkg}/test-junit-{args.command}.xml",
@@ -79,7 +79,7 @@ class whl(Check):
                     "--ignore=samples"
                 ]
                 , cwd=pkg
-            )
+            ).returncode
 
             if exit_code != 0:
                 if exit_code == 5 and is_error_code_5_allowed(parsed.folder, parsed.name):
