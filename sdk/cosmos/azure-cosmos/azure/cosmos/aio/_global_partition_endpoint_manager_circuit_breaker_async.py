@@ -21,7 +21,6 @@
 
 """Internal class for global endpoint manager for circuit breaker.
 """
-import logging
 from typing import TYPE_CHECKING, Optional
 
 from azure.cosmos._constants import _Constants
