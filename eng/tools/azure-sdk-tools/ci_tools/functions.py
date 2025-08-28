@@ -491,8 +491,10 @@ def get_pip_list_output(python_executable: Optional[str] = None):
     """Uses the invoking python executable to get the output from pip list."""
     exe = python_executable or sys.executable
 
+    pip_cmd = get_pip_command(exe)
+
     out = subprocess.Popen(
-        [exe, "-m", "pip", "list", "--disable-pip-version-check", "--format", "freeze"],
+        pip_cmd + ["list", "--disable-pip-version-check", "--format", "freeze"],
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
     )

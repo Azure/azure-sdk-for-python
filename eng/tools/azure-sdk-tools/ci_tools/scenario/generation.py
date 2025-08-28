@@ -130,6 +130,7 @@ def create_package_and_install(
                         addition_necessary = True
                         # get all installed packages
                         installed_pkgs = get_pip_list_output(python_exe)
+                        breakpoint()
                         logging.info("Installed packages: {}".format(installed_pkgs))
 
                         # parse the specifier
