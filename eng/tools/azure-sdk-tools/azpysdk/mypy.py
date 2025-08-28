@@ -52,7 +52,7 @@ class mypy(Check):
         for parsed in targeted:
             package_dir = parsed.folder
             package_name = parsed.name
-            executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, pkg)
+            executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, package_dir)
             print(f"Processing {package_name} for mypy check")
             create_package_and_install(
                 distribution_directory=staging_directory,
