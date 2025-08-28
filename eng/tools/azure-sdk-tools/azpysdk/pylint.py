@@ -110,7 +110,7 @@ class pylint(Check):
                 ))
             except CalledProcessError as e:
                 logging.error(
-                    "{} exited with linting error {}. Please see this link for more information https://aka.ms/azsdk/python/pylint-guide".format(package_name=package_name, e=e.returncode)
+                    "{} exited with linting error {}. Please see this link for more information https://aka.ms/azsdk/python/pylint-guide".format(package_name, e.returncode)
                 )
                 if args.next and in_ci():
                     from gh_tools.vnext_issue_creator import create_vnext_issue
