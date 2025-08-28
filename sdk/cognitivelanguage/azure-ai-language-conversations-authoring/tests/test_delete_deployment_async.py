@@ -5,6 +5,7 @@ import pytest
 from devtools_testutils import EnvironmentVariableLoader, AzureRecordedTestCase
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.core.credentials import AzureKeyCredential
+from azure.core.exceptions import HttpResponseError
 from azure.ai.language.conversations.authoring.aio import ConversationAuthoringClient
 from azure.ai.language.conversations.authoring.models import DeploymentState
 
@@ -27,24 +28,23 @@ class TestConversationsDeleteDeploymentAsync(TestConversationsAsync):
     @pytest.mark.asyncio
     async def test_delete_deployment_async(self, authoring_endpoint, authoring_key):
         client = await self.create_client(authoring_endpoint, authoring_key)
-        try:
+        async with client:
             project_name = "Test-data-labels"
-            deployment_name = "deployment3"
+            deployment_name = "deployment2"
 
             project_client = client.get_project_client(project_name)
 
-            # Act: begin delete and wait for completion
-            poller = await project_client.deployment.begin_delete_deployment(deployment_name=deployment_name)
-            result: DeploymentState = await poller.result()
+            # Begin delete; Async poller now returns None on success
+            poller = await project_client.deployment.begin_delete_deployment(
+                deployment_name=deployment_name
+            )
 
-            # Assert + print LRO state
-            assert result.status == "succeeded", f"Delete failed with status: {result.status}"
-            print(f"Job ID: {result.job_id}")
-            print(f"Status: {result.status}")
-            print(f"Created on: {result.created_on}")
-            print(f"Last updated on: {result.last_updated_on}")
-            print(f"Expires on: {result.expires_on}")
-            print(f"Warnings: {result.warnings}")
-            print(f"Errors: {result.errors}")
-        finally:
-            await client.close()
+            try:
+                await poller.result()
+            except HttpResponseError as e:
+                msg = getattr(getattr(e, "error", None), "message", str(e))
+                print(f"Operation failed: {msg}")
+                raise
+
+            # Success -> poller completed
+            print(f"Delete completed. done={poller.done()} status={poller.status()}")
