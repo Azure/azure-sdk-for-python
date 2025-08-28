@@ -52,7 +52,7 @@ class CustomerSdkStatsMetrics(metaclass=Singleton): # pylint: disable=too-many-i
     def __init__(self, connection_string):
         self._counters = _CustomerSdkStatsTelemetryCounters()
         self._language = _CUSTOMER_SDKSTATS_LANGUAGE
-        self._is_enabled = os.environ.get(_APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW, "").lower() in ("true")
+        self._is_enabled = os.environ.get(_APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW, "").lower() == "true"
         if not self._is_enabled:
             return
 

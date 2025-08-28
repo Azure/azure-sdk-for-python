@@ -122,28 +122,6 @@ class TestBaseExporter(unittest.TestCase):
     def tearDown(self):
         clean_folder(self._base.storage._path)
 
-    # @mock.patch('azure.monitor.opentelemetry.exporter.export._base._ConfigurationManager')
-    # def test_base_exporter_calls_configuration_manager(self, mock_config_manager):
-    #     """Test that BaseExporter creates and uses ConfigurationManager."""
-    #     # Configure the mock
-    #     mock_manager_instance = mock.Mock()
-    #     mock_config_manager.return_value = mock_manager_instance
-        
-    #     # Create BaseExporter instance
-    #     base = BaseExporter(
-    #         connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
-    #         disable_offline_storage=True
-    #     )
-        
-    #     # Verify ConfigurationManager was called
-    #     mock_config_manager.assert_called_once()
-        
-    #     # Verify the manager instance is accessible (if needed for future operations)
-    #     self.assertIsNotNone(base)
-        
-    #     # Optionally verify it was assigned to the instance
-    #     self.assertEqual(base._configuration_manager, mock_manager_instance)
-
     # ========================================================================
     # CONSTRUCTOR AND INITIALIZATION TESTS
     # ========================================================================
