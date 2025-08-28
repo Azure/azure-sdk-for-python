@@ -2,9 +2,20 @@ import abc
 import os
 import argparse
 import traceback
+import sys
+
 from typing import Sequence, Optional, List, Any
+from subprocess import check_call
+
 from ci_tools.parsing import ParsedSetup
-from ci_tools.functions import discover_targeted_packages
+from ci_tools.functions import discover_targeted_packages, get_venv_call
+from ci_tools.variables import discover_repo_root
+from ci_tools.scenario import install_into_venv, get_venv_python
+
+# right now, we are assuming you HAVE to be in the azure-sdk-tools repo
+# we assume this because we don't know how a dev has installed this package, and might be
+# being called from within a site-packages folder. Due to that, we can't trust the location of __file__
+REPO_ROOT = discover_repo_root()
 
 class Check(abc.ABC):
     """
@@ -34,13 +45,44 @@ class Check(abc.ABC):
         """
         return 0
 
+    def handle_venv(self, isolate: bool, args: argparse.Namespace, venv_location: Optional[str]) -> str:
+        """Handle virtual environment commands."""
+        # if we have to isolate, return the new python exe that the rest of the checks should use
+        if (isolate):
+            # os.environ["AZURE_SDK_TOOLS_VENV"] = "1"
+
+            venv_cmd = get_venv_call()
+            if not venv_location:
+                venv_location = os.path.join(REPO_ROOT, f".venv_{args.command}")
+
+            # todo, make this a consistent directory based on the command
+            # I'm seriously thinking we should move handle_venv within each check's main(),
+            # which will mean that we will _know_ what folder we're in.
+            # however, that comes at the cost of not having every check be able to handle one or multiple packages
+            # I don't want to get into an isolation loop where every time we need a new venv, we create it, call it,
+            # and now as we foreach across the targeted packages we've lost our spot.
+            check_call(venv_cmd + [venv_location])
+
+            # TODO: we should reuse part of build_whl_for_req to integrate with PREBUILT_WHL_DIR so that we don't have to fresh build for each
+            # venv
+            install_into_venv(venv_location, os.path.join(REPO_ROOT, "eng/tools/azure-sdk-tools"), False, "build")
+            venv_python_exe = get_venv_python(venv_location)
+
+            # here is a newly prepped virtual environment (which includes azure-sdk-tools)
+            return venv_python_exe
+            # command_args = [venv_python_exe, "-m", "azpysdk.main"] + sys.argv[1:]
+            # check_call(command_args)
+
+        # if we don't need to isolate, just return the python executable that we're invoking
+        return sys.executable
+
     def get_targeted_directories(self, args: argparse.Namespace) -> List[ParsedSetup]:
         """
         Get the directories that are targeted for the check.
         """
         targeted: List[ParsedSetup] = []
         targeted_dir = os.getcwd()
- 
+
         if args.target == ".":
             try:
                 targeted.append(ParsedSetup.from_path(targeted_dir))

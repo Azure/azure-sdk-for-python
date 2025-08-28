@@ -3,8 +3,8 @@ import logging
 import tempfile
 import os
 from typing import Optional, List, Any
-from pytest import main as pytest_main
 import sys
+from subprocess import check_call
 
 from .Check import Check
 
@@ -39,11 +39,15 @@ class whl(Check):
 
         for parsed in targeted:
             pkg = parsed.folder
+            venv_location = os.path.join(parsed.folder, f".venv_{args.command}")
+            # if isolation is required, the executable we get back will align with the venv
+            # otherwise we'll just get sys.executable and install in current
+            executable = self.handle_venv(args.isolate, args, venv_location=venv_location)
 
             dev_requirements = os.path.join(pkg, "dev_requirements.txt")
 
             if os.path.exists(dev_requirements):
-                pip_install([f"-r", f"{dev_requirements}"], True, sys.executable)
+                pip_install([f"-r", f"{dev_requirements}"], True, executable)
 
             staging_area = tempfile.mkdtemp()
             create_package_and_install(
@@ -55,13 +59,24 @@ class whl(Check):
                 force_create=False,
                 package_type="wheel",
                 pre_download_disabled=False,
+                python_executable=executable
             )
 
             # todo, come up with a good pattern for passing all the additional args after -- to pytest
             logging.info(f"Invoke pytest for {pkg}")
-
-            exit_code = pytest_main(
-                [pkg]
+            exit_code = check_call(
+                [executable, "-m", "pytest", pkg] + (["-m", args.mark_arg] if args.mark_arg else []) + [
+                    "-rsfE",
+                    f"--junitxml={pkg}/test-junit-{args.command}.xml",
+                    "--verbose",
+                    "--cov-branch",
+                    "--durations=10",
+                    "--ignore=azure",
+                    "--ignore-glob=.venv*",
+                    "--ignore=build",
+                    "--ignore=.eggs",
+                    "--ignore=samples"
+                ]
             )
 
             if exit_code != 0:
