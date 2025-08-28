@@ -14,11 +14,10 @@ In practical terms, we want to control the version of Autorest used, the output 
 
 ## Writing the readme
 
-Writing the readme is the responsibility of the Python SDK team. There is currently two types of templates for Python readmes:
+Writing the readme is the responsibility of the Python SDK team. There is currently one type of template for Python readmes:
 - Readme that handles only one API version, and generates packages that handle one API version only
-- Readme that handles several API versions, and generates packages with multiples API and profile supports
 
-These templates can be found in the [single_api](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/mgmt/swagger/single_api) and the [multi_api](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/mgmt/swagger/multi_api) folders.
+Templates can be found in the [single_api](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/mgmt/swagger/single_api) folder.
 
 
 ### Single API readmes
