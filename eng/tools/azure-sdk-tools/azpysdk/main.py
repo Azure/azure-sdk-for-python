@@ -136,10 +136,10 @@ def main(argv: Optional[Sequence[str]] = None) -> int:#
         result = args.func(args)
         return int(result or 0)
     except KeyboardInterrupt:
-        print("Interrupted by user", file=sys.stderr)
+        logger.error("Interrupted by user")
         return 130
     except Exception as exc:  # pragma: no cover - simple top-level error handling
-        print(f"Error: {exc}", file=sys.stderr)
+        logger.error(f"Error: {exc}")
         return 2
 
 if __name__ == "__main__":

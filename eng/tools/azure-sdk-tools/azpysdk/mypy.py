@@ -39,7 +39,7 @@ class mypy(Check):
 
     def run(self, args: argparse.Namespace) -> int:
         """Run the mypy check command."""
-        print("Running mypy check in isolated venv...")
+        logger.info("Running mypy check in isolated venv...")
 
         set_envvar_defaults()
 
@@ -50,7 +50,7 @@ class mypy(Check):
         for parsed in targeted:
             package_dir = parsed.folder
             package_name = parsed.name
-            print(f"Processing {package_name} for mypy check")
+            logger.info(f"Processing {package_name} for mypy check")
 
             staging_area = tempfile.mkdtemp()
             create_package_and_install(
@@ -72,7 +72,7 @@ class mypy(Check):
                 else:
                     check_call([sys.executable, "-m", "pip", "install", f"mypy=={MYPY_VERSION}"])
             except CalledProcessError as e:
-                print("Failed to install mypy:", e)
+                logger.error("Failed to install mypy:", e)
                 return e.returncode
 
             logger.info(f"Running mypy against {package_name}")

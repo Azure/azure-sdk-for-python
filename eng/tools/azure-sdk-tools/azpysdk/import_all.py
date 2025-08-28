@@ -42,7 +42,7 @@ class import_all(Check):
     # todo: figure out venv abstraction mechanism via override
     def run(self, args: argparse.Namespace) -> int:
         """Run the import_all check command."""
-        print("Running import_all check in isolated venv...")
+        logger.info("Running import_all check in isolated venv...")
 
         targeted = self.get_targeted_directories(args)
 

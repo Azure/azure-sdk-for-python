@@ -28,7 +28,7 @@ class whl(Check):
 
     def run(self, args: argparse.Namespace) -> int:
         """Run the whl check command."""
-        print("Running whl check...")
+        logger.info("Running whl check...")
 
         set_envvar_defaults()
 

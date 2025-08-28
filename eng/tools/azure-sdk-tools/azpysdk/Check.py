@@ -5,6 +5,7 @@ import traceback
 from typing import Sequence, Optional, List, Any
 from ci_tools.parsing import ParsedSetup
 from ci_tools.functions import discover_targeted_packages
+from ci_tools.logging import logger
 
 class Check(abc.ABC):
     """
@@ -45,8 +46,8 @@ class Check(abc.ABC):
             try:
                 targeted.append(ParsedSetup.from_path(targeted_dir))
             except Exception as e:
-                print("Error: Current directory does not appear to be a Python package (no setup.py or setup.cfg found). Remove '.' argument to run on child directories.")
-                print(f"Exception: {e}")
+                logger.error("Error: Current directory does not appear to be a Python package (no setup.py or setup.cfg found). Remove '.' argument to run on child directories.")
+                logger.error(f"Exception: {e}")
                 return []
         else:
             targeted_packages = discover_targeted_packages(args.target, targeted_dir)
@@ -54,8 +55,8 @@ class Check(abc.ABC):
                 try:
                     targeted.append(ParsedSetup.from_path(pkg))
                 except Exception as e:
-                    print(f"Unable to parse {pkg} as a Python package. Dumping exception detail and skipping.")
-                    print(f"Exception: {e}")
-                    print(traceback.format_exc())
+                    logger.error(f"Unable to parse {pkg} as a Python package. Dumping exception detail and skipping.")
+                    logger.error(f"Exception: {e}")
+                    logger.error(traceback.format_exc())
 
         return targeted
