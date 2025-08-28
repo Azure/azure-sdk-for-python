@@ -10,8 +10,6 @@ from opentelemetry.sdk.resources import Resource
 
 from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics import _StatsbeatMetrics
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
-    _STATSBEAT_STATE,
-    _STATSBEAT_STATE_LOCK,
     is_statsbeat_enabled,
     set_statsbeat_shutdown,  # Add this import
 )
