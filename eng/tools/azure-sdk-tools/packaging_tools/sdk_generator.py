@@ -268,11 +268,11 @@ def main(generate_input, generate_output):
         except Exception as e:
             _LOGGER.error(f"Fail to generate sdk for {readme_or_tsp}: {str(e)}")
             for hint_message in [
-                "======================================= Whant Can I do (begin) ========================================================================",
+                "======================================= What Can I do (begin) ========================================================================",
                 f"Fail to generate sdk for {readme_or_tsp}. If you are from service team, please first check if the failure happens only to Python automation, or for all SDK automations. ",
                 "If it happens for all SDK automations, please double check your Swagger / Typespec, and check whether there is error in ModelValidation and LintDiff. ",
-                "If it happens to Python alone, you can open an issue to https://github.com/Azure/autorest.python/issues. Please include the link of this Pull Request in the issue.",
-                "======================================= Whant Can I do (end) =========================================================================",
+                "If it happens to Python alone, you can open an issue to https://github.com/microsoft/typespec/issues. Please include the link of this Pull Request in the issue.",
+                "======================================= What Can I do (end) =========================================================================",
             ]:
                 _LOGGER.error(hint_message)
             if len(readme_and_tsp) == 1:
