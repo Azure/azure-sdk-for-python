@@ -35,12 +35,6 @@
 # PRLabel: %AI
 /sdk/ai/                                                             @luigiw @needuv @paulshealy1 @singankit @dargilco @jhakulin
 
-# PRLabel: %Contoso
-/sdk/contoso/                                                      @danieljurek @ronniegeraghty
-
-# ServiceLabel: %Contoso
-# ServiceOwners:                                                   @danieljurek @ronniegeraghty
-
 # ServiceOwners: @luigiw @needuv @singankit
 # ServiceLabel: %Evaluation
 
@@ -843,6 +837,12 @@
 ####################
 
 /**/*mgmt*/                                                          @ChenxiJiang333 @msyyc
+
+# PRLabel: %Contoso
+/sdk/contoso/azure-mgmt-contoso/                                   @danieljurek @ronniegeraghty
+
+# ServiceLabel: %Contoso %Mgmt
+# ServiceOwners:                                                   @danieljurek @ronniegeraghty
 
 ###########
 # Eng Sys and other
