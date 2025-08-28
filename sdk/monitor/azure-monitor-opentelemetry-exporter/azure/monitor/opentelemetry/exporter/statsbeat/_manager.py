@@ -34,7 +34,7 @@ class StatsbeatConfig:
                  distro_version: Optional[str] = None) -> None:
         self.endpoint = endpoint
         self.instrumentation_key = instrumentation_key
-        self.connection_string = _get_stats_connection_string(endpoint)
+        self.connection_string: str = _get_stats_connection_string(endpoint)
         self.distro_version = distro_version
         # features
         self.disable_offline_storage = disable_offline_storage
@@ -76,7 +76,7 @@ class StatsbeatManager(metaclass=Singleton):
         self._meter_provider: Optional[MeterProvider] = None  # type: ignore
         self._config: Optional[StatsbeatConfig] = None  # type: ignore
 
-    def initialize(self, config: StatsbeatConfig) -> bool:  # pyright: ignore
+    def initialize(self, config: 'StatsbeatConfig') -> bool:  # pyright: ignore
         # Initialize statsbeat collection with thread safety.
         if not is_statsbeat_enabled():
             return False
@@ -181,7 +181,7 @@ class StatsbeatManager(metaclass=Singleton):
 
             return shutdown_success
 
-    def reconfigure(self, new_config: StatsbeatConfig) -> bool:  # pyright: ignore
+    def reconfigure(self, new_config: 'StatsbeatConfig') -> bool:  # pyright: ignore
         # Reconfigure statsbeat with new configuration.
         if not is_statsbeat_enabled():
             return False

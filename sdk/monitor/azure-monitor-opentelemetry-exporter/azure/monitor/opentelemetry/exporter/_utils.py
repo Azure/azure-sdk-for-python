@@ -9,7 +9,7 @@ import platform
 import threading
 import time
 import warnings
-from typing import Callable, Dict, Any, Optional
+from typing import Callable, Dict, Any, Optional, Type, TypeVar
 
 from opentelemetry.semconv.resource import ResourceAttributes
 from opentelemetry.sdk.resources import Resource
@@ -33,6 +33,8 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _UNKNOWN,
     _RP_Names,
 )
+
+T = TypeVar('T')
 
 opentelemetry_version = ""
 
@@ -382,7 +384,7 @@ class Singleton(type):
     _instance = None
     _lock = threading.Lock()
 
-    def __call__(cls, *args, **kwargs):  # pyright: ignore
+    def __call__(cls: Type[T], *args: Any, **kwargs: Any) -> T:
         if not cls._instance:
             with cls._lock:
                 if not cls._instance:

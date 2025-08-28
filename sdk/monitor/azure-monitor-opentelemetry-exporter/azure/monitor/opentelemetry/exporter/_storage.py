@@ -8,7 +8,7 @@ import os
 import random
 import subprocess
 import errno
-from typing import Union, Optional, Any, Generator, Tuple, List
+from typing import Union, Optional, Any, Generator, Tuple, List, Type
 from enum import Enum
 
 from azure.monitor.opentelemetry.exporter._utils import PeriodicTask
@@ -133,7 +133,7 @@ class LocalFileStorage:
         return self
 
     # pylint: disable=redefined-builtin
-    def __exit__(self, type, value, traceback) -> None:  # pyright: ignore
+    def __exit__(self, exc_type: Optional[Type[BaseException]], exc_value: Optional[BaseException], traceback: Optional[Any]) -> None:
         self.close()
 
     def _maintenance_routine(self) -> None:
@@ -184,7 +184,7 @@ class LocalFileStorage:
         else:
             pass
 
-    def get(self) -> Optional[LocalFileBlob]:  # pyright: ignore
+    def get(self) -> Optional['LocalFileBlob']:
         if not self._enabled:
             return None
         cursor = self.gets()

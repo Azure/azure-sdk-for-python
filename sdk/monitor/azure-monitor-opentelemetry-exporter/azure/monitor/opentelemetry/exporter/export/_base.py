@@ -155,7 +155,7 @@ class BaseExporter:
             config.http_logging_policy or HttpLoggingPolicy(**kwargs),
         ]
 
-        self.client = AzureMonitorClient(  # pyright: ignore
+        self.client = AzureMonitorClient(
             host=self._endpoint, connection_timeout=self._timeout, policies=policies, **kwargs
         )
         self.storage = None
