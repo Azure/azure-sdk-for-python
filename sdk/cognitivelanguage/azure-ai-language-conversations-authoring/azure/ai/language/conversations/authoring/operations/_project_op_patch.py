@@ -454,6 +454,9 @@ class ProjectOperations(ProjectOperationsGenerated):
             get_long_running_output,
             polling_method,  # type: ignore
         )
+        # return super()._begin_cancel_training_job(
+        #     project_name=self._project_name, job_id=job_id, **kwargs
+        # )
 
     @overload
     def begin_copy_project(
