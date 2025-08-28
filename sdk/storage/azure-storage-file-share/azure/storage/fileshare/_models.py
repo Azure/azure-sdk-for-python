@@ -313,7 +313,7 @@ class ShareProtocolSettings(GeneratedShareProtocolSettings):
         return cls(smb=generated.smb, nfs=generated.nfs)
 
 
-class ShareSasPermissions(object):
+class ShareSasPermissions:
     """ShareSasPermissions class to be used to be used with
     generating shared access signature and access policy operations.
 
@@ -859,7 +859,7 @@ class HandlesPaged(PageIterator):
         return self._response.next_marker or None, self.current_page
 
 
-class NTFSAttributes(object):
+class NTFSAttributes:
     """Valid set of attributes to set for file or directory.
 
     To set attribute for directory, 'Directory' should always be enabled except setting 'None' for directory.
@@ -1284,7 +1284,7 @@ class ShareProtocols(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NFS = "NFS"
 
 
-class FileSasPermissions(object):
+class FileSasPermissions:
     """FileSasPermissions class to be used with
     generating shared access signature operations.
 

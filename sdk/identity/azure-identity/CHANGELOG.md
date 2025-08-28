@@ -1,23 +1,39 @@
 # Release History
 
-## 1.24.0b2 (Unreleased)
+## 1.24.1 (Unreleased)
 
 ### Features Added
+
+- `AzureDeveloperCliCredential` now supports `claims` in `get_token` and `get_token_info`. ([#42568](https://github.com/Azure/azure-sdk-for-python/pull/42568))
+- Added new keyword argument `require_envvar` to `DefaultAzureCredential` to enforce the presence of the `AZURE_TOKEN_CREDENTIALS` environment variable. ([#42660](https://github.com/Azure/azure-sdk-for-python/pull/42660))
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
-- Fixed an issue where CAE (Continuous Access Evaluation) caches were not properly used by `AuthorizationCodeCredential` and the asynchronous `OnBehalfOfCredential`. ([#42145](https://github.com/Azure/azure-sdk-for-python/pull/42145))
+- Fixed an issue where `AzureDeveloperCliCredential` would time out during token requests when `azd` prompts for user interaction. This issue commonly occurred in environments where the `AZD_DEBUG` environment variable was set, causing the Azure Developer CLI to display additional prompts that interfered with automated token acquisition. ([#42535](https://github.com/Azure/azure-sdk-for-python/pull/42535))
 
 ### Other Changes
+
+## 1.24.0 (2025-08-07)
+
+### Bugs Fixed
+
+- Fixed an issue where CAE (Continuous Access Evaluation) caches were not properly used by `AuthorizationCodeCredential` and the asynchronous `OnBehalfOfCredential`. ([#42145](https://github.com/Azure/azure-sdk-for-python/pull/42145))
+- Fixed an issue where brokered authentication was not included in the `DefaultAzureCredential` chain when `AZURE_TOKEN_CREDENTIALS` was set to `dev`. ([#42599](https://github.com/Azure/azure-sdk-for-python/pull/42599))
+
+### Other Changes
+
+- `ManagedIdentityCredential` now retries IMDS 410 status responses for at least 70 seconds total duration as required by [Azure IMDS documentation](https://learn.microsoft.com/azure/virtual-machines/instance-metadata-service?tabs=windows#errors-and-debugging).  ([#42330](https://github.com/Azure/azure-sdk-for-python/pull/42330))
+- Improved `DefaultAzureCredential` diagnostics when `WorkloadIdentityCredential` initialization fails. If DAC fails to find a successful credential in the chain, the reason `WorkloadIdentityCredential` failed will be included in the error message. ([#42346](https://github.com/Azure/azure-sdk-for-python/pull/42346))
+- `AzureCliCredential` and `AzurePowerShellCredential` now raise `ClientAuthenticationError` when `claims` are provided to `get_token` or `get_token_info`, as these credentials do not support claims challenges. The error message includes instructions for handling claims authentication scenarios. ([#42568](https://github.com/Azure/azure-sdk-for-python/pull/42568))
 
 ## 1.24.0b1 (2025-07-17)
 
 ### Features Added
 
 - Expanded the set of acceptable values for environment variable `AZURE_TOKEN_CREDENTIALS` to allow for selection of a specific credential in the `DefaultAzureCredential` chain. At runtime, only the specified credential will be used when acquiring tokens with `DefaultAzureCredential`. For example, setting `AZURE_TOKEN_CREDENTIALS=WorkloadIdentityCredential` will make `DefaultAzureCredential` use only `WorkloadIdentityCredential`.
-  - Valid values are `EnvironmentCredential`, `WorkloadIdentityCredential`, `ManagedIdentityCredential`, `AzureCliCredential`, `AzurePowershellCredential`, `AzureDeveloperCliCredential`, and `InteractiveBrowserCredential`. ([#41709](https://github.com/Azure/azure-sdk-for-python/pull/41709))
+  - Valid values are `EnvironmentCredential`, `WorkloadIdentityCredential`, `ManagedIdentityCredential`, `VisualStudioCodeCredential`, `AzureCliCredential`, `AzurePowershellCredential`, `AzureDeveloperCliCredential`, and `InteractiveBrowserCredential`. ([#41709](https://github.com/Azure/azure-sdk-for-python/pull/41709))
 - Re-enabled `VisualStudioCodeCredential` - Previously deprecated `VisualStudioCodeCredential` has been re-implemented to work with the VS Code Azure Resources extension instead of the deprecated Azure Account extension. This requires the `azure-identity-broker` package to be installed for authentication. ([#41822](https://github.com/Azure/azure-sdk-for-python/pull/41822))
   - `VisualStudioCodeCredential` is now included in the `DefaultAzureCredential` token chain by default.
 - `DefaultAzureCredential` now supports authentication with the currently signed-in Windows account, provided the `azure-identity-broker` package is installed. This auth mechanism is added at the end of the `DefaultAzureCredential` credential chain.  ([#40335](https://github.com/Azure/azure-sdk-for-python/pull/40335))

@@ -20,7 +20,7 @@ steps:
             | ConvertFrom-Json
 
           if ($pkgInfo) {
-            python tools/azure-sdk-tools/ci_tools/snippet_update/python_snippet_updater.py "$(Build.SourcesDirectory)/sdk/$($pkgInfo.ServiceDirectory)/$targetedPackage"
+            python eng/tools/azure-sdk-tools/ci_tools/snippet_update/python_snippet_updater.py "$(Build.SourcesDirectory)/sdk/$($pkgInfo.ServiceDirectory)/$targetedPackage"
           }
           else {
             Write-Error "Unable to obtain package info for $targetedPackage."
