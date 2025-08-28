@@ -764,6 +764,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
             tool: Optional[Tool] = None,
             have_submit_tools: bool = False,
             run_step_events: List[List[Dict[str, Any]]] = None,
+            has_annotations: bool = False,
             **kwargs
         ) -> None:
         """The helper method to check the recordings."""
@@ -820,6 +821,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
             tool_message_attribute_content=tool_message_attribute_content,
             event_contents=event_contents,
             run_step_events=run_step_events,
+            has_annotations=has_annotations,
         )
 
     @pytest.mark.usefixtures("instrument_with_content")
@@ -957,6 +959,27 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
             tool_message_attribute_content="",
             event_contents=[],
             run_step_events=self.get_expected_mcp_spans(),
+        )
+
+    @pytest.mark.usefixtures("instrument_with_content")
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_telemetry_steps_with_deep_research_tool(self, **kwargs):
+        """Test running functions with streaming and tracing content recording."""
+        
+        self._do_test_run_steps_with_toolset_with_tracing_content_recording(
+            tool=self._get_deep_research_tool(**kwargs),
+            model="gpt-4o",
+            use_stream=False,
+            instructions="You are a helpful agent that assists in researching scientific topics.",
+            message="Research the benefits of renewable energy sources. Keep the response brief.",
+            recording_enabled=True,
+            tool_message_attribute_content='',
+            event_contents=[],
+            have_submit_tools=False,
+            run_step_events=self.get_expected_deep_research_spans(),
+            has_annotations=True,
+            **kwargs
         )
 
 class MyEventHandler(AgentEventHandler):
