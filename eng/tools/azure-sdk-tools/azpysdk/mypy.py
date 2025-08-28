@@ -2,15 +2,11 @@ import argparse
 import os
 import sys
 import logging
-import tempfile
 
 from typing import Optional, List
 from subprocess import CalledProcessError, check_call
 
 from .Check import Check
-from ci_tools.parsing import ParsedSetup
-from ci_tools.functions import discover_targeted_packages
-from ci_tools.scenario.generation import create_package_and_install
 from ci_tools.variables import in_ci, set_envvar_defaults
 from ci_tools.environment_exclusions import (
     is_check_enabled, is_typing_ignored
