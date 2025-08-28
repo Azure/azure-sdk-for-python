@@ -101,8 +101,8 @@ class CommunicationUserIdentifier:
     """Represents a user in Azure Communication Service."""
 
     # Protocol expects CommunicationIdentifierKind, but we use Literal for discrimination.
-    # This cast is safe because CommunicationIdentifierKind.COMMUNICATION_USER == "communication_user".
-    kind: Literal["communication_user"] = cast(Literal["communication_user"], CommunicationIdentifierKind.COMMUNICATION_USER)
+    # This assignment is safe because CommunicationIdentifierKind.COMMUNICATION_USER == "communication_user".
+    kind: CommunicationIdentifierKind = CommunicationIdentifierKind.COMMUNICATION_USER
     """The type of identifier."""
     properties: CommunicationUserProperties
     """The properties of the identifier."""
@@ -142,7 +142,7 @@ class PhoneNumberIdentifier:
     """Represents a phone number."""
 
     # Protocol expects CommunicationIdentifierKind, but we use Literal for discrimination.
-    kind: Literal["phone_number"] = cast(Literal["phone_number"], CommunicationIdentifierKind.PHONE_NUMBER)
+    kind: CommunicationIdentifierKind = CommunicationIdentifierKind.PHONE_NUMBER
     """The type of identifier."""
     properties: PhoneNumberProperties
     """The properties of the identifier."""
@@ -199,7 +199,7 @@ class UnknownIdentifier:
     """
 
     # Protocol expects CommunicationIdentifierKind, but we use Literal for discrimination.
-    kind: Literal["unknown"] = cast(Literal["unknown"], CommunicationIdentifierKind.UNKNOWN)
+    kind: CommunicationIdentifierKind = CommunicationIdentifierKind.UNKNOWN
     """The type of identifier."""
     properties: Mapping[str, Any]
     """The properties of the identifier."""
@@ -235,7 +235,7 @@ class MicrosoftTeamsUserIdentifier:
     """Represents an identifier for a Microsoft Teams user."""
 
     # Protocol expects CommunicationIdentifierKind, but we use Literal for discrimination.
-    kind: Literal["microsoft_teams_user"] = cast(Literal["microsoft_teams_user"], CommunicationIdentifierKind.MICROSOFT_TEAMS_USER)
+    kind: CommunicationIdentifierKind = CommunicationIdentifierKind.MICROSOFT_TEAMS_USER
     """The type of identifier."""
     properties: MicrosoftTeamsUserProperties
     """The properties of the identifier."""
@@ -308,7 +308,7 @@ class MicrosoftTeamsAppIdentifier:
     """Represents an identifier for a Microsoft Teams application."""
 
     # Protocol expects CommunicationIdentifierKind, but we use Literal for discrimination.
-    kind: Literal["microsoft_teams_app"] = cast(Literal["microsoft_teams_app"], CommunicationIdentifierKind.MICROSOFT_TEAMS_APP)
+    kind: CommunicationIdentifierKind = CommunicationIdentifierKind.MICROSOFT_TEAMS_APP
     """The type of identifier."""
     properties: MicrosoftTeamsAppProperties
     """The properties of the identifier."""
@@ -389,7 +389,7 @@ class TeamsExtensionUserIdentifier:
     """Represents an identifier for a Teams Extension user."""
 
     # Protocol expects CommunicationIdentifierKind, but we use Literal for discrimination.
-    kind: Literal["teams_extension_user"] = cast(Literal["teams_extension_user"], CommunicationIdentifierKind.TEAMS_EXTENSION_USER)
+    kind: CommunicationIdentifierKind = CommunicationIdentifierKind.TEAMS_EXTENSION_USER
     """The type of identifier."""
     properties: TeamsExtensionUserProperties
     """The properties of the identifier."""
