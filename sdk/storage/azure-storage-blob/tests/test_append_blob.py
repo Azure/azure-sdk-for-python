@@ -1545,7 +1545,7 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
             property = mgmt_client.models().BlobContainer(
                 immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(enabled=True))
             mgmt_client.blob_containers.create(storage_resource_group_name, versioned_storage_account_name, container_name, blob_container=property)
-    
+
         # Act
         blob_name = self.get_resource_name('vlwblob')
         blob = bsc.get_blob_client(container_name, blob_name)
@@ -1622,7 +1622,8 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
             self.get_resource_name("file"),
             bearer_token_string,
             storage_account_name,
-            source_data
+            source_data,
+            self.is_live
         )
 
         # Set up destination blob without data
@@ -1646,11 +1647,12 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
             # Assert
             assert destination_blob_data == source_data
         finally:
-            requests.delete(
-                url=base_url,
-                headers=_build_base_file_share_headers(bearer_token_string, 0),
-                params={'restype': 'share'}
-            )
-            bsc.delete_container(self.source_container_name)
+            if self.is_live:
+                requests.delete(
+                    url=base_url,
+                    headers=_build_base_file_share_headers(bearer_token_string, 0),
+                    params={'restype': 'share'}
+                )
+                bsc.delete_container(self.source_container_name)
 
 # ------------------------------------------------------------------------------

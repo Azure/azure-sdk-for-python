@@ -8,6 +8,9 @@
 - Added `language` parameter to `RedTeam` class for multilingual red team scanning support. The parameter accepts values from `SupportedLanguages` enum including English, Spanish, French, German, Italian, Portuguese, Japanese, Korean, and Simplified Chinese, enabling red team attacks to be generated and conducted in multiple languages.
 - Added support for XPIA and UngroundedAttributes risk categories in `RedTeam` scanning. These new risk categories expand red team capabilities to detect cross-platform indirect attacks and evaluate ungrounded inferences about human attributes including emotional state and protected class information.
 
+### Bugs Fixed
+- Fixed issue where evaluation results were not properly aligned with input data, leading to incorrect metrics being reported.
+
 ### Other Changes
 - Deprecating `AdversarialSimulator` in favor of the [AI Red Teaming Agent](https://aka.ms/airedteamingagent-sample). `AdversarialSimulator` will be removed in the next minor release. 
 

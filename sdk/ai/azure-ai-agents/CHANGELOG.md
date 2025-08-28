@@ -10,6 +10,10 @@
 
 ### Bugs Fixed
 
+* Fix the issue with logging Agent message, when the message has "in progress" status (related to [issue](https://github.com/Azure/azure-sdk-for-python/issues/42645)).
+* Fix the issue with `RunStepOpenAPIToolCall` logging [issue](https://github.com/Azure/azure-sdk-for-python/issues/42645).
+* Fix the issue with `RunStepMcpToolCall` logging [issue](https://github.com/Azure/azure-sdk-for-python/issues/42689).
+
 ### Sample updates
 
 ## 1.2.0b3 (2025-08-22)

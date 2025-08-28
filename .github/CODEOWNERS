@@ -260,6 +260,10 @@
 # ServiceLabel: %AI Projects %Service Attention
 /sdk/ai/azure-ai-projects/                                           @dargilco @jhakulin @trangevi @glharper @nick863 @howieleung
 
+# PRLabel: %AI Voice Live
+# ServiceLabel: %AI Voice Live %Service Attention
+/sdk/ai/azure-ai-voicelive/                                          @rhurey @xitzhang
+
 
 # PRLabel: %HDInsight
 /sdk/hdinsight/                                                      @idear1203
@@ -349,10 +353,10 @@
 
 # ServiceLabel: %Search
 # AzureSdkOwners: @xiangyan99
-# ServiceOwners:  @mattgotteiner
+# ServiceOwners:  @kuanlu95 @mattgotteiner
 
 # PRLabel: %Search
-/sdk/search/                                                         @xiangyan99 @Azure/azsdk-search
+/sdk/search/                                                         @Azure/azure-sdk-write-search @Azure/azsdk-search
 
 # PRLabel: %Service Fabric
 /sdk/servicefabric/                                                  @QingChenmsft @samedder

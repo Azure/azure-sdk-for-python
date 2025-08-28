@@ -15,6 +15,7 @@ from subprocess import check_call
 
 from .whl import whl
 from .import_all import import_all
+from .mypy import mypy
 
 from ci_tools.scenario import install_into_venv, get_venv_python
 from ci_tools.functions import get_venv_call
@@ -42,8 +43,8 @@ def build_parser() -> argparse.ArgumentParser:
     common.add_argument(
         "target",
         nargs="?",
-        default=".",
-        help="Glob pattern for packages. Defaults to '.', but will match patterns below CWD if a value is provided."
+        default="**",
+        help="Glob pattern for packages. Defaults to '**', but will match patterns below CWD if a value is provided."
     )
     # allow --isolate to be specified after the subcommand as well
     common.add_argument(
@@ -58,6 +59,7 @@ def build_parser() -> argparse.ArgumentParser:
     # register our checks with the common params as their parent
     whl().register(subparsers, [common])
     import_all().register(subparsers, [common])
+    mypy().register(subparsers, [common])
 
     return parser
 
