@@ -72,6 +72,6 @@ class CosmosBearerTokenCredentialPolicy(BearerTokenCredentialPolicy):
         :param str scopes: required scopes of authentication
         """
 
-        super().authorize_request(request, self._current_scope, **kwargs)
+        super().authorize_request(request, *scopes, **kwargs)
         # The None-check for self._token is done in the parent authorize_request
         self._update_headers(request.http_request.headers, cast(AccessToken, self._token).token)

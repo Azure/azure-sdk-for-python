@@ -73,6 +73,6 @@ class AsyncCosmosBearerTokenCredentialPolicy(AsyncBearerTokenCredentialPolicy):
         :param str scopes: required scopes of authentication
         """
 
-        await super().authorize_request(request, self._current_scope, **kwargs)
+        await super().authorize_request(request, *scopes, **kwargs)
         # The None-check for self._token is done in the parent authorize_request
         self._update_headers(request.http_request.headers, cast(AccessToken, self._token).token)
