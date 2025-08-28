@@ -144,6 +144,10 @@ class TestBaseExporter(unittest.TestCase):
     #     # Optionally verify it was assigned to the instance
     #     self.assertEqual(base._configuration_manager, mock_manager_instance)
 
+    # ========================================================================
+    # CONSTRUCTOR AND INITIALIZATION TESTS
+    # ========================================================================
+
     def test_constructor(self):
         """Test the constructor."""
         base = BaseExporter(
@@ -274,6 +278,10 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(base._storage_min_retry_interval, 100)
         self.assertEqual(base._storage_directory, "test/path")
         mock_get_temp_dir.assert_not_called()
+
+    # ========================================================================
+    # STORAGE TESTS
+    # ========================================================================
 
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base._format_storage_telemetry_item")
     @mock.patch.object(TelemetryItem, "from_dict")
@@ -502,6 +510,10 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(format_ti.data.base_type, "RequestData")
         self.assertEqual(req_data.__dict__.items(), format_ti.data.base_data.__dict__.items())
 
+    # ========================================================================
+    # TRANSMISSION TESTS
+    # ========================================================================
+
     def test_transmit_http_error_retryable(self):
         with mock.patch("azure.monitor.opentelemetry.exporter.export._base._is_retryable_code") as m:
             m.return_value = True
@@ -563,6 +575,10 @@ class TestBaseExporter(unittest.TestCase):
         with mock.patch.object(AzureMonitorClient, "track", throw(ServiceRequestError, message="error")):
             result = self._base._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
+
+    # ========================================================================
+    # STATSBEAT TESTS
+    # ========================================================================
 
     @mock.patch.dict(
         os.environ,
@@ -992,6 +1008,10 @@ class TestBaseExporter(unittest.TestCase):
         status = self._base._transmit([])
         self.assertEqual(status, ExportResult.SUCCESS)
 
+    # ========================================================================
+    # AUTHENTICATION AND CREDENTIAL TESTS
+    # ========================================================================
+
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base._get_authentication_credential")
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base._get_auth_policy")
     def test_exporter_credential(self, mock_add_credential_policy, mock_get_authentication_credential):
@@ -1209,6 +1229,10 @@ class TestBaseExporter(unittest.TestCase):
         )
         self.assertIsNone(result)
         mock_managed_identity.assert_called_once_with(client_id="TEST_CLIENT_ID")
+
+    # ========================================================================
+    # CUSTOMER SDK STATS (METRICS) TESTS
+    # ========================================================================
 
     def test_customer_sdkstats_shutdown_state(self):
         """Test that customer sdkstats shutdown state works correctly"""
@@ -1523,6 +1547,10 @@ class TestBaseExporter(unittest.TestCase):
     # Custom Breeze Message Handling Tests
     # These tests verify that custom error messages from Azure Monitor service (Breeze)
     # are properly preserved and passed through the error handling chain.
+
+    # ========================================================================
+    # UTILITY AND HELPER FUNCTION TESTS
+    # ========================================================================
 
     def test_determine_client_retry_code_telemetry_error_details_with_custom_message(self):
         """Test that TelemetryErrorDetails with custom message preserves the message for specific status codes."""
