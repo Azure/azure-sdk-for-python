@@ -100,9 +100,7 @@ class CommunicationUserProperties(TypedDict):
 class CommunicationUserIdentifier:
     """Represents a user in Azure Communication Service."""
 
-    # Protocol expects CommunicationIdentifierKind, but we use Literal for discrimination.
-    # This assignment is safe because CommunicationIdentifierKind.COMMUNICATION_USER == "communication_user".
-    kind: CommunicationIdentifierKind = CommunicationIdentifierKind.COMMUNICATION_USER
+    kind: Literal[CommunicationIdentifierKind.COMMUNICATION_USER] = CommunicationIdentifierKind.COMMUNICATION_USER
     """The type of identifier."""
     properties: CommunicationUserProperties
     """The properties of the identifier."""
@@ -141,8 +139,7 @@ class PhoneNumberProperties(TypedDict):
 class PhoneNumberIdentifier:
     """Represents a phone number."""
 
-    # Protocol expects CommunicationIdentifierKind, but we use Literal for discrimination.
-    kind: CommunicationIdentifierKind = CommunicationIdentifierKind.PHONE_NUMBER
+    kind: Literal[CommunicationIdentifierKind.PHONE_NUMBER] = CommunicationIdentifierKind.PHONE_NUMBER
     """The type of identifier."""
     properties: PhoneNumberProperties
     """The properties of the identifier."""
@@ -198,8 +195,7 @@ class UnknownIdentifier:
     as it could become a new or existing distinct type in the future.
     """
 
-    # Protocol expects CommunicationIdentifierKind, but we use Literal for discrimination.
-    kind: CommunicationIdentifierKind = CommunicationIdentifierKind.UNKNOWN
+    kind: Literal[CommunicationIdentifierKind.UNKNOWN] = CommunicationIdentifierKind.UNKNOWN
     """The type of identifier."""
     properties: Mapping[str, Any]
     """The properties of the identifier."""
@@ -234,8 +230,7 @@ class MicrosoftTeamsUserProperties(TypedDict):
 class MicrosoftTeamsUserIdentifier:
     """Represents an identifier for a Microsoft Teams user."""
 
-    # Protocol expects CommunicationIdentifierKind, but we use Literal for discrimination.
-    kind: CommunicationIdentifierKind = CommunicationIdentifierKind.MICROSOFT_TEAMS_USER
+    kind: Literal[CommunicationIdentifierKind.MICROSOFT_TEAMS_USER] = CommunicationIdentifierKind.MICROSOFT_TEAMS_USER
     """The type of identifier."""
     properties: MicrosoftTeamsUserProperties
     """The properties of the identifier."""
@@ -307,8 +302,7 @@ class _botbackcompatdict(dict):
 class MicrosoftTeamsAppIdentifier:
     """Represents an identifier for a Microsoft Teams application."""
 
-    # Protocol expects CommunicationIdentifierKind, but we use Literal for discrimination.
-    kind: CommunicationIdentifierKind = CommunicationIdentifierKind.MICROSOFT_TEAMS_APP
+    kind: Literal[CommunicationIdentifierKind.MICROSOFT_TEAMS_APP] = CommunicationIdentifierKind.MICROSOFT_TEAMS_APP
     """The type of identifier."""
     properties: MicrosoftTeamsAppProperties
     """The properties of the identifier."""
@@ -388,8 +382,7 @@ class TeamsExtensionUserProperties(TypedDict):
 class TeamsExtensionUserIdentifier:
     """Represents an identifier for a Teams Extension user."""
 
-    # Protocol expects CommunicationIdentifierKind, but we use Literal for discrimination.
-    kind: CommunicationIdentifierKind = CommunicationIdentifierKind.TEAMS_EXTENSION_USER
+    kind: Literal[CommunicationIdentifierKind.TEAMS_EXTENSION_USER] = CommunicationIdentifierKind.TEAMS_EXTENSION_USER
     """The type of identifier."""
     properties: TeamsExtensionUserProperties
     """The properties of the identifier."""
