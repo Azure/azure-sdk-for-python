@@ -121,7 +121,7 @@ Write-Host "Applied kubeconfig.yaml"
 $vmScript = @"
 sudo apt update && sudo apt install python3-pip -y --no-install-recommends &&
 git clone https://github.com/Azure/azure-sdk-for-python.git --depth 1 --single-branch --branch main /sdk &&
-cd /sdk/sdk/identity/azure-identity/tests/integration/azure-vms &&
+cd /sdk/sdk/identity/azure-identity/tests/integration/azure-vms && pip install --upgrade pip setuptools wheel &&
 pip install -r requirements.txt
 "@
 az vm run-command invoke -n $DeploymentOutputs['IDENTITY_VM_NAME'] -g $DeploymentOutputs['IDENTITY_RESOURCE_GROUP'] --command-id RunShellScript --scripts "$vmScript"

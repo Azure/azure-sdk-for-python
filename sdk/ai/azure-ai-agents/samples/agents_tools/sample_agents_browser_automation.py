@@ -22,10 +22,8 @@ USAGE:
        page of your Azure AI Foundry portal.
     2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Azure AI Foundry project.
-    3) AZURE_PLAYWRIGHT_CONNECTION_ID - The ID of the Azure Playwright Workspaces connection, in the format of:
-       /subscriptions/{subscription-id}/resourceGroups/{resource-group-name}/providers/Microsoft.MachineLearningServices/workspaces/{workspace-name}/connections/{connection-name}
-       You can also get the connection ID programmatically from AIProjectClient, using the call
-       `project_client.connections.get("<playwright-connection-name>").id`.
+    3) AZURE_PLAYWRIGHT_CONNECTION_NAME - The name of a connection to the Azure Playwright Workspace as it is
+       listed in Azure AI Foundry connected resources.
 """
 
 import os
@@ -41,7 +39,7 @@ from azure.identity import DefaultAzureCredential
 project_client = AIProjectClient(endpoint=os.environ["PROJECT_ENDPOINT"], credential=DefaultAzureCredential())
 
 # [START create_agent_with_browser_automation]
-connection_id = os.environ["AZURE_PLAYWRIGHT_CONNECTION_ID"]
+connection_id = project_client.connections.get(os.environ["AZURE_PLAYWRIGHT_CONNECTION_NAME"]).id
 
 # Initialize Browser Automation tool and add the connection id
 browser_automation = BrowserAutomationTool(connection_id=connection_id)

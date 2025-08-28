@@ -2305,6 +2305,46 @@ class MessageContent(_Model):
         super().__init__(*args, **kwargs)
 
 
+class MessageDeletionStatus(_Model):
+    """The status of a thread message deletion operation.
+
+    :ivar id: The ID of the resource specified for deletion. Required.
+    :vartype id: str
+    :ivar deleted: A value indicating whether deletion was successful. Required.
+    :vartype deleted: bool
+    :ivar object: The object type, which is always 'thread.message.deleted'. Required. Default
+     value is "thread.message.deleted".
+    :vartype object: str
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The ID of the resource specified for deletion. Required."""
+    deleted: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A value indicating whether deletion was successful. Required."""
+    object: Literal["thread.message.deleted"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The object type, which is always 'thread.message.deleted'. Required. Default value is
+     \"thread.message.deleted\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        deleted: bool,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.object: Literal["thread.message.deleted"] = "thread.message.deleted"
+
+
 class MessageDelta(_Model):
     """Represents the typed 'delta' payload within a streaming message delta chunk.
 
@@ -5070,8 +5110,9 @@ class RunStepDeltaToolCall(_Model):
     RunStepDeltaAzureAISearchToolCall, RunStepDeltaAzureFunctionToolCall,
     RunStepDeltaCustomBingGroundingToolCall, RunStepDeltaBingGroundingToolCall,
     RunStepDeltaCodeInterpreterToolCall, RunStepDeltaConnectedAgentToolCall,
-    RunStepDeltaDeepResearchToolCall, RunStepDeltaFileSearchToolCall, RunStepDeltaFunctionToolCall,
-    RunStepDeltaMcpToolCall, RunStepDeltaOpenAPIToolCall
+    RunStepDeltaDeepResearchToolCall, RunStepDeltaMicrosoftFabricToolCall,
+    RunStepDeltaFileSearchToolCall, RunStepDeltaFunctionToolCall, RunStepDeltaMcpToolCall,
+    RunStepDeltaOpenAPIToolCall, RunStepDeltaSharepointToolCall
 
     :ivar index: The index of the tool call detail in the run step's tool_calls array. Required.
     :vartype index: int
@@ -5916,6 +5957,48 @@ class RunStepDeltaMessageCreationObject(_Model):
         super().__init__(*args, **kwargs)
 
 
+class RunStepDeltaMicrosoftFabricToolCall(RunStepDeltaToolCall, discriminator="fabric_dataagent"):
+    """Represents the Microsoft Fabric tool call in a streaming run step.
+
+    :ivar index: The index of the tool call detail in the run step's tool_calls array. Required.
+    :vartype index: int
+    :ivar id: The ID of the tool call, used when submitting outputs to the run. Required.
+    :vartype id: str
+    :ivar type: The object type, which is always 'fabric_dataagent'. Required. Default value is
+     "fabric_dataagent".
+    :vartype type: str
+    :ivar microsoft_fabric: Fabric input and output. Required.
+    :vartype microsoft_fabric: dict[str, str]
+    """
+
+    type: Literal["fabric_dataagent"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always 'fabric_dataagent'. Required. Default value is
+     \"fabric_dataagent\"."""
+    microsoft_fabric: Dict[str, str] = rest_field(
+        name="fabric_dataagent", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Fabric input and output. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        index: int,
+        id: str,  # pylint: disable=redefined-builtin
+        microsoft_fabric: Dict[str, str],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="fabric_dataagent", **kwargs)
+
+
 class RunStepDeltaOpenAPIObject(RunStepDeltaDetail, discriminator="openapi"):
     """Represents an invocation of openapi as part of a streaming run step.
 
@@ -5986,6 +6069,46 @@ class RunStepDeltaOpenAPIToolCall(RunStepDeltaToolCall, discriminator="openapi")
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, type="openapi", **kwargs)
+
+
+class RunStepDeltaSharepointToolCall(RunStepDeltaToolCall, discriminator="sharepoint_grounding"):
+    """Represents the SharePoint tool call in a streaming run step.
+
+    :ivar index: The index of the tool call detail in the run step's tool_calls array. Required.
+    :vartype index: int
+    :ivar id: The ID of the tool call, used when submitting outputs to the run. Required.
+    :vartype id: str
+    :ivar type: The object type, which is always 'sharepoint_grounding'. Required. Default value is
+     "sharepoint_grounding".
+    :vartype type: str
+    :ivar sharepoint_grounding: SharePoint tool input and output. Required.
+    :vartype sharepoint_grounding: dict[str, str]
+    """
+
+    type: Literal["sharepoint_grounding"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always 'sharepoint_grounding'. Required. Default value is
+     \"sharepoint_grounding\"."""
+    sharepoint_grounding: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """SharePoint tool input and output. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        index: int,
+        id: str,  # pylint: disable=redefined-builtin
+        sharepoint_grounding: Dict[str, str],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="sharepoint_grounding", **kwargs)
 
 
 class RunStepDeltaToolCallObject(RunStepDeltaDetail, discriminator="tool_calls"):
@@ -6438,7 +6561,7 @@ class RunStepMicrosoftFabricToolCall(RunStepToolCall, discriminator="fabric_data
     :ivar type: The object type, which is always 'fabric_dataagent'. Required. Default value is
      "fabric_dataagent".
     :vartype type: str
-    :ivar microsoft_fabric: Reserved for future use. Required.
+    :ivar microsoft_fabric: Fabric input and output. Required.
     :vartype microsoft_fabric: dict[str, str]
     """
 
@@ -6448,7 +6571,7 @@ class RunStepMicrosoftFabricToolCall(RunStepToolCall, discriminator="fabric_data
     microsoft_fabric: Dict[str, str] = rest_field(
         name="fabric_dataagent", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Reserved for future use. Required."""
+    """Fabric input and output. Required."""
 
     @overload
     def __init__(
@@ -6518,7 +6641,7 @@ class RunStepSharepointToolCall(RunStepToolCall, discriminator="sharepoint_groun
     :ivar type: The object type, which is always 'sharepoint_grounding'. Required. Default value is
      "sharepoint_grounding".
     :vartype type: str
-    :ivar share_point: Reserved for future use. Required.
+    :ivar share_point: SharePoint tool input and output. Required.
     :vartype share_point: dict[str, str]
     """
 
@@ -6528,7 +6651,7 @@ class RunStepSharepointToolCall(RunStepToolCall, discriminator="sharepoint_groun
     share_point: Dict[str, str] = rest_field(
         name="sharepoint_grounding", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Reserved for future use. Required."""
+    """SharePoint tool input and output. Required."""
 
     @overload
     def __init__(

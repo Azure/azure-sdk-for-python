@@ -1,14 +1,31 @@
 
+
 # Release History
 
-## 1.2.0b3 (Unreleased)
+## 1.2.0b4 (Unreleased)
 
 ### Breaking Changes
 
 ### Features Added
 
+### Bugs Fixed
+
+* Fix the issue with logging Agent message, when the message has "in progress" status (related to [issue](https://github.com/Azure/azure-sdk-for-python/issues/42645)).
+* Fix the issue with `RunStepOpenAPIToolCall` logging [issue](https://github.com/Azure/azure-sdk-for-python/issues/42645).
+* Fix the issue with `RunStepMcpToolCall` logging [issue](https://github.com/Azure/azure-sdk-for-python/issues/42689).
+
+### Sample updates
+
+## 1.2.0b3 (2025-08-22)
+
+### Features Added
+
+- Added delete operation for `ThreadMessages`.
 - Add `RunStepDetailsActivity`, describing MCP function parameters.
 - Add `RunStepDeltaCustomBingGroundingToolCall`, describing `BingCustomSearchTool` updates in streaming scenario.
+- Add `RunStepDeltaMicrosoftFabricToolCall`, describing `FabricTool` updates in streaming scenario.
+- Add `RunStepDeltaSharepointToolCall`, describing `SharepointTool` updates in streaming scenario.
+- Improve code interpreter tool to take the list of `VectorStoreDataSource` as an input for enterprise file search.
 
 ### Bugs Fixed
 
@@ -16,6 +33,9 @@
 
 ### Sample updates
 
+- The file search samples were updated to demonstrate retrieving text associated with citations.
+- The SharePoint tool sample was updated to demonstrate retrieving text associated with citations and render references correctly.
+- Added samples for file search citation with streaming.
 - Bing Grounding and Bing Custom Search samples were fixed to correctly present references.
 
 ## 1.2.0b2 (2025-08-12)

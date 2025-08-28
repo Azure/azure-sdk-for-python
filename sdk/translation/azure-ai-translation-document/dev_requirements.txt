@@ -1,4 +1,4 @@
--e ../../../tools/azure-sdk-tools
+-e ../../../eng/tools/azure-sdk-tools
 ../../core/azure-core
 azure-storage-blob==12.9.0
 -e ../../identity/azure-identity

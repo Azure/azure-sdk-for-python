@@ -58,7 +58,7 @@ class ImageAnalysisTestBase(AzureRecordedTestCase):
 
     def _create_client_for_standard_analysis_with_entra_id_auth(self, sync: bool, get_connection_url: bool = False, **kwargs):
         endpoint = kwargs.pop("vision_endpoint")
-        # See /tools/azure-sdk-tools/devtools_testutils/azure_recorded_testcase.py for `get_credential`
+        # See /eng/tools/azure-sdk-tools/devtools_testutils/azure_recorded_testcase.py for `get_credential`
         if sync:
             credential = self.get_credential(sdk.ImageAnalysisClient, is_async=False)
         else:
@@ -72,7 +72,7 @@ class ImageAnalysisTestBase(AzureRecordedTestCase):
         self._create_client(endpoint, credential, sync, False)
 
     def _create_client(self, endpoint: str, credential: Union[AzureKeyCredential, TokenCredential], sync: bool, get_connection_url: bool):
-        
+
         if sync:
             self.client = sdk.ImageAnalysisClient(
                 endpoint=endpoint,

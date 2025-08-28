@@ -31,6 +31,7 @@ import binascii
 from typing import Dict, Any, List, Mapping, Optional, Sequence, Union, Tuple, TYPE_CHECKING
 
 from urllib.parse import quote as urllib_quote
+from urllib.parse import unquote as urllib_unquote
 from urllib.parse import urlsplit
 from azure.core import MatchConditions
 
@@ -68,8 +69,8 @@ _COMMON_OPTIONS = {
     'retry_write': Constants.Kwargs.RETRY_WRITE,
     'max_item_count': 'maxItemCount',
     'throughput_bucket': 'throughputBucket',
-    'excluded_locations': 'excludedLocations',
-    'availability_strategy': 'availabilityStrategy'
+    'excluded_locations': Constants.Kwargs.EXCLUDED_LOCATIONS,
+    'availability_strategy': Constants.Kwargs.AVAILABILITY_STRATEGY
 }
 
 # Cosmos resource ID validation regex breakdown:
@@ -359,13 +360,16 @@ def set_session_token_header(
             # then update from session container
             if headers[http_constants.HttpHeaders.ConsistencyLevel] == documents.ConsistencyLevel.Session and \
                     cosmos_client_connection.session:
+                # urllib_unquote is used to decode the path, as it may contain encoded characters
+                path = urllib_unquote(path)
                 # populate session token from the client's session container
                 session_token = (
                     cosmos_client_connection.session.get_session_token(path,
                                                                 options.get('partitionKey'),
                                                                 cosmos_client_connection._container_properties_cache,
                                                                 cosmos_client_connection._routing_map_provider,
-                                                                partition_key_range_id))
+                                                                partition_key_range_id,
+                                                                options))
                 if session_token != "":
                     headers[http_constants.HttpHeaders.SessionToken] = session_token
 
@@ -387,12 +391,15 @@ async def set_session_token_header_async(
             if headers[http_constants.HttpHeaders.ConsistencyLevel] == documents.ConsistencyLevel.Session and \
                     cosmos_client_connection.session:
                 # populate session token from the client's session container
+                # urllib_unquote is used to decode the path, as it may contain encoded characters
+                path = urllib_unquote(path)
                 session_token = \
                     await cosmos_client_connection.session.get_session_token_async(path,
                                                                 options.get('partitionKey'),
                                                                 cosmos_client_connection._container_properties_cache,
                                                                 cosmos_client_connection._routing_map_provider,
-                                                                partition_key_range_id)
+                                                                partition_key_range_id,
+                                                                options)
                 if session_token != "":
                     headers[http_constants.HttpHeaders.SessionToken] = session_token
 
@@ -607,19 +614,21 @@ def GetItemContainerInfo(self_link: str, alt_content_path: str, resource_id: str
 
     self_link = TrimBeginningAndEndingSlashes(self_link) + "/"
 
-    index = IndexOfNth(self_link, "/", 4)
+    end_index = IndexOfNth(self_link, "/", 4)
+    start_index = IndexOfNth(self_link, "/", 3)
 
-    if index != -1:
-        collection_id = self_link[0:index]
+    if start_index != -1 and end_index != -1:
+        # parse only the collection rid from the path as it's unique across databases
+        collection_rid = self_link[start_index + 1:end_index]
 
         if "colls" in self_link:
             # this is a collection request
             index_second_slash = IndexOfNth(alt_content_path, "/", 2)
             if index_second_slash == -1:
                 collection_name = alt_content_path + "/colls/" + urllib_quote(resource_id)
-                return collection_id, collection_name
+                return collection_rid, collection_name
             collection_name = alt_content_path
-            return collection_id, collection_name
+            return collection_rid, collection_name
         raise ValueError(
             "Response Not from Server Partition, self_link: {0}, alt_content_path: {1}, id: {2}".format(
                 self_link, alt_content_path, resource_id
