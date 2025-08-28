@@ -32,7 +32,7 @@ def configure_logging(
         numeric_level = getattr(logging, LOGLEVEL.upper(), None)
 
     if not isinstance(numeric_level, int):
-        raise ValueError(f"Invalid log level: {numeric_level}")
+        raise ValueError(f"Invalid log level: {level}")
     logger.setLevel(numeric_level)
 
     # Propagate logger config globally if needed
