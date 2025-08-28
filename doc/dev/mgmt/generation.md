@@ -31,7 +31,7 @@ A basic autorest command line will looks like this:
 autorest readme.md --python --use="@microsoft.azure/autorest.python@~4.0.71" --python-mode=update --python-sdks-folder=<root of sdk clone>/sdks/ --no-async
 ```
 
-Which means "Generate the Python code for the Swagger mentioned in this readme, using autorest for Pyton v4.0.71 or above (but not v5), do not generate async files, and assume the package was already generated and it's an update"
+Which means "Generate the Python code for the Swagger mentioned in this readme, using autorest for Python v4.0.71 or above (but not v5), do not generate async files, and assume the package was already generated and it's an update"
 
 In practical terms, this is not necessary since the Python SDK has the necessary tooling to simplify to just specify the readme.md:
 
