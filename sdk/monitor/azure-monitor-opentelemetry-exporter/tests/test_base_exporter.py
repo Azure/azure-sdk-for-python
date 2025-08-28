@@ -23,7 +23,6 @@ from azure.monitor.opentelemetry.exporter._storage import StorageExportResult
 from azure.monitor.opentelemetry.exporter.statsbeat._state import _REQUESTS_MAP, _STATSBEAT_STATE, _LOCAL_STORAGE_SETUP_STATE
 from azure.monitor.opentelemetry.exporter.statsbeat import _customer_sdkstats
 from azure.monitor.opentelemetry.exporter.statsbeat._customer_sdkstats import _CUSTOMER_SDKSTATS_STATE, CustomerSdkStatsMetrics
-from azure.monitor.opentelemetry.exporter.statsbeat._exporter import _StatsBeatExporter
 from azure.monitor.opentelemetry.exporter.export.metrics._exporter import AzureMonitorMetricExporter
 from azure.monitor.opentelemetry.exporter.export.trace._exporter import AzureMonitorTraceExporter
 from azure.monitor.opentelemetry.exporter._constants import (
@@ -3376,24 +3375,13 @@ class TestBaseExporter(unittest.TestCase):
         metric_exporter = AzureMonitorMetricExporter(connection_string="InstrumentationKey=12345678-1234-1234-1234-123456789abc")
         self.assertFalse(metric_exporter._is_customer_sdkstats_exporter())
 
-    def test_statsbeat_exporter_not_flagged_as_customer_sdkstats(self):
-        """Test that regular statsbeat exporter is not identified as customer sdkstats exporter."""
-        statsbeat_exporter = _StatsBeatExporter(connection_string="InstrumentationKey=12345678-1234-1234-1234-123456789abc")
-        self.assertFalse(statsbeat_exporter._is_customer_sdkstats_exporter())
-
     def test_customer_sdkstats_exporter_properly_flagged(self):
         """Test that customer sdkstats exporter is properly identified when flag is set."""
-        # Create a metric exporter and manually set the customer sdkstats flag
+        # Create a metric exporter with the customer sdkstats flag
         exporter = AzureMonitorMetricExporter(
             connection_string="InstrumentationKey=12345678-1234-1234-1234-123456789abc",
-            instrumentation_collection=True
+            is_customer_sdkstats=True
         )
-        
-        # Verify initially not flagged
-        self.assertFalse(exporter._is_customer_sdkstats_exporter())
-        
-        # Set the customer sdkstats flag
-        exporter._is_customer_sdkstats = True
         
         # Verify now properly flagged
         self.assertTrue(exporter._is_customer_sdkstats_exporter())
@@ -3474,9 +3462,8 @@ class TestBaseExporter(unittest.TestCase):
         with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._state.get_customer_sdkstats_shutdown", return_value=False):
             exporter = AzureMonitorMetricExporter(
                 connection_string="InstrumentationKey=12345678-1234-1234-1234-123456789abc",
-                instrumentation_collection=True
+                is_customer_sdkstats=True
             )
-            exporter._is_customer_sdkstats = True
             
             # customer sdkstats exporter should NOT collect customer sdkstats (prevents recursion)
             self.assertFalse(exporter._should_collect_customer_sdkstats())
@@ -3588,10 +3575,9 @@ class TestBaseExporter(unittest.TestCase):
             # Create a customer sdkstats exporter
             customer_sdkstats_exporter = AzureMonitorMetricExporter(
                 connection_string="InstrumentationKey=12345678-1234-1234-1234-123456789abc",
-                instrumentation_collection=True,
-                disable_offline_storage=True
+                disable_offline_storage=True,
+                is_customer_sdkstats=True
             )
-            customer_sdkstats_exporter._is_customer_sdkstats = True
             
             # Verify identification
             self.assertFalse(trace_exporter._is_customer_sdkstats_exporter())
@@ -3644,7 +3630,10 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(message, "Something went wrong")
 
     def test_track_retry_items_stats_exporter(self):
-        exporter = _StatsBeatExporter(disable_offline_storage=True)
+        exporter = AzureMonitorMetricExporter(
+            disable_offline_storage=True,
+            is_customer_sdkstats=True
+        )
         
         mock_customer_sdkstats = mock.Mock()
         exporter._customer_sdkstats_metrics = mock_customer_sdkstats
@@ -3900,7 +3889,7 @@ class TestBaseExporter(unittest.TestCase):
     @mock.patch.dict(
         os.environ,
         {
-            "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "false",
+            "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "true",
             "APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW": "true",
         },
     )
@@ -3922,17 +3911,15 @@ class TestBaseExporter(unittest.TestCase):
                 
                 self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
                 
-                # We expect two calls: one for storage disabled, one for the exception
-                expected_calls = [
-                    mock.call(1, 'UNKNOWN', DropCode.CLIENT_STORAGE_DISABLED),
-                    mock.call(1, 'UNKNOWN', DropCode.CLIENT_EXCEPTION, 'Unexpected error')
-                ]
-                mock_customer_sdkstats.count_dropped_items.assert_has_calls(expected_calls)
-                self.assertEqual(mock_customer_sdkstats.count_dropped_items.call_count, 2)
+                # We expect only one call for the general exception
+                mock_customer_sdkstats.count_dropped_items.assert_called_once_with(
+                    1, 'UNKNOWN', DropCode.CLIENT_EXCEPTION, 'Unexpected error'
+                )
 
     @mock.patch.dict(
         os.environ,
         {
+            "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "false",
             "APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW": "false",
         },
     )
