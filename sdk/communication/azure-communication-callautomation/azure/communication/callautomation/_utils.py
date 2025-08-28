@@ -59,7 +59,7 @@ def build_call_locator(
     group_call_id: Optional[str],
     room_id: Optional[str],
     args: Optional[List[Union['ServerCallLocator', 'GroupCallLocator','RoomCallLocator']]] = None,
-) -> CallLocator:
+) -> Optional[CallLocator]:
     """Build the generated callLocator object from args in kwargs with support for legacy models.
 
     :param args: Any positional parameters provided. This may include the legacy model. The new method signature
@@ -109,11 +109,6 @@ def build_call_locator(
                 "Please provide either 'group_call_id' or 'server_call_id' or 'room_id'."
             )
         request = CallLocator(room_id=room_id, kind="roomCallLocator")
-
-    if request is None:
-        raise ValueError(
-            "No call locator provided. Please provide either 'group_call_id', 'server_call_id', or 'room_id'."
-        )
     return request
 
 def process_repeatability_first_sent(keywords: Dict[str, Any]) -> None:

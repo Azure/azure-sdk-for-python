@@ -277,6 +277,11 @@ class CallAutomationClient:
             kwargs.pop("group_call_id", None),
             kwargs.pop("room_id", None)
         )
+
+        if call_locator is None:
+            raise ValueError(
+                "No call locator provided. Please provide either 'group_call_id', 'server_call_id', or 'room_id'."
+            )
         connect_call_request = ConnectRequest(
             call_locator=call_locator,
             callback_uri=callback_url,
