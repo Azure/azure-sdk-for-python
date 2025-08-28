@@ -370,7 +370,13 @@ def _convert_column_types_for_target(df: pd.DataFrame, signature: inspect.Signat
                         # Convert to string, handling NaN values
                         df[param_name] = df[param_name].astype(str)
                         # Replace 'nan' strings with actual NaN for consistency
-                        df[param_name] = df[param_name].replace('nan', pd.NA)
+                        # Use pandas NA if available, otherwise use numpy nan
+                        try:
+                            nan_value = pd.NA
+                        except AttributeError:
+                            import numpy as np
+                            nan_value = np.nan
+                        df[param_name] = df[param_name].replace('nan', nan_value)
                     elif expected_type == int:
                         # Only convert if all non-null values can be safely converted to int
                         try:

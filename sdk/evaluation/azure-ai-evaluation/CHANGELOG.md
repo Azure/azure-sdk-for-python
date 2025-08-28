@@ -10,6 +10,7 @@
 
 ### Bugs Fixed
 - Fixed issue where evaluation results were not properly aligned with input data, leading to incorrect metrics being reported.
+- Fixed issue where `evaluate` function did not honor target function parameter types when loading data from JSONL files. Target functions with type annotations (e.g., `book_id: str`) now receive correctly typed parameters even when pandas auto-converts values during JSONL loading.
 
 ### Other Changes
 - Deprecating `AdversarialSimulator` in favor of the [AI Red Teaming Agent](https://aka.ms/airedteamingagent-sample). `AdversarialSimulator` will be removed in the next minor release. 
