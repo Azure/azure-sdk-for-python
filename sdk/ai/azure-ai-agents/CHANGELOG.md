@@ -8,7 +8,8 @@
 
 ### Features Added
 
-- Added static `merge_resources` method to `McpTool` with accompanying sample.
+- ToolSet now supports adding multiple McpTool instances and OpenApiTool instances.
+- Added static merge_resources method to `McpTool` with accompanying sample.
 
 ### Bugs Fixed
 
