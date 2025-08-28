@@ -70,7 +70,7 @@ class ProjectOperations(ProjectOperationsGenerated):
         exported_project_format: Optional[Union[str, ExportedProjectFormat]] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[ImportProjectState]:
+    ) -> AsyncLROPoller[None]:
         """
         Triggers a job to import a project. If a project with the same name already exists, the data of that project is replaced.
 
@@ -80,8 +80,8 @@ class ProjectOperations(ProjectOperationsGenerated):
         :paramtype exported_project_format: str or ~azure.ai.language.conversations.authoring.models.ExportedProjectFormat
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body. Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns ImportProjectState.
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.language.conversations.authoring.models.ImportProjectState]
+        :return: An instance of AsyncLROPoller that returns None.
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         """
@@ -94,7 +94,7 @@ class ProjectOperations(ProjectOperationsGenerated):
         exported_project_format: Optional[Union[str, ExportedProjectFormat]] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[ImportProjectState]:
+    ) -> AsyncLROPoller[None]:
         """
         Triggers a job to import a project. If a project with the same name already exists, the data of that project is replaced.
 
@@ -104,8 +104,8 @@ class ProjectOperations(ProjectOperationsGenerated):
         :paramtype exported_project_format: str or ~azure.ai.language.conversations.authoring.models.ExportedProjectFormat
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body. Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns ImportProjectState.
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.language.conversations.authoring.models.ImportProjectState]
+        :return: An instance of AsyncLROPoller that returns None.
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         """
@@ -118,7 +118,7 @@ class ProjectOperations(ProjectOperationsGenerated):
         exported_project_format: Optional[Union[str, ExportedProjectFormat]] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[ImportProjectState]:
+    ) -> AsyncLROPoller[None]:
         """
         Triggers a job to import a project. If a project with the same name already exists, the data of that project is replaced.
 
@@ -128,8 +128,8 @@ class ProjectOperations(ProjectOperationsGenerated):
         :paramtype exported_project_format: str or ~azure.ai.language.conversations.authoring.models.ExportedProjectFormat
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body. Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns ImportProjectState.
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.language.conversations.authoring.models.ImportProjectState]
+        :return: An instance of AsyncLROPoller that returns None.
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         """
@@ -140,8 +140,9 @@ class ProjectOperations(ProjectOperationsGenerated):
         body: Union[ExportedProject, JSON, IO[bytes]],
         *,
         exported_project_format: Optional[Union[str, ExportedProjectFormat]] = None,
+        content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[ImportProjectState]:
+    ) -> AsyncLROPoller[None]:
         """
         Triggers a job to import a project. If a project with the same name already exists, the data of that project is replaced.
 
@@ -149,72 +150,17 @@ class ProjectOperations(ProjectOperationsGenerated):
         :type body: ~azure.ai.language.conversations.authoring.models.ExportedProject or JSON or IO[bytes]
         :keyword exported_project_format: The format of the exported project file to use. Known values are: "Conversation" and "Luis".
         :paramtype exported_project_format: str or ~azure.ai.language.conversations.authoring.models.ExportedProjectFormat
-        :return: An instance of AsyncLROPoller that returns ImportProjectState.
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.language.conversations.authoring.models.ImportProjectState]
+        :return: An instance of AsyncLROPoller that returns None.
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[ImportProjectState] = kwargs.pop("cls", None)
-        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-
-        if cont_token is None:
-            initial = await self._import_method_initial(
-                project_name=self._project_name,  # instance-scoped project name
-                body=body,
-                exported_project_format=exported_project_format,
-                content_type=content_type,
-                cls=lambda x, y, z: x,  # return PipelineResponse
-                headers=_headers,
-                params=_params,
-                **kwargs,
-            )
-            await initial.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            # Final payload is at the ROOT of the jobs response
-            obj = _deserialize(ImportProjectState, pipeline_response.http_response.json())
-            if cls:
-                return cls(pipeline_response, obj, {})  # type: ignore[misc]
-            return obj
-
-        path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method = cast(
-                AsyncPollingMethod,
-                AsyncJobsPollingMethod(
-                    polling_interval=lro_delay,
-                    path_format_arguments=path_format_arguments,  # resolves {Endpoint} in Operation-Location
-                    **kwargs,
-                ),
-            )
-        elif polling is False:
-            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else:
-            polling_method = polling  # user-supplied async polling method
-
-        if cont_token:
-            return AsyncLROPoller[ImportProjectState].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-
-        return AsyncLROPoller[ImportProjectState](
-            self._client,
-            initial,  # type: ignore
-            get_long_running_output,
-            polling_method,
+        return await super()._begin_import_method(
+            project_name=self._project_name,
+            body=body,
+            exported_project_format=exported_project_format,
+            content_type=content_type,
+            **kwargs,
         )
 
     @overload

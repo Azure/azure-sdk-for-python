@@ -149,7 +149,7 @@ class DeploymentOperations(DeploymentOperationsGenerated):
         *,
         content_type: str = "application/json",
         **kwargs: Any,
-    ) -> AsyncLROPoller[DeploymentState]:
+    ) -> AsyncLROPoller[None]:
         """Creates a new deployment or replaces an existing one.
 
         :param deployment_name: The name of the specific deployment of the project to use. Required.
@@ -159,15 +159,15 @@ class DeploymentOperations(DeploymentOperationsGenerated):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
         Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns DeploymentState.
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.language.conversations.authoring.models.DeploymentState]
+        :return: An instance of AsyncLROPoller that returns None.
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def begin_deploy_project(
         self, deployment_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[DeploymentState]:
+    ) -> AsyncLROPoller[None]:
         """Creates a new deployment or replaces an existing one.
 
         :param deployment_name: The name of the specific deployment of the project to use. Required.
@@ -177,15 +177,15 @@ class DeploymentOperations(DeploymentOperationsGenerated):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
         Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns DeploymentState.
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.language.conversations.authoring.models.DeploymentState]
+        :return: An instance of AsyncLROPoller that returns None.
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def begin_deploy_project(
         self, deployment_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[DeploymentState]:
+    ) -> AsyncLROPoller[None]:
         """Creates a new deployment or replaces an existing one.
 
         :param deployment_name: The name of the specific deployment of the project to use. Required.
@@ -195,85 +195,31 @@ class DeploymentOperations(DeploymentOperationsGenerated):
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
         Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns DeploymentState.
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.language.conversations.authoring.models.DeploymentState]
+        :return: An instance of AsyncLROPoller that returns None.
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
     async def begin_deploy_project(
-        self, deployment_name: str, body: Union[CreateDeploymentDetails, JSON, IO[bytes]], **kwargs: Any
-    ) -> AsyncLROPoller[DeploymentState]:
+        self, deployment_name: str, body: Union[CreateDeploymentDetails, JSON, IO[bytes]], *, content_type: str = "application/json", **kwargs: Any
+    ) -> AsyncLROPoller[None]:
         """Creates a new deployment or replaces an existing one.
 
         :param deployment_name: The name of the specific deployment of the project to use. Required.
         :type deployment_name: str
         :param body: The new deployment info. Required.
         :type body: ~azure.ai.language.conversations.authoring.models.CreateDeploymentDetails or JSON or IO[bytes]
-        :return: An instance of AsyncLROPoller that returns DeploymentState.
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.language.conversations.authoring.models.DeploymentState]
+        :return: An instance of AsyncLROPoller that returns None.
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[DeploymentState] = kwargs.pop("cls", None)
-        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-
-        if cont_token is None:
-            initial = await self._deploy_project_initial(
-                project_name=self._project_name,
-                deployment_name=deployment_name,
-                body=body,
-                content_type=content_type,
-                cls=lambda x, y, z: x,  # return PipelineResponse
-                headers=_headers,
-                params=_params,
-                **kwargs,
-            )
-            await initial.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            deserialized = _deserialize(DeploymentState, pipeline_response.http_response.json())
-            if cls:
-                return cls(pipeline_response, deserialized, {})  # type: ignore[misc]
-            return deserialized
-
-        path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method = cast(
-                AsyncPollingMethod,
-                AsyncJobsPollingMethod(
-                    polling_interval=lro_delay,
-                    path_format_arguments=path_format_arguments,
-                    **kwargs,
-                ),
-            )
-        elif polling is False:
-            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else:
-            polling_method = polling
-
-        if cont_token:
-            return AsyncLROPoller[DeploymentState].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-
-        return AsyncLROPoller[DeploymentState](
-            self._client,
-            initial,  # type: ignore
-            get_long_running_output,
-            polling_method,
+        return await super()._begin_deploy_project(
+            project_name=self._project_name,
+            deployment_name=deployment_name,
+            body=body,
+            content_type=content_type,
+            **kwargs,
         )
 
     @distributed_trace
