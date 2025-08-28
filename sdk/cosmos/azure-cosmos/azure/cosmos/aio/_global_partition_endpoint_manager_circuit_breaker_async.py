@@ -21,6 +21,7 @@
 
 """Internal class for global endpoint manager for circuit breaker.
 """
+import logging
 from typing import TYPE_CHECKING, Optional
 
 from azure.cosmos._constants import _Constants
@@ -36,6 +37,7 @@ from azure.cosmos.http_constants import HttpHeaders
 if TYPE_CHECKING:
     from azure.cosmos.aio._cosmos_client_connection_async import CosmosClientConnection
 
+logger = logging.getLogger("azure.cosmos._GlobalPartitionEndpointManagerForCircuitBreakerAsync")
 
 # pylint: disable=protected-access
 class _GlobalPartitionEndpointManagerForCircuitBreakerAsync(_GlobalEndpointManager):
@@ -58,6 +60,7 @@ class _GlobalPartitionEndpointManagerForCircuitBreakerAsync(_GlobalEndpointManag
                 "Circuit breaker cannot be performed.")
             return None
         properties = self.client._container_properties_cache[container_rid]
+        logger.info("Container Properties = " +  str(properties))
         # get relevant information from container cache to get the overlapping ranges
         container_link = properties["container_link"]
         partition_key_definition = properties["partitionKey"]
@@ -66,13 +69,16 @@ class _GlobalPartitionEndpointManagerForCircuitBreakerAsync(_GlobalEndpointManag
         options = {}
         if request.excluded_locations:
             options[_Constants.Kwargs.EXCLUDED_LOCATIONS] = request.excluded_locations
-        if HttpHeaders.PartitionKey in request.headers:
-            partition_key_value = request.headers[HttpHeaders.PartitionKey]
+        if request.pk_val:
+            partition_key_value = request.pk_val
+            logger.info("PartitionKey Value = " + str(partition_key_value))
             # get the partition key range for the given partition key
             epk_range = [partition_key._get_epk_range_for_partition_key(partition_key_value)]
+            logger.info("EPK_RANGE = " +  str(epk_range[0]))
             partition_ranges = await (self.client._routing_map_provider
                                       .get_overlapping_ranges(container_link, epk_range, options))
             partition_range = Range.PartitionKeyRangeToRange(partition_ranges[0])
+            logger.info("Partition Range = " +  str(partition_range))
         elif HttpHeaders.PartitionKeyRangeID in request.headers:
             pk_range_id = request.headers[HttpHeaders.PartitionKeyRangeID]
             epk_range = await (self.client._routing_map_provider
