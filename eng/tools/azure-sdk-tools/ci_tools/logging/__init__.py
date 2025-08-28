@@ -27,13 +27,12 @@ def configure_logging(
     elif args.verbose:
         numeric_level = logging.DEBUG
 
-    # parse LOG_LEVEL environment variable
-    log_level_env = os.getenv("LOG_LEVEL")
-    if not args.log_level and log_level_env:
-        numeric_level = getattr(logging, log_level_env.upper(), None)
+    # use log level environment variable
+    if not args.log_level:
+        numeric_level = getattr(logging, LOGLEVEL.upper(), None)
 
     if not isinstance(numeric_level, int):
-        raise ValueError(f"Invalid log level: {level}")
+        raise ValueError(f"Invalid log level: {numeric_level}")
     logger.setLevel(numeric_level)
 
     # Propagate logger config globally if needed
