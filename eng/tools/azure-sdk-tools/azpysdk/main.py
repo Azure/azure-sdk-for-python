@@ -56,7 +56,6 @@ def build_parser() -> argparse.ArgumentParser:
     )
     log_group.add_argument(
         "--log-level",
-        default="INFO",
         choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
         help="Set the logging level."
     )

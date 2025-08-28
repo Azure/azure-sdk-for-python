@@ -18,18 +18,15 @@ def configure_logging(
     """
     Configures the shared logger. Should be called **once** at startup.
     """
-    
+    # use cli arg > log level arg > env var
     numeric_level = getattr(logging, level.upper(), None)
 
-    # parse cli arg
     if args.quiet:
         numeric_level = logging.ERROR
     elif args.verbose:
         numeric_level = logging.DEBUG
-
-    # use log level environment variable
-    if not args.log_level:
-        numeric_level = getattr(logging, LOGLEVEL.upper(), None)
+    elif not args.log_level:
+        numeric_level = LOGLEVEL
 
     if not isinstance(numeric_level, int):
         raise ValueError(f"Invalid log level: {level}")
