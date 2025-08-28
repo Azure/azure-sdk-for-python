@@ -45,20 +45,10 @@ class Check(abc.ABC):
         """
         return 0
 
-    def create_venv(self, isolate: bool,venv_location: Optional[str]) -> str:
+    def create_venv(self, isolate: bool, venv_location: str) -> str:
         """Abstraction for creating a virtual environment."""
         if (isolate):
-
-            venv_cmd = get_venv_call()
-            if not venv_location:
-                venv_location = os.path.join(REPO_ROOT, f".venv_{args.command}")
-
-            # todo, make this a consistent directory based on the command
-            # I'm seriously thinking we should move handle_venv within each check's main(),
-            # which will mean that we will _know_ what folder we're in.
-            # however, that comes at the cost of not having every check be able to handle one or multiple packages
-            # I don't want to get into an isolation loop where every time we need a new venv, we create it, call it,
-            # and now as we foreach across the targeted packages we've lost our spot.
+            venv_cmd = get_venv_call(sys.executable)
             check_call(venv_cmd + [venv_location])
 
             # TODO: we should reuse part of build_whl_for_req to integrate with PREBUILT_WHL_DIR so that we don't have to fresh build for each
@@ -66,10 +56,7 @@ class Check(abc.ABC):
             install_into_venv(venv_location, os.path.join(REPO_ROOT, "eng/tools/azure-sdk-tools"), False, "build")
             venv_python_exe = get_venv_python(venv_location)
 
-            # here is a newly prepped virtual environment (which includes azure-sdk-tools)
             return venv_python_exe
-            # command_args = [venv_python_exe, "-m", "azpysdk.main"] + sys.argv[1:]
-            # check_call(command_args)
 
         # if we don't need to isolate, just return the python executable that we're invoking
         return sys.executable
