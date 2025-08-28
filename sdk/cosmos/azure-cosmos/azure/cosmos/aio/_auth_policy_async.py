@@ -4,7 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 
-from typing import Any, MutableMapping, TypeVar, cast
+from typing import Any, MutableMapping, TypeVar, cast, Optional
 
 from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
 from azure.core.pipeline import PipelineRequest
@@ -20,7 +20,7 @@ HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
 class AsyncCosmosBearerTokenCredentialPolicy(AsyncBearerTokenCredentialPolicy):
     AadDefaultScope = "https://cosmos.azure.com/.default"
 
-    def __init__(self, credential, account_scope: str, override_scope: str):
+    def __init__(self, credential, account_scope: str, override_scope: Optional[str] = None):
         self._account_scope = account_scope
         self._override_scope = override_scope
         self._current_scope = override_scope or account_scope
@@ -42,25 +42,11 @@ class AsyncCosmosBearerTokenCredentialPolicy(AsyncBearerTokenCredentialPolicy):
         :type request: ~azure.core.pipeline.PipelineRequest
         :raises: :class:`~azure.core.exceptions.ServiceRequestError`
         """
-        await self.authorize_request(request)
-        await super().on_request(request)
-        # The None-check for self._token is done in the parent on_request
-        self._update_headers(request.http_request.headers, cast(AccessToken, self._token).token)
-
-    async def authorize_request(self, request: PipelineRequest[HTTPRequestType], *scopes: str, **kwargs: Any) -> None:
-        """Acquire a token from the credential and authorize the request with it.
-
-        Keyword arguments are passed to the credential's get_token method. The token will be cached and used to
-        authorize future requests.
-
-        :param ~azure.core.pipeline.PipelineRequest request: the request
-        :param str scopes: required scopes of authentication
-        """
         tried_fallback = False
         while True:
             try:
-                await super().authorize_request(request, self._current_scope, **kwargs)
-                # The None-check for self._token is done in the parent authorize_request
+                await super().on_request(request)
+                # The None-check for self._token is done in the parent on_request
                 self._update_headers(request.http_request.headers, cast(AccessToken, self._token).token)
                 break
             except Exception as ex:
@@ -71,7 +57,22 @@ class AsyncCosmosBearerTokenCredentialPolicy(AsyncBearerTokenCredentialPolicy):
                         self._current_scope != self.AadDefaultScope and
                         "AADSTS500011" in str(ex)
                 ):
+                    self._scopes = (self.AadDefaultScope,)
                     self._current_scope = self.AadDefaultScope
                     tried_fallback = True
                     continue
                 raise
+
+    async def authorize_request(self, request: PipelineRequest[HTTPRequestType], *scopes: str, **kwargs: Any) -> None:
+        """Acquire a token from the credential and authorize the request with it.
+
+        Keyword arguments are passed to the credential's get_token method. The token will be cached and used to
+        authorize future requests.
+
+        :param ~azure.core.pipeline.PipelineRequest request: the request
+        :param str scopes: required scopes of authentication
+        """
+
+        await super().authorize_request(request, self._current_scope, **kwargs)
+        # The None-check for self._token is done in the parent authorize_request
+        self._update_headers(request.http_request.headers, cast(AccessToken, self._token).token)
