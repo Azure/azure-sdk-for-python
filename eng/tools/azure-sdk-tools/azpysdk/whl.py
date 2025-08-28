@@ -1,5 +1,4 @@
 import argparse
-import logging
 import tempfile
 import os
 from typing import Optional, List, Any
@@ -12,7 +11,7 @@ from ci_tools.functions import discover_targeted_packages, is_error_code_5_allow
 from ci_tools.variables import set_envvar_defaults
 from ci_tools.parsing import ParsedSetup
 from ci_tools.scenario.generation import create_package_and_install
-
+from ci_tools.logging import logger
 
 class whl(Check):
     def __init__(self) -> None:
@@ -58,7 +57,7 @@ class whl(Check):
             )
 
             # todo, come up with a good pattern for passing all the additional args after -- to pytest
-            logging.info(f"Invoke pytest for {pkg}")
+            logger.info(f"Invoke pytest for {pkg}")
 
             exit_code = pytest_main(
                 [pkg]
@@ -66,9 +65,9 @@ class whl(Check):
 
             if exit_code != 0:
                 if exit_code == 5 and is_error_code_5_allowed(parsed.folder, parsed.name):
-                    logging.info("Exit code 5 is allowed, continuing execution.")
+                    logger.info("Exit code 5 is allowed, continuing execution.")
                 else:
-                    logging.info(f"pytest failed with exit code {exit_code}.")
+                    logger.info(f"pytest failed with exit code {exit_code}.")
                     results.append(exit_code)
 
         # final result is the worst case of all the results

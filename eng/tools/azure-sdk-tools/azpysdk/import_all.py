@@ -69,7 +69,7 @@ class import_all(Check):
 
             if should_run_import_all(parsed.name):
                 # import all modules from current package
-                logging.info(
+                logger.info(
                     "Importing all modules from namespace [{0}] to verify dependency".format(
                         parsed.namespace
                     )
@@ -82,8 +82,8 @@ class import_all(Check):
                 ]
 
                 outcomes.append(check_call(commands))
-                logging.info("Verified module dependency, no issues found")
+                logger.info("Verified module dependency, no issues found")
             else:
-                logging.info("Package {} is excluded from dependency check".format(parsed.name))
+                logger.info("Package {} is excluded from dependency check".format(parsed.name))
 
         return max(outcomes) if outcomes else 0
