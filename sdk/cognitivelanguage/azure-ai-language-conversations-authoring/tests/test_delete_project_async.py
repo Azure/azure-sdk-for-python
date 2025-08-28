@@ -6,8 +6,8 @@ import pytest
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.core.credentials import AzureKeyCredential
+from azure.core.exceptions import HttpResponseError
 from azure.ai.language.conversations.authoring.aio import ConversationAuthoringClient
-from azure.ai.language.conversations.authoring.models import ProjectDeletionState  # optional (type hint only)
 
 ConversationsPreparer = functools.partial(
     EnvironmentVariableLoader,
@@ -28,22 +28,18 @@ class TestConversationsDeleteProjectAsync(TestConversationsAsync):
     @pytest.mark.asyncio
     async def test_delete_project_async(self, authoring_endpoint, authoring_key):
         client = await self.create_client(authoring_endpoint, authoring_key)
-        try:
+        async with client:
             project_name = "PythonImportProject0820"
-            # Act: begin delete (LRO)
+
+            # Begin delete; LRO now returns None on success
             poller = await client.begin_delete_project(project_name)
 
-            # Wait for completion and get the ProjectDeletionState
-            result = await poller.result()
+            try:
+                await poller.result()  # completes with None; raises on failure
+            except HttpResponseError as e:
+                msg = getattr(getattr(e, "error", None), "message", str(e))
+                print(f"Operation failed: {msg}")
+                raise
 
-            assert result.status == "succeeded", f"Deletion failed with status: {result.status}"
-            # Print details of the ProjectDeletionState
-            print(f"Job ID: {result.job_id}")
-            print(f"Status: {result.status}")
-            print(f"Created on: {result.created_on}")
-            print(f"Last updated on: {result.last_updated_on}")
-            print(f"Expires on: {result.expires_on}")
-            print(f"Warnings: {result.warnings}")
-            print(f"Errors: {result.errors}")
-        finally:
-            await client.close()
+            # Success -> poller completed
+            print(f"Delete completed. done={poller.done()} status={poller.status()}")

@@ -2,11 +2,11 @@
 import functools
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
 from azure.core.credentials import AzureKeyCredential
+from azure.core.exceptions import HttpResponseError
 from azure.ai.language.conversations.authoring import ConversationAuthoringClient
 from azure.ai.language.conversations.authoring.models import (
     SwapDeploymentsDetails,
-    SwapDeploymentsState,
-)  # adjust if your SDK names differ
+) 
 
 ConversationsPreparer = functools.partial(
     EnvironmentVariableLoader,
@@ -39,14 +39,12 @@ class TestConversationsSwapDeploymentsSync(TestConversations):
 
         # Act: begin swap and wait for completion
         poller = project_client.project.begin_swap_deployments(body=details)
-        result: SwapDeploymentsState = poller.result()
+        try:
+            poller.result()  # completes with None; raises on failure
+        except HttpResponseError as e:
+            msg = getattr(getattr(e, "error", None), "message", str(e))
+            print(f"Operation failed: {msg}")
+            raise
 
-        # Assert + print LRO state
-        assert result.status == "succeeded", f"Swap failed with status: {result.status}"
-        print(f"Job ID: {result.job_id}")
-        print(f"Status: {result.status}")
-        print(f"Created on: {result.created_on}")
-        print(f"Last updated on: {result.last_updated_on}")
-        print(f"Expires on: {result.expires_on}")
-        print(f"Warnings: {result.warnings}")
-        print(f"Errors: {result.errors}")
+        # Success -> poller completed
+        print(f"Swap deployments completed. done={poller.done()} status={poller.status()}")

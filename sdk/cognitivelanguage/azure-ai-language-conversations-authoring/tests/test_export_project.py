@@ -4,6 +4,7 @@ import pytest
 
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
 from azure.core.credentials import AzureKeyCredential
+from azure.core.exceptions import HttpResponseError
 from azure.ai.language.conversations.authoring import ConversationAuthoringClient
 from azure.ai.language.conversations.authoring.models import (
     ExportedProjectFormat,
@@ -21,7 +22,6 @@ class TestConversations(AzureRecordedTestCase):
     def create_client(self, endpoint, key):
         return ConversationAuthoringClient(endpoint, AzureKeyCredential(key))
 
-
 class TestConversationsExportCase(TestConversations):
     @ConversationsPreparer()
     @recorded_by_proxy
@@ -36,15 +36,12 @@ class TestConversationsExportCase(TestConversations):
             exported_project_format=ExportedProjectFormat.CONVERSATION,
         )
 
-        # Wait for completion and get the ExportProjectState
-        result = poller.result()
+        try:
+            poller.result()  # completes with None; raises on failure
+        except HttpResponseError as e:
+            msg = getattr(getattr(e, "error", None), "message", str(e))
+            print(f"Operation failed: {msg}")
+            raise
 
-        assert result.status == "succeeded", f"Export failed with status: {result.status}"
-        # Print details of the ExportProjectState
-        print(f"Job ID: {result.job_id}")
-        print(f"Status: {result.status}")
-        print(f"Created on: {result.created_on}")
-        print(f"Last updated on: {result.last_updated_on}")
-        print(f"Expires on: {result.expires_on}")
-        print(f"Warnings: {result.warnings}")
-        print(f"Errors: {result.errors}")
+        # Success -> poller completed
+        print(f"Export completed. done={poller.done()} status={poller.status()}")

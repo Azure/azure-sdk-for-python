@@ -4,6 +4,7 @@ import pytest
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.core.credentials import AzureKeyCredential
+from azure.core.exceptions import HttpResponseError
 from azure.ai.language.conversations.authoring.aio import ConversationAuthoringClient
 from azure.ai.language.conversations.authoring.models import LoadSnapshotState
 
@@ -26,7 +27,7 @@ class TestConversationsLoadSnapshotPrintResultAsync(TestConversationsAsync):
     @pytest.mark.asyncio
     async def test_load_snapshot_async(self, authoring_endpoint, authoring_key):
         client = await self.create_client(authoring_endpoint, authoring_key)
-        try:
+        async with client:
             project_name = "EmailApp"
             trained_model_label = "Model1"
 
@@ -34,15 +35,12 @@ class TestConversationsLoadSnapshotPrintResultAsync(TestConversationsAsync):
 
             # Start LRO and wait for completion
             poller = await project_client.trained_model.begin_load_snapshot(trained_model_label)
-            result: LoadSnapshotState = await poller.result()
+            try:
+                await poller.result()  # completes with None; raises on failure
+            except HttpResponseError as e:
+                msg = getattr(getattr(e, "error", None), "message", str(e))
+                print(f"Operation failed: {msg}")
+                raise
 
-            # Print properties from the LRO result (LoadSnapshotState)
-            print(f"Job ID: {result.job_id}")
-            print(f"Status: {result.status}")
-            print(f"Created on: {result.created_on}")
-            print(f"Last updated on: {result.last_updated_on}")
-            print(f"Expires on: {result.expires_on}")
-            print(f"Warnings: {result.warnings}")
-            print(f"Errors: {result.errors}")
-        finally:
-            await client.close()
+            # Success -> poller completed
+            print(f"Load snapshot completed. done={poller.done()} status={poller.status()}")

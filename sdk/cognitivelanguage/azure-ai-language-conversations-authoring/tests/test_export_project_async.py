@@ -5,9 +5,9 @@ import pytest
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.core.credentials import AzureKeyCredential
+from azure.core.exceptions import HttpResponseError
 from azure.ai.language.conversations.authoring.aio import ConversationAuthoringClient
 from azure.ai.language.conversations.authoring.models import (
-    StringIndexType,
     ExportedProjectFormat,
 )
 
@@ -30,7 +30,7 @@ class TestConversationsExportCaseAsync(TestConversationsAsync):
     @pytest.mark.asyncio
     async def test_export_project_async(self, authoring_endpoint, authoring_key):
         client = await self.create_client(authoring_endpoint, authoring_key)
-        try:
+        async with client:
             project_name = "PythonImportProject0820"
             project_client = client.get_project_client(project_name)
 
@@ -40,17 +40,12 @@ class TestConversationsExportCaseAsync(TestConversationsAsync):
                 exported_project_format=ExportedProjectFormat.CONVERSATION,
             )
 
-            # Wait for completion and get the ExportProjectState
-            result = await poller.result()
+            try:
+                await poller.result()  # completes with None; raises on failure
+            except HttpResponseError as e:
+                msg = getattr(getattr(e, "error", None), "message", str(e))
+                print(f"Operation failed: {msg}")
+                raise
 
-            assert result.status == "succeeded", f"Export failed with status: {result.status}"
-            # Print details of the ExportProjectState
-            print(f"Job ID: {result.job_id}")
-            print(f"Status: {result.status}")
-            print(f"Created on: {result.created_on}")
-            print(f"Last updated on: {result.last_updated_on}")
-            print(f"Expires on: {result.expires_on}")
-            print(f"Warnings: {result.warnings}")
-            print(f"Errors: {result.errors}")
-        finally:
-            await client.close()
+            # Success -> poller completed
+            print(f"Export completed. done={poller.done()} status={poller.status()}")
