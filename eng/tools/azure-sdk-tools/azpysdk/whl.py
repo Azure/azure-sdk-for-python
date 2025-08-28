@@ -25,7 +25,7 @@ class whl(Check):
         parents = parent_parsers or []
         p = subparsers.add_parser("whl", parents=parents, help="Run the whl check")
         p.set_defaults(func=self.run)
-        # Add any additional arguments specific to WhlCheck here (do not re-add common handled by parents)
+        # TODO add mark_args, and other parameters
 
     def run(self, args: argparse.Namespace) -> int:
         """Run the whl check command."""
@@ -43,6 +43,8 @@ class whl(Check):
             # if isolation is required, the executable we get back will align with the venv
             # otherwise we'll just get sys.executable and install in current
             executable = self.handle_venv(args.isolate, args, venv_location=venv_location)
+            staging_directory = os.path.join(venv_location, ".staging")
+            os.makedirs(staging_directory, exist_ok=True)
 
             print(f"Invoking check with {executable}")
             dev_requirements = os.path.join(pkg, "dev_requirements.txt")
@@ -53,23 +55,21 @@ class whl(Check):
             else:
                 print("Skipping installing dev_requirements")
 
-            # TODO: make the staging area a folder under the venv_location
-            staging_area = tempfile.mkdtemp()
             create_package_and_install(
-                distribution_directory=staging_area,
+                distribution_directory=staging_directory,
                 target_setup=pkg,
                 skip_install=False,
                 cache_dir=None,
-                work_dir=staging_area,
+                work_dir=staging_directory,
                 force_create=False,
                 package_type="wheel",
                 pre_download_disabled=False,
                 python_executable=executable
             )
 
-            # todo, come up with a good pattern for passing all the additional args after -- to pytest
+            # TODO: split sys.argv[1:] on -- and pass in everything after the -- as additional arguments
+            # TODO: handle mark_args
             logging.info(f"Invoke pytest for {pkg}")
-            # + (["-m", args.mark_arg] if args.mark_arg else []) +
             exit_code = check_call(
                 [executable, "-m", "pytest", "."] + [
                     "-rsfE",
