@@ -53,18 +53,18 @@ class import_all(Check):
 
         for parsed in targeted:
             pkg = parsed.folder
-                
+            executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, pkg)
 
-            staging_area = tempfile.mkdtemp()
             create_package_and_install(
-                distribution_directory=staging_area,
+                distribution_directory=staging_directory,
                 target_setup=pkg,
                 skip_install=False,
                 cache_dir=None,
-                work_dir=staging_area,
+                work_dir=staging_directory,
                 force_create=False,
                 package_type="wheel",
                 pre_download_disabled=False,
+                python_executable=executable
             )
 
             if should_run_import_all(parsed.name):
@@ -76,7 +76,7 @@ class import_all(Check):
                 )
                 import_script_all = "from {0} import *".format(parsed.namespace)
                 commands = [
-                    sys.executable,
+                    executable,
                     "-c",
                     import_script_all
                 ]

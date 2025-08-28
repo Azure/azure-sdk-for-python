@@ -3,12 +3,12 @@ import logging
 import tempfile
 import os
 from typing import Optional, List, Any
-from pytest import main as pytest_main
 import sys
+from subprocess import run
 
 from .Check import Check
 
-from ci_tools.functions import discover_targeted_packages, is_error_code_5_allowed, pip_install
+from ci_tools.functions import is_error_code_5_allowed, pip_install
 from ci_tools.variables import set_envvar_defaults
 from ci_tools.parsing import ParsedSetup
 from ci_tools.scenario.generation import create_package_and_install
@@ -25,7 +25,7 @@ class whl(Check):
         parents = parent_parsers or []
         p = subparsers.add_parser("whl", parents=parents, help="Run the whl check")
         p.set_defaults(func=self.run)
-        # Add any additional arguments specific to WhlCheck here (do not re-add common handled by parents)
+        # TODO add mark_args, and other parameters
 
     def run(self, args: argparse.Namespace) -> int:
         """Run the whl check command."""
@@ -39,30 +39,47 @@ class whl(Check):
 
         for parsed in targeted:
             pkg = parsed.folder
+            executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, pkg)
 
+            print(f"Invoking check with {executable}")
             dev_requirements = os.path.join(pkg, "dev_requirements.txt")
 
             if os.path.exists(dev_requirements):
-                pip_install([f"-r", f"{dev_requirements}"], True, sys.executable)
+                print(f"Installing dev_requirements at {dev_requirements}")
+                pip_install([f"-r", f"{dev_requirements}"], True, executable, pkg)
+            else:
+                print("Skipping installing dev_requirements")
 
-            staging_area = tempfile.mkdtemp()
             create_package_and_install(
-                distribution_directory=staging_area,
+                distribution_directory=staging_directory,
                 target_setup=pkg,
                 skip_install=False,
                 cache_dir=None,
-                work_dir=staging_area,
+                work_dir=staging_directory,
                 force_create=False,
                 package_type="wheel",
                 pre_download_disabled=False,
+                python_executable=executable
             )
 
-            # todo, come up with a good pattern for passing all the additional args after -- to pytest
+            # TODO: split sys.argv[1:] on -- and pass in everything after the -- as additional arguments
+            # TODO: handle mark_args
             logging.info(f"Invoke pytest for {pkg}")
-
-            exit_code = pytest_main(
-                [pkg]
-            )
+            exit_code = run(
+                [executable, "-m", "pytest", "."] + [
+                    "-rsfE",
+                    f"--junitxml={pkg}/test-junit-{args.command}.xml",
+                    "--verbose",
+                    "--cov-branch",
+                    "--durations=10",
+                    "--ignore=azure",
+                    "--ignore-glob=.venv*",
+                    "--ignore=build",
+                    "--ignore=.eggs",
+                    "--ignore=samples"
+                ]
+                , cwd=pkg
+            ).returncode
 
             if exit_code != 0:
                 if exit_code == 5 and is_error_code_5_allowed(parsed.folder, parsed.name):
