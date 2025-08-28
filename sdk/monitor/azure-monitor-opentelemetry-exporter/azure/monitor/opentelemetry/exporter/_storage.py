@@ -133,7 +133,7 @@ class LocalFileStorage:
         return self
 
     # pylint: disable=redefined-builtin
-    def __exit__(self, type, value, traceback) -> None:
+    def __exit__(self, type, value, traceback) -> None:  # pyright: ignore
         self.close()
 
     def _maintenance_routine(self) -> None:
@@ -184,7 +184,7 @@ class LocalFileStorage:
         else:
             pass
 
-    def get(self) -> Optional[LocalFileBlob]:
+    def get(self) -> Optional[LocalFileBlob]:  # pyright: ignore
         if not self._enabled:
             return None
         cursor = self.gets()

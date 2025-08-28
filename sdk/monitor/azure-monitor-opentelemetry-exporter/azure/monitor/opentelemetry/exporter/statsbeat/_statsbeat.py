@@ -6,7 +6,7 @@ from azure.monitor.opentelemetry.exporter.statsbeat._manager import (
 )
 
 
-def collect_statsbeat_metrics(exporter) -> None:  # type: ignore
+def collect_statsbeat_metrics(exporter) -> None:  # pyright: ignore
     config = StatsbeatConfig.from_exporter(exporter)
     StatsbeatManager().initialize(config)
 

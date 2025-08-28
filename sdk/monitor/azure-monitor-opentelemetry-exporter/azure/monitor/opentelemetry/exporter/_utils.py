@@ -382,7 +382,7 @@ class Singleton(type):
     _instance = None
     _lock = threading.Lock()
 
-    def __call__(cls, *args, **kwargs):  # type: ignore
+    def __call__(cls, *args, **kwargs):  # pyright: ignore
         if not cls._instance:
             with cls._lock:
                 if not cls._instance:

@@ -76,7 +76,7 @@ class StatsbeatManager(metaclass=Singleton):
         self._meter_provider: Optional[MeterProvider] = None  # type: ignore
         self._config: Optional[StatsbeatConfig] = None  # type: ignore
 
-    def initialize(self, config: StatsbeatConfig) -> bool:
+    def initialize(self, config: StatsbeatConfig) -> bool:  # pyright: ignore
         # Initialize statsbeat collection with thread safety.
         if not is_statsbeat_enabled():
             return False
@@ -181,7 +181,7 @@ class StatsbeatManager(metaclass=Singleton):
 
             return shutdown_success
 
-    def reconfigure(self, new_config: StatsbeatConfig) -> bool:
+    def reconfigure(self, new_config: StatsbeatConfig) -> bool:  # pyright: ignore
         # Reconfigure statsbeat with new configuration.
         if not is_statsbeat_enabled():
             return False
