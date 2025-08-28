@@ -54,18 +54,6 @@ class mypy(Check):
             package_name = parsed.name
             print(f"Processing {package_name} for mypy check")
 
-            staging_area = tempfile.mkdtemp()
-            create_package_and_install(
-                distribution_directory=staging_area,
-                target_setup=package_dir,
-                skip_install=False,
-                cache_dir=None,
-                work_dir=staging_area,
-                force_create=False,
-                package_type="wheel",
-                pre_download_disabled=False,
-            )
-
             # install mypy
             try:
                 if (args.next):
