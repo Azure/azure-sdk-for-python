@@ -31,7 +31,7 @@ class StatsbeatConfig:
                  instrumentation_key: str,
                  disable_offline_storage: bool = False,
                  credential: Optional[Any] = None,
-                 distro_version: Optional[str] = None):
+                 distro_version: Optional[str] = None) -> None:
         self.endpoint = endpoint
         self.instrumentation_key = instrumentation_key
         self.connection_string = _get_stats_connection_string(endpoint)
@@ -41,7 +41,7 @@ class StatsbeatConfig:
         self.credential = credential
 
     @classmethod
-    def from_exporter(cls, exporter) -> 'StatsbeatConfig':
+    def from_exporter(cls, exporter: Any) -> 'StatsbeatConfig':
         # Create configuration from an exporter instance
         return cls(
             endpoint=exporter._endpoint,  # pylint: disable=protected-access
@@ -51,7 +51,7 @@ class StatsbeatConfig:
             distro_version=exporter._distro_version,  # pylint: disable=protected-access
         )
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: object) -> bool:
         # Compare two configurations for equality based on what can be changed via control plane.
         if not isinstance(other, StatsbeatConfig):
             return False
@@ -68,7 +68,7 @@ class StatsbeatConfig:
 class StatsbeatManager(metaclass=Singleton):
     """Thread-safe singleton manager for Statsbeat metrics collection with dynamic reconfiguration support."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         # Initialize instance attributes. Called only once due to Singleton metaclass.
         self._lock = threading.Lock()
         self._initialized: bool = False  # type: ignore
@@ -148,7 +148,7 @@ class StatsbeatManager(metaclass=Singleton):
             self._cleanup()
             return False
 
-    def _cleanup(self):
+    def _cleanup(self) -> None:
         # Clean up resources.
         if self._meter_provider:
             try:

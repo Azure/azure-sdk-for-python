@@ -62,7 +62,7 @@ def build_track_request(
 # fmt: on
 class AzureMonitorClientOperationsMixin(object):
 
-    def track(
+    def track(  # type: ignore
         self,
         body,  # type: List["_models.TelemetryItem"]
         **kwargs  # type: Any

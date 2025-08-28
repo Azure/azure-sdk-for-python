@@ -38,7 +38,7 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
 from azure.monitor.opentelemetry.exporter import _utils
 
 # Use a function to get VERSION lazily
-def _get_version():
+def _get_version() -> str:
     # Get VERSION using delayed import to avoid circular import.
     from azure.monitor.opentelemetry.exporter import VERSION
     return VERSION
@@ -277,7 +277,7 @@ class _StatsbeatMetrics:
 
         return observations
 
-    def _meets_long_interval_threshold(self, name) -> bool:
+    def _meets_long_interval_threshold(self, name: str) -> bool:
         with self._long_interval_lock:
             # if long interval threshold not met, it is not time to export
             # statsbeat metrics that are long intervals
@@ -289,7 +289,7 @@ class _StatsbeatMetrics:
             return True
 
     # pylint: disable=W0201
-    def init_non_initial_metrics(self):
+    def init_non_initial_metrics(self) -> None:
         # Network metrics - metrics related to request calls to ingestion service
         self._success_count = self._meter.create_observable_gauge(
             _REQ_SUCCESS_NAME[0],

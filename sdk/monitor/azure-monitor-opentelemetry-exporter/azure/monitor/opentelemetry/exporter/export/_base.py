@@ -155,12 +155,12 @@ class BaseExporter:
             config.http_logging_policy or HttpLoggingPolicy(**kwargs),
         ]
 
-        self.client = AzureMonitorClient(
+        self.client = AzureMonitorClient(  # type: ignore
             host=self._endpoint, connection_timeout=self._timeout, policies=policies, **kwargs
         )
         self.storage = None
         if not self._disable_offline_storage:
-            self.storage = LocalFileStorage(
+            self.storage = LocalFileStorage(  # type: ignore
                 path=self._storage_directory,
                 max_size=self._storage_max_size,
                 maintenance_period=self._storage_maintenance_period,
