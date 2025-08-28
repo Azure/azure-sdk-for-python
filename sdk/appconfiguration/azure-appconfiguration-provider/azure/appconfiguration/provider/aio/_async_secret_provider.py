@@ -7,6 +7,7 @@ import inspect
 from typing import Mapping, Any, TypeVar, Dict
 from azure.appconfiguration import SecretReferenceConfigurationSetting  # type:ignore # pylint:disable=no-name-in-module
 from azure.keyvault.secrets.aio import SecretClient
+from azure.core.exceptions import ServiceRequestError
 from .._secret_provider_base import _SecretProviderBase
 
 JSON = Mapping[str, Any]
@@ -23,9 +24,11 @@ class SecretProvider(_SecretProviderBase):
         self._keyvault_client_configs = kwargs.pop("keyvault_client_configs", {})
 
     async def resolve_keyvault_reference(self, config: SecretReferenceConfigurationSetting) -> str:
-        if config.key in self._secret_cache:
-            return self._secret_cache[config.key]
         keyvault_identifier, vault_url = self.resolve_keyvault_reference_base(config)
+        if keyvault_identifier.source_id in self._secret_cache:
+            return self._secret_cache[keyvault_identifier.source_id]
+        elif keyvault_identifier.source_id in self._secret_version_cache:
+            return self._secret_version_cache[keyvault_identifier.source_id]
 
         # pylint:disable=protected-access
         referenced_client = self._secret_clients.get(vault_url, None)
@@ -40,21 +43,24 @@ class SecretProvider(_SecretProviderBase):
         secret_value = None
 
         if referenced_client:
-            secret_value = (
-                await referenced_client.get_secret(keyvault_identifier.name, version=keyvault_identifier.version)
-            ).value
+            try:
+                secret_value = (
+                    await referenced_client.get_secret(keyvault_identifier.name, version=keyvault_identifier.version)
+                ).value
+            except ServiceRequestError as e:
+                raise ValueError("Failed to retrieve secret from Key Vault") from e
 
         if self._secret_resolver and secret_value is None:
-            result = self._secret_resolver(config.secret_id)
-            if inspect.isawaitable(result):
+            secret_value = self._secret_resolver(config.secret_id)
+            if inspect.isawaitable(secret_value):
                 # Secret resolver was async
-                secret_value = await result
-            else:
-                # Secret resolver was sync
-                secret_value = result
+                secret_value = await secret_value
 
         if secret_value:
-            self._secret_cache[config.key] = secret_value
+            if keyvault_identifier.version:
+                self._secret_version_cache[keyvault_identifier.source_id] = keyvault_identifier.version
+            else:
+                self._secret_cache[keyvault_identifier.source_id] = secret_value
             return secret_value
 
         raise ValueError("No Secret Client found for Key Vault reference %s" % (vault_url))

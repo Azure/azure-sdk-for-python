@@ -29,6 +29,7 @@ class _SecretProviderBase(Mapping[str, Union[str, JSON]]):
 
     def __init__(self, **kwargs: Any) -> None:
         self._secret_cache: Dict[str, Any] = {}
+        self._secret_version_cache: Dict[str, str] = {}
         self.uses_key_vault = (
             "keyvault_credential" in kwargs
             or ("keyvault_client_configs" in kwargs and len(kwargs.get("keyvault_client_configs", {})) > 0)
