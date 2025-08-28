@@ -37,7 +37,6 @@ from azure.cosmos.http_constants import HttpHeaders
 if TYPE_CHECKING:
     from azure.cosmos.aio._cosmos_client_connection_async import CosmosClientConnection
 
-logger = logging.getLogger("azure.cosmos._GlobalPartitionEndpointManagerForCircuitBreakerAsync")
 
 # pylint: disable=protected-access
 class _GlobalPartitionEndpointManagerForCircuitBreakerAsync(_GlobalEndpointManager):
@@ -60,7 +59,6 @@ class _GlobalPartitionEndpointManagerForCircuitBreakerAsync(_GlobalEndpointManag
                 "Circuit breaker cannot be performed.")
             return None
         properties = self.client._container_properties_cache[container_rid]
-        logger.info("Container Properties = " +  str(properties))
         # get relevant information from container cache to get the overlapping ranges
         container_link = properties["container_link"]
         partition_key_definition = properties["partitionKey"]

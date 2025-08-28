@@ -177,7 +177,7 @@ class WorkloadLoggerFilter(logging.Filter):
                 request_url_index = record.msg.find("Request URL:")
                 response_status_index = record.msg.find("Response status:")
                 if request_url_index == -1 and response_status_index == -1:
-                    return True        # Check if the required attributes exist in the log record
+                    return True
         if all(hasattr(record, attr) for attr in _REQUIRED_ATTRIBUTES):
             # Check the conditions
             # Check database account reads

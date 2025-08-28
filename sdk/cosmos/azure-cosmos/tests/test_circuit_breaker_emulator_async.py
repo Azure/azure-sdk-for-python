@@ -94,7 +94,7 @@ class TestCircuitBreakerEmulatorAsync:
         predicate = lambda r: (FaultInjectionTransportAsync.predicate_is_resource_type(r, ResourceType.Collection) and
                                FaultInjectionTransportAsync.predicate_is_operation_type(r, documents._OperationType.Delete) and
                                FaultInjectionTransportAsync.predicate_targets_region(r, uri_down))
-        if error:
+        if error is not None:
             custom_transport.add_fault(predicate, error)
         custom_setup = await self.setup_method_with_custom_transport(custom_transport, default_endpoint=self.host, multiple_write_locations=mm)
         setup = await self.setup_method_with_custom_transport(None, default_endpoint=self.host, multiple_write_locations=mm)
