@@ -14,8 +14,6 @@ import requests  # pylint: disable=networking-import-outside-azure-core-transpor
 from opentelemetry.metrics import CallbackOptions, Observation
 from opentelemetry.sdk.metrics import MeterProvider
 
-# Remove the VERSION import to avoid circular import
-# from azure.monitor.opentelemetry.exporter import VERSION
 from azure.monitor.opentelemetry.exporter._constants import (
     _ATTACH_METRIC_NAME,
     _FEATURE_METRIC_NAME,
@@ -41,7 +39,7 @@ from azure.monitor.opentelemetry.exporter import _utils
 
 # Use a function to get VERSION lazily
 def _get_version():
-    """Get VERSION using delayed import to avoid circular import."""
+    # Get VERSION using delayed import to avoid circular import.
     from azure.monitor.opentelemetry.exporter import VERSION
     return VERSION
 
@@ -126,7 +124,7 @@ class _StatsbeatMetrics:
         # Set the version if not already set using delayed import
         if _StatsbeatMetrics._COMMON_ATTRIBUTES["version"] is None:
             _StatsbeatMetrics._COMMON_ATTRIBUTES["version"] = _get_version()
-            
+
         self._ikey = instrumentation_key
         self._feature = _StatsbeatFeature.NONE
         if not disable_offline_storage:
@@ -149,12 +147,12 @@ class _StatsbeatMetrics:
             _FEATURE_METRIC_NAME[0]: sys.maxsize,
         }
         self._long_interval_lock = threading.Lock()
-        
+
         # Initialize common attributes and set values
         _StatsbeatMetrics._COMMON_ATTRIBUTES["cikey"] = instrumentation_key
         if _utils._is_attach_enabled():
             _StatsbeatMetrics._COMMON_ATTRIBUTES["attach"] = _AttachTypes.INTEGRATED
-        
+
         _StatsbeatMetrics._NETWORK_ATTRIBUTES["host"] = _shorten_host(endpoint)
         _StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"] = self._feature
         _StatsbeatMetrics._INSTRUMENTATION_ATTRIBUTES["feature"] = _utils.get_instrumentations()
@@ -205,7 +203,7 @@ class _StatsbeatMetrics:
             if _AKS_ARM_NAMESPACE_ID in os.environ:
                 rpId = os.environ.get(_AKS_ARM_NAMESPACE_ID, "")
             else:
-                rpId = os.environ.get(_KUBERNETES_SERVICE_HOST , "")
+                rpId = os.environ.get(_KUBERNETES_SERVICE_HOST, "")
         elif self._vm_retry and self._get_azure_compute_metadata():
             # VM
             rp = _RP_Names.VM.value

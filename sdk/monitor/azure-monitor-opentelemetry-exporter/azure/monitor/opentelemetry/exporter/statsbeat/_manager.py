@@ -25,8 +25,8 @@ logger = logging.getLogger(__name__)
 
 class StatsbeatConfig:
     """Configuration class for Statsbeat metrics collection."""
-    
-    def __init__(self, 
+
+    def __init__(self,
                  endpoint: str,
                  instrumentation_key: str,
                  disable_offline_storage: bool = False,
@@ -42,26 +42,26 @@ class StatsbeatConfig:
 
     @classmethod
     def from_exporter(cls, exporter) -> 'StatsbeatConfig':
-        """Create configuration from an exporter instance."""
+        # Create configuration from an exporter instance
         return cls(
-            endpoint=exporter._endpoint,
-            instrumentation_key=exporter._instrumentation_key,
-            disable_offline_storage=exporter._disable_offline_storage,
-            credential=exporter._credential,
-            distro_version=exporter._distro_version,
+            endpoint=exporter._endpoint,  # pylint: disable=protected-access
+            instrumentation_key=exporter._instrumentation_key,  # pylint: disable=protected-access
+            disable_offline_storage=exporter._disable_offline_storage,  # pylint: disable=protected-access
+            credential=exporter._credential,  # pylint: disable=protected-access
+            distro_version=exporter._distro_version,  # pylint: disable=protected-access
         )
-    
+
     def __eq__(self, other) -> bool:
-        """Compare two configurations for equality based on what can be changed via control plane."""
+        # Compare two configurations for equality based on what can be changed via control plane.
         if not isinstance(other, StatsbeatConfig):
             return False
         return (
             self.connection_string == other.connection_string and
             self.disable_offline_storage == other.disable_offline_storage
         )
-    
+
     def __hash__(self) -> int:
-        """Hash based on connection string and offline storage setting."""
+        # Hash based on connection string and offline storage setting.
         return hash((self.connection_string, self.disable_offline_storage))
 
 
@@ -69,19 +69,18 @@ class StatsbeatManager(metaclass=Singleton):
     """Thread-safe singleton manager for Statsbeat metrics collection with dynamic reconfiguration support."""
 
     def __init__(self):
-        """Initialize instance attributes. Called only once due to Singleton metaclass."""
-        # Instance-level attributes
+        # Initialize instance attributes. Called only once due to Singleton metaclass.
         self._lock = threading.Lock()
         self._initialized: bool = False  # type: ignore
         self._metrics: Optional[_StatsbeatMetrics] = None  # type: ignore
         self._meter_provider: Optional[MeterProvider] = None  # type: ignore
         self._config: Optional[StatsbeatConfig] = None  # type: ignore
-    
+
     def initialize(self, config: StatsbeatConfig) -> bool:
-        """Initialize statsbeat collection with thread safety."""
+        # Initialize statsbeat collection with thread safety.
         if not is_statsbeat_enabled():
             return False
-            
+
         with self._lock:
             if self._initialized:
                 # If already initialized with the same config, return True
@@ -89,11 +88,11 @@ class StatsbeatManager(metaclass=Singleton):
                     return True
                 # If config is different, reconfigure
                 return self._reconfigure(config)
-            
+
             return self._do_initialize(config)
-    
+
     def _do_initialize(self, config: StatsbeatConfig) -> bool:
-        """Internal initialization method."""
+        # Internal initialization method.
         try:
             # Create statsbeat exporter
             # Use delayed import to avoid circular import
@@ -110,19 +109,19 @@ class StatsbeatManager(metaclass=Singleton):
                 statsbeat_exporter,
                 export_interval_millis=_get_stats_short_export_interval() * 1000, # 15m by default
             )
-            
+
             # Create meter provider
             self._meter_provider = MeterProvider(
                 metric_readers=[reader],
                 resource=Resource.get_empty(),
             )
-            
+
             # long_interval_threshold represents how many collects for short interval
             # should have passed before a long interval collect
             long_interval_threshold = (
                 _get_stats_long_export_interval() // _get_stats_short_export_interval()
             )
-            
+
             # Create statsbeat metrics
             self._metrics = _StatsbeatMetrics(
                 self._meter_provider,
@@ -133,24 +132,24 @@ class StatsbeatManager(metaclass=Singleton):
                 config.credential is not None,
                 config.distro_version,
             )
-            
+
             # Force initial flush and initialize non-initial metrics
             self._meter_provider.force_flush()
             self._metrics.init_non_initial_metrics()
-            
+
             self._config = config
             self._initialized = True
             return True
-            
+
         except Exception as e:  # pylint: disable=broad-except
             # Log the error for debugging
             logger.warning("Failed to initialize statsbeat: %s", e)
             # Clean up on failure
             self._cleanup()
             return False
-    
+
     def _cleanup(self):
-        """Clean up resources."""
+        # Clean up resources.
         if self._meter_provider:
             try:
                 self._meter_provider.shutdown()
@@ -160,13 +159,13 @@ class StatsbeatManager(metaclass=Singleton):
         self._metrics = None
         self._config = None
         self._initialized = False
-    
+
     def shutdown(self) -> bool:
-        """Shutdown statsbeat collection with thread safety."""
+        # Shutdown statsbeat collection with thread safety.
         with self._lock:
             if not self._initialized:
                 return False
-            
+
             shutdown_success = False
             try:
                 if self._meter_provider is not None:
@@ -176,30 +175,30 @@ class StatsbeatManager(metaclass=Singleton):
                 pass
             finally:
                 self._cleanup()
-            
+
             if shutdown_success:
                 set_statsbeat_shutdown(True)  # Use the proper setter function
-            
+
             return shutdown_success
-    
+
     def reconfigure(self, new_config: StatsbeatConfig) -> bool:
-        """Reconfigure statsbeat with new configuration."""
+        # Reconfigure statsbeat with new configuration.
         if not is_statsbeat_enabled():
             return False
-            
+
         with self._lock:
             if not self._initialized:
                 # If not initialized, just initialize with new config
                 return self._do_initialize(new_config)
-            
+
             # If same config, no need to reconfigure
             if self._config and self._config == new_config:
                 return True
-                
+
             return self._reconfigure(new_config)
-    
+
     def _reconfigure(self, new_config: StatsbeatConfig) -> bool:
-        """Internal reconfiguration method."""
+        # Internal reconfiguration method.
         # Shutdown current instance with timeout
         if self._meter_provider:
             try:
@@ -208,29 +207,17 @@ class StatsbeatManager(metaclass=Singleton):
                 self._meter_provider.shutdown(timeout_millis=5000)
             except Exception:  # pylint: disable=broad-except
                 pass
-        
+
         # Reset state but keep initialized=True
         self._meter_provider = None
         self._metrics = None
         self._config = None
-        
+
         # Initialize with new config
         success = self._do_initialize(new_config)
-        
+
         if not success:
             # If reinitialization failed, mark as not initialized
             self._initialized = False
-        
+
         return success
-
-
-# Global convenience functions
-def collect_statsbeat_metrics(exporter) -> None:
-    """Collect statsbeat metrics from an exporter."""
-    config = StatsbeatConfig.from_exporter(exporter)
-    StatsbeatManager().initialize(config)
-
-
-def shutdown_statsbeat_metrics() -> bool:
-    """Shutdown statsbeat collection globally."""
-    return StatsbeatManager().shutdown()

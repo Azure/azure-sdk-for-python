@@ -160,12 +160,12 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
         # When Metrics to Log Analytics is disabled, only send Standard metrics and _OTELRESOURCE_
         if not self._metrics_to_log_analytics and name not in _AUTOCOLLECTED_INSTRUMENT_NAMES:
             return None
-            
+
         # Apply statsbeat metric name mapping if this is a statsbeat exporter
         final_metric_name = name
         if self._is_sdkstats and name in _STATSBEAT_METRIC_NAME_MAPPINGS:
             final_metric_name = _STATSBEAT_METRIC_NAME_MAPPINGS[name]
-            
+
         envelope = _convert_point_to_envelope(point, final_metric_name, resource, scope)
         if name in _AUTOCOLLECTED_INSTRUMENT_NAMES:
             envelope = _handle_std_metric_envelope(envelope, name, point.attributes)  # type: ignore
