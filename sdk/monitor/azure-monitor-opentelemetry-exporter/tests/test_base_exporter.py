@@ -510,6 +510,227 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(format_ti.data.base_type, "RequestData")
         self.assertEqual(req_data.__dict__.items(), format_ti.data.base_data.__dict__.items())
 
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._utils._track_dropped_items")
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._utils._track_dropped_items")
+    def test_handle_transmit_from_storage_success_result(self, mock_track_dropped1, mock_track_dropped2):
+        """Test that when storage.put() returns StorageExportResult.LOCAL_FILE_BLOB_SUCCESS,
+        the method continues without any special handling."""
+        exporter = BaseExporter(disable_offline_storage=False)
+        mock_customer_sdkstats = mock.Mock()
+        exporter._customer_sdkstats_metrics = mock_customer_sdkstats
+        exporter._should_collect_customer_sdkstats = mock.Mock(return_value=True)
+        
+        # Mock storage.put() to return success
+        exporter.storage = mock.Mock()
+        exporter.storage.put.return_value = StorageExportResult.LOCAL_FILE_BLOB_SUCCESS
+        
+        test_envelopes = [TelemetryItem(name="test", time=datetime.now())]
+        serialized_envelopes = [envelope.as_dict() for envelope in test_envelopes]
+        exporter._handle_transmit_from_storage(test_envelopes, ExportResult.FAILED_RETRYABLE)
+        
+        # Verify storage.put was called with the serialized envelopes
+        exporter.storage.put.assert_called_once_with(serialized_envelopes)
+        # Verify that no dropped items were tracked (since it was a success)
+        mock_track_dropped1.assert_not_called()
+        mock_track_dropped2.assert_not_called()
+        # Verify that the customer sdkstats wasn't invoked
+        mock_customer_sdkstats.assert_not_called()
+
+    def test_handle_transmit_from_storage_success_triggers_transmit(self):
+        exporter = BaseExporter(disable_offline_storage=False)
+        
+        with mock.patch.object(exporter, '_transmit_from_storage') as mock_transmit_from_storage:
+            test_envelopes = [TelemetryItem(name="test", time=datetime.now())]
+            
+            exporter._handle_transmit_from_storage(test_envelopes, ExportResult.SUCCESS)
+            
+            mock_transmit_from_storage.assert_called_once()
+
+    def test_handle_transmit_from_storage_no_storage(self):
+        exporter = BaseExporter(disable_offline_storage=True)
+        
+        self.assertIsNone(exporter.storage)
+        
+        test_envelopes = [TelemetryItem(name="test", time=datetime.now())]
+        
+        exporter._handle_transmit_from_storage(test_envelopes, ExportResult.SUCCESS)
+        exporter._handle_transmit_from_storage(test_envelopes, ExportResult.FAILED_RETRYABLE)
+
+    def test_transmit_from_storage_no_storage(self):
+        exporter = BaseExporter(disable_offline_storage=True)
+        
+        self.assertIsNone(exporter.storage)
+        
+        exporter._transmit_from_storage()
+
+    def test_local_storage_state_exception_get_set_operations(self):
+        """Test the validity of get and set operations for exception state in local storage state"""
+        from azure.monitor.opentelemetry.exporter.statsbeat._state import (
+            get_local_storage_setup_state_exception,
+            set_local_storage_setup_state_exception,
+            _LOCAL_STORAGE_SETUP_STATE,
+            _LOCAL_STORAGE_SETUP_STATE_LOCK
+        )
+        
+        # Save original state
+        original_exception_state = _LOCAL_STORAGE_SETUP_STATE["EXCEPTION_OCCURRED"]
+        
+        try:
+            # Test 1: Initial state should be None
+            self.assertEqual(get_local_storage_setup_state_exception(), "")
+            
+            # Test 2: Set string value and verify get operation
+            test_error = "Test storage exception"
+            set_local_storage_setup_state_exception(test_error)
+            self.assertEqual(get_local_storage_setup_state_exception(), test_error)
+            
+            # Test 3: Set empty string and verify get operation
+            set_local_storage_setup_state_exception("")
+            self.assertEqual(get_local_storage_setup_state_exception(), "")
+            
+            # Test 4: Set complex error message and verify get operation
+            complex_error = "OSError: [Errno 28] No space left on device: '/tmp/storage/file.blob'"
+            set_local_storage_setup_state_exception(complex_error)
+            self.assertEqual(get_local_storage_setup_state_exception(), complex_error)
+            
+            # Test 5: Verify thread safety by directly accessing state
+            with _LOCAL_STORAGE_SETUP_STATE_LOCK:
+                direct_value = _LOCAL_STORAGE_SETUP_STATE["EXCEPTION_OCCURRED"]
+            self.assertEqual(direct_value, complex_error)
+            self.assertEqual(get_local_storage_setup_state_exception(), direct_value)
+            
+            # Test 6: Test multiple rapid set/get operations
+            test_values = [
+                "Error 1",
+                "Error 2", 
+                "Error 3",
+                "",
+                "Final error"
+            ]
+            
+            for value in test_values:
+                with self.subTest(value=value):
+                    set_local_storage_setup_state_exception(value)
+                    self.assertEqual(get_local_storage_setup_state_exception(), value)
+            
+            # Test 8: Verify that set operation doesn't affect other state values
+            original_readonly = _LOCAL_STORAGE_SETUP_STATE["READONLY"]
+            set_local_storage_setup_state_exception("New exception")
+            self.assertEqual(_LOCAL_STORAGE_SETUP_STATE["READONLY"], original_readonly)
+            self.assertEqual(get_local_storage_setup_state_exception(), "New exception")
+            
+        finally:
+            # Restore original state
+            _LOCAL_STORAGE_SETUP_STATE["EXCEPTION_OCCURRED"] = original_exception_state
+
+    def test_local_storage_state_exception_concurrent_access(self):
+        """Test concurrent access to exception state get/set operations"""
+        import threading
+        import time
+        from azure.monitor.opentelemetry.exporter.statsbeat._state import (
+            get_local_storage_setup_state_exception,
+            set_local_storage_setup_state_exception,
+            _LOCAL_STORAGE_SETUP_STATE
+        )
+        
+        # Save original state
+        original_exception_state = _LOCAL_STORAGE_SETUP_STATE["EXCEPTION_OCCURRED"]
+        results = []
+        errors = []
+        
+        def worker_thread(thread_id):
+            try:
+                for i in range(10):
+                    # Set a unique value
+                    value = f"Thread-{thread_id}-Error-{i}"
+                    set_local_storage_setup_state_exception(value)
+                    
+                    # Small delay to increase chance of race conditions
+                    time.sleep(0.001)
+                    
+                    # Get the value and verify it's either our value or another thread's value
+                    retrieved_value = get_local_storage_setup_state_exception()
+                    results.append((thread_id, i, value, retrieved_value))
+                    
+                    # Verify it's a valid value (either ours or from another thread)
+                    if retrieved_value is not None:
+                        self.assertIsInstance(retrieved_value, str)
+                        self.assertTrue(retrieved_value.startswith("Thread-"))
+            except Exception as e:
+                errors.append(f"Thread {thread_id}: {e}")
+        
+        try:
+            # Reset to original state
+            set_local_storage_setup_state_exception("")
+            
+            # Start multiple threads
+            threads = []
+            for i in range(5):
+                thread = threading.Thread(target=worker_thread, args=(i,))
+                threads.append(thread)
+                thread.start()
+            
+            # Wait for all threads to complete
+            for thread in threads:
+                thread.join()
+            
+            # Verify no errors occurred
+            self.assertEqual(len(errors), 0, f"Errors in concurrent access: {errors}")
+            
+            # Verify we got results from all threads
+            self.assertEqual(len(results), 50)  # 5 threads * 10 operations each
+            
+            # Verify final state is valid
+            final_value = get_local_storage_setup_state_exception()
+            if final_value is not None:
+                self.assertIsInstance(final_value, str)
+                self.assertTrue(final_value.startswith("Thread-"))
+            
+        finally:
+            # Restore original state
+            _LOCAL_STORAGE_SETUP_STATE["EXCEPTION_OCCURRED"] = original_exception_state
+
+    def test_local_storage_state_readonly_get_operations(self):
+        """Test the get operation for readonly state in local storage state"""
+        from azure.monitor.opentelemetry.exporter.statsbeat._state import (
+            get_local_storage_setup_state_readonly,
+            _LOCAL_STORAGE_SETUP_STATE,
+            _LOCAL_STORAGE_SETUP_STATE_LOCK
+        )
+        
+        # Save original state
+        original_readonly_state = _LOCAL_STORAGE_SETUP_STATE["READONLY"]
+        
+        try:
+            # Test 1: Initial state should be False
+            self.assertEqual(get_local_storage_setup_state_readonly(), False)
+            
+            # Test 2: Set True directly and verify get operation
+            with _LOCAL_STORAGE_SETUP_STATE_LOCK:
+                _LOCAL_STORAGE_SETUP_STATE["READONLY"] = True
+            self.assertEqual(get_local_storage_setup_state_readonly(), True)
+            
+            # Test 3: Set False directly and verify get operation
+            with _LOCAL_STORAGE_SETUP_STATE_LOCK:
+                _LOCAL_STORAGE_SETUP_STATE["READONLY"] = False
+            self.assertEqual(get_local_storage_setup_state_readonly(), False)
+            
+            # Test 4: Verify get operation doesn't affect other state values
+            original_exception = _LOCAL_STORAGE_SETUP_STATE["EXCEPTION_OCCURRED"]
+            with _LOCAL_STORAGE_SETUP_STATE_LOCK:
+                _LOCAL_STORAGE_SETUP_STATE["READONLY"] = True
+            
+            # Get readonly state multiple times
+            for _ in range(5):
+                self.assertEqual(get_local_storage_setup_state_readonly(), True)
+            
+            # Verify exception state wasn't affected
+            self.assertEqual(_LOCAL_STORAGE_SETUP_STATE["EXCEPTION_OCCURRED"], original_exception)
+            
+        finally:
+            # Restore original state
+            _LOCAL_STORAGE_SETUP_STATE["READONLY"] = original_readonly_state
+
     # ========================================================================
     # TRANSMISSION TESTS
     # ========================================================================
@@ -1085,32 +1306,6 @@ class TestBaseExporter(unittest.TestCase):
             ValueError, _get_auth_policy, credential=InvalidTestCredential(), default_auth_policy=TEST_AUTH_POLICY
         )
 
-    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._utils._track_dropped_items")
-    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._utils._track_dropped_items")
-    def test_handle_transmit_from_storage_success_result(self, mock_track_dropped1, mock_track_dropped2):
-        """Test that when storage.put() returns StorageExportResult.LOCAL_FILE_BLOB_SUCCESS,
-        the method continues without any special handling."""
-        exporter = BaseExporter(disable_offline_storage=False)
-        mock_customer_sdkstats = mock.Mock()
-        exporter._customer_sdkstats_metrics = mock_customer_sdkstats
-        exporter._should_collect_customer_sdkstats = mock.Mock(return_value=True)
-        
-        # Mock storage.put() to return success
-        exporter.storage = mock.Mock()
-        exporter.storage.put.return_value = StorageExportResult.LOCAL_FILE_BLOB_SUCCESS
-        
-        test_envelopes = [TelemetryItem(name="test", time=datetime.now())]
-        serialized_envelopes = [envelope.as_dict() for envelope in test_envelopes]
-        exporter._handle_transmit_from_storage(test_envelopes, ExportResult.FAILED_RETRYABLE)
-        
-        # Verify storage.put was called with the serialized envelopes
-        exporter.storage.put.assert_called_once_with(serialized_envelopes)
-        # Verify that no dropped items were tracked (since it was a success)
-        mock_track_dropped1.assert_not_called()
-        mock_track_dropped2.assert_not_called()
-        # Verify that the customer sdkstats wasn't invoked
-        mock_customer_sdkstats.assert_not_called()
-
     def test_get_auth_policy_audience(self):
         class TestCredential:
             def get_token():
@@ -1347,202 +1542,6 @@ class TestBaseExporter(unittest.TestCase):
         
         # Note: The actual integration point exists in _base.py where both shutdown 
         # functions are called together during failure threshold
-
-    def test_handle_transmit_from_storage_success_triggers_transmit(self):
-        exporter = BaseExporter(disable_offline_storage=False)
-        
-        with mock.patch.object(exporter, '_transmit_from_storage') as mock_transmit_from_storage:
-            test_envelopes = [TelemetryItem(name="test", time=datetime.now())]
-            
-            exporter._handle_transmit_from_storage(test_envelopes, ExportResult.SUCCESS)
-            
-            mock_transmit_from_storage.assert_called_once()
-
-    def test_handle_transmit_from_storage_no_storage(self):
-        exporter = BaseExporter(disable_offline_storage=True)
-        
-        self.assertIsNone(exporter.storage)
-        
-        test_envelopes = [TelemetryItem(name="test", time=datetime.now())]
-        
-        exporter._handle_transmit_from_storage(test_envelopes, ExportResult.SUCCESS)
-        exporter._handle_transmit_from_storage(test_envelopes, ExportResult.FAILED_RETRYABLE)
-
-    def test_transmit_from_storage_no_storage(self):
-        exporter = BaseExporter(disable_offline_storage=True)
-        
-        self.assertIsNone(exporter.storage)
-        
-        exporter._transmit_from_storage()
-   
-
-    def test_local_storage_state_exception_get_set_operations(self):
-        """Test the validity of get and set operations for exception state in local storage state"""
-        from azure.monitor.opentelemetry.exporter.statsbeat._state import (
-            get_local_storage_setup_state_exception,
-            set_local_storage_setup_state_exception,
-            _LOCAL_STORAGE_SETUP_STATE,
-            _LOCAL_STORAGE_SETUP_STATE_LOCK
-        )
-        
-        # Save original state
-        original_exception_state = _LOCAL_STORAGE_SETUP_STATE["EXCEPTION_OCCURRED"]
-        
-        try:
-            # Test 1: Initial state should be None
-            self.assertEqual(get_local_storage_setup_state_exception(), "")
-            
-            # Test 2: Set string value and verify get operation
-            test_error = "Test storage exception"
-            set_local_storage_setup_state_exception(test_error)
-            self.assertEqual(get_local_storage_setup_state_exception(), test_error)
-            
-            # Test 3: Set empty string and verify get operation
-            set_local_storage_setup_state_exception("")
-            self.assertEqual(get_local_storage_setup_state_exception(), "")
-            
-            # Test 4: Set complex error message and verify get operation
-            complex_error = "OSError: [Errno 28] No space left on device: '/tmp/storage/file.blob'"
-            set_local_storage_setup_state_exception(complex_error)
-            self.assertEqual(get_local_storage_setup_state_exception(), complex_error)
-            
-            # Test 5: Verify thread safety by directly accessing state
-            with _LOCAL_STORAGE_SETUP_STATE_LOCK:
-                direct_value = _LOCAL_STORAGE_SETUP_STATE["EXCEPTION_OCCURRED"]
-            self.assertEqual(direct_value, complex_error)
-            self.assertEqual(get_local_storage_setup_state_exception(), direct_value)
-            
-            # Test 6: Test multiple rapid set/get operations
-            test_values = [
-                "Error 1",
-                "Error 2", 
-                "Error 3",
-                "",
-                "Final error"
-            ]
-            
-            for value in test_values:
-                with self.subTest(value=value):
-                    set_local_storage_setup_state_exception(value)
-                    self.assertEqual(get_local_storage_setup_state_exception(), value)
-            
-            # Test 8: Verify that set operation doesn't affect other state values
-            original_readonly = _LOCAL_STORAGE_SETUP_STATE["READONLY"]
-            set_local_storage_setup_state_exception("New exception")
-            self.assertEqual(_LOCAL_STORAGE_SETUP_STATE["READONLY"], original_readonly)
-            self.assertEqual(get_local_storage_setup_state_exception(), "New exception")
-            
-        finally:
-            # Restore original state
-            _LOCAL_STORAGE_SETUP_STATE["EXCEPTION_OCCURRED"] = original_exception_state
-
-    def test_local_storage_state_exception_concurrent_access(self):
-        """Test concurrent access to exception state get/set operations"""
-        import threading
-        import time
-        from azure.monitor.opentelemetry.exporter.statsbeat._state import (
-            get_local_storage_setup_state_exception,
-            set_local_storage_setup_state_exception,
-            _LOCAL_STORAGE_SETUP_STATE
-        )
-        
-        # Save original state
-        original_exception_state = _LOCAL_STORAGE_SETUP_STATE["EXCEPTION_OCCURRED"]
-        results = []
-        errors = []
-        
-        def worker_thread(thread_id):
-            try:
-                for i in range(10):
-                    # Set a unique value
-                    value = f"Thread-{thread_id}-Error-{i}"
-                    set_local_storage_setup_state_exception(value)
-                    
-                    # Small delay to increase chance of race conditions
-                    time.sleep(0.001)
-                    
-                    # Get the value and verify it's either our value or another thread's value
-                    retrieved_value = get_local_storage_setup_state_exception()
-                    results.append((thread_id, i, value, retrieved_value))
-                    
-                    # Verify it's a valid value (either ours or from another thread)
-                    if retrieved_value is not None:
-                        self.assertIsInstance(retrieved_value, str)
-                        self.assertTrue(retrieved_value.startswith("Thread-"))
-            except Exception as e:
-                errors.append(f"Thread {thread_id}: {e}")
-        
-        try:
-            # Reset to original state
-            set_local_storage_setup_state_exception("")
-            
-            # Start multiple threads
-            threads = []
-            for i in range(5):
-                thread = threading.Thread(target=worker_thread, args=(i,))
-                threads.append(thread)
-                thread.start()
-            
-            # Wait for all threads to complete
-            for thread in threads:
-                thread.join()
-            
-            # Verify no errors occurred
-            self.assertEqual(len(errors), 0, f"Errors in concurrent access: {errors}")
-            
-            # Verify we got results from all threads
-            self.assertEqual(len(results), 50)  # 5 threads * 10 operations each
-            
-            # Verify final state is valid
-            final_value = get_local_storage_setup_state_exception()
-            if final_value is not None:
-                self.assertIsInstance(final_value, str)
-                self.assertTrue(final_value.startswith("Thread-"))
-            
-        finally:
-            # Restore original state
-            _LOCAL_STORAGE_SETUP_STATE["EXCEPTION_OCCURRED"] = original_exception_state
-
-    def test_local_storage_state_readonly_get_operations(self):
-        """Test the get operation for readonly state in local storage state"""
-        from azure.monitor.opentelemetry.exporter.statsbeat._state import (
-            get_local_storage_setup_state_readonly,
-            _LOCAL_STORAGE_SETUP_STATE,
-            _LOCAL_STORAGE_SETUP_STATE_LOCK
-        )
-        
-        # Save original state
-        original_readonly_state = _LOCAL_STORAGE_SETUP_STATE["READONLY"]
-        
-        try:
-            # Test 1: Initial state should be False
-            self.assertEqual(get_local_storage_setup_state_readonly(), False)
-            
-            # Test 2: Set True directly and verify get operation
-            with _LOCAL_STORAGE_SETUP_STATE_LOCK:
-                _LOCAL_STORAGE_SETUP_STATE["READONLY"] = True
-            self.assertEqual(get_local_storage_setup_state_readonly(), True)
-            
-            # Test 3: Set False directly and verify get operation
-            with _LOCAL_STORAGE_SETUP_STATE_LOCK:
-                _LOCAL_STORAGE_SETUP_STATE["READONLY"] = False
-            self.assertEqual(get_local_storage_setup_state_readonly(), False)
-            
-            # Test 4: Verify get operation doesn't affect other state values
-            original_exception = _LOCAL_STORAGE_SETUP_STATE["EXCEPTION_OCCURRED"]
-            with _LOCAL_STORAGE_SETUP_STATE_LOCK:
-                _LOCAL_STORAGE_SETUP_STATE["READONLY"] = True
-            
-            # Get readonly state multiple times
-            for _ in range(5):
-                self.assertEqual(get_local_storage_setup_state_readonly(), True)
-            
-            # Verify exception state wasn't affected
-            self.assertEqual(_LOCAL_STORAGE_SETUP_STATE["EXCEPTION_OCCURRED"], original_exception)
-            
-        finally:
-            # Restore original state
-            _LOCAL_STORAGE_SETUP_STATE["READONLY"] = original_readonly_state
 
     # Custom Breeze Message Handling Tests
     # These tests verify that custom error messages from Azure Monitor service (Breeze)
