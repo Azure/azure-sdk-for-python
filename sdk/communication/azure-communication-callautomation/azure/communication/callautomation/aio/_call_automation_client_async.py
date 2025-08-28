@@ -353,11 +353,10 @@ class CallAutomationClient:
             else None
         )
 
-        if isinstance(target_participant, list):
-            if target_participant:  # Check if the list is not empty
-                targets = [serialize_identifier(p) for p in target_participant]
-        else:
-            targets = [serialize_identifier(cast("CommunicationIdentifier", target_participant))]
+        try:
+            targets = [serialize_identifier(p) for p in target_participant]
+        except TypeError:
+            targets = [serialize_identifier(target_participant)]
 
         media_config = media_streaming._to_generated() if media_streaming else None # pylint:disable=protected-access
         transcription_config = transcription._to_generated() if transcription else None # pylint:disable=protected-access
