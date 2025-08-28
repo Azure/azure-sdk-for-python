@@ -39,20 +39,22 @@ def build_parser() -> argparse.ArgumentParser:
     # global flag: allow --isolate to appear before the subcommand as well
     parser.add_argument("--isolate", action="store_true", default=False,
                         help="If set, run in an isolated virtual environment.")
-    # logging level info
-    parser.add_argument(
+
+    # mutually exclusive logging options
+    log_group = parser.add_mutually_exclusive_group()
+    log_group.add_argument(
         "--quiet",
         action="store_true",
         default=False,
         help="Enable quiet mode (only shows ERROR logs)"
     )
-    parser.add_argument(
+    log_group.add_argument(
         "--verbose",
         action="store_true",
         default=False,
         help="Enable verbose mode (shows DEBUG logs)"
     )
-    parser.add_argument(
+    log_group.add_argument(
         "--log-level",
         default="INFO",
         choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
