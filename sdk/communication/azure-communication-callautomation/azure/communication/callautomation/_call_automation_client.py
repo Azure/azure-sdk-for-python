@@ -852,13 +852,13 @@ class CallAutomationClient:
         :rtype: Iterable[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        response = self._downloader.download_streaming(
+        stream = self._downloader.download_streaming(
             source_location=recording_url,
             offset=cast(int, offset or 0),
             length=cast(int, length or 0),
             **kwargs
         )
-        return response.iter_bytes()
+        return stream  # type: ignore[return-value]
 
     @distributed_trace
     def delete_recording(self, recording_url: str, **kwargs) -> None:
