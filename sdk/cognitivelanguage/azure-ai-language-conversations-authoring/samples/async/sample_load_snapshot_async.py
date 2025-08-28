@@ -31,6 +31,7 @@ OPTIONAL ENV VARS:
 import os
 import asyncio
 from azure.identity import DefaultAzureCredential
+from azure.core.exceptions import HttpResponseError
 from azure.ai.language.conversations.authoring.aio import ConversationAuthoringClient
 
 
@@ -47,18 +48,14 @@ async def sample_load_snapshot_async():
         # start load snapshot operation (async long-running operation)
         poller = await project_client.trained_model.begin_load_snapshot(trained_model_label)
 
-        # wait for job completion and get the result (no explicit type variables)
-        result = await poller.result()
-
-        # print result details (direct attribute access; no getattr)
-        print("=== Load Snapshot Result ===")
-        print(f"Job ID: {result.job_id}")
-        print(f"Status: {result.status}")
-        print(f"Created on: {result.created_on}")
-        print(f"Last updated on: {result.last_updated_on}")
-        print(f"Expires on: {result.expires_on}")
-        print(f"Warnings: {result.warnings}")
-        print(f"Errors: {result.errors}")
+        try:
+            await poller.result()
+            print("Load completed.")
+            print(f"done: {poller.done()}")
+            print(f"status: {poller.status()}")
+        except HttpResponseError as e:
+            msg = getattr(getattr(e, "error", None), "message", str(e))
+            print(f"Operation failed: {msg}")
 
 # [END conversation_authoring_load_snapshot_async]
 

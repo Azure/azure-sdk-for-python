@@ -12,7 +12,7 @@ from collections.abc import MutableMapping # pylint:disable=import-error
 from typing import IO, Any, Callable, Dict, Optional, TypeVar, Union, cast, overload
 
 from azure.core.pipeline import PipelineResponse
-from azure.core.polling import LROPoller, NoPolling, PollingMethod
+from azure.core.polling import LROPoller
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
@@ -23,7 +23,6 @@ from ..models import (
     DeleteDeploymentDetails,
     DeploymentDeleteFromResourcesState,
     DeploymentState,
-    JobsPollingMethod,
     ProjectDeployment,
 )
 from ._operations import DeploymentOperations as DeploymentOperationsGenerated

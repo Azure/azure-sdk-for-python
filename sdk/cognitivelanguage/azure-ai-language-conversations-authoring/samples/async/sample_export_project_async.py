@@ -30,6 +30,7 @@ OPTIONAL ENV VARS:
 import os
 import asyncio
 from azure.identity import DefaultAzureCredential
+from azure.core.exceptions import HttpResponseError
 from azure.ai.language.conversations.authoring.aio import ConversationAuthoringClient
 from azure.ai.language.conversations.authoring.models import ExportedProjectFormat
 
@@ -49,18 +50,14 @@ async def sample_export_project_async():
             exported_project_format=ExportedProjectFormat.CONVERSATION,
         )
 
-        # wait for completion and get the result (no explicit type variables)
-        result = await poller.result()
-
-        # print export details (direct attribute access; no getattr)
-        print("=== Export Project Result ===")
-        print(f"Job ID: {result.job_id}")
-        print(f"Status: {result.status}")
-        print(f"Created on: {result.created_on}")
-        print(f"Last updated on: {result.last_updated_on}")
-        print(f"Expires on: {result.expires_on}")
-        print(f"Warnings: {result.warnings}")
-        print(f"Errors: {result.errors}")
+        try:
+            await poller.result()
+            print("Export completed.")
+            print(f"done: {poller.done()}")
+            print(f"status: {poller.status()}")
+        except HttpResponseError as e:
+            msg = getattr(getattr(e, "error", None), "message", str(e))
+            print(f"Operation failed: {msg}")
 
 # [END conversation_authoring_export_project_async]
 

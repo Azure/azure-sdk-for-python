@@ -33,11 +33,11 @@ OPTIONAL ENV VARS:
 # [START conversation_authoring_assign_deployment_resources]
 import os
 from azure.identity import DefaultAzureCredential
+from azure.core.exceptions import HttpResponseError
 from azure.ai.language.conversations.authoring import ConversationAuthoringClient
 from azure.ai.language.conversations.authoring.models import (
     ResourceMetadata,
     AssignDeploymentResourcesDetails,
-    DeploymentResourcesState,
 )
 
 
@@ -66,18 +66,14 @@ def sample_assign_deployment_resources():
     # start assign (long-running operation)
     poller = project_client.project.begin_assign_deployment_resources(body=details)
 
-    # wait for completion and get the result (no explicit type variables)
-    result = poller.result()
-
-    # print result details (direct attribute access; no getattr)
-    print("=== Assign Deployment Resources Result ===")
-    print(f"Job ID: {result.job_id}")
-    print(f"Status: {result.status}")
-    print(f"Created on: {result.created_on}")
-    print(f"Last updated on: {result.last_updated_on}")
-    print(f"Expires on: {result.expires_on}")
-    print(f"Warnings: {result.warnings}")
-    print(f"Errors: {result.errors}")
+    try:
+        poller.result()
+        print("Assign completed.")
+        print(f"done: {poller.done()}")
+        print(f"status: {poller.status()}")
+    except HttpResponseError as e:
+        msg = getattr(getattr(e, "error", None), "message", str(e))
+        print(f"Operation failed: {msg}")
 
 # [END conversation_authoring_assign_deployment_resources]
 
