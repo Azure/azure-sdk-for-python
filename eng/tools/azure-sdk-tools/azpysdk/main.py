@@ -39,6 +39,25 @@ def build_parser() -> argparse.ArgumentParser:
     # global flag: allow --isolate to appear before the subcommand as well
     parser.add_argument("--isolate", action="store_true", default=False,
                         help="If set, run in an isolated virtual environment.")
+    # logging level info
+    parser.add_argument(
+        "--quiet",
+        action="store_true",
+        default=False,
+        help="Enable quiet mode (only shows ERROR logs)"
+    )
+    parser.add_argument(
+        "--verbose",
+        action="store_true",
+        default=False,
+        help="Enable verbose mode (shows DEBUG logs)"
+    )
+    parser.add_argument(
+        "--log-level",
+        default="INFO",
+        choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
+        help="Set the logging level."
+    )
 
     common = argparse.ArgumentParser(add_help=False)
     common.add_argument(
@@ -104,21 +123,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:#
     parser = build_parser()
     args = parser.parse_args(argv)
 
-    # parse logging args TODO ?
-    log_parser = argparse.ArgumentParser()
-    log_parser.add_argument(
-        "--quiet",
-        action="store_true",
-        default=False,
-        help="Enable quiet mode (only shows ERROR logs)"
-    )
-    log_parser.add_argument(
-        "--verbose",
-        action="store_true",
-        default=False,
-        help="Enable verbose mode (shows DEBUG logs)"
-    )
-    
+    configure_logging(args, args.log_level)
 
     if not hasattr(args, "func"):
         parser.print_help()

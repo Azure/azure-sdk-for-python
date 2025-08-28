@@ -5,6 +5,7 @@ import os
 logger = logging.getLogger("azure-sdk-tools")
 
 def configure_logging(
+    args: argparse.Namespace,
     level: str = "INFO",
     fmt: str = "%(asctime)s [%(levelname)s] %(name)s: %(message)s"
 ) -> None:
@@ -14,19 +15,15 @@ def configure_logging(
     
     numeric_level = getattr(logging, level.upper(), None)
 
-    # parse cli arg, and compare to numeric level?
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--quiet", default=False, help="Enable quiet mode (only shows ERROR logs)")
-    parser.add_argument("--verbose", default=False, help="Enable verbose mode (shows DEBUG logs)")
-    parser.add_argument("--log-level", default="INFO", help="Set log level (DEBUG, INFO, WARNING, ERROR, CRITICAL)")
-    
-    args = parser.parse_args()
-    if args.log_level:
-        numeric_level = getattr(logging, args.log_level.upper(), None)
+    # parse cli arg
+    if args.quiet:
+        numeric_level = logging.ERROR
+    elif args.verbose:
+        numeric_level = logging.DEBUG
 
     # parse LOG_LEVEL environment variable
     log_level_env = os.getenv("LOG_LEVEL")
-    if log_level_env:
+    if not args.log_level and log_level_env:
         numeric_level = getattr(logging, log_level_env.upper(), None)
 
     if not isinstance(numeric_level, int):
