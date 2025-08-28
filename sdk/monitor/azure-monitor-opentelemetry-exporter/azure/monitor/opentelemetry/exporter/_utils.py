@@ -384,7 +384,7 @@ class Singleton(type):
     _instance = None
     _lock = threading.Lock()
 
-    def __call__(cls: Type[T], *args: Any, **kwargs: Any) -> T:
+    def __call__(cls, *args: Any, **kwargs: Any) -> T:
         if not cls._instance:
             with cls._lock:
                 if not cls._instance:
