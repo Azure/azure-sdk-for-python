@@ -120,35 +120,49 @@ class DefaultAzureCredential(ChainedTokenCredential):
             :caption: Create a DefaultAzureCredential.
     """
 
-    def __init__(self, **kwargs: Any) -> None:  # pylint: disable=too-many-statements, too-many-locals
+    def __init__(  # pylint: disable=too-many-statements, too-many-locals
+        self,
+        *,
+        authority: Optional[str] = None,
+        exclude_workload_identity_credential: Optional[bool] = None,
+        exclude_developer_cli_credential: Optional[bool] = None,
+        exclude_cli_credential: Optional[bool] = None,
+        exclude_environment_credential: Optional[bool] = None,
+        exclude_powershell_credential: Optional[bool] = None,
+        exclude_visual_studio_code_credential: Optional[bool] = None,
+        exclude_managed_identity_credential: Optional[bool] = None,
+        exclude_shared_token_cache_credential: Optional[bool] = None,
+        managed_identity_client_id: Optional[str] = None,
+        workload_identity_client_id: Optional[str] = None,
+        workload_identity_tenant_id: Optional[str] = None,
+        shared_cache_username: Optional[str] = None,
+        shared_cache_tenant_id: Optional[str] = None,
+        visual_studio_code_tenant_id: Optional[str] = None,
+        process_timeout: Optional[int] = None,
+        require_envvar: Optional[bool] = None,
+        **kwargs: Any
+    ) -> None:
         if "tenant_id" in kwargs:
             raise TypeError("'tenant_id' is not supported in DefaultAzureCredential.")
 
-        authority = kwargs.pop("authority", None)
-        authority = normalize_authority(authority) if authority else get_default_authority()
-
-        vscode_tenant_id = kwargs.pop("visual_studio_code_tenant_id", None)
-
-        shared_cache_username = kwargs.pop("shared_cache_username", os.environ.get(EnvironmentVariables.AZURE_USERNAME))
-        shared_cache_tenant_id = kwargs.pop(
-            "shared_cache_tenant_id", os.environ.get(EnvironmentVariables.AZURE_TENANT_ID)
-        )
-
-        managed_identity_client_id = kwargs.pop(
-            "managed_identity_client_id", os.environ.get(EnvironmentVariables.AZURE_CLIENT_ID)
-        )
-        workload_identity_client_id = kwargs.pop("workload_identity_client_id", managed_identity_client_id)
-        workload_identity_tenant_id = kwargs.pop(
-            "workload_identity_tenant_id", os.environ.get(EnvironmentVariables.AZURE_TENANT_ID)
-        )
-
-        process_timeout = kwargs.pop("process_timeout", 10)
-        require_envvar = kwargs.pop("require_envvar", False)
         if require_envvar and not os.environ.get(EnvironmentVariables.AZURE_TOKEN_CREDENTIALS):
             raise ValueError(
                 "AZURE_TOKEN_CREDENTIALS environment variable is required but is not set or is empty. "
                 "Set it to 'dev', 'prod', or a specific credential name."
             )
+
+        authority = normalize_authority(authority) if authority else get_default_authority()
+
+        if process_timeout is None:
+            process_timeout = 10
+
+        shared_cache_username = shared_cache_username or os.environ.get(EnvironmentVariables.AZURE_USERNAME)
+        shared_cache_tenant_id = shared_cache_tenant_id or os.environ.get(EnvironmentVariables.AZURE_TENANT_ID)
+        managed_identity_client_id = managed_identity_client_id or os.environ.get(EnvironmentVariables.AZURE_CLIENT_ID)
+        workload_identity_client_id = workload_identity_client_id or managed_identity_client_id
+        workload_identity_tenant_id = workload_identity_tenant_id or os.environ.get(
+            EnvironmentVariables.AZURE_TENANT_ID
+        )
 
         # Define credential configuration mapping (async version)
         credential_config = {
@@ -193,26 +207,35 @@ class DefaultAzureCredential(ChainedTokenCredential):
             },
         }
 
-        # Extract user-provided exclude flags and set defaults
+        # Create mapping of user-provided exclude flags
+        user_excludes = {
+            "environment": exclude_environment_credential,
+            "workload_identity": exclude_workload_identity_credential,
+            "managed_identity": exclude_managed_identity_credential,
+            "shared_token_cache": exclude_shared_token_cache_credential,
+            "visual_studio_code": exclude_visual_studio_code_credential,
+            "cli": exclude_cli_credential,
+            "developer_cli": exclude_developer_cli_credential,
+            "powershell": exclude_powershell_credential,
+        }
+
+        # Set default exclude flags
         exclude_flags = {}
-        user_excludes = {}
         for cred_key, config in credential_config.items():
-            param_name = cast(str, config["exclude_param"])
-            user_excludes[cred_key] = kwargs.pop(param_name, None)
             exclude_flags[cred_key] = config["default_exclude"]
 
         # Process AZURE_TOKEN_CREDENTIALS environment variable and apply user overrides
         exclude_flags = process_credential_exclusions(credential_config, exclude_flags, user_excludes)
 
         # Extract individual exclude flags for backward compatibility
-        exclude_environment_credential = exclude_flags["environment"]
-        exclude_workload_identity_credential = exclude_flags["workload_identity"]
-        exclude_managed_identity_credential = exclude_flags["managed_identity"]
-        exclude_shared_token_cache_credential = exclude_flags["shared_token_cache"]
-        exclude_visual_studio_code_credential = exclude_flags["visual_studio_code"]
-        exclude_cli_credential = exclude_flags["cli"]
-        exclude_developer_cli_credential = exclude_flags["developer_cli"]
-        exclude_powershell_credential = exclude_flags["powershell"]
+        exclude_environment_credential = bool(exclude_flags["environment"])
+        exclude_workload_identity_credential = bool(exclude_flags["workload_identity"])
+        exclude_managed_identity_credential = bool(exclude_flags["managed_identity"])
+        exclude_shared_token_cache_credential = bool(exclude_flags["shared_token_cache"])
+        exclude_visual_studio_code_credential = bool(exclude_flags["visual_studio_code"])
+        exclude_cli_credential = bool(exclude_flags["cli"])
+        exclude_developer_cli_credential = bool(exclude_flags["developer_cli"])
+        exclude_powershell_credential = bool(exclude_flags["powershell"])
 
         credentials: List[AsyncSupportsTokenInfo] = []
         within_dac.set(True)
@@ -248,7 +271,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
             except Exception as ex:  # pylint:disable=broad-except
                 _LOGGER.info("Shared token cache is unavailable: '%s'", ex)
         if not exclude_visual_studio_code_credential:
-            credentials.append(VisualStudioCodeCredential(tenant_id=vscode_tenant_id))
+            credentials.append(VisualStudioCodeCredential(tenant_id=visual_studio_code_tenant_id))
         if not exclude_cli_credential:
             credentials.append(AzureCliCredential(process_timeout=process_timeout))
         if not exclude_powershell_credential:

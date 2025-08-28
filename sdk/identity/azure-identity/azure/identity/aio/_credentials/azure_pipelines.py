@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Any, Optional
+from typing import Any, Optional, List
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions
@@ -53,6 +53,8 @@ class AzurePipelinesCredential(AsyncContextManager):
         client_id: str,
         service_connection_id: str,
         system_access_token: str,
+        authority: Optional[str] = None,
+        additionally_allowed_tenants: Optional[List[str]] = None,
         **kwargs: Any,
     ) -> None:
 
@@ -66,7 +68,12 @@ class AzurePipelinesCredential(AsyncContextManager):
         self._system_access_token = system_access_token
         self._service_connection_id = service_connection_id
         self._client_assertion_credential = ClientAssertionCredential(
-            tenant_id=tenant_id, client_id=client_id, func=self._get_oidc_token, **kwargs
+            tenant_id=tenant_id,
+            client_id=client_id,
+            func=self._get_oidc_token,
+            authority=authority,
+            additionally_allowed_tenants=additionally_allowed_tenants,
+            **kwargs,
         )
         self._pipeline = build_pipeline(**kwargs)
 

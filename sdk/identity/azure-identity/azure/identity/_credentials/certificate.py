@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from binascii import hexlify
-from typing import cast, NamedTuple, Union, Dict, Any, Optional
+from typing import cast, NamedTuple, Union, Dict, Any, Optional, List, TYPE_CHECKING
 
 from cryptography import x509
 from cryptography.hazmat.primitives import hashes, serialization
@@ -12,6 +12,9 @@ from cryptography.hazmat.backends import default_backend
 
 from .._internal import validate_tenant_id
 from .._internal.client_credential_base import ClientCredentialBase
+
+if TYPE_CHECKING:
+    from .._persistent_cache import TokenCachePersistenceOptions
 
 
 class CertificateCredential(ClientCredentialBase):
@@ -61,13 +64,39 @@ class CertificateCredential(ClientCredentialBase):
             :caption: Create a CertificateCredential.
     """
 
-    def __init__(self, tenant_id: str, client_id: str, certificate_path: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        tenant_id: str,
+        client_id: str,
+        certificate_path: Optional[str] = None,
+        *,
+        authority: Optional[str] = None,
+        certificate_data: Optional[bytes] = None,
+        password: Optional[Union[str, bytes]] = None,
+        send_certificate_chain: Optional[bool] = None,
+        cache_persistence_options: Optional["TokenCachePersistenceOptions"] = None,
+        disable_instance_discovery: Optional[bool] = None,
+        additionally_allowed_tenants: Optional[List[str]] = None,
+        **kwargs: Any
+    ) -> None:
         validate_tenant_id(tenant_id)
 
-        client_credential = get_client_credential(certificate_path, **kwargs)
+        client_credential = get_client_credential(
+            certificate_path,
+            password,
+            certificate_data,
+            send_certificate_chain=bool(send_certificate_chain),
+        )
 
         super(CertificateCredential, self).__init__(
-            client_id=client_id, client_credential=client_credential, tenant_id=tenant_id, **kwargs
+            client_id=client_id,
+            client_credential=client_credential,
+            tenant_id=tenant_id,
+            authority=authority,
+            cache_persistence_options=cache_persistence_options,
+            disable_instance_discovery=disable_instance_discovery,
+            additionally_allowed_tenants=additionally_allowed_tenants,
+            **kwargs
         )
 
 

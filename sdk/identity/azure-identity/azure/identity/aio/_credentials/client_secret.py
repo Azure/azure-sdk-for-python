@@ -2,12 +2,15 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Optional, Any
+from typing import Optional, Any, List, TYPE_CHECKING
 
 from azure.core.credentials import AccessTokenInfo
 from .._internal import AadClient, AsyncContextManager
 from .._internal.get_token_mixin import GetTokenMixin
 from ..._internal import validate_tenant_id
+
+if TYPE_CHECKING:
+    from ..._persistent_cache import TokenCachePersistenceOptions
 
 
 class ClientSecretCredential(AsyncContextManager, GetTokenMixin):
@@ -37,7 +40,17 @@ class ClientSecretCredential(AsyncContextManager, GetTokenMixin):
             :caption: Create a ClientSecretCredential.
     """
 
-    def __init__(self, tenant_id: str, client_id: str, client_secret: str, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        tenant_id: str,
+        client_id: str,
+        client_secret: str,
+        *,
+        authority: Optional[str] = None,
+        cache_persistence_options: Optional["TokenCachePersistenceOptions"] = None,
+        additionally_allowed_tenants: Optional[List[str]] = None,
+        **kwargs: Any
+    ) -> None:
         if not client_id:
             raise ValueError("client_id should be the id of a Microsoft Entra application")
         if not client_secret:
@@ -46,7 +59,14 @@ class ClientSecretCredential(AsyncContextManager, GetTokenMixin):
             raise ValueError("tenant_id should be a Microsoft Entra tenant's id (also called its 'directory id')")
         validate_tenant_id(tenant_id)
 
-        self._client = AadClient(tenant_id, client_id, **kwargs)
+        self._client = AadClient(
+            tenant_id,
+            client_id,
+            authority=authority,
+            cache_persistence_options=cache_persistence_options,
+            additionally_allowed_tenants=additionally_allowed_tenants,
+            **kwargs
+        )
         self._client_id = client_id
         self._secret = client_secret
         super().__init__()

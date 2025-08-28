@@ -100,6 +100,7 @@ class InteractiveCredential(MsalCredential, ABC):
         self._auth_record = authentication_record
         if self._auth_record:
             kwargs.pop("client_id", None)  # authentication_record overrides client_id argument
+            kwargs.pop("authority", None)  # authentication_record overrides authority argument
             tenant_id = kwargs.pop("tenant_id", None) or self._auth_record.tenant_id
             super(InteractiveCredential, self).__init__(
                 client_id=self._auth_record.client_id,

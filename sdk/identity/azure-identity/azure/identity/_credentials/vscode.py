@@ -4,7 +4,7 @@
 # ------------------------------------
 import os
 import json
-from typing import Any, Optional
+from typing import Any, Optional, List
 
 import msal
 from azure.core.credentials import AccessToken, TokenRequestOptions, AccessTokenInfo
@@ -139,7 +139,13 @@ class VisualStudioCodeCredential:
         acquire tokens for any tenant the application can access.
     """
 
-    def __init__(self, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        tenant_id: Optional[str] = None,
+        additionally_allowed_tenants: Optional[List[str]] = None,
+        **kwargs: Any,
+    ) -> None:
 
         self._broker_credential = None
         self._unavailable_message = (
@@ -165,6 +171,8 @@ class VisualStudioCodeCredential:
                     parent_window_handle=msal.PublicClientApplication.CONSOLE_WINDOW_HANDLE,
                     use_default_broker_account=True,
                     disable_interactive_fallback=True,
+                    tenant_id=tenant_id,
+                    additionally_allowed_tenants=additionally_allowed_tenants,
                     **kwargs,
                 )
             except ValueError as ex:

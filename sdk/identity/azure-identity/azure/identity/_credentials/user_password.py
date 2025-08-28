@@ -2,10 +2,13 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Any, Dict
+from typing import Any, Dict, Optional, List, TYPE_CHECKING
 import warnings
 
 from .._internal import InteractiveCredential, wrap_exceptions
+
+if TYPE_CHECKING:
+    from .._persistent_cache import TokenCachePersistenceOptions
 
 
 class UsernamePasswordCredential(InteractiveCredential):
@@ -62,7 +65,20 @@ class UsernamePasswordCredential(InteractiveCredential):
             :caption: Create a UsernamePasswordCredential.
     """
 
-    def __init__(self, client_id: str, username: str, password: str, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        client_id: str,
+        username: str,
+        password: str,
+        *,
+        authority: Optional[str] = None,
+        tenant_id: Optional[str] = None,
+        cache_persistence_options: Optional["TokenCachePersistenceOptions"] = None,
+        disable_instance_discovery: Optional[bool] = None,
+        additionally_allowed_tenants: Optional[List[str]] = None,
+        enable_support_logging: Optional[bool] = None,
+        **kwargs: Any,
+    ) -> None:
         if not kwargs.pop("_silence_deprecation_warning", False):
             # Only emit the deprecation warning if the credential was constructed directly and not via
             # EnvironmentCredential since EnvironmentCredential will emit its own deprecation
@@ -78,7 +94,17 @@ class UsernamePasswordCredential(InteractiveCredential):
         # validate the given password. This class therefore doesn't document the authentication_record argument, and we
         # discard it here.
         kwargs.pop("authentication_record", None)
-        super(UsernamePasswordCredential, self).__init__(client_id=client_id, **kwargs)
+
+        super(UsernamePasswordCredential, self).__init__(
+            client_id=client_id,
+            authority=authority,
+            tenant_id=tenant_id,
+            cache_persistence_options=cache_persistence_options,
+            disable_instance_discovery=disable_instance_discovery,
+            additionally_allowed_tenants=additionally_allowed_tenants,
+            enable_support_logging=enable_support_logging,
+            **kwargs,
+        )
         self._username = username
         self._password = password
 

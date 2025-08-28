@@ -2,8 +2,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Any
+from typing import Any, Optional, List, TYPE_CHECKING
+
 from .._internal.client_credential_base import ClientCredentialBase
+
+if TYPE_CHECKING:
+    from .._persistent_cache import TokenCachePersistenceOptions
 
 
 class ClientSecretCredential(ClientCredentialBase):
@@ -40,7 +44,18 @@ class ClientSecretCredential(ClientCredentialBase):
             :caption: Create a ClientSecretCredential.
     """
 
-    def __init__(self, tenant_id: str, client_id: str, client_secret: str, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        tenant_id: str,
+        client_id: str,
+        client_secret: str,
+        *,
+        authority: Optional[str] = None,
+        cache_persistence_options: Optional["TokenCachePersistenceOptions"] = None,
+        disable_instance_discovery: Optional[bool] = None,
+        additionally_allowed_tenants: Optional[List[str]] = None,
+        **kwargs: Any
+    ) -> None:
         if not client_id:
             raise ValueError("client_id should be the id of a Microsoft Entra application")
         if not client_secret:
@@ -49,5 +64,12 @@ class ClientSecretCredential(ClientCredentialBase):
             raise ValueError("tenant_id should be a Microsoft Entra tenant's id (also called its 'directory id')")
 
         super(ClientSecretCredential, self).__init__(
-            client_id=client_id, client_credential=client_secret, tenant_id=tenant_id, **kwargs
+            client_id=client_id,
+            client_credential=client_secret,
+            tenant_id=tenant_id,
+            authority=authority,
+            cache_persistence_options=cache_persistence_options,
+            disable_instance_discovery=disable_instance_discovery,
+            additionally_allowed_tenants=additionally_allowed_tenants,
+            **kwargs
         )
