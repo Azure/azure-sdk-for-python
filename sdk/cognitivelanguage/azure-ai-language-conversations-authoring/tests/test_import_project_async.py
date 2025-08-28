@@ -5,7 +5,7 @@ import pytest
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.core.credentials import AzureKeyCredential
-
+from azure.core.exceptions import HttpResponseError
 from azure.ai.language.conversations.authoring.aio import ConversationAuthoringClient
 from azure.ai.language.conversations.authoring.models import (
     ConversationExportedProjectAsset,
@@ -39,8 +39,8 @@ class TestConversationsImportCaseAsync(TestConversations):
     @pytest.mark.asyncio
     async def test_import_project_async(self, authoring_endpoint, authoring_key):
         client = await self.create_client(authoring_endpoint, authoring_key)
-        try:
-            project_name = "PythonImportProject0820"
+        async with client:
+            project_name = "PythonImportProject0828"
             project_client = client.get_project_client(project_name)
 
             # ----- Build assets using objects -----
@@ -108,18 +108,11 @@ class TestConversationsImportCaseAsync(TestConversations):
                 exported_project_format=ExportedProjectFormat.CONVERSATION,
             )
 
-            # Wait for completion and get the ImportProjectState
-            result = await poller.result()
+            try:
+                await poller.result()
+            except HttpResponseError as e:
+                msg = getattr(getattr(e, "error", None), "message", str(e))
+                print(f"Operation failed: {msg}")
+                raise
 
-            assert result.status == "succeeded", f"Import failed with status: {result.status}"
-
-            # Optional debug prints
-            print(f"Job ID: {result.job_id}")
-            print(f"Status: {result.status}")
-            print(f"Created on: {result.created_on}")
-            print(f"Last updated on: {result.last_updated_on}")
-            print(f"Expires on: {result.expires_on}")
-            print(f"Warnings: {result.warnings}")
-            print(f"Errors: {result.errors}")
-        finally:
-            await client.close()
+            print(f"Import completed. done={poller.done()} status={poller.status()}")

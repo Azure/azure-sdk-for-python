@@ -5,6 +5,7 @@ import pytest
 from devtools_testutils import EnvironmentVariableLoader, AzureRecordedTestCase
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.core.credentials import AzureKeyCredential
+from azure.core.exceptions import HttpResponseError
 from azure.ai.language.conversations.authoring.aio import ConversationAuthoringClient
 from azure.ai.language.conversations.authoring.models import CreateDeploymentDetails, DeploymentState
 
@@ -27,9 +28,9 @@ class TestConversationsDeployProjectAsync(TestConversationsAsync):
     @pytest.mark.asyncio
     async def test_deploy_project_async(self, authoring_endpoint, authoring_key):
         client = await self.create_client(authoring_endpoint, authoring_key)
-        try:
+        async with client:
             project_name = "EmailApp"
-            deployment_name = "production"
+            deployment_name = "0828Deployment"
             trained_model_label = "Model1"
 
             project_client = client.get_project_client(project_name)
@@ -42,16 +43,12 @@ class TestConversationsDeployProjectAsync(TestConversationsAsync):
                 deployment_name=deployment_name,
                 body=details,
             )
-            result: DeploymentState = await poller.result()
+            try:
+                await poller.result()
+            except HttpResponseError as e:
+                msg = getattr(getattr(e, "error", None), "message", str(e))
+                print(f"Operation failed: {msg}")
+                raise
 
-            # Assert + print LRO state
-            assert result.status == "succeeded", f"Deploy failed with status: {result.status}"
-            print(f"Job ID: {result.job_id}")
-            print(f"Status: {result.status}")
-            print(f"Created on: {result.created_on}")
-            print(f"Last updated on: {result.last_updated_on}")
-            print(f"Expires on: {result.expires_on}")
-            print(f"Warnings: {result.warnings}")
-            print(f"Errors: {result.errors}")
-        finally:
-            await client.close()
+            # If we get here, the deploy succeeded
+            print(f"Deploy project completed. done={poller.done()} status={poller.status()}")
