@@ -129,72 +129,19 @@ class TrainedModelOperations(TrainedModelOperationsGenerated):
         )
 
     @distributed_trace_async
-    async def begin_load_snapshot(self, trained_model_label: str, **kwargs: Any) -> AsyncLROPoller[LoadSnapshotState]:
+    async def begin_load_snapshot(self, trained_model_label: str, **kwargs: Any) -> AsyncLROPoller[None]:
         """Restores the snapshot of this trained model to be the current working directory of the project.
 
         :param trained_model_label: The trained model label. Required.
         :type trained_model_label: str
-        :return: An instance of AsyncLROPoller that returns LoadSnapshotState.
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.language.conversations.authoring.models.LoadSnapshotState]
+        :return: An instance of LROPoller that returns None.
+        :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[LoadSnapshotState] = kwargs.pop("cls", None)
-        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-
-        if cont_token is None:
-            initial = await self._load_snapshot_initial(
-                project_name=self._project_name,  # instance-scoped project name
-                trained_model_label=trained_model_label,
-                cls=lambda x, y, z: x,  # return PipelineResponse
-                headers=_headers,
-                params=_params,
-                **kwargs,
-            )
-            await initial.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            obj = _deserialize(LoadSnapshotState, pipeline_response.http_response.json())
-            if cls:
-                return cls(pipeline_response, obj, {})  # type: ignore[misc]
-            return obj
-
-        path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method = cast(
-                AsyncPollingMethod,
-                AsyncJobsPollingMethod(
-                    polling_interval=lro_delay,
-                    path_format_arguments=path_format_arguments,  # resolves {Endpoint} in Operation-Location
-                    **kwargs,
-                ),
-            )
-        elif polling is False:
-            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else:
-            polling_method = polling  # user-supplied AsyncPollingMethod
-
-        if cont_token:
-            return AsyncLROPoller[LoadSnapshotState].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-
-        return AsyncLROPoller[LoadSnapshotState](
-            self._client,
-            initial,  # type: ignore
-            get_long_running_output,
-            polling_method,
+        return await super()._begin_load_snapshot(
+            project_name=self._project_name,
+            trained_model_label=trained_model_label,
+            **kwargs,
         )
 
     @distributed_trace_async

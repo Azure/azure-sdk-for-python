@@ -24,7 +24,6 @@ from ..models import (
     EvaluationDetails,
     EvaluationJobResult,
     EvaluationState,
-    JobsPollingMethod,
     LoadSnapshotState,
     ProjectTrainedModel,
     StringIndexType,
