@@ -797,6 +797,125 @@ class TestBaseExporter(unittest.TestCase):
             result = self._base._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
 
+    def test_transmission_200(self):
+        with mock.patch.object(AzureMonitorClient, "track") as post:
+            post.return_value = TrackResponse(
+                items_received=1,
+                items_accepted=1,
+                errors=[],
+            )
+            result = self._base._transmit(self._envelopes_to_export)
+        self.assertEqual(result, ExportResult.SUCCESS)
+
+    def test_transmission_206_retry(self):
+        exporter = BaseExporter(disable_offline_storage=True)
+        exporter.storage = mock.Mock()
+        test_envelope = TelemetryItem(name="testEnvelope", time=datetime.now())
+        custom_envelopes_to_export = [
+            TelemetryItem(name="Test", time=datetime.now()),
+            TelemetryItem(name="Test", time=datetime.now()),
+            test_envelope,
+        ]
+        with mock.patch.object(AzureMonitorClient, "track") as post:
+            post.return_value = TrackResponse(
+                items_received=3,
+                items_accepted=1,
+                errors=[
+                    TelemetryErrorDetails(
+                        index=0,
+                        status_code=400,
+                        message="should drop",
+                    ),
+                    TelemetryErrorDetails(index=2, status_code=500, message="should retry"),
+                ],
+            )
+            result = exporter._transmit(custom_envelopes_to_export)
+        self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
+        exporter.storage.put.assert_called_once()
+
+    def test_transmission_206_no_retry(self):
+        exporter = BaseExporter(disable_offline_storage=True)
+        exporter.storage = mock.Mock()
+        test_envelope = TelemetryItem(name="testEnvelope", time=datetime.now())
+        custom_envelopes_to_export = [
+            TelemetryItem(name="Test", time=datetime.now()),
+            TelemetryItem(name="Test", time=datetime.now()),
+            test_envelope,
+        ]
+        with mock.patch.object(AzureMonitorClient, "track") as post:
+            post.return_value = TrackResponse(
+                items_received=3,
+                items_accepted=2,
+                errors=[
+                    TelemetryErrorDetails(
+                        index=0,
+                        status_code=400,
+                        message="should drop",
+                    ),
+                ],
+            )
+            result = self._base._transmit(custom_envelopes_to_export)
+        self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
+        exporter.storage.put.assert_not_called()
+
+    def test_transmission_400(self):
+        with mock.patch("requests.Session.request") as post:
+            post.return_value = MockResponse(400, "{}")
+            result = self._base._transmit(self._envelopes_to_export)
+        self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
+
+    def test_transmission_402(self):
+        with mock.patch("requests.Session.request") as post:
+            post.return_value = MockResponse(402, "{}")
+            result = self._base._transmit(self._envelopes_to_export)
+        self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
+
+    def test_transmission_408(self):
+        with mock.patch("requests.Session.request") as post:
+            post.return_value = MockResponse(408, "{}")
+            result = self._base._transmit(self._envelopes_to_export)
+        self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
+
+    def test_transmission_429(self):
+        with mock.patch("requests.Session.request") as post:
+            post.return_value = MockResponse(429, "{}")
+            result = self._base._transmit(self._envelopes_to_export)
+        self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
+
+    def test_transmission_439(self):
+        with mock.patch("requests.Session.request") as post:
+            post.return_value = MockResponse(439, "{}")
+            result = self._base._transmit(self._envelopes_to_export)
+        self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
+
+    def test_transmission_500(self):
+        with mock.patch("requests.Session.request") as post:
+            post.return_value = MockResponse(500, "{}")
+            result = self._base._transmit(self._envelopes_to_export)
+        self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
+
+    def test_transmission_502(self):
+        with mock.patch("requests.Session.request") as post:
+            post.return_value = MockResponse(503, "{}")
+            result = self._base._transmit(self._envelopes_to_export)
+        self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
+
+    def test_transmission_503(self):
+        with mock.patch("requests.Session.request") as post:
+            post.return_value = MockResponse(503, "{}")
+            result = self._base._transmit(self._envelopes_to_export)
+        self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
+
+    def test_transmission_504(self):
+        with mock.patch("requests.Session.request") as post:
+            post.return_value = MockResponse(504, "{}")
+            result = self._base._transmit(self._envelopes_to_export)
+        self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
+
+    def test_transmission_empty(self):
+        status = self._base._transmit([])
+        self.assertEqual(status, ExportResult.SUCCESS)
+
     # ========================================================================
     # STATSBEAT TESTS
     # ========================================================================
@@ -844,16 +963,6 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(_REQUESTS_MAP["count"], 1)
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
 
-    def test_transmission_200(self):
-        with mock.patch.object(AzureMonitorClient, "track") as post:
-            post.return_value = TrackResponse(
-                items_received=1,
-                items_accepted=1,
-                errors=[],
-            )
-            result = self._base._transmit(self._envelopes_to_export)
-        self.assertEqual(result, ExportResult.SUCCESS)
-
     @mock.patch.dict(
         os.environ,
         {
@@ -876,32 +985,6 @@ class TestBaseExporter(unittest.TestCase):
         self.assertIsNotNone(_REQUESTS_MAP[_REQ_DURATION_NAME[1]])
         self.assertEqual(_REQUESTS_MAP["count"], 1)
         self.assertEqual(result, ExportResult.SUCCESS)
-
-    def test_transmission_206_retry(self):
-        exporter = BaseExporter(disable_offline_storage=True)
-        exporter.storage = mock.Mock()
-        test_envelope = TelemetryItem(name="testEnvelope", time=datetime.now())
-        custom_envelopes_to_export = [
-            TelemetryItem(name="Test", time=datetime.now()),
-            TelemetryItem(name="Test", time=datetime.now()),
-            test_envelope,
-        ]
-        with mock.patch.object(AzureMonitorClient, "track") as post:
-            post.return_value = TrackResponse(
-                items_received=3,
-                items_accepted=1,
-                errors=[
-                    TelemetryErrorDetails(
-                        index=0,
-                        status_code=400,
-                        message="should drop",
-                    ),
-                    TelemetryErrorDetails(index=2, status_code=500, message="should retry"),
-                ],
-            )
-            result = exporter._transmit(custom_envelopes_to_export)
-        self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
-        exporter.storage.put.assert_called_once()
 
     @mock.patch.dict(
         os.environ,
@@ -941,31 +1024,6 @@ class TestBaseExporter(unittest.TestCase):
         self.assertIsNotNone(_REQUESTS_MAP[_REQ_DURATION_NAME[1]])
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
 
-    def test_transmission_206_no_retry(self):
-        exporter = BaseExporter(disable_offline_storage=True)
-        exporter.storage = mock.Mock()
-        test_envelope = TelemetryItem(name="testEnvelope", time=datetime.now())
-        custom_envelopes_to_export = [
-            TelemetryItem(name="Test", time=datetime.now()),
-            TelemetryItem(name="Test", time=datetime.now()),
-            test_envelope,
-        ]
-        with mock.patch.object(AzureMonitorClient, "track") as post:
-            post.return_value = TrackResponse(
-                items_received=3,
-                items_accepted=2,
-                errors=[
-                    TelemetryErrorDetails(
-                        index=0,
-                        status_code=400,
-                        message="should drop",
-                    ),
-                ],
-            )
-            result = self._base._transmit(custom_envelopes_to_export)
-        self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
-        exporter.storage.put.assert_not_called()
-
     @mock.patch.dict(
         os.environ,
         {
@@ -1001,12 +1059,6 @@ class TestBaseExporter(unittest.TestCase):
         self.assertIsNotNone(_REQUESTS_MAP[_REQ_DURATION_NAME[1]])
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
 
-    def test_transmission_400(self):
-        with mock.patch("requests.Session.request") as post:
-            post.return_value = MockResponse(400, "{}")
-            result = self._base._transmit(self._envelopes_to_export)
-        self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
-
     @mock.patch.dict(
         os.environ,
         {
@@ -1028,12 +1080,6 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(_REQUESTS_MAP["count"], 1)
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
 
-    def test_transmission_402(self):
-        with mock.patch("requests.Session.request") as post:
-            post.return_value = MockResponse(402, "{}")
-            result = self._base._transmit(self._envelopes_to_export)
-        self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
-
     @mock.patch.dict(
         os.environ,
         {
@@ -1053,12 +1099,6 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(_REQUESTS_MAP["count"], 1)
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
 
-    def test_transmission_408(self):
-        with mock.patch("requests.Session.request") as post:
-            post.return_value = MockResponse(408, "{}")
-            result = self._base._transmit(self._envelopes_to_export)
-        self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
-
     @mock.patch.dict(
         os.environ,
         {
@@ -1076,12 +1116,6 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(_REQUESTS_MAP[_REQ_RETRY_NAME[1]][408], 1)
         self.assertIsNotNone(_REQUESTS_MAP[_REQ_DURATION_NAME[1]])
         self.assertEqual(_REQUESTS_MAP["count"], 1)
-        self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
-
-    def test_transmission_429(self):
-        with mock.patch("requests.Session.request") as post:
-            post.return_value = MockResponse(429, "{}")
-            result = self._base._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
 
     @mock.patch.dict(
@@ -1103,12 +1137,6 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(_REQUESTS_MAP["count"], 1)
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
 
-    def test_transmission_439(self):
-        with mock.patch("requests.Session.request") as post:
-            post.return_value = MockResponse(439, "{}")
-            result = self._base._transmit(self._envelopes_to_export)
-        self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
-
     @mock.patch.dict(
         os.environ,
         {
@@ -1128,12 +1156,6 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(_REQUESTS_MAP["count"], 1)
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
 
-    def test_transmission_500(self):
-        with mock.patch("requests.Session.request") as post:
-            post.return_value = MockResponse(500, "{}")
-            result = self._base._transmit(self._envelopes_to_export)
-        self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
-
     @mock.patch.dict(
         os.environ,
         {
@@ -1151,12 +1173,6 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(_REQUESTS_MAP[_REQ_RETRY_NAME[1]][500], 1)
         self.assertIsNotNone(_REQUESTS_MAP[_REQ_DURATION_NAME[1]])
         self.assertEqual(_REQUESTS_MAP["count"], 1)
-        self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
-
-    def test_transmission_502(self):
-        with mock.patch("requests.Session.request") as post:
-            post.return_value = MockResponse(503, "{}")
-            result = self._base._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
 
     @mock.patch.dict(
@@ -1178,12 +1194,6 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(_REQUESTS_MAP["count"], 1)
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
 
-    def test_transmission_503(self):
-        with mock.patch("requests.Session.request") as post:
-            post.return_value = MockResponse(503, "{}")
-            result = self._base._transmit(self._envelopes_to_export)
-        self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
-
     @mock.patch.dict(
         os.environ,
         {
@@ -1198,12 +1208,6 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(_REQUESTS_MAP[_REQ_RETRY_NAME[1]][503], 1)
         self.assertIsNotNone(_REQUESTS_MAP[_REQ_DURATION_NAME[1]])
         self.assertEqual(_REQUESTS_MAP["count"], 1)
-        self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
-
-    def test_transmission_504(self):
-        with mock.patch("requests.Session.request") as post:
-            post.return_value = MockResponse(504, "{}")
-            result = self._base._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
 
     @mock.patch.dict(
@@ -1224,10 +1228,6 @@ class TestBaseExporter(unittest.TestCase):
         self.assertIsNotNone(_REQUESTS_MAP[_REQ_DURATION_NAME[1]])
         self.assertEqual(_REQUESTS_MAP["count"], 1)
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
-
-    def test_transmission_empty(self):
-        status = self._base._transmit([])
-        self.assertEqual(status, ExportResult.SUCCESS)
 
     # ========================================================================
     # AUTHENTICATION AND CREDENTIAL TESTS
