@@ -35,6 +35,12 @@
 # PRLabel: %AI
 /sdk/ai/                                                             @luigiw @needuv @paulshealy1 @singankit @dargilco @jhakulin
 
+# PRLabel: %Contoso WidgetManager
+/sdk/contosowidgetmanager/                                         @ReilleyMilne @Shirelmr
+
+# ServiceLabel: %Contoso WidgetManager
+# ServiceOwners:                                                   @ReilleyMilne @Shirelmr
+
 # ServiceOwners: @luigiw @needuv @singankit
 # ServiceLabel: %Evaluation
 
