@@ -24,22 +24,57 @@ class PathAwareSchema(PatchedBaseSchema, metaclass=PatchedSchemaMeta):
     schema_ignored = fields.Str(data_key="$schema", dump_only=True)
 
     def __init__(self, *args, **kwargs):
-        # this will make context of all PathAwareSchema child class point to one object
-        self.context = kwargs.get("context", None)
-        if self.context is None or self.context.get(BASE_PATH_CONTEXT_KEY, None) is None:
-            msg = "Base path for reading files is required when building PathAwareSchema"
-            raise MlException(message=msg, no_personal_data_message=msg)
-        # set old base path, note it's an Path object and point to the same object with
-        # self.context.get(BASE_PATH_CONTEXT_KEY)
-        self.old_base_path = self.context.get(BASE_PATH_CONTEXT_KEY)
-        super().__init__(*args, **kwargs)
+        # Extract context from kwargs for marshmallow 4.x compatibility
+        context = kwargs.pop("context", None)
+        
+        # Filter out any other parameters that might not be supported in marshmallow 4.x
+        unsupported_schema_params = {'strict', 'prefix'}  # These were removed in marshmallow 4.x
+        filtered_kwargs = {k: v for k, v in kwargs.items() if k not in unsupported_schema_params}
+        
+        if context is None:
+            # Provide a default context with current working directory
+            from pathlib import Path
+            context = {BASE_PATH_CONTEXT_KEY: Path.cwd()}
+        elif context.get(BASE_PATH_CONTEXT_KEY, None) is None:
+            # If context exists but doesn't have base path, add current directory
+            from pathlib import Path
+            context[BASE_PATH_CONTEXT_KEY] = Path.cwd()
+        
+        # Store context for internal use
+        self._ml_context = context
+        self.old_base_path = context.get(BASE_PATH_CONTEXT_KEY)
+        super().__init__(*args, **filtered_kwargs)
+
+    def get_context(self):
+        """Get the ML context for this schema."""
+        return self._ml_context
+
+    def set_context(self, context):
+        """Set the ML context for this schema."""
+        self._ml_context = context
+        if context:
+            self.old_base_path = context.get(BASE_PATH_CONTEXT_KEY)
+
+    # Compatibility property for existing code
+    @property
+    def context(self):
+        """Compatibility property for existing code that accesses context."""
+        return self._ml_context
+
+    @context.setter
+    def context(self, value):
+        """Compatibility setter for existing code that sets context."""
+        self.set_context(value)
 
     @pre_load
     def add_param_overrides(self, data, **kwargs):
         # Removing params override from context so that overriding is done once on the yaml
         # child schema should not override the params.
-        params_override = self.context.pop(PARAMS_OVERRIDE_KEY, None)
+        # Use get() instead of pop() to avoid permanently modifying the context
+        params_override = self._ml_context.get(PARAMS_OVERRIDE_KEY, None)
         if params_override is not None:
+            # Remove it from the context copy to prevent re-processing
+            self._ml_context.pop(PARAMS_OVERRIDE_KEY, None)
             for override in params_override:
                 for param, val in override.items():
                     # Check that none of the intermediary levels are string references (azureml/file)
@@ -102,13 +137,13 @@ class YamlFileSchema(PathAwareSchema):
 
     @pre_load
     def load_from_file(self, data, **kwargs):
-        path = self._resolve_path(data, Path(self.context[BASE_PATH_CONTEXT_KEY]))
+        path = self._resolve_path(data, Path(self._ml_context[BASE_PATH_CONTEXT_KEY]))
         if path is not None:
-            self._previous_base_path = Path(self.context[BASE_PATH_CONTEXT_KEY])
+            self._previous_base_path = Path(self._ml_context[BASE_PATH_CONTEXT_KEY])
             # Push update
-            # deepcopy self.context[BASE_PATH_CONTEXT_KEY] to update old base path
-            self.old_base_path = copy.deepcopy(self.context[BASE_PATH_CONTEXT_KEY])
-            self.context[BASE_PATH_CONTEXT_KEY] = path.parent
+            # deepcopy self._ml_context[BASE_PATH_CONTEXT_KEY] to update old base path
+            self.old_base_path = copy.deepcopy(self._ml_context[BASE_PATH_CONTEXT_KEY])
+            self._ml_context[BASE_PATH_CONTEXT_KEY] = path.parent
 
             data = load_yaml(path)
             return data
@@ -119,5 +154,5 @@ class YamlFileSchema(PathAwareSchema):
     def reset_base_path_post_load(self, data, **kwargs):
         if self._previous_base_path is not None:
             # pop state
-            self.context[BASE_PATH_CONTEXT_KEY] = self._previous_base_path
+            self._ml_context[BASE_PATH_CONTEXT_KEY] = self._previous_base_path
         return data
