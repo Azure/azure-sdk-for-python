@@ -935,9 +935,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
         # Set range filters for a query. Options are either 'feed_range' or 'partition_key'
         utils.verify_exclusive_arguments(["feed_range", "partition_key"], **kwargs)
-        pk_value = kwargs.pop("partition_key", None)
-        if pk_value:
-            partition_key_value = self._set_partition_key(pk_value)
+        if "partition_key" in kwargs:
+            partition_key_value = self._set_partition_key(kwargs["partition_key"])
             partition_key_obj = _build_partition_key_from_properties(container_properties)
             if partition_key_obj._is_prefix_partition_key(partition_key_value):
                 kwargs["prefix_partition_key_object"] = partition_key_obj
@@ -945,6 +944,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             else:
                 # Add to feed_options, only when feed_range not given and partition_key was not prefixed partition_key
                 feed_options["partitionKey"] = partition_key_value
+        kwargs.pop("partition_key", None)
 
         # Set 'partition_key' for QueryItems method. This can be 'None' if feed range or prefix partition key was set
         partition_key = feed_options.get("partitionKey")

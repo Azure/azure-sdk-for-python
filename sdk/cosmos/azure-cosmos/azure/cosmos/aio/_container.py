@@ -755,13 +755,13 @@ class ContainerProxy:
         kwargs["containerProperties"] = self._get_properties_with_options
 
         utils.verify_exclusive_arguments(["feed_range", "partition_key"], **kwargs)
-        partition_key = kwargs.pop("partition_key", None)
         # If 'partition_key' is provided, set 'partitionKey' in 'feed_options'
-        if partition_key:
-            feed_options["partitionKey"] = self._set_partition_key(partition_key)
+        if "partition_key" in kwargs:
+            feed_options["partitionKey"] = self._set_partition_key(kwargs["partition_key"])
         # If 'partition_key' or 'feed_range' is not provided, set 'enableCrossPartitionQuery' to True
         elif not utils.valid_key_value_exist(kwargs, "feed_range"):
             feed_options["enableCrossPartitionQuery"] = True
+        kwargs.pop("partition_key", None)
 
         # Set 'response_hook'
         response_hook = kwargs.pop("response_hook", None)
@@ -772,7 +772,7 @@ class ContainerProxy:
             database_or_container_link=self.container_link,
             query=query,
             options=feed_options,
-            partition_key=partition_key,
+            partition_key=feed_options.get("partitionKey"),
             response_hook=response_hook,
             **kwargs
         )
