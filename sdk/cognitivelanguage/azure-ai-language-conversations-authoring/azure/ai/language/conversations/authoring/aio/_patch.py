@@ -154,72 +154,18 @@ class ConversationAuthoringClient(AuthoringClientGenerated):
         )
 
     @distributed_trace_async
-    async def begin_delete_project(self, project_name: str, **kwargs: Any) -> AsyncLROPoller[ProjectDeletionState]:
+    async def begin_delete_project(self, project_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
         """
         Delete a project.
 
         :param project_name: The name of the project to delete. Required.
         :type project_name: str
-        :return: An instance of AsyncLROPoller that returns ProjectDeletionState.
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.language.conversations.authoring.models.ProjectDeletionState]
-
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[ProjectDeletionState] = kwargs.pop("cls", None)
-        polling: Union[bool, "AsyncPollingMethod"] = kwargs.pop("polling", True)  # type: ignore[name-defined]
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-
-        if cont_token is None:
-            initial = await self._delete_project_initial(
-                project_name=project_name,
-                cls=lambda x, y, z: x,  # return PipelineResponse
-                headers=_headers,
-                params=_params,
-                **kwargs,
-            )
-            await initial.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            # Final jobs payload is at the ROOT
-            obj = _deserialize(ProjectDeletionState, pipeline_response.http_response.json())
-            if cls:
-                return cls(pipeline_response, obj, {})  # type: ignore[misc]
-            return obj
-
-        path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method = cast(
-                "AsyncPollingMethod",  # type: ignore[name-defined]
-                AsyncJobsPollingMethod(  # replace with your async jobs polling class name if different
-                    polling_interval=lro_delay,
-                    path_format_arguments=path_format_arguments,  # resolves {Endpoint} in Operation-Location
-                    **kwargs,
-                ),
-            )
-        elif polling is False:
-            from azure.core.polling import AsyncNoPolling
-
-            polling_method = cast("AsyncPollingMethod", AsyncNoPolling())  # type: ignore[name-defined]
-        else:
-            polling_method = polling
-
-        if cont_token:
-            return AsyncLROPoller[ProjectDeletionState].from_continuation_token(  # type: ignore[index]
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-
-        return AsyncLROPoller[ProjectDeletionState](  # type: ignore[index]
-            self._client, initial, get_long_running_output, polling_method  # type: ignore
+        return await super()._begin_delete_project(
+            project_name=project_name, **kwargs
         )
 
 
