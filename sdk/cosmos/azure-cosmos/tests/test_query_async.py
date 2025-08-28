@@ -465,6 +465,20 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
 
         assert second_page['id'] == second_page_fetched_with_continuation_token['id']
 
+    async def test_cross_partition_query_with_none_partition_key_async(self):
+        created_collection = self.created_db.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
+        document_definition = {'pk': 'pk1', 'id': str(uuid.uuid4())}
+        await created_collection.create_item(body=document_definition)
+        document_definition = {'pk': 'pk2', 'id': str(uuid.uuid4())}
+        await created_collection.create_item(body=document_definition)
+
+        query = 'SELECT * from c'
+        query_iterable = created_collection.query_items(
+            query=query,
+            partition_key=None)
+
+        assert len([item async for item in query_iterable]) > 0
+
     async def test_value_max_query_results_async(self):
         container = self.created_db.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
         await container.create_item(

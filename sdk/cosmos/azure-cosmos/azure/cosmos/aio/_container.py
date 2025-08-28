@@ -755,10 +755,9 @@ class ContainerProxy:
         kwargs["containerProperties"] = self._get_properties_with_options
 
         utils.verify_exclusive_arguments(["feed_range", "partition_key"], **kwargs)
-        partition_key = None
+        partition_key = kwargs.pop("partition_key", None)
         # If 'partition_key' is provided, set 'partitionKey' in 'feed_options'
-        if utils.valid_key_value_exist(kwargs, "partition_key"):
-            partition_key = kwargs.pop("partition_key")
+        if partition_key:
             feed_options["partitionKey"] = self._set_partition_key(partition_key)
         # If 'partition_key' or 'feed_range' is not provided, set 'enableCrossPartitionQuery' to True
         elif not utils.valid_key_value_exist(kwargs, "feed_range"):

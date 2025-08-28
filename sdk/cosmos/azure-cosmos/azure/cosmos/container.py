@@ -935,8 +935,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
         # Set range filters for a query. Options are either 'feed_range' or 'partition_key'
         utils.verify_exclusive_arguments(["feed_range", "partition_key"], **kwargs)
-        if utils.valid_key_value_exist(kwargs, "partition_key"):
-            partition_key_value = self._set_partition_key(kwargs.pop("partition_key"))
+        pk_value = kwargs.pop("partition_key", None)
+        if pk_value:
+            partition_key_value = self._set_partition_key(pk_value)
             partition_key_obj = _build_partition_key_from_properties(container_properties)
             if partition_key_obj._is_prefix_partition_key(partition_key_value):
                 kwargs["prefix_partition_key_object"] = partition_key_obj
