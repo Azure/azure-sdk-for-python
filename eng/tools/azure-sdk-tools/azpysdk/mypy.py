@@ -1,7 +1,6 @@
 import argparse
 import os
 import sys
-import logging
 import tempfile
 
 from typing import Optional, List
@@ -15,8 +14,7 @@ from ci_tools.variables import in_ci, set_envvar_defaults
 from ci_tools.environment_exclusions import (
     is_check_enabled, is_typing_ignored
 )
-
-logging.getLogger().setLevel(logging.INFO)
+from ci_tools.logging import logger
 
 PYTHON_VERSION = "3.9"
 MYPY_VERSION = "1.14.1"
@@ -77,11 +75,11 @@ class mypy(Check):
                 print("Failed to install mypy:", e)
                 return e.returncode
 
-            logging.info(f"Running mypy against {package_name}")
+            logger.info(f"Running mypy against {package_name}")
 
             if not args.next and in_ci():
                 if not is_check_enabled(package_dir, "mypy", True) or is_typing_ignored(package_name):
-                    logging.info(
+                    logger.info(
                         f"Package {package_name} opts-out of mypy check. See https://aka.ms/python/typing-guide for information."
                     )
                     continue
@@ -101,17 +99,17 @@ class mypy(Check):
             src_code_error = None
             sample_code_error = None
             try:
-                logging.info(
+                logger.info(
                     f"Running mypy commands on src code: {src_code}"
                 )
                 results.append(check_call(src_code))
-                logging.info("Verified mypy, no issues found")
+                logger.info("Verified mypy, no issues found")
             except CalledProcessError as src_error:
                 src_code_error = src_error 
                 results.append(src_error.returncode)
             
             if not args.next and in_ci() and not is_check_enabled(package_dir, "type_check_samples", True):
-                logging.info(
+                logger.info(
                     f"Package {package_name} opts-out of mypy check on samples."
                 )
                 continue
@@ -120,7 +118,7 @@ class mypy(Check):
                 samples = os.path.exists(os.path.join(package_dir, "samples"))
                 generated_samples = os.path.exists(os.path.join(package_dir, "generated_samples"))
                 if not samples and not generated_samples:
-                    logging.info(
+                    logger.info(
                         f"Package {package_name} does not have a samples directory."
                     )
                 else:
@@ -131,7 +129,7 @@ class mypy(Check):
                         os.path.join(package_dir, "samples" if samples else "generated_samples"),
                     ]
                     try:
-                        logging.info(
+                        logger.info(
                             f"Running mypy commands on sample code: {sample_code}"
                         )
                         results.append(check_call(sample_code))
