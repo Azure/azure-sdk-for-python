@@ -134,7 +134,7 @@ class LocalFileStorage:
 
     # pylint: disable=redefined-builtin
     def __exit__(
-        self, 
+        self,
         exc_type: Optional[Type[BaseException]],
         exc_value: Optional[BaseException],
         traceback: Optional[Any]
