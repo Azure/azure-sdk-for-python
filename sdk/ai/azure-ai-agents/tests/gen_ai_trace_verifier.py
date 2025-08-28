@@ -127,7 +127,7 @@ class GenAiTraceVerifier:
                 actual_val = json.dumps(actual_dict)
             else:
                 actual_val = actual_dict
-            raise AssertionError("check_event_attributes: keys do not match: " + expected_val + "!=" + actual_val)
+            raise AssertionError(f"check_event_attributes: keys do not match: {set(expected_dict.keys())} != {set(actual_dict.keys())}. The actual dictionaries: {expected_val} != {actual_val}")
         for key, expected_val in expected_dict.items():
             if key not in actual_dict:
                 raise AssertionError(f"check_event_attributes: key {key} not found in actuals")
