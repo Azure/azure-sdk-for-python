@@ -9,7 +9,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, AsyncIterable, Callable, Dict, IO, List, Optional, TypeVar, Union, overload
+from typing import Any, AsyncIterator, Callable, Dict, IO, List, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -25,15 +25,18 @@ from azure.core.exceptions import (
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
+from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
+from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
+from ..._validation import api_version_validation
 from ...operations._operations import (
     build_binary_hardening_list_by_firmware_request,
     build_crypto_certificates_list_by_firmware_request,
@@ -86,7 +89,7 @@ class Operations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.Operation"]:
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.Operation"]:
         """List the operations for the provider.
 
         :return: An iterator like instance of Operation
@@ -162,7 +165,7 @@ class Operations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -247,7 +250,7 @@ class FirmwaresOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -426,7 +429,7 @@ class FirmwaresOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -606,7 +609,7 @@ class FirmwaresOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -670,7 +673,7 @@ class FirmwaresOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -679,7 +682,7 @@ class FirmwaresOperations:
     @distributed_trace
     def list_by_workspace(
         self, resource_group_name: str, workspace_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.Firmware"]:
+    ) -> AsyncItemPaged["_models.Firmware"]:
         """Lists all of firmwares inside a workspace.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -762,7 +765,7 @@ class FirmwaresOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -842,7 +845,7 @@ class WorkspacesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -1008,7 +1011,7 @@ class WorkspacesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -1174,7 +1177,7 @@ class WorkspacesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -1187,19 +1190,14 @@ class WorkspacesOperations:
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def delete(self, resource_group_name: str, workspace_name: str, **kwargs: Any) -> None:
-        """The operation to delete a firmware analysis workspace.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param workspace_name: The name of the firmware analysis workspace. Required.
-        :type workspace_name: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    @api_version_validation(
+        method_added_on="2025-08-02",
+        params_added_on={"2025-08-02": ["api_version", "subscription_id", "resource_group_name", "workspace_name"]},
+        api_versions_list=["2025-08-02"],
+    )
+    async def _delete_initial(
+        self, resource_group_name: str, workspace_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -1211,7 +1209,7 @@ class WorkspacesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_workspaces_delete_request(
             resource_group_name=resource_group_name,
@@ -1226,23 +1224,98 @@ class WorkspacesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = False
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 204]:
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes()
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-08-02",
+        params_added_on={"2025-08-02": ["api_version", "subscription_id", "resource_group_name", "workspace_name"]},
+        api_versions_list=["2025-08-02"],
+    )
+    async def begin_delete(self, resource_group_name: str, workspace_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
+        """The operation to delete a firmware analysis workspace.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param workspace_name: The name of the firmware analysis workspace. Required.
+        :type workspace_name: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                workspace_name=workspace_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
-    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.Workspace"]:
+    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.Workspace"]:
         """Lists all of the firmware analysis workspaces in the specified resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -1323,7 +1396,7 @@ class WorkspacesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1331,7 +1404,7 @@ class WorkspacesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_by_subscription(self, **kwargs: Any) -> AsyncIterable["_models.Workspace"]:
+    def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.Workspace"]:
         """Lists all of the firmware analysis workspaces in the specified subscription.
 
         :return: An iterator like instance of Workspace
@@ -1408,7 +1481,7 @@ class WorkspacesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1568,7 +1641,7 @@ class WorkspacesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -1604,7 +1677,7 @@ class BinaryHardeningOperations:
     @distributed_trace
     def list_by_firmware(
         self, resource_group_name: str, workspace_name: str, firmware_id: str, **kwargs: Any
-    ) -> AsyncIterable["_models.BinaryHardeningResource"]:
+    ) -> AsyncItemPaged["_models.BinaryHardeningResource"]:
         """Lists binary hardening analysis results of a firmware.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -1691,7 +1764,7 @@ class BinaryHardeningOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1721,7 +1794,7 @@ class CryptoCertificatesOperations:
     @distributed_trace
     def list_by_firmware(
         self, resource_group_name: str, workspace_name: str, firmware_id: str, **kwargs: Any
-    ) -> AsyncIterable["_models.CryptoCertificateResource"]:
+    ) -> AsyncItemPaged["_models.CryptoCertificateResource"]:
         """Lists crypto certificate analysis results of a firmware.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -1808,7 +1881,7 @@ class CryptoCertificatesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1838,7 +1911,7 @@ class CryptoKeysOperations:
     @distributed_trace
     def list_by_firmware(
         self, resource_group_name: str, workspace_name: str, firmware_id: str, **kwargs: Any
-    ) -> AsyncIterable["_models.CryptoKeyResource"]:
+    ) -> AsyncItemPaged["_models.CryptoKeyResource"]:
         """Lists crypto key analysis results of a firmware.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -1925,7 +1998,7 @@ class CryptoKeysOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1953,9 +2026,23 @@ class CvesOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-08-02",
+        params_added_on={
+            "2025-08-02": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "firmware_id",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-08-02"],
+    )
     def list_by_firmware(
         self, resource_group_name: str, workspace_name: str, firmware_id: str, **kwargs: Any
-    ) -> AsyncIterable["_models.CveResource"]:
+    ) -> AsyncItemPaged["_models.CveResource"]:
         """Lists CVE analysis results of a firmware.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -2042,7 +2129,7 @@ class CvesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2072,7 +2159,7 @@ class PasswordHashesOperations:
     @distributed_trace
     def list_by_firmware(
         self, resource_group_name: str, workspace_name: str, firmware_id: str, **kwargs: Any
-    ) -> AsyncIterable["_models.PasswordHashResource"]:
+    ) -> AsyncItemPaged["_models.PasswordHashResource"]:
         """Lists password hash analysis results of a firmware.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -2159,7 +2246,7 @@ class PasswordHashesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2189,7 +2276,7 @@ class SbomComponentsOperations:
     @distributed_trace
     def list_by_firmware(
         self, resource_group_name: str, workspace_name: str, firmware_id: str, **kwargs: Any
-    ) -> AsyncIterable["_models.SbomComponentResource"]:
+    ) -> AsyncItemPaged["_models.SbomComponentResource"]:
         """Lists sbom analysis results of a firmware.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -2276,7 +2363,7 @@ class SbomComponentsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2371,7 +2458,7 @@ class SummariesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -2387,7 +2474,7 @@ class SummariesOperations:
     @distributed_trace
     def list_by_firmware(
         self, resource_group_name: str, workspace_name: str, firmware_id: str, **kwargs: Any
-    ) -> AsyncIterable["_models.SummaryResource"]:
+    ) -> AsyncItemPaged["_models.SummaryResource"]:
         """Lists analysis result summary names of a firmware. To fetch the full summary data, get that
         summary by name.
 
@@ -2475,7 +2562,7 @@ class SummariesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2558,7 +2645,7 @@ class UsageMetricsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -2574,7 +2661,7 @@ class UsageMetricsOperations:
     @distributed_trace
     def list_by_workspace(
         self, resource_group_name: str, workspace_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.UsageMetric"]:
+    ) -> AsyncItemPaged["_models.UsageMetric"]:
         """Lists monthly usage information for a workspace.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -2658,7 +2745,7 @@ class UsageMetricsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response

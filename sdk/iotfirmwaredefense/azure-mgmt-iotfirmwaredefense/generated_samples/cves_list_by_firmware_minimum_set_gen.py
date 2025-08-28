@@ -33,12 +33,12 @@ def main():
     response = client.cves.list_by_firmware(
         resource_group_name="FirmwareAnalysisRG",
         workspace_name="default",
-        firmware_id="109a9886-50bf-85a8-9d75-000000000000",
+        firmware_id="00000000-0000-0000-0000-000000000000",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: 2025-04-01-preview/Cves_ListByFirmware_MinimumSet_Gen.json
+# x-ms-original-file: 2025-08-02/Cves_ListByFirmware_MinimumSet_Gen.json
 if __name__ == "__main__":
     main()
