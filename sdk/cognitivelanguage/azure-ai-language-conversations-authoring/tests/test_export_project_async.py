@@ -31,7 +31,7 @@ class TestConversationsExportCaseAsync(TestConversationsAsync):
     async def test_export_project_async(self, authoring_endpoint, authoring_key):
         client = await self.create_client(authoring_endpoint, authoring_key)
         async with client:
-            project_name = "PythonImportProject0820"
+            project_name = "Test-data-labels"
             project_client = client.get_project_client(project_name)
 
             # Act: begin export (LRO)
