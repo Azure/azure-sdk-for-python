@@ -71,14 +71,11 @@ class _GlobalPartitionEndpointManagerForCircuitBreakerAsync(_GlobalEndpointManag
             options[_Constants.Kwargs.EXCLUDED_LOCATIONS] = request.excluded_locations
         if request.pk_val:
             partition_key_value = request.pk_val
-            logger.info("PartitionKey Value = " + str(partition_key_value))
             # get the partition key range for the given partition key
             epk_range = [partition_key._get_epk_range_for_partition_key(partition_key_value)]
-            logger.info("EPK_RANGE = " +  str(epk_range[0]))
             partition_ranges = await (self.client._routing_map_provider
                                       .get_overlapping_ranges(container_link, epk_range, options))
             partition_range = Range.PartitionKeyRangeToRange(partition_ranges[0])
-            logger.info("Partition Range = " +  str(partition_range))
         elif HttpHeaders.PartitionKeyRangeID in request.headers:
             pk_range_id = request.headers[HttpHeaders.PartitionKeyRangeID]
             epk_range = await (self.client._routing_map_provider
