@@ -438,7 +438,7 @@ def find_sdist(dist_dir: str, pkg_name: str, pkg_version: str) -> Optional[str]:
 
 
 def pip_install(
-    requirements: List[str], include_dependencies: bool = True, python_executable: Optional[str] = None
+    requirements: List[str], include_dependencies: bool = True, python_executable: Optional[str] = None, cwd: Optional[str] = None
 ) -> bool:
     """
     Attempts to invoke an install operation using the invoking python's pip. Empty requirements are auto-success.
@@ -454,7 +454,10 @@ def pip_install(
         return True
 
     try:
-        subprocess.check_call(command)
+        if cwd:
+            subprocess.check_call(command, cwd=cwd)
+        else:
+            subprocess.check_call(command)
     except subprocess.CalledProcessError as f:
         return False
 

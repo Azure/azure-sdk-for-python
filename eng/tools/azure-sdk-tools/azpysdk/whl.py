@@ -44,11 +44,16 @@ class whl(Check):
             # otherwise we'll just get sys.executable and install in current
             executable = self.handle_venv(args.isolate, args, venv_location=venv_location)
 
+            print(f"Invoking check with {executable}")
             dev_requirements = os.path.join(pkg, "dev_requirements.txt")
 
             if os.path.exists(dev_requirements):
-                pip_install([f"-r", f"{dev_requirements}"], True, executable)
+                print(f"Installing dev_requirements at {dev_requirements}")
+                pip_install([f"-r", f"{dev_requirements}"], True, executable, pkg)
+            else:
+                print("Skipping installing dev_requirements")
 
+            # TODO: make the staging area a folder under the venv_location
             staging_area = tempfile.mkdtemp()
             create_package_and_install(
                 distribution_directory=staging_area,
@@ -64,8 +69,9 @@ class whl(Check):
 
             # todo, come up with a good pattern for passing all the additional args after -- to pytest
             logging.info(f"Invoke pytest for {pkg}")
+            # + (["-m", args.mark_arg] if args.mark_arg else []) +
             exit_code = check_call(
-                [executable, "-m", "pytest", pkg] + (["-m", args.mark_arg] if args.mark_arg else []) + [
+                [executable, "-m", "pytest", "."] + [
                     "-rsfE",
                     f"--junitxml={pkg}/test-junit-{args.command}.xml",
                     "--verbose",
@@ -77,6 +83,7 @@ class whl(Check):
                     "--ignore=.eggs",
                     "--ignore=samples"
                 ]
+                , cwd=pkg
             )
 
             if exit_code != 0:
