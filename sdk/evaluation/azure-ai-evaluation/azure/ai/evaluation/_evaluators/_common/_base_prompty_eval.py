@@ -3,21 +3,34 @@
 # ---------------------------------------------------------
 
 import math
-import re
 import os
+import re
 from typing import Dict, TypeVar, Union
 
-if os.getenv("AI_EVALS_USE_PF_PROMPTY", "false").lower() == "true":
-    from promptflow.core._flow import AsyncPrompty
-else:
-    from azure.ai.evaluation._legacy.prompty import AsyncPrompty
+from azure.ai.evaluation._legacy.prompty import (
+    AsyncPrompty as _LegacyAsyncPrompty,
+)
 from typing_extensions import override
 
-from azure.ai.evaluation._common.constants import PROMPT_BASED_REASON_EVALUATORS
+from azure.ai.evaluation._common.constants import (
+    PROMPT_BASED_REASON_EVALUATORS,
+)
 from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
-from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
-from ..._common.utils import construct_prompty_model_config, validate_model_config, parse_quality_evaluator_reason_score
+from azure.ai.evaluation._exceptions import (
+    EvaluationException,
+    ErrorBlame,
+    ErrorCategory,
+    ErrorTarget,
+)
+from ..._common.utils import (
+    construct_prompty_model_config,
+    validate_model_config,
+    parse_quality_evaluator_reason_score,
+)
 from . import EvaluatorBase
+
+_PFAsyncPrompty = None  # type: ignore[assignment]
+
 
 try:
     from ..._user_agent import UserAgentSingleton
@@ -71,7 +84,11 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
         self._prompty_file = prompty_file
         self._threshold = threshold
         self._higher_is_better = _higher_is_better
-        super().__init__(eval_last_turn=eval_last_turn, threshold=threshold, _higher_is_better=_higher_is_better)
+        super().__init__(
+            eval_last_turn=eval_last_turn,
+            threshold=threshold,
+            _higher_is_better=_higher_is_better,
+        )
 
         subclass_name = self.__class__.__name__
         user_agent = f"{UserAgentSingleton().value} (type=evaluator subtype={subclass_name})"
@@ -80,9 +97,28 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
             self._DEFAULT_OPEN_API_VERSION,
             user_agent,
         )
+        # Choose backend: force legacy prompty for reasoning models so
+        # parameter adaptation applies
+        use_pf = os.getenv("AI_EVALS_USE_PF_PROMPTY", "false").lower() == "true"
+        if self._is_reasoning_model:
+            AsyncPromptyClass = _LegacyAsyncPrompty
+        else:
+            if use_pf and _PFAsyncPrompty is None:
+                try:
+                    from promptflow.core._flow import (  # type: ignore
+                        AsyncPrompty as _PFAsyncPrompty_import,
+                    )
 
-        self._flow = AsyncPrompty.load(
-            source=self._prompty_file, model=prompty_model_config, is_reasoning_model=self._is_reasoning_model
+                    # assign to module-level for reuse
+                    globals()["_PFAsyncPrompty"] = _PFAsyncPrompty_import
+                except Exception:  # pragma: no cover - PF not available
+                    globals()["_PFAsyncPrompty"] = None
+            AsyncPromptyClass = _PFAsyncPrompty if (use_pf and _PFAsyncPrompty is not None) else _LegacyAsyncPrompty
+
+        self._flow = AsyncPromptyClass.load(  # type: ignore[call-arg]
+            source=self._prompty_file,
+            model=prompty_model_config,
+            is_reasoning_model=self._is_reasoning_model,
         )
 
     # __call__ not overridden here because child classes have such varied signatures that there's no point
