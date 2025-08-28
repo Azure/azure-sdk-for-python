@@ -34,6 +34,7 @@ servicePreparer = functools.partial(
 
 class TestBase(AzureRecordedTestCase):
     test_redteams_params = {
+        # cSpell:disable-next-line
         "connection_name": "naposaniwestus3",
         "connection_type": ConnectionType.AZURE_OPEN_AI,
         "model_deployment_name": "gpt-4o-mini"
