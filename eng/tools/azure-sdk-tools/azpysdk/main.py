@@ -20,6 +20,7 @@ from .mypy import mypy
 from ci_tools.scenario import install_into_venv, get_venv_python
 from ci_tools.functions import get_venv_call
 from ci_tools.variables import discover_repo_root
+from ci_tools.logging import logger, configure_logging
 
 # right now, we are assuming you HAVE to be in the azure-sdk-tools repo
 # we assume this because we don't know how a dev has installed this package, and might be
@@ -102,6 +103,22 @@ def main(argv: Optional[Sequence[str]] = None) -> int:#
     """
     parser = build_parser()
     args = parser.parse_args(argv)
+
+    # parse logging args TODO ?
+    log_parser = argparse.ArgumentParser()
+    log_parser.add_argument(
+        "--quiet",
+        action="store_true",
+        default=False,
+        help="Enable quiet mode (only shows ERROR logs)"
+    )
+    log_parser.add_argument(
+        "--verbose",
+        action="store_true",
+        default=False,
+        help="Enable verbose mode (shows DEBUG logs)"
+    )
+    
 
     if not hasattr(args, "func"):
         parser.print_help()
