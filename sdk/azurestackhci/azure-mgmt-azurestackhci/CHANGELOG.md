@@ -1,6 +1,6 @@
 # Release History
 
-## 8.0.0 (2025-09-22)
+## 8.0.0 (2025-09-04)
 
 ### Features Added
 
@@ -281,37 +281,32 @@
   - Added model `VirtualMachineInstanceView`
   - Added model `VirtualSwitchConfigurationOverrides`
   - Added enum `VmSizeEnum`
-  - Model `ArcSettingsOperations` added parameter `kwargs` in method `__init__`
-  - Model `ArcSettingsOperations` added method `begin_initialize_disable_process`
-  - Model `ArcSettingsOperations` added method `consent_and_install_default_extensions`
-  - Model `ClustersOperations` added parameter `kwargs` in method `__init__`
-  - Model `ClustersOperations` added method `begin_extend_software_assurance_benefit`
-  - Model `ExtensionsOperations` added parameter `kwargs` in method `__init__`
-  - Model `ExtensionsOperations` added method `begin_upgrade`
-  - Model `Operations` added parameter `kwargs` in method `__init__`
-  - Added model `DeploymentSettingsOperations`
-  - Added model `EdgeDevicesOperations`
-  - Added model `GalleryImagesOperations`
-  - Added model `GuestAgentOperations`
-  - Added model `GuestAgentsOperations`
-  - Added model `HybridIdentityMetadataOperations`
-  - Added model `LogicalNetworksOperations`
-  - Added model `MarketplaceGalleryImagesOperations`
-  - Added model `NetworkInterfacesOperations`
-  - Added model `OffersOperations`
-  - Added model `PublishersOperations`
-  - Added model `SecuritySettingsOperations`
-  - Added model `SkusOperations`
-  - Added model `StorageContainersOperations`
-  - Added model `UpdateRunsOperations`
-  - Added model `UpdateSummariesOperations`
-  - Added model `UpdatesOperations`
-  - Added model `VirtualHardDisksOperations`
-  - Added model `VirtualMachineInstancesOperations`
+  - Operation group `ArcSettingsOperations` added method `begin_initialize_disable_process`
+  - Operation group `ArcSettingsOperations` added method `consent_and_install_default_extensions`
+  - Operation group `ClustersOperations` added method `begin_extend_software_assurance_benefit`
+  - Operation group `ExtensionsOperations` added method `begin_upgrade`
+  - Added operation group `DeploymentSettingsOperations`
+  - Added operation group `EdgeDevicesOperations`
+  - Added operation group `GalleryImagesOperations`
+  - Added operation group `GuestAgentOperations`
+  - Added operation group `GuestAgentsOperations`
+  - Added operation group `HybridIdentityMetadataOperations`
+  - Added operation group `LogicalNetworksOperations`
+  - Added operation group `MarketplaceGalleryImagesOperations`
+  - Added operation group `NetworkInterfacesOperations`
+  - Added operation group `OffersOperations`
+  - Added operation group `PublishersOperations`
+  - Added operation group `SecuritySettingsOperations`
+  - Added operation group `SkusOperations`
+  - Added operation group `StorageContainersOperations`
+  - Added operation group `UpdateRunsOperations`
+  - Added operation group `UpdateSummariesOperations`
+  - Added operation group `UpdatesOperations`
+  - Added operation group `VirtualHardDisksOperations`
+  - Added operation group `VirtualMachineInstancesOperations`
 
 ### Breaking Changes
 
-  - Deleted or renamed function `patch_sdk`
   - Model `ArcSetting` deleted or renamed its instance variable `created_by`
   - Model `ArcSetting` deleted or renamed its instance variable `created_by_type`
   - Model `ArcSetting` deleted or renamed its instance variable `created_at`
