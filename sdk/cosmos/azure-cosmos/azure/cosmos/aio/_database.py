@@ -22,12 +22,13 @@
 """Interact with databases in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, Dict, List, Mapping, Optional, Union, Callable
+from typing import Any, Dict, List, Mapping, Optional, Union, Callable, overload, Literal
 
 import warnings
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
+from wheel.wheelfile import MINIMUM_TIMESTAMP
 
 from ._cosmos_client_connection_async import CosmosClientConnection
 from .._base import build_options as _build_options, _set_throughput_options, _deserialize_throughput, \
@@ -39,6 +40,7 @@ from ..exceptions import CosmosResourceNotFoundError
 from ._user import UserProxy
 from ..documents import IndexingMode
 from ..partition_key import PartitionKey
+from .._cosmos_responses import CosmosDict
 
 
 __all__ = ("DatabaseProxy",)
@@ -132,7 +134,7 @@ class DatabaseProxy(object):
         *,
         initial_headers: Optional[Dict[str, str]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> CosmosDict:
         """Read the database properties.
 
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
@@ -160,7 +162,7 @@ class DatabaseProxy(object):
 
         return self._properties
 
-    @distributed_trace_async
+    @overload
     async def create_container(
         self,
         id: str,
@@ -177,8 +179,39 @@ class DatabaseProxy(object):
         vector_embedding_policy: Optional[Dict[str, Any]] = None,
         change_feed_policy: Optional[Dict[str, Any]] = None,
         full_text_policy: Optional[Dict[str, Any]] = None,
+        return_properties: Literal[False] = False,
         **kwargs: Any
     ) -> ContainerProxy:
+        ...
+
+    @overload
+    async def create_container(
+            self,
+            id: str,
+            partition_key: PartitionKey,
+            *,
+            indexing_policy: Optional[Dict[str, str]] = None,
+            default_ttl: Optional[int] = None,
+            offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
+            unique_key_policy: Optional[Dict[str, str]] = None,
+            conflict_resolution_policy: Optional[Dict[str, str]] = None,
+            initial_headers: Optional[Dict[str, str]] = None,
+            computed_properties: Optional[List[Dict[str, str]]] = None,
+            analytical_storage_ttl: Optional[int] = None,
+            vector_embedding_policy: Optional[Dict[str, Any]] = None,
+            change_feed_policy: Optional[Dict[str, Any]] = None,
+            full_text_policy: Optional[Dict[str, Any]] = None,
+            return_properties: Literal[True],
+            **kwargs: Any
+    ) -> tuple[ContainerProxy, CosmosDict]:
+        ...
+
+    @distributed_trace_async
+    async def create_container(
+        self,
+        *args: Any,
+        **kwargs: Any
+    ) -> Union[ContainerProxy, tuple[ContainerProxy, CosmosDict]]:
         """Create a new container with the given ID (name).
 
         If a container with the given ID already exists, a CosmosResourceExistsError is raised.
@@ -186,6 +219,8 @@ class DatabaseProxy(object):
         :param str id: ID (name) of container to create.
         :param partition_key: The partition key to use for the container.
         :type partition_key: ~azure.cosmos.PartitionKey
+        :keyword bool return_properties: Specifies function to return either a ContainerProxy
+            or a Tuple of a ContainerProxy and CosmosDict instance.
         :keyword dict[str, str] indexing_policy: The indexing policy to apply to the container.
         :keyword int default_ttl: Default time to live (TTL) for items in the container.
             If unspecified, items do not expire.
@@ -211,8 +246,9 @@ class DatabaseProxy(object):
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container creation failed.
-        :returns: A `ContainerProxy` instance representing the new container.
-        :rtype: ~azure.cosmos.aio.ContainerProxy
+        :returns: A `ContainerProxy` instance representing the new container or a tuple of the ContainerProxy
+            and CosmosDict with the response headers.
+        :rtype: ~azure.cosmos.aio.ContainerProxy or tuple[~azure.cosmos.aio.ContainerProxy, ~azure.cosmos.CosmosDict]
 
         .. admonition:: Example:
 
@@ -232,6 +268,21 @@ class DatabaseProxy(object):
                 :caption: Create a container with specific settings; in this case, a custom partition key:
                 :name: create_container_with_settings
         """
+
+        id = args[0] if len(args) > 0 else kwargs.pop('id', None)
+        partition_key = args[1] if len(args) > 1 else kwargs.pop('partition_key', None)
+        indexing_policy = kwargs.pop('indexing_policy', None)
+        default_ttl = kwargs.pop('default_ttl', None)
+        offer_throughput = kwargs.pop('offer_throughput', None)
+        unique_key_policy = kwargs.pop('unique_key_policy', None)
+        conflict_resolution_policy = kwargs.pop('conflict_resolution_policy', None)
+        analytical_storage_ttl = kwargs.pop('analytical_storage_ttl', None)
+        vector_embedding_policy = kwargs.pop('vector_embedding_policy', None)
+        computed_properties = kwargs.pop('computed_properties', None)
+        change_feed_policy = kwargs.pop('change_feed_policy', None)
+        full_text_policy = kwargs.pop('full_text_policy', None)
+        return_properties = kwargs.pop('return_properties', False)
+
         session_token = kwargs.get('session_token')
         if session_token is not None:
             warnings.warn(
@@ -277,17 +328,17 @@ class DatabaseProxy(object):
             definition["changeFeedPolicy"] = change_feed_policy
         if full_text_policy is not None:
             definition["fullTextPolicy"] = full_text_policy
-        if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
         request_options = _build_options(kwargs)
         _set_throughput_options(offer=offer_throughput, request_options=request_options)
 
         data = await self.client_connection.CreateContainer(
             database_link=self.database_link, collection=definition, options=request_options, **kwargs
         )
-        return ContainerProxy(self.client_connection, self.database_link, data["id"], properties=data)
+        if not return_properties:
+            return ContainerProxy(self.client_connection, self.database_link, data["id"], properties=data)
+        return ContainerProxy(self.client_connection, self.database_link, data["id"], properties=data), data
 
-    @distributed_trace_async
+    @overload
     async def create_container_if_not_exists(
         self,
         id: str,
@@ -304,8 +355,39 @@ class DatabaseProxy(object):
         vector_embedding_policy: Optional[Dict[str, Any]] = None,
         change_feed_policy: Optional[Dict[str, Any]] = None,
         full_text_policy: Optional[Dict[str, Any]] = None,
+        return_properties: Literal[False] = False,
         **kwargs: Any
     ) -> ContainerProxy:
+        ...
+
+    @overload
+    async def create_container_if_not_exists(
+        self,
+        id: str,
+        partition_key: PartitionKey,
+        *,
+        indexing_policy: Optional[Dict[str, str]] = None,
+        default_ttl: Optional[int] = None,
+        offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
+        unique_key_policy: Optional[Dict[str, str]] = None,
+        conflict_resolution_policy: Optional[Dict[str, str]] = None,
+        initial_headers: Optional[Dict[str, str]] = None,
+        computed_properties: Optional[List[Dict[str, str]]] = None,
+        analytical_storage_ttl: Optional[int] = None,
+        vector_embedding_policy: Optional[Dict[str, Any]] = None,
+        change_feed_policy: Optional[Dict[str, Any]] = None,
+        full_text_policy: Optional[Dict[str, Any]] = None,
+        return_properties: Literal[True],
+        **kwargs: Any
+    ) -> tuple[ContainerProxy, CosmosDict]:
+        ...
+
+    @distributed_trace_async
+    async def create_container_if_not_exists(
+        self,
+        *args: Any,
+        **kwargs: Any
+    ) -> Union[ContainerProxy, tuple[ContainerProxy, CosmosDict]]:
         """Create a container if it does not exist already.
 
         If the container already exists, the existing settings are returned.
@@ -315,6 +397,8 @@ class DatabaseProxy(object):
         :param str id: ID (name) of container to create.
         :param partition_key: The partition key to use for the container.
         :type partition_key: ~azure.cosmos.PartitionKey
+        :keyword bool return_properties: Specifies function to return either a ContainerProxy
+            or a Tuple of a ContainerProxy and CosmosDict instance.
         :keyword dict[str, str] indexing_policy: The indexing policy to apply to the container.
         :keyword int default_ttl: Default time to live (TTL) for items in the container.
             If unspecified, items do not expire.
@@ -340,9 +424,26 @@ class DatabaseProxy(object):
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container creation failed.
-        :returns: A `ContainerProxy` instance representing the new container.
-        :rtype: ~azure.cosmos.aio.ContainerProxy
+        :returns: A `ContainerProxy` instance representing the new container or a tuple of the ContainerProxy
+            and CosmosDict with the response headers.
+        :rtype: ~azure.cosmos.ContainerProxy or tuple[~azure.cosmos.aio.ContainerProxy, ~azure.cosmos.CosmosDict]
         """
+
+        id = args[0] if len(args) > 0 else kwargs.pop('id', None)
+        partition_key = args[1] if len(args) > 1 else kwargs.pop('partition_key', None)
+        indexing_policy = kwargs.pop('indexing_policy', None)
+        default_ttl = kwargs.pop('default_ttl', None)
+        offer_throughput = kwargs.pop('offer_throughput', None)
+        unique_key_policy = kwargs.pop('unique_key_policy', None)
+        conflict_resolution_policy = kwargs.pop('conflict_resolution_policy', None)
+        initial_headers = kwargs.pop('initial_headers', None)
+        analytical_storage_ttl = kwargs.pop('analytical_storage_ttl', None)
+        vector_embedding_policy = kwargs.pop('vector_embedding_policy', None)
+        computed_properties = kwargs.pop('computed_properties', None)
+        change_feed_policy = kwargs.pop('change_feed_policy', None)
+        full_text_policy = kwargs.pop('full_text_policy', None)
+        return_properties = kwargs.pop('return_properties', False)
+
         session_token = kwargs.get('session_token')
         if session_token is not None:
             warnings.warn(
@@ -363,11 +464,13 @@ class DatabaseProxy(object):
                 DeprecationWarning)
         try:
             container_proxy = self.get_container_client(id)
-            await container_proxy.read(
+            properties = await container_proxy.read(
                 initial_headers=initial_headers,
                 **kwargs
             )
-            return container_proxy
+            if not return_properties:
+                return container_proxy
+            return container_proxy, properties
         except CosmosResourceNotFoundError:
             return await self.create_container(
                 id=id,
@@ -383,6 +486,7 @@ class DatabaseProxy(object):
                 vector_embedding_policy=vector_embedding_policy,
                 change_feed_policy=change_feed_policy,
                 full_text_policy=full_text_policy,
+                return_properties=return_properties,
                 **kwargs
             )
 
@@ -506,7 +610,7 @@ class DatabaseProxy(object):
             response_hook(self.client_connection.last_response_headers, result)
         return result
 
-    @distributed_trace_async
+    @overload
     async def replace_container(
         self,
         container: Union[str, ContainerProxy, Mapping[str, Any]],
@@ -519,8 +623,35 @@ class DatabaseProxy(object):
         analytical_storage_ttl: Optional[int] = None,
         computed_properties: Optional[List[Dict[str, str]]] = None,
         full_text_policy: Optional[Dict[str, Any]] = None,
+        return_properties: Literal[False] = False,
         **kwargs: Any
     ) -> ContainerProxy:
+        ...
+
+    @overload
+    async def replace_container(
+        self,
+        container: Union[str, ContainerProxy, Mapping[str, Any]],
+        partition_key: PartitionKey,
+        *,
+        indexing_policy: Optional[Dict[str, str]] = None,
+        default_ttl: Optional[int] = None,
+        conflict_resolution_policy: Optional[Dict[str, str]] = None,
+        initial_headers: Optional[Dict[str, str]] = None,
+        analytical_storage_ttl: Optional[int] = None,
+        computed_properties: Optional[List[Dict[str, str]]] = None,
+        full_text_policy: Optional[Dict[str, Any]] = None,
+        return_properties: Literal[True],
+        **kwargs: Any
+    ) -> tuple[ContainerProxy, CosmosDict]:
+        ...
+
+    @distributed_trace_async
+    async def replace_container(
+        self,
+        *args: Any,
+        **kwargs: Any
+    ) -> Union[ContainerProxy, tuple[ContainerProxy, CosmosDict]]:
         """Reset the properties of the container.
 
         Property changes are persisted immediately. Any properties not specified
@@ -531,6 +662,8 @@ class DatabaseProxy(object):
         :type container: Union[str, Dict[str, Any], ~azure.cosmos.aio.ContainerProxy]
         :param partition_key: The partition key to use for the container.
         :type partition_key: ~azure.cosmos.PartitionKey
+        :keyword bool return_properties: Specifies function to return either a ContainerProxy
+            or a Tuple of a ContainerProxy and CosmosDict instance.
         :keyword dict[str, str] indexing_policy: The indexing policy to apply to the container.
         :keyword int default_ttl: Default time to live (TTL) for items in the container.
             If unspecified, items do not expire.
@@ -547,10 +680,11 @@ class DatabaseProxy(object):
         :keyword Dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
-        :returns: A `ContainerProxy` instance representing the container after replace completed.
+        :returns: A `ContainerProxy` instance representing the new container or a tuple of the ContainerProxy
+            and CosmosDict with the response headers.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be replaced.
             This includes if the container with given id does not exist.
-        :rtype: ~azure.cosmos.aio.ContainerProxy
+        :rtype: ~azure.cosmos.aio.ContainerProxy or tuple[~azure.cosmos.aio.ContainerProxy, ~azure.cosmos.CosmosDict]
 
         .. admonition:: Example:
 
@@ -562,6 +696,18 @@ class DatabaseProxy(object):
                 :caption: Reset the TTL property on a container, and display the updated properties:
                 :name: reset_container_properties
         """
+
+        container = args[0] if len(args) > 0 else kwargs.pop('container', None)
+        partition_key = args[1] if len(args) > 1 else kwargs.pop('partition_key', None)
+        indexing_policy = kwargs.pop('indexing_policy', None)
+        default_ttl = kwargs.pop('default_ttl', None)
+        conflict_resolution_policy = kwargs.pop('conflict_resolution_policy', None)
+        initial_headers = kwargs.pop('initial_headers', None)
+        analytical_storage_ttl = kwargs.pop('analytical_storage_ttl', None)
+        computed_properties = kwargs.pop('computed_properties', None)
+        full_text_policy = kwargs.pop('full_text_policy', None)
+        return_properties = kwargs.pop('return_properties', False)
+
         session_token = kwargs.get('session_token')
         if session_token is not None:
             warnings.warn(
@@ -604,9 +750,15 @@ class DatabaseProxy(object):
         container_properties = await self.client_connection.ReplaceContainer(
             container_link, collection=parameters, options=request_options, **kwargs
         )
+
+        if not return_properties:
+            return ContainerProxy(
+                self.client_connection, self.database_link, container_properties["id"], properties=container_properties)
         return ContainerProxy(
-            self.client_connection, self.database_link, container_properties["id"], properties=container_properties
-        )
+            self.client_connection,
+            self.database_link,
+            container_properties["id"],
+            properties=container_properties), container_properties
 
     @distributed_trace_async
     async def delete_container(
