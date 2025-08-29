@@ -334,7 +334,7 @@ def _aggregate_metrics(df: pd.DataFrame, evaluators: Dict[str, Callable]) -> Dic
 def _convert_column_types_for_target(df: pd.DataFrame, signature: inspect.Signature) -> None:
     """
     Convert DataFrame column types to match target function parameter types.
-    
+
     :param df: The data frame to be modified in place.
     :type df: pd.DataFrame
     :param signature: The target function signature.
@@ -345,24 +345,24 @@ def _convert_column_types_for_target(df: pd.DataFrame, signature: inspect.Signat
             try:
                 # Get the expected type from the annotation
                 expected_type = param.annotation
-                
+
                 # Skip conversion if annotation is not a basic type we can handle
                 if expected_type not in (str, int, float, bool):
                     continue
-                
+
                 # Check if conversion is needed by comparing with first non-null value
                 if len(df) == 0:
                     continue
-                    
+
                 # Find first non-null value to check current type
                 series = df[param_name]
                 non_null_values = series.dropna()
                 if len(non_null_values) == 0:
                     continue
-                    
+
                 first_value = non_null_values.iloc[0]
                 current_type = type(first_value)
-                
+
                 # Only convert if types don't match and conversion is safe
                 if current_type != expected_type:
                     # Convert the entire column to the expected type
@@ -375,18 +375,19 @@ def _convert_column_types_for_target(df: pd.DataFrame, signature: inspect.Signat
                             nan_value = pd.NA
                         except AttributeError:
                             import numpy as np
+
                             nan_value = np.nan
-                        df[param_name] = df[param_name].replace('nan', nan_value)
+                        df[param_name] = df[param_name].replace("nan", nan_value)
                     elif expected_type == int:
                         # Only convert if all non-null values can be safely converted to int
                         try:
-                            df[param_name] = pd.to_numeric(df[param_name], errors='raise').astype('Int64')
+                            df[param_name] = pd.to_numeric(df[param_name], errors="raise").astype("Int64")
                         except (ValueError, TypeError):
                             # If conversion fails, leave as is
                             pass
                     elif expected_type == float:
                         try:
-                            df[param_name] = pd.to_numeric(df[param_name], errors='raise').astype(float)
+                            df[param_name] = pd.to_numeric(df[param_name], errors="raise").astype(float)
                         except (ValueError, TypeError):
                             # If conversion fails, leave as is
                             pass
@@ -397,7 +398,7 @@ def _convert_column_types_for_target(df: pd.DataFrame, signature: inspect.Signat
                         except (ValueError, TypeError):
                             # If conversion fails, leave as is
                             pass
-                            
+
             except Exception:
                 # If any conversion fails, just continue - we don't want to break
                 # existing functionality for edge cases

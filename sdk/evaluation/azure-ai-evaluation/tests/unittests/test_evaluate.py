@@ -582,27 +582,31 @@ class TestEvaluate:
         # This test verifies the fix for the bug where JSONL data isn't converted to match
         # target function parameter types. The test data contains "1234" which pandas
         # would normally convert to int, but should be converted back to str for the target.
-        
+
         # Use a simple evaluator that doesn't require external dependencies
         from azure.ai.evaluation._evaluate._evaluate import _validate_columns_for_target
         from azure.ai.evaluation._evaluate._utils import JSONLDataFileLoader
-        
+
         # Load the test data
         loader = JSONLDataFileLoader(test_type_conversion_file)
         df = loader.load()
-        
+
         # Verify that pandas auto-converted book_id to int (reproducing the bug)
-        assert df['book_id'].dtype in ['int64', 'Int64'], f"Expected book_id to be int type, got {df['book_id'].dtype}"
-        
+        assert df["book_id"].dtype in ["int64", "Int64"], f"Expected book_id to be int type, got {df['book_id'].dtype}"
+
         # Apply the validation which should convert types
         _validate_columns_for_target(df, _typed_target)
-        
+
         # Verify that book_id is now string type
-        assert df['book_id'].dtype == 'object', f"Expected book_id to be object (string) type after conversion, got {df['book_id'].dtype}"
-        
+        assert (
+            df["book_id"].dtype == "object"
+        ), f"Expected book_id to be object (string) type after conversion, got {df['book_id'].dtype}"
+
         # Verify that the first value is now a string
-        assert isinstance(df['book_id'].iloc[0], str), f"Expected first book_id value to be str, got {type(df['book_id'].iloc[0])}"
-        assert df['book_id'].iloc[0] == "1234", f"Expected book_id to be '1234', got {df['book_id'].iloc[0]}"
+        assert isinstance(
+            df["book_id"].iloc[0], str
+        ), f"Expected first book_id value to be str, got {type(df['book_id'].iloc[0])}"
+        assert df["book_id"].iloc[0] == "1234", f"Expected book_id to be '1234', got {df['book_id'].iloc[0]}"
 
     @pytest.mark.skip(reason="Breaking CI by crashing pytest somehow")
     def test_evaluate_with_typed_target(self, test_type_conversion_file):
@@ -612,13 +616,13 @@ class TestEvaluate:
         result = evaluate(
             data=test_type_conversion_file,
             target=_typed_target,
-            evaluators={"dummy": lambda response: {"score": len(response) if response else 0}}
+            evaluators={"dummy": lambda response: {"score": len(response) if response else 0}},
         )
-        
+
         # Verify that the evaluation completed successfully
         assert "rows" in result
         assert len(result["rows"]) == 2  # We have 2 test records
-        
+
         # Verify that the target function was called successfully (no type errors)
         assert all("outputs.response" in row for row in result["rows"])
 
