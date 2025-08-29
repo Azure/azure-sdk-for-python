@@ -770,7 +770,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
             source_name = knowledge_source.name  # type: ignore
         except AttributeError:
             source_name = knowledge_source
-        self._client.knowledge_sources.delete(agent_name=source_name, error_map=error_map, **kwargs)
+        self._client.knowledge_sources.delete(source_name=source_name, error_map=error_map, **kwargs)
 
     @distributed_trace
     def create_knowledge_source(self, knowledge_source: KnowledgeSource, **kwargs: Any) -> KnowledgeSource:
