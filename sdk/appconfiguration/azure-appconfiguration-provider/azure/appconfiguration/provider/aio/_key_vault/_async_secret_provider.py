@@ -4,6 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import inspect
+import logging
 from typing import Mapping, Any, TypeVar, Dict
 from azure.appconfiguration import SecretReferenceConfigurationSetting  # type:ignore # pylint:disable=no-name-in-module
 from azure.keyvault.secrets.aio import SecretClient
@@ -12,6 +13,8 @@ from ..._key_vault._secret_provider_base import _SecretProviderBase
 
 JSON = Mapping[str, Any]
 _T = TypeVar("_T")
+
+logger = logging.getLogger(__name__)
 
 
 class SecretProvider(_SecretProviderBase):
@@ -54,7 +57,8 @@ class SecretProvider(_SecretProviderBase):
             secret_value = self._secret_resolver(config.secret_id)
             if inspect.isawaitable(secret_value):
                 # Secret resolver was async
-                secret_value = await secret_value
+                # Need to ignore type, mypy doesn't like the callback could return `Never`
+                secret_value = await secret_value  # type: ignore
 
         if secret_value:
             if keyvault_identifier.version:
