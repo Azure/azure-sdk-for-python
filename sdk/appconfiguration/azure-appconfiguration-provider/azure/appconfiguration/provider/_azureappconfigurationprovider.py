@@ -295,6 +295,15 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
     ) -> None:
         """
         A common method for handing replicas on refresh. Along with error handling.
+
+        :param refresh_operation: The refresh operation to execute.
+        :type refresh_operation: ~typing.Callable
+        :param error_log_message: The error message to log in case of failure.
+        :type error_log_message: str
+        :param timer: The refresh timer.
+        :type timer: ~._azureappconfigurationproviderbase._RefreshTimer
+        :param refresh_condition: Condition to check if refresh is needed.
+        :type refresh_condition: bool
         """
         if not refresh_condition:
             logger.debug("Refresh called but no refresh enabled.")
@@ -393,7 +402,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
             self._refresh_on_feature_flags,
             self._feature_flag_selectors,
             headers,
-            self._origin_endpoint or "",
+            self._origin_endpoint,
             **kwargs,
         )
 
@@ -474,7 +483,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                     feature_flags, feature_flag_sentinel_keys, used_filters = client.load_feature_flags(
                         self._feature_flag_selectors,
                         self._feature_flag_refresh_enabled,
-                        self._origin_endpoint or "",
+                        self._origin_endpoint,
                         headers=headers,
                         **kwargs,
                     )
