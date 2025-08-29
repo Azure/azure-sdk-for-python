@@ -32,9 +32,10 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _REQ_SUCCESS_NAME,
     _APPLICATIONINSIGHTS_SDKSTATS_EXPORT_INTERVAL,
 )
+
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
-    _REQUESTS_MAP_LOCK,
     _REQUESTS_MAP,
+    _REQUESTS_MAP_LOCK,
 )
 
 def _get_stats_connection_string(endpoint: str) -> str:
@@ -198,6 +199,9 @@ def _track_dropped_items_from_storage(result_from_storage_put, envelopes):
     customer_sdkstats_metrics = get_customer_sdkstats_metrics()
     if not customer_sdkstats_metrics:
         return
+    # Use delayed import to avoid circular import
+    from azure.monitor.opentelemetry.exporter._storage import StorageExportResult
+
     if result_from_storage_put == StorageExportResult.CLIENT_STORAGE_DISABLED:
         # Track items that would have been retried but are dropped since client has local storage disabled
         _track_dropped_items(envelopes, DropCode.CLIENT_STORAGE_DISABLED)

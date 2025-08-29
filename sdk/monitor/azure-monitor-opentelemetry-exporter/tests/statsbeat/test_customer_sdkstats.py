@@ -195,12 +195,12 @@ class TestCustomerSdkStats(unittest.TestCase):
     def test_custom_export_interval_from_env_var(self):
         """Test that a custom export interval is picked up from the environment variable."""
         # Use a non-default value to test
-        custom_interval = 300
+        custom_interval_s = 300
         
         # Mock the environment variable with our custom interval
         with mock.patch.dict(os.environ, {
             _APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW: "true",
-            _APPLICATIONINSIGHTS_SDKSTATS_EXPORT_INTERVAL: str(custom_interval)
+            _APPLICATIONINSIGHTS_SDKSTATS_EXPORT_INTERVAL: str(custom_interval_s)
         }):
             # Get the export interval
             actual_interval = _get_customer_sdkstats_export_interval()
@@ -208,8 +208,8 @@ class TestCustomerSdkStats(unittest.TestCase):
             # Verify it matches our custom value
             self.assertEqual(
                 actual_interval,
-                custom_interval,
-                f"Expected export interval to be {custom_interval}, got {actual_interval}"
+                custom_interval_s,
+                f"Expected export interval to be {custom_interval_s}, got {actual_interval}"
             )
             
             # Verify the CustomerSdkStatsMetrics instance picks up the custom interval
@@ -219,8 +219,8 @@ class TestCustomerSdkStats(unittest.TestCase):
             set_customer_sdkstats_metrics(metrics)
             self.assertEqual(
                 metrics._customer_sdkstats_metric_reader._export_interval_millis,
-                custom_interval * 1000,
-                f"CustomerSdkStatsMetrics should use export interval {custom_interval}, got {metrics._customer_sdkstats_metric_reader._export_interval_millis}"
+                custom_interval_s * 1000,
+                f"CustomerSdkStatsMetrics should use export interval {custom_interval_s}, got {metrics._customer_sdkstats_metric_reader._export_interval_millis}"
             )
             
     def test_default_export_interval_when_env_var_empty(self):
@@ -248,8 +248,8 @@ class TestCustomerSdkStats(unittest.TestCase):
             set_customer_sdkstats_metrics(metrics)
             self.assertEqual(
                 metrics._customer_sdkstats_metric_reader._export_interval_millis,
-                default_interval,
-                f"CustomerSdkStatsMetrics should use default export interval {default_interval}, got {metrics._customer_sdkstats_metric_reader._export_interval_millis}"
+                _DEFAULT_STATS_SHORT_EXPORT_INTERVAL * 1000,
+                f"CustomerSdkStatsMetrics should use default export interval {_DEFAULT_STATS_SHORT_EXPORT_INTERVAL}, got {metrics._customer_sdkstats_metric_reader._export_interval_millis}"
             )
 
     def test_successful_items_count(self):

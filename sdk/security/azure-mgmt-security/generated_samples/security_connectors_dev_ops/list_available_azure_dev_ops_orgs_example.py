@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -37,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/security/resource-manager/Microsoft.Security/stable/2024-04-01/examples/SecurityConnectorsDevOps/ListAvailableAzureDevOpsOrgs_example.json
+# x-ms-original-file: specification/security/resource-manager/Microsoft.Security/stable/2025-03-01/examples/SecurityConnectorsDevOps/ListAvailableAzureDevOpsOrgs_example.json
 if __name__ == "__main__":
     main()
