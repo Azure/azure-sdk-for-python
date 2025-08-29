@@ -4,11 +4,13 @@ import os
 from typing import Optional, List, Tuple
 from azure.core.exceptions import ServiceRequestError
 from azure.monitor.opentelemetry.exporter._constants import (
+    _REQUEST,
     RetryCode,
     RetryCodeType,
     DropCodeType,
     DropCode,
     _UNKNOWN,
+    _DEPENDENCY,
 )
 from azure.monitor.opentelemetry.exporter._utils import _get_telemetry_type
 from azure.monitor.opentelemetry.exporter._generated.models import TelemetryItem
@@ -143,7 +145,8 @@ def _track_dropped_items(
                 customer_sdkstats_metrics.count_dropped_items(
                     1,
                     telemetry_type,
-                    drop_code
+                    drop_code,
+                    telemetry_success=_get_telemetry_success_flag(envelope) if telemetry_type in (_REQUEST, _DEPENDENCY) else None
                 )
         else:
             for envelope in envelopes:
@@ -152,7 +155,8 @@ def _track_dropped_items(
                     1,
                     telemetry_type,
                     drop_code,
-                    error_message
+                    telemetry_success=_get_telemetry_success_flag(envelope) if telemetry_type in (_REQUEST, _DEPENDENCY) else None,
+                    exception_message=error_message
                 )
 
 def _track_retry_items(customer_sdkstats_metrics, envelopes: List[TelemetryItem], error) -> None:
@@ -212,3 +216,13 @@ def _get_customer_sdkstats_export_interval() -> int:
         except ValueError:
             return _DEFAULT_STATS_SHORT_EXPORT_INTERVAL
     return _DEFAULT_STATS_SHORT_EXPORT_INTERVAL
+
+def _get_telemetry_success_flag(envelope: List[TelemetryItem]) -> bool:
+    if not hasattr(envelope, "data") or not hasattr(envelope.data, "base_data"):
+        return None
+    base_type = envelope.data.base_type if hasattr(envelope.data, "base_type") else None
+    if base_type == "RequestData":
+        return envelope.data.base_data.success
+    elif base_type == "RemoteDependencyData":
+        return envelope.data.base_data.success
+    return None

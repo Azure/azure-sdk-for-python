@@ -23,6 +23,8 @@ from azure.monitor.opentelemetry.exporter._constants import (
     RetryCodeType,
     CustomerSdkStatsMetricName,
     _CUSTOMER_SDKSTATS_LANGUAGE,
+    _REQUEST,
+    _DEPENDENCY,
 )
 
 from azure.monitor.opentelemetry.exporter.export.metrics._exporter import AzureMonitorMetricExporter
@@ -45,7 +47,7 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
 class _CustomerSdkStatsTelemetryCounters:
     def __init__(self):
         self.total_item_success_count: Dict[str, Any] = {}
-        self.total_item_drop_count: Dict[str, Dict[DropCodeType, Dict[str, int]]] = {}
+        self.total_item_drop_count: Dict[str, Dict[DropCodeType, Dict[str, Dict[Optional[bool], int]]]] = {}
         self.total_item_retry_count: Dict[str, Dict[RetryCodeType, Dict[str, int]]] = {}
 
 class CustomerSdkStatsMetrics(metaclass=Singleton): # pylint: disable=too-many-instance-attributes
@@ -105,28 +107,33 @@ class CustomerSdkStatsMetrics(metaclass=Singleton): # pylint: disable=too-many-i
             self._counters.total_item_success_count[telemetry_type] = count
 
     def count_dropped_items(
-        self, count: int, telemetry_type: str, drop_code: DropCodeType,
+        self, count: int, telemetry_type: str, drop_code: DropCodeType, telemetry_success: Optional[bool] = None,
         exception_message: Optional[str] = None
     ) -> None:
         if not self._is_enabled or count <= 0:
             return
 
-        # Get or create the drop_code map for this telemetry_type
         if telemetry_type not in self._counters.total_item_drop_count:
             self._counters.total_item_drop_count[telemetry_type] = {}
         drop_code_map = self._counters.total_item_drop_count[telemetry_type]
 
-        # Get or create the reason map for this drop_code
         if drop_code not in drop_code_map:
             drop_code_map[drop_code] = {}
         reason_map = drop_code_map[drop_code]
 
-        # Generate a low-cardinality, informative reason description
         reason = self._get_drop_reason(drop_code, exception_message)
 
-        # Update the count for this reason
-        current_count = reason_map.get(reason, 0)
-        reason_map[reason] = current_count + count
+        if reason not in reason_map:
+            reason_map[reason] = {}
+        success_map = reason_map[reason]
+
+        if telemetry_type in (_REQUEST, _DEPENDENCY) and telemetry_success is not None:
+            success_key = telemetry_success
+        else:
+            success_key = None
+
+        current_count = success_map.get(success_key, 0)
+        success_map[success_key] = current_count + count
 
     def count_retry_items(
         self, count: int, telemetry_type: str, retry_code: RetryCodeType,
@@ -172,17 +179,20 @@ class CustomerSdkStatsMetrics(metaclass=Singleton): # pylint: disable=too-many-i
         observations: List[Observation] = []
         for telemetry_type, drop_code_map in self._counters.total_item_drop_count.items():
             for drop_code, reason_map in drop_code_map.items():
-                for reason, count in reason_map.items():
-                    if count > 0:
-                        attributes = {
-                            "language": self._customer_properties.language,
-                            "version": self._customer_properties.version,
-                            "compute_type": self._customer_properties.compute_type,
-                            "drop.code": drop_code,
-                            "drop.reason": reason,
-                            "telemetry_type": telemetry_type
-                        }
-                        observations.append(Observation(count, dict(attributes)))
+                for reason, success_map in reason_map.items():
+                    for success_tracker, count in success_map.items():
+                        if count > 0:
+                            attributes = {
+                                "language": self._customer_properties.language,
+                                "version": self._customer_properties.version,
+                                "compute_type": self._customer_properties.compute_type,
+                                "drop.code": drop_code,
+                                "drop.reason": reason,
+                                "telemetry_type": telemetry_type
+                            }
+                            if telemetry_type in (_REQUEST, _DEPENDENCY) and success_tracker is not None:
+                                attributes["telemetry_success"] = success_tracker
+                            observations.append(Observation(count, dict(attributes)))
 
         return observations
 
