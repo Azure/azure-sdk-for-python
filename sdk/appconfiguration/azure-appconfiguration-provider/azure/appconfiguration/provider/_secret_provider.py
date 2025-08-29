@@ -26,7 +26,7 @@ class SecretProvider(_SecretProviderBase):
         keyvault_identifier, vault_url = self.resolve_keyvault_reference_base(config)
         if keyvault_identifier.source_id in self._secret_cache:
             return self._secret_cache[keyvault_identifier.source_id]
-        elif keyvault_identifier.source_id in self._secret_version_cache:
+        if keyvault_identifier.source_id in self._secret_version_cache:
             return self._secret_version_cache[keyvault_identifier.source_id]
 
         # pylint:disable=protected-access
