@@ -43,12 +43,13 @@ class pylint(Check):
         for parsed in targeted:
             package_dir = parsed.folder
             package_name = parsed.name
+            executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, package_dir)
             print(f"Processing {package_name} for pylint check")
 
             # install dependencies
             try:
                 check_call([
-                    sys.executable,
+                    executable,
                     "-m",
                     "pip",
                     "install",
@@ -63,9 +64,9 @@ class pylint(Check):
             try:
                 if args.next:
                     # use latest version of pylint
-                    check_call([sys.executable, "-m", "pip", "install", "pylint"])
+                    check_call([executable, "-m", "pip", "install", "pylint"])
                 else:
-                    check_call([sys.executable, "-m", "pip", "install", f"pylint=={PYLINT_VERSION}"])
+                    check_call([executable, "-m", "pip", "install", f"pylint=={PYLINT_VERSION}"])
             except CalledProcessError as e:
                 print("Failed to install pylint:", e)
                 return e.returncode
@@ -84,7 +85,7 @@ class pylint(Check):
             try:
                 results.append(check_call(
                     [
-                        sys.executable,
+                        executable,
                         "-m",
                         "pylint",
                         "--rcfile={}".format(rcFileLocation),
