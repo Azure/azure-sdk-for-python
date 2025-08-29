@@ -8,7 +8,7 @@ from subprocess import CalledProcessError, check_call
 
 from .Check import Check
 from ci_tools.parsing import ParsedSetup
-from ci_tools.functions import discover_targeted_packages
+from ci_tools.functions import pip_install
 from ci_tools.scenario.generation import create_package_and_install
 from ci_tools.variables import in_ci, set_envvar_defaults
 from ci_tools.environment_exclusions import (
@@ -31,8 +31,8 @@ class mypy(Check):
         p.set_defaults(func=self.run)
 
         p.add_argument(
-            "--next", 
-            default=False, 
+            "--next",
+            default=False,
             help="Next version of mypy is being tested",
             required=False
         )
@@ -50,27 +50,27 @@ class mypy(Check):
         for parsed in targeted:
             package_dir = parsed.folder
             package_name = parsed.name
+            executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, package_dir)
             logger.info(f"Processing {package_name} for mypy check")
-
-            staging_area = tempfile.mkdtemp()
             create_package_and_install(
-                distribution_directory=staging_area,
+                distribution_directory=staging_directory,
                 target_setup=package_dir,
                 skip_install=False,
                 cache_dir=None,
-                work_dir=staging_area,
+                work_dir=staging_directory,
                 force_create=False,
                 package_type="wheel",
                 pre_download_disabled=False,
+                python_executable=executable
             )
 
             # install mypy
             try:
                 if (args.next):
                     # use latest version of mypy
-                    check_call([sys.executable, "-m", "pip", "install", "mypy"])
+                    pip_install(["mypy"], True, executable, package_dir)
                 else:
-                    check_call([sys.executable, "-m", "pip", "install", f"mypy=={MYPY_VERSION}"])
+                    pip_install([f"mypy=={MYPY_VERSION}"], True, executable, package_dir)
             except CalledProcessError as e:
                 logger.error("Failed to install mypy:", e)
                 return e.returncode
@@ -87,7 +87,7 @@ class mypy(Check):
             top_level_module = parsed.namespace.split(".")[0]
 
             commands = [
-                sys.executable,
+                executable,
                 "-m",
                 "mypy",
                 "--python-version",
@@ -105,9 +105,9 @@ class mypy(Check):
                 results.append(check_call(src_code))
                 logger.info("Verified mypy, no issues found")
             except CalledProcessError as src_error:
-                src_code_error = src_error 
+                src_code_error = src_error
                 results.append(src_error.returncode)
-            
+
             if not args.next and in_ci() and not is_check_enabled(package_dir, "type_check_samples", True):
                 logger.info(
                     f"Package {package_name} opts-out of mypy check on samples."
@@ -143,6 +143,5 @@ class mypy(Check):
                     create_vnext_issue(package_dir, "mypy")
                 else:
                     close_vnext_issue(package_name, "mypy")
-            
+
         return max(results) if results else 0
-        
