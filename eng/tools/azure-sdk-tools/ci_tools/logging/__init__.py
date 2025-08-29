@@ -6,8 +6,9 @@ import datetime
 from subprocess import run
 import argparse
 
-logger = logging.getLogger("azure-sdk-tools")
 LOGLEVEL = getattr(logging, os.environ.get("LOGLEVEL", "INFO").upper())
+
+logger = logging.getLogger("azure-sdk-tools")
 
 def configure_logging(
     args: argparse.Namespace,
