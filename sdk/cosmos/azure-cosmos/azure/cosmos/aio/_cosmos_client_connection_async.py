@@ -431,7 +431,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         request_params = _request_object.RequestObject(http_constants.ResourceType.DatabaseAccount,
                                                        documents._OperationType.Read,
-                                                       headers, url_connection)
+                                                       headers, endpoint_override=url_connection)
 
         result, self.last_response_headers = await self.__Get("", request_params, headers, **kwargs)
         database_account = documents.DatabaseAccount()
@@ -484,7 +484,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         request_params = _request_object.RequestObject(http_constants.ResourceType.DatabaseAccount,
                                                        documents._OperationType.Read,
                                                        headers,
-                                                       url_connection)
+                                                       endpoint_override=url_connection)
         await self.__Get("", request_params, headers, **kwargs)
 
     async def CreateDatabase(
