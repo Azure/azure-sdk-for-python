@@ -200,9 +200,9 @@ class ShareServiceClient(StorageAccountHostsMixin):
     @distributed_trace
     def get_user_delegation_key(
         self,
-        key_start_time: "datetime",
-        key_expiry_time: "datetime",
         *,
+        expiry: "datetime",
+        start: Optional["datetime"] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> "UserDelegationKey":
@@ -211,10 +211,12 @@ class ShareServiceClient(StorageAccountHostsMixin):
 
         A token credential must be present on the service object for this request to succeed.
 
-        :param ~datetime.datetime key_start_time:
-            A DateTime value. Indicates when the key becomes valid.
-        :param ~datetime.datetime key_expiry_time:
+        :keyword expiry:
             A DateTime value. Indicates when the key stops being valid.
+        :paramtype expiry: ~datetime.datetime
+        :keyword start
+            A DateTime value. Indicates when the key becomes valid.
+        :paramtype start: Optional[~datetime.datetime]
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
@@ -224,7 +226,7 @@ class ShareServiceClient(StorageAccountHostsMixin):
         :return: The user delegation key.
         :rtype: ~azure.storage.fileshare.UserDelegationKey
         """
-        key_info = KeyInfo(start=_to_utc_datetime(key_start_time), expiry=_to_utc_datetime(key_expiry_time))
+        key_info = KeyInfo(start=_to_utc_datetime(start), expiry=_to_utc_datetime(expiry))
         try:
             user_delegation_key = self._client.service.get_user_delegation_key(  # type: ignore
                 key_info=key_info,

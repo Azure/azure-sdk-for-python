@@ -111,6 +111,7 @@ class ShareClient(StorageAccountHostsMixin):
         paid_bursting_iops: Optional[int] = None,
         provisioned_iops: Optional[int] = None,
         provisioned_bandwidth_mibps: Optional[int] = None,
+        enable_smb_directory_lease: Optional[bool] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Any]: ...

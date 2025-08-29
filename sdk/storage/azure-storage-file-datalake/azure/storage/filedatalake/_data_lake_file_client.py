@@ -461,7 +461,7 @@ class DataLakeFileClient(PathClient):
             A callback to track the progress of a long-running upload. The signature is
             function(current: int, total: int) where current is the number of bytes transferred
             so far, and total is the total size of the download.
-        :paramtype progress_hook: ~typing.Callable[[int, int], None]
+        :paramtype progress_hook: Optional[~typing.Callable[[int, int], None]]
         :returns: A dictionary of response headers.
         :rtype: Dict[str, Any]
         """
@@ -823,11 +823,12 @@ class DataLakeFileClient(PathClient):
             eg. Select * from DataLakeStorage
         :keyword on_error:
             A function to be called on any processing errors returned by the service.
-        :paramtype on_error: ~typing.Callable[~azure.storage.filedatalake.DataLakeFileQueryError]
+        :paramtype on_error: Optional[~typing.Callable[~azure.storage.filedatalake.DataLakeFileQueryError]]
         :keyword file_format:
             Optional. Defines the serialization of the data currently stored in the file. The default is to
             treat the file data as CSV data formatted in the default dialect. This can be overridden with
             a custom DelimitedTextDialect, or DelimitedJsonDialect or "ParquetDialect" (passed as a string or enum).
+            These dialects can be passed through their respective classes, the QuickQueryDialect enum or as a string.
             These dialects can be passed through their respective classes, the QuickQueryDialect enum or as a string.
         :paramtype file_format:
             ~azure.storage.filedatalake.DelimitedTextDialect or ~azure.storage.filedatalake.DelimitedJsonDialect or
