@@ -24,7 +24,7 @@ class TestKeyVaultManagementPrivateLinkResourcesOperations(AzureMgmtRecordedTest
         response = self.client.private_link_resources.list_by_vault(
             resource_group_name=resource_group.name,
             vault_name="str",
-            api_version="2024-11-01",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself

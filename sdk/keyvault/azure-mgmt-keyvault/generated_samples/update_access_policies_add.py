@@ -50,6 +50,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/keyvault/resource-manager/Microsoft.KeyVault/stable/2024-11-01/examples/updateAccessPoliciesAdd.json
+# x-ms-original-file: specification/keyvault/resource-manager/Microsoft.KeyVault/stable/2025-05-01/examples/updateAccessPoliciesAdd.json
 if __name__ == "__main__":
     main()

@@ -2355,6 +2355,8 @@ class MHSMNetworkRuleSet(_serialization.Model):
     :vartype default_action: str or ~azure.mgmt.keyvault.models.NetworkRuleAction
     :ivar ip_rules: The list of IP address rules.
     :vartype ip_rules: list[~azure.mgmt.keyvault.models.MHSMIPRule]
+    :ivar service_tags: The list of service tags.
+    :vartype service_tags: list[~azure.mgmt.keyvault.models.MHSMServiceTagRule]
     :ivar virtual_network_rules: The list of virtual network rules.
     :vartype virtual_network_rules: list[~azure.mgmt.keyvault.models.MHSMVirtualNetworkRule]
     """
@@ -2363,6 +2365,7 @@ class MHSMNetworkRuleSet(_serialization.Model):
         "bypass": {"key": "bypass", "type": "str"},
         "default_action": {"key": "defaultAction", "type": "str"},
         "ip_rules": {"key": "ipRules", "type": "[MHSMIPRule]"},
+        "service_tags": {"key": "serviceTags", "type": "[MHSMServiceTagRule]"},
         "virtual_network_rules": {"key": "virtualNetworkRules", "type": "[MHSMVirtualNetworkRule]"},
     }
 
@@ -2372,6 +2375,7 @@ class MHSMNetworkRuleSet(_serialization.Model):
         bypass: Optional[Union[str, "_models.NetworkRuleBypassOptions"]] = None,
         default_action: Optional[Union[str, "_models.NetworkRuleAction"]] = None,
         ip_rules: Optional[List["_models.MHSMIPRule"]] = None,
+        service_tags: Optional[List["_models.MHSMServiceTagRule"]] = None,
         virtual_network_rules: Optional[List["_models.MHSMVirtualNetworkRule"]] = None,
         **kwargs: Any
     ) -> None:
@@ -2386,6 +2390,8 @@ class MHSMNetworkRuleSet(_serialization.Model):
         :paramtype default_action: str or ~azure.mgmt.keyvault.models.NetworkRuleAction
         :keyword ip_rules: The list of IP address rules.
         :paramtype ip_rules: list[~azure.mgmt.keyvault.models.MHSMIPRule]
+        :keyword service_tags: The list of service tags.
+        :paramtype service_tags: list[~azure.mgmt.keyvault.models.MHSMServiceTagRule]
         :keyword virtual_network_rules: The list of virtual network rules.
         :paramtype virtual_network_rules: list[~azure.mgmt.keyvault.models.MHSMVirtualNetworkRule]
         """
@@ -2393,6 +2399,7 @@ class MHSMNetworkRuleSet(_serialization.Model):
         self.bypass = bypass
         self.default_action = default_action
         self.ip_rules = ip_rules
+        self.service_tags = service_tags
         self.virtual_network_rules = virtual_network_rules
 
 
@@ -2788,6 +2795,32 @@ class MHSMRegionsListResult(_serialization.Model):
         super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
+
+
+class MHSMServiceTagRule(_serialization.Model):
+    """A rule governing the accessibility of a managed hsm pool from a specific service tags.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar tag: Name of the service tag. Required.
+    :vartype tag: str
+    """
+
+    _validation = {
+        "tag": {"required": True},
+    }
+
+    _attribute_map = {
+        "tag": {"key": "tag", "type": "str"},
+    }
+
+    def __init__(self, *, tag: str, **kwargs: Any) -> None:
+        """
+        :keyword tag: Name of the service tag. Required.
+        :paramtype tag: str
+        """
+        super().__init__(**kwargs)
+        self.tag = tag
 
 
 class MHSMVirtualNetworkRule(_serialization.Model):

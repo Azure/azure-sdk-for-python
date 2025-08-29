@@ -1,5 +1,12 @@
 # Release History
 
+## 12.1.0 (2025-08-29)
+
+### Features Added
+
+  - Model `MHSMNetworkRuleSet` added property `service_tags`
+  - Added model `MHSMServiceTagRule`
+
 ## 12.0.0 (2025-07-07)
 
 ### Breaking Changes
