@@ -12,6 +12,7 @@
 * Fixed bug where during health checks read regions were marked as unavailable for write operations. See [PR 42525](https://github.com/Azure/azure-sdk-for-python/pull/42525).
 * Fixed bug where containers named with spaces or special characters using session consistency would fall back to eventual consistency. See [PR 42608](https://github.com/Azure/azure-sdk-for-python/pull/42608)
 * Fixed bug where `excluded_locations` was not being honored for some metadata calls. See [PR 42266](https://github.com/Azure/azure-sdk-for-python/pull/42266).
+* Fixed bug where `partition_key` set to None was not properly handled for query operations. See [PR 42747](https://github.com/Azure/azure-sdk-for-python/pull/42747)
 
 #### Other Changes
 * Added session token false progress merge logic. See [42393](https://github.com/Azure/azure-sdk-for-python/pull/42393)
