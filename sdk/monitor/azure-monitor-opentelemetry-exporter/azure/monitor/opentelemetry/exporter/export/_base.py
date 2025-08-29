@@ -52,6 +52,7 @@ from azure.monitor.opentelemetry.exporter._utils import _get_auth_policy
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     get_statsbeat_initial_success,
     get_statsbeat_shutdown,
+    get_customer_sdkstats_shutdown,
     increment_and_check_statsbeat_failure_count,
     is_statsbeat_enabled,
     set_statsbeat_initial_success,
@@ -100,9 +101,11 @@ class BaseExporter:
         # self._configuration_manager = _ConfigurationManager()
 
         self._api_version = kwargs.get("api_version") or _SERVICE_API_LATEST
+        # We do not need to use entra Id if this is a sdkStats exporter
         if self._is_stats_exporter():
             self._credential = None
         else:
+            # We use the credential on a regular exporter or customer sdkStats exporter
             self._credential = _get_authentication_credential(**kwargs)
         self._consecutive_redirects = 0  # To prevent circular redirects
         self._disable_offline_storage = kwargs.get("disable_offline_storage", False)
@@ -158,8 +161,8 @@ class BaseExporter:
         )
         self.storage = None
         if not self._disable_offline_storage:
-            self.storage = LocalFileStorage(
-                path=self._storage_directory,
+            self.storage = LocalFileStorage(  # pyright: ignore
+                path=self._storage_directory,  # type: ignore
                 max_size=self._storage_max_size,
                 maintenance_period=self._storage_maintenance_period,
                 retention_period=self._storage_retention_period,
@@ -171,10 +174,12 @@ class BaseExporter:
 
         # statsbeat initialization
         if self._should_collect_stats():
-            # Import here to avoid circular dependencies
-            from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat import collect_statsbeat_metrics
-
-            collect_statsbeat_metrics(self)
+            try:
+                # Import here to avoid circular dependencies
+                from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat import collect_statsbeat_metrics
+                collect_statsbeat_metrics(self)
+            except Exception as e:  # pylint: disable=broad-except
+                logger.warning("Failed to initialize statsbeat metrics: %s", e)
 
         # Initialize customer sdkstats if enabled
         self._customer_sdkstats_metrics = None
@@ -454,21 +459,20 @@ class BaseExporter:
             is_statsbeat_enabled()
             and not get_statsbeat_shutdown()
             and not self._is_stats_exporter()
+            and not self._is_customer_sdkstats_exporter()
             and not self._instrumentation_collection
         )
 
 
     # check to see whether its the case of customer sdkstats collection
     def _should_collect_customer_sdkstats(self):
-        # Import here to avoid circular dependencies
-        from azure.monitor.opentelemetry.exporter.statsbeat._state import get_customer_sdkstats_shutdown
-
         env_value = os.environ.get("APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW", "")
         is_customer_sdkstats_enabled = env_value.lower() == "true"
-        # Don't collect customer sdkstats for instrumentation collection or customer sdkstats exporter
+        # Don't collect customer sdkstats for instrumentation collection, sdkstats exporter or customer sdkstats exporter
         return (
             is_customer_sdkstats_enabled
             and not get_customer_sdkstats_shutdown()
+            and not self._is_stats_exporter()
             and not self._is_customer_sdkstats_exporter()
             and not self._instrumentation_collection
         )
@@ -478,7 +482,7 @@ class BaseExporter:
         return self._is_stats_exporter() and not get_statsbeat_shutdown() and not get_statsbeat_initial_success()
 
     def _is_stats_exporter(self):
-        return self.__class__.__name__ == "_StatsBeatExporter"
+        return getattr(self, "_is_sdkstats", False)
 
     def _is_customer_sdkstats_exporter(self):
         return getattr(self, '_is_customer_sdkstats', False)

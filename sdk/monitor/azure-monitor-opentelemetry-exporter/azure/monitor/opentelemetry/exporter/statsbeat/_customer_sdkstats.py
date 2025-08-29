@@ -25,7 +25,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _CUSTOMER_SDKSTATS_LANGUAGE,
 )
 
-from azure.monitor.opentelemetry.exporter.export.metrics._exporter import AzureMonitorMetricExporter
+
 from azure.monitor.opentelemetry.exporter._utils import (
     Singleton,
     get_compute_type,
@@ -35,7 +35,6 @@ from azure.monitor.opentelemetry.exporter.statsbeat._utils import (
     categorize_status_code,
     _get_customer_sdkstats_export_interval,
 )
-from azure.monitor.opentelemetry.exporter import VERSION
 
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     _CUSTOMER_SDKSTATS_STATE,
@@ -44,28 +43,30 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
 
 class _CustomerSdkStatsTelemetryCounters:
     def __init__(self):
-        self.total_item_success_count: Dict[str, Any] = {}
-        self.total_item_drop_count: Dict[str, Dict[DropCodeType, Dict[str, int]]] = {}
-        self.total_item_retry_count: Dict[str, Dict[RetryCodeType, Dict[str, int]]] = {}
+        self.total_item_success_count: Dict[str, Any] = {}  # type: ignore
+        self.total_item_drop_count: Dict[str, Dict[DropCodeType, Dict[str, int]]] = {}  # type: ignore
+        self.total_item_retry_count: Dict[str, Dict[RetryCodeType, Dict[str, int]]] = {}  # type: ignore
+
 
 class CustomerSdkStatsMetrics(metaclass=Singleton): # pylint: disable=too-many-instance-attributes
     def __init__(self, connection_string):
         self._counters = _CustomerSdkStatsTelemetryCounters()
         self._language = _CUSTOMER_SDKSTATS_LANGUAGE
-        self._is_enabled = os.environ.get(_APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW, "").lower() in ("true")
+        self._is_enabled = os.environ.get(_APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW, "").lower() == "true"
         if not self._is_enabled:
             return
 
-        exporter_config = {
-            "connection_string": connection_string,
-            "instrumentation_collection": True,  # Prevent circular dependency
-        }
+        # Use delayed import to avoid circular import
+        from azure.monitor.opentelemetry.exporter.export.metrics._exporter import AzureMonitorMetricExporter
+        from azure.monitor.opentelemetry.exporter import VERSION
 
-        self._customer_sdkstats_exporter = AzureMonitorMetricExporter(**exporter_config)
-        self._customer_sdkstats_exporter._is_customer_sdkstats = True
+        self._customer_sdkstats_exporter = AzureMonitorMetricExporter(
+            connection_string=connection_string,
+            is_customer_sdkstats=True,
+        )
         metric_reader_options = {
             "exporter": self._customer_sdkstats_exporter,
-            "export_interval_millis": _get_customer_sdkstats_export_interval()
+            "export_interval_millis": _get_customer_sdkstats_export_interval() * 1000  # Default 15m
         }
         self._customer_sdkstats_metric_reader = PeriodicExportingMetricReader(**metric_reader_options)
         self._customer_sdkstats_meter_provider = MeterProvider(

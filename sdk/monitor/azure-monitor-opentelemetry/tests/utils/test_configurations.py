@@ -17,14 +17,21 @@ from unittest import TestCase
 from unittest.mock import patch
 from logging import Formatter
 
-from opentelemetry.instrumentation.environment_variables import (
-    OTEL_PYTHON_DISABLED_INSTRUMENTATIONS,
+from opentelemetry.sdk.environment_variables import (
+    OTEL_EXPERIMENTAL_RESOURCE_DETECTORS,
+    OTEL_TRACES_SAMPLER_ARG,
+    OTEL_TRACES_SAMPLER
 )
+from opentelemetry.instrumentation.environment_variables import (
+    OTEL_PYTHON_DISABLED_INSTRUMENTATIONS,)
 from azure.monitor.opentelemetry._utils.configurations import (
-    SAMPLING_RATIO_ENV_VAR,
     _get_configurations,
 )
 from azure.monitor.opentelemetry._constants import LOGGER_NAME_ENV_ARG, LOGGING_FORMAT_ENV_ARG
+from azure.monitor.opentelemetry._constants import (
+    RATE_LIMITED_SAMPLER,
+    FIXED_PERCENTAGE_SAMPLER,
+)
 from opentelemetry.environment_variables import (
     OTEL_LOGS_EXPORTER,
     OTEL_METRICS_EXPORTER,
@@ -136,7 +143,7 @@ class TestConfigurations(TestCase):
         "os.environ",
         {
             OTEL_PYTHON_DISABLED_INSTRUMENTATIONS: "flask,requests,fastapi,azure_sdk",
-            SAMPLING_RATIO_ENV_VAR: "0.5",
+            OTEL_TRACES_SAMPLER_ARG: "0.5",
             OTEL_TRACES_EXPORTER: "None",
             OTEL_LOGS_EXPORTER: "none",
             OTEL_METRICS_EXPORTER: "NONE",
@@ -168,12 +175,13 @@ class TestConfigurations(TestCase):
         self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
         self.assertEqual(environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS], "custom_resource_detector")
         resource_create_mock.assert_called_once_with()
-        self.assertEqual(configurations["sampling_ratio"], 0.5)
+        self.assertEqual(configurations["sampling_ratio"], 1.0)
 
     @patch.dict(
         "os.environ",
         {
-            SAMPLING_RATIO_ENV_VAR: "Half",
+            OTEL_TRACES_SAMPLER: FIXED_PERCENTAGE_SAMPLER,
+            OTEL_TRACES_SAMPLER_ARG: "Half",
             OTEL_TRACES_EXPORTER: "False",
             OTEL_LOGS_EXPORTER: "no",
             OTEL_METRICS_EXPORTER: "True",
@@ -183,7 +191,6 @@ class TestConfigurations(TestCase):
     @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
     def test_get_configurations_env_vars_validation(self, resource_create_mock):
         configurations = _get_configurations()
-
         self.assertTrue("connection_string" not in configurations)
         self.assertEqual(configurations["disable_logging"], False)
         self.assertEqual(configurations["disable_metrics"], False)
@@ -371,3 +378,183 @@ class TestConfigurations(TestCase):
 
         # Should not have logging_formatter key when no env var is set
         self.assertNotIn("logging_formatter", configurations)
+    @patch.dict(
+        "os.environ",
+        {
+            OTEL_PYTHON_DISABLED_INSTRUMENTATIONS: "flask,requests,fastapi,azure_sdk",
+            OTEL_TRACES_SAMPLER: RATE_LIMITED_SAMPLER,
+            OTEL_TRACES_SAMPLER_ARG: "0.5",
+            OTEL_TRACES_EXPORTER: "None",
+            OTEL_LOGS_EXPORTER: "none",
+            OTEL_METRICS_EXPORTER: "NONE",
+            OTEL_EXPERIMENTAL_RESOURCE_DETECTORS: "custom_resource_detector",
+        },
+        clear=True,
+    )
+    @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
+    def test_get_configurations_env_vars_rate_limited(self, resource_create_mock):
+        configurations = _get_configurations()
+
+        self.assertTrue("connection_string" not in configurations)
+        self.assertEqual(configurations["disable_logging"], True)
+        self.assertEqual(configurations["disable_metrics"], True)
+        self.assertEqual(configurations["disable_tracing"], True)
+        self.assertEqual(
+            configurations["instrumentation_options"],
+            {
+                "azure_sdk": {"enabled": False},
+                "django": {"enabled": True},
+                "fastapi": {"enabled": False},
+                "flask": {"enabled": False},
+                "psycopg2": {"enabled": True},
+                "requests": {"enabled": False},
+                "urllib": {"enabled": True},
+                "urllib3": {"enabled": True},
+            },
+        )
+        self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
+        self.assertEqual(environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS], "custom_resource_detector")
+        resource_create_mock.assert_called_once_with()
+        self.assertEqual(configurations["traces_per_second"], 0.5)
+    
+    @patch.dict("os.environ", {}, clear=True)
+    @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
+    def test_get_configurations_rate_limited_sampler_param(self, resource_create_mock):
+        configurations = _get_configurations(traces_per_second=2.5)
+
+        self.assertTrue("connection_string" not in configurations)
+        self.assertEqual(configurations["disable_logging"], False)
+        self.assertEqual(configurations["disable_metrics"], False)
+        self.assertEqual(configurations["disable_tracing"], False)
+        self.assertEqual(
+            configurations["instrumentation_options"],
+            {
+                "azure_sdk": {"enabled": True},
+                "django": {"enabled": True},
+                "fastapi": {"enabled": True},
+                "flask": {"enabled": True},
+                "psycopg2": {"enabled": True},
+                "requests": {"enabled": True},
+                "urllib": {"enabled": True},
+                "urllib3": {"enabled": True},
+            },
+        )
+        self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
+        self.assertEqual(environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS], "azure_app_service,azure_vm")
+        resource_create_mock.assert_called_once_with()
+        self.assertEqual(configurations["traces_per_second"], 2.5)
+
+    @patch.dict(
+        "os.environ",
+        {
+            OTEL_PYTHON_DISABLED_INSTRUMENTATIONS: "flask,requests,fastapi,azure_sdk",
+            OTEL_TRACES_SAMPLER_ARG: "34",
+            OTEL_TRACES_EXPORTER: "None",
+            OTEL_LOGS_EXPORTER: "none",
+            OTEL_METRICS_EXPORTER: "NONE",
+            OTEL_EXPERIMENTAL_RESOURCE_DETECTORS: "custom_resource_detector",
+        },
+        clear=True,
+    )
+    @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
+    def test_get_configurations_env_vars_no_preference(self, resource_create_mock):
+        configurations = _get_configurations()
+
+        self.assertTrue("connection_string" not in configurations)
+        self.assertEqual(configurations["disable_logging"], True)
+        self.assertEqual(configurations["disable_metrics"], True)
+        self.assertEqual(configurations["disable_tracing"], True)
+        self.assertEqual(
+            configurations["instrumentation_options"],
+            {
+                "azure_sdk": {"enabled": False},
+                "django": {"enabled": True},
+                "fastapi": {"enabled": False},
+                "flask": {"enabled": False},
+                "psycopg2": {"enabled": True},
+                "requests": {"enabled": False},
+                "urllib": {"enabled": True},
+                "urllib3": {"enabled": True},
+            },
+        )
+        self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
+        self.assertEqual(environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS], "custom_resource_detector")
+        resource_create_mock.assert_called_once_with()
+        self.assertEqual(configurations["sampling_ratio"], 1.0)
+    
+    @patch.dict(
+        "os.environ",
+        {
+            OTEL_PYTHON_DISABLED_INSTRUMENTATIONS: "flask,requests,fastapi,azure_sdk",
+            OTEL_TRACES_SAMPLER_ARG: "2 traces per second",
+            OTEL_TRACES_EXPORTER: "None",
+            OTEL_LOGS_EXPORTER: "none",
+            OTEL_METRICS_EXPORTER: "NONE",
+            OTEL_EXPERIMENTAL_RESOURCE_DETECTORS: "custom_resource_detector",
+        },
+        clear=True,
+    )
+    @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
+    def test_get_configurations_env_vars_check_default(self, resource_create_mock):
+        configurations = _get_configurations()
+
+        self.assertTrue("connection_string" not in configurations)
+        self.assertEqual(configurations["disable_logging"], True)
+        self.assertEqual(configurations["disable_metrics"], True)
+        self.assertEqual(configurations["disable_tracing"], True)
+        self.assertEqual(
+            configurations["instrumentation_options"],
+            {
+                "azure_sdk": {"enabled": False},
+                "django": {"enabled": True},
+                "fastapi": {"enabled": False},
+                "flask": {"enabled": False},
+                "psycopg2": {"enabled": True},
+                "requests": {"enabled": False},
+                "urllib": {"enabled": True},
+                "urllib3": {"enabled": True},
+            },
+        )
+        self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
+        self.assertEqual(environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS], "custom_resource_detector")
+        resource_create_mock.assert_called_once_with()
+        self.assertEqual(configurations["sampling_ratio"], 1.0)
+    
+    @patch.dict(
+        "os.environ",
+        {
+            OTEL_PYTHON_DISABLED_INSTRUMENTATIONS: "flask,requests,fastapi,azure_sdk",
+            OTEL_TRACES_SAMPLER: FIXED_PERCENTAGE_SAMPLER,
+            OTEL_TRACES_SAMPLER_ARG: "0.9",
+            OTEL_TRACES_EXPORTER: "None",
+            OTEL_LOGS_EXPORTER: "none",
+            OTEL_METRICS_EXPORTER: "NONE",
+            OTEL_EXPERIMENTAL_RESOURCE_DETECTORS: "custom_resource_detector",
+        },
+        clear=True,
+    )
+    @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
+    def test_get_configurations_env_vars_fixed_percentage(self, resource_create_mock):
+        configurations = _get_configurations()
+
+        self.assertTrue("connection_string" not in configurations)
+        self.assertEqual(configurations["disable_logging"], True)
+        self.assertEqual(configurations["disable_metrics"], True)
+        self.assertEqual(configurations["disable_tracing"], True)
+        self.assertEqual(
+            configurations["instrumentation_options"],
+            {
+                "azure_sdk": {"enabled": False},
+                "django": {"enabled": True},
+                "fastapi": {"enabled": False},
+                "flask": {"enabled": False},
+                "psycopg2": {"enabled": True},
+                "requests": {"enabled": False},
+                "urllib": {"enabled": True},
+                "urllib3": {"enabled": True},
+            },
+        )
+        self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
+        self.assertEqual(environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS], "custom_resource_detector")
+        resource_create_mock.assert_called_once_with()
+        self.assertEqual(configurations["sampling_ratio"], 0.9)

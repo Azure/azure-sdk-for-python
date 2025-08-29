@@ -26,6 +26,8 @@
   ([#42360] https://github.com/Azure/azure-sdk-for-python/pull/42360)
 - Configuration manager/worker fetch via OneSettings part 2 - Concurrency and refactoring of _ConfigurationManager
   ([#42508] https://github.com/Azure/azure-sdk-for-python/pull/42508)
+- Refactoring of statsbeat to use `StatsbeatManager`
+  ([#42716] https://github.com/Azure/azure-sdk-for-python/pull/42716)
 
 ## 1.0.0b41 (2025-07-31)
 
