@@ -6,6 +6,7 @@
 import json
 import datetime
 import logging
+import inspect
 from typing import (
     Any,
     Awaitable,
@@ -25,10 +26,8 @@ from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-
     SecretReferenceConfigurationSetting,
 )
 from azure.core.exceptions import AzureError, HttpResponseError
-from azure.keyvault.secrets.aio import SecretClient
-from azure.keyvault.secrets import KeyVaultSecretIdentifier
-
 from .._models import AzureAppConfigurationKeyVaultOptions, SettingSelector
+from ._key_vault._async_secret_provider import SecretProvider
 from .._constants import (
     FEATURE_MANAGEMENT_KEY,
     FEATURE_FLAG_KEY,
@@ -37,6 +36,7 @@ from .._constants import (
 )
 from .._azureappconfigurationproviderbase import (
     AzureAppConfigurationProviderBase,
+    _RefreshTimer,
     update_correlation_context_header,
     delay_failure,
     is_json_content_type,
@@ -250,54 +250,6 @@ async def _buildprovider(
     return AzureAppConfigurationProvider(**kwargs)
 
 
-async def _resolve_keyvault_reference(
-    config: "SecretReferenceConfigurationSetting", provider: "AzureAppConfigurationProvider"
-) -> str:
-    # pylint:disable=protected-access
-    if not (provider._keyvault_credential or provider._keyvault_client_configs or provider._secret_resolver):
-        raise ValueError(
-            """
-            Either a credential to Key Vault, custom Key Vault client, or a secret resolver must be set to resolve Key
-             Vault references.
-            """
-        )
-
-    if config.secret_id is None:
-        raise ValueError("Key Vault reference must have a uri value.")
-
-    keyvault_identifier = KeyVaultSecretIdentifier(config.secret_id)
-
-    vault_url = keyvault_identifier.vault_url + "/"
-
-    # pylint:disable=protected-access
-    referenced_client = provider._secret_clients.get(vault_url, None)
-
-    vault_config = provider._keyvault_client_configs.get(vault_url, {})
-    credential = vault_config.pop("credential", provider._keyvault_credential)
-
-    if referenced_client is None and credential is not None:
-        referenced_client = SecretClient(vault_url=vault_url, credential=credential, **vault_config)
-        provider._secret_clients[vault_url] = referenced_client
-
-    if referenced_client:
-        secret_value = (
-            await referenced_client.get_secret(keyvault_identifier.name, version=keyvault_identifier.version)
-        ).value
-        if secret_value is not None:
-            return secret_value
-
-    if provider._secret_resolver:
-        resolved = provider._secret_resolver(config.secret_id)
-        try:
-            # Secret resolver was async
-            return await resolved
-        except TypeError:
-            # Secret resolver was sync
-            return resolved
-
-    raise ValueError("No Secret Client found for Key Vault reference %s" % (vault_url))
-
-
 class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylint: disable=too-many-instance-attributes
     """
     Provides a dictionary-like interface to Azure App Configuration settings. Enables loading of sets of configuration
@@ -322,7 +274,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
 
         self._replica_client_manager = AsyncConfigurationClientManager(
             connection_string=kwargs.pop("connection_string", None),
-            endpoint=kwargs.pop("endpoint", None),
+            endpoint=kwargs.pop("endpoint"),
             credential=kwargs.pop("credential", None),
             user_agent=user_agent,
             retry_total=kwargs.pop("retry_total", 2),
@@ -333,92 +285,176 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
             load_balancing_enabled=kwargs.pop("load_balancing_enabled", False),
             **kwargs,
         )
-        self._secret_clients: Dict[str, SecretClient] = {}
+        self._secret_provider = SecretProvider(**kwargs)
         self._on_refresh_success: Optional[Callable] = kwargs.pop("on_refresh_success", None)
         self._on_refresh_error: Optional[Union[Callable[[Exception], Awaitable[None]], None]] = kwargs.pop(
             "on_refresh_error", None
         )
 
-    async def refresh(self, **kwargs) -> None:  # pylint: disable=too-many-statements
-        if not self._refresh_on and not self._feature_flag_refresh_enabled:
+    async def _common_refresh(
+        self,
+        refresh_operation: Callable,
+        error_log_message: str,
+        timer: _RefreshTimer,
+        refresh_condition: bool,
+        **kwargs,
+    ) -> None:
+        """
+        A common method for handing replicas on refresh. Along with error handling.
+
+        :param refresh_operation: The refresh operation to execute.
+        :type refresh_operation: ~typing.Callable
+        :param error_log_message: The error message to log in case of failure.
+        :type error_log_message: str
+        :param timer: The refresh timer.
+        :type timer: ~._azureappconfigurationproviderbase._RefreshTimer
+        :param refresh_condition: Condition to check if refresh is needed.
+        :type refresh_condition: bool
+        """
+        if not refresh_condition:
             logger.debug("Refresh called but no refresh enabled.")
             return
-        if not self._refresh_timer.needs_refresh():
-            logger.debug("Refresh called but refresh interval not elapsed.")
+
+        success = False
+        error_message = """
+                        Failed to refresh configuration settings from Azure App Configuration.
+                        """
+        exception: Optional[Exception] = None
+        is_failover_request = False
+        await self._replica_client_manager.refresh_clients()
+        self._replica_client_manager.find_active_clients()
+        replica_count = self._replica_client_manager.get_client_count() - 1
+        while client := self._replica_client_manager.get_next_active_client():
+            headers = update_correlation_context_header(
+                kwargs.pop("headers", {}),
+                "Watch",
+                replica_count,
+                self._feature_flag_enabled,
+                self._feature_filter_usage,
+                self._secret_provider.uses_key_vault,
+                self._uses_load_balancing,
+                is_failover_request,
+                self._uses_ai_configuration,
+                self._uses_aicc_configuration,
+            )
+
+            try:
+                # Execute the specific refresh operation
+                success = await refresh_operation(client, headers, **kwargs)
+                if success:
+                    break
+            except AzureError as e:
+                exception = e
+                logger.warning(error_log_message, client.endpoint)
+                self._replica_client_manager.backoff(client)
+                is_failover_request = True
+
+        if not success:
+            if exception is None:
+                exception = RuntimeError(error_message)
+            timer.backoff()
+            if self._on_refresh_error:
+                self._on_refresh_error(exception)
+                return
+            raise exception
+
+        if self._on_refresh_success and inspect.iscoroutinefunction(self._on_refresh_success):
+            await self._on_refresh_success()
+        elif self._on_refresh_success:
+            self._on_refresh_success()
+
+    async def _refresh_operation_configuration(self, client, headers, **kwargs):
+        configuration_settings: Optional[List[ConfigurationSetting]] = None
+        need_refresh = False
+        reset_secret_timer = False
+
+        if self._secret_provider.secret_refresh_timer and self._secret_provider.secret_refresh_timer.needs_refresh():
+            self._secret_provider.bust_cache()
+            reset_secret_timer = True
+            need_refresh = True
+
+        if not need_refresh:
+            need_refresh, self._refresh_on, configuration_settings = await client.refresh_configuration_settings(
+                self._selects, self._refresh_on, headers=headers, **kwargs
+            )
+        else:
+            # Force a refresh to make sure secrets are up to date
+            configuration_settings, self._refresh_on = await client.load_configuration_settings(
+                self._selects, self._refresh_on, headers=headers, **kwargs
+            )
+
+        configuration_settings_processed: Dict[str, Any] = {}
+
+        if configuration_settings is not None:
+            configuration_settings_processed = await self._process_configurations(configuration_settings)
+
+        if need_refresh:
+            feature_flags = []
+            uses_feature_flags = False
+            if self._dict.get(FEATURE_MANAGEMENT_KEY, {}).get(FEATURE_FLAG_KEY):
+                uses_feature_flags = True
+                feature_flags = self._dict[FEATURE_MANAGEMENT_KEY][FEATURE_FLAG_KEY]
+            self._dict = configuration_settings_processed
+            if uses_feature_flags:
+                # If feature flags were already loaded, we need to keep them
+                self._dict[FEATURE_MANAGEMENT_KEY][FEATURE_FLAG_KEY] = feature_flags
+
+        self._refresh_timer.reset()
+        if reset_secret_timer and self._secret_provider.secret_refresh_timer:
+            self._secret_provider.secret_refresh_timer.reset()
+
+        return True
+
+    async def _refresh_operation_feature_flags(self, client, headers, **kwargs):
+        need_ff_refresh, refresh_on_feature_flags, feature_flags, filters_used = await client.refresh_feature_flags(
+            self._refresh_on_feature_flags,
+            self._feature_flag_selectors,
+            headers,
+            self._origin_endpoint,
+            **kwargs,
+        )
+
+        if refresh_on_feature_flags:
+            self._refresh_on_feature_flags = refresh_on_feature_flags
+        self._feature_filter_usage = filters_used
+
+        if need_ff_refresh:
+            self._dict[FEATURE_MANAGEMENT_KEY] = {}
+            self._dict[FEATURE_MANAGEMENT_KEY][FEATURE_FLAG_KEY] = feature_flags
+
+        self._feature_flag_refresh_timer.reset()
+        return True
+
+    async def refresh(self, **kwargs) -> None:  # pylint: disable=too-many-statements
+        if (
+            not self._refresh_on
+            and not self._feature_flag_refresh_enabled
+            and not self._secret_provider.secret_refresh_timer
+        ):
+            logger.debug("Refresh called but no refresh enabled.")
             return
         if not self._refresh_lock.acquire(blocking=False):  # pylint: disable= consider-using-with
             logger.debug("Refresh called but refresh already in progress.")
             return
-        success = False
-        need_refresh = False
-        error_message = """
-                        Failed to refresh configuration settings from Azure App Configuration.
-                        """
-        exception: Exception = RuntimeError(error_message)
-        is_failover_request = False
         try:
-            await self._replica_client_manager.refresh_clients()
-            self._replica_client_manager.find_active_clients()
-            replica_count = self._replica_client_manager.get_client_count() - 1
-
-            while client := self._replica_client_manager.get_next_active_client():
-                headers = update_correlation_context_header(
-                    kwargs.pop("headers", {}),
-                    "Watch",
-                    replica_count,
-                    self._feature_flag_enabled,
-                    self._feature_filter_usage,
-                    self._uses_key_vault,
-                    self._uses_load_balancing,
-                    is_failover_request,
-                    self._uses_ai_configuration,
-                    self._uses_aicc_configuration,
+            if self._refresh_timer and self._refresh_timer.needs_refresh():
+                await self._common_refresh(
+                    refresh_operation=self._refresh_operation_configuration,
+                    error_log_message="Failed to refresh configurations from endpoint %s",
+                    timer=self._refresh_timer,
+                    refresh_condition=bool(self._refresh_on),
+                    **kwargs,
                 )
-
-                try:
-                    if self._refresh_on:
-                        need_refresh, self._refresh_on, configuration_settings = (
-                            await client.refresh_configuration_settings(
-                                self._selects, self._refresh_on, headers=headers, **kwargs
-                            )
-                        )
-                        configuration_settings_processed = await self._process_configurations(configuration_settings)
-                        if need_refresh:
-                            self._dict = configuration_settings_processed
-                    if self._feature_flag_refresh_enabled:
-                        need_ff_refresh, refresh_on_feature_flags, feature_flags, filters_used = (
-                            await client.refresh_feature_flags(
-                                self._refresh_on_feature_flags,
-                                self._feature_flag_selectors,
-                                headers,
-                                self._origin_endpoint,
-                                **kwargs,
-                            )
-                        )
-                        if refresh_on_feature_flags:
-                            self._refresh_on_feature_flags = refresh_on_feature_flags
-                        self._feature_filter_usage = filters_used
-
-                        if need_refresh or need_ff_refresh:
-                            self._dict[FEATURE_MANAGEMENT_KEY] = {}
-                            self._dict[FEATURE_MANAGEMENT_KEY][FEATURE_FLAG_KEY] = feature_flags
-                    # Even if we don't need to refresh, we should reset the timer
-                    self._refresh_timer.reset()
-                    success = True
-                    break
-                except AzureError as e:
-                    exception = e
-                    logger.warning("Failed to refresh configurations from endpoint %s", client.endpoint)
-                    self._replica_client_manager.backoff(client)
-                    is_failover_request = True
-            if not success:
-                self._refresh_timer.backoff()
-                if self._on_refresh_error:
-                    await self._on_refresh_error(exception)
-                    return
-                raise exception
-            if self._on_refresh_success:
-                await self._on_refresh_success()
+            if self._feature_flag_refresh_enabled and (
+                self._feature_flag_refresh_timer and self._feature_flag_refresh_timer.needs_refresh()
+            ):
+                await self._common_refresh(
+                    refresh_operation=self._refresh_operation_feature_flags,
+                    error_log_message="Failed to refresh feature flags from endpoint %s",
+                    timer=self._feature_flag_refresh_timer,
+                    refresh_condition=self._feature_flag_refresh_enabled,
+                    **kwargs,
+                )
         finally:
             self._refresh_lock.release()
 
@@ -440,7 +476,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 replica_count,
                 self._feature_flag_enabled,
                 self._feature_filter_usage,
-                self._uses_key_vault,
+                self._secret_provider.uses_key_vault,
                 self._uses_load_balancing,
                 is_failover_request,
                 self._uses_ai_configuration,
@@ -496,7 +532,6 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         raise exception
 
     async def _process_configurations(self, configuration_settings: List[ConfigurationSetting]) -> Dict[str, Any]:
-        # Reset feature flag usage
         self._uses_ai_configuration = False
         self._uses_aicc_configuration = False
 
@@ -514,9 +549,8 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
 
     async def _process_key_value(self, config):
         if isinstance(config, SecretReferenceConfigurationSetting):
-            return await _resolve_keyvault_reference(config, self)
+            return await self._secret_provider.resolve_keyvault_reference(config)
         if is_json_content_type(config.content_type) and not isinstance(config, FeatureFlagConfigurationSetting):
-            # Feature flags are of type json, but don't treat them as such
             try:
                 if APP_CONFIG_AI_MIME_PROFILE in config.content_type:
                     self._uses_ai_configuration = True
@@ -545,17 +579,14 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         """
         Closes the connection to Azure App Configuration.
         """
-        for client in self._secret_clients.values():
-            await client.close()
+        await self._secret_provider.close()
         await self._replica_client_manager.close()
 
     async def __aenter__(self) -> "AzureAppConfigurationProvider":
         await self._replica_client_manager.__aenter__()
-        for client in self._secret_clients.values():
-            await client.__aenter__()
+        await self._secret_provider.__aenter__()
         return self
 
     async def __aexit__(self, *args) -> None:
         await self._replica_client_manager.__aexit__(*args)
-        for client in self._secret_clients.values():
-            await client.__aexit__()
+        await self._secret_provider.__aexit__(*args)
