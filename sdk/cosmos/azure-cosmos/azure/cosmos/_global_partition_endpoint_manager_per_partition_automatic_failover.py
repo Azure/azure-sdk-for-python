@@ -16,7 +16,6 @@ from azure.cosmos._global_partition_endpoint_manager_circuit_breaker import \
     _GlobalPartitionEndpointManagerForCircuitBreaker
 from azure.cosmos._partition_health_tracker import _PPAFPartitionThresholdsTracker
 from azure.cosmos.documents import _OperationType
-from azure.cosmos._location_cache import RegionalRoutingContext
 from azure.cosmos._request_object import RequestObject
 from azure.cosmos._routing.routing_range import PartitionKeyRangeWrapper
 
@@ -25,7 +24,7 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger("azure.cosmos._GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover")
 
-# pylint: disable=name-too-long, protected-access
+# pylint: disable=name-too-long, protected-access, too-many-nested-blocks
 #cspell:ignore PPAF, ppaf, ppcb
 
 class PartitionLevelFailoverInfo:
