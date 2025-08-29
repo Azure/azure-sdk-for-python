@@ -34,7 +34,7 @@ class PartitionLevelFailoverInfo:
     Used to track the partition key range and the regions where it is available.
     """
     def __init__(self):
-        self.unavailable_regional_endpoints: Dict[str, RegionalRoutingContext] = {}
+        self.unavailable_regional_endpoints: Dict[str, str] = {}
         self.current_region = None
         self._lock = threading.Lock()
 
@@ -43,10 +43,16 @@ class PartitionLevelFailoverInfo:
             available_account_regional_endpoints: Dict[str, str],
             endpoint_region: str,
             request: RequestObject) -> bool:
+        """
+        Tries to move to the next available regional endpoint for the partition key range.
+        :param Dict[str, str] available_account_regional_endpoints: The available regional endpoints
+        :param str endpoint_region: The current regional endpoint
+        :param RequestObject request: The request object containing the routing context.
+        :return: True if the move was successful, False otherwise.
+        :rtype: bool
+        """
         with self._lock:
             if endpoint_region != self.current_region:
-                logger.warning("PPAF - Moving to next available regional endpoint: %s", self.current_region)
-                # make the actual endpoint since the current_region is just West US
                 regional_endpoint = available_account_regional_endpoints[self.current_region]
                 request.route_to_location(regional_endpoint)
                 return True
@@ -76,6 +82,7 @@ class _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailoverAsync(
         super(_GlobalPartitionEndpointManagerForPerPartitionAutomaticFailoverAsync, self).__init__(client)
         self.partition_range_to_failover_info: Dict[PartitionKeyRangeWrapper, PartitionLevelFailoverInfo] = {}
         self.ppaf_thresholds_tracker = _PPAFPartitionThresholdsTracker()
+        self._lock = threading.Lock()
 
     def is_per_partition_automatic_failover_enabled(self) -> bool:
         if not self._database_account_cache or not self._database_account_cache._EnablePerPartitionFailoverBehavior:
@@ -157,18 +164,23 @@ class _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailoverAsync(
                 if request.location_endpoint_to_route is not None:
                     endpoint_region = self.location_cache.get_location_from_endpoint(request.location_endpoint_to_route)
                     if endpoint_region in partition_failover_info.unavailable_regional_endpoints:
-                        # If the current region is unavailable, we try to move to the next available region
-                        if not partition_failover_info.try_move_to_next_location(
+                        available_account_regional_endpoints = self.compute_available_preferred_regions(request)
+                        if endpoint_region != partition_failover_info.current_region:
+                            # this request has not yet seen there's an available region being used for this partition
+                            regional_endpoint = available_account_regional_endpoints[
+                                partition_failover_info.current_region]
+                            request.route_to_location(regional_endpoint)
+                        else:
+                            # If the current region is unavailable, we try to move to the next available region
+                            if not partition_failover_info.try_move_to_next_location(
                                 self.compute_available_preferred_regions(request),
                                 endpoint_region,
                                 request):
-                            logger.warning("All available regions for partition are unavailable. Refreshing cache.")
-                            # If no other region is available, we invalidate the cache and start once again from our
-                            # main write region in the account configurations
-                            self.partition_range_to_failover_info[pk_range_wrapper] = PartitionLevelFailoverInfo()
-                            request.clear_route_to_location()
-                            return self._resolve_service_endpoint_for_partition_circuit_breaker(request,
-                                                                                                pk_range_wrapper)
+                                logger.warning("All available regions for partition are unavailable. Refreshing cache.")
+                                # If no other region is available, we invalidate the cache and start once again
+                                # from our main write region in the account configurations
+                                self.partition_range_to_failover_info[pk_range_wrapper] = PartitionLevelFailoverInfo()
+                                request.clear_route_to_location()
                     else:
                         # Update the current regional endpoint to whatever the request is routing to
                         endpoint_region = self.location_cache.get_location_from_endpoint(
