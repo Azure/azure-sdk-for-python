@@ -53,6 +53,12 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
         self._client = client
         self._resource_link = resource_link
         self._partitioned_query_ex_info = partitioned_query_execution_info
+        # If the query uses parameters, we must save them to add them back to the component queries
+        self._parameters = getattr(
+            getattr(self._partitioned_query_ex_info, "_query_execution_info", None),
+            "parameters",
+            None
+        )
         self._hybrid_search_query_info = hybrid_search_query_info
         self._final_results = []
         self._aggregated_global_statistics = None
@@ -66,6 +72,12 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
             target_partition_key_ranges = await self._get_target_partition_key_range(target_all_ranges=True)
             global_statistics_doc_producers = []
             global_statistics_query = self._hybrid_search_query_info['globalStatisticsQuery']
+            # If query was given parameters we must add them back in
+            if self._parameters:
+                global_statistics_query = {
+                    'query': global_statistics_query,
+                    'parameters': self._parameters
+                }
             partitioned_query_execution_context_list = []
             for partition_key_target_range in target_partition_key_ranges:
                 # create a document producer for each partition key range
@@ -113,6 +125,11 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
         target_partition_key_ranges = await self._get_target_partition_key_range(target_all_ranges=False)
         for rewritten_query in rewritten_query_infos:
             for pk_range in target_partition_key_ranges:
+                if self._parameters:
+                    rewritten_query['rewrittenQuery'] = {
+                        'query': rewritten_query['rewrittenQuery'],
+                        'parameters': self._parameters
+                    }
                 component_query_execution_list.append(
                     document_producer._DocumentProducer(
                         pk_range,
