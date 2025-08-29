@@ -83,6 +83,9 @@ jobs:
 
     steps:
     - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
+      parameters:
+        Paths:
+          - '**'
 
     - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
 
