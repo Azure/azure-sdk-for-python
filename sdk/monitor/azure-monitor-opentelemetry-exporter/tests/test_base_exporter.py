@@ -1564,22 +1564,10 @@ class TestBaseExporter(unittest.TestCase):
         exporter = BaseExporter(disable_offline_storage=True)
         
         error = ReadTimeout("Network error")
-        error.message = "Specific network error"
         
         retry_code, message = _determine_client_retry_code(error)
         self.assertEqual(retry_code, RetryCode.CLIENT_TIMEOUT)
         self.assertEqual(message, _TIMEOUT_EXCEPTION)
-
-    @mock.patch.dict(
-        os.environ,
-        {
-            "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "true",
-            "APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW": "true",
-        },
-    )
-    def test_track_retry_items_connection_error_network_exception(self):
-        """Test that ConnectionError is properly categorized as _NETWORK_EXCEPTION in retry items tracking."""
-        exporter = BaseExporter(disable_offline_storage=True)
 
 
 def validate_telemetry_item(item1, item2):

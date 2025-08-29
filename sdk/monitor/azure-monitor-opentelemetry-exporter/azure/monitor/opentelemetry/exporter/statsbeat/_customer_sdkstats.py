@@ -23,6 +23,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     RetryCodeType,
     CustomerSdkStatsMetricName,
     _CUSTOMER_SDKSTATS_LANGUAGE,
+    _CLIENT_EXCEPTION,
 )
 
 
@@ -112,20 +113,16 @@ class CustomerSdkStatsMetrics(metaclass=Singleton): # pylint: disable=too-many-i
         if not self._is_enabled or count <= 0:
             return
 
-        # Get or create the drop_code map for this telemetry_type
         if telemetry_type not in self._counters.total_item_drop_count:
             self._counters.total_item_drop_count[telemetry_type] = {}
         drop_code_map = self._counters.total_item_drop_count[telemetry_type]
 
-        # Get or create the reason map for this drop_code
         if drop_code not in drop_code_map:
             drop_code_map[drop_code] = {}
         reason_map = drop_code_map[drop_code]
 
-        # Generate a low-cardinality, informative reason description
         reason = self._get_drop_reason(drop_code, exception_message)
 
-        # Update the count for this reason
         current_count = reason_map.get(reason, 0)
         reason_map[reason] = current_count + count
 
@@ -212,7 +209,7 @@ class CustomerSdkStatsMetrics(metaclass=Singleton): # pylint: disable=too-many-i
             return categorize_status_code(drop_code)
 
         if drop_code == DropCode.CLIENT_EXCEPTION:
-            return exception_message if exception_message else "Client exception"
+            return exception_message if exception_message else _CLIENT_EXCEPTION
 
         drop_code_reasons = {
             DropCode.CLIENT_READONLY: "Readonly mode",
@@ -227,7 +224,7 @@ class CustomerSdkStatsMetrics(metaclass=Singleton): # pylint: disable=too-many-i
             return categorize_status_code(retry_code)
 
         if retry_code == RetryCode.CLIENT_EXCEPTION:
-            return exception_message if exception_message else "Client exception"
+            return exception_message if exception_message else _CLIENT_EXCEPTION
 
         retry_code_reasons = {
             RetryCode.CLIENT_TIMEOUT: "Client timeout",

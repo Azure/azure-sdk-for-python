@@ -270,7 +270,7 @@ class TestCustomerSdkStats(unittest.TestCase):
                 if should_fail:
                     nonlocal dropped_items
                     
-                    failure_type = random.choice(["http_status", "client_exception"])
+                    failure_type = random.choice(["http_status", "exception"])
                     
                     if failure_type == "http_status":
                         status_codes = [401, 401, 403, 500, 500, 503, 402] 
