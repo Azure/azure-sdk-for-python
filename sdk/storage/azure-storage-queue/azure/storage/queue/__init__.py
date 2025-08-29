@@ -13,6 +13,7 @@ from ._shared.models import (
     LocationMode,
     ResourceTypes,
     AccountSasPermissions,
+    UserDelegationKey,
     StorageErrorCode,
     Services,
 )
@@ -58,5 +59,6 @@ __all__ = [
     "RetentionPolicy",
     "generate_account_sas",
     "generate_queue_sas",
+    "UserDelegationKey",
     "Services",
 ]

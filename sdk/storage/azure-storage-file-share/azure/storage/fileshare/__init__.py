@@ -17,6 +17,7 @@ from ._shared.models import (
     AccountSasPermissions,
     LocationMode,
     ResourceTypes,
+    UserDelegationKey,
     StorageErrorCode,
     Services,
 )
@@ -83,6 +84,7 @@ __all__ = [
     'SmbEncryptionInTransit',
     'SmbMultichannel',
     'StorageErrorCode',
+    'UserDelegationKey',
     'generate_account_sas',
     'generate_file_sas',
     'generate_share_sas'
