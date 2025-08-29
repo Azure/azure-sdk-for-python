@@ -4,7 +4,7 @@
 # ------------------------------------
 import socket
 import sys
-from typing import Dict, Any, Mapping, Union, cast
+from typing import Dict, Any, Mapping, Union, cast, Optional, TYPE_CHECKING
 import msal
 
 from azure.core.exceptions import ClientAuthenticationError
@@ -15,6 +15,9 @@ from azure.identity._credentials import (
 from azure.identity._exceptions import CredentialUnavailableError  # pylint:disable=protected-access
 from azure.identity._internal.utils import within_dac  # pylint:disable=protected-access
 from ._utils import wrap_exceptions, resolve_tenant, is_wsl
+
+if TYPE_CHECKING:
+    from azure.identity import TokenCachePersistenceOptions
 
 
 class PopTokenRequestOptions(TokenRequestOptions):
@@ -75,12 +78,39 @@ class InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):
     :raises ValueError: invalid **redirect_uri**
     """
 
-    def __init__(self, **kwargs: Any) -> None:
-        self._parent_window_handle = kwargs.pop("parent_window_handle", None)
-        self._enable_msa_passthrough = kwargs.pop("enable_msa_passthrough", False)
-        self._use_default_broker_account = kwargs.pop("use_default_broker_account", False)
+    def __init__(
+        self,
+        *,
+        authority: Optional[str] = None,
+        tenant_id: Optional[str] = None,
+        client_id: Optional[str] = None,
+        login_hint: Optional[str] = None,
+        cache_persistence_options: Optional["TokenCachePersistenceOptions"] = None,
+        timeout: Optional[int] = None,
+        parent_window_handle: Optional[int] = None,
+        use_default_broker_account: Optional[bool] = None,
+        enable_msa_passthrough: Optional[bool] = None,
+        disable_instance_discovery: Optional[bool] = None,
+        enable_support_logging: Optional[bool] = None,
+        **kwargs: Any
+    ) -> None:
+        self._parent_window_handle = parent_window_handle
+        self._enable_msa_passthrough = enable_msa_passthrough
+        self._use_default_broker_account = use_default_broker_account
         self._disable_interactive_fallback = kwargs.pop("disable_interactive_fallback", False)
-        super().__init__(**kwargs)
+
+        # Pass the documented parameters to the parent class
+        super().__init__(
+            authority=authority,
+            tenant_id=tenant_id,
+            client_id=client_id,
+            login_hint=login_hint,
+            cache_persistence_options=cache_persistence_options,
+            timeout=timeout,
+            disable_instance_discovery=disable_instance_discovery,
+            enable_support_logging=enable_support_logging,
+            **kwargs
+        )
 
     @wrap_exceptions
     def _request_token(self, *scopes: str, **kwargs: Any) -> Dict:

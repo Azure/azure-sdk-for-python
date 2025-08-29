@@ -4,16 +4,20 @@
 # ------------------------------------
 import platform
 import socket
-from typing import Dict, Any
+from typing import Dict, Any, Optional, TYPE_CHECKING
 import subprocess
 import webbrowser
-from urllib.parse import urlparse
+from urllib.parse import urlparse, ParseResult
 
 from azure.core.exceptions import ClientAuthenticationError
 
 from .. import CredentialUnavailableError
 from .._constants import DEVELOPER_SIGN_ON_CLIENT_ID
 from .._internal import AuthCodeRedirectServer, InteractiveCredential, wrap_exceptions, within_dac
+
+if TYPE_CHECKING:
+    from .._auth_record import AuthenticationRecord
+    from .._persistent_cache import TokenCachePersistenceOptions
 
 
 class InteractiveBrowserCredential(InteractiveCredential):
@@ -66,20 +70,45 @@ class InteractiveBrowserCredential(InteractiveCredential):
             :caption: Create an InteractiveBrowserCredential.
     """
 
-    def __init__(self, **kwargs: Any) -> None:
-        redirect_uri = kwargs.pop("redirect_uri", None)
+    def __init__(
+        self,
+        *,
+        authority: Optional[str] = None,
+        tenant_id: Optional[str] = None,
+        client_id: Optional[str] = None,
+        login_hint: Optional[str] = None,
+        redirect_uri: Optional[str] = None,
+        authentication_record: Optional["AuthenticationRecord"] = None,
+        disable_automatic_authentication: Optional[bool] = None,
+        cache_persistence_options: Optional["TokenCachePersistenceOptions"] = None,
+        timeout: Optional[int] = None,
+        disable_instance_discovery: Optional[bool] = None,
+        enable_support_logging: Optional[bool] = None,
+        **kwargs: Any
+    ) -> None:
         if redirect_uri:
-            self._parsed_url = urlparse(redirect_uri)
+            self._parsed_url: Optional[ParseResult] = urlparse(redirect_uri)
             if not (self._parsed_url.hostname and self._parsed_url.port):
                 raise ValueError('"redirect_uri" must be a URL with port number, for example "http://localhost:8400"')
         else:
             self._parsed_url = None
 
-        self._login_hint = kwargs.pop("login_hint", None)
-        self._timeout = kwargs.pop("timeout", 300)
+        self._login_hint = login_hint
+        self._timeout = timeout if timeout is not None else 300
         self._server_class = kwargs.pop("_server_class", AuthCodeRedirectServer)
-        client_id = kwargs.pop("client_id", DEVELOPER_SIGN_ON_CLIENT_ID)
-        super(InteractiveBrowserCredential, self).__init__(client_id=client_id, **kwargs)
+
+        client_id = client_id or DEVELOPER_SIGN_ON_CLIENT_ID
+        super(InteractiveBrowserCredential, self).__init__(
+            client_id=client_id,
+            authority=authority,
+            tenant_id=tenant_id,
+            authentication_record=authentication_record,
+            disable_automatic_authentication=disable_automatic_authentication or False,
+            cache_persistence_options=cache_persistence_options,
+            disable_instance_discovery=disable_instance_discovery,
+            enable_support_logging=enable_support_logging,
+            **kwargs
+        )
 
     @wrap_exceptions
     def _request_token(self, *scopes: str, **kwargs) -> Dict:
