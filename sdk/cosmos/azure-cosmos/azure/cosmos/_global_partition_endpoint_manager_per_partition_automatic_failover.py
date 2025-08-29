@@ -137,7 +137,6 @@ class _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover(_GlobalPar
                 regional_context = (self.location_cache.
                                     account_read_regional_routing_contexts_by_location.get(location).primary_endpoint)
                 partition_level_info.unavailable_regional_endpoints[location] = regional_context
-                print(3)
 
     def resolve_service_endpoint_for_partition(
             self,
