@@ -35,12 +35,6 @@
 # PRLabel: %AI
 /sdk/ai/                                                             @luigiw @needuv @paulshealy1 @singankit @dargilco @jhakulin
 
-# PRLabel: %contosowidgetmanager
-/sdk/contoso/                                                      @danieljurek @ronniegeraghty
-
-# ServiceLabel: %contosowidgetmanager
-# ServiceOwners:                                                   @danieljurek @ronniegeraghty
-
 # ServiceOwners: @luigiw @needuv @singankit
 # ServiceLabel: %Evaluation
 
@@ -56,12 +50,11 @@
 # PRLabel: %Azure.Identity
 /sdk/identity/                                                       @pvaneck @xiangyan99 @Azure/azure-sdk-write-identity
 
-# AzureSdkOwners: @kashifkhan
 # ServiceLabel: %Event Hubs
-# ServiceOwners: @kasun04
+# ServiceOwners: @axisc @sjkwak @hmlam
 
 # PRLabel: %Event Hubs
-/sdk/eventhub/                                                       @annatisch @kashifkhan @swathipil @l0lawrence
+/sdk/eventhub/                                                       @axisc @sjkwak @hmlam
 
 # ServiceLabel: %Storage
 # ServiceOwners: @jalauzon-msft @vincenttran-msft
@@ -266,6 +259,10 @@
 # ServiceLabel: %AI Projects %Service Attention
 /sdk/ai/azure-ai-projects/                                           @dargilco @jhakulin @trangevi @glharper @nick863 @howieleung
 
+# PRLabel: %AI Voice Live
+# ServiceLabel: %AI Voice Live %Service Attention
+/sdk/ai/azure-ai-voicelive/                                          @rhurey @xitzhang
+
 
 # PRLabel: %HDInsight
 /sdk/hdinsight/                                                      @idear1203
@@ -346,19 +343,18 @@
 # PRLabel: %Recovery Services
 /sdk/recoveryservices/                                               @DheerendraRathor
 
-# AzureSdkOwners: @kashifkhan
 # ServiceLabel: %Schema Registry
-# ServiceOwners: @arerlend @alzimmermsft
+# ServiceOwners: @axisc @sjkwak @hmlam
 
 # PRLabel: %Schema Registry
-/sdk/schemaregistry/                                                 @kashifkhan @swathipil
+/sdk/schemaregistry/                                                 @axisc @sjkwak @hmlam
 
 # ServiceLabel: %Search
 # AzureSdkOwners: @xiangyan99
-# ServiceOwners:  @mattgotteiner
+# ServiceOwners:  @kuanlu95 @mattgotteiner
 
 # PRLabel: %Search
-/sdk/search/                                                         @xiangyan99 @Azure/azsdk-search
+/sdk/search/                                                         @Azure/azure-sdk-write-search @Azure/azsdk-search
 
 # PRLabel: %Service Fabric
 /sdk/servicefabric/                                                  @QingChenmsft @samedder
@@ -366,12 +362,11 @@
 # ServiceLabel: %SQL
 # ServiceOwners: @azureSQLGitHub
 
-# AzureSdkOwners: @kashifkhan
 # ServiceLabel: %Service Bus
-# ServiceOwners:  @EldertGrootenboer
+# ServiceOwners: @skarri-microsoft @EldertGrootenboer
 
 # PRLabel: %Service Bus
-/sdk/servicebus/                                                     @annatisch @kashifkhan @swathipil @l0lawrence
+/sdk/servicebus/                                                     @skarri-microsoft @EldertGrootenboer
 
 # ServiceOwners:  @wanyang7 @zesluo
 # ServiceLabel: %Synapse
@@ -839,6 +834,12 @@
 ####################
 
 /**/*mgmt*/                                                          @ChenxiJiang333 @msyyc
+
+# PRLabel: %contosowidgetmanager
+/sdk/contoso/                                                      @shirelmr @michiisai
+
+# ServiceLabel: %contosowidgetmanager %Mgmt
+# ServiceOwners:                                                   @shirelmr @michiisai
 
 ###########
 # Eng Sys and other
