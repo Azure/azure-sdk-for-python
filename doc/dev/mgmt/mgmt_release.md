@@ -125,11 +125,7 @@ Example:
 - Added operation group TrafficManagerUserMetricsKeysOperations
 ```
 
-### Note on multi-api packages
 
-If a package is using multi-api, this means it contains several Autorest generated folder. The tool will then build one report per Autorest generation.
-
-To simplify the change log call, the code report also build a "merged_report" that will merge correctly all api-versions and build a report suitable *for the default floating latest*
 
 Example of output if call with network:
 ```shell
