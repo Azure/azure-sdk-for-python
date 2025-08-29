@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -15,7 +16,7 @@ from azure.mgmt.azurestackhci import AzureStackHCIClient
     pip install azure-identity
     pip install azure-mgmt-azurestackhci
 # USAGE
-    python create_hci_edge_device.py
+    python put_gallery_image.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -27,36 +28,28 @@ from azure.mgmt.azurestackhci import AzureStackHCIClient
 def main():
     client = AzureStackHCIClient(
         credential=DefaultAzureCredential(),
-        subscription_id="SUBSCRIPTION_ID",
+        subscription_id="fd3c3665-1729-4b7b-9a38-238e83b0f98b",
     )
 
-    response = client.edge_devices.begin_create_or_update(
-        resource_uri="subscriptions/fd3c3665-1729-4b7b-9a38-238e83b0f98b/resourceGroups/ArcInstance-rg/providers/Microsoft.HybridCompute/machines/Node-1",
-        resource={
-            "kind": "HCI",
+    response = client.gallery_images.begin_create_or_update(
+        resource_group_name="test-rg",
+        gallery_image_name="test-gallery-image",
+        gallery_images={
+            "extendedLocation": {
+                "name": "/subscriptions/a95612cb-f1fa-4daa-a4fd-272844fa512c/resourceGroups/dogfoodarc/providers/Microsoft.ExtendedLocation/customLocations/dogfood-location",
+                "type": "CustomLocation",
+            },
+            "location": "West US2",
             "properties": {
-                "deviceConfiguration": {
-                    "deviceMetadata": "",
-                    "nicDetails": [
-                        {
-                            "adapterName": "ethernet",
-                            "componentId": "VMBUS{f8615163-df3e-46c5-913f-f2d2f965ed0g} ",
-                            "defaultGateway": "10.10.10.1",
-                            "defaultIsolationId": "0",
-                            "dnsServers": ["100.10.10.1"],
-                            "driverVersion": "10.0.20348.1547 ",
-                            "interfaceDescription": "NDIS 6.70 ",
-                            "ip4Address": "10.10.10.10",
-                            "subnetMask": "255.255.255.0",
-                        }
-                    ],
-                }
+                "containerId": "/subscriptions/a95612cb-f1fa-4daa-a4fd-272844fa512c/resourceGroups/dogfoodarc/providers/Microsoft.AzureStackHCI/storageContainers/test-storage-container",
+                "imagePath": "C:\\test.vhdx",
+                "osType": "Linux",
             },
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/azurestackhci/resource-manager/Microsoft.AzureStackHCI/StackHCI/stable/2024-04-01/examples/CreateHciEdgeDevice.json
+# x-ms-original-file: specification/azurestackhci/resource-manager/Microsoft.AzureStackHCI/stable/2024-01-01/examples/PutGalleryImage.json
 if __name__ == "__main__":
     main()

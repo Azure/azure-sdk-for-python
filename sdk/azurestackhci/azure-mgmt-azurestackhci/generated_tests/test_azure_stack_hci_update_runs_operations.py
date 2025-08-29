@@ -20,12 +20,12 @@ class TestAzureStackHCIUpdateRunsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_update_runs_list(self, resource_group):
         response = self.client.update_runs.list(
             resource_group_name=resource_group.name,
             cluster_name="str",
             update_name="str",
-            api_version="2024-04-01",
+            api_version="2024-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -33,13 +33,13 @@ class TestAzureStackHCIUpdateRunsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_update_runs_begin_delete(self, resource_group):
         response = self.client.update_runs.begin_delete(
             resource_group_name=resource_group.name,
             cluster_name="str",
             update_name="str",
             update_run_name="str",
-            api_version="2024-04-01",
+            api_version="2024-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -47,7 +47,7 @@ class TestAzureStackHCIUpdateRunsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_put(self, resource_group):
+    def test_update_runs_put(self, resource_group):
         response = self.client.update_runs.put(
             resource_group_name=resource_group.name,
             cluster_name="str",
@@ -58,7 +58,6 @@ class TestAzureStackHCIUpdateRunsOperations(AzureMgmtRecordedTestCase):
                 "duration": "str",
                 "endTimeUtc": "2020-02-20 00:00:00",
                 "errorMessage": "str",
-                "expectedExecutionTime": "str",
                 "id": "str",
                 "lastUpdatedTime": "2020-02-20 00:00:00",
                 "lastUpdatedTimeUtc": "2020-02-20 00:00:00",
@@ -73,7 +72,6 @@ class TestAzureStackHCIUpdateRunsOperations(AzureMgmtRecordedTestCase):
                         "description": "str",
                         "endTimeUtc": "2020-02-20 00:00:00",
                         "errorMessage": "str",
-                        "expectedExecutionTime": "str",
                         "lastUpdatedTimeUtc": "2020-02-20 00:00:00",
                         "name": "str",
                         "startTimeUtc": "2020-02-20 00:00:00",
@@ -92,7 +90,7 @@ class TestAzureStackHCIUpdateRunsOperations(AzureMgmtRecordedTestCase):
                 "timeStarted": "2020-02-20 00:00:00",
                 "type": "str",
             },
-            api_version="2024-04-01",
+            api_version="2024-01-01",
         )
 
         # please add some check logic here by yourself
@@ -100,13 +98,13 @@ class TestAzureStackHCIUpdateRunsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_update_runs_get(self, resource_group):
         response = self.client.update_runs.get(
             resource_group_name=resource_group.name,
             cluster_name="str",
             update_name="str",
             update_run_name="str",
-            api_version="2024-04-01",
+            api_version="2024-01-01",
         )
 
         # please add some check logic here by yourself

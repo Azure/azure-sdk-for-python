@@ -21,13 +21,13 @@ class TestAzureStackHCISkusOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_offer(self, resource_group):
+    async def test_skus_list_by_offer(self, resource_group):
         response = self.client.skus.list_by_offer(
             resource_group_name=resource_group.name,
             cluster_name="str",
             publisher_name="str",
             offer_name="str",
-            api_version="2024-04-01",
+            api_version="2024-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -35,14 +35,14 @@ class TestAzureStackHCISkusOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_skus_get(self, resource_group):
         response = await self.client.skus.get(
             resource_group_name=resource_group.name,
             cluster_name="str",
             publisher_name="str",
             offer_name="str",
             sku_name="str",
-            api_version="2024-04-01",
+            api_version="2024-01-01",
         )
 
         # please add some check logic here by yourself

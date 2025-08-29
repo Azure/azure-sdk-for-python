@@ -20,10 +20,10 @@ class TestAzureStackHCIEdgeDevicesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_edge_devices_list(self, resource_group):
         response = self.client.edge_devices.list(
             resource_uri="str",
-            api_version="2024-04-01",
+            api_version="2024-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -31,11 +31,11 @@ class TestAzureStackHCIEdgeDevicesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_edge_devices_get(self, resource_group):
         response = self.client.edge_devices.get(
             resource_uri="str",
             edge_device_name="default",
-            api_version="2024-04-01",
+            api_version="2024-01-01",
         )
 
         # please add some check logic here by yourself
@@ -43,125 +43,29 @@ class TestAzureStackHCIEdgeDevicesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_edge_devices_begin_create_or_update(self, resource_group):
         response = self.client.edge_devices.begin_create_or_update(
             resource_uri="str",
             resource={
-                "kind": "HCI",
+                "deviceConfiguration": {
+                    "deviceMetadata": "str",
+                    "nicDetails": [
+                        {
+                            "adapterName": "str",
+                            "componentId": "str",
+                            "defaultGateway": "str",
+                            "defaultIsolationId": "str",
+                            "dnsServers": ["str"],
+                            "driverVersion": "str",
+                            "interfaceDescription": "str",
+                            "ip4Address": "str",
+                            "subnetMask": "str",
+                        }
+                    ],
+                },
                 "id": "str",
                 "name": "str",
-                "properties": {
-                    "deviceConfiguration": {
-                        "deviceMetadata": "str",
-                        "nicDetails": [
-                            {
-                                "adapterName": "str",
-                                "componentId": "str",
-                                "defaultGateway": "str",
-                                "defaultIsolationId": "str",
-                                "dnsServers": ["str"],
-                                "driverVersion": "str",
-                                "interfaceDescription": "str",
-                                "ip4Address": "str",
-                                "subnetMask": "str",
-                            }
-                        ],
-                    },
-                    "provisioningState": "str",
-                    "reportedProperties": {
-                        "deviceState": "str",
-                        "extensionProfile": {
-                            "extensions": [
-                                {
-                                    "errorDetails": [{"exception": "str"}],
-                                    "extensionName": "str",
-                                    "extensionResourceId": "str",
-                                    "managedBy": "str",
-                                    "state": "str",
-                                    "typeHandlerVersion": "str",
-                                }
-                            ]
-                        },
-                        "networkProfile": {
-                            "hostNetwork": {
-                                "enableStorageAutoIp": bool,
-                                "intents": [
-                                    {
-                                        "adapterPropertyOverrides": {
-                                            "jumboPacket": "str",
-                                            "networkDirect": "str",
-                                            "networkDirectTechnology": "str",
-                                        },
-                                        "intentAdapters": ["str"],
-                                        "intentName": "str",
-                                        "intentType": 0,
-                                        "isComputeIntentSet": bool,
-                                        "isManagementIntentSet": bool,
-                                        "isNetworkIntentType": bool,
-                                        "isOnlyStorage": bool,
-                                        "isOnlyStretch": bool,
-                                        "isStorageIntentSet": bool,
-                                        "isStretchIntentSet": bool,
-                                        "overrideAdapterProperty": bool,
-                                        "overrideQosPolicy": bool,
-                                        "overrideVirtualSwitchConfiguration": bool,
-                                        "qosPolicyOverrides": {
-                                            "bandwidthPercentage_SMB": "str",
-                                            "priorityValue8021Action_Cluster": "str",
-                                            "priorityValue8021Action_SMB": "str",
-                                        },
-                                        "scope": 0,
-                                        "virtualSwitchConfigurationOverrides": {
-                                            "enableIov": "str",
-                                            "loadBalancingAlgorithm": "str",
-                                        },
-                                    }
-                                ],
-                                "storageConnectivitySwitchless": bool,
-                                "storageNetworks": [
-                                    {
-                                        "name": "str",
-                                        "networkAdapterName": "str",
-                                        "storageAdapterIPInfo": [
-                                            {"ipv4Address": "str", "physicalNode": "str", "subnetMask": "str"}
-                                        ],
-                                        "storageVlanId": "str",
-                                    }
-                                ],
-                            },
-                            "nicDetails": [
-                                {
-                                    "adapterName": "str",
-                                    "componentId": "str",
-                                    "defaultGateway": "str",
-                                    "defaultIsolationId": "str",
-                                    "dnsServers": ["str"],
-                                    "driverVersion": "str",
-                                    "interfaceDescription": "str",
-                                    "ip4Address": "str",
-                                    "macAddress": "str",
-                                    "nicStatus": "str",
-                                    "nicType": "str",
-                                    "slot": "str",
-                                    "subnetMask": "str",
-                                    "switchName": "str",
-                                    "vlanId": "str",
-                                }
-                            ],
-                            "switchDetails": [
-                                {
-                                    "extensions": [
-                                        {"extensionEnabled": bool, "extensionName": "str", "switchId": "str"}
-                                    ],
-                                    "switchName": "str",
-                                    "switchType": "str",
-                                }
-                            ],
-                        },
-                        "osProfile": {"assemblyVersion": "str", "bootType": "str"},
-                        "sbeDeploymentPackageInfo": {"code": "str", "message": "str", "sbeManifest": "str"},
-                    },
-                },
+                "provisioningState": "str",
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
                     "createdBy": "str",
@@ -173,7 +77,7 @@ class TestAzureStackHCIEdgeDevicesOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
             },
             edge_device_name="default",
-            api_version="2024-04-01",
+            api_version="2024-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -181,11 +85,11 @@ class TestAzureStackHCIEdgeDevicesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_edge_devices_begin_delete(self, resource_group):
         response = self.client.edge_devices.begin_delete(
             resource_uri="str",
             edge_device_name="default",
-            api_version="2024-04-01",
+            api_version="2024-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -193,12 +97,12 @@ class TestAzureStackHCIEdgeDevicesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_validate(self, resource_group):
+    def test_edge_devices_begin_validate(self, resource_group):
         response = self.client.edge_devices.begin_validate(
             resource_uri="str",
             validate_request={"edgeDeviceIds": ["str"], "additionalInfo": "str"},
             edge_device_name="default",
-            api_version="2024-04-01",
+            api_version="2024-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
