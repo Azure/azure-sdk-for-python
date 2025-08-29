@@ -359,10 +359,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         need_refresh = False
         reset_secret_timer = False
 
-        if (
-            self._secret_provider.secret_refresh_timer
-            and self._secret_provider.secret_refresh_timer.needs_refresh()
-        ):
+        if self._secret_provider.secret_refresh_timer and self._secret_provider.secret_refresh_timer.needs_refresh():
             self._secret_provider.bust_cache()
             reset_secret_timer = True
             need_refresh = True

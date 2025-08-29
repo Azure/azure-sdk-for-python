@@ -6,6 +6,4 @@
 
 from ._async_secret_provider import SecretProvider
 
-__all__ = [
-    "SecretProvider"
-]
+__all__ = ["SecretProvider"]

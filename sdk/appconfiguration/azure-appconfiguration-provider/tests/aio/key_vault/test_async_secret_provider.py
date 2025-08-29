@@ -174,7 +174,9 @@ class TestSecretProviderAsync(AppConfigTestCase, unittest.IsolatedAsyncioTestCas
             mock_kv_id.return_value = mock_id_instance
 
             # Mock SecretClient creation and get_secret method
-            with patch("azure.appconfiguration.provider.aio._key_vault._async_secret_provider.SecretClient") as mock_client_class:
+            with patch(
+                "azure.appconfiguration.provider.aio._key_vault._async_secret_provider.SecretClient"
+            ) as mock_client_class:
                 mock_client = Mock()
                 mock_secret = Mock()
                 mock_secret.value = "new-secret-value"
@@ -399,7 +401,9 @@ class TestSecretProviderAsync(AppConfigTestCase, unittest.IsolatedAsyncioTestCas
             mock_kv_id.return_value = mock_id_instance
 
             # Mock SecretClient creation and get_secret method
-            with patch("azure.appconfiguration.provider.aio._key_vault._async_secret_provider.SecretClient") as mock_client_class:
+            with patch(
+                "azure.appconfiguration.provider.aio._key_vault._async_secret_provider.SecretClient"
+            ) as mock_client_class:
                 mock_client = Mock()
                 mock_secret = Mock()
                 mock_secret.value = "secret-value"
