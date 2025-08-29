@@ -149,6 +149,9 @@ jobs:
       InstallPortAudio: true
 
     steps:
+    - checkout: self
+      fetchDepth: 3
+
     - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
 
     - template: /eng/pipelines/templates/steps/resolve-package-targeting.yml
@@ -181,6 +184,9 @@ jobs:
       os: linux
 
     steps:
+    - checkout: self
+      fetchDepth: 3
+
     - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
 
     - template: /eng/pipelines/templates/steps/resolve-package-targeting.yml
@@ -216,6 +222,9 @@ jobs:
       os: linux
 
     steps:
+    - checkout: self
+      fetchDepth: 3
+
     - task: UsePythonVersion@0
       displayName: 'Use Python $(PythonVersion)'
       condition: succeededOrFailed()
