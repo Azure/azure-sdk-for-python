@@ -43,7 +43,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _RETRYABLE_STATUS_CODES,
     _THROTTLE_STATUS_CODES,
     DropCode,
-    _CLIENT_EXCEPTION,
+    exception_categories,
 )
 # from azure.monitor.opentelemetry.exporter._configuration import _ConfigurationManager
 from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
@@ -347,7 +347,7 @@ class BaseExporter:
                         else:
                             if not self._is_stats_exporter():
                                 if self._customer_sdkstats_metrics and self._should_collect_customer_sdkstats():
-                                    _track_dropped_items(self._customer_sdkstats_metrics, envelopes, DropCode.CLIENT_EXCEPTION, _CLIENT_EXCEPTION)
+                                    _track_dropped_items(self._customer_sdkstats_metrics, envelopes, DropCode.CLIENT_EXCEPTION, exception_categories._CLIENT_EXCEPTION.value)
                                 logger.error(
                                     "Error parsing redirect information.",
                                 )
@@ -360,7 +360,7 @@ class BaseExporter:
                                     self._customer_sdkstats_metrics,
                                     envelopes,
                                     DropCode.CLIENT_EXCEPTION,
-                                    _CLIENT_EXCEPTION
+                                    exception_categories.CLIENT_EXCEPTION.value
                                 )
                             logger.error(
                                 "Error sending telemetry because of circular redirects. "
@@ -419,7 +419,7 @@ class BaseExporter:
 
                 # Track dropped items in customer sdkstats for general exceptions
                 if self._customer_sdkstats_metrics and self._should_collect_customer_sdkstats():
-                    _track_dropped_items(self._customer_sdkstats_metrics, envelopes, DropCode.CLIENT_EXCEPTION, _CLIENT_EXCEPTION)
+                    _track_dropped_items(self._customer_sdkstats_metrics, envelopes, DropCode.CLIENT_EXCEPTION, exception_categories.CLIENT_EXCEPTION.value)
 
                 if self._should_collect_stats():
                     _update_requests_map(_REQ_EXCEPTION_NAME[1], value=ex.__class__.__name__)

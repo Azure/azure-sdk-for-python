@@ -29,10 +29,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _REQ_DURATION_NAME,
     _REQ_SUCCESS_NAME,
     _APPLICATIONINSIGHTS_SDKSTATS_EXPORT_INTERVAL,
-    _CLIENT_EXCEPTION,
-    _NETWORK_EXCEPTION,
-    _STORAGE_EXCEPTION,
-    _TIMEOUT_EXCEPTION,
+    exception_categories,
 )
 
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
@@ -128,17 +125,17 @@ def _determine_client_retry_code(error) -> Tuple[RetryCodeType, Optional[str]]:
         return (error.status_code, error_message or _UNKNOWN)
 
     if isinstance(error, timeout_exception_types):
-        return (RetryCode.CLIENT_TIMEOUT, _TIMEOUT_EXCEPTION)
+        return (RetryCode.CLIENT_TIMEOUT, exception_categories.TIMEOUT_EXCEPTION.value)
 
     if hasattr(error, 'message'):
         error_message = getattr(error, 'message', None) if hasattr(error, 'message') else None
         if error_message is not None and ('timeout' in error_message.lower() or 'timed out' in error_message.lower()):
-            return (RetryCode.CLIENT_TIMEOUT, _TIMEOUT_EXCEPTION)
+            return (RetryCode.CLIENT_TIMEOUT, exception_categories.TIMEOUT_EXCEPTION.value)
 
     if isinstance(error, network_exception_types):
-        return (RetryCode.CLIENT_EXCEPTION, _NETWORK_EXCEPTION)
+        return (RetryCode.CLIENT_EXCEPTION, exception_categories.NETWORK_EXCEPTION.value)
 
-    return (RetryCode.CLIENT_EXCEPTION, _CLIENT_EXCEPTION)
+    return (RetryCode.CLIENT_EXCEPTION, exception_categories.CLIENT_EXCEPTION.value)
 
 def _track_successful_items(customer_sdkstats_metrics, envelopes: List[TelemetryItem]):
     if customer_sdkstats_metrics:
@@ -218,10 +215,10 @@ def _track_dropped_items_from_storage(customer_sdkstats_metrics, result_from_sto
             _track_dropped_items(customer_sdkstats_metrics, envelopes, DropCode.CLIENT_PERSISTENCE_CAPACITY)
         elif get_local_storage_setup_state_exception() != "":
             # For exceptions caught in _check_and_set_folder_permissions during storage setup
-            _track_dropped_items(customer_sdkstats_metrics, envelopes, DropCode.CLIENT_EXCEPTION, _STORAGE_EXCEPTION)
+            _track_dropped_items(customer_sdkstats_metrics, envelopes, DropCode.CLIENT_EXCEPTION, exception_categories.STORAGE_EXCEPTION.value)
         elif isinstance(result_from_storage_put, str):
             # For any exceptions occurred in put method of either LocalFileStorage or LocalFileBlob, track dropped item with reason # pylint: disable=line-too-long
-            _track_dropped_items(customer_sdkstats_metrics, envelopes, DropCode.CLIENT_EXCEPTION, _STORAGE_EXCEPTION) # pylint: disable=line-too-long
+            _track_dropped_items(customer_sdkstats_metrics, envelopes, DropCode.CLIENT_EXCEPTION, exception_categories.STORAGE_EXCEPTION.value) # pylint: disable=line-too-long
         else:
             # LocalFileBlob.put returns StorageExportResult.LOCAL_FILE_BLOB_SUCCESS here. Don't need to track anything in this case. # pylint: disable=line-too-long
             pass

@@ -196,10 +196,11 @@ _TYPE_MAP = {
             }
 
 # Exception categories
-_CLIENT_EXCEPTION = "Client exception"
-_STORAGE_EXCEPTION = "Storage exception"
-_NETWORK_EXCEPTION = "Network exception"
-_TIMEOUT_EXCEPTION = "Timeout exception"
+class exception_categories(Enum):
+    CLIENT_EXCEPTION = "Client exception"
+    STORAGE_EXCEPTION = "Storage exception"
+    NETWORK_EXCEPTION = "Network exception"
+    TIMEOUT_EXCEPTION = "Timeout exception"
 
 # Map RP names
 class _RP_Names(Enum):

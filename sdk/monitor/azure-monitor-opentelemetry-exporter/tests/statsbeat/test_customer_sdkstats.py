@@ -23,10 +23,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _TYPE_MAP,
     DropCode,
     RetryCode,
-    _CLIENT_EXCEPTION,
-    _NETWORK_EXCEPTION,
-    _STORAGE_EXCEPTION,
-    _TIMEOUT_EXCEPTION,
+    exception_categories,
 )
 
 from opentelemetry import trace
@@ -115,7 +112,7 @@ class TestCustomerSdkStats(unittest.TestCase):
 
             # Verify the metrics methods don't do anything when disabled
             metrics.count_successful_items(5, _REQUEST)
-            metrics.count_dropped_items(3, _REQUEST, DropCode.CLIENT_EXCEPTION, _NETWORK_EXCEPTION)
+            metrics.count_dropped_items(3, _REQUEST, DropCode.CLIENT_EXCEPTION, exception_categories.NETWORK_EXCEPTION.value)
 
             # Verify callbacks return empty lists when disabled
             self.assertEqual(metrics._item_success_callback(mock.Mock()), [])
@@ -282,10 +279,10 @@ class TestCustomerSdkStats(unittest.TestCase):
                         metrics.count_dropped_items(failure_count, telemetry_type, status_code, None)
                     else:
                         exception_scenarios = [
-                            _CLIENT_EXCEPTION,
-                            _NETWORK_EXCEPTION,
-                            _STORAGE_EXCEPTION,
-                            _TIMEOUT_EXCEPTION
+                            exception_categories.CLIENT_EXCEPTION.value,
+                            exception_categories.NETWORK_EXCEPTION.value,
+                            exception_categories.STORAGE_EXCEPTION.value,
+                            exception_categories.TIMEOUT_EXCEPTION.value
                         ]
 
                         
@@ -451,10 +448,10 @@ class TestCustomerSdkStats(unittest.TestCase):
                     else:
                         # Unknown retry reasons
                         unknown_messages = [
-                            _CLIENT_EXCEPTION,
-                            _NETWORK_EXCEPTION,
-                            _STORAGE_EXCEPTION,
-                            _TIMEOUT_EXCEPTION
+                            exception_categories.CLIENT_EXCEPTION.value,
+                            exception_categories.NETWORK_EXCEPTION.value,
+                            exception_categories.STORAGE_EXCEPTION.value,
+                            exception_categories.TIMEOUT_EXCEPTION.value
                         ]
                         
                         exception_message = random.choice(unknown_messages)
