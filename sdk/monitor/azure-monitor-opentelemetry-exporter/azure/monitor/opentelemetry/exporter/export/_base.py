@@ -55,7 +55,6 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     increment_and_check_statsbeat_failure_count,
     is_statsbeat_enabled,
     set_statsbeat_initial_success,
-    get_customer_sdkstats_shutdown,
     is_customer_sdkstats_enabled,
 )
 from azure.monitor.opentelemetry.exporter.statsbeat._utils import (
@@ -464,8 +463,6 @@ class BaseExporter:
 
     # check to see whether its the case of customer stats collection
     def _should_collect_customer_sdkstats(self):
-        env_value = os.environ.get("APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW", "")
-        is_customer_sdkstats_enabled = env_value.lower() == "true"
         # Don't collect customer sdkstats for instrumentation collection, sdkstats exporter or customer sdkstats exporter
         return (
             is_customer_sdkstats_enabled()

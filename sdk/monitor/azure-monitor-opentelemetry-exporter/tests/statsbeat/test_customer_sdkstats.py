@@ -27,17 +27,13 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW,
     _REQUEST,
     _DEPENDENCY,
-    _REQ_RETRY_NAME,
     _CUSTOMER_SDKSTATS_LANGUAGE,
     _APPLICATIONINSIGHTS_SDKSTATS_EXPORT_INTERVAL,
     _DEFAULT_STATS_SHORT_EXPORT_INTERVAL,
     _UNKNOWN,
     _TYPE_MAP,
     DropCode,
-    DropCodeType,
     RetryCode,
-    RetryCodeType,
-    _TRACE,
 )
 
 from opentelemetry import trace

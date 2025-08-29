@@ -42,6 +42,7 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     _CUSTOMER_SDKSTATS_REQUESTS_LOCK,
     get_customer_sdkstats_metrics,
     set_customer_sdkstats_metrics,
+    is_customer_sdkstats_enabled,
 )
 
 class _CustomerSdkStatsTelemetryCounters:
@@ -55,7 +56,7 @@ class CustomerSdkStatsMetrics(metaclass=Singleton): # pylint: disable=too-many-i
     def __init__(self, connection_string):
         self._counters = _CustomerSdkStatsTelemetryCounters()
         self._language = _CUSTOMER_SDKSTATS_LANGUAGE
-        self._is_enabled = os.environ.get(_APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW, "").lower() == "true"
+        self._is_enabled = is_customer_sdkstats_enabled()
         if not self._is_enabled:
             return
 
@@ -266,10 +267,10 @@ def shutdown_customer_sdkstats_metrics() -> None:
             try:
                 if metrics._customer_sdkstats_meter_provider is not None:
                     metrics._customer_sdkstats_meter_provider.shutdown()
-                    set_customer_sdkstats_metrics(None)
                     shutdown_success = True
             except:  # pylint: disable=bare-except
                 pass
         if shutdown_success:
             with _CUSTOMER_SDKSTATS_STATE_LOCK:
                 _CUSTOMER_SDKSTATS_STATE["SHUTDOWN"] = True
+            set_customer_sdkstats_metrics(None)
