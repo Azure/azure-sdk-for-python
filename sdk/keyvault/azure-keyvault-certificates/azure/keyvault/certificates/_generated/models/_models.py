@@ -9,7 +9,7 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, Dict, List, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .._utils.model_base import Model as _Model, rest_field
 
@@ -222,7 +222,7 @@ class CertificateBundle(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The certificate attributes."""
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Application specific metadata in the form of key-value pairs."""
     preserve_cert_order: Optional[bool] = rest_field(
         name="preserveCertOrder", visibility=["read", "create", "update", "delete", "query"]
@@ -237,7 +237,7 @@ class CertificateBundle(_Model):
         cer: Optional[bytes] = None,
         content_type: Optional[str] = None,
         attributes: Optional["_models.CertificateAttributes"] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         preserve_cert_order: Optional[bool] = None,
     ) -> None: ...
 
@@ -275,7 +275,7 @@ class CertificateCreateParameters(_Model):
         name="attributes", visibility=["read", "create", "update", "delete", "query"]
     )
     """The attributes of the certificate (optional)."""
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Application specific metadata in the form of key-value pairs."""
     preserve_cert_order: Optional[bool] = rest_field(
         name="preserveCertOrder", visibility=["read", "create", "update", "delete", "query"]
@@ -289,7 +289,7 @@ class CertificateCreateParameters(_Model):
         *,
         certificate_policy: Optional["_models.CertificatePolicy"] = None,
         certificate_attributes: Optional["_models.CertificateAttributes"] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         preserve_cert_order: Optional[bool] = None,
     ) -> None: ...
 
@@ -340,7 +340,7 @@ class CertificateImportParameters(_Model):
         name="attributes", visibility=["read", "create", "update", "delete", "query"]
     )
     """The attributes of the certificate (optional)."""
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Application specific metadata in the form of key-value pairs."""
     preserve_cert_order: Optional[bool] = rest_field(
         name="preserveCertOrder", visibility=["read", "create", "update", "delete", "query"]
@@ -356,7 +356,7 @@ class CertificateImportParameters(_Model):
         password: Optional[str] = None,
         certificate_policy: Optional["_models.CertificatePolicy"] = None,
         certificate_attributes: Optional["_models.CertificateAttributes"] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         preserve_cert_order: Optional[bool] = None,
     ) -> None: ...
 
@@ -523,7 +523,7 @@ class CertificateItem(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The certificate management attributes."""
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Application specific metadata in the form of key-value pairs."""
     x509_thumbprint: Optional[bytes] = rest_field(
         name="x5t", visibility=["read", "create", "update", "delete", "query"], format="base64url"
@@ -536,7 +536,7 @@ class CertificateItem(_Model):
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         attributes: Optional["_models.CertificateAttributes"] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         x509_thumbprint: Optional[bytes] = None,
     ) -> None: ...
 
@@ -563,7 +563,7 @@ class CertificateMergeParameters(_Model):
     :vartype tags: dict[str, str]
     """
 
-    x509_certificates: List[bytes] = rest_field(
+    x509_certificates: list[bytes] = rest_field(
         name="x5c", visibility=["read", "create", "update", "delete", "query"], format="base64"
     )
     """The certificate or the certificate chain to merge. Required."""
@@ -571,16 +571,16 @@ class CertificateMergeParameters(_Model):
         name="attributes", visibility=["read", "create", "update", "delete", "query"]
     )
     """The attributes of the certificate (optional)."""
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Application specific metadata in the form of key-value pairs."""
 
     @overload
     def __init__(
         self,
         *,
-        x509_certificates: List[bytes],
+        x509_certificates: list[bytes],
         certificate_attributes: Optional["_models.CertificateAttributes"] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -740,7 +740,7 @@ class CertificatePolicy(_Model):
         name="x509_props", visibility=["read", "create", "update", "delete", "query"]
     )
     """Properties of the X509 component of a certificate."""
-    lifetime_actions: Optional[List["_models.LifetimeAction"]] = rest_field(
+    lifetime_actions: Optional[list["_models.LifetimeAction"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Actions that will be performed by Key Vault over the lifetime of a certificate."""
@@ -760,7 +760,7 @@ class CertificatePolicy(_Model):
         key_properties: Optional["_models.KeyProperties"] = None,
         secret_properties: Optional["_models.SecretProperties"] = None,
         x509_certificate_properties: Optional["_models.X509CertificateProperties"] = None,
-        lifetime_actions: Optional[List["_models.LifetimeAction"]] = None,
+        lifetime_actions: Optional[list["_models.LifetimeAction"]] = None,
         issuer_parameters: Optional["_models.IssuerParameters"] = None,
         attributes: Optional["_models.CertificateAttributes"] = None,
     ) -> None: ...
@@ -827,7 +827,7 @@ class CertificateUpdateParameters(_Model):
         name="attributes", visibility=["read", "create", "update", "delete", "query"]
     )
     """The attributes of the certificate (optional)."""
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Application specific metadata in the form of key-value pairs."""
 
     @overload
@@ -836,7 +836,7 @@ class CertificateUpdateParameters(_Model):
         *,
         certificate_policy: Optional["_models.CertificatePolicy"] = None,
         certificate_attributes: Optional["_models.CertificateAttributes"] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -899,7 +899,7 @@ class Contacts(_Model):
 
     id: Optional[str] = rest_field(visibility=["read"])
     """Identifier for the contacts collection."""
-    contact_list: Optional[List["_models.Contact"]] = rest_field(
+    contact_list: Optional[list["_models.Contact"]] = rest_field(
         name="contacts", visibility=["read", "create", "update", "delete", "query"]
     )
     """The contact list for the vault certificates."""
@@ -908,7 +908,7 @@ class Contacts(_Model):
     def __init__(
         self,
         *,
-        contact_list: Optional[List["_models.Contact"]] = None,
+        contact_list: Optional[list["_models.Contact"]] = None,
     ) -> None: ...
 
     @overload
@@ -977,7 +977,7 @@ class DeletedCertificateBundle(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The certificate attributes."""
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Application specific metadata in the form of key-value pairs."""
     preserve_cert_order: Optional[bool] = rest_field(
         name="preserveCertOrder", visibility=["read", "create", "update", "delete", "query"]
@@ -1004,7 +1004,7 @@ class DeletedCertificateBundle(_Model):
         cer: Optional[bytes] = None,
         content_type: Optional[str] = None,
         attributes: Optional["_models.CertificateAttributes"] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         preserve_cert_order: Optional[bool] = None,
         recovery_id: Optional[str] = None,
     ) -> None: ...
@@ -1046,7 +1046,7 @@ class DeletedCertificateItem(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The certificate management attributes."""
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Application specific metadata in the form of key-value pairs."""
     x509_thumbprint: Optional[bytes] = rest_field(
         name="x5t", visibility=["read", "create", "update", "delete", "query"], format="base64url"
@@ -1071,7 +1071,7 @@ class DeletedCertificateItem(_Model):
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         attributes: Optional["_models.CertificateAttributes"] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         x509_thumbprint: Optional[bytes] = None,
         recovery_id: Optional[str] = None,
     ) -> None: ...
@@ -1387,7 +1387,7 @@ class OrganizationDetails(_Model):
 
     id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Id of the organization."""
-    admin_details: Optional[List["_models.AdministratorDetails"]] = rest_field(
+    admin_details: Optional[list["_models.AdministratorDetails"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Details of the organization administrator."""
@@ -1397,7 +1397,7 @@ class OrganizationDetails(_Model):
         self,
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        admin_details: Optional[List["_models.AdministratorDetails"]] = None,
+        admin_details: Optional[list["_models.AdministratorDetails"]] = None,
     ) -> None: ...
 
     @overload
@@ -1452,20 +1452,20 @@ class SubjectAlternativeNames(_Model):
     :vartype upns: list[str]
     """
 
-    emails: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    emails: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Email addresses."""
-    dns_names: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    dns_names: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Domain names."""
-    upns: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    upns: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """User principal names."""
 
     @overload
     def __init__(
         self,
         *,
-        emails: Optional[List[str]] = None,
-        dns_names: Optional[List[str]] = None,
-        upns: Optional[List[str]] = None,
+        emails: Optional[list[str]] = None,
+        dns_names: Optional[list[str]] = None,
+        upns: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -1535,13 +1535,13 @@ class X509CertificateProperties(_Model):
 
     subject: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The subject name. Should be a valid X509 distinguished Name."""
-    ekus: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    ekus: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The enhanced key usage."""
     subject_alternative_names: Optional["_models.SubjectAlternativeNames"] = rest_field(
         name="sans", visibility=["read", "create", "update", "delete", "query"]
     )
     """The subject alternative names."""
-    key_usage: Optional[List[Union[str, "_models.KeyUsageType"]]] = rest_field(
+    key_usage: Optional[list[Union[str, "_models.KeyUsageType"]]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Defines how the certificate's key may be used."""
@@ -1555,9 +1555,9 @@ class X509CertificateProperties(_Model):
         self,
         *,
         subject: Optional[str] = None,
-        ekus: Optional[List[str]] = None,
+        ekus: Optional[list[str]] = None,
         subject_alternative_names: Optional["_models.SubjectAlternativeNames"] = None,
-        key_usage: Optional[List[Union[str, "_models.KeyUsageType"]]] = None,
+        key_usage: Optional[list[Union[str, "_models.KeyUsageType"]]] = None,
         validity_in_months: Optional[int] = None,
     ) -> None: ...
 

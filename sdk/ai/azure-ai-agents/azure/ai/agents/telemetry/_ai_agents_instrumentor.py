@@ -444,11 +444,7 @@ class _AIAgentsInstrumentorPreview:
                     t.type: t.bing_grounding,
                 }
             elif isinstance(t, RunStepOpenAPIToolCall):
-                tool_call = {
-                    "id": t.id,
-                    "type": t.type,
-                    'function': t.as_dict().get('function', {})
-                }
+                tool_call = {"id": t.id, "type": t.type, "function": t.as_dict().get("function", {})}
             elif isinstance(t, RunStepMcpToolCall):
                 tool_call = {
                     "id": t.id,
@@ -456,7 +452,7 @@ class _AIAgentsInstrumentorPreview:
                     "arguments": t.arguments,
                     "name": t.name,
                     "output": t.output,
-                    "server_label": t.server_label or ""
+                    "server_label": t.server_label or "",
                 }
             else:
                 # Works for Deep research
@@ -2081,7 +2077,9 @@ class _AgentEventHandlerTraceWrapper(AgentEventHandler):
         # See work item 4636616 and 4636299 for details.
         # When the work item is resolved, change this code back to:
         # if message.status in {MessageStatus.COMPLETED, MessageStatus.INCOMPLETE}
-        if message.status in {MessageStatus.COMPLETED, MessageStatus.INCOMPLETE} or (message.status == MessageStatus.IN_PROGRESS and message.content):
+        if message.status in {MessageStatus.COMPLETED, MessageStatus.INCOMPLETE} or (
+            message.status == MessageStatus.IN_PROGRESS and message.content
+        ):
             self.last_message = message
 
         return retval  # type: ignore
@@ -2222,7 +2220,9 @@ class _AsyncAgentEventHandlerTraceWrapper(AsyncAgentEventHandler):
         # See work item 4636616 and 4636299 for details.
         # When the work item is resolved, change this code back to:
         # if message.status in {MessageStatus.COMPLETED, MessageStatus.INCOMPLETE}
-        if message.status in {MessageStatus.COMPLETED, MessageStatus.INCOMPLETE} or (message.status == MessageStatus.IN_PROGRESS and message.content):
+        if message.status in {MessageStatus.COMPLETED, MessageStatus.INCOMPLETE} or (
+            message.status == MessageStatus.IN_PROGRESS and message.content
+        ):
             self.last_message = message
 
         return retval  # type: ignore

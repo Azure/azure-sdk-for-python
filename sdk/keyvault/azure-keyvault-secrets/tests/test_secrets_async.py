@@ -390,6 +390,7 @@ class TestKeyVaultSecret(KeyVaultTestCase):
         # Test that 409 is raised correctly (`set_secret` shouldn't actually trigger this, but for raising behavior)
         async def run(*_, **__):
             return Mock(http_response=Mock(status_code=409))
+
         with patch.object(client._client._client._pipeline, "run", run):
             with pytest.raises(ResourceExistsError):
                 await client.set_secret("...", "...")

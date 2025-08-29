@@ -16,6 +16,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 
 DISPLAY_NAME = "TestingResourcePyTest"
 
+
 class TestLoadTestAdministrationOperations(LoadTestingAsyncTest):
 
     @LoadTestingPreparer()
@@ -36,8 +37,18 @@ class TestLoadTestAdministrationOperations(LoadTestingAsyncTest):
                 },
                 "passFailCriteria": {
                     "passFailMetrics": {
-                        "condition1": {"clientmetric": "response_time_ms", "aggregate": "avg", "condition": ">", "value": 300},
-                        "condition2": {"clientmetric": "error", "aggregate": "percentage", "condition": ">", "value": 50},
+                        "condition1": {
+                            "clientmetric": "response_time_ms",
+                            "aggregate": "avg",
+                            "condition": ">",
+                            "value": 300,
+                        },
+                        "condition2": {
+                            "clientmetric": "error",
+                            "aggregate": "percentage",
+                            "condition": ">",
+                            "value": 50,
+                        },
                         "condition3": {
                             "clientmetric": "latency",
                             "aggregate": "avg",
@@ -49,7 +60,8 @@ class TestLoadTestAdministrationOperations(LoadTestingAsyncTest):
                 },
                 "secrets": {},
                 "environmentVariables": {"my-variable": "value"},
-        })
+            },
+        )
 
         assert result is not None
         await self.close_admin_client()
@@ -137,7 +149,7 @@ class TestLoadTestAdministrationOperations(LoadTestingAsyncTest):
         assert result is None
 
         await self.close_admin_client()
-    
+
     @LoadTestingPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
@@ -230,6 +242,7 @@ class TestLoadTestAdministrationOperations(LoadTestingAsyncTest):
 
         await self.close_admin_client()
 
+
 class TestTestProfileAdministrationOperations(LoadTestingAsyncTest):
 
     @LoadTestingPreparer()
@@ -250,8 +263,18 @@ class TestTestProfileAdministrationOperations(LoadTestingAsyncTest):
                 },
                 "passFailCriteria": {
                     "passFailMetrics": {
-                        "condition1": {"clientmetric": "response_time_ms", "aggregate": "avg", "condition": ">", "value": 300},
-                        "condition2": {"clientmetric": "error", "aggregate": "percentage", "condition": ">", "value": 50},
+                        "condition1": {
+                            "clientmetric": "response_time_ms",
+                            "aggregate": "avg",
+                            "condition": ">",
+                            "value": 300,
+                        },
+                        "condition2": {
+                            "clientmetric": "error",
+                            "aggregate": "percentage",
+                            "condition": ">",
+                            "value": 50,
+                        },
                         "condition3": {
                             "clientmetric": "latency",
                             "aggregate": "avg",
@@ -263,7 +286,8 @@ class TestTestProfileAdministrationOperations(LoadTestingAsyncTest):
                 },
                 "secrets": {},
                 "environmentVariables": {"my-variable": "value"},
-        })
+            },
+        )
 
         assert result is not None
         await self.close_admin_client()
@@ -283,7 +307,9 @@ class TestTestProfileAdministrationOperations(LoadTestingAsyncTest):
     @LoadTestingPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_create_or_update_test_profile(self, loadtesting_endpoint, loadtesting_test_id, loadtesting_test_profile_id, loadtesting_target_resource_id):
+    async def test_create_or_update_test_profile(
+        self, loadtesting_endpoint, loadtesting_test_id, loadtesting_test_profile_id, loadtesting_target_resource_id
+    ):
         set_bodiless_matcher()
 
         client = self.create_administration_client(loadtesting_endpoint)
@@ -297,16 +323,10 @@ class TestTestProfileAdministrationOperations(LoadTestingAsyncTest):
                 "targetResourceConfigurations": {
                     "kind": "FunctionsFlexConsumption",
                     "configurations": {
-                        "config1": {
-                            "instanceMemoryMB": 2048,
-                            "httpConcurrency": 20
-                        },
-                        "config2": {
-                            "instanceMemoryMB": 4096,
-                            "httpConcurrency": 100
-                        },
-                    }
-                }
+                        "config1": {"instanceMemoryMB": 2048, "httpConcurrency": 20},
+                        "config2": {"instanceMemoryMB": 4096, "httpConcurrency": 100},
+                    },
+                },
             },
         )
 
@@ -318,7 +338,7 @@ class TestTestProfileAdministrationOperations(LoadTestingAsyncTest):
     @pytest.mark.asyncio
     async def test_get_test_profile(self, loadtesting_endpoint, loadtesting_test_profile_id):
         set_bodiless_matcher()
-            
+
         client = self.create_administration_client(loadtesting_endpoint)
         result = await client.get_test_profile(loadtesting_test_profile_id)
         assert result is not None
@@ -330,7 +350,7 @@ class TestTestProfileAdministrationOperations(LoadTestingAsyncTest):
     @pytest.mark.asyncio
     async def test_list_test_profiles(self, loadtesting_endpoint):
         set_bodiless_matcher()
-            
+
         client = self.create_administration_client(loadtesting_endpoint)
         result = client.list_test_profiles()
         assert result is not None

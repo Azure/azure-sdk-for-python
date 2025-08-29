@@ -9,7 +9,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, Callable, Dict, IO, Iterable, List, Optional, TypeVar, Union, overload
+from typing import Any, Callable, IO, Optional, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core import PipelineClient
@@ -37,7 +37,7 @@ from .._utils.utils import ClientMixinABC
 
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -248,12 +248,9 @@ def build_key_vault_get_deleted_secret_request(  # pylint: disable=name-too-long
 def build_key_vault_purge_deleted_secret_request(  # pylint: disable=name-too-long
     secret_name: str, **kwargs: Any
 ) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/deletedsecrets/{secret-name}"
     path_format_arguments = {
@@ -265,10 +262,7 @@ def build_key_vault_purge_deleted_secret_request(  # pylint: disable=name-too-lo
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
 def build_key_vault_recover_deleted_secret_request(  # pylint: disable=name-too-long
@@ -343,7 +337,7 @@ def build_key_vault_restore_secret_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class KeyVaultClientOperationsMixin(
+class _KeyVaultClientOperationsMixin(
     ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], KeyVaultClientConfiguration]
 ):
 
@@ -496,7 +490,7 @@ class KeyVaultClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -562,7 +556,7 @@ class KeyVaultClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -742,7 +736,7 @@ class KeyVaultClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -812,7 +806,7 @@ class KeyVaultClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -826,7 +820,7 @@ class KeyVaultClientOperationsMixin(
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_secrets(self, *, maxresults: Optional[int] = None, **kwargs: Any) -> Iterable["_models.SecretItem"]:
+    def get_secrets(self, *, maxresults: Optional[int] = None, **kwargs: Any) -> ItemPaged["_models.SecretItem"]:
         """List secrets in a specified key vault.
 
         The Get Secrets operation is applicable to the entire vault. However, only the base secret
@@ -843,7 +837,7 @@ class KeyVaultClientOperationsMixin(
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.SecretItem]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.SecretItem]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -893,7 +887,7 @@ class KeyVaultClientOperationsMixin(
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.SecretItem], deserialized.get("value", []))
+            list_of_elem = _deserialize(list[_models.SecretItem], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -909,7 +903,7 @@ class KeyVaultClientOperationsMixin(
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+                error = _failsafe_deserialize(_models.KeyVaultError, response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -919,7 +913,7 @@ class KeyVaultClientOperationsMixin(
     @distributed_trace
     def get_secret_versions(
         self, secret_name: str, *, maxresults: Optional[int] = None, **kwargs: Any
-    ) -> Iterable["_models.SecretItem"]:
+    ) -> ItemPaged["_models.SecretItem"]:
         """List all versions of the specified secret.
 
         The full secret identifier and attributes are provided in the response. No values are returned
@@ -937,7 +931,7 @@ class KeyVaultClientOperationsMixin(
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.SecretItem]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.SecretItem]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -988,7 +982,7 @@ class KeyVaultClientOperationsMixin(
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.SecretItem], deserialized.get("value", []))
+            list_of_elem = _deserialize(list[_models.SecretItem], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -1004,7 +998,7 @@ class KeyVaultClientOperationsMixin(
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+                error = _failsafe_deserialize(_models.KeyVaultError, response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -1014,7 +1008,7 @@ class KeyVaultClientOperationsMixin(
     @distributed_trace
     def get_deleted_secrets(
         self, *, maxresults: Optional[int] = None, **kwargs: Any
-    ) -> Iterable["_models.DeletedSecretItem"]:
+    ) -> ItemPaged["_models.DeletedSecretItem"]:
         """Lists deleted secrets for the specified vault.
 
         The Get Deleted Secrets operation returns the secrets that have been deleted for a vault
@@ -1031,7 +1025,7 @@ class KeyVaultClientOperationsMixin(
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.DeletedSecretItem]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.DeletedSecretItem]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -1081,7 +1075,7 @@ class KeyVaultClientOperationsMixin(
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.DeletedSecretItem], deserialized.get("value", []))
+            list_of_elem = _deserialize(list[_models.DeletedSecretItem], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -1097,7 +1091,7 @@ class KeyVaultClientOperationsMixin(
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+                error = _failsafe_deserialize(_models.KeyVaultError, response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -1157,7 +1151,7 @@ class KeyVaultClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -1221,7 +1215,7 @@ class KeyVaultClientOperationsMixin(
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -1280,7 +1274,7 @@ class KeyVaultClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -1346,7 +1340,7 @@ class KeyVaultClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -1482,7 +1476,7 @@ class KeyVaultClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
