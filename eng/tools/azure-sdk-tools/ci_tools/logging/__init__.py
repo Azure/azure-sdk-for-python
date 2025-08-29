@@ -6,9 +6,8 @@ import datetime
 from subprocess import run
 import argparse
 
-LOGLEVEL = getattr(logging, os.environ.get("LOGLEVEL", "INFO").upper())
-
 logger = logging.getLogger("azure-sdk-tools")
+LOGLEVEL = getattr(logging, os.environ.get("LOGLEVEL", "INFO").upper())
 
 def configure_logging(
     args: argparse.Namespace,
@@ -19,14 +18,15 @@ def configure_logging(
     Configures the shared logger. Should be called **once** at startup.
     """
     # use cli arg > log level arg > env var
-    numeric_level = getattr(logging, level.upper(), None)
 
     if args.quiet:
         numeric_level = logging.ERROR
     elif args.verbose:
         numeric_level = logging.DEBUG
-    elif not args.log_level:
-        numeric_level = LOGLEVEL
+    elif not level:
+        numeric_level = getattr(logging, os.environ.get("LOGLEVEL", "INFO").upper())
+    else:
+        numeric_level = getattr(logging, level.upper(), None)
 
     if not isinstance(numeric_level, int):
         raise ValueError(f"Invalid log level: {level}")
