@@ -9,7 +9,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from collections.abc import MutableMapping # pylint: disable=import-error
-from typing import TYPE_CHECKING, Any, Callable, Dict, Optional, TypeVar, Union, cast
+from typing import TYPE_CHECKING, Any, Callable, Dict, Optional, TypeVar, Union
 
 from azure.core import AsyncPipelineClient
 from azure.core.credentials import AzureKeyCredential
@@ -17,10 +17,7 @@ from azure.core.pipeline import PipelineResponse, policies
 from azure.core.polling import AsyncLROPoller
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator_async import distributed_trace_async
-
-from .._utils.model_base import _deserialize
 from .._utils.serialization import Deserializer, Serializer
-from ..models import AsyncJobsPollingMethod, ProjectDeletionState
 from ._configuration import ConversationAuthoringProjectClientConfiguration
 from ._client import (
     ConversationAuthoringClient as AuthoringClientGenerated,

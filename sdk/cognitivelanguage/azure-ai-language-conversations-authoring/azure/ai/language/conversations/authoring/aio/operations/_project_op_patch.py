@@ -17,7 +17,6 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.core.utils import case_insensitive_dict
 
 from ..._utils.model_base import _deserialize
 from ...models import (
@@ -31,7 +30,6 @@ from ...models import (
     ExportedProject,
     ExportedProjectFormat,
     ExportedTrainedModel,
-    ImportProjectState,
     ProjectDeletionState,
     ProjectDeployment,
     ProjectDetails,
@@ -150,6 +148,7 @@ class ProjectOperations(ProjectOperationsGenerated):
         :type body: ~azure.ai.language.conversations.authoring.models.ExportedProject or JSON or IO[bytes]
         :keyword exported_project_format: The format of the exported project file to use. Known values are: "Conversation" and "Luis".
         :paramtype exported_project_format: str or ~azure.ai.language.conversations.authoring.models.ExportedProjectFormat
+        :keyword str content_type: Media type of the request body. Default is "application/json".
         :return: An instance of AsyncLROPoller that returns None.
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -234,6 +233,7 @@ class ProjectOperations(ProjectOperationsGenerated):
 
         :param body: The new project resources info. Required.
         :type body: ~azure.ai.language.conversations.authoring.models.AssignDeploymentResourcesDetails or JSON or IO[bytes]
+        :keyword str content_type: Media type of the request body. Default is "application/json".
         :return: An instance of AsyncLROPoller that returns None.
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -298,6 +298,7 @@ class ProjectOperations(ProjectOperationsGenerated):
 
         :param body: The job object to swap two deployments. Required.
         :type body: ~azure.ai.language.conversations.authoring.models.SwapDeploymentsDetails or JSON or IO[bytes]
+        :keyword str content_type: Media type of the request body. Default is "application/json".
         :return: An instance of AsyncLROPoller that returns None.
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -366,6 +367,7 @@ class ProjectOperations(ProjectOperationsGenerated):
 
         :param body: The info for the deployment resources to be deleted. Required.
         :type body: ~azure.ai.language.conversations.authoring.models.UnassignDeploymentResourcesDetails or JSON or IO[bytes]
+        :keyword str content_type: Media type of the request body. Default is "application/json".
         :return: An instance of LROPoller that returns None.
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -493,7 +495,7 @@ class ProjectOperations(ProjectOperationsGenerated):
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
         Default value is "application/json".
-        :paramtype content_type: str
+        :keyword str content_type: Media type of the request body. Default is "application/json".
         :return: An instance of AsyncLROPoller that returns None.
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -507,6 +509,9 @@ class ProjectOperations(ProjectOperationsGenerated):
 
         :param body: The copy project info. Required.
         :type body: ~azure.ai.language.conversations.authoring.models.CopyProjectDetails or JSON or IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+        Default value is "application/json".
+        :paramtype content_type: str
         :return: An instance of LROPoller that returns None.
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:

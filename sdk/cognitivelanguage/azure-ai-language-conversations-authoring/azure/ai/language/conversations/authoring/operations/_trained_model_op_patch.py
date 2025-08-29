@@ -10,15 +10,14 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 
 from collections.abc import MutableMapping # pylint:disable=import-error
-from typing import IO, Any, Callable, Dict, Optional, TypeVar, Union, cast, overload
+from typing import IO, Any, Callable, Dict, Optional, TypeVar, Union, overload
 
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.polling import LROPoller, NoPolling, PollingMethod
+from azure.core.polling import LROPoller
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 
-from .._utils.model_base import _deserialize
 from ..models import (
     EvalSummary,
     EvaluationDetails,

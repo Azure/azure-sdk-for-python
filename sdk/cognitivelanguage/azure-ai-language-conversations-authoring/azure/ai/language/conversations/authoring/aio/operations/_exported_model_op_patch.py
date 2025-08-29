@@ -9,18 +9,15 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from collections.abc import MutableMapping # pylint:disable=import-error
-from typing import IO, Any, Callable, Dict, Optional, TypeVar, Union, cast, overload
+from typing import IO, Any, Callable, Dict, Optional, TypeVar, Union, overload
 
 from azure.core.pipeline import PipelineResponse
-from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
+from azure.core.polling import AsyncLROPoller
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.core.utils import case_insensitive_dict
 
-from ..._utils.model_base import _deserialize
 from ...models import (
-    AsyncJobsPollingMethod,
     ExportedModelDetails,
     ExportedModelState,
     ExportedTrainedModel,
@@ -109,6 +106,7 @@ class ExportedModelOperations(ExportedModelOperationsGenerated):
         :type exported_model_name: str
         :param body: The exported model info. Required.
         :type body: ~azure.ai.language.conversations.authoring.models.ExportedModelDetails or JSON or IO[bytes]
+        :keyword str content_type: Media type of the request body. Default is "application/json".
         :return: An instance of LROPoller that returns None.
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
