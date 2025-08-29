@@ -15,7 +15,7 @@ from azure.core.exceptions import ServiceResponseError
 
 import test_config
 from azure.cosmos import _location_cache
-from azure.cosmos._availability_strategy import CrossRegionHedgingStrategy, DisabledStrategy
+from azure.cosmos._availability_strategy import CrossRegionHedgingStrategy
 from azure.cosmos.aio import CosmosClient
 from azure.cosmos.documents import _OperationType as OperationType
 from azure.cosmos.exceptions import CosmosHttpResponseError
@@ -344,13 +344,43 @@ class TestAsyncAvailabilityStrategy:
         custom_transport.add_fault(predicate, error_lambda)
         return custom_transport
 
+    @pytest.mark.parametrize("threshold,threshold_steps", [
+        (timedelta(milliseconds=-1), timedelta(milliseconds=100)),
+        (timedelta(milliseconds=0), timedelta(milliseconds=100)),
+        (timedelta(milliseconds=100), timedelta(milliseconds=-1)),
+        (timedelta(milliseconds=100), timedelta(milliseconds=0))
+    ])
+    def test_invalid_thresholds_when_enabled(self, threshold, threshold_steps):
+        """Test that creating strategy with non-positive thresholds raises ValueError when enabled"""
+        with pytest.raises(ValueError):
+            CrossRegionHedgingStrategy(
+                enabled=True,
+                threshold=threshold,
+                threshold_steps=threshold_steps
+            )
+
+    def test_allows_any_thresholds_when_disabled(self):
+        """Test that any threshold values are allowed when strategy is disabled"""
+        # These should not raise errors since enabled=False
+        CrossRegionHedgingStrategy(
+            enabled=False,
+            threshold=timedelta(milliseconds=-1),
+            threshold_steps=timedelta(milliseconds=-1)
+        )
+        CrossRegionHedgingStrategy(
+            enabled=False,
+            threshold=timedelta(milliseconds=0),
+            threshold_steps=timedelta(milliseconds=0)
+        )
+
     @pytest.mark.asyncio
     @pytest.mark.parametrize("operation", [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED, CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
     @pytest.mark.parametrize("availability_strategy_level", ["client","request"])
     async def test_availability_strategy_in_steady_state(self, operation, availability_strategy_level, setup):
         """Test for steady state, operations go to first preferred location even with availability strategy enabled"""
-        # Setup client with strategy
+        # Setup client with availability strategy
         strategy = CrossRegionHedgingStrategy(
+            enabled=True,
             threshold=timedelta(milliseconds=150),
             threshold_steps=timedelta(milliseconds=50)
         )
@@ -388,7 +418,7 @@ class TestAsyncAvailabilityStrategy:
     @pytest.mark.asyncio
     @pytest.mark.parametrize("operation",[READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED, CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
     @pytest.mark.parametrize("availability_strategy_level", ["client", "request"])
-    async def test_client_availability_strategy_failover(self, operation, availability_strategy_level, succeeded, setup):
+    async def test_client_availability_strategy_failover(self, operation, availability_strategy_level, setup):
         """Test operations failover to second preferred location on errors"""
         uri_down = _location_cache.LocationCache.GetLocationalEndpoint(self.host, setup['region_1'])
         failed_over_uri = _location_cache.LocationCache.GetLocationalEndpoint(self.host, setup['region_2'])
@@ -404,6 +434,7 @@ class TestAsyncAvailabilityStrategy:
         custom_transport = self.get_custom_transport_with_fault_injection(predicate, error_lambda)
 
         strategy = CrossRegionHedgingStrategy(
+            enabled=True,
             threshold=timedelta(milliseconds=100),
             threshold_steps=timedelta(milliseconds=50)
         )
@@ -420,8 +451,6 @@ class TestAsyncAvailabilityStrategy:
 
         doc = create_doc()
         await setup_without_fault['col'].create_item(doc)
-
-        expected_uris = [uri_down, failed_over_uri]
 
         # Test operation with fault injection
         if operation in [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED]:
@@ -489,6 +518,7 @@ class TestAsyncAvailabilityStrategy:
 
         # Test should fail with original error without failover
         strategy = CrossRegionHedgingStrategy(
+            enabled=True,
             threshold=timedelta(milliseconds=100),
             threshold_steps=timedelta(milliseconds=50)
         )
@@ -545,6 +575,7 @@ class TestAsyncAvailabilityStrategy:
         custom_transport.add_fault(predicate_first_region, error_lambda_first_region)
 
         strategy = CrossRegionHedgingStrategy(
+            enabled=True,
             threshold=timedelta(milliseconds=100),
             threshold_steps=timedelta(milliseconds=50)
         )
@@ -589,10 +620,11 @@ class TestAsyncAvailabilityStrategy:
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("operation", [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED, CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
-    async def test_request_level_disable_override_client_strategy(self, operation, setup):
-        """Test that request-level DisabledStrategy overrides client-level CrossRegionHedgingStrategy"""
-        # Setup client with CrossRegionHedgingStrategy
+    async def test_request_level_disabled_override_client_policy(self, operation, setup):
+        """Test that request-level disabled policy overrides client-level enabled policy"""
+        # Setup client with enabled hedging policy
         client_strategy = CrossRegionHedgingStrategy(
+            enabled=True,
             threshold=timedelta(milliseconds=100),
             threshold_steps=timedelta(milliseconds=50)
         )
@@ -624,8 +656,8 @@ class TestAsyncAvailabilityStrategy:
         doc = create_doc()
         await setup_without_fault['col'].create_item(doc)
 
-        # Create request-level strategy to disable hedging
-        request_strategy = DisabledStrategy()
+        # Create request-level disabled policy
+        request_strategy = CrossRegionHedgingStrategy(enabled=False)
 
         expected_uris = [uri_down]
         excluded_uris = [failed_over_uri]
@@ -642,9 +674,9 @@ class TestAsyncAvailabilityStrategy:
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("operation", [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED, CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
-    async def test_request_level_enable_override_client_disable(self, operation, setup):
-        """Test that request-level CrossRegionHedgingStrategy overrides client-level DisabledStrategy"""
-        client_strategy = DisabledStrategy()
+    async def test_request_level_enabled_override_client_disabled(self, operation, setup):
+        """Test that request-level enabled policy overrides client-level disabled policy"""
+        client_strategy = CrossRegionHedgingStrategy(enabled=False)
 
         uri_down = _location_cache.LocationCache.GetLocationalEndpoint(self.host, setup['region_1'])
         failed_over_uri = _location_cache.LocationCache.GetLocationalEndpoint(self.host, setup['region_2'])
@@ -673,8 +705,9 @@ class TestAsyncAvailabilityStrategy:
         doc = create_doc()
         await setup_without_fault['col'].create_item(doc)
 
-        # Create request-level strategy to enable hedging
+        # Create request-level enabled policy
         request_strategy = CrossRegionHedgingStrategy(
+            enabled=True,
             threshold=timedelta(milliseconds=100),
             threshold_steps=timedelta(milliseconds=50)
         )
@@ -721,6 +754,7 @@ class TestAsyncAvailabilityStrategy:
         expected_uris = [uri_down]
         excluded_uris = [failed_over_uri]
         strategy = CrossRegionHedgingStrategy(
+            enabled=True,
             threshold=timedelta(milliseconds=100),
             threshold_steps=timedelta(milliseconds=50)
         )
@@ -774,6 +808,7 @@ class TestAsyncAvailabilityStrategy:
         excluded_uris = [failed_over_uri]
 
         strategy = CrossRegionHedgingStrategy(
+            enabled=True,
             threshold=timedelta(milliseconds=100),
             threshold_steps=timedelta(milliseconds=50)
         )
@@ -831,6 +866,7 @@ class TestAsyncAvailabilityStrategy:
             custom_transport = self.get_custom_transport_with_fault_injection(predicate, error_lambda)
 
             strategy = CrossRegionHedgingStrategy(
+                enabled=True,
                 threshold=timedelta(milliseconds=100),
                 threshold_steps=timedelta(milliseconds=50)
             )

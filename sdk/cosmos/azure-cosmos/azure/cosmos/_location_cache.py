@@ -263,7 +263,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         # Else, return all regional endpoints
         return self.get_write_regional_routing_contexts()
 
-    def get_region_name(self, endpoint, is_write_operation: bool) -> Optional[str]:
+    def get_region_name(self, endpoint: str, is_write_operation: bool) -> Optional[str]:
         if is_write_operation:
             if endpoint in self.account_locations_by_write_endpoints:
                 return self.account_locations_by_write_endpoints[endpoint]

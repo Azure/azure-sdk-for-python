@@ -7,6 +7,7 @@
 # displayed in the SDK reference documentation. When editing these
 # example snippets, take into consideration how this might affect
 # the readability and usability of the reference documentation.
+from datetime import timedelta
 
 # All interaction with Cosmos DB starts with an instance of the CosmosClient
 # [START create_client]
@@ -14,6 +15,8 @@ from azure.cosmos import exceptions, CosmosClient, PartitionKey
 from typing import Dict, Any
 
 import os
+
+from cosmos import CrossRegionHedgingStrategy
 
 url = os.environ["ACCOUNT_URI"]
 key = os.environ["ACCOUNT_KEY"]
@@ -302,3 +305,27 @@ for queried_item in container.query_items_change_feed(feed_range=feed_ranges[0])
 for queried_item in container.query_items_change_feed(feed_range=feed_ranges[0], start_time="Beginning"):
     print(json.dumps(queried_item, indent=True))
 # [END query_items_change_feed_from_beginning]
+
+# configure availability strategy on request level
+# [START read_item_with_availability_strategy]
+strategy = CrossRegionHedgingStrategy(
+    enabled=True,
+    threshold=timedelta(milliseconds=500),  # Try alternate region after 500ms
+    threshold_steps=timedelta(milliseconds=100))  # Wait 100ms between region attempt
+
+container.read_item(
+    item="id1",
+    partition_key="pk1",
+    availability_strategy=strategy)
+# [END read_item_with_availability_strategy]
+
+# disable availability strategy on request level
+# [START read_item_with_disabled_availability_strategy]
+strategy = CrossRegionHedgingStrategy(enabled=False)
+
+container.read_item(
+    item="id1",
+    partition_key="pk1",
+    availability_strategy=strategy
+)
+# [END read_item_with_disabled_availability_strategy]

@@ -19,127 +19,90 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-
 """Availability strategy for the Azure Cosmos database service.
 
 This module provides availability strategies that can be used to improve request latency and
 availability in multi-region deployments. Strategies can be configured at the client level
 and overridden per request.
-
-Example:
-    ```python
-    from azure.cosmos import CosmosClient
-    from azure.cosmos._availability_strategy import CrossRegionHedgingStrategy, DisabledStrategy
-    from datetime import timedelta
-
-    # Configure hedging strategy with initial threshold and fixed step
-    strategy = CrossRegionHedgingStrategy(
-        threshold=timedelta(milliseconds=100),  # Wait 100ms before first hedged request
-        threshold_steps=timedelta(milliseconds=50)  # Wait 50ms between each subsequent request
-    )
-
-    # Create client with configured strategy
-    client = CosmosClient(url, credential, availability_strategy=strategy)
-    container = client.get_container_client("dbname", "containername")
-
-    # Strategy will be used automatically for read operations
-    items = list(container.read_all_items())
-
-    # Override strategy for a specific request
-    custom_strategy = CrossRegionHedgingStrategy(
-        threshold=timedelta(milliseconds=50),
-        threshold_steps=[0.5]
-    )
-    items = list(container.read_all_items(availability_strategy=custom_strategy))
-
-    # Disable hedging for a specific request
-    items = list(container.read_all_items(availability_strategy=DisabledStrategy()))
-    ```
 """
 
-import abc
 from datetime import timedelta
 
-class AvailabilityStrategy(abc.ABC):
-    """Abstract base class for availability strategies.
-
-    This class defines the interface that all availability strategies must implement.
-    Strategies can modify how requests are executed to improve availability and latency.
-    Strategies can be configured at the client level and overridden per request.
-    """
-
-
-class DisabledStrategy(AvailabilityStrategy):
-    """Strategy that disables request hedging.
-
-    This strategy executes requests directly without any hedging.
-    It can be used to disable hedging for specific requests when a client
-    has a default hedging strategy configured.
-
+class CrossRegionHedgingStrategy:
+    """Configuration for cross-region request routing using availability thresholds.
+    
+    Controls whether and how requests are routed across regions for improved availability
+    and latency. Uses time-based thresholds to determine when to route requests to alternate
+    regions. Can be configured at the client level and overridden per request.
+    
+    :param enabled: Whether cross-region request routing is enabled, defaults to True
+    :type enabled: bool
+    :param threshold: Time to wait before routing to an alternate region, defaults to 500ms
+    :type threshold: ~datetime.timedelta
+    :param threshold_steps: Time interval between subsequent region routing attempts, defaults to 100ms
+    :type threshold_steps: ~datetime.timedelta
+    
     Example:
         ```python
-        # Disable hedging for a specific request
-        items = container.read_all_items(
-            availability_strategy=DisabledStrategy()
+        from datetime import timedelta
+        
+        # Enable cross-region routing with default settings
+        strategy = CrossRegionHedgingStrategy()
+        
+        # Disable cross-region routing
+        strategy = CrossRegionHedgingStrategy(enabled=False)
+        
+        # Custom routing thresholds
+        strategy = CrossRegionHedgingStrategy(
+            enabled=True,
+            threshold=timedelta(milliseconds=500),  # Try alternate region after 500ms
+            threshold_steps=timedelta(milliseconds=100)  # Wait 100ms between region attempts
+        )
+        
+        # Set at client level
+        client = CosmosClient(
+            url,
+            key,
+            availability_strategy=strategy
+        )
+        
+        # Override per request
+        container.read_item(
+            item="id1",
+            partition_key="pk1",
+            availability_strategy=strategy
         )
         ```
     """
-
-class CrossRegionHedgingStrategy(AvailabilityStrategy):
-    """Strategy that implements cross-region request hedging.
-
-    This strategy improves tail latency by sending duplicate requests to other regions
-    after configured time thresholds. When the first successful response arrives,
-    any pending requests are cancelled.
-
-    The strategy uses two timing parameters:
-    - threshold: Initial wait time before sending the first hedged request
-    - threshold_steps: Fixed wait time between each subsequent request
-
-    For example, with threshold=100ms and threshold_steps=50:
-    - Original request sent at t=0
-    - Second request at t=100ms (initial threshold)
-    - Third request at t=150ms (after 50ms step)
-    - Fourth request at t=200ms (after 50ms step)
-
-    :param threshold: Initial wait before first hedged request
-    :type threshold: timedelta
-    :param threshold_steps: Fixed time interval between subsequent requests
-    :type threshold_steps: timedelta
-    :raises ValueError: If threshold is negative or threshold_steps is invalid
-    """
-
-    def __init__(self, threshold: timedelta, threshold_steps: timedelta) -> None:
-        """Initialize the cross-region hedging strategy.
-
-        :param threshold: Initial wait before first hedged request
-        :type threshold: timedelta
-        :param threshold_steps: Fixed time interval between subsequent requests
-        :type threshold_steps: timedelta
-        :raises ValueError: If threshold or threshold_steps is negative
-        """
-        if threshold.total_seconds() < 0:
-            raise ValueError("Threshold must be non-negative")
-        if threshold_steps.total_seconds() < 0:
-            raise ValueError("Threshold steps must be non-negative")
-
+    
+    def __init__(
+        self,
+        enabled: bool = True,
+        threshold: timedelta = timedelta(milliseconds=500),
+        threshold_steps: timedelta = timedelta(milliseconds=100)
+    ) -> None:
+        """Initialize availability strategy with specified configuration."""
+        if enabled:
+            if threshold.total_seconds() <= 0:
+                raise ValueError("threshold must be positive when enabled is True")
+            if threshold_steps.total_seconds() <= 0:
+                raise ValueError("threshold_steps must be positive when enabled is True")
+                
+        self._enabled = enabled
         self._threshold = threshold
         self._threshold_steps = threshold_steps
-
+    
+    @property
+    def enabled(self) -> bool:
+        """Whether cross-region request routing is enabled."""
+        return self._enabled
+        
     @property
     def threshold(self) -> timedelta:
-        """Get the base threshold before sending hedged requests.
-
-        :return: Base threshold
-        :rtype: timedelta
-        """
+        """Wait time before routing to alternate region."""
         return self._threshold
-
+        
     @property
     def threshold_steps(self) -> timedelta:
-        """Get the fixed time interval between requests.
-
-        :return: Time interval
-        :rtype: timedelta
-        """
+        """Time interval between subsequent region routing attempts."""
         return self._threshold_steps

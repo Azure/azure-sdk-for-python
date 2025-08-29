@@ -4,8 +4,8 @@
 """Module for async completion status tracking."""
 
 import asyncio # pylint: disable=do-not-import-asyncio
-from .._request_object import HedgingCompletionStatus
 
+from azure.cosmos._request_hedging_completion_status import HedgingCompletionStatus
 
 class AsyncHedgingCompletionStatus(HedgingCompletionStatus):
     """Async-safe implementation of completion status using asyncio.Event."""

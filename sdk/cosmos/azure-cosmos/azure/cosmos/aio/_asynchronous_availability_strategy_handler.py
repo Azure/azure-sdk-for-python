@@ -20,114 +20,25 @@
 # SOFTWARE.
 
 """Module for handling asynchronous request hedging strategies in Azure Cosmos DB."""
-import abc
-import asyncio # pylint: disable=do-not-import-asyncio
+import asyncio  # pylint: disable=do-not-import-asyncio
 import copy
-import logging
-from asyncio import Task, CancelledError # pylint: disable=do-not-import-asyncio
+from asyncio import Task, CancelledError  # pylint: disable=do-not-import-asyncio
 from types import SimpleNamespace
-from typing import Any, Dict, List, Optional, Tuple, Callable, Awaitable, TYPE_CHECKING, cast
+from typing import Any, Dict, List, Optional, Tuple, Callable, Awaitable, cast
 
-from azure.core import AsyncPipelineClient
-from azure.core.pipeline.transport import HttpRequest, \
-    AsyncHttpResponse  # pylint: disable=no-legacy-azure-core-http-response-import
+from azure.core.pipeline.transport import HttpRequest  # pylint: disable=no-legacy-azure-core-http-response-import
 
 from ._asynchronous_hedging_completion_status import AsyncHedgingCompletionStatus
 from ._global_partition_endpoint_manager_circuit_breaker_async import \
     _GlobalPartitionEndpointManagerForCircuitBreakerAsync
-from .._availability_strategy import CrossRegionHedgingStrategy, DisabledStrategy, AvailabilityStrategy
+from .._availability_strategy import CrossRegionHedgingStrategy
 from .._request_object import RequestObject
-from ..documents import _OperationType, ConnectionPolicy
+from ..documents import _OperationType
 from ..exceptions import CosmosHttpResponseError
 
-if TYPE_CHECKING:
-    from . import CosmosClient
-
-logger = logging.getLogger(__name__)
 ResponseType = Tuple[Dict[str, Any], Dict[str, Any]]
 
-class AsyncHedgingHandler(abc.ABC):
-    """Abstract base class for async hedging handlers."""
-
-    @abc.abstractmethod
-    async def execute_request(
-        self,
-        client: "CosmosClient",
-        request_params: RequestObject,
-        global_endpoint_manager: _GlobalPartitionEndpointManagerForCircuitBreakerAsync,
-        connection_policy: ConnectionPolicy,
-        pipeline_client: AsyncPipelineClient[HttpRequest, AsyncHttpResponse],
-        request: HttpRequest,
-        execute_request_fn: Callable[..., Awaitable[ResponseType]],
-        **kwargs: Any
-    ) -> ResponseType:
-        """Execute an async request with the appropriate hedging behavior.
-
-        :param client: The Cosmos client instance making the request
-        :type client: CosmosClient
-        :param request_params: Parameters for the request including operation type and strategy
-        :type request_params: RequestObject
-        :param global_endpoint_manager: Manager for handling global endpoints and circuit breaking
-        :type global_endpoint_manager: _GlobalPartitionEndpointManagerForCircuitBreakerAsync
-        :param connection_policy: Policy defining connection behaviors and preferences
-        :type connection_policy: ConnectionPolicy
-        :param pipeline_client: Client for executing the async HTTP pipeline
-        :type pipeline_client: AsyncPipelineClient[HttpRequest, AsyncHttpResponse]
-        :param request: The HTTP request to be executed
-        :type request: HttpRequest
-        :param execute_request_fn: Async function to execute the actual request
-        :type execute_request_fn: Callable[..., Awaitable[ResponseType]]
-        :returns: A tuple containing the response data and headers
-        :rtype: Tuple[Dict[str, Any], Dict[str, Any]]
-        """
-
-class DisabledAsyncHedgingHandler(AsyncHedgingHandler):
-    """Handler for DisabledStrategy that executes requests directly."""
-
-    async def execute_request(
-        self,
-        client: "CosmosClient",
-        request_params: RequestObject,
-        global_endpoint_manager: _GlobalPartitionEndpointManagerForCircuitBreakerAsync,
-        connection_policy: ConnectionPolicy,
-        pipeline_client: AsyncPipelineClient[HttpRequest, AsyncHttpResponse],
-        request: HttpRequest,
-        execute_request_fn: Callable[..., Awaitable[ResponseType]],
-        **kwargs: Any
-    ) -> ResponseType:
-        """Execute async request without any hedging behavior.
-
-        This implementation directly executes the async request without hedging strategy,
-        suitable for scenarios where hedging is explicitly disabled.
-
-        :param client: The Cosmos client instance making the request
-        :type client: CosmosClient
-        :param request_params: Parameters for the request including operation type and strategy
-        :type request_params: RequestObject
-        :param global_endpoint_manager: Manager for handling global endpoints and circuit breaking
-        :type global_endpoint_manager: _GlobalPartitionEndpointManagerForCircuitBreakerAsync
-        :param connection_policy: Policy defining connection behaviors and preferences
-        :type connection_policy: ConnectionPolicy
-        :param pipeline_client: Client for executing the async HTTP pipeline
-        :type pipeline_client: AsyncPipelineClient[HttpRequest, AsyncHttpResponse]
-        :param request: The HTTP request to be executed
-        :type request: HttpRequest
-        :param execute_request_fn: Async function to execute the actual request
-        :type execute_request_fn: Callable[..., Awaitable[ResponseType]]
-        :returns: A tuple containing the response data and headers
-        :rtype: Tuple[Dict[str, Any], Dict[str, Any]]
-        """
-        return await execute_request_fn(
-            client,
-            global_endpoint_manager,
-            request_params,
-            connection_policy,
-            pipeline_client,
-            request,
-            **kwargs
-        )
-
-class CrossRegionAsyncHedgingHandler(AsyncHedgingHandler):
+class CrossRegionAsyncHedgingHandler:
     """Handler for CrossRegionHedgingStrategy that implements cross-region request hedging."""
 
     def setup_excluded_regions_for_hedging(
@@ -177,18 +88,13 @@ class CrossRegionAsyncHedgingHandler(AsyncHedgingHandler):
 
     async def execute_single_request_with_delay(
         self,
-        client: "CosmosClient",
         request_params: RequestObject,
-        global_endpoint_manager: _GlobalPartitionEndpointManagerForCircuitBreakerAsync,
-        connection_policy: ConnectionPolicy,
-        pipeline_client: AsyncPipelineClient[HttpRequest, AsyncHttpResponse],
         request: HttpRequest,
         execute_request_fn: Callable[..., Awaitable[ResponseType]],
         location_index: int,
         available_locations: List[str],
         complete_status: AsyncHedgingCompletionStatus,
-        first_request_params_holder: SimpleNamespace,
-        **kwargs: Any
+        first_request_params_holder: SimpleNamespace
     ) -> ResponseType:
         """Execute a single request with appropriate delay based on location index.
 
@@ -201,16 +107,8 @@ class CrossRegionAsyncHedgingHandler(AsyncHedgingHandler):
            - Threshold + steps for subsequent requests (index > 1)
         4. Checking completion status before executing request
 
-        :param client: The Cosmos client instance making the request
-        :type client: CosmosClient
         :param request_params: Original request parameters to be copied and modified
         :type request_params: RequestObject
-        :param global_endpoint_manager: Manager for handling global endpoints and circuit breaking
-        :type global_endpoint_manager: _GlobalPartitionEndpointManagerForCircuitBreakerAsync
-        :param connection_policy: Policy defining connection behaviors and preferences
-        :type connection_policy: ConnectionPolicy
-        :param pipeline_client: Client for executing the async HTTP pipeline
-        :type pipeline_client: AsyncPipelineClient[HttpRequest, AsyncHttpResponse]
         :param request: The HTTP request to be executed
         :type request: HttpRequest
         :param execute_request_fn: Async function to execute the actual request
@@ -260,29 +158,20 @@ class CrossRegionAsyncHedgingHandler(AsyncHedgingHandler):
         if delay > 0:
             await asyncio.sleep(delay)
 
-        if complete_status and complete_status.is_completed:
+        if complete_status is not None and complete_status.is_completed:
             raise CancelledError("The request has been cancelled")
 
         return await execute_request_fn(
-            client,
-            global_endpoint_manager,
             params,
-            connection_policy,
-            pipeline_client,
-            req,
-            **kwargs
+            req
         )
 
     async def execute_request(
         self,
-        client: "CosmosClient",
         request_params: RequestObject,
         global_endpoint_manager: _GlobalPartitionEndpointManagerForCircuitBreakerAsync,
-        connection_policy: ConnectionPolicy,
-        pipeline_client: AsyncPipelineClient[HttpRequest, AsyncHttpResponse],
         request: HttpRequest,
-        execute_request_fn: Callable[..., Awaitable[ResponseType]],
-        **kwargs: Any
+        execute_request_fn: Callable[..., Awaitable[ResponseType]]
     ) -> ResponseType:
         """Execute request with cross-region hedging strategy.
 
@@ -292,16 +181,10 @@ class CrossRegionAsyncHedgingHandler(AsyncHedgingHandler):
         cancelled. If the first request fails but a subsequent request succeeds, the failure
         of the first request is recorded.
 
-        :param client: The Cosmos client instance making the request
-        :type client: CosmosClient
         :param request_params: Parameters for the request including operation type and strategy
         :type request_params: RequestObject
         :param global_endpoint_manager: Manager for handling global endpoints and circuit breaking
         :type global_endpoint_manager: _GlobalPartitionEndpointManagerForCircuitBreakerAsync
-        :param connection_policy: Policy defining connection behaviors and preferences
-        :type connection_policy: ConnectionPolicy
-        :param pipeline_client: Client for executing the async HTTP pipeline
-        :type pipeline_client: AsyncPipelineClient[HttpRequest, AsyncHttpResponse]
         :param request: The HTTP request to be executed
         :type request: HttpRequest
         :param execute_request_fn: Async function to execute the actual request
@@ -322,37 +205,32 @@ class CrossRegionAsyncHedgingHandler(AsyncHedgingHandler):
             for i in range(len(available_locations)):
                 task = asyncio.create_task(
                     self.execute_single_request_with_delay(
-                        client,
                         request_params,
-                        global_endpoint_manager,
-                        connection_policy,
-                        pipeline_client,
                         request,
                         execute_request_fn,
                         i,
                         available_locations,
                         completion_status,
-                        first_request_params_holder,
-                        **kwargs
+                        first_request_params_holder
                     ))
                 tasks.append(task)
                 if i == 0:
                     first_task = task
 
             # Wait for tasks to complete
-            for completed in asyncio.as_completed(tasks):
+            for completed_task in asyncio.as_completed(tasks):
                 try:
-                    await completed
+                    result = await completed_task
                     completion_status.set_completed()
 
-                    if completed is first_task:
-                        return first_task.result()
+                    if completed_task is first_task:
+                        return result
 
                     # successful response does not come from the initial request, record failure for it
                     await self._record_cancel_for_first_request(first_request_params_holder, global_endpoint_manager)
-                    return first_task.result()
+                    return result
                 except Exception as e: #pylint: disable=broad-exception-caught
-                    if completed is first_task:
+                    if completed_task is first_task:
                         completion_status.set_completed()
                         raise e
                     if self._is_non_transient_error(e):
@@ -362,7 +240,7 @@ class CrossRegionAsyncHedgingHandler(AsyncHedgingHandler):
                             global_endpoint_manager)
                         raise e
 
-            # if we have reached here, it means all tasks completed but all failed with transient exceptions
+            # if we have reached here, it means all tasks completed_task but all failed with transient exceptions
             # in this case, raise the exception from the first task
             completion_status.set_completed()
             assert first_task is not None
@@ -414,35 +292,14 @@ class CrossRegionAsyncHedgingHandler(AsyncHedgingHandler):
 
         return applicable_endpoints
 
-def create_async_hedging_handler(strategy: Optional[AvailabilityStrategy]) -> AsyncHedgingHandler:
-    """Create appropriate hedging handler based on availability strategy type.
-    
-    :param strategy: The availability strategy to create a handler for
-    :type strategy: Any
-    :returns: An appropriate hedging handler for the strategy
-    :rtype: AsyncHedgingHandler
-    :raises ValueError: If the strategy type is not supported
-    """
+# Global handler instance
+_global_cross_region_hedging_handler = CrossRegionAsyncHedgingHandler()
 
-    if strategy is None:
-        raise ValueError("Strategy can not be null in create_async_hedging_handler")
-
-    if isinstance(strategy, DisabledStrategy):
-        return DisabledAsyncHedgingHandler()
-    if isinstance(strategy, CrossRegionHedgingStrategy):
-        return CrossRegionAsyncHedgingHandler()
-
-    raise ValueError(f"Unsupported availability strategy type: {type(strategy)}")
-
-async def execute_with_hedging(
-    client: "CosmosClient",
+async def execute_with_availability_strategy(
     request_params: RequestObject,
     global_endpoint_manager: _GlobalPartitionEndpointManagerForCircuitBreakerAsync,
-    connection_policy: ConnectionPolicy,
-    pipeline_client: AsyncPipelineClient[HttpRequest, AsyncHttpResponse],
     request: HttpRequest,
-    execute_request_fn: Callable[..., Awaitable[ResponseType]],
-    **kwargs: Any
+    execute_request_fn: Callable[..., Awaitable[ResponseType]]
 ) -> ResponseType:
     """Execute a request with hedging based on the availability strategy.
 
@@ -454,16 +311,10 @@ async def execute_with_hedging(
     - With DisabledStrategy: Executes request directly without hedging
     - With CrossRegionHedgingStrategy: Implements cross-region request hedging with delays
 
-    :param client: The Cosmos client instance making the request
-    :type client: CosmosClient
     :param request_params: Parameters containing operation type, strategy, and routing preferences
     :type request_params: RequestObject
     :param global_endpoint_manager: Manager for handling global endpoints and circuit breaking
     :type global_endpoint_manager: _GlobalPartitionEndpointManagerForCircuitBreakerAsync
-    :param connection_policy: Policy defining connection behaviors and preferences
-    :type connection_policy: ConnectionPolicy
-    :param pipeline_client: Client for executing the async HTTP pipeline
-    :type pipeline_client: AsyncPipelineClient[HttpRequest, AsyncHttpResponse]
     :param request: The HTTP request to be executed
     :type request: HttpRequest
     :param execute_request_fn: Async function to execute the actual request
@@ -474,14 +325,12 @@ async def execute_with_hedging(
     :raises: ValueError if availability strategy is not supported
     """
 
-    handler = create_async_hedging_handler(request_params.availability_strategy)
-    return await handler.execute_request(
-        client,
-        request_params,
-        global_endpoint_manager,
-        connection_policy,
-        pipeline_client,
-        request,
-        execute_request_fn,
-        **kwargs
-    )
+    availability_strategy = request_params.availability_strategy
+    if isinstance(availability_strategy, CrossRegionHedgingStrategy):
+        return await _global_cross_region_hedging_handler.execute_request(
+            request_params,
+            global_endpoint_manager,
+            request,
+            execute_request_fn
+        )
+

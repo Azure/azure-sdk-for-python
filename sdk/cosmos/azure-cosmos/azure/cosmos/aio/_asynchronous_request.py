@@ -169,8 +169,9 @@ def _is_availability_strategy_applicable(request_params):
     :returns: True if availability strategy should be applied, False otherwise
     :rtype: bool
     """
-    return (request_params.availability_strategy and
-            not request_params.get_is_hedging_request and
+    return (request_params.availability_strategy is not None and
+            request_params.availability_strategy.enabled and
+            not request_params.is_hedging_request and
             request_params.resource_type == ResourceType.Document and
             (not _OperationType.IsWriteOperation(request_params.operation_type) or
              request_params.retry_write))
@@ -205,18 +206,21 @@ async def AsynchronousRequest(
 
     # Handle hedging if strategy is configured
     if _is_availability_strategy_applicable(request_params):
-        from ._asynchronous_hedging_handler import execute_with_hedging
-        return await execute_with_hedging(
-            client,
+        from ._asynchronous_availability_strategy_handler import execute_with_availability_strategy
+        return await execute_with_availability_strategy(
             request_params,
             global_endpoint_manager,
-            connection_policy,
-            pipeline_client,
             request,
-            lambda c, g, p, cp, pc, r, **kw: _retry_utility_async.ExecuteAsync(
-                c, g, _Request, p, cp, pc, r, **kw
-            ),
-            **kwargs
+            lambda req_param, r: _retry_utility_async.ExecuteAsync(
+                client,
+                global_endpoint_manager,
+                _Request,
+                req_param,
+                connection_policy,
+                pipeline_client,
+                r,
+                **kwargs
+            )
         )
 
     # Pass _Request function with its parameters to retry_utility's Execute method that wraps the call with retries
