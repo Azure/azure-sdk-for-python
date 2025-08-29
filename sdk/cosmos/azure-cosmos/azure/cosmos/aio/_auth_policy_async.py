@@ -23,8 +23,11 @@ class AsyncCosmosBearerTokenCredentialPolicy(AsyncBearerTokenCredentialPolicy):
     def __init__(self, credential, account_scope: str, override_scope: Optional[str] = None):
         self._account_scope = account_scope
         self._override_scope = override_scope
-        self._current_scope = override_scope or account_scope
-        super().__init__(credential, self._current_scope)
+        self._primary_policy = AsyncBearerTokenCredentialPolicy(credential, override_scope or account_scope)
+        self._fallback_policy = (
+            None if override_scope else AsyncBearerTokenCredentialPolicy(credential, self.AadDefaultScope)
+        )
+        self._use_fallback = False
 
     @staticmethod
     def _update_headers(headers: MutableMapping[str, str], token: str) -> None:
@@ -42,25 +45,22 @@ class AsyncCosmosBearerTokenCredentialPolicy(AsyncBearerTokenCredentialPolicy):
         :type request: ~azure.core.pipeline.PipelineRequest
         :raises: :class:`~azure.core.exceptions.ServiceRequestError`
         """
-        tried_fallback = False
-        while True:
-            try:
-                await super().on_request(request)
-                # The None-check for self._token is done in the parent on_request
-                self._update_headers(request.http_request.headers, cast(AccessToken, self._token).token)
-                break
-            except Exception as ex:
-                # Only fallback if not using override, not already tried, and error is AADSTS500011
-                if (
-                        not self._override_scope and
-                        not tried_fallback and
-                        self._current_scope != self.AadDefaultScope and
-                        "AADSTS500011" in str(ex)
-                ):
-                    self._scopes = (self.AadDefaultScope,)
-                    self._current_scope = self.AadDefaultScope
-                    tried_fallback = True
-                    continue
+        policy = self._fallback_policy if self._use_fallback else self._primary_policy
+        try:
+            await policy.on_request(request)
+            self._update_headers(request.http_request.headers, cast(AccessToken, policy._token).token)
+        except Exception as ex:
+            # Only fallback if not using override, and error is AADSTS500011
+            if (
+                    self._fallback_policy is not None
+                    and not self._use_fallback
+                    and "AADSTS500011" in str(ex)
+            ):
+                self._use_fallback = True
+                await self._fallback_policy.on_request(request)
+                self._update_headers(request.http_request.headers,
+                                     cast(AccessToken, self._fallback_policy._token).token)
+            else:
                 raise
 
     async def authorize_request(self, request: PipelineRequest[HTTPRequestType], *scopes: str, **kwargs: Any) -> None:
@@ -73,6 +73,7 @@ class AsyncCosmosBearerTokenCredentialPolicy(AsyncBearerTokenCredentialPolicy):
         :param str scopes: required scopes of authentication
         """
 
-        await super().authorize_request(request, *scopes, **kwargs)
+        policy = self._fallback_policy if self._use_fallback else self._primary_policy
+        await policy.authorize_request(request, *scopes, **kwargs)
         # The None-check for self._token is done in the parent authorize_request
-        self._update_headers(request.http_request.headers, cast(AccessToken, self._token).token)
+        self._update_headers(request.http_request.headers, cast(AccessToken, policy._token).token)
