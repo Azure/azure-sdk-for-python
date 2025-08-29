@@ -164,10 +164,10 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
         """
         # First try to get from options
         if options is not None and 'availabilityStrategyExecutor' in options and options['availabilityStrategyExecutor'] is not None:
-            self.availability_strategy = options['availabilityStrategyExecutor']
+            self.availability_strategy_executor = options['availabilityStrategyExecutor']
         # If not in options, use client default
         elif client_availability_strategy_executor is not None:
-            self.availability_strategy = client_availability_strategy_executor
+            self.availability_strategy_executor = client_availability_strategy_executor
 
     def should_cancel_request(self) -> bool:
         """Check if this request should be cancelled due to parallel request completion.
