@@ -1,0 +1,2 @@
+{"book_id": "1234", "book_name": "Test Book", "author_name": "Test Author", "query": "What is this book about?"}
+{"book_id": "5678", "book_name": "Another Book", "author_name": "Another Author", "query": "Tell me about this book"}
