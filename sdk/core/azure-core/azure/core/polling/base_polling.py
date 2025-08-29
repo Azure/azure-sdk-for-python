@@ -75,8 +75,8 @@ HTTPResponseType_co = TypeVar("HTTPResponseType_co", covariant=True)
 HTTPRequestType_co = TypeVar("HTTPRequestType_co", covariant=True)
 
 
-_FINISHED = frozenset(["succeeded", "canceled", "failed"])
-_FAILED = frozenset(["canceled", "failed"])
+_FINISHED = frozenset(["succeeded", "canceled", "cancelled", "failed"])
+_FAILED = frozenset(["canceled", "cancelled", "failed"])
 _SUCCEEDED = frozenset(["succeeded"])
 
 
