@@ -175,7 +175,13 @@ class ChatThreadClient(object):  # pylint: disable=client-accepts-api-version-ke
         )
 
     @distributed_trace
-    def list_read_receipts(self, **kwargs: Any) -> AsyncItemPaged[ChatMessageReadReceipt]:
+    def list_read_receipts(
+        self,
+        *,
+        results_per_page: Optional[int] = None,
+        skip: Optional[int] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged[ChatMessageReadReceipt]:
         """Gets read receipts for a thread.
 
         :keyword int results_per_page: The maximum number of chat message read receipts to be returned per page.
@@ -193,9 +199,6 @@ class ChatThreadClient(object):  # pylint: disable=client-accepts-api-version-ke
                 :dedent: 8
                 :caption: Listing read receipts.
         """
-        results_per_page = kwargs.pop("results_per_page", None)
-        skip = kwargs.pop("skip", None)
-
         return self._client.chat_thread.list_chat_read_receipts(
             self._thread_id,
             max_page_size=results_per_page,
@@ -233,7 +236,15 @@ class ChatThreadClient(object):  # pylint: disable=client-accepts-api-version-ke
         )
 
     @distributed_trace_async
-    async def send_message(self, content: str, *, metadata: Dict[str, str] = None, **kwargs) -> SendChatMessageResult:
+    async def send_message(
+        self,
+        content: str,
+        *,
+        chat_message_type: Optional[Union[str, ChatMessageType]] = None,
+        sender_display_name: Optional[str] = None,
+        metadata: Optional[Dict[str, str]] = None,
+        **kwargs: Any
+    ) -> SendChatMessageResult:
         """Sends a message to a thread.
 
         :param content: Required. Chat message content.
@@ -260,7 +271,6 @@ class ChatThreadClient(object):  # pylint: disable=client-accepts-api-version-ke
         if not content:
             raise ValueError("content cannot be None.")
 
-        chat_message_type = kwargs.pop("chat_message_type", None)
         if chat_message_type is None:
             chat_message_type = ChatMessageType.TEXT
         elif not isinstance(chat_message_type, ChatMessageType):
@@ -275,8 +285,6 @@ class ChatThreadClient(object):  # pylint: disable=client-accepts-api-version-ke
             raise ValueError(
                 "chat_message_type: {message_type} can be only 'text' or 'html'".format(message_type=chat_message_type)
             )
-
-        sender_display_name = kwargs.pop("sender_display_name", None)
 
         create_message_request = SendChatMessageRequest(
             content=content, type=chat_message_type, sender_display_name=sender_display_name, metadata=metadata
@@ -313,7 +321,13 @@ class ChatThreadClient(object):  # pylint: disable=client-accepts-api-version-ke
         return ChatMessage._from_generated(chat_message)  # pylint:disable=protected-access
 
     @distributed_trace
-    def list_messages(self, **kwargs: Any) -> AsyncItemPaged[ChatMessage]:
+    def list_messages(
+        self,
+        *,
+        results_per_page: Optional[int] = None,
+        start_time: Optional[datetime] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged[ChatMessage]:
         """Gets a list of messages from a thread.
 
         :keyword int results_per_page: The maximum number of messages to be returned per page.
@@ -331,9 +345,6 @@ class ChatThreadClient(object):  # pylint: disable=client-accepts-api-version-ke
                 :dedent: 8
                 :caption: Listing messages of a chat thread.
         """
-        results_per_page = kwargs.pop("results_per_page", None)
-        start_time = kwargs.pop("start_time", None)
-
         return self._client.chat_thread.list_chat_messages(
             self._thread_id,
             max_page_size=results_per_page,
@@ -404,7 +415,13 @@ class ChatThreadClient(object):  # pylint: disable=client-accepts-api-version-ke
         )
 
     @distributed_trace
-    def list_participants(self, **kwargs: Any) -> AsyncItemPaged[ChatParticipant]:
+    def list_participants(
+        self,
+        *,
+        results_per_page: Optional[int] = None,
+        skip: Optional[int] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged[ChatParticipant]:
         """Gets the participants of a thread.
 
         :keyword int results_per_page: The maximum number of participants to be returned per page.
@@ -422,9 +439,6 @@ class ChatThreadClient(object):  # pylint: disable=client-accepts-api-version-ke
                 :dedent: 8
                 :caption: Listing participants of chat thread.
         """
-
-        results_per_page = kwargs.pop("results_per_page", None)
-        skip = kwargs.pop("skip", None)
 
         return self._client.chat_thread.list_chat_participants(
             self._thread_id,
