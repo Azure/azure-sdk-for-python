@@ -15,6 +15,7 @@ from typing import Sequence, Optional
 from .whl import whl
 from .import_all import import_all
 from .mypy import mypy
+from .pylint import pylint
 
 from ci_tools.logging import configure_logging, logger
 
@@ -72,6 +73,7 @@ def build_parser() -> argparse.ArgumentParser:
     whl().register(subparsers, [common])
     import_all().register(subparsers, [common])
     mypy().register(subparsers, [common])
+    pylint().register(subparsers, [common])
 
     return parser
 
