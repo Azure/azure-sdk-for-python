@@ -46,7 +46,9 @@ class GenAiTraceVerifier:
                 # Check if the attribute value matches the provided value
                 if attribute_value == "+":
                     if not isinstance(span.attributes[attribute_name], numbers.Number):
-                        raise AssertionError("Attribute value " + str(span.attributes[attribute_name]) + " is not a number")
+                        raise AssertionError(
+                            "Attribute value " + str(span.attributes[attribute_name]) + " is not a number"
+                        )
                     if span.attributes[attribute_name] < 0:
                         raise AssertionError("Attribute value " + str(span.attributes[attribute_name]) + " is negative")
                 elif attribute_value != "" and span.attributes[attribute_name] != attribute_value:
@@ -88,7 +90,9 @@ class GenAiTraceVerifier:
             elif isinstance(attribute_value, dict):
                 # Check if both are dictionaries and compare them
                 if not isinstance(span_value, dict) or span_value != attribute_value:
-                    raise AssertionError("Attribute value dict " + str(span_value) + " does not match with " + str(attribute_value))
+                    raise AssertionError(
+                        "Attribute value dict " + str(span_value) + " does not match with " + str(attribute_value)
+                    )
             else:
                 # Check if the attribute value matches the provided value
                 if attribute_value == "+":
@@ -97,7 +101,9 @@ class GenAiTraceVerifier:
                     if span_value < 0:
                         raise AssertionError("Attribute value " + str(span_value) + " is negative")
                 elif attribute_value != "" and span_value != attribute_value:
-                    raise AssertionError("Attribute value " + str(span_value) + " does not match with " + str(attribute_value))
+                    raise AssertionError(
+                        "Attribute value " + str(span_value) + " does not match with " + str(attribute_value)
+                    )
                 # Check if the attribute value in the span is not empty when the provided value is ""
                 elif attribute_value == "" and not span_value:
                     raise AssertionError("Expected non-empty attribute value")
@@ -127,7 +133,9 @@ class GenAiTraceVerifier:
                 actual_val = json.dumps(actual_dict)
             else:
                 actual_val = actual_dict
-            raise AssertionError(f"check_event_attributes: keys do not match: {set(expected_dict.keys())} != {set(actual_dict.keys())}. The actual dictionaries: {expected_val} != {actual_val}")
+            raise AssertionError(
+                f"check_event_attributes: keys do not match: {set(expected_dict.keys())} != {set(actual_dict.keys())}. The actual dictionaries: {expected_val} != {actual_val}"
+            )
         for key, expected_val in expected_dict.items():
             if key not in actual_dict:
                 raise AssertionError(f"check_event_attributes: key {key} not found in actuals")
@@ -145,7 +153,9 @@ class GenAiTraceVerifier:
                 if not isinstance(actual_val, list):
                     raise AssertionError(f"check_event_attributes: actual_val for {key}  is not list")
                 if len(expected_val) != len(actual_val):
-                    raise AssertionError(f"check_event_attributes: list lengths do not match for key {key}: expected {len(expected_val)}, actual {len(actual_val)}")
+                    raise AssertionError(
+                        f"check_event_attributes: list lengths do not match for key {key}: expected {len(expected_val)}, actual {len(actual_val)}"
+                    )
                 for expected_list, actual_list in zip(expected_val, actual_val):
                     self.check_event_attributes(expected_list, actual_list)
             elif isinstance(expected_val, str) and expected_val == "*":
@@ -153,13 +163,15 @@ class GenAiTraceVerifier:
                     raise AssertionError(f"check_event_attributes: actual_val for {key} is empty")
             elif isinstance(expected_val, str) and expected_val == "+":
                 assert isinstance(actual_val, numbers.Number), f"The {key} is not a number."
-                assert actual_val > 0, f"The {key} is <0 {actual_val}" 
+                assert actual_val > 0, f"The {key} is <0 {actual_val}"
             elif expected_val != actual_val:
                 if isinstance(expected_val, dict):
                     expected_val = json.dumps(expected_val)
                 if isinstance(actual_val, dict):
                     actual_val = json.dumps(actual_val)
-                raise AssertionError(f"check_event_attributes: values do not match for key {key}: {expected_val} != {actual_val}")
+                raise AssertionError(
+                    f"check_event_attributes: values do not match for key {key}: {expected_val} != {actual_val}"
+                )
 
     def check_span_events(self, span, expected_events):
         print("Checking span: " + span.name)

@@ -16,13 +16,13 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .._utils.serialization import Deserializer, Serializer
 from ._configuration import KeyVaultClientConfiguration
-from ._operations import KeyVaultClientOperationsMixin
+from ._operations import _KeyVaultClientOperationsMixin
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class KeyVaultClient(KeyVaultClientOperationsMixin):
+class KeyVaultClient(_KeyVaultClientOperationsMixin):
     """The key vault client performs cryptographic key operations and vault operations against the Key
     Vault service.
 

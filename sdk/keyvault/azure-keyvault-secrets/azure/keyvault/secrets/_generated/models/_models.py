@@ -8,7 +8,7 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, Dict, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .._utils.model_base import Model as _Model, rest_field
 
@@ -68,7 +68,7 @@ class DeletedSecretBundle(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The secret management attributes."""
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Application specific metadata in the form of key-value pairs."""
     kid: Optional[str] = rest_field(visibility=["read"])
     """If this is a secret backing a KV certificate, then this field specifies the corresponding key
@@ -97,7 +97,7 @@ class DeletedSecretBundle(_Model):
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         content_type: Optional[str] = None,
         attributes: Optional["_models.SecretAttributes"] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         recovery_id: Optional[str] = None,
     ) -> None: ...
 
@@ -141,7 +141,7 @@ class DeletedSecretItem(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The secret management attributes."""
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Application specific metadata in the form of key-value pairs."""
     content_type: Optional[str] = rest_field(
         name="contentType", visibility=["read", "create", "update", "delete", "query"]
@@ -169,7 +169,7 @@ class DeletedSecretItem(_Model):
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         attributes: Optional["_models.SecretAttributes"] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         content_type: Optional[str] = None,
         recovery_id: Optional[str] = None,
     ) -> None: ...
@@ -320,7 +320,7 @@ class SecretBundle(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The secret management attributes."""
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Application specific metadata in the form of key-value pairs."""
     kid: Optional[str] = rest_field(visibility=["read"])
     """If this is a secret backing a KV certificate, then this field specifies the corresponding key
@@ -337,7 +337,7 @@ class SecretBundle(_Model):
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         content_type: Optional[str] = None,
         attributes: Optional["_models.SecretAttributes"] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -373,7 +373,7 @@ class SecretItem(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The secret management attributes."""
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Application specific metadata in the form of key-value pairs."""
     content_type: Optional[str] = rest_field(
         name="contentType", visibility=["read", "create", "update", "delete", "query"]
@@ -389,7 +389,7 @@ class SecretItem(_Model):
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         attributes: Optional["_models.SecretAttributes"] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         content_type: Optional[str] = None,
     ) -> None: ...
 
@@ -449,7 +449,7 @@ class SecretSetParameters(_Model):
 
     value: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The value of the secret. Required."""
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Application specific metadata in the form of key-value pairs."""
     content_type: Optional[str] = rest_field(
         name="contentType", visibility=["read", "create", "update", "delete", "query"]
@@ -465,7 +465,7 @@ class SecretSetParameters(_Model):
         self,
         *,
         value: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         content_type: Optional[str] = None,
         secret_attributes: Optional["_models.SecretAttributes"] = None,
     ) -> None: ...
@@ -500,7 +500,7 @@ class SecretUpdateParameters(_Model):
         name="attributes", visibility=["read", "create", "update", "delete", "query"]
     )
     """The secret management attributes."""
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Application specific metadata in the form of key-value pairs."""
 
     @overload
@@ -509,7 +509,7 @@ class SecretUpdateParameters(_Model):
         *,
         content_type: Optional[str] = None,
         secret_attributes: Optional["_models.SecretAttributes"] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload

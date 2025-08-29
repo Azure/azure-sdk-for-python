@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression,too-many-locals,protected-access
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9,7 +9,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, overload
+from typing import Any, Callable, IO, Optional, TypeVar, Union, overload
 
 from azure.core import AsyncPipelineClient
 from azure.core.exceptions import (
@@ -35,7 +35,7 @@ from .._configuration import MetricsClientConfiguration
 
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
 
 class _MetricsClientOperationsMixin(
@@ -49,7 +49,7 @@ class _MetricsClientOperationsMixin(
         batch_request: _models._models.ResourceIdList,
         *,
         metric_namespace: str,
-        metric_names: List[str],
+        metric_names: list[str],
         start_time: Optional[str] = None,
         end_time: Optional[str] = None,
         interval: Optional[str] = None,
@@ -68,7 +68,7 @@ class _MetricsClientOperationsMixin(
         batch_request: JSON,
         *,
         metric_namespace: str,
-        metric_names: List[str],
+        metric_names: list[str],
         start_time: Optional[str] = None,
         end_time: Optional[str] = None,
         interval: Optional[str] = None,
@@ -87,7 +87,7 @@ class _MetricsClientOperationsMixin(
         batch_request: IO[bytes],
         *,
         metric_namespace: str,
-        metric_names: List[str],
+        metric_names: list[str],
         start_time: Optional[str] = None,
         end_time: Optional[str] = None,
         interval: Optional[str] = None,
@@ -107,7 +107,7 @@ class _MetricsClientOperationsMixin(
         batch_request: Union[_models._models.ResourceIdList, JSON, IO[bytes]],
         *,
         metric_namespace: str,
-        metric_names: List[str],
+        metric_names: list[str],
         start_time: Optional[str] = None,
         end_time: Optional[str] = None,
         interval: Optional[str] = None,
@@ -233,7 +233,7 @@ class _MetricsClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models._models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models._models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
