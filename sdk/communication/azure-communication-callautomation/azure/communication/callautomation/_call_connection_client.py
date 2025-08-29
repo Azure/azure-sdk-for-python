@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines, disable=line-too-long
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -537,7 +537,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         interrupt_call_media_operation = interrupt_call_media_operation if play_to == "all" else False
         play_request = PlayRequest(
             play_sources=[play_source_single._to_generated()] if play_source_single else # pylint:disable=protected-access
-            [source._to_generated() for source in play_sources] if play_sources else [],
+            [source._to_generated() for source in play_sources] if play_sources else [], # pylint:disable=protected-access
             play_to=cast(list, audience),
             play_options=PlayOptions(loop=loop),
             interrupt_call_media_operation=interrupt_call_media_operation,

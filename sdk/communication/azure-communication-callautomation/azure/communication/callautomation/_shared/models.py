@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
