@@ -1,4 +1,3 @@
-include _meta.json
 recursive-include tests *.py *.json
 recursive-include samples *.py *.md
 include *.md
