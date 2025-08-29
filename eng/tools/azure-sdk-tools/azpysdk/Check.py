@@ -11,12 +11,12 @@ from ci_tools.parsing import ParsedSetup
 from ci_tools.functions import discover_targeted_packages, get_venv_call
 from ci_tools.variables import discover_repo_root
 from ci_tools.scenario import install_into_venv, get_venv_python
+from ci_tools.logging import logger
 
 # right now, we are assuming you HAVE to be in the azure-sdk-tools repo
 # we assume this because we don't know how a dev has installed this package, and might be
 # being called from within a site-packages folder. Due to that, we can't trust the location of __file__
 REPO_ROOT = discover_repo_root()
-from ci_tools.logging import logger
 
 class Check(abc.ABC):
     """

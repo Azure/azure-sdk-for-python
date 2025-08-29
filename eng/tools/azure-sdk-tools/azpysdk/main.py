@@ -16,6 +16,8 @@ from .whl import whl
 from .import_all import import_all
 from .mypy import mypy
 
+from ci_tools.logging import configure_logging, logger
+
 __all__ = ["main", "build_parser"]
 __version__ = "0.0.0"
 
