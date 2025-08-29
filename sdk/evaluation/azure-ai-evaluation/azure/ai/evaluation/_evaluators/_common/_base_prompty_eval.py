@@ -5,7 +5,7 @@
 import math
 import re
 import os
-from typing import Dict, TypeVar, Union
+from typing import Dict, Optional, TypeVar, Union
 
 if os.getenv("AI_EVALS_USE_PF_PROMPTY", "false").lower() == "true":
     from promptflow.core._flow import AsyncPrompty
@@ -13,6 +13,7 @@ else:
     from azure.ai.evaluation._legacy.prompty import AsyncPrompty
 from typing_extensions import override
 
+from azure.core.credentials import TokenCredential
 from azure.ai.evaluation._common.constants import PROMPT_BASED_REASON_EVALUATORS
 from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
@@ -63,6 +64,7 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
         model_config: dict,
         eval_last_turn: bool = False,
         threshold: int = 3,
+        credential: Optional[TokenCredential] = None,
         _higher_is_better: bool = False,
         **kwargs,
     ) -> None:
@@ -82,7 +84,10 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
         )
 
         self._flow = AsyncPrompty.load(
-            source=self._prompty_file, model=prompty_model_config, is_reasoning_model=self._is_reasoning_model
+            source=self._prompty_file,
+            model=prompty_model_config,
+            token_credential=credential,
+            is_reasoning_model=self._is_reasoning_model,
         )
 
     # __call__ not overridden here because child classes have such varied signatures that there's no point

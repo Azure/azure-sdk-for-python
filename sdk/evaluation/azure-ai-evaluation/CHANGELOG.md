@@ -4,6 +4,7 @@
 
 ### Features Added
 - Added support for user-supplied tags in the `evaluate` function. Tags are key-value pairs that can be used for experiment tracking, A/B testing, filtering, and organizing evaluation runs. The function accepts a `tags` parameter.
+- Added support for user-supplied TokenCredentials with LLM based evaluators.
 - Enhanced `GroundednessEvaluator` to support AI agent evaluation with tool calls. The evaluator now accepts agent response data containing tool calls and can extract context from `file_search` tool results for groundedness assessment. This enables evaluation of AI agents that use tools to retrieve information and generate responses. Note: Agent groundedness evaluation is currently supported only when the `file_search` tool is used.
 - Added `language` parameter to `RedTeam` class for multilingual red team scanning support. The parameter accepts values from `SupportedLanguages` enum including English, Spanish, French, German, Italian, Portuguese, Japanese, Korean, and Simplified Chinese, enabling red team attacks to be generated and conducted in multiple languages.
 - Added support for XPIA and UngroundedAttributes risk categories in `RedTeam` scanning. These new risk categories expand red team capabilities to detect cross-platform indirect attacks and evaluate ungrounded inferences about human attributes including emotional state and protected class information.
