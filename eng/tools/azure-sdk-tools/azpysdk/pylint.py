@@ -6,6 +6,7 @@ from typing import Optional, List
 from subprocess import CalledProcessError, check_call
 
 from .Check import Check
+from ci_tools.functions import pip_install
 from ci_tools.variables import discover_repo_root, in_ci, set_envvar_defaults, in_ci, set_envvar_defaults
 from ci_tools.environment_exclusions import is_check_enabled
 from ci_tools.logging import logger
@@ -48,14 +49,9 @@ class pylint(Check):
 
             # install dependencies
             try:
-                check_call([
-                    executable,
-                    "-m",
-                    "pip",
-                    "install",
-                    "azure-pylint-guidelines-checker==0.5.6",
-                    "--index-url=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"
-                ])
+                pip_install([
+                    "azure-pylint-guidelines-checker==0.5.6", "--index-url=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"
+                ], True, executable, package_dir)
             except CalledProcessError as e:
                 logger.error("Failed to install dependencies:", e)
                 return e.returncode
@@ -64,9 +60,9 @@ class pylint(Check):
             try:
                 if args.next:
                     # use latest version of pylint
-                    check_call([executable, "-m", "pip", "install", "pylint"])
+                    pip_install(["pylint"], True, executable, package_dir)
                 else:
-                    check_call([executable, "-m", "pip", "install", f"pylint=={PYLINT_VERSION}"])
+                    pip_install([f"pylint=={PYLINT_VERSION}"], True, executable, package_dir)
             except CalledProcessError as e:
                 logger.error("Failed to install pylint:", e)
                 return e.returncode
