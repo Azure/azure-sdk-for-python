@@ -213,11 +213,12 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         credentials_policy = None
         if self.aad_credentials:
             scope_override = os.environ.get(Constants.AAD_SCOPE_OVERRIDE, "")
-            if scope_override:
-                scope = scope_override
-            else:
-                scope = base.create_scope_from_url(self.url_connection)
-            credentials_policy = AsyncCosmosBearerTokenCredentialPolicy(self.aad_credentials, scope)
+            account_scope = base.create_scope_from_url(self.url_connection)
+            credentials_policy = AsyncCosmosBearerTokenCredentialPolicy(
+                self.aad_credentials,
+                account_scope,
+                scope_override
+            )
         self._enable_diagnostics_logging = kwargs.pop("enable_diagnostics_logging", False)
         policies = [
             HeadersPolicy(**kwargs),

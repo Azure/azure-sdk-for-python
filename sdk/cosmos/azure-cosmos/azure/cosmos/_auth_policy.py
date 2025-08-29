@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from typing import TypeVar, Any, MutableMapping, cast
+from typing import TypeVar, Any, MutableMapping, cast, Optional
 
 from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy
@@ -17,6 +17,16 @@ HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
 
 
 class CosmosBearerTokenCredentialPolicy(BearerTokenCredentialPolicy):
+    AadDefaultScope = "https://cosmos.azure.com/.default"
+
+    def __init__(self, credential, account_scope: str, override_scope: Optional[str] = None):
+        self._account_scope = account_scope
+        self._override_scope = override_scope
+        self._primary_policy = BearerTokenCredentialPolicy(credential, override_scope or account_scope)
+        self._fallback_policy = (
+            None if override_scope else BearerTokenCredentialPolicy(credential, self.AadDefaultScope)
+        )
+        self._use_fallback = False
 
     @staticmethod
     def _update_headers(headers: MutableMapping[str, str], token: str) -> None:
@@ -34,9 +44,23 @@ class CosmosBearerTokenCredentialPolicy(BearerTokenCredentialPolicy):
 
         :param ~azure.core.pipeline.PipelineRequest request: the request
         """
-        super().on_request(request)
-        # The None-check for self._token is done in the parent on_request
-        self._update_headers(request.http_request.headers, cast(AccessToken, self._token).token)
+        policy = self._fallback_policy if self._use_fallback else self._primary_policy
+        try:
+            policy.on_request(request)
+            self._update_headers(request.http_request.headers, cast(AccessToken, policy._token).token)
+        except Exception as ex:
+            # Only fallback if not using override, and error is AADSTS500011
+            if (
+                    self._fallback_policy is not None
+                    and not self._use_fallback
+                    and "AADSTS500011" in str(ex)
+            ):
+                self._use_fallback = True
+                self._fallback_policy.on_request(request)
+                self._update_headers(request.http_request.headers,
+                                     cast(AccessToken, self._fallback_policy._token).token)
+            else:
+                raise
 
     def authorize_request(self, request: PipelineRequest[HTTPRequestType], *scopes: str, **kwargs: Any) -> None:
         """Acquire a token from the credential and authorize the request with it.
@@ -47,6 +71,8 @@ class CosmosBearerTokenCredentialPolicy(BearerTokenCredentialPolicy):
         :param ~azure.core.pipeline.PipelineRequest request: the request
         :param str scopes: required scopes of authentication
         """
-        super().authorize_request(request, *scopes, **kwargs)
+
+        policy = self._fallback_policy if self._use_fallback else self._primary_policy
+        policy.authorize_request(request, *scopes, **kwargs)
         # The None-check for self._token is done in the parent authorize_request
-        self._update_headers(request.http_request.headers, cast(AccessToken, self._token).token)
+        self._update_headers(request.http_request.headers, cast(AccessToken, policy._token).token)
