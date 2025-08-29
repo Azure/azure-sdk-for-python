@@ -8,7 +8,7 @@ from typing import Mapping, Any, TypeVar, Dict
 from azure.appconfiguration import SecretReferenceConfigurationSetting  # type:ignore # pylint:disable=no-name-in-module
 from azure.keyvault.secrets.aio import SecretClient
 from azure.core.exceptions import ServiceRequestError
-from .._secret_provider_base import _SecretProviderBase
+from ..._key_vault._secret_provider_base import _SecretProviderBase
 
 JSON = Mapping[str, Any]
 _T = TypeVar("_T")

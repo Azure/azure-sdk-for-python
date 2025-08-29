@@ -24,7 +24,7 @@ from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-
 )
 from azure.core.exceptions import AzureError, HttpResponseError
 from ._models import AzureAppConfigurationKeyVaultOptions, SettingSelector
-from ._secret_provider import SecretProvider
+from ._key_vault._secret_provider import SecretProvider
 from ._constants import (
     FEATURE_MANAGEMENT_KEY,
     FEATURE_FLAG_KEY,

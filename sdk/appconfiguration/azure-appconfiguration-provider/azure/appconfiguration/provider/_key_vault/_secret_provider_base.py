@@ -19,7 +19,7 @@ from typing import (
 )
 from azure.appconfiguration import SecretReferenceConfigurationSetting  # type:ignore # pylint:disable=no-name-in-module
 from azure.keyvault.secrets import KeyVaultSecretIdentifier
-from ._azureappconfigurationproviderbase import _RefreshTimer
+from .._azureappconfigurationproviderbase import _RefreshTimer
 
 JSON = Mapping[str, Any]
 _T = TypeVar("_T")
