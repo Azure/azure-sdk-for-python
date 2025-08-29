@@ -81,7 +81,7 @@ class _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailoverAsync(
         super(_GlobalPartitionEndpointManagerForPerPartitionAutomaticFailoverAsync, self).__init__(client)
         self.partition_range_to_failover_info: Dict[PartitionKeyRangeWrapper, PartitionLevelFailoverInfo] = {}
         self.ppaf_thresholds_tracker = _PPAFPartitionThresholdsTracker()
-        self._lock = threading.Lock()
+        self._threshold_lock = threading.Lock()
 
     def is_per_partition_automatic_failover_enabled(self) -> bool:
         if not self._database_account_cache or not self._database_account_cache._EnablePerPartitionFailoverBehavior:
@@ -131,14 +131,21 @@ class _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailoverAsync(
             if (self.ppaf_thresholds_tracker.get_pk_failures(pk_range_wrapper)
                     >= int(os.environ.get(Constants.TIMEOUT_ERROR_THRESHOLD_PPAF,
                                           Constants.TIMEOUT_ERROR_THRESHOLD_PPAF_DEFAULT))):
-                # If the PPAF threshold is reached, we reset the count and retry to the next region
-                self.ppaf_thresholds_tracker.clear_pk_failures(pk_range_wrapper)
-                partition_level_info = self.partition_range_to_failover_info[pk_range_wrapper]
-                location = self.location_cache.get_location_from_endpoint(
-                    str(request.location_endpoint_to_route))
-                regional_context = (self.location_cache.
-                                    account_read_regional_routing_contexts_by_location.get(location).primary_endpoint)
-                partition_level_info.unavailable_regional_endpoints[location] = regional_context
+                # If the PPAF threshold is reached, we reset the count and mark the endpoint unavailable
+                with self._threshold_lock:
+                    logger.warning("PPAF - Failover threshold reached for partition key range: %s", pk_range_wrapper)
+                    # Check for count again, since a previous request may have now reset the count
+                    if (self.ppaf_thresholds_tracker.get_pk_failures(pk_range_wrapper)
+                            >= int(os.environ.get(Constants.TIMEOUT_ERROR_THRESHOLD_PPAF,
+                                                  Constants.TIMEOUT_ERROR_THRESHOLD_PPAF_DEFAULT))):
+                        self.ppaf_thresholds_tracker.clear_pk_failures(pk_range_wrapper)
+                        partition_level_info = self.partition_range_to_failover_info[pk_range_wrapper]
+                        location = self.location_cache.get_location_from_endpoint(
+                            str(request.location_endpoint_to_route))
+                        regional_context = (self.location_cache.
+                                            account_read_regional_routing_contexts_by_location.
+                                            get(location).primary_endpoint)
+                        partition_level_info.unavailable_regional_endpoints[location] = regional_context
 
     def resolve_service_endpoint_for_partition(
             self,
@@ -175,7 +182,8 @@ class _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailoverAsync(
                                 self.compute_available_preferred_regions(request),
                                 endpoint_region,
                                 request):
-                                logger.warning("All available regions for partition are unavailable. Refreshing cache.")
+                                logger.warning("All available regions for partition %s are unavailable."
+                                               " Refreshing cache.", pk_range_wrapper)
                                 # If no other region is available, we invalidate the cache and start once again
                                 # from our main write region in the account configurations
                                 self.partition_range_to_failover_info[pk_range_wrapper] = PartitionLevelFailoverInfo()
