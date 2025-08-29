@@ -171,8 +171,8 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
 
         :param job_id: The ID of the Job to disable. Required.
         :type job_id: str
-        :param content: The options to use for disabling the Job. Required.
-        :type content: ~azure.batch.models.BatchJobDisableOptions
+        :param disable_options: The options to use for disabling the Job. Required.
+        :type disable_options: ~azure.batch.models.BatchJobDisableOptions
         :keyword timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
@@ -499,7 +499,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         self,
         pool_id: str,
         node_id: str,
-        parameters: Optional[_models.BatchNodeDeallocateOptions] = None,
+        options: Optional[_models.BatchNodeDeallocateOptions] = None,
         *,
         timeout: Optional[int] = None,
         ocpdate: Optional[datetime.datetime] = None,
@@ -514,8 +514,8 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :type pool_id: str
         :param node_id: The ID of the Compute Node that you want to restart. Required.
         :type node_id: str
-        :param parameters: The options to use for deallocating the Compute Node. Default value is None.
-        :type parameters: ~azure.batch.models.BatchNodeDeallocateOptions
+        :param options: The options to use for deallocating the Compute Node. Default value is None.
+        :type options: ~azure.batch.models.BatchNodeDeallocateOptions
         :keyword timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
@@ -535,7 +535,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         pipeline_response = self._deallocate_node_internal(
             pool_id,
             node_id,
-            parameters=parameters,
+            options=options,
             timeout=timeout,
             ocpdate=ocpdate,
             cls=capture_pipeline_response,
@@ -550,7 +550,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         self,
         pool_id: str,
         node_id: str,
-        parameters: Optional[_models.BatchNodeRebootOptions] = None,
+        options: Optional[_models.BatchNodeRebootOptions] = None,
         *,
         timeout: Optional[int] = None,
         ocpdate: Optional[datetime.datetime] = None,
@@ -565,8 +565,8 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :type pool_id: str
         :param node_id: The ID of the Compute Node that you want to restart. Required.
         :type node_id: str
-        :param parameters: The options to use for rebooting the Compute Node. Default value is None.
-        :type parameters: ~azure.batch.models.BatchNodeRebootOptions
+        :param options: The options to use for rebooting the Compute Node. Default value is None.
+        :type options: ~azure.batch.models.BatchNodeRebootOptions
         :keyword timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
@@ -586,7 +586,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         pipeline_response = self._reboot_node_internal(
             pool_id,
             node_id,
-            parameters=parameters,
+            options=options,
             timeout=timeout,
             ocpdate=ocpdate,
             cls=capture_pipeline_response,
@@ -601,7 +601,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         self,
         pool_id: str,
         node_id: str,
-        parameters: Optional[_models.BatchNodeReimageOptions] = None,
+        options: Optional[_models.BatchNodeReimageOptions] = None,
         *,
         timeout: Optional[int] = None,
         ocpdate: Optional[datetime.datetime] = None,
@@ -620,8 +620,8 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :type pool_id: str
         :param node_id: The ID of the Compute Node that you want to restart. Required.
         :type node_id: str
-        :param parameters: The options to use for reimaging the Compute Node. Default value is None.
-        :type parameters: ~azure.batch.models.BatchNodeReimageOptions
+        :param options: The options to use for reimaging the Compute Node. Default value is None.
+        :type options: ~azure.batch.models.BatchNodeReimageOptions
         :keyword timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
@@ -641,7 +641,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         pipeline_response = self._reimage_node_internal(
             pool_id,
             node_id,
-            parameters=parameters,
+            options=options,
             timeout=timeout,
             ocpdate=ocpdate,
             cls=capture_pipeline_response,
@@ -655,7 +655,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
     def begin_remove_nodes(
         self,
         pool_id: str,
-        content: _models.BatchNodeRemoveOptions,
+        remove_options: _models.BatchNodeRemoveOptions,
         *,
         timeout: Optional[int] = None,
         ocpdate: Optional[datetime.datetime] = None,
@@ -674,8 +674,8 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
 
         :param pool_id: The ID of the Pool to get. Required.
         :type pool_id: str
-        :param content: The options to use for removing the node. Required.
-        :type content: ~azure.batch.models.BatchNodeRemoveOptions
+        :param remove_options: The options to use for removing the node. Required.
+        :type remove_options: ~azure.batch.models.BatchNodeRemoveOptions
         :keyword timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
@@ -709,7 +709,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
 
         pipeline_response = self._remove_nodes_internal(
             pool_id,
-            content=content,
+            remove_options=remove_options,
             timeout=timeout,
             ocpdate=ocpdate,
             if_modified_since=if_modified_since,
@@ -727,7 +727,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
     def begin_resize_pool(
         self,
         pool_id: str,
-        content: _models.BatchPoolResizeOptions,
+        resize_options: _models.BatchPoolResizeOptions,
         *,
         timeout: Optional[int] = None,
         ocpdate: Optional[datetime.datetime] = None,
@@ -750,8 +750,8 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
 
         :param pool_id: The ID of the Pool to get. Required.
         :type pool_id: str
-        :param content: The options to use for resizing the pool. Required.
-        :type content: ~azure.batch.models.BatchPoolResizeOptions
+        :param resize_options: The options to use for resizing the pool. Required.
+        :type resize_options: ~azure.batch.models.BatchPoolResizeOptions
         :keyword timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
@@ -785,7 +785,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
 
         pipeline_response = self._resize_pool_internal(
             pool_id,
-            content=content,
+            resize_options=resize_options,
             timeout=timeout,
             ocpdate=ocpdate,
             if_modified_since=if_modified_since,

@@ -327,4 +327,4 @@ class JobPreparer(AzureMgmtPreparer):
 
     def remove_resource(self, name, **kwargs):
         if self.is_live:
-            self.client.delete_job(name)
+            self.client.begin_delete_job(name)
