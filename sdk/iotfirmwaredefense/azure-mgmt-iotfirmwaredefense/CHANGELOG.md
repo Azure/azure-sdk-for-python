@@ -74,7 +74,7 @@
   - Added model `UsageMetric`
   - Added model `UsageMetricProperties`
   - Added model `WorkspaceUpdate`
-  - Model `WorkspacesOperations` added method `begin_delete`
+  - Operation group `WorkspacesOperations` added method `begin_delete`
   - Added operation group `UsageMetricsOperations`
 
 ### Breaking Changes
@@ -121,20 +121,14 @@
   - Deleted or renamed model `SummaryName`
   - Deleted or renamed model `WorkspaceList`
   - Deleted or renamed model `WorkspaceUpdateDefinition`
-  - Method `FirmwaresOperations.create` inserted a `positional_or_keyword` parameter `resource`
-  - Method `FirmwaresOperations.create` deleted or renamed its parameter `firmware` of kind `positional_or_keyword`
-  - Method `FirmwaresOperations.update` inserted a `positional_or_keyword` parameter `properties`
-  - Method `FirmwaresOperations.update` deleted or renamed its parameter `firmware` of kind `positional_or_keyword`
+  - Method `FirmwaresOperations.create` renamed its instance variable `firmware` to `resource`
+  - Method `FirmwaresOperations.update` renamed its instance variable `firmware` to `properties`
   - Deleted or renamed method `FirmwaresOperations.generate_download_url`
   - Deleted or renamed method `FirmwaresOperations.generate_filesystem_download_url`
-  - Method `SummariesOperations.get` inserted a `positional_or_keyword` parameter `summary_type`
-  - Method `SummariesOperations.get` deleted or renamed its parameter `summary_name` of kind `positional_or_keyword`
-  - Method `WorkspacesOperations.create` inserted a `positional_or_keyword` parameter `resource`
-  - Method `WorkspacesOperations.create` deleted or renamed its parameter `workspace` of kind `positional_or_keyword`
-  - Method `WorkspacesOperations.generate_upload_url` inserted a `positional_or_keyword` parameter `body`
-  - Method `WorkspacesOperations.generate_upload_url` deleted or renamed its parameter `generate_upload_url` of kind `positional_or_keyword`
-  - Method `WorkspacesOperations.update` inserted a `positional_or_keyword` parameter `properties`
-  - Method `WorkspacesOperations.update` deleted or renamed its parameter `workspace` of kind `positional_or_keyword`
+  - Method `SummariesOperations.get` renamed its instance variable `summary_name` to `summary_type`
+  - Method `WorkspacesOperations.create` renamed its instance variable `workspace` to `resource`
+  - Method `WorkspacesOperations.generate_upload_url` renamed its instance variable `generate_upload_url` to `body`
+  - Method `WorkspacesOperations.update` renamed its instance variable `workspace` to `properties`
   - Deleted or renamed method `WorkspacesOperations.delete`
 
 ## 2.0.0b1 (2025-05-08)
