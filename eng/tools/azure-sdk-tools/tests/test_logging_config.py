@@ -7,10 +7,10 @@ import argparse
 import os
 
 @pytest.mark.parametrize("cli_args,level_env,expected_level", [
-	(argparse.Namespace(quiet=True, verbose=False, log_level=None), "INFO", logging.ERROR),  
-	(argparse.Namespace(quiet=False, verbose=True, log_level=None), "INFO", logging.DEBUG),  
-	(argparse.Namespace(quiet=False, verbose=False, log_level="ERROR"), "INFO", logging.ERROR),  
-	(argparse.Namespace(quiet=False, verbose=False, log_level=None), "WARN", logging.WARNING),  
+    (argparse.Namespace(quiet=True, verbose=False, log_level=None), "INFO", logging.ERROR),  
+    (argparse.Namespace(quiet=False, verbose=True, log_level=None), "INFO", logging.DEBUG),  
+    (argparse.Namespace(quiet=False, verbose=False, log_level="ERROR"), "INFO", logging.ERROR),  
+    (argparse.Namespace(quiet=False, verbose=False, log_level=None), "WARN", logging.WARNING),  
 ])
 @patch("logging.basicConfig")
 def test_configure_logging_various_levels(mock_basic_config, cli_args, level_env, expected_level, monkeypatch):
