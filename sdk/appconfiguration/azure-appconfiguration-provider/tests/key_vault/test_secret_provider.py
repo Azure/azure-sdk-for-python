@@ -12,8 +12,7 @@ from devtools_testutils import recorded_by_proxy
 from preparers import app_config_decorator_aad
 from testcase import AppConfigTestCase
 
-TEST_SECRET_ID = "https://myvault.vault.azure.net/secrets/mysecret"  # cspell:disable-line
-
+TEST_SECRET_ID = "https://myvault.vault.azure.net/secrets/my_secret"
 TEST_SECRET_ID_VERSION = TEST_SECRET_ID + "/12345"
 
 
@@ -136,7 +135,7 @@ class TestSecretProvider(AppConfigTestCase, unittest.TestCase):
             mock_id_instance = Mock()
             mock_id_instance._resource_id = TEST_SECRET_ID_VERSION
             mock_id_instance.source_id = TEST_SECRET_ID_VERSION
-            mock_id_instance.name = "mysecret"
+            mock_id_instance.name = "my_secret"
             mock_id_instance.version = "12345"
             mock_id_instance.vault_url = "https://myvault.vault.azure.net"
             mock_kv_id.return_value = mock_id_instance
@@ -167,7 +166,7 @@ class TestSecretProvider(AppConfigTestCase, unittest.TestCase):
             mock_id_instance = Mock()
             mock_id_instance._resource_id = TEST_SECRET_ID_VERSION
             mock_id_instance.source_id = TEST_SECRET_ID_VERSION
-            mock_id_instance.name = "mysecret"
+            mock_id_instance.name = "my_secret"
             mock_id_instance.version = "12345"
             mock_id_instance.vault_url = "https://myvault.vault.azure.net"
             mock_kv_id.return_value = mock_id_instance
@@ -214,7 +213,7 @@ class TestSecretProvider(AppConfigTestCase, unittest.TestCase):
             mock_id_instance = Mock()
             mock_id_instance._resource_id = TEST_SECRET_ID_VERSION
             mock_id_instance.source_id = TEST_SECRET_ID_VERSION
-            mock_id_instance.name = "mysecret"
+            mock_id_instance.name = "my_secret"
             mock_id_instance.version = "12345"
             mock_id_instance.vault_url = "https://myvault.vault.azure.net"
             mock_kv_id.return_value = mock_id_instance
@@ -257,7 +256,7 @@ class TestSecretProvider(AppConfigTestCase, unittest.TestCase):
             mock_id_instance = Mock()
             mock_id_instance._resource_id = TEST_SECRET_ID_VERSION
             mock_id_instance.source_id = TEST_SECRET_ID_VERSION
-            mock_id_instance.name = "mysecret"
+            mock_id_instance.name = "my_secret"
             mock_id_instance.version = "12345"
             mock_id_instance.vault_url = "https://myvault.vault.azure.net"
             mock_kv_id.return_value = mock_id_instance
@@ -289,7 +288,7 @@ class TestSecretProvider(AppConfigTestCase, unittest.TestCase):
             mock_id_instance = Mock()
             mock_id_instance._resource_id = TEST_SECRET_ID_VERSION
             mock_id_instance.source_id = TEST_SECRET_ID_VERSION
-            mock_id_instance.name = "mysecret"
+            mock_id_instance.name = "my_secret"
             mock_id_instance.version = "12345"
             mock_id_instance.vault_url = "https://myvault.vault.azure.net"
             mock_kv_id.return_value = mock_id_instance
@@ -348,7 +347,7 @@ class TestSecretProvider(AppConfigTestCase, unittest.TestCase):
             mock_id_instance = Mock()
             mock_id_instance._resource_id = TEST_SECRET_ID_VERSION
             mock_id_instance.source_id = TEST_SECRET_ID_VERSION
-            mock_id_instance.name = "mysecret"
+            mock_id_instance.name = "my_secret"
             mock_id_instance.version = "12345"
             mock_id_instance.vault_url = "https://myvault.vault.azure.net"
             mock_kv_id.return_value = mock_id_instance
