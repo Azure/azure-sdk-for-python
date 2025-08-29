@@ -131,6 +131,8 @@ class _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover(_GlobalPar
                     >= int(os.environ.get(Constants.TIMEOUT_ERROR_THRESHOLD_PPAF,
                                           Constants.TIMEOUT_ERROR_THRESHOLD_PPAF_DEFAULT))):
                 # If the PPAF threshold is reached, we reset the count and mark the endpoint unavailable
+                # Once we mark the endpoint unavailable, the PPAF endpoint manager will try to move to the next
+                # available region for the partition key range
                 with self._threshold_lock:
                     logger.warning("PPAF - Failover threshold reached for partition key range: %s", pk_range_wrapper)
                     # Check for count again, since a previous request may have now reset the count
