@@ -9,7 +9,7 @@
   - Added enum `AKSVolumeTypes`
   - Added model `AdlsBlobBackupDatasourceParameters`
   - Added model `ValidateForModifyBackupRequest`
-  - Model `BackupInstancesOperations` added method `begin_validate_for_modify_backup`
+  - Operation group `BackupInstancesOperations` added method `begin_validate_for_modify_backup`
 
 ## 1.4.0 (2024-07-22)
 

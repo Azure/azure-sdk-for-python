@@ -14,7 +14,6 @@ from devtools_testutils.aio import recorded_by_proxy_async
 AZURE_LOCATION = "eastus"
 
 
-
 class TestDataProtectionManagementResourceGuardsOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(DataProtectionMgmtClient, is_async=True)
@@ -28,7 +27,6 @@ class TestDataProtectionManagementResourceGuardsOperationsAsync(AzureMgmtRecorde
         )
         result = [r async for r in response]
         assert result == []
-
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
