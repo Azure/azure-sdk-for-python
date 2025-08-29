@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -460,57 +461,57 @@ def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:  # pylint: d
     :rtype: CommunicationIdentifier
     """
     if raw_id.startswith(PHONE_NUMBER_PREFIX):
-        return PhoneNumberIdentifier(value=raw_id[len(PHONE_NUMBER_PREFIX) :], raw_id=raw_id)
+        return PhoneNumberIdentifier(value=raw_id[len(PHONE_NUMBER_PREFIX) :], raw_id=raw_id)  # type: ignore[return-value]
 
     segments = raw_id.split(":", maxsplit=2)
     if len(segments) < 3:
-        return UnknownIdentifier(identifier=raw_id)
+        return UnknownIdentifier(identifier=raw_id)  # type: ignore[return-value]
 
     prefix = f"{segments[0]}:{segments[1]}:"
     suffix = segments[2]
     if prefix == TEAMS_USER_ANONYMOUS_PREFIX:
-        return MicrosoftTeamsUserIdentifier(user_id=suffix, is_anonymous=True, raw_id=raw_id)
+        return MicrosoftTeamsUserIdentifier(user_id=suffix, is_anonymous=True, raw_id=raw_id)  # type: ignore[return-value]
     if prefix == TEAMS_USER_PUBLIC_CLOUD_PREFIX:
-        return MicrosoftTeamsUserIdentifier(
+        return MicrosoftTeamsUserIdentifier(  # type: ignore[return-value]
             user_id=suffix,
             is_anonymous=False,
             cloud=CommunicationCloudEnvironment.PUBLIC,
             raw_id=raw_id,
         )
     if prefix == TEAMS_USER_DOD_CLOUD_PREFIX:
-        return MicrosoftTeamsUserIdentifier(
+        return MicrosoftTeamsUserIdentifier(  # type: ignore[return-value]
             user_id=suffix,
             is_anonymous=False,
             cloud=CommunicationCloudEnvironment.DOD,
             raw_id=raw_id,
         )
     if prefix == TEAMS_USER_GCCH_CLOUD_PREFIX:
-        return MicrosoftTeamsUserIdentifier(
+        return MicrosoftTeamsUserIdentifier(  # type: ignore[return-value]
             user_id=suffix,
             is_anonymous=False,
             cloud=CommunicationCloudEnvironment.GCCH,
             raw_id=raw_id,
         )
     if prefix == TEAMS_APP_PUBLIC_CLOUD_PREFIX:
-        return MicrosoftTeamsAppIdentifier(
+        return MicrosoftTeamsAppIdentifier(  # type: ignore[return-value]
             app_id=suffix,
             cloud=CommunicationCloudEnvironment.PUBLIC,
             raw_id=raw_id,
         )
     if prefix == TEAMS_APP_DOD_CLOUD_PREFIX:
-        return MicrosoftTeamsAppIdentifier(
+        return MicrosoftTeamsAppIdentifier(  # type: ignore[return-value]
             app_id=suffix,
             cloud=CommunicationCloudEnvironment.DOD,
             raw_id=raw_id,
         )
     if prefix == TEAMS_APP_GCCH_CLOUD_PREFIX:
-        return MicrosoftTeamsAppIdentifier(
+        return MicrosoftTeamsAppIdentifier(  # type: ignore[return-value]
             app_id=suffix,
             cloud=CommunicationCloudEnvironment.GCCH,
             raw_id=raw_id,
         )
     if prefix == SPOOL_USER_PREFIX:
-        return CommunicationUserIdentifier(id=raw_id, raw_id=raw_id)
+        return CommunicationUserIdentifier(id=raw_id, raw_id=raw_id)  # type: ignore[return-value]
 
     if prefix in [
         ACS_USER_PREFIX,
@@ -519,6 +520,6 @@ def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:  # pylint: d
     ]:
         identifier = try_create_teams_extension_user(prefix, suffix)
         if identifier is not None:
-            return identifier
-        return CommunicationUserIdentifier(id=raw_id, raw_id=raw_id)
-    return UnknownIdentifier(identifier=raw_id)
+            return identifier  # type: ignore[return-value]
+        return CommunicationUserIdentifier(id=raw_id, raw_id=raw_id)  # type: ignore[return-value]
+    return UnknownIdentifier(identifier=raw_id)  # type: ignore[return-value]
