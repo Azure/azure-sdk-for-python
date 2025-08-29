@@ -12,16 +12,14 @@ from typing import Any, List, Mapping, Optional, TYPE_CHECKING, overload
 
 from azure.core.exceptions import ODataV4Format
 
-from .. import _model_base
-from .._model_base import rest_field
+from .._utils.model_base import Model as _Model, rest_field
 
 if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AcknowledgeResult(_model_base.Model):
+class AcknowledgeResult(_Model):
     """The result of the Acknowledge operation.
-
 
     :ivar failed_lock_tokens: Array of FailedLockToken for failed cloud events. Each
      FailedLockToken includes the lock token along with the related error information (namely, the
@@ -32,18 +30,33 @@ class AcknowledgeResult(_model_base.Model):
     :vartype succeeded_lock_tokens: list[str]
     """
 
-    failed_lock_tokens: List["_models.FailedLockToken"] = rest_field(name="failedLockTokens")
+    failed_lock_tokens: List["_models.FailedLockToken"] = rest_field(name="failedLockTokens", visibility=["read"])
     """Array of FailedLockToken for failed cloud events. Each FailedLockToken includes the lock token
      along with the related error information (namely, the error code and description). Required."""
-    succeeded_lock_tokens: List[str] = rest_field(name="succeededLockTokens")
+    succeeded_lock_tokens: List[str] = rest_field(name="succeededLockTokens", visibility=["read"])
     """Array of lock tokens for the successfully acknowledged cloud events. Required."""
+
+
+class BrokerProperties(_Model):
+    """Properties of the Event Broker operation.
+
+    :ivar lock_token: The token of the lock on the event. Required.
+    :vartype lock_token: str
+    :ivar delivery_count: The attempt count for delivering the event. Required.
+    :vartype delivery_count: int
+    """
+
+    lock_token: str = rest_field(name="lockToken", visibility=["read", "create", "update", "delete", "query"])
+    """The token of the lock on the event. Required."""
+    delivery_count: int = rest_field(name="deliveryCount", visibility=["read", "create", "update", "delete", "query"])
+    """The attempt count for delivering the event. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        failed_lock_tokens: List["_models.FailedLockToken"],
-        succeeded_lock_tokens: List[str],
+        lock_token: str,
+        delivery_count: int,
     ) -> None: ...
 
     @overload
@@ -57,26 +70,9 @@ class AcknowledgeResult(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BrokerProperties(_model_base.Model):
-    """Properties of the Event Broker operation.
-
-
-    :ivar lock_token: The token of the lock on the event. Required.
-    :vartype lock_token: str
-    :ivar delivery_count: The attempt count for delivering the event. Required.
-    :vartype delivery_count: int
-    """
-
-    lock_token: str = rest_field(name="lockToken")
-    """The token of the lock on the event. Required."""
-    delivery_count: int = rest_field(name="deliveryCount")
-    """The attempt count for delivering the event. Required."""
-
-
-class CloudEvent(_model_base.Model):
+class CloudEvent(_Model):
     """Properties of an event published to an Azure Messaging EventGrid Namespace topic using the
     CloudEvent 1.0 Schema.
-
 
     :ivar id: An identifier for the event. The combination of id and source must be unique for each
      distinct event. Required.
@@ -103,34 +99,63 @@ class CloudEvent(_model_base.Model):
     :vartype subject: str
     """
 
-    id: str = rest_field()
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """An identifier for the event. The combination of id and source must be unique for each distinct
      event. Required."""
-    source: str = rest_field()
+    source: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Identifies the context in which an event happened. The combination of id and source must be
      unique for each distinct event. Required."""
-    data: Optional[Any] = rest_field()
+    data: Optional[Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Event data specific to the event type."""
-    data_base64: Optional[bytes] = rest_field(format="base64")
+    data_base64: Optional[bytes] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="base64"
+    )
     """Event data specific to the event type, encoded as a base64 string."""
-    type: str = rest_field()
+    type: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Type of event related to the originating occurrence. Required."""
-    time: Optional[datetime.datetime] = rest_field(format="rfc3339")
+    time: Optional[datetime.datetime] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The time (in UTC) the event was generated, in RFC3339 format."""
-    specversion: str = rest_field()
+    specversion: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The version of the CloudEvents specification which the event uses. Required."""
-    dataschema: Optional[str] = rest_field()
+    dataschema: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Identifies the schema that data adheres to."""
-    datacontenttype: Optional[str] = rest_field()
+    datacontenttype: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Content type of data value."""
-    subject: Optional[str] = rest_field()
+    subject: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """This describes the subject of the event in the context of the event producer (identified by
      source)."""
 
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        source: str,
+        type: str,
+        specversion: str,
+        data: Optional[Any] = None,
+        data_base64: Optional[bytes] = None,
+        time: Optional[datetime.datetime] = None,
+        dataschema: Optional[str] = None,
+        datacontenttype: Optional[str] = None,
+        subject: Optional[str] = None,
+    ) -> None: ...
 
-class FailedLockToken(_model_base.Model):
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class FailedLockToken(_Model):
     """Failed LockToken information.
-
 
     :ivar lock_token: The lock token of an entry in the request. Required.
     :vartype lock_token: str
@@ -139,9 +164,9 @@ class FailedLockToken(_model_base.Model):
     :vartype error: ~azure.core.ODataV4Format
     """
 
-    lock_token: str = rest_field(name="lockToken")
+    lock_token: str = rest_field(name="lockToken", visibility=["read", "create", "update", "delete", "query"])
     """The lock token of an entry in the request. Required."""
-    error: ODataV4Format = rest_field()
+    error: ODataV4Format = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Error information of the failed operation result for the lock token in the request. Required."""
 
     @overload
@@ -163,13 +188,12 @@ class FailedLockToken(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class PublishResult(_model_base.Model):
+class PublishResult(_Model):
     """The result of the Publish operation."""
 
 
-class ReceiveDetails(_model_base.Model):
+class ReceiveDetails(_Model):
     """Receive operation details per Cloud Event.
-
 
     :ivar broker_properties: The Event Broker details. Required.
     :vartype broker_properties: ~azure.eventgrid.models._models.BrokerProperties
@@ -177,27 +201,45 @@ class ReceiveDetails(_model_base.Model):
     :vartype event: ~azure.eventgrid.models._models.CloudEvent
     """
 
-    broker_properties: "_models._models.BrokerProperties" = rest_field(name="brokerProperties")
+    broker_properties: "_models._models.BrokerProperties" = rest_field(
+        name="brokerProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The Event Broker details. Required."""
-    event: "_models._models.CloudEvent" = rest_field()
+    event: "_models._models.CloudEvent" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Cloud Event details. Required."""
 
+    @overload
+    def __init__(
+        self,
+        *,
+        broker_properties: "_models._models.BrokerProperties",
+        event: "_models._models.CloudEvent",
+    ) -> None: ...
 
-class ReceiveResult(_model_base.Model):
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ReceiveResult(_Model):
     """Details of the Receive operation response.
-
 
     :ivar details: Array of receive responses, one per cloud event. Required.
     :vartype details: list[~azure.eventgrid.models._models.ReceiveDetails]
     """
 
-    details: List["_models._models.ReceiveDetails"] = rest_field(name="value")
+    details: List["_models._models.ReceiveDetails"] = rest_field(name="value", visibility=["read"])
     """Array of receive responses, one per cloud event. Required."""
 
 
-class RejectResult(_model_base.Model):
+class RejectResult(_Model):
     """The result of the Reject operation.
-
 
     :ivar failed_lock_tokens: Array of FailedLockToken for failed cloud events. Each
      FailedLockToken includes the lock token along with the related error information (namely, the
@@ -208,34 +250,15 @@ class RejectResult(_model_base.Model):
     :vartype succeeded_lock_tokens: list[str]
     """
 
-    failed_lock_tokens: List["_models.FailedLockToken"] = rest_field(name="failedLockTokens")
+    failed_lock_tokens: List["_models.FailedLockToken"] = rest_field(name="failedLockTokens", visibility=["read"])
     """Array of FailedLockToken for failed cloud events. Each FailedLockToken includes the lock token
      along with the related error information (namely, the error code and description). Required."""
-    succeeded_lock_tokens: List[str] = rest_field(name="succeededLockTokens")
+    succeeded_lock_tokens: List[str] = rest_field(name="succeededLockTokens", visibility=["read"])
     """Array of lock tokens for the successfully rejected cloud events. Required."""
 
-    @overload
-    def __init__(
-        self,
-        *,
-        failed_lock_tokens: List["_models.FailedLockToken"],
-        succeeded_lock_tokens: List[str],
-    ) -> None: ...
 
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ReleaseResult(_model_base.Model):
+class ReleaseResult(_Model):
     """The result of the Release operation.
-
 
     :ivar failed_lock_tokens: Array of FailedLockToken for failed cloud events. Each
      FailedLockToken includes the lock token along with the related error information (namely, the
@@ -246,34 +269,15 @@ class ReleaseResult(_model_base.Model):
     :vartype succeeded_lock_tokens: list[str]
     """
 
-    failed_lock_tokens: List["_models.FailedLockToken"] = rest_field(name="failedLockTokens")
+    failed_lock_tokens: List["_models.FailedLockToken"] = rest_field(name="failedLockTokens", visibility=["read"])
     """Array of FailedLockToken for failed cloud events. Each FailedLockToken includes the lock token
      along with the related error information (namely, the error code and description). Required."""
-    succeeded_lock_tokens: List[str] = rest_field(name="succeededLockTokens")
+    succeeded_lock_tokens: List[str] = rest_field(name="succeededLockTokens", visibility=["read"])
     """Array of lock tokens for the successfully released cloud events. Required."""
 
-    @overload
-    def __init__(
-        self,
-        *,
-        failed_lock_tokens: List["_models.FailedLockToken"],
-        succeeded_lock_tokens: List[str],
-    ) -> None: ...
 
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class RenewLocksResult(_model_base.Model):
+class RenewLocksResult(_Model):
     """The result of the RenewLock operation.
-
 
     :ivar failed_lock_tokens: Array of FailedLockToken for failed cloud events. Each
      FailedLockToken includes the lock token along with the related error information (namely, the
@@ -283,26 +287,8 @@ class RenewLocksResult(_model_base.Model):
     :vartype succeeded_lock_tokens: list[str]
     """
 
-    failed_lock_tokens: List["_models.FailedLockToken"] = rest_field(name="failedLockTokens")
+    failed_lock_tokens: List["_models.FailedLockToken"] = rest_field(name="failedLockTokens", visibility=["read"])
     """Array of FailedLockToken for failed cloud events. Each FailedLockToken includes the lock token
      along with the related error information (namely, the error code and description). Required."""
-    succeeded_lock_tokens: List[str] = rest_field(name="succeededLockTokens")
+    succeeded_lock_tokens: List[str] = rest_field(name="succeededLockTokens", visibility=["read"])
     """Array of lock tokens for the successfully renewed locks. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        failed_lock_tokens: List["_models.FailedLockToken"],
-        succeeded_lock_tokens: List[str],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
