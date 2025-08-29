@@ -9,7 +9,7 @@
 ### Breaking Changes
 
   - Deleted or renamed model `NetworkInjections`
-  - Deleted or renamed model `CognitiveServicesManagementClientOperationsMixin`
+  - Deleted or renamed operation group `CognitiveServicesManagementClientOperationsMixin`
 
 ## 13.7.0 (2025-07-21)
 
