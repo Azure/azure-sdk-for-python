@@ -1,10 +1,9 @@
 # Release History
 
-## 2.0.0 (2025-08-29)
+## 2.0.0 (2025-09-04)
 
 ### Features Added
 
-  - Client `IoTFirmwareDefenseMgmtClient` added method `send_request`
   - Client `IoTFirmwareDefenseMgmtClient` added operation group `usage_metrics`
   - Model `BinaryHardeningFeatures` added property `no_execute`
   - Model `BinaryHardeningFeatures` added property `position_independent_executable`
@@ -76,7 +75,7 @@
   - Added model `UsageMetricProperties`
   - Added model `WorkspaceUpdate`
   - Model `WorkspacesOperations` added method `begin_delete`
-  - Added model `UsageMetricsOperations`
+  - Added operation group `UsageMetricsOperations`
 
 ### Breaking Changes
 
@@ -137,12 +136,6 @@
   - Method `WorkspacesOperations.update` inserted a `positional_or_keyword` parameter `properties`
   - Method `WorkspacesOperations.update` deleted or renamed its parameter `workspace` of kind `positional_or_keyword`
   - Deleted or renamed method `WorkspacesOperations.delete`
-  - Method `SummariesOperations.get` re-ordered its parameters from `['self', 'resource_group_name', 'workspace_name', 'firmware_id', 'summary_name', 'kwargs']` to `['self', 'resource_group_name', 'workspace_name', 'firmware_id', 'summary_type', 'kwargs']`
-  - Method `FirmwaresOperations.create` re-ordered its parameters from `['self', 'resource_group_name', 'workspace_name', 'firmware_id', 'firmware', 'kwargs']` to `['self', 'resource_group_name', 'workspace_name', 'firmware_id', 'resource', 'kwargs']`
-  - Method `FirmwaresOperations.update` re-ordered its parameters from `['self', 'resource_group_name', 'workspace_name', 'firmware_id', 'firmware', 'kwargs']` to `['self', 'resource_group_name', 'workspace_name', 'firmware_id', 'properties', 'kwargs']`
-  - Method `WorkspacesOperations.create` re-ordered its parameters from `['self', 'resource_group_name', 'workspace_name', 'workspace', 'kwargs']` to `['self', 'resource_group_name', 'workspace_name', 'resource', 'kwargs']`
-  - Method `WorkspacesOperations.update` re-ordered its parameters from `['self', 'resource_group_name', 'workspace_name', 'workspace', 'kwargs']` to `['self', 'resource_group_name', 'workspace_name', 'properties', 'kwargs']`
-  - Method `WorkspacesOperations.generate_upload_url` re-ordered its parameters from `['self', 'resource_group_name', 'workspace_name', 'generate_upload_url', 'kwargs']` to `['self', 'resource_group_name', 'workspace_name', 'body', 'kwargs']`
 
 ## 2.0.0b1 (2025-05-08)
 
