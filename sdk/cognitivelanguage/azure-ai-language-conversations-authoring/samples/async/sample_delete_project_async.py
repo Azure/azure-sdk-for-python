@@ -44,9 +44,6 @@ async def sample_delete_project_async():
         # start delete (async long-running operation)
         poller = await client.begin_delete_project(project_name)
 
-        # wait for completion and get the result (no explicit type variables)
-        result = await poller.result()
-
         try:
             await poller.result()
             print("Delete completed.")
