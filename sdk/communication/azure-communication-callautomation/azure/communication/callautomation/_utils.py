@@ -134,7 +134,7 @@ def serialize_identifier(identifier: CommunicationIdentifier) -> Dict[str, Any]:
     try:
         request_model = {"raw_id": identifier.raw_id}
         if identifier.kind and identifier.kind != CommunicationIdentifierKind.UNKNOWN:
-            request_model[identifier.kind] = dict(identifier.properties)
+            request_model[identifier.kind] = dict(identifier.properties)  # type: ignore[assignment]
         return request_model
     except AttributeError:
         raise TypeError(f"Unsupported identifier type: {identifier.__class__.__name__}") from None
