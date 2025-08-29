@@ -32,12 +32,12 @@ def main():
 
     response = client.workspaces.generate_upload_url(
         resource_group_name="rgworkspaces",
-        workspace_name="E___-3",
-        body={"firmwareId": "ktnnf"},
+        workspace_name="default",
+        body={"firmwareId": "00000000-0000-0000-0000-000000000000"},
     )
     print(response)
 
 
-# x-ms-original-file: 2025-04-01-preview/Workspaces_GenerateUploadUrl_MinimumSet_Gen.json
+# x-ms-original-file: 2025-08-02/Workspaces_GenerateUploadUrl_MinimumSet_Gen.json
 if __name__ == "__main__":
     main()

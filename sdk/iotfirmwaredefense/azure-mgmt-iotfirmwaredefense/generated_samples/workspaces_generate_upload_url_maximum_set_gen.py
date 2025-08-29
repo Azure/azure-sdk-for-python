@@ -33,11 +33,11 @@ def main():
     response = client.workspaces.generate_upload_url(
         resource_group_name="rgiotfirmwaredefense",
         workspace_name="exampleWorkspaceName",
-        body={"firmwareId": "ktnnf"},
+        body={"firmwareId": "00000000-0000-0000-0000-000000000000"},
     )
     print(response)
 
 
-# x-ms-original-file: 2025-04-01-preview/Workspaces_GenerateUploadUrl_MaximumSet_Gen.json
+# x-ms-original-file: 2025-08-02/Workspaces_GenerateUploadUrl_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()
