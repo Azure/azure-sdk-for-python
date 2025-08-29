@@ -112,6 +112,9 @@ async def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     :keyword load_balancing_enabled: Optional flag to enable or disable the load balancing of replica endpoints. Default
      is False.
     :paramtype load_balancing_enabled: bool
+    :keyword configuration_mapper: Optional function to map configuration settings. Enables transformation of
+    configurations before they are added to the provider.
+    :paramtype configuration_mapper: Optional[Callable[[ConfigurationSetting], None]]
     """
 
 
@@ -175,6 +178,9 @@ async def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     :keyword load_balancing_enabled: Optional flag to enable or disable the load balancing of replica endpoints. Default
      is False.
     :paramtype load_balancing_enabled: bool
+    :keyword configuration_mapper: Optional function to map configuration settings. Enables transformation of
+    configurations before they are added to the provider.
+    :paramtype configuration_mapper: Optional[Callable[[ConfigurationSetting], None]]
     """
 
 
@@ -507,6 +513,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         for config in configuration_settings:
             if self._configuration_mapper:
                 await self._configuration_mapper(config)
+            # pylint:disable=protected-access
             if FeatureFlagConfigurationSetting._feature_flag_content_type == config.content_type:
                 # Feature flags are not processed like other settings
                 continue
@@ -518,9 +525,13 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         return configuration_settings_processed
 
     async def _process_key_value(self, config):
+        # pylint:disable=protected-access
         if SecretReferenceConfigurationSetting._secret_reference_content_type == config.content_type:
             return await _resolve_keyvault_reference(config, self)
-        if is_json_content_type(config.content_type) and not FeatureFlagConfigurationSetting._feature_flag_content_type == config.content_type:
+        if (
+            is_json_content_type(config.content_type)
+            and not FeatureFlagConfigurationSetting._feature_flag_content_type == config.content_type
+        ):
             # Feature flags are of type json, but don't treat them as such
             try:
                 if APP_CONFIG_AI_MIME_PROFILE in config.content_type:

@@ -241,6 +241,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         async def test_mapper(setting):
             if setting.key == "message":
                 setting.value = "mapped"
+
         async with await self.create_client(
             connection_string=appconfiguration_connection_string,
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
@@ -252,15 +253,18 @@ class TestAppConfigurationProvider(AppConfigTestCase):
     # method: load
     @app_config_decorator_async
     @recorded_by_proxy_async
-    async def test_configuration_mapper_with_trimming(self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url):
+    async def test_configuration_mapper_with_trimming(
+        self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url
+    ):
         async def test_mapper(setting):
             if setting.key == "message":
                 setting.value = "mapped"
+
         async with await self.create_client(
             connection_string=appconfiguration_connection_string,
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
             configuration_mapper=test_mapper,
-            trim_prefixes=["refresh_"]
+            trim_prefixes=["refresh_"],
         ) as client:
             # Because our processing happens after mapping and refresh_message is alphabetically after message the override
             # value isn't used, as the mapped value is overridden by the first value.
@@ -270,16 +274,19 @@ class TestAppConfigurationProvider(AppConfigTestCase):
     # method: load
     @app_config_decorator_async
     @recorded_by_proxy_async
-    async def test_configuration_mapper_with_feature_flags(self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url):
+    async def test_configuration_mapper_with_feature_flags(
+        self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url
+    ):
         async def test_mapper(setting):
             if setting.key == ".appconfig.featureflag/Alpha":
                 setting.content_type = "application/json"
+
         async with await self.create_client(
             connection_string=appconfiguration_connection_string,
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
             feature_flag_enabled=True,
             configuration_mapper=test_mapper,
-            trim_prefixes=[".appconfig.featureflag/"]
+            trim_prefixes=[".appconfig.featureflag/"],
         ) as client:
             assert "Alpha" in client
             assert client["Alpha"]["enabled"] is False
@@ -287,6 +294,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
             assert "feature_management" in client
             assert "feature_flags" in client["feature_management"]
             assert "Alpha" == client["feature_management"]["feature_flags"][0]["id"]
+
 
 async def secret_resolver(secret_id):
     return "Resolver Value"
