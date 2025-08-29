@@ -21,7 +21,7 @@ class TestComputeManagementDiskEncryptionSetsOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_disk_encryption_sets_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.disk_encryption_sets.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -29,15 +29,31 @@ class TestComputeManagementDiskEncryptionSetsOperationsAsync(AzureMgmtRecordedTe
                 disk_encryption_set={
                     "location": "str",
                     "activeKey": {"keyUrl": "str", "sourceVault": {"id": "str"}},
+                    "autoKeyRotationError": {
+                        "code": "str",
+                        "details": [{"code": "str", "message": "str", "target": "str"}],
+                        "innererror": {"errordetail": "str", "exceptiontype": "str"},
+                        "message": "str",
+                        "target": "str",
+                    },
+                    "encryptionType": "str",
+                    "federatedClientId": "str",
                     "id": "str",
-                    "identity": {"principalId": "str", "tenantId": "str", "type": "str"},
+                    "identity": {
+                        "principalId": "str",
+                        "tenantId": "str",
+                        "type": "str",
+                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                    },
+                    "lastKeyRotationTimestamp": "2020-02-20 00:00:00",
                     "name": "str",
                     "previousKeys": [{"keyUrl": "str", "sourceVault": {"id": "str"}}],
                     "provisioningState": "str",
+                    "rotationToLatestKeyVersionEnabled": bool,
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2019-07-01",
+                api_version="2023-10-02",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -46,16 +62,25 @@ class TestComputeManagementDiskEncryptionSetsOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_update(self, resource_group):
+    async def test_disk_encryption_sets_begin_update(self, resource_group):
         response = await (
             await self.client.disk_encryption_sets.begin_update(
                 resource_group_name=resource_group.name,
                 disk_encryption_set_name="str",
                 disk_encryption_set={
                     "activeKey": {"keyUrl": "str", "sourceVault": {"id": "str"}},
+                    "encryptionType": "str",
+                    "federatedClientId": "str",
+                    "identity": {
+                        "principalId": "str",
+                        "tenantId": "str",
+                        "type": "str",
+                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                    },
+                    "rotationToLatestKeyVersionEnabled": bool,
                     "tags": {"str": "str"},
                 },
-                api_version="2019-07-01",
+                api_version="2023-10-02",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -64,11 +89,11 @@ class TestComputeManagementDiskEncryptionSetsOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_disk_encryption_sets_get(self, resource_group):
         response = await self.client.disk_encryption_sets.get(
             resource_group_name=resource_group.name,
             disk_encryption_set_name="str",
-            api_version="2019-07-01",
+            api_version="2023-10-02",
         )
 
         # please add some check logic here by yourself
@@ -76,12 +101,12 @@ class TestComputeManagementDiskEncryptionSetsOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_disk_encryption_sets_begin_delete(self, resource_group):
         response = await (
             await self.client.disk_encryption_sets.begin_delete(
                 resource_group_name=resource_group.name,
                 disk_encryption_set_name="str",
-                api_version="2019-07-01",
+                api_version="2023-10-02",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -90,10 +115,10 @@ class TestComputeManagementDiskEncryptionSetsOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_resource_group(self, resource_group):
+    async def test_disk_encryption_sets_list_by_resource_group(self, resource_group):
         response = self.client.disk_encryption_sets.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2019-07-01",
+            api_version="2023-10-02",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -101,9 +126,21 @@ class TestComputeManagementDiskEncryptionSetsOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_disk_encryption_sets_list(self, resource_group):
         response = self.client.disk_encryption_sets.list(
-            api_version="2019-07-01",
+            api_version="2023-10-02",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_disk_encryption_sets_list_associated_resources(self, resource_group):
+        response = self.client.disk_encryption_sets.list_associated_resources(
+            resource_group_name=resource_group.name,
+            disk_encryption_set_name="str",
+            api_version="2023-10-02",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

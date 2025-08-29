@@ -73,5 +73,5 @@ strings in that file will still trigger warnings if present in another unsuppres
 [ci_scan_output]: https://dev.azure.com/azure-sdk/public/_build/results?buildId=1426258&view=logs&jobId=b70e5e73-bbb6-5567-0939-8415943fadb9&j=bc67675d-56bf-581f-e0a2-208848ba68ca&t=7eee3a58-6120-518b-7fcb-7e943712aa81
 [credscan_doc]: https://aka.ms/credscan
 [devops_doc]: https://dev.azure.com/azure-sdk/internal/_wiki/wikis/internal.wiki/413/Credential-Scan-Step-in-Pipeline
-[fake_credentials]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/fake_credentials.py
+[fake_credentials]: https://github.com/Azure/azure-sdk-for-python/blob/main/eng/tools/azure-sdk-tools/devtools_testutils/fake_credentials.py
 [suppression_file]: https://github.com/Azure/azure-sdk-for-python/blob/main/eng/CredScanSuppression.json
