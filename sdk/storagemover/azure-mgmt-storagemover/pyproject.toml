@@ -4,3 +4,15 @@ mypy = false
 pyright = false
 type_check_samples = false
 verifytypes = false
+
+[packaging]
+package_name = "azure-mgmt-storagemover"
+package_nspkg = "azure-mgmt-nspkg"
+package_pprint_name = "Storagemover Management"
+package_doc_id = ""
+is_stable = true
+is_arm = true
+need_msrestazure = false
+need_azuremgmtcore = true
+sample_link = ""
+title = "StorageMoverMgmtClient"
