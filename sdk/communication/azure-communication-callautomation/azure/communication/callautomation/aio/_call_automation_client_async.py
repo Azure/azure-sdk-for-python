@@ -354,9 +354,9 @@ class CallAutomationClient:
         )
 
         try:
-            targets = [serialize_identifier(p) for p in target_participant]
+            targets = [serialize_identifier(p) for p in target_participant]  # type: ignore[union-attr]
         except TypeError:
-            targets = [serialize_identifier(target_participant)]
+            targets = [serialize_identifier(target_participant)]  # type: ignore[arg-type]
 
         media_config = media_streaming._to_generated() if media_streaming else None # pylint:disable=protected-access
         transcription_config = transcription._to_generated() if transcription else None # pylint:disable=protected-access
