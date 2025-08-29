@@ -5,10 +5,11 @@
 # --------------------------------------------------------------------------
 import os
 import pytest
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from enum import Enum
 from time import sleep
 
+from azure.core import MatchConditions
 from azure.core.exceptions import ResourceExistsError, ResourceModifiedError, HttpResponseError
 from azure.storage.blob import (
     AccountSasPermissions,
@@ -522,4 +523,57 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         first_page = next(blob_list)
         items_on_page1 = list(first_page)
         assert 1 == len(items_on_page1)
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_blob_tags_conditional_headers(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        self._setup(storage_account_name, storage_account_key)
+
+        blob_name = self._get_blob_reference()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        first_resp = blob.upload_blob(b"abc123", overwrite=True)
+        early = self.get_datetime_variable(
+            variables, 'expiry_time', datetime.utcnow()
+        )
+        first_tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
+        second_tags = {"tag4": "fourthtag", "tag5": "fifthtag", "tag6": "sixthtag"}
+
+        with pytest.raises(ResourceModifiedError):
+            blob.set_blob_tags(first_tags, if_modified_since=early)
+        with pytest.raises(ResourceModifiedError):
+            blob.get_blob_tags(if_modified_since=early)
+        with pytest.raises(ResourceModifiedError):
+            blob.set_blob_tags(first_tags, etag=first_resp['etag'], match_condition=MatchConditions.IfModified)
+
+        blob.set_blob_tags(first_tags, if_unmodified_since=early)
+        tags = blob.get_blob_tags(if_unmodified_since=early)
+        assert tags == first_tags
+
+        blob.set_blob_tags(second_tags, etag=first_resp['etag'], match_condition=MatchConditions.IfNotModified)
+        tags = blob.get_blob_tags(etag=first_resp['etag'], match_condition=MatchConditions.IfNotModified)
+        assert tags == second_tags
+
+        blob.upload_blob(b"def456", overwrite=True)
+
+        with pytest.raises(ResourceModifiedError):
+            blob.set_blob_tags(first_tags, if_unmodified_since=early)
+        with pytest.raises(ResourceModifiedError):
+            blob.get_blob_tags(if_unmodified_since=early)
+        with pytest.raises(ResourceModifiedError):
+            blob.set_blob_tags(first_tags, etag=first_resp['etag'], match_condition=MatchConditions.IfNotModified)
+
+        blob.set_blob_tags(first_tags, if_modified_since=early)
+        tags = blob.get_blob_tags(if_modified_since=early)
+        assert tags == first_tags
+
+        blob.set_blob_tags(second_tags, etag=first_resp['etag'], match_condition=MatchConditions.IfModified)
+        tags = blob.get_blob_tags(etag=first_resp['etag'], match_condition=MatchConditions.IfModified)
+        assert tags == second_tags
+
+        return variables
+
 #------------------------------------------------------------------------------

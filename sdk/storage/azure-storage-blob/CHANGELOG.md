@@ -3,6 +3,7 @@
 ## 12.28.0b1 (Unreleased)
 
 ### Features Added
+- Added support for service version 2026-02-06.
 
 ## 12.26.0 (2025-07-16)
 
