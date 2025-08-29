@@ -73,8 +73,6 @@ class ConversationAuthoringProjectClient(AuthoringProjectClientGenerated): # pyl
         :type credential: ~azure.core.credentials.AzureKeyCredential or
             ~azure.core.credentials_async.AsyncTokenCredential
         :keyword str project_name: The name of the project to scope operations. Required.
-        :keyword Any kwargs: Additional keyword arguments.
-        :rtype: None
         """
         self._project_name = project_name
         _endpoint = "{Endpoint}/language"

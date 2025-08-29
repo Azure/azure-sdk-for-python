@@ -64,16 +64,14 @@ class ConversationAuthoringProjectClient(AuthoringProjectClientGenerated): # pyl
         project_name: str,
         **kwargs: Any,
     ) -> None:
-        """Initialize a ConversationAuthoringProjectClient.
+        """
+        Initialize a ConversationAuthoringProjectClient.
 
         :param str endpoint: Supported Cognitive Services endpoint, e.g.
-            "https://<resource>.cognitiveservices.azure.com".
+            ``https://<resource>.cognitiveservices.azure.com``.
         :param credential: Credential used to authenticate requests to the service.
-        :type credential: ~azure.core.credentials.AzureKeyCredential or
-            ~azure.core.credentials_async.AsyncTokenCredential
-        :keyword str project_name: The name of the project to scope operations. Required.
-        :keyword Any kwargs: Additional keyword arguments.
-        :rtype: None
+        :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.TokenCredential
+        :keyword str project_name: The name of the project to scope operations. **Required**.
         """
         self._project_name = project_name
         _endpoint = f"{endpoint}/language"
