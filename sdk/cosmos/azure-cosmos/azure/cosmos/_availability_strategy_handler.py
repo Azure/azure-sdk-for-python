@@ -19,7 +19,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Module for handling request hedging strategies in Azure Cosmos DB."""
+"""Module for handling request availability strategies in Azure Cosmos DB."""
 import copy
 import time
 from concurrent.futures import ThreadPoolExecutor, Future, as_completed, CancelledError
@@ -43,7 +43,7 @@ class CrossRegionHedgingHandler:
     def __init__(self) -> None:
         self._shared_executor = ThreadPoolExecutor()
 
-    def setup_excluded_regions_for_hedging(
+    def _setup_excluded_regions_for_hedging(
         self,
         location_index: int,
         available_locations: List[str],
@@ -134,7 +134,7 @@ class CrossRegionHedgingHandler:
         params.set_completion_status(complete_status)
 
         # Setup excluded regions for hedging requests
-        params.excluded_locations = self.setup_excluded_regions_for_hedging(
+        params.excluded_locations = self._setup_excluded_regions_for_hedging(
             location_index,
             available_locations,
             request_params.excluded_locations
@@ -164,10 +164,7 @@ class CrossRegionHedgingHandler:
         if complete_status.is_completed:
             raise CancelledError("The request has been cancelled")
 
-        return execute_request_fn(
-            params,
-            req
-        )
+        return execute_request_fn(params, req)
 
     def execute_request(
         self,
@@ -288,7 +285,7 @@ class CrossRegionHedgingHandler:
         return applicable_endpoints
 
 # Global handler instance
-_global_hedging_handler = CrossRegionHedgingHandler()
+_cross_region_hedging_handler = CrossRegionHedgingHandler()
 
 def execute_with_hedging(
     request_params: RequestObject,
@@ -310,9 +307,13 @@ def execute_with_hedging(
     :rtype: Tuple[Dict[str, Any], Dict[str, Any]]
     :raises: Any exceptions raised by the hedging handler's execute_request method
     """
-    return _global_hedging_handler.execute_request(
-        request_params,
-        global_endpoint_manager,
-        request,
-        execute_request_fn
-    )
+    availability_strategy = request_params.availability_strategy
+    if isinstance(availability_strategy, CrossRegionHedgingStrategy):
+        return _cross_region_hedging_handler.execute_request(
+            request_params,
+            global_endpoint_manager,
+            request,
+            execute_request_fn
+        )
+    raise ValueError("Unsupported availability strategy type: {0}".format(CrossRegionHedgingStrategy.__class__))
+

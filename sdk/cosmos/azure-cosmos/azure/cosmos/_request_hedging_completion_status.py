@@ -25,7 +25,7 @@ from threading import Event
 
 
 class HedgingCompletionStatus(ABC):
-    """Abstract base class for tracking request completion status.
+    """Abstract base class for tracking request hedging completion status.
     
     This class defines the interface for both synchronous and asynchronous
     implementations of completion status tracking.

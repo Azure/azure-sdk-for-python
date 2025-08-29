@@ -337,10 +337,6 @@ class ConnectionPolicy:  # pylint: disable=too-many-instance-attributes
         Indicates whether service should be instructed to skip sending response payloads
     :ivar boolean RetryNonIdempotentWrites:
         Indicates whether the client should retry non-idempotent write requests for items
-    :ivar AvailabilityStrategy:
-        Gets or sets the availability strategy for improving request latency and availability.
-        The strategy can be overridden per request.
-    :vartype AvailabilityStrategy: Optional[~azure.cosmos._availability_strategy.CrossRegionHedgingStrategy]
     """
 
     __defaultRequestTimeout: int = 5  # seconds
@@ -372,7 +368,6 @@ class ConnectionPolicy:  # pylint: disable=too-many-instance-attributes
         self.ConnectionRetryConfiguration: Optional["ConnectionRetryPolicy"] = None
         self.ResponsePayloadOnWriteDisabled: bool = False
         self.RetryNonIdempotentWrites: bool = False
-        self.AvailabilityStrategy: Optional[CrossRegionHedgingStrategy] = None
 
     def override_dba_timeouts(
             self,

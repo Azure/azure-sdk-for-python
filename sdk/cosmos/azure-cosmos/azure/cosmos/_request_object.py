@@ -130,15 +130,16 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
             self,
             options: Mapping[str, Any],
             client_strategy: Optional[CrossRegionHedgingStrategy] = None) -> None:
-        """Sets the availability strategy for this request from options.
+        """Sets the availability strategy config for this request from options.
         If not in options, uses the client's default strategy.
 
         :param options: The request options that may contain availabilityStrategy
         :type options: Mapping[str, Any]
         :param client_strategy: The client's default availability strategy
-        :type client_strategy: ~azure.cosmos.ThresholdBasedAvailabilityStrategy
+        :type client_strategy: ~azure.cosmos.CrossRegionHedgingStrategy
         :return: None
         """
+        # setup availabilityStrategy
         # First try to get from options
         if options is not None and 'availabilityStrategy' in options and options['availabilityStrategy'] is not None:
             self.availability_strategy = options['availabilityStrategy']

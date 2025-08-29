@@ -80,7 +80,6 @@ from .partition_key import (
     _return_undefined_or_empty_partition_key,
 )
 
-
 class CredentialDict(TypedDict, total=False):
     masterKey: str
     resourceTokens: Mapping[str, Any]
@@ -119,7 +118,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         connection_policy: Optional[ConnectionPolicy] = None,
         consistency_level: Optional[str] = None,
         availability_strategy: Optional[CrossRegionHedgingStrategy] = None,
-        availability_strategy_executor: Optional[ThreadPoolExecutor] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -139,7 +137,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self.client_id = str(uuid.uuid4())
         self.url_connection = url_connection
         self.availability_strategy = availability_strategy
-        self.availability_strategy_executor = availability_strategy_executor
         self.master_key: Optional[str] = None
         self.resource_tokens: Optional[Mapping[str, Any]] = None
         self.aad_credentials: Optional[TokenCredential] = None

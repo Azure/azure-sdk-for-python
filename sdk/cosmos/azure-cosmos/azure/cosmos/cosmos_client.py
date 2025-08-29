@@ -203,7 +203,10 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     :keyword availability_strategy: The strategy for cross-region request routing. The default value is None.
         Controls whether and how requests are automatically routed across regions based on availability
         and response time thresholds. This helps optimize latency and availability for multi-region accounts.
-    :paramtype availability_strategy: ~azure.cosmos.ThresholdBasedAvailabilityStrategy
+    :paramtype availability_strategy: ~azure.cosmos.CrossRegionHedgingStrategy
+    :keyword availability_strategy_executor: Optional thread pool executor for executing availability strategy operations.
+            Allows customizing the threading behavior of the strategy. If not provided, a default executor will be used.
+    :paramtype availability_strategy_executor: Optional[concurrent.futures.ThreadPoolExecutor]
 
     .. admonition:: Example:
 
@@ -226,12 +229,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         **kwargs
     ) -> None:
         """Instantiate a new CosmosClient.
-
-        :param availability_strategy: The strategy for cross-region request routing. The default value is None.
-            Controls whether and how requests are automatically routed across regions based on availability
-            and response time thresholds. This helps optimize latency and availability for multi-region accounts.
-        :type availability_strategy: Optional[~azure.cosmos.ThresholdBasedAvailabilityStrategy]
         """
+
         auth = _build_auth(credential)
         connection_policy = _build_connection_policy(kwargs)
         self.client_connection = CosmosClientConnection(

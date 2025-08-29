@@ -247,26 +247,11 @@ def SynchronizedRequest(
     :return: tuple of (result, headers)
     :rtype: tuple of (dict dict)
     """
-
-    def prepare_request(req, req_data):
-        """Helper to prepare request data and headers before execution.
-
-        :param req: The HTTP request to be prepared
-        :type req: azure.core.pipeline.transport.HttpRequest
-        :param req_data: The data to be sent in the request
-        :type req_data: Union[str, unicode, file-like stream object, dict, list, None]
-        :returns: The prepared request object
-        :rtype: azure.core.pipeline.transport.HttpRequest
-        """
-        req.data = _request_body_from_data(req_data)
-        if req.data and isinstance(req.data, str):
-            req.headers[http_constants.HttpHeaders.ContentLength] = len(req.data)
-        elif req.data is None:
-            req.headers[http_constants.HttpHeaders.ContentLength] = 0
-        return req
-
-    # Prepare the original request
-    request = prepare_request(request, request_data)
+    request.data = _request_body_from_data(request_data)
+    if request.data and isinstance(request.data, str):
+        request.headers[http_constants.HttpHeaders.ContentLength] = len(request.data)
+    elif request.data is None:
+        request.headers[http_constants.HttpHeaders.ContentLength] = 0
 
     # Handle hedging if availability strategy is applicable
     if _is_availability_strategy_applicable(request_params):

@@ -41,7 +41,7 @@ ResponseType = Tuple[Dict[str, Any], Dict[str, Any]]
 class CrossRegionAsyncHedgingHandler:
     """Handler for CrossRegionHedgingStrategy that implements cross-region request hedging."""
 
-    def setup_excluded_regions_for_hedging(
+    def _setup_excluded_regions_for_hedging(
         self,
         location_index: int,
         available_locations: List[str],
@@ -133,7 +133,7 @@ class CrossRegionAsyncHedgingHandler:
         params.set_completion_status(complete_status)
 
         # Setup excluded regions for hedging requests
-        params.excluded_locations = self.setup_excluded_regions_for_hedging(
+        params.excluded_locations = self._setup_excluded_regions_for_hedging(
             location_index,
             available_locations,
             request_params.excluded_locations
@@ -161,10 +161,7 @@ class CrossRegionAsyncHedgingHandler:
         if complete_status is not None and complete_status.is_completed:
             raise CancelledError("The request has been cancelled")
 
-        return await execute_request_fn(
-            params,
-            req
-        )
+        return await execute_request_fn(params, req)
 
     async def execute_request(
         self,
@@ -293,7 +290,7 @@ class CrossRegionAsyncHedgingHandler:
         return applicable_endpoints
 
 # Global handler instance
-_global_cross_region_hedging_handler = CrossRegionAsyncHedgingHandler()
+_cross_region_hedging_handler = CrossRegionAsyncHedgingHandler()
 
 async def execute_with_availability_strategy(
     request_params: RequestObject,
@@ -327,10 +324,12 @@ async def execute_with_availability_strategy(
 
     availability_strategy = request_params.availability_strategy
     if isinstance(availability_strategy, CrossRegionHedgingStrategy):
-        return await _global_cross_region_hedging_handler.execute_request(
+        return await _cross_region_hedging_handler.execute_request(
             request_params,
             global_endpoint_manager,
             request,
             execute_request_fn
         )
+
+    raise ValueError("Unsupported availability strategy type: {0}".format(CrossRegionHedgingStrategy.__class__))
 

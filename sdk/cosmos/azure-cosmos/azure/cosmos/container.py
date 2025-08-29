@@ -241,10 +241,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :param str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword availability_strategy: The availability strategy to use for this request. Configures when
-            to route to alternate regions (defaults: 500ms initial threshold, 100ms between attempts) if not
-            overridden by the client's default strategy.
-        :paramtype availability_strategy: ~azure.cosmos.ThresholdBasedAvailabilityStrategy
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
@@ -258,10 +254,14 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-         :keyword availability_strategy: The availability strategy to use for this request. Configures when
-            to route to alternate regions (defaults: 500ms initial threshold, 100ms between attempts) if not
-            overridden by the client's default strategy.
-        :paramtype availability_strategy: ~azure.cosmos.ThresholdBasedAvailabilityStrategy
+        :keyword availability_strategy: The availability strategy to use for this request. Configures when
+             to route to alternate regions (defaults: 500ms initial threshold, 100ms between attempts) if not
+             overridden by the client's default strategy.
+        :paramtype availability_strategy: ~azure.cosmos.CrossRegionHedgingStrategy
+        :keyword availability_strategy_executor: Optional ThreadPoolExecutor used by the availability strategy
+             for executing concurrent cross-region requests. If not provided but availability_strategy is enabled,
+             a new executor will be created as needed.
+        :paramtype availability_strategy: ~concurrent.futures.thread.ThreadPoolExecutor
         :returns: A CosmosDict representing the item to be retrieved.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item couldn't be retrieved.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
@@ -343,9 +343,14 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :keyword int throughput_bucket: The desired throughput bucket for the client
-        :keyword availability_strategy: The availability strategy to use for this request. If not provided,
-            the client's default strategy will be used.
-        :paramtype availability_strategy: ~azure.cosmos.ThresholdBasedAvailabilityStrategy
+        :keyword availability_strategy: The availability strategy to use for this request. Configures when
+             to route to alternate regions (defaults: 500ms initial threshold, 100ms between attempts) if not
+             overridden by the client's default strategy.
+        :paramtype availability_strategy: ~azure.cosmos.CrossRegionHedgingStrategy
+        :keyword availability_strategy_executor: Optional ThreadPoolExecutor used by the availability strategy
+             for executing concurrent cross-region requests. If not provided but availability_strategy is enabled,
+             a new executor will be created as needed.
+        :paramtype availability_strategy: ~concurrent.futures.thread.ThreadPoolExecutor
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The read-many operation failed.
         :returns: A CosmosList containing the retrieved items. Items that were not found are omitted from the list.
         :rtype: ~azure.cosmos.CosmosList
@@ -419,9 +424,13 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
         :keyword availability_strategy: The availability strategy to use for this request. Configures when
-            to route to alternate regions (defaults: 500ms initial threshold, 100ms between attempts) if not
-            overridden by the client's default strategy.
-        :paramtype availability_strategy: ~azure.cosmos.ThresholdBasedAvailabilityStrategy
+             to route to alternate regions (defaults: 500ms initial threshold, 100ms between attempts) if not
+             overridden by the client's default strategy.
+        :paramtype availability_strategy: ~azure.cosmos.CrossRegionHedgingStrategy
+        :keyword availability_strategy_executor: Optional ThreadPoolExecutor used by the availability strategy
+             for executing concurrent cross-region requests. If not provided but availability_strategy is enabled,
+             a new executor will be created as needed.
+        :paramtype availability_strategy: ~concurrent.futures.thread.ThreadPoolExecutor
         :returns: An Iterable of items (dicts).
         :rtype: Iterable[Dict[str, Any]]
         """
@@ -501,9 +510,13 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
         :keyword availability_strategy: The availability strategy to use for this request. Configures when
-            to route to alternate regions (defaults: 500ms initial threshold, 100ms between attempts) if not
-            overridden by the client's default strategy.
-        :paramtype availability_strategy: ~azure.cosmos.ThresholdBasedAvailabilityStrategy
+             to route to alternate regions (defaults: 500ms initial threshold, 100ms between attempts) if not
+             overridden by the client's default strategy.
+        :paramtype availability_strategy: ~azure.cosmos.CrossRegionHedgingStrategy
+        :keyword availability_strategy_executor: Optional ThreadPoolExecutor used by the availability strategy
+             for executing concurrent cross-region requests. If not provided but availability_strategy is enabled,
+             a new executor will be created as needed.
+        :paramtype availability_strategy: ~concurrent.futures.thread.ThreadPoolExecutor
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
         :returns: An Iterable of items (dicts).
@@ -550,9 +563,13 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
         :keyword availability_strategy: The availability strategy to use for this request. Configures when
-            to route to alternate regions (defaults: 500ms initial threshold, 100ms between attempts) if not
-            overridden by the client's default strategy.
-        :paramtype availability_strategy: ~azure.cosmos.ThresholdBasedAvailabilityStrategy
+             to route to alternate regions (defaults: 500ms initial threshold, 100ms between attempts) if not
+             overridden by the client's default strategy.
+        :paramtype availability_strategy: ~azure.cosmos.CrossRegionHedgingStrategy
+        :keyword availability_strategy_executor: Optional ThreadPoolExecutor used by the availability strategy
+             for executing concurrent cross-region requests. If not provided but availability_strategy is enabled,
+             a new executor will be created as needed.
+        :paramtype availability_strategy: ~concurrent.futures.thread.ThreadPoolExecutor
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
         :returns: An Iterable of items (dicts).
@@ -586,9 +603,13 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
         :keyword availability_strategy: The availability strategy to use for this request. Configures when
-            to route to alternate regions (defaults: 500ms initial threshold, 100ms between attempts) if not
-            overridden by the client's default strategy.
-        :paramtype availability_strategy: ~azure.cosmos.ThresholdBasedAvailabilityStrategy
+             to route to alternate regions (defaults: 500ms initial threshold, 100ms between attempts) if not
+             overridden by the client's default strategy.
+        :paramtype availability_strategy: ~azure.cosmos.CrossRegionHedgingStrategy
+        :keyword availability_strategy_executor: Optional ThreadPoolExecutor used by the availability strategy
+             for executing concurrent cross-region requests. If not provided but availability_strategy is enabled,
+             a new executor will be created as needed.
+        :paramtype availability_strategy: ~concurrent.futures.thread.ThreadPoolExecutor
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
         :returns: An Iterable of items (dicts).
@@ -633,9 +654,13 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
         :keyword availability_strategy: The availability strategy to use for this request. Configures when
-            to route to alternate regions (defaults: 500ms initial threshold, 100ms between attempts) if not
-            overridden by the client's default strategy.
-        :paramtype availability_strategy: ~azure.cosmos.ThresholdBasedAvailabilityStrategy
+             to route to alternate regions (defaults: 500ms initial threshold, 100ms between attempts) if not
+             overridden by the client's default strategy.
+        :paramtype availability_strategy: ~azure.cosmos.CrossRegionHedgingStrategy
+        :keyword availability_strategy_executor: Optional ThreadPoolExecutor used by the availability strategy
+             for executing concurrent cross-region requests. If not provided but availability_strategy is enabled,
+             a new executor will be created as needed.
+        :paramtype availability_strategy: ~concurrent.futures.thread.ThreadPoolExecutor
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
         :returns: An Iterable of items (dicts).
@@ -676,8 +701,11 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
         :keyword availability_strategy: The availability strategy to use for this request. If not provided,
-            the client's default strategy will be used.
-        :paramtype availability_strategy: ~azure.cosmos.ThresholdBasedAvailabilityStrategy
+             the client's default strategy will be used.
+        :keyword availability_strategy_executor: Optional ThreadPoolExecutor used by the availability strategy
+             for executing concurrent cross-region requests. If not provided but availability_strategy is enabled,
+             a new executor will be created as needed.
+        :paramtype availability_strategy: ~azure.cosmos.CrossRegionHedgingStrategy
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
         :param Any args: args
@@ -788,10 +816,14 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
         :keyword str session_token: Token for use with Session consistency.
         :keyword int throughput_bucket: The desired throughput bucket for the client.
-        :keyword availability_strategy: The threshold-based availability strategy to use for this request. Configures when
-                  to route to alternate regions (defaults: 500ms initial threshold, 100ms between attempts) if not
-                  overridden by the client's default strategy.
-        :paramtype availability_strategy: ~azure.cosmos.ThresholdBasedAvailabilityStrategy
+        :keyword availability_strategy: The availability strategy to use for this request. Configures when
+             to route to alternate regions (defaults: 500ms initial threshold, 100ms between attempts) if not
+             overridden by the client's default strategy.
+        :paramtype availability_strategy: ~azure.cosmos.CrossRegionHedgingStrategy
+        :keyword availability_strategy_executor: Optional ThreadPoolExecutor used by the availability strategy
+             for executing concurrent cross-region requests. If not provided but availability_strategy is enabled,
+             a new executor will be created as needed.
+        :paramtype availability_strategy: ~concurrent.futures.thread.ThreadPoolExecutor
         :returns: An Iterable of items (dicts).
         :rtype: ItemPaged[Dict[str, Any]]
 
@@ -877,10 +909,14 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
         :keyword str session_token: Token for use with Session consistency.
         :keyword int throughput_bucket: The desired throughput bucket for the client.
-        :keyword availability_strategy: The threshold-based availability strategy to use for this request. Configures when
-                    to route to alternate regions (defaults: 500ms initial threshold, 100ms between attempts) if not
-                    overridden by the client's default strategy.
-        :paramtype availability_strategy: ~azure.cosmos.ThresholdBasedAvailabilityStrategy
+        :keyword availability_strategy: The availability strategy to use for this request. Configures when
+             to route to alternate regions (defaults: 500ms initial threshold, 100ms between attempts) if not
+             overridden by the client's default strategy.
+        :paramtype availability_strategy: ~azure.cosmos.CrossRegionHedgingStrategy
+        :keyword availability_strategy_executor: Optional ThreadPoolExecutor used by the availability strategy
+             for executing concurrent cross-region requests. If not provided but availability_strategy is enabled,
+             a new executor will be created as needed.
+        :paramtype availability_strategy: ~concurrent.futures.thread.ThreadPoolExecutor
         :returns: An Iterable of items (dicts).
         :rtype: ItemPaged[Dict[str, Any]]
 
@@ -1088,10 +1124,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-        :keyword availability_strategy: The threshold-based availability strategy to use for this request. Configures when
-                    to route to alternate regions (defaults: 500ms initial threshold, 100ms between attempts) if not
-                    overridden by the client's default strategy.
-        :paramtype availability_strategy: ~azure.cosmos.ThresholdBasedAvailabilityStrategy
+        :keyword availability_strategy: The availability strategy to use for this request. Configures when
+                     to route to alternate regions (defaults: 500ms initial threshold, 100ms between attempts) if not
+                     overridden by the client's default strategy.
+        :paramtype availability_strategy: ~azure.cosmos.CrossRegionHedgingStrategy
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The replace operation failed or the item with
             given id does not exist.
         :returns: A CosmosDict representing the item after replace went through. The dict will be empty if `no_response`
@@ -1192,10 +1228,14 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-        :keyword availability_strategy: The threshold-based availability strategy to use for this request. Configures when
-                    to route to alternate regions (defaults: 500ms initial threshold, 100ms between attempts) if not
-                    overridden by the client's default strategy.
-        :paramtype availability_strategy: ~azure.cosmos.ThresholdBasedAvailabilityStrategy
+        :keyword availability_strategy: The availability strategy to use for this request. Configures when
+             to route to alternate regions (defaults: 500ms initial threshold, 100ms between attempts) if not
+             overridden by the client's default strategy.
+        :paramtype availability_strategy: ~azure.cosmos.CrossRegionHedgingStrategy
+        :keyword availability_strategy_executor: Optional ThreadPoolExecutor used by the availability strategy
+             for executing concurrent cross-region requests. If not provided but availability_strategy is enabled,
+             a new executor will be created as needed.
+        :paramtype availability_strategy: ~concurrent.futures.thread.ThreadPoolExecutor
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item could not be upserted.
         :returns: A CosmosDict representing the upserted item. The dict will be empty if `no_response` is specified.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
@@ -1298,9 +1338,13 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
         :keyword availability_strategy: The availability strategy to use for this request. Configures when
-            to route to alternate regions (defaults: 500ms initial threshold, 100ms between attempts) if not
-            overridden by the client's default strategy.
-        :paramtype availability_strategy: ~azure.cosmos.ThresholdBasedAvailabilityStrategy
+             to route to alternate regions (defaults: 500ms initial threshold, 100ms between attempts) if not
+             overridden by the client's default strategy.
+        :paramtype availability_strategy: ~azure.cosmos.CrossRegionHedgingStrategy
+        :keyword availability_strategy_executor: Optional ThreadPoolExecutor used by the availability strategy
+             for executing concurrent cross-region requests. If not provided but availability_strategy is enabled,
+             a new executor will be created as needed.
+        :paramtype availability_strategy: ~concurrent.futures.thread.ThreadPoolExecutor
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Item with the given ID already exists.
         :returns: A CosmosDict representing the new item. The dict will be empty if `no_response` is specified.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
@@ -1412,9 +1456,14 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-        :keyword availability_strategy: The availability strategy to use for this request. If not provided,
-            the client's default strategy will be used.
-        :paramtype availability_strategy: ~azure.cosmos.ThresholdBasedAvailabilityStrategy
+        :keyword availability_strategy: The availability strategy to use for this request. Configures when
+             to route to alternate regions (defaults: 500ms initial threshold, 100ms between attempts) if not
+             overridden by the client's default strategy.
+        :paramtype availability_strategy: ~azure.cosmos.CrossRegionHedgingStrategy
+        :keyword availability_strategy_executor: Optional ThreadPoolExecutor used by the availability strategy
+             for executing concurrent cross-region requests. If not provided but availability_strategy is enabled,
+             a new executor will be created as needed.
+        :paramtype availability_strategy: ~concurrent.futures.thread.ThreadPoolExecutor
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The patch operations failed or the item with
             given id does not exist.
         :returns: A CosmosDict representing the item after the patch operations went through. The dict will be empty
@@ -1493,9 +1542,14 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             the operation is not guaranteed to be idempotent. This should only be enabled if the application can
             tolerate such risks or has logic to safely detect and handle duplicate operations.
         :keyword int throughput_bucket: The desired throughput bucket for the client
-        :keyword availability_strategy: The availability strategy to use for this request. If not provided,
-            the client's default strategy will be used.
-        :paramtype availability_strategy: ~azure.cosmos.ThresholdBasedAvailabilityStrategy
+        :keyword availability_strategy: The availability strategy to use for this request. Configures when
+             to route to alternate regions (defaults: 500ms initial threshold, 100ms between attempts) if not
+             overridden by the client's default strategy.
+        :paramtype availability_strategy: ~azure.cosmos.CrossRegionHedgingStrategy
+        :keyword availability_strategy_executor: Optional ThreadPoolExecutor used by the availability strategy
+             for executing concurrent cross-region requests. If not provided but availability_strategy is enabled,
+             a new executor will be created as needed.
+        :paramtype availability_strategy: ~concurrent.futures.thread.ThreadPoolExecutor
         :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
@@ -1593,9 +1647,14 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-        :keyword availability_strategy: The availability strategy to use for this request. If not provided,
-            the client's default strategy will be used.
-        :paramtype availability_strategy: ~azure.cosmos.ThresholdBasedAvailabilityStrategy
+        :keyword availability_strategy: The availability strategy to use for this request. Configures when
+             to route to alternate regions (defaults: 500ms initial threshold, 100ms between attempts) if not
+             overridden by the client's default strategy.
+        :paramtype availability_strategy: ~azure.cosmos.CrossRegionHedgingStrategy
+        :keyword availability_strategy_executor: Optional ThreadPoolExecutor used by the availability strategy
+             for executing concurrent cross-region requests. If not provided but availability_strategy is enabled,
+             a new executor will be created as needed.
+        :paramtype availability_strategy: ~concurrent.futures.thread.ThreadPoolExecutor
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], None], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The item wasn't deleted successfully.
