@@ -217,7 +217,7 @@ class QueueServiceClient(  # type: ignore [misc]
         :keyword expiry:
             A DateTime value. Indicates when the key stops being valid.
         :paramtype expiry: ~datetime.datetime
-        :keyword start
+        :keyword start:
             A DateTime value. Indicates when the key becomes valid.
         :paramtype start: Optional[~datetime.datetime]
         :keyword int timeout:
