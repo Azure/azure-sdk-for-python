@@ -971,6 +971,36 @@ class McpTool(Tool[MCPToolDefinition]):
         :type tool_call: Any
         """
 
+    @staticmethod
+    def merge_resources(mcp_tools: List["McpTool"]) -> ToolResources:
+        """
+        Merge the tool resources from multiple MCP tool instances into a single ToolResources object.
+
+        This is useful when creating a run that should have access to multiple MCP servers at once.
+
+        :param mcp_tools: A list of McpTool instances whose resources will be merged.
+        :type mcp_tools: List[McpTool]
+        :return: A ToolResources object containing all MCP tool resources from the provided tools.
+        :rtype: ToolResources
+        :raises ValueError: If the provided list is empty.
+        :raises TypeError: If any item in the list is not an instance of McpTool.
+        """
+        if not mcp_tools:
+            raise ValueError("mcp_tools must be a non-empty list of McpTool instances.")
+
+        flat_resources: List[MCPToolResource] = []
+        for tool in mcp_tools:
+            if not isinstance(tool, McpTool):
+                raise TypeError("All items in mcp_tools must be instances of McpTool.")
+            # Combine all MCP resources; duplicates are harmless and can be filtered by the service if needed
+            res = tool.resources.get("mcp")  # May be a list or a single MCPToolResource depending on model behavior
+            if isinstance(res, list):
+                flat_resources.extend(cast(List[MCPToolResource], res))
+            elif res is not None:
+                flat_resources.append(cast(MCPToolResource, res))
+
+        return ToolResources(mcp=flat_resources)
+
 
 class AzureFunctionTool(Tool[AzureFunctionToolDefinition]):
     """
@@ -1431,13 +1461,26 @@ class CodeInterpreterTool(Tool[CodeInterpreterToolDefinition]):
 
     :param file_ids: A list of file IDs to interpret.
     :type file_ids: list[str]
+    :param data_sources: The list of data sources for the enterprise file search.
+    :type data_sources: list[VectorStoreDataSource]
+    :raises: ValueError if both file_ids and data_sources are provided.
     """
 
-    def __init__(self, file_ids: Optional[List[str]] = None):
-        if file_ids is None:
-            self.file_ids = set()
-        else:
+    _INVALID_CONFIGURATION = "file_ids and data_sources are mutually exclusive."
+
+    def __init__(
+        self,
+        file_ids: Optional[List[str]] = None,
+        data_sources: Optional[List[VectorStoreDataSource]] = None,
+    ):
+        if file_ids and data_sources:
+            raise ValueError(CodeInterpreterTool._INVALID_CONFIGURATION)
+        self.file_ids = set()
+        if file_ids:
             self.file_ids = set(file_ids)
+        self.data_sources: Dict[str, VectorStoreDataSource] = {}
+        if data_sources:
+            self.data_sources = {ds.asset_identifier: ds for ds in data_sources}
 
     def add_file(self, file_id: str) -> None:
         """
@@ -1445,8 +1488,23 @@ class CodeInterpreterTool(Tool[CodeInterpreterToolDefinition]):
 
         :param file_id: The ID of the file to interpret.
         :type file_id: str
+        :raises: ValueError if data_sources are provided.
         """
+        if self.data_sources:
+            raise ValueError(CodeInterpreterTool._INVALID_CONFIGURATION)
         self.file_ids.add(file_id)
+
+    def add_data_source(self, data_source: VectorStoreDataSource) -> None:
+        """
+        Add a data source to the list of data sources to interpret.
+
+        :param data_source: The new data source.
+        :type data_source: VectorStoreDataSource
+        :raises: ValueError if file_ids are provided.
+        """
+        if self.file_ids:
+            raise ValueError(CodeInterpreterTool._INVALID_CONFIGURATION)
+        self.data_sources[data_source.asset_identifier] = data_source
 
     def remove_file(self, file_id: str) -> None:
         """
@@ -1455,7 +1513,16 @@ class CodeInterpreterTool(Tool[CodeInterpreterToolDefinition]):
         :param file_id: The ID of the file to remove.
         :type file_id: str
         """
-        self.file_ids.remove(file_id)
+        self.file_ids.discard(file_id)
+
+    def remove_data_source(self, asset_identifier: str) -> None:
+        """
+        Remove The asset from data_sources.
+
+        :param asset_identifier: The asset identifier to remove.
+        :type asset_identifier: str
+        """
+        self.data_sources.pop(asset_identifier, None)
 
     @property
     def definitions(self) -> List[CodeInterpreterToolDefinition]:
@@ -1473,9 +1540,13 @@ class CodeInterpreterTool(Tool[CodeInterpreterToolDefinition]):
 
         :rtype: ToolResources
         """
-        if not self.file_ids:
+        if not self.file_ids and not self.data_sources:
             return ToolResources()
-        return ToolResources(code_interpreter=CodeInterpreterToolResource(file_ids=list(self.file_ids)))
+        if self.file_ids:
+            return ToolResources(code_interpreter=CodeInterpreterToolResource(file_ids=list(self.file_ids)))
+        return ToolResources(
+            code_interpreter=CodeInterpreterToolResource(data_sources=list(self.data_sources.values()))
+        )
 
     def execute(self, tool_call: Any) -> Any:
         pass

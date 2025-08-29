@@ -309,6 +309,66 @@ class TestConfigure(unittest.TestCase):
                 tp_init_mock.add_span_processor.assert_has_calls([call(custom_sp), call(bsp_init_mock)])
                 self.assertEqual(settings_mock.tracing_implementation, opentelemetry_span_mock)
 
+    @patch(
+        "azure.monitor.opentelemetry._configure.BatchSpanProcessor",
+    )
+    @patch(
+        "azure.monitor.opentelemetry._configure.AzureMonitorTraceExporter",
+    )
+    @patch(
+        "azure.monitor.opentelemetry._configure.set_tracer_provider",
+    )
+    @patch(
+        "azure.monitor.opentelemetry._configure.TracerProvider",
+        autospec=True,
+    )
+    @patch(
+        "azure.monitor.opentelemetry._configure.RateLimitedSampler",
+    )
+    def test_setup_tracing_rate_limited_sampler(
+        self,
+        sampler_mock,
+        tp_mock,
+        set_tracer_provider_mock,
+        trace_exporter_mock,
+        bsp_mock,
+    ):
+        sampler_init_mock = Mock()
+        sampler_mock.return_value = sampler_init_mock
+        tp_init_mock = Mock()
+        tp_mock.return_value = tp_init_mock
+        trace_exp_init_mock = Mock()
+        trace_exporter_mock.return_value = trace_exp_init_mock
+        bsp_init_mock = Mock()
+        bsp_mock.return_value = bsp_init_mock
+        custom_sp = Mock()
+
+        settings_mock = Mock()
+        opentelemetry_span_mock = Mock()
+
+        configurations = {
+            "connection_string": "test_cs",
+            "instrumentation_options": {"azure_sdk": {"enabled": True}},
+            "traces_per_second": 2.0,
+            "span_processors": [custom_sp],
+            "resource": TEST_RESOURCE,
+        }
+        with patch("azure.monitor.opentelemetry._configure._is_instrumentation_enabled") as instr_mock:
+            instr_mock.return_value = True
+            with patch.dict('sys.modules', {
+                'azure.core.settings': Mock(settings=settings_mock),
+                'azure.core.tracing.ext.opentelemetry_span': Mock(OpenTelemetrySpan=opentelemetry_span_mock)
+            }):
+                _setup_tracing(configurations)
+                sampler_mock.assert_called_once_with(target_spans_per_second_limit=2.0)
+                tp_mock.assert_called_once_with(sampler=sampler_init_mock, resource=TEST_RESOURCE)
+                set_tracer_provider_mock.assert_called_once_with(tp_init_mock)
+                trace_exporter_mock.assert_called_once_with(**configurations)
+                bsp_mock.assert_called_once_with(trace_exp_init_mock)
+                self.assertEqual(tp_init_mock.add_span_processor.call_count, 2)
+                tp_init_mock.add_span_processor.assert_has_calls([call(custom_sp), call(bsp_init_mock)])
+                self.assertEqual(settings_mock.tracing_implementation, opentelemetry_span_mock)
+
 
     @patch("azure.monitor.opentelemetry._configure.getLogger")
     def test_setup_logging(self, get_logger_mock):
