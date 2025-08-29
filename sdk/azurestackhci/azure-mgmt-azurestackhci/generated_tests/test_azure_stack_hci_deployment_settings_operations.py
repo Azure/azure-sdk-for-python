@@ -20,11 +20,11 @@ class TestAzureStackHCIDeploymentSettingsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_clusters(self, resource_group):
+    def test_deployment_settings_list_by_clusters(self, resource_group):
         response = self.client.deployment_settings.list_by_clusters(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2024-04-01",
+            api_version="2024-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -32,12 +32,12 @@ class TestAzureStackHCIDeploymentSettingsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_deployment_settings_get(self, resource_group):
         response = self.client.deployment_settings.get(
             resource_group_name=resource_group.name,
             cluster_name="str",
             deployment_settings_name="default",
-            api_version="2024-04-01",
+            api_version="2024-01-01",
         )
 
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestAzureStackHCIDeploymentSettingsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_deployment_settings_begin_create_or_update(self, resource_group):
         response = self.client.deployment_settings.begin_create_or_update(
             resource_group_name=resource_group.name,
             cluster_name="str",
@@ -91,16 +91,7 @@ class TestAzureStackHCIDeploymentSettingsOperations(AzureMgmtRecordedTestCase):
                                         }
                                     ],
                                     "storageConnectivitySwitchless": False,
-                                    "storageNetworks": [
-                                        {
-                                            "name": "str",
-                                            "networkAdapterName": "str",
-                                            "storageAdapterIPInfo": [
-                                                {"ipv4Address": "str", "physicalNode": "str", "subnetMask": "str"}
-                                            ],
-                                            "vlanId": "str",
-                                        }
-                                    ],
+                                    "storageNetworks": [{"name": "str", "networkAdapterName": "str", "vlanId": "str"}],
                                 },
                                 "infrastructureNetwork": [
                                     {
@@ -119,14 +110,6 @@ class TestAzureStackHCIDeploymentSettingsOperations(AzureMgmtRecordedTestCase):
                                 },
                                 "optionalServices": {"customLocation": "str"},
                                 "physicalNodes": [{"ipv4Address": "str", "name": "str"}],
-                                "sdnIntegration": {
-                                    "networkController": {
-                                        "macAddressPoolStart": "str",
-                                        "macAddressPoolStop": "str",
-                                        "networkVirtualizationEnabled": bool,
-                                    }
-                                },
-                                "secrets": [{"eceSecretName": "str", "secretLocation": "str", "secretName": "str"}],
                                 "secretsLocation": "str",
                                 "securitySettings": {
                                     "bitlockerBootVolume": True,
@@ -141,20 +124,7 @@ class TestAzureStackHCIDeploymentSettingsOperations(AzureMgmtRecordedTestCase):
                                     "wdacEnforced": True,
                                 },
                                 "storage": {"configurationMode": "Express"},
-                            },
-                            "sbePartnerInfo": {
-                                "credentialList": [
-                                    {"eceSecretName": "str", "secretLocation": "str", "secretName": "str"}
-                                ],
-                                "partnerProperties": [{"name": "str", "value": "str"}],
-                                "sbeDeploymentInfo": {
-                                    "family": "str",
-                                    "publisher": "str",
-                                    "sbeManifestCreationDate": "2020-02-20 00:00:00",
-                                    "sbeManifestSource": "str",
-                                    "version": "str",
-                                },
-                            },
+                            }
                         }
                     ],
                     "version": "str",
@@ -162,7 +132,6 @@ class TestAzureStackHCIDeploymentSettingsOperations(AzureMgmtRecordedTestCase):
                 "deploymentMode": "Deploy",
                 "id": "str",
                 "name": "str",
-                "operationType": "ClusterProvisioning",
                 "provisioningState": "str",
                 "reportedProperties": {
                     "deploymentStatus": {
@@ -207,7 +176,7 @@ class TestAzureStackHCIDeploymentSettingsOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
             },
             deployment_settings_name="default",
-            api_version="2024-04-01",
+            api_version="2024-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -215,12 +184,12 @@ class TestAzureStackHCIDeploymentSettingsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_deployment_settings_begin_delete(self, resource_group):
         response = self.client.deployment_settings.begin_delete(
             resource_group_name=resource_group.name,
             cluster_name="str",
             deployment_settings_name="default",
-            api_version="2024-04-01",
+            api_version="2024-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

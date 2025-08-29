@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -53,7 +54,6 @@ def main():
                                 },
                                 "domainFqdn": "ASZ1PLab8.nttest.microsoft.com",
                                 "hostNetwork": {
-                                    "enableStorageAutoIp": False,
                                     "intents": [
                                         {
                                             "adapter": ["Port2"],
@@ -80,18 +80,7 @@ def main():
                                     ],
                                     "storageConnectivitySwitchless": True,
                                     "storageNetworks": [
-                                        {
-                                            "name": "Storage1Network",
-                                            "networkAdapterName": "Port3",
-                                            "storageAdapterIPInfo": [
-                                                {
-                                                    "ipv4Address": "10.57.48.60",
-                                                    "physicalNode": "string",
-                                                    "subnetMask": "255.255.248.0",
-                                                }
-                                            ],
-                                            "vlanId": "5",
-                                        }
+                                        {"name": "Storage1Network", "networkAdapterName": "Port3", "vlanId": "5"}
                                     ],
                                 },
                                 "infrastructureNetwork": [
@@ -113,25 +102,6 @@ def main():
                                     {"ipv4Address": "10.57.51.224", "name": "ms169host"},
                                     {"ipv4Address": "10.57.53.236", "name": "ms154host"},
                                 ],
-                                "sdnIntegration": {
-                                    "networkController": {
-                                        "macAddressPoolStart": "00-0D-3A-1B-C7-21",
-                                        "macAddressPoolStop": "00-0D-3A-1B-C7-29",
-                                        "networkVirtualizationEnabled": True,
-                                    }
-                                },
-                                "secrets": [
-                                    {
-                                        "eceSecretName": "BMCAdminUserCred",
-                                        "secretLocation": "https://sclusterkvnirhci35.vault.azure.net/secrets/cluster-34232342-BmcAdminUser-f5bcc1d9-23af-4ae9-aca1-041d0f593a63/9276354aabfc492fa9b2cdbefb54ae4b",
-                                        "secretName": "cluster1-BmcAdminUser-f5bcc1d9-23af-4ae9-aca1-041d0f593a63",
-                                    },
-                                    {
-                                        "eceSecretName": "AzureStackLCMUserCredential",
-                                        "secretLocation": "https://sclusterkvnirhci35.vault.azure.net/secrets/cluster-34232342-AzureStackLCMUserCredential-f5bcc1d9-23af-4ae9-aca1-041d0f593a63/9276354aabfc492fa9b2cdbefb54ae4c",
-                                        "secretName": "cluster2-AzureStackLCMUserCredential-f5bcc1d9-23af-4ae9-aca1-041d0f593a63",
-                                    },
-                                ],
                                 "secretsLocation": "/subscriptions/db4e2fdb-6d80-4e6e-b7cd-xxxxxxx/resourceGroups/test-rg/providers/Microsoft.KeyVault/vaults/abcd123",
                                 "securitySettings": {
                                     "bitlockerBootVolume": True,
@@ -146,40 +116,18 @@ def main():
                                     "wdacEnforced": True,
                                 },
                                 "storage": {"configurationMode": "Express"},
-                            },
-                            "sbePartnerInfo": {
-                                "credentialList": [
-                                    {
-                                        "eceSecretName": "DownloadConnectorCred",
-                                        "secretLocation": "https://sclusterkvnirhci35.vault.azure.net/secrets/cluster-34232342-DownloadConnectorCred-f5bcc1d9-23af-4ae9-aca1-041d0f593a63/9276354aabfc492fa9b2cdbefb54ae4b",
-                                        "secretName": "cluster1-DownloadConnectorCred-f5bcc1d9-23af-4ae9-aca1-041d0f593a63",
-                                    }
-                                ],
-                                "partnerProperties": [
-                                    {"name": "EnableBMCIpV6", "value": "false"},
-                                    {"name": "PhoneHomePort", "value": "1653"},
-                                    {"name": "BMCSecurityState", "value": "HighSecurity"},
-                                ],
-                                "sbeDeploymentInfo": {
-                                    "family": "Gen5",
-                                    "publisher": "Contoso",
-                                    "sbeManifestCreationDate": "2023-07-25T02:40:33Z",
-                                    "sbeManifestSource": "default",
-                                    "version": "4.0.2309.13",
-                                },
-                            },
+                            }
                         }
                     ],
                     "version": "string",
                 },
                 "deploymentMode": "Deploy",
-                "operationType": "ClusterProvisioning",
             }
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/azurestackhci/resource-manager/Microsoft.AzureStackHCI/StackHCI/stable/2024-04-01/examples/PutDeploymentSettings.json
+# x-ms-original-file: specification/azurestackhci/resource-manager/Microsoft.AzureStackHCI/stable/2024-01-01/examples/PutDeploymentSettings.json
 if __name__ == "__main__":
     main()

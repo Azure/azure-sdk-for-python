@@ -20,12 +20,12 @@ class TestAzureStackHCIExtensionsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_arc_setting(self, resource_group):
+    def test_extensions_list_by_arc_setting(self, resource_group):
         response = self.client.extensions.list_by_arc_setting(
             resource_group_name=resource_group.name,
             cluster_name="str",
             arc_setting_name="str",
-            api_version="2024-04-01",
+            api_version="2024-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -33,13 +33,13 @@ class TestAzureStackHCIExtensionsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_extensions_get(self, resource_group):
         response = self.client.extensions.get(
             resource_group_name=resource_group.name,
             cluster_name="str",
             arc_setting_name="str",
             extension_name="str",
-            api_version="2024-04-01",
+            api_version="2024-01-01",
         )
 
         # please add some check logic here by yourself
@@ -47,7 +47,7 @@ class TestAzureStackHCIExtensionsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create(self, resource_group):
+    def test_extensions_begin_create(self, resource_group):
         response = self.client.extensions.begin_create(
             resource_group_name=resource_group.name,
             cluster_name="str",
@@ -96,7 +96,7 @@ class TestAzureStackHCIExtensionsOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "typeHandlerVersion": "str",
             },
-            api_version="2024-04-01",
+            api_version="2024-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -104,7 +104,7 @@ class TestAzureStackHCIExtensionsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_update(self, resource_group):
+    def test_extensions_begin_update(self, resource_group):
         response = self.client.extensions.begin_update(
             resource_group_name=resource_group.name,
             cluster_name="str",
@@ -118,7 +118,7 @@ class TestAzureStackHCIExtensionsOperations(AzureMgmtRecordedTestCase):
                     "typeHandlerVersion": "str",
                 }
             },
-            api_version="2024-04-01",
+            api_version="2024-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -126,13 +126,13 @@ class TestAzureStackHCIExtensionsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_extensions_begin_delete(self, resource_group):
         response = self.client.extensions.begin_delete(
             resource_group_name=resource_group.name,
             cluster_name="str",
             arc_setting_name="str",
             extension_name="str",
-            api_version="2024-04-01",
+            api_version="2024-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -140,14 +140,14 @@ class TestAzureStackHCIExtensionsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_upgrade(self, resource_group):
+    def test_extensions_begin_upgrade(self, resource_group):
         response = self.client.extensions.begin_upgrade(
             resource_group_name=resource_group.name,
             cluster_name="str",
             arc_setting_name="str",
             extension_name="str",
             extension_upgrade_parameters={"targetVersion": "str"},
-            api_version="2024-04-01",
+            api_version="2024-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

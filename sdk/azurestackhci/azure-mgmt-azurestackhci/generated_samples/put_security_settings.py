@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -33,17 +34,11 @@ def main():
     response = client.security_settings.begin_create_or_update(
         resource_group_name="test-rg",
         cluster_name="myCluster",
-        resource={
-            "properties": {
-                "securedCoreComplianceAssignment": "Audit",
-                "smbEncryptionForIntraClusterTrafficComplianceAssignment": "Audit",
-                "wdacComplianceAssignment": "ApplyAndAutoCorrect",
-            }
-        },
+        resource={"properties": {"securedCoreComplianceAssignment": "Audit"}},
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/azurestackhci/resource-manager/Microsoft.AzureStackHCI/StackHCI/stable/2024-04-01/examples/PutSecuritySettings.json
+# x-ms-original-file: specification/azurestackhci/resource-manager/Microsoft.AzureStackHCI/stable/2024-01-01/examples/PutSecuritySettings.json
 if __name__ == "__main__":
     main()

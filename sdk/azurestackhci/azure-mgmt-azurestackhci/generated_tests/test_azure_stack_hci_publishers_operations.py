@@ -20,11 +20,11 @@ class TestAzureStackHCIPublishersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_cluster(self, resource_group):
+    def test_publishers_list_by_cluster(self, resource_group):
         response = self.client.publishers.list_by_cluster(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2024-04-01",
+            api_version="2024-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -32,12 +32,12 @@ class TestAzureStackHCIPublishersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_publishers_get(self, resource_group):
         response = self.client.publishers.get(
             resource_group_name=resource_group.name,
             cluster_name="str",
             publisher_name="str",
-            api_version="2024-04-01",
+            api_version="2024-01-01",
         )
 
         # please add some check logic here by yourself

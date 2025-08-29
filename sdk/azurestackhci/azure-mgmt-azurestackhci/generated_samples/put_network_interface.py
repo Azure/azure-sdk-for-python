@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -15,7 +16,7 @@ from azure.mgmt.azurestackhci import AzureStackHCIClient
     pip install azure-identity
     pip install azure-mgmt-azurestackhci
 # USAGE
-    python configure_remote_support.py
+    python put_network_interface.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,20 +31,23 @@ def main():
         subscription_id="fd3c3665-1729-4b7b-9a38-238e83b0f98b",
     )
 
-    response = client.clusters.begin_configure_remote_support(
+    response = client.network_interfaces.begin_create_or_update(
         resource_group_name="test-rg",
-        cluster_name="mycluster",
-        remote_support_request={
+        network_interface_name="test-nic",
+        network_interfaces={
+            "extendedLocation": {
+                "name": "/subscriptions/a95612cb-f1fa-4daa-a4fd-272844fa512c/resourceGroups/dogfoodarc/providers/Microsoft.ExtendedLocation/customLocations/dogfood-location",
+                "type": "CustomLocation",
+            },
+            "location": "West US2",
             "properties": {
-                "accessLevel": "Diagnostics",
-                "expirationTimeStamp": "2020-01-01T17:18:19.1234567Z",
-                "remoteSupportType": "Enable",
-            }
+                "ipConfigurations": [{"name": "ipconfig-sample", "properties": {"subnet": {"id": "test-lnet"}}}]
+            },
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/azurestackhci/resource-manager/Microsoft.AzureStackHCI/StackHCI/stable/2024-04-01/examples/ConfigureRemoteSupport.json
+# x-ms-original-file: specification/azurestackhci/resource-manager/Microsoft.AzureStackHCI/stable/2024-01-01/examples/PutNetworkInterface.json
 if __name__ == "__main__":
     main()

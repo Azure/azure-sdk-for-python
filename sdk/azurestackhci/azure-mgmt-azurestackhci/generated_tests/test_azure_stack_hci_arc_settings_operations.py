@@ -20,11 +20,11 @@ class TestAzureStackHCIArcSettingsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_cluster(self, resource_group):
+    def test_arc_settings_list_by_cluster(self, resource_group):
         response = self.client.arc_settings.list_by_cluster(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2024-04-01",
+            api_version="2024-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -32,12 +32,12 @@ class TestAzureStackHCIArcSettingsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_arc_settings_get(self, resource_group):
         response = self.client.arc_settings.get(
             resource_group_name=resource_group.name,
             cluster_name="str",
             arc_setting_name="str",
-            api_version="2024-04-01",
+            api_version="2024-01-01",
         )
 
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestAzureStackHCIArcSettingsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create(self, resource_group):
+    def test_arc_settings_create(self, resource_group):
         response = self.client.arc_settings.create(
             resource_group_name=resource_group.name,
             cluster_name="str",
@@ -75,7 +75,7 @@ class TestAzureStackHCIArcSettingsOperations(AzureMgmtRecordedTestCase):
                 },
                 "type": "str",
             },
-            api_version="2024-04-01",
+            api_version="2024-01-01",
         )
 
         # please add some check logic here by yourself
@@ -83,13 +83,13 @@ class TestAzureStackHCIArcSettingsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_update(self, resource_group):
+    def test_arc_settings_update(self, resource_group):
         response = self.client.arc_settings.update(
             resource_group_name=resource_group.name,
             cluster_name="str",
             arc_setting_name="str",
             arc_setting={"connectivityProperties": {}, "tags": {"str": "str"}},
-            api_version="2024-04-01",
+            api_version="2024-01-01",
         )
 
         # please add some check logic here by yourself
@@ -97,12 +97,12 @@ class TestAzureStackHCIArcSettingsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_arc_settings_begin_delete(self, resource_group):
         response = self.client.arc_settings.begin_delete(
             resource_group_name=resource_group.name,
             cluster_name="str",
             arc_setting_name="str",
-            api_version="2024-04-01",
+            api_version="2024-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -110,12 +110,12 @@ class TestAzureStackHCIArcSettingsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_generate_password(self, resource_group):
+    def test_arc_settings_generate_password(self, resource_group):
         response = self.client.arc_settings.generate_password(
             resource_group_name=resource_group.name,
             cluster_name="str",
             arc_setting_name="str",
-            api_version="2024-04-01",
+            api_version="2024-01-01",
         )
 
         # please add some check logic here by yourself
@@ -123,12 +123,12 @@ class TestAzureStackHCIArcSettingsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_identity(self, resource_group):
+    def test_arc_settings_begin_create_identity(self, resource_group):
         response = self.client.arc_settings.begin_create_identity(
             resource_group_name=resource_group.name,
             cluster_name="str",
             arc_setting_name="str",
-            api_version="2024-04-01",
+            api_version="2024-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -136,12 +136,12 @@ class TestAzureStackHCIArcSettingsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_consent_and_install_default_extensions(self, resource_group):
+    def test_arc_settings_consent_and_install_default_extensions(self, resource_group):
         response = self.client.arc_settings.consent_and_install_default_extensions(
             resource_group_name=resource_group.name,
             cluster_name="str",
             arc_setting_name="str",
-            api_version="2024-04-01",
+            api_version="2024-01-01",
         )
 
         # please add some check logic here by yourself
@@ -149,12 +149,12 @@ class TestAzureStackHCIArcSettingsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_initialize_disable_process(self, resource_group):
+    def test_arc_settings_begin_initialize_disable_process(self, resource_group):
         response = self.client.arc_settings.begin_initialize_disable_process(
             resource_group_name=resource_group.name,
             cluster_name="str",
             arc_setting_name="str",
-            api_version="2024-04-01",
+            api_version="2024-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

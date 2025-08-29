@@ -20,11 +20,11 @@ class TestAzureStackHCIUpdateSummariesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_update_summaries_list(self, resource_group):
         response = self.client.update_summaries.list(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2024-04-01",
+            api_version="2024-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -32,11 +32,11 @@ class TestAzureStackHCIUpdateSummariesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_update_summaries_begin_delete(self, resource_group):
         response = self.client.update_summaries.begin_delete(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2024-04-01",
+            api_version="2024-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -44,13 +44,11 @@ class TestAzureStackHCIUpdateSummariesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_put(self, resource_group):
+    def test_update_summaries_put(self, resource_group):
         response = self.client.update_summaries.put(
             resource_group_name=resource_group.name,
             cluster_name="str",
             update_location_properties={
-                "currentOemVersion": "str",
-                "currentSbeVersion": "str",
                 "currentVersion": "str",
                 "hardwareModel": "str",
                 "healthCheckDate": "2020-02-20 00:00:00",
@@ -60,7 +58,6 @@ class TestAzureStackHCIUpdateSummariesOperations(AzureMgmtRecordedTestCase):
                         "description": "str",
                         "displayName": "str",
                         "healthCheckSource": "str",
-                        "healthCheckTags": {},
                         "name": "str",
                         "remediation": "str",
                         "severity": "str",
@@ -68,7 +65,6 @@ class TestAzureStackHCIUpdateSummariesOperations(AzureMgmtRecordedTestCase):
                         "tags": {"key": "str", "value": "str"},
                         "targetResourceID": "str",
                         "targetResourceName": "str",
-                        "targetResourceType": "str",
                         "timestamp": "2020-02-20 00:00:00",
                         "title": "str",
                     }
@@ -93,7 +89,7 @@ class TestAzureStackHCIUpdateSummariesOperations(AzureMgmtRecordedTestCase):
                 },
                 "type": "str",
             },
-            api_version="2024-04-01",
+            api_version="2024-01-01",
         )
 
         # please add some check logic here by yourself
@@ -101,11 +97,11 @@ class TestAzureStackHCIUpdateSummariesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_update_summaries_get(self, resource_group):
         response = self.client.update_summaries.get(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2024-04-01",
+            api_version="2024-01-01",
         )
 
         # please add some check logic here by yourself

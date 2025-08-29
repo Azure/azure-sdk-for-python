@@ -1,5 +1,336 @@
 # Release History
 
+## 8.0.0 (2025-09-22)
+
+### Features Added
+
+  - Client `AzureStackHCIClient` added operation group `deployment_settings`
+  - Client `AzureStackHCIClient` added operation group `edge_devices`
+  - Client `AzureStackHCIClient` added operation group `gallery_images`
+  - Client `AzureStackHCIClient` added operation group `logical_networks`
+  - Client `AzureStackHCIClient` added operation group `marketplace_gallery_images`
+  - Client `AzureStackHCIClient` added operation group `network_interfaces`
+  - Client `AzureStackHCIClient` added operation group `offers`
+  - Client `AzureStackHCIClient` added operation group `publishers`
+  - Client `AzureStackHCIClient` added operation group `security_settings`
+  - Client `AzureStackHCIClient` added operation group `skus`
+  - Client `AzureStackHCIClient` added operation group `storage_containers`
+  - Client `AzureStackHCIClient` added operation group `update_runs`
+  - Client `AzureStackHCIClient` added operation group `update_summaries`
+  - Client `AzureStackHCIClient` added operation group `updates`
+  - Client `AzureStackHCIClient` added operation group `virtual_hard_disks`
+  - Client `AzureStackHCIClient` added operation group `virtual_machine_instances`
+  - Client `AzureStackHCIClient` added operation group `hybrid_identity_metadata`
+  - Client `AzureStackHCIClient` added operation group `guest_agent`
+  - Client `AzureStackHCIClient` added operation group `guest_agents`
+  - Model `ArcConnectivityProperties` added property `service_configurations`
+  - Model `ArcSetting` added property `default_extensions`
+  - Model `ArcSetting` added property `system_data`
+  - Enum `ArcSettingAggregateState` added member `ACCEPTED`
+  - Enum `ArcSettingAggregateState` added member `DISABLE_IN_PROGRESS`
+  - Enum `ArcSettingAggregateState` added member `PROVISIONING`
+  - Model `Cluster` added property `connectivity_status`
+  - Model `Cluster` added property `software_assurance_properties`
+  - Model `Cluster` added property `isolated_vm_attestation_configuration`
+  - Model `Cluster` added property `resource_provider_object_id`
+  - Model `Cluster` added property `principal_id`
+  - Model `Cluster` added property `tenant_id`
+  - Model `Cluster` added property `type_identity_type`
+  - Model `Cluster` added property `user_assigned_identities`
+  - Model `Cluster` added property `system_data`
+  - Model `ClusterNode` added property `node_type`
+  - Model `ClusterNode` added property `ehc_resource_id`
+  - Model `ClusterNode` added property `os_display_version`
+  - Model `ClusterNode` added property `last_licensing_timestamp`
+  - Model `ClusterNode` added property `oem_activation`
+  - Model `ClusterPatch` added property `principal_id`
+  - Model `ClusterPatch` added property `tenant_id`
+  - Model `ClusterPatch` added property `type`
+  - Model `ClusterPatch` added property `user_assigned_identities`
+  - Model `ClusterReportedProperties` added property `supported_capabilities`
+  - Model `ClusterReportedProperties` added property `cluster_type`
+  - Model `ClusterReportedProperties` added property `manufacturer`
+  - Model `ClusterReportedProperties` added property `oem_activation`
+  - Model `Extension` added property `managed_by`
+  - Model `Extension` added property `enable_automatic_upgrade`
+  - Model `Extension` added property `system_data`
+  - Enum `ExtensionAggregateState` added member `ACCEPTED`
+  - Enum `ExtensionAggregateState` added member `PROVISIONING`
+  - Enum `ExtensionAggregateState` added member `UPGRADE_FAILED_ROLLBACK_SUCCEEDED`
+  - Enum `NodeArcState` added member `ACCEPTED`
+  - Enum `NodeArcState` added member `DISABLE_IN_PROGRESS`
+  - Enum `NodeArcState` added member `IN_PROGRESS`
+  - Enum `NodeArcState` added member `PARTIALLY_CONNECTED`
+  - Enum `NodeArcState` added member `PARTIALLY_SUCCEEDED`
+  - Enum `NodeArcState` added member `PROVISIONING`
+  - Enum `NodeExtensionState` added member `ACCEPTED`
+  - Enum `NodeExtensionState` added member `IN_PROGRESS`
+  - Enum `NodeExtensionState` added member `PARTIALLY_CONNECTED`
+  - Enum `NodeExtensionState` added member `PARTIALLY_SUCCEEDED`
+  - Enum `NodeExtensionState` added member `PROVISIONING`
+  - Model `PerNodeExtensionState` added property `type_handler_version`
+  - Model `PerNodeExtensionState` added property `instance_view`
+  - Model `PerNodeState` added property `arc_node_service_principal_object_id`
+  - Enum `ProvisioningState` added member `CONNECTED`
+  - Enum `ProvisioningState` added member `CREATING`
+  - Enum `ProvisioningState` added member `DELETED`
+  - Enum `ProvisioningState` added member `DELETING`
+  - Enum `ProvisioningState` added member `DISABLE_IN_PROGRESS`
+  - Enum `ProvisioningState` added member `DISCONNECTED`
+  - Enum `ProvisioningState` added member `ERROR`
+  - Enum `ProvisioningState` added member `IN_PROGRESS`
+  - Enum `ProvisioningState` added member `MOVING`
+  - Enum `ProvisioningState` added member `NOT_SPECIFIED`
+  - Enum `ProvisioningState` added member `PARTIALLY_CONNECTED`
+  - Enum `ProvisioningState` added member `PARTIALLY_SUCCEEDED`
+  - Enum `ProvisioningState` added member `UPDATING`
+  - Model `ProxyResource` added property `system_data`
+  - Model `Resource` added property `system_data`
+  - Enum `Status` added member `DEPLOYMENT_FAILED`
+  - Enum `Status` added member `DEPLOYMENT_IN_PROGRESS`
+  - Enum `Status` added member `DEPLOYMENT_SUCCESS`
+  - Enum `Status` added member `FAILED`
+  - Enum `Status` added member `IN_PROGRESS`
+  - Enum `Status` added member `NOT_SPECIFIED`
+  - Enum `Status` added member `SUCCEEDED`
+  - Enum `Status` added member `VALIDATION_FAILED`
+  - Enum `Status` added member `VALIDATION_IN_PROGRESS`
+  - Enum `Status` added member `VALIDATION_SUCCESS`
+  - Model `TrackedResource` added property `system_data`
+  - Added model `AdapterPropertyOverrides`
+  - Added enum `AvailabilityType`
+  - Added enum `CloudInitDataSource`
+  - Added enum `ClusterNodeType`
+  - Added enum `ComplianceAssignmentType`
+  - Added enum `ComplianceStatus`
+  - Added enum `ConnectivityStatus`
+  - Added model `DefaultExtensionDetails`
+  - Added model `DeploymentCluster`
+  - Added model `DeploymentConfiguration`
+  - Added model `DeploymentData`
+  - Added enum `DeploymentMode`
+  - Added model `DeploymentSecuritySettings`
+  - Added model `DeploymentSetting`
+  - Added model `DeploymentSettingListResult`
+  - Added model `DeploymentStatus`
+  - Added model `DeploymentStep`
+  - Added model `DeviceConfiguration`
+  - Added enum `DiskFileFormat`
+  - Added model `EdgeDevice`
+  - Added model `EdgeDeviceListResult`
+  - Added model `ExtendedLocation`
+  - Added enum `ExtendedLocationTypes`
+  - Added model `ExtensionInstanceView`
+  - Added model `ExtensionInstanceViewStatus`
+  - Added enum `ExtensionManagedBy`
+  - Added model `ExtensionPatch`
+  - Added model `ExtensionPatchParameters`
+  - Added model `ExtensionUpgradeParameters`
+  - Added model `GalleryDiskImage`
+  - Added model `GalleryImageIdentifier`
+  - Added model `GalleryImageStatus`
+  - Added model `GalleryImageStatusDownloadStatus`
+  - Added model `GalleryImageStatusProvisioningStatus`
+  - Added model `GalleryImageVersion`
+  - Added model `GalleryImageVersionStorageProfile`
+  - Added model `GalleryImages`
+  - Added model `GalleryImagesListResult`
+  - Added model `GalleryImagesUpdateRequest`
+  - Added model `GalleryOSDiskImage`
+  - Added model `GuestAgent`
+  - Added model `GuestAgentInstallStatus`
+  - Added model `GuestAgentList`
+  - Added model `GuestCredential`
+  - Added model `HardwareProfileUpdate`
+  - Added enum `HealthState`
+  - Added model `HostNetwork`
+  - Added model `HttpProxyConfiguration`
+  - Added model `HybridIdentityMetadata`
+  - Added model `HybridIdentityMetadataList`
+  - Added enum `HyperVGeneration`
+  - Added model `IPConfiguration`
+  - Added model `IPConfigurationProperties`
+  - Added model `IPConfigurationPropertiesSubnet`
+  - Added model `IPPool`
+  - Added model `IPPoolInfo`
+  - Added enum `IPPoolTypeEnum`
+  - Added model `Identity`
+  - Added model `InfrastructureNetwork`
+  - Added model `InstanceViewStatus`
+  - Added model `Intents`
+  - Added model `InterfaceDNSSettings`
+  - Added enum `IpAllocationMethodEnum`
+  - Added model `IpPools`
+  - Added model `IsolatedVmAttestationConfiguration`
+  - Added model `LogicalNetworkPropertiesDhcpOptions`
+  - Added model `LogicalNetworkStatus`
+  - Added model `LogicalNetworkStatusProvisioningStatus`
+  - Added model `LogicalNetworks`
+  - Added model `LogicalNetworksListResult`
+  - Added model `LogicalNetworksUpdateRequest`
+  - Added enum `ManagedServiceIdentityType`
+  - Added model `MarketplaceGalleryImageStatus`
+  - Added model `MarketplaceGalleryImageStatusDownloadStatus`
+  - Added model `MarketplaceGalleryImageStatusProvisioningStatus`
+  - Added model `MarketplaceGalleryImages`
+  - Added model `MarketplaceGalleryImagesListResult`
+  - Added model `MarketplaceGalleryImagesUpdateRequest`
+  - Added model `NetworkInterfaceStatus`
+  - Added model `NetworkInterfaceStatusProvisioningStatus`
+  - Added model `NetworkInterfaces`
+  - Added model `NetworkInterfacesListResult`
+  - Added model `NetworkInterfacesUpdateRequest`
+  - Added model `NetworkProfileUpdate`
+  - Added model `NetworkProfileUpdateNetworkInterfacesItem`
+  - Added model `NicDetail`
+  - Added model `Observability`
+  - Added enum `OemActivation`
+  - Added model `Offer`
+  - Added model `OfferList`
+  - Added enum `OperatingSystemTypes`
+  - Added model `OptionalServices`
+  - Added model `OsProfileUpdate`
+  - Added model `OsProfileUpdateLinuxConfiguration`
+  - Added model `OsProfileUpdateWindowsConfiguration`
+  - Added model `PackageVersionInfo`
+  - Added model `PhysicalNodes`
+  - Added enum `PowerStateEnum`
+  - Added model `PrecheckResult`
+  - Added model `PrecheckResultTags`
+  - Added enum `ProvisioningAction`
+  - Added enum `ProvisioningStateEnum`
+  - Added model `Publisher`
+  - Added model `PublisherList`
+  - Added model `QosPolicyOverrides`
+  - Added enum `RebootRequirement`
+  - Added model `ReportedProperties`
+  - Added model `Route`
+  - Added model `RouteTable`
+  - Added model `ScaleUnits`
+  - Added model `SecurityComplianceStatus`
+  - Added model `SecuritySetting`
+  - Added model `SecuritySettingListResult`
+  - Added enum `SecurityTypes`
+  - Added model `ServiceConfiguration`
+  - Added enum `ServiceName`
+  - Added enum `Severity`
+  - Added model `Sku`
+  - Added model `SkuList`
+  - Added model `SkuMappings`
+  - Added model `SoftwareAssuranceChangeRequest`
+  - Added model `SoftwareAssuranceChangeRequestProperties`
+  - Added enum `SoftwareAssuranceIntent`
+  - Added model `SoftwareAssuranceProperties`
+  - Added enum `SoftwareAssuranceStatus`
+  - Added model `SshConfiguration`
+  - Added model `SshPublicKey`
+  - Added enum `State`
+  - Added enum `StatusLevelTypes`
+  - Added enum `StatusTypes`
+  - Added model `Step`
+  - Added model `Storage`
+  - Added model `StorageContainerStatus`
+  - Added model `StorageContainerStatusProvisioningStatus`
+  - Added model `StorageContainers`
+  - Added model `StorageContainersListResult`
+  - Added model `StorageContainersUpdateRequest`
+  - Added model `StorageNetworks`
+  - Added model `StorageProfileUpdate`
+  - Added model `StorageProfileUpdateDataDisksItem`
+  - Added model `Subnet`
+  - Added model `SubnetPropertiesFormatIpConfigurationReferencesItem`
+  - Added model `SystemData`
+  - Added model `Update`
+  - Added model `UpdateList`
+  - Added model `UpdatePrerequisite`
+  - Added model `UpdateRun`
+  - Added model `UpdateRunList`
+  - Added enum `UpdateRunPropertiesState`
+  - Added model `UpdateSummaries`
+  - Added model `UpdateSummariesList`
+  - Added enum `UpdateSummariesPropertiesState`
+  - Added model `UserAssignedIdentity`
+  - Added model `ValidateRequest`
+  - Added model `ValidateResponse`
+  - Added model `ValidationStatus`
+  - Added model `VirtualHardDiskStatus`
+  - Added model `VirtualHardDiskStatusProvisioningStatus`
+  - Added model `VirtualHardDisks`
+  - Added model `VirtualHardDisksListResult`
+  - Added model `VirtualHardDisksUpdateRequest`
+  - Added model `VirtualMachineConfigAgentInstanceView`
+  - Added model `VirtualMachineInstance`
+  - Added model `VirtualMachineInstanceListResult`
+  - Added model `VirtualMachineInstancePropertiesHardwareProfile`
+  - Added model `VirtualMachineInstancePropertiesHardwareProfileDynamicMemoryConfig`
+  - Added model `VirtualMachineInstancePropertiesNetworkProfile`
+  - Added model `VirtualMachineInstancePropertiesNetworkProfileNetworkInterfacesItem`
+  - Added model `VirtualMachineInstancePropertiesOsProfile`
+  - Added model `VirtualMachineInstancePropertiesOsProfileLinuxConfiguration`
+  - Added model `VirtualMachineInstancePropertiesOsProfileWindowsConfiguration`
+  - Added model `VirtualMachineInstancePropertiesSecurityProfile`
+  - Added model `VirtualMachineInstancePropertiesSecurityProfileUefiSettings`
+  - Added model `VirtualMachineInstancePropertiesStorageProfile`
+  - Added model `VirtualMachineInstancePropertiesStorageProfileDataDisksItem`
+  - Added model `VirtualMachineInstancePropertiesStorageProfileImageReference`
+  - Added model `VirtualMachineInstancePropertiesStorageProfileOsDisk`
+  - Added model `VirtualMachineInstanceStatus`
+  - Added model `VirtualMachineInstanceStatusProvisioningStatus`
+  - Added model `VirtualMachineInstanceUpdateProperties`
+  - Added model `VirtualMachineInstanceUpdateRequest`
+  - Added model `VirtualMachineInstanceView`
+  - Added model `VirtualSwitchConfigurationOverrides`
+  - Added enum `VmSizeEnum`
+  - Model `ArcSettingsOperations` added parameter `kwargs` in method `__init__`
+  - Model `ArcSettingsOperations` added method `begin_initialize_disable_process`
+  - Model `ArcSettingsOperations` added method `consent_and_install_default_extensions`
+  - Model `ClustersOperations` added parameter `kwargs` in method `__init__`
+  - Model `ClustersOperations` added method `begin_extend_software_assurance_benefit`
+  - Model `ExtensionsOperations` added parameter `kwargs` in method `__init__`
+  - Model `ExtensionsOperations` added method `begin_upgrade`
+  - Model `Operations` added parameter `kwargs` in method `__init__`
+  - Added model `DeploymentSettingsOperations`
+  - Added model `EdgeDevicesOperations`
+  - Added model `GalleryImagesOperations`
+  - Added model `GuestAgentOperations`
+  - Added model `GuestAgentsOperations`
+  - Added model `HybridIdentityMetadataOperations`
+  - Added model `LogicalNetworksOperations`
+  - Added model `MarketplaceGalleryImagesOperations`
+  - Added model `NetworkInterfacesOperations`
+  - Added model `OffersOperations`
+  - Added model `PublishersOperations`
+  - Added model `SecuritySettingsOperations`
+  - Added model `SkusOperations`
+  - Added model `StorageContainersOperations`
+  - Added model `UpdateRunsOperations`
+  - Added model `UpdateSummariesOperations`
+  - Added model `UpdatesOperations`
+  - Added model `VirtualHardDisksOperations`
+  - Added model `VirtualMachineInstancesOperations`
+
+### Breaking Changes
+
+  - Deleted or renamed function `patch_sdk`
+  - Model `ArcSetting` deleted or renamed its instance variable `created_by`
+  - Model `ArcSetting` deleted or renamed its instance variable `created_by_type`
+  - Model `ArcSetting` deleted or renamed its instance variable `created_at`
+  - Model `ArcSetting` deleted or renamed its instance variable `last_modified_by`
+  - Model `ArcSetting` deleted or renamed its instance variable `last_modified_by_type`
+  - Model `ArcSetting` deleted or renamed its instance variable `last_modified_at`
+  - Model `Cluster` deleted or renamed its instance variable `created_by`
+  - Model `Cluster` deleted or renamed its instance variable `created_by_type`
+  - Model `Cluster` deleted or renamed its instance variable `created_at`
+  - Model `Cluster` deleted or renamed its instance variable `last_modified_by`
+  - Model `Cluster` deleted or renamed its instance variable `last_modified_by_type`
+  - Model `Cluster` deleted or renamed its instance variable `last_modified_at`
+  - Model `Extension` deleted or renamed its instance variable `created_by`
+  - Model `Extension` deleted or renamed its instance variable `created_by_type`
+  - Model `Extension` deleted or renamed its instance variable `created_at`
+  - Model `Extension` deleted or renamed its instance variable `last_modified_by`
+  - Model `Extension` deleted or renamed its instance variable `last_modified_by_type`
+  - Model `Extension` deleted or renamed its instance variable `last_modified_at`
+
 ## 8.0.0b4 (2024-08-26)
 
 ### Features Added
