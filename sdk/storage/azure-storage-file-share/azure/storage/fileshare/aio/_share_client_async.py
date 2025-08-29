@@ -997,7 +997,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # t
 
                 Restore - apply changes without further modification.
 
-        :paramtype file_property_semantics: Literal["New", "Restore"]
+        :paramtype file_property_semantics: Optional[Literal["New", "Restore"]]
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
