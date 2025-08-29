@@ -32,6 +32,7 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
             resource_type: str,
             operation_type: str,
             headers: Dict[str, Any],
+            pk_val: Optional[Any] = None,
             endpoint_override: Optional[str] = None,
     ) -> None:
         self.resource_type = resource_type
@@ -46,6 +47,7 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
         self.excluded_locations: Optional[List[str]] = None
         self.excluded_locations_circuit_breaker: List[str] = []
         self.healthy_tentative_location: Optional[str] = None
+        self.pk_val = pk_val
         self.retry_write: bool = False
 
     def route_to_location_with_preferred_location_flag(  # pylint: disable=name-too-long
