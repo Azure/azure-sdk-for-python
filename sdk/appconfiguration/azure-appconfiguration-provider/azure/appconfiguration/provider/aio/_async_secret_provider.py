@@ -58,7 +58,7 @@ class SecretProvider(_SecretProviderBase):
 
         if secret_value:
             if keyvault_identifier.version:
-                self._secret_version_cache[keyvault_identifier.source_id] = keyvault_identifier.version
+                self._secret_version_cache[keyvault_identifier.source_id] = secret_value
             else:
                 self._secret_cache[keyvault_identifier.source_id] = secret_value
             return secret_value

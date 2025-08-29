@@ -4,18 +4,21 @@
 # license information.
 # --------------------------------------------------------------------------
 import unittest
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import Mock, patch, MagicMock, AsyncMock
+import asyncio
+import pytest
 from azure.appconfiguration import SecretReferenceConfigurationSetting
-from azure.appconfiguration.provider._secret_provider import SecretProvider
-from azure.keyvault.secrets import SecretClient, KeyVaultSecret
+from azure.appconfiguration.provider.aio._async_secret_provider import SecretProvider
+from azure.keyvault.secrets.aio import SecretClient
+from azure.core.exceptions import ServiceRequestError
 from devtools_testutils import recorded_by_proxy
 from preparers import app_config_decorator_aad
 from testcase import AppConfigTestCase
 
 
-class TestSecretProvider(AppConfigTestCase, unittest.TestCase):
+class TestSecretProviderAsync(AppConfigTestCase, unittest.IsolatedAsyncioTestCase):
 
-    def test_init_with_defaults(self):
+    async def test_init_with_defaults(self):
         """Test initialization of SecretProvider with default parameters."""
         secret_provider = SecretProvider()
         
@@ -28,7 +31,7 @@ class TestSecretProvider(AppConfigTestCase, unittest.TestCase):
         self.assertIsNone(secret_provider.secret_refresh_timer)
         self.assertEqual(len(secret_provider._secret_cache), 0)
     
-    def test_init_with_keyvault_credential(self):
+    async def test_init_with_keyvault_credential(self):
         """Test initialization with a Key Vault credential."""
         mock_credential = Mock()
         secret_provider = SecretProvider(keyvault_credential=mock_credential)
@@ -40,7 +43,7 @@ class TestSecretProvider(AppConfigTestCase, unittest.TestCase):
         self.assertEqual(secret_provider._keyvault_client_configs, {})
         self.assertTrue(secret_provider.uses_key_vault)
         
-    def test_init_with_secret_resolver(self):
+    async def test_init_with_secret_resolver(self):
         """Test initialization with a secret resolver."""
         mock_resolver = Mock()
         secret_provider = SecretProvider(secret_resolver=mock_resolver)
@@ -52,7 +55,7 @@ class TestSecretProvider(AppConfigTestCase, unittest.TestCase):
         self.assertEqual(secret_provider._keyvault_client_configs, {})
         self.assertTrue(secret_provider.uses_key_vault)
         
-    def test_init_with_keyvault_client_configs(self):
+    async def test_init_with_keyvault_client_configs(self):
         """Test initialization with Key Vault client configurations."""
         client_configs = {"https://myvault.vault.azure.net/": {"retry_total": 3}}
         secret_provider = SecretProvider(keyvault_client_configs=client_configs)
@@ -64,7 +67,7 @@ class TestSecretProvider(AppConfigTestCase, unittest.TestCase):
         self.assertEqual(secret_provider._keyvault_client_configs, client_configs)
         self.assertTrue(secret_provider.uses_key_vault)
     
-    def test_init_with_secret_refresh_interval(self):
+    async def test_init_with_secret_refresh_interval(self):
         """Test initialization with a secret refresh interval."""
         mock_credential = Mock()
         refresh_interval = 30
@@ -77,7 +80,7 @@ class TestSecretProvider(AppConfigTestCase, unittest.TestCase):
         self.assertIsNotNone(secret_provider.secret_refresh_timer)
         self.assertTrue(secret_provider.uses_key_vault)
 
-    def test_resolve_keyvault_reference_with_cached_secret(self):
+    async def test_resolve_keyvault_reference_with_cached_secret(self):
         """Test resolving a Key Vault reference when the secret is in the cache."""
         # Create a mock Key Vault reference
         secret_id = "https://myvault.vault.azure.net/secrets/mysecret/"
@@ -90,12 +93,12 @@ class TestSecretProvider(AppConfigTestCase, unittest.TestCase):
         secret_provider._secret_cache[secret_id] = "cached-secret-value"
 
         # This should return the cached value without calling SecretClient
-        result = secret_provider.resolve_keyvault_reference(config)
+        result = await secret_provider.resolve_keyvault_reference(config)
         
         # Verify the result
         self.assertEqual(result, "cached-secret-value")
 
-    def test_resolve_keyvault_reference_with_cached_secret_version(self):
+    async def test_resolve_keyvault_reference_with_cached_secret_version(self):
         """Test resolving a Key Vault reference when the secret is in the cache."""
         # Create a mock Key Vault reference
         secret_id = "https://myvault.vault.azure.net/secrets/mysecret/12345"
@@ -108,12 +111,12 @@ class TestSecretProvider(AppConfigTestCase, unittest.TestCase):
         secret_provider._secret_version_cache[secret_id] = "cached-secret-value"
 
         # This should return the cached value without calling SecretClient
-        result = secret_provider.resolve_keyvault_reference(config)
+        result = await secret_provider.resolve_keyvault_reference(config)
         
         # Verify the result
         self.assertEqual(result, "cached-secret-value")
     
-    def test_resolve_keyvault_reference_with_existing_client(self):
+    async def test_resolve_keyvault_reference_with_existing_client(self):
         """Test resolving a Key Vault reference with an existing client."""
         # Create a mock Key Vault reference
         secret_id = "https://myvault.vault.azure.net/secrets/mysecret/12345"
@@ -127,7 +130,8 @@ class TestSecretProvider(AppConfigTestCase, unittest.TestCase):
         mock_client = Mock()
         mock_secret = Mock()
         mock_secret.value = "secret-value"
-        mock_client.get_secret.return_value = mock_secret
+        # Set up the get_secret method to return an awaitable that resolves to mock_secret
+        mock_client.get_secret = AsyncMock(return_value=mock_secret)
         
         # Add the mock client to the secret_clients dictionary
         vault_url = "https://myvault.vault.azure.net/"
@@ -147,7 +151,7 @@ class TestSecretProvider(AppConfigTestCase, unittest.TestCase):
             with patch.object(secret_provider, 'resolve_keyvault_reference_base') as mock_base:
                 mock_base.return_value = (mock_id_instance, vault_url)
                 
-                result = secret_provider.resolve_keyvault_reference(config)
+                result = await secret_provider.resolve_keyvault_reference(config)
                 
                 # Verify the result
                 self.assertEqual(result, "secret-value")
@@ -156,9 +160,9 @@ class TestSecretProvider(AppConfigTestCase, unittest.TestCase):
                     version=mock_id_instance.version
                 )
                 # Verify the secret was cached
-                self.assertEqual(secret_provider._secret_version_cache[secret_id], "secret-value")
+                self.assertEqual(secret_provider._secret_cache[secret_id], "secret-value")
     
-    def test_resolve_keyvault_reference_with_new_client(self):
+    async def test_resolve_keyvault_reference_with_new_client(self):
         """Test resolving a Key Vault reference by creating a new client."""
         # Create a mock Key Vault reference
         secret_id = "https://myvault.vault.azure.net/secrets/mysecret/12345"
@@ -179,11 +183,11 @@ class TestSecretProvider(AppConfigTestCase, unittest.TestCase):
             mock_kv_id.return_value = mock_id_instance
             
             # Mock SecretClient creation and get_secret method
-            with patch('azure.appconfiguration.provider._secret_provider.SecretClient') as mock_client_class:
+            with patch('azure.appconfiguration.provider.aio._async_secret_provider.SecretClient') as mock_client_class:
                 mock_client = Mock()
                 mock_secret = Mock()
                 mock_secret.value = "new-secret-value"
-                mock_client.get_secret.return_value = mock_secret
+                mock_client.get_secret = AsyncMock(return_value=mock_secret)
                 mock_client_class.return_value = mock_client
                 
                 # Call resolve_keyvault_reference
@@ -191,7 +195,7 @@ class TestSecretProvider(AppConfigTestCase, unittest.TestCase):
                     vault_url = "https://myvault.vault.azure.net/"
                     mock_base.return_value = (mock_id_instance, vault_url)
                     
-                    result = secret_provider.resolve_keyvault_reference(config)
+                    result = await secret_provider.resolve_keyvault_reference(config)
                     
                     # Verify the result
                     self.assertEqual(result, "new-secret-value")
@@ -206,9 +210,9 @@ class TestSecretProvider(AppConfigTestCase, unittest.TestCase):
                     # Verify the client was cached
                     self.assertEqual(secret_provider._secret_clients[vault_url], mock_client)
                     # Verify the secret was cached
-                    self.assertEqual(secret_provider._secret_version_cache[secret_id], "new-secret-value")
+                    self.assertEqual(secret_provider._secret_cache[secret_id], "new-secret-value")
     
-    def test_resolve_keyvault_reference_with_secret_resolver(self):
+    async def test_resolve_keyvault_reference_with_secret_resolver(self):
         """Test resolving a Key Vault reference using a secret resolver."""
         # Create a mock Key Vault reference
         secret_id = "https://myvault.vault.azure.net/secrets/mysecret/12345"
@@ -235,15 +239,51 @@ class TestSecretProvider(AppConfigTestCase, unittest.TestCase):
                 vault_url = "https://myvault.vault.azure.net/"
                 mock_base.return_value = (mock_id_instance, vault_url)
                 
-                result = secret_provider.resolve_keyvault_reference(config)
+                result = await secret_provider.resolve_keyvault_reference(config)
                 
                 # Verify the result
                 self.assertEqual(result, "resolved-secret-value")
                 mock_resolver.assert_called_once_with(secret_id)
                 # Verify the secret was cached
-                self.assertEqual(secret_provider._secret_version_cache[secret_id], "resolved-secret-value")
+                self.assertEqual(secret_provider._secret_cache[secret_id], "resolved-secret-value")
     
-    def test_resolve_keyvault_reference_with_client_and_resolver_fallback(self):
+    async def test_resolve_keyvault_reference_with_async_secret_resolver(self):
+        """Test resolving a Key Vault reference using an async secret resolver."""
+        # Create a mock Key Vault reference
+        secret_id = "https://myvault.vault.azure.net/secrets/mysecret/12345"
+        config = SecretReferenceConfigurationSetting(key="test-key", secret_id=secret_id)
+        
+        # Create a mock async secret resolver
+        async def async_resolver(secret_id):
+            return "async-resolved-secret-value"
+        
+        # Create a SecretProvider with the mock resolver
+        secret_provider = SecretProvider(secret_resolver=async_resolver)
+        
+        # Setup key vault identifier mock
+        with patch('azure.keyvault.secrets.KeyVaultSecretIdentifier') as mock_kv_id:
+            mock_id_instance = Mock()
+            mock_id_instance._resource_id = secret_id
+            mock_id_instance.source_id = secret_id
+            mock_id_instance.name = "mysecret"
+            mock_id_instance.version = "12345"
+            mock_id_instance.vault_url = "https://myvault.vault.azure.net"
+            mock_kv_id.return_value = mock_id_instance
+            
+            # Call resolve_keyvault_reference
+            with patch.object(secret_provider, 'resolve_keyvault_reference_base') as mock_base:
+                vault_url = "https://myvault.vault.azure.net/"
+                mock_base.return_value = (mock_id_instance, vault_url)
+                
+                result = await secret_provider.resolve_keyvault_reference(config)
+                
+                # Verify the result
+                self.assertEqual(result, "async-resolved-secret-value")
+                # Verify the secret was cached
+                breakpoint()
+                self.assertEqual(secret_provider._secret_version_cache[secret_id], "async-resolved-secret-value")
+    
+    async def test_resolve_keyvault_reference_with_client_and_resolver_fallback(self):
         """Test falling back to a secret resolver if the client fails to get the secret."""
         # Create a mock Key Vault reference
         secret_id = "https://myvault.vault.azure.net/secrets/mysecret/12345"
@@ -261,7 +301,9 @@ class TestSecretProvider(AppConfigTestCase, unittest.TestCase):
         
         # Create a mock SecretClient that returns None for get_secret
         mock_client = Mock()
-        mock_client.get_secret.return_value.value = None
+        mock_secret = Mock()
+        mock_secret.value = None
+        mock_client.get_secret = AsyncMock(return_value=mock_secret)
         
         # Add the mock client to the secret_clients dictionary
         vault_url = "https://myvault.vault.azure.net/"
@@ -281,7 +323,7 @@ class TestSecretProvider(AppConfigTestCase, unittest.TestCase):
             with patch.object(secret_provider, 'resolve_keyvault_reference_base') as mock_base:
                 mock_base.return_value = (mock_id_instance, vault_url)
                 
-                result = secret_provider.resolve_keyvault_reference(config)
+                result = await secret_provider.resolve_keyvault_reference(config)
                 
                 # Verify the result
                 self.assertEqual(result, "fallback-secret-value")
@@ -291,9 +333,9 @@ class TestSecretProvider(AppConfigTestCase, unittest.TestCase):
                 )
                 mock_resolver.assert_called_once_with(secret_id)
                 # Verify the secret was cached
-                self.assertEqual(secret_provider._secret_version_cache[secret_id], "fallback-secret-value")
+                self.assertEqual(secret_provider._secret_cache[secret_id], "fallback-secret-value")
     
-    def test_resolve_keyvault_reference_no_client_no_resolver(self):
+    async def test_resolve_keyvault_reference_no_client_no_resolver(self):
         """Test that an error is raised when no client or resolver can resolve the reference."""
         # Create a mock Key Vault reference
         secret_id = "https://myvault.vault.azure.net/secrets/mysecret/12345"
@@ -319,16 +361,18 @@ class TestSecretProvider(AppConfigTestCase, unittest.TestCase):
                 
                 # This should raise an error since we have no client for this vault URL
                 with self.assertRaises(ValueError):
-                    secret_provider.resolve_keyvault_reference(config)
+                    await secret_provider.resolve_keyvault_reference(config)
     
-    def test_close(self):
+    async def test_close(self):
         """Test closing the SecretProvider."""
         # Create a SecretProvider with mock clients
         secret_provider = SecretProvider()
         
         # Create mock clients
         mock_client1 = Mock()
+        mock_client1.close = AsyncMock()
         mock_client2 = Mock()
+        mock_client2.close = AsyncMock()
         
         # Add the mock clients to the secret_clients dictionary
         secret_provider._secret_clients = {
@@ -337,13 +381,13 @@ class TestSecretProvider(AppConfigTestCase, unittest.TestCase):
         }
         
         # Call close
-        secret_provider.close()
+        await secret_provider.close()
         
         # Verify both clients were closed
         mock_client1.close.assert_called_once()
         mock_client2.close.assert_called_once()
 
-    def test_client_config_specific_credential(self):
+    async def test_client_config_specific_credential(self):
         """Test that client configuration can specify a specific credential."""
         # Create a mock Key Vault reference
         secret_id = "https://myvault.vault.azure.net/secrets/mysecret/12345"
@@ -378,11 +422,11 @@ class TestSecretProvider(AppConfigTestCase, unittest.TestCase):
             mock_kv_id.return_value = mock_id_instance
             
             # Mock SecretClient creation and get_secret method
-            with patch('azure.appconfiguration.provider._secret_provider.SecretClient') as mock_client_class:
+            with patch('azure.appconfiguration.provider.aio._async_secret_provider.SecretClient') as mock_client_class:
                 mock_client = Mock()
                 mock_secret = Mock()
                 mock_secret.value = "secret-value"
-                mock_client.get_secret.return_value = mock_secret
+                mock_client.get_secret = AsyncMock(return_value=mock_secret)
                 mock_client_class.return_value = mock_client
                 
                 # Call resolve_keyvault_reference
@@ -390,7 +434,7 @@ class TestSecretProvider(AppConfigTestCase, unittest.TestCase):
                     vault_url = "https://myvault.vault.azure.net/"
                     mock_base.return_value = (mock_id_instance, vault_url)
                     
-                    result = secret_provider.resolve_keyvault_reference(config)
+                    result = await secret_provider.resolve_keyvault_reference(config)
                     
                     # Verify the specific credential was used instead of the default
                     mock_client_class.assert_called_once_with(
@@ -401,7 +445,7 @@ class TestSecretProvider(AppConfigTestCase, unittest.TestCase):
                     # Verify the result
                     self.assertEqual(result, "secret-value")
 
-    def test_mapping_interface(self):
+    async def test_mapping_interface(self):
         """Test that the SecretProvider implements the Mapping interface."""
         # Create a SecretProvider
         secret_provider = SecretProvider()
@@ -448,7 +492,7 @@ class TestSecretProvider(AppConfigTestCase, unittest.TestCase):
         self.assertEqual(secret_provider.get("key4"), None)
         self.assertEqual(secret_provider.get("key4", "default"), "default")
 
-    def test_bust_cache(self):
+    async def test_bust_cache(self):
         """Test that bust_cache clears the secret cache."""
         # Create a SecretProvider
         secret_provider = SecretProvider()
@@ -472,7 +516,7 @@ class TestSecretProvider(AppConfigTestCase, unittest.TestCase):
 
     @recorded_by_proxy
     @app_config_decorator_aad
-    def test_integration_with_keyvault(
+    async def test_integration_with_keyvault(
         self,
         appconfiguration_endpoint_string,
         appconfiguration_keyvault_secret_url
@@ -494,7 +538,7 @@ class TestSecretProvider(AppConfigTestCase, unittest.TestCase):
         )
         
         # Resolve the reference
-        secret_value = secret_provider.resolve_keyvault_reference(config)
+        secret_value = await secret_provider.resolve_keyvault_reference(config)
         
         # Verify a value was returned (we can't know the exact value)
         self.assertIsNotNone(secret_value)
