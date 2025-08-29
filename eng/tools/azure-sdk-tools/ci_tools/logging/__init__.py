@@ -12,7 +12,6 @@ logger = logging.getLogger("azure-sdk-tools")
 
 def configure_logging(
     args: argparse.Namespace,
-    level: str = "INFO",
     fmt: str = "%(asctime)s [%(levelname)s] %(name)s: %(message)s"
 ) -> None:
     """
@@ -24,13 +23,13 @@ def configure_logging(
         numeric_level = logging.ERROR
     elif args.verbose:
         numeric_level = logging.DEBUG
-    elif not level:
+    elif not args.log_level:
         numeric_level = getattr(logging, os.environ.get("LOGLEVEL", "INFO").upper())
     else:
-        numeric_level = getattr(logging, level.upper(), None)
+        numeric_level = getattr(logging, args.log_level.upper(), None)
 
     if not isinstance(numeric_level, int):
-        raise ValueError(f"Invalid log level: {level}")
+        raise ValueError(f"Invalid log level: {numeric_level}")
     logger.setLevel(numeric_level)
 
     # Propagate logger config globally if needed

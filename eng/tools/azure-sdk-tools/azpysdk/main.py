@@ -87,7 +87,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
 
-    configure_logging(args, args.log_level)
+    configure_logging(args)
 
     if not hasattr(args, "func"):
         parser.print_help()
