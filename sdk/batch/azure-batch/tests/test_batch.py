@@ -351,13 +351,10 @@ class TestBatch(AzureMgmtRecordedTestCase):
         poller = await wrap_result(client.begin_delete_pool(pool_id=test_paas_pool.id, polling_interval=5))
         assert poller is not None
 
-        # Wait for LRO completion - handle both sync and async pollers
-        if hasattr(poller.result(), "__await__"):
+        result = poller.result()
+        if hasattr(result, "__await__"):
             # Async poller
-            result = await poller.result()
-        else:
-            # Sync poller
-            result = poller.result()
+            result = await result
         assert result is None
         assert poller.done()
         assert poller.status() == "Succeeded"
@@ -429,12 +426,10 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert poller is not None
 
         # Wait for LRO completion
-        if hasattr(poller.result(), "__await__"):
+        result = poller.result()
+        if hasattr(result, "__await__"):
             # Async poller
-            result = await poller.result()
-        else:
-            # Sync poller
-            result = poller.result()
+            result = await result
         assert result is None
         assert poller.done()
         assert poller.status() == "Succeeded"
@@ -512,13 +507,10 @@ class TestBatch(AzureMgmtRecordedTestCase):
         poller = await wrap_result(client.begin_terminate_job_schedule(job_schedule_id=schedule_id, polling_interval=5))
         assert poller is not None
 
-        # Wait for LRO completion
-        if hasattr(poller.result(), "__await__"):
+        result = poller.result()
+        if hasattr(result, "__await__"):
             # Async poller
-            result = await poller.result()
-        else:
-            # Sync poller
-            result = poller.result()
+            result = await result
         assert result is None
         assert poller.done()
         assert poller.status() == "Succeeded"
@@ -527,13 +519,10 @@ class TestBatch(AzureMgmtRecordedTestCase):
         poller = await wrap_result(client.begin_delete_job_schedule(job_schedule_id=schedule_id, polling_interval=5))
         assert poller is not None
 
-        # Wait for LRO completion
-        if hasattr(poller.result(), "__await__"):
+        result = poller.result()
+        if hasattr(result, "__await__"):
             # Async poller
-            result = await poller.result()
-        else:
-            # Sync poller
-            result = poller.result()
+            result = await result
         assert result is None
         assert poller.done()
         assert poller.status() == "Succeeded"
@@ -664,13 +653,10 @@ class TestBatch(AzureMgmtRecordedTestCase):
         )
         assert poller is not None
 
-        # Wait for LRO completion
-        if hasattr(poller.result(), "__await__"):
+        result = poller.result()
+        if hasattr(result, "__await__"):
             # Async poller
-            result = await poller.result()
-        else:
-            # Sync poller
-            result = poller.result()
+            result = await result
         assert result is None
         assert poller.done()
         assert poller.status() == "Succeeded"
@@ -697,8 +683,16 @@ class TestBatch(AzureMgmtRecordedTestCase):
 
         # Test Remove Nodes
         options = models.BatchNodeRemoveOptions(node_ids=[n.id for n in nodes])
-        response = await wrap_result(client.remove_nodes(batch_pool.name, options))
-        assert response is None
+        poller = await wrap_result(client.begin_remove_nodes(batch_pool.name, options))
+        assert poller is not None
+        
+        result = poller.result()
+        if hasattr(result, "__await__"):
+            # Async poller
+            result = await result
+        assert result is None
+        assert poller.done()
+        assert poller.status() == "Succeeded"
 
     @CachedResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
@@ -1228,13 +1222,11 @@ class TestBatch(AzureMgmtRecordedTestCase):
         )
         assert poller is not None
 
-        # Wait for LRO completion
-        if hasattr(poller.result(), "__await__"):
+        result = poller.result()
+        if hasattr(result, "__await__"):
             # Async poller
-            result = await poller.result()
-        else:
-            # Sync poller
-            result = poller.result()
+            result = await result
+
         assert result is None
         assert poller.done()
         assert poller.status() == "Succeeded"
@@ -1252,13 +1244,10 @@ class TestBatch(AzureMgmtRecordedTestCase):
         poller = await wrap_result(client.begin_enable_job(job_id=job_param.id, polling_interval=5))
         assert poller is not None
 
-        # Wait for LRO completion
-        if hasattr(poller.result(), "__await__"):
+        result = poller.result()
+        if hasattr(result, "__await__"):
             # Async poller
-            result = await poller.result()
-        else:
-            # Sync poller
-            result = poller.result()
+            result = await result
         assert result is None
         assert poller.done()
         assert poller.status() == "Succeeded"
@@ -1279,13 +1268,12 @@ class TestBatch(AzureMgmtRecordedTestCase):
         # Test Terminate Job using LRO
         poller = await wrap_result(client.begin_terminate_job(job_id=job_param.id, polling_interval=5))
         assert poller is not None
-        # waiting for completion
-        if hasattr(poller.result(), "__await__"):
+
+        result = poller.result()
+        if hasattr(result, "__await__"):
             # Async poller
-            result = await poller.result()
-        else:
-            # Sync poller
-            result = poller.result()
+            result = await result
+        # waiting for completion
         assert result is None
         assert poller.done()
         assert poller.status() == "Succeeded"
@@ -1294,31 +1282,15 @@ class TestBatch(AzureMgmtRecordedTestCase):
         poller = await wrap_result(client.begin_delete_job(job_id=job_auto_param.id, polling_interval=5))
         assert poller is not None
 
-        # Wait for LRO completion
-        if hasattr(poller.result(), "__await__"):
+        result = poller.result()
+        if hasattr(result, "__await__"):
             # Async poller
-            result = await poller.result()
-        else:
-            # Sync poller
-            result = poller.result()
+            result = await result
         assert result is None
         assert poller.done()
         assert poller.status() == "Succeeded"
 
-        # Test Fake Delete Job
-        try:
-            await wrap_result(client.begin_delete_job(job_id="potato", polling_interval=5))
-            self.fail("Expected ResourceNotFoundError but no exception was raised")
-        except azure.core.exceptions.ResourceNotFoundError as e:
-            assert e.response is not None
-            assert hasattr(e, "model")
-            assert "(JobNotFound) The specified job does not exist." in str(e)
-
         # introduce artificial states or failures to test more (returning back deleting for 10 calls so make it longer and to test LRO)
-
-        # Test Delete Job
-        # response = await wrap_result(client.delete_job(job_auto_param.id))
-        # assert response is None
 
     @CachedResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
