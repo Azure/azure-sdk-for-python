@@ -56,6 +56,7 @@ from ._models import (  # type: ignore
     SASCredentials,
     SystemMessage,
     TargetConfig,
+    Taxonomy,
     UserMessage,
 )
 
@@ -117,6 +118,7 @@ __all__ = [
     "SASCredentials",
     "SystemMessage",
     "TargetConfig",
+    "Taxonomy",
     "UserMessage",
     "AttackStrategy",
     "ConnectionType",

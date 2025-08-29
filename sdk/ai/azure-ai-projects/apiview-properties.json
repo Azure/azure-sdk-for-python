@@ -43,6 +43,7 @@
         "azure.ai.projects.models.RedTeam": "Azure.AI.Projects.RedTeam",
         "azure.ai.projects.models.SASCredentials": "Azure.AI.Projects.SASCredentials",
         "azure.ai.projects.models.SystemMessage": "Azure.AI.Projects.SystemMessage",
+        "azure.ai.projects.models.Taxonomy": "Azure.AI.Projects.Taxonomy",
         "azure.ai.projects.models.UserMessage": "Azure.AI.Projects.UserMessage",
         "azure.ai.projects.models.ConnectionType": "Azure.AI.Projects.ConnectionType",
         "azure.ai.projects.models.CredentialType": "Azure.AI.Projects.CredentialType",

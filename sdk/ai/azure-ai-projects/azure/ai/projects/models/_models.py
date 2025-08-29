@@ -567,7 +567,7 @@ class AzureOpenAIModelConfiguration(TargetConfig, discriminator="AzureOpenAIMode
     :vartype model_deployment_name: str
     """
 
-    type: Literal["AzureOpenAIModel"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    type: Literal["AzureOpenAIModel"] = rest_discriminator(name="type", visibility=["read"])  # type: ignore
     """Required. Default value is \"AzureOpenAIModel\"."""
     model_deployment_name: str = rest_field(
         name="modelDeploymentName", visibility=["read", "create", "update", "delete", "query"]
@@ -597,7 +597,8 @@ class BlobReference(_Model):
     """Blob reference details.
 
     :ivar blob_uri: Blob URI path for client to upload data. Example:
-     ``https://blob.windows.core.net/Container/Path``. Required.
+     `https://blob.windows.core.net/Container/Path <https://blob.windows.core.net/Container/Path>`_.
+     Required.
     :vartype blob_uri: str
     :ivar storage_account_arm_id: ARM ID of the storage account to use. Required.
     :vartype storage_account_arm_id: str
@@ -606,7 +607,8 @@ class BlobReference(_Model):
     """
 
     blob_uri: str = rest_field(name="blobUri", visibility=["read", "create", "update", "delete", "query"])
-    """Blob URI path for client to upload data. Example: ``https://blob.windows.core.net/Container/Path``. Required."""
+    """Blob URI path for client to upload data. Example: `https://blob.windows.core.net/Container/Path
+     <https://blob.windows.core.net/Container/Path>`_. Required."""
     storage_account_arm_id: str = rest_field(
         name="storageAccountArmId", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -827,7 +829,8 @@ class DatasetVersion(_Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     FileDatasetVersion, FolderDatasetVersion
 
-    :ivar data_uri: URI of the data. Example: ``https://go.microsoft.com/fwlink/?linkid=2202330``. Required.
+    :ivar data_uri: URI of the data. Example: `https://go.microsoft.com/fwlink/?linkid=2202330
+     <https://go.microsoft.com/fwlink/?linkid=2202330>`_. Required.
     :vartype data_uri: str
     :ivar type: Dataset type. Required. Known values are: "uri_file" and "uri_folder".
     :vartype type: str or ~azure.ai.projects.models.DatasetType
@@ -852,7 +855,8 @@ class DatasetVersion(_Model):
 
     __mapping__: Dict[str, _Model] = {}
     data_uri: str = rest_field(name="dataUri", visibility=["read", "create"])
-    """URI of the data. Example: ``https://go.microsoft.com/fwlink/?linkid=2202330``. Required."""
+    """URI of the data. Example: `https://go.microsoft.com/fwlink/?linkid=2202330
+     <https://go.microsoft.com/fwlink/?linkid=2202330>`_. Required."""
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """Dataset type. Required. Known values are: \"uri_file\" and \"uri_folder\"."""
     is_reference: Optional[bool] = rest_field(name="isReference", visibility=["read"])
@@ -1234,7 +1238,8 @@ class FieldMapping(_Model):
 class FileDatasetVersion(DatasetVersion, discriminator="uri_file"):
     """FileDatasetVersion Definition.
 
-    :ivar data_uri: URI of the data. Example: ``https://go.microsoft.com/fwlink/?linkid=2202330``. Required.
+    :ivar data_uri: URI of the data. Example: `https://go.microsoft.com/fwlink/?linkid=2202330
+     <https://go.microsoft.com/fwlink/?linkid=2202330>`_. Required.
     :vartype data_uri: str
     :ivar is_reference: Indicates if the dataset holds a reference to the storage, or the dataset
      manages storage itself. If true, the underlying data will not be deleted when the dataset
@@ -1284,7 +1289,8 @@ class FileDatasetVersion(DatasetVersion, discriminator="uri_file"):
 class FolderDatasetVersion(DatasetVersion, discriminator="uri_folder"):
     """FileDatasetVersion Definition.
 
-    :ivar data_uri: URI of the data. Example: ``https://go.microsoft.com/fwlink/?linkid=2202330``. Required.
+    :ivar data_uri: URI of the data. Example: `https://go.microsoft.com/fwlink/?linkid=2202330
+     <https://go.microsoft.com/fwlink/?linkid=2202330>`_. Required.
     :vartype data_uri: str
     :ivar is_reference: Indicates if the dataset holds a reference to the storage, or the dataset
      manages storage itself. If true, the underlying data will not be deleted when the dataset
@@ -1335,7 +1341,7 @@ class InputData(_Model):
     """Abstract data class.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    InputDataset
+    InputDataset, Taxonomy
 
     :ivar type: Type of the data. Required. Default value is None.
     :vartype type: str
@@ -1720,6 +1726,8 @@ class RedTeam(_Model):
 
     :ivar name: Identifier of the red team run. Required.
     :vartype name: str
+    :ivar data: Data for red team operation.
+    :vartype data: ~azure.ai.projects.models.InputData
     :ivar display_name: Name of the red-team run.
     :vartype display_name: str
     :ivar num_turns: Number of simulation rounds.
@@ -1747,6 +1755,8 @@ class RedTeam(_Model):
 
     name: str = rest_field(name="id", visibility=["read"])
     """Identifier of the red team run. Required."""
+    data: Optional["_models.InputData"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Data for red team operation."""
     display_name: Optional[str] = rest_field(
         name="displayName", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1785,6 +1795,7 @@ class RedTeam(_Model):
         self,
         *,
         target: "_models.TargetConfig",
+        data: Optional["_models.InputData"] = None,
         display_name: Optional[str] = None,
         num_turns: Optional[int] = None,
         attack_strategies: Optional[List[Union[str, "_models.AttackStrategy"]]] = None,
@@ -1867,6 +1878,48 @@ class SystemMessage(Message, discriminator="system"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, role="system", **kwargs)
+
+
+class Taxonomy(InputData, discriminator="taxonomy"):
+    """Taxonomy as source for red team operations.
+
+    :ivar type: Required. Default value is "taxonomy".
+    :vartype type: str
+    :ivar id: Red team input taxonomy data. Required.
+    :vartype id: str
+    :ivar name: Required.
+    :vartype name: str
+    :ivar description: Required.
+    :vartype description: str
+    """
+
+    type: Literal["taxonomy"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Default value is \"taxonomy\"."""
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Red team input taxonomy data. Required."""
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    description: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        name: str,
+        description: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="taxonomy", **kwargs)
 
 
 class UserMessage(Message, discriminator="user"):

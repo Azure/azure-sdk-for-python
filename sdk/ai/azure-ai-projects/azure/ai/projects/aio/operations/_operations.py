@@ -739,7 +739,7 @@ class EvaluationsOperations:
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2025-05-15-preview",
-        params_added_on={"2025-05-15-preview": ["api_version", "name", "client_request_id", "accept"]},
+        params_added_on={"2025-05-15-preview": ["api_version", "name", "client_request_id"]},
         api_versions_list=["2025-05-15-preview"],
     )
     async def cancel(self, name: str, **kwargs: Any) -> None:
@@ -797,7 +797,7 @@ class EvaluationsOperations:
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2025-05-15-preview",
-        params_added_on={"2025-05-15-preview": ["api_version", "name", "client_request_id", "accept"]},
+        params_added_on={"2025-05-15-preview": ["api_version", "name", "client_request_id"]},
         api_versions_list=["2025-05-15-preview"],
     )
     async def delete(self, name: str, **kwargs: Any) -> None:
