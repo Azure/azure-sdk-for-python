@@ -4,6 +4,7 @@
 
 #### Features Added
 * Added read_items API to provide an efficient method for retrieving multiple items in a single request. See [PR 42167](https://github.com/Azure/azure-sdk-for-python/pull/42167).
+* Added support for Per Partition Automatic Failover. To enable this feature, you must follow the guide [here](https://learn.microsoft.com/azure/cosmos-db/how-to-configure-per-partition-automatic-failover). See [PR 41588](https://github.com/Azure/azure-sdk-for-python/pull/41588).
 
 #### Breaking Changes
 
@@ -12,6 +13,7 @@
 * Fixed bug where during health checks read regions were marked as unavailable for write operations. See [PR 42525](https://github.com/Azure/azure-sdk-for-python/pull/42525).
 * Fixed bug where containers named with spaces or special characters using session consistency would fall back to eventual consistency. See [PR 42608](https://github.com/Azure/azure-sdk-for-python/pull/42608)
 * Fixed bug where `excluded_locations` was not being honored for some metadata calls. See [PR 42266](https://github.com/Azure/azure-sdk-for-python/pull/42266).
+* Added cross-regional retries for 503 (Service Unavailable) errors. See [PR 41588](https://github.com/Azure/azure-sdk-for-python/pull/41588).
 * Fixed partition scoping for per partition circuit breaker. See [PR 42751](https://github.com/Azure/azure-sdk-for-python/pull/42751)
 
 #### Other Changes
