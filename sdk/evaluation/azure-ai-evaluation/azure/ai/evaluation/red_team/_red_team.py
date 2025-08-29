@@ -944,12 +944,12 @@ class RedTeam:
             )
             raise ValueError("MultiTurn and Crescendo strategies are not compatible with multiple attack strategies.")
         if AttackStrategy.Tense in flattened_attack_strategies and (
-            RiskCategory.XPIA in self.risk_categories or RiskCategory.UngroundedAttributes in self.risk_categories
+            RiskCategory.IndirectAttack in self.risk_categories or RiskCategory.UngroundedAttributes in self.risk_categories
         ):
             self.logger.warning(
-                "Tense strategy is not compatible with XPIA or UngroundedAttributes risk categories. Skipping Tense strategy."
+                "Tense strategy is not compatible with IndirectAttack or UngroundedAttributes risk categories. Skipping Tense strategy."
             )
-            raise ValueError("Tense strategy is not compatible with XPIA or UngroundedAttributes risk categories.")
+            raise ValueError("Tense strategy is not compatible with IndirectAttack or UngroundedAttributes risk categories.")
 
     def _initialize_tracking_dict(self, flattened_attack_strategies: List):
         """Initialize the red_team_info tracking dictionary."""
