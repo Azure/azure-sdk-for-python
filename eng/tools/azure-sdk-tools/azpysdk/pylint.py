@@ -1,6 +1,5 @@
 import argparse
 import os
-import logging
 import sys
 
 from typing import Optional, List
@@ -9,6 +8,7 @@ from subprocess import CalledProcessError, check_call
 from .Check import Check
 from ci_tools.variables import discover_repo_root, in_ci, set_envvar_defaults, in_ci, set_envvar_defaults
 from ci_tools.environment_exclusions import is_check_enabled
+from ci_tools.logging import logger
 
 REPO_ROOT = discover_repo_root()
 PYLINT_VERSION = "3.2.7"
@@ -33,7 +33,7 @@ class pylint(Check):
 
     def run(self, args: argparse.Namespace) -> int:
         """Run the pylint check command."""
-        print("Running pylint check...")
+        logger.info("Running pylint check...")
 
         set_envvar_defaults()
         targeted = self.get_targeted_directories(args)
@@ -44,7 +44,7 @@ class pylint(Check):
             package_dir = parsed.folder
             package_name = parsed.name
             executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, package_dir)
-            print(f"Processing {package_name} for pylint check")
+            logger.info(f"Processing {package_name} for pylint check")
 
             # install dependencies
             try:
@@ -57,7 +57,7 @@ class pylint(Check):
                     "--index-url=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"
                 ])
             except CalledProcessError as e:
-                print("Failed to install dependencies:", e)
+                logger.error("Failed to install dependencies:", e)
                 return e.returncode
 
             # install pylint
@@ -68,14 +68,14 @@ class pylint(Check):
                 else:
                     check_call([executable, "-m", "pip", "install", f"pylint=={PYLINT_VERSION}"])
             except CalledProcessError as e:
-                print("Failed to install pylint:", e)
+                logger.error("Failed to install pylint:", e)
                 return e.returncode
 
             top_level_module = parsed.namespace.split(".")[0]
 
             if in_ci():
                 if not is_check_enabled(package_dir, "pylint"):
-                    logging.info(
+                    logger.info(
                         f"Package {package_name} opts-out of pylint check."
                     )
                     continue
@@ -94,7 +94,7 @@ class pylint(Check):
                     ]
                 ))
             except CalledProcessError as e:
-                logging.error(
+                logger.error(
                     "{} exited with linting error {}. Please see this link for more information https://aka.ms/azsdk/python/pylint-guide".format(package_name, e.returncode)
                 )
                 if args.next and in_ci():
