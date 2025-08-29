@@ -63,6 +63,7 @@ from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.identity import DefaultAzureCredential, InteractiveBrowserCredential
 
 from azure.ai.voicelive import connect
+
 if TYPE_CHECKING:
     from azure.ai.voicelive import VoiceLiveConnection
 
@@ -566,7 +567,11 @@ async def main():
 
         # Create and start voice assistant
         assistant = BasicVoiceAssistant(
-            endpoint=args.endpoint, credential=credential, model=args.model, voice=args.voice, instructions=args.instructions
+            endpoint=args.endpoint,
+            credential=credential,
+            model=args.model,
+            voice=args.voice,
+            instructions=args.instructions,
         )
 
         # Setup signal handlers for graceful shutdown
@@ -615,12 +620,14 @@ if __name__ == "__main__":
         p = pyaudio.PyAudio()
         # Check for input devices
         input_devices = [
-            i for i in range(p.get_device_count())
+            i
+            for i in range(p.get_device_count())
             if float(p.get_device_info_by_index(i).get("maxInputChannels", 0) or 0) > 0.0
         ]
         # Check for output devices
         output_devices = [
-            i for i in range(p.get_device_count())
+            i
+            for i in range(p.get_device_count())
             if float(p.get_device_info_by_index(i).get("maxOutputChannels", 0) or 0) > 0.0
         ]
         p.terminate()

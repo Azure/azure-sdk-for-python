@@ -12,6 +12,7 @@ import json
 import logging
 from contextlib import AbstractContextManager
 from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
+
 try:  # Python 3.11+
     from typing import NotRequired  # type: ignore[attr-defined]
 except Exception:  # Python <=3.10
@@ -41,8 +42,10 @@ else:
     try:
         from websockets.typing import Subprotocol as WSSubprotocol  # runtime if available
     except Exception:
+
         class WSSubprotocol(str):  # fallback, keeps runtime simple
             pass
+
 
 __all__: List[str] = [
     "connect",
@@ -60,6 +63,7 @@ __all__: List[str] = [
 ]
 
 log = logging.getLogger(__name__)
+
 
 def _json_default(o: Any) -> Any:
     """
@@ -89,13 +93,14 @@ def _json_default(o: Any) -> Any:
         return {k: v for k, v in vars(o).items() if not k.startswith("_")}
     raise TypeError(f"{type(o).__name__} is not JSON serializable")
 
+
 class WebsocketConnectionOptions(TypedDict, total=False):
     """
     Advanced WebSocket connection options for the synchronous VoiceLive API.
 
     These options are passed directly to :func:`websockets.sync.client.connect`
-    and control low-level WebSocket behavior.  
-    All keys are optional — if omitted, the `websockets` library's defaults apply.  
+    and control low-level WebSocket behavior.
+    All keys are optional — if omitted, the `websockets` library's defaults apply.
     Unsupported or unknown keys are ignored.
 
     :keyword extensions: WebSocket extensions to negotiate with the server.
@@ -649,7 +654,7 @@ class _VoiceLiveConnectionManager(AbstractContextManager["VoiceLiveConnection"])
     def __exit__(self, exc_type, exc, exc_tb) -> None:
         """
         Close the connection when exiting the context.
-        
+
         :param exc_type: Exception type if an error occurred.
         :type exc_type: type | None
         :param exc: Exception instance if an error occurred.
@@ -664,7 +669,7 @@ class _VoiceLiveConnectionManager(AbstractContextManager["VoiceLiveConnection"])
 
     def _get_auth_headers(self) -> Dict[str, str]:
         """Get authentication headers for WebSocket connection.
-        
+
         :return: A dictionary containing authentication headers.
         :rtype: dict[str, str]
         """
@@ -740,7 +745,7 @@ def connect(
     :paramtype connection_options: ~azure.ai.voicelive.WebsocketConnectionOptions or None
     :return: A context manager that yields a connected :class:`~azure.ai.voicelive.VoiceLiveConnection`.
     :rtype: contextlib.AbstractContextManager[~azure.ai.voicelive.VoiceLiveConnection]
-    
+
     .. note::
         Additional keyword arguments can be passed and will be forwarded to the underlying connection.
     """

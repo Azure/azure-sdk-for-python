@@ -163,19 +163,25 @@ def glob_packages(glob_string: str, target_root_dir: str) -> List[str]:
     collected_top_level_directories = []
 
     for glob_string in individual_globs:
-        globbed = glob.glob(os.path.join(target_root_dir, glob_string, "setup.py")) + glob.glob(
+        globbed = glob.glob(os.path.join(target_root_dir, glob_string, "setup.py"), recursive=True) + glob.glob(
             os.path.join(target_root_dir, "sdk/*/", glob_string, "setup.py")
         )
         collected_top_level_directories.extend([os.path.dirname(p) for p in globbed])
 
     # handle pyproject.toml separately, as we need to filter them by the presence of a `[project]` section
     for glob_string in individual_globs:
-        globbed = glob.glob(os.path.join(target_root_dir, glob_string, "pyproject.toml")) + glob.glob(
+        globbed = glob.glob(os.path.join(target_root_dir, glob_string, "pyproject.toml"), recursive=True) + glob.glob(
             os.path.join(target_root_dir, "sdk/*/", glob_string, "pyproject.toml")
         )
         for p in globbed:
             if get_pyproject(os.path.dirname(p)):
                 collected_top_level_directories.append(os.path.dirname(p))
+
+    # drop any packages that exist within a tests or test directory
+    collected_top_level_directories = [
+        p for p in collected_top_level_directories
+        if not any(part in ("test", "tests") for part in p.split(os.sep))
+    ]
 
     # deduplicate, in case we have double coverage from the glob strings. Example: "azure-mgmt-keyvault,azure-mgmt-*"
     return list(set(collected_top_level_directories))
@@ -438,7 +444,7 @@ def find_sdist(dist_dir: str, pkg_name: str, pkg_version: str) -> Optional[str]:
 
 
 def pip_install(
-    requirements: List[str], include_dependencies: bool = True, python_executable: Optional[str] = None
+    requirements: List[str], include_dependencies: bool = True, python_executable: Optional[str] = None, cwd: Optional[str] = None
 ) -> bool:
     """
     Attempts to invoke an install operation using the invoking python's pip. Empty requirements are auto-success.
@@ -454,7 +460,10 @@ def pip_install(
         return True
 
     try:
-        subprocess.check_call(command)
+        if cwd:
+            subprocess.check_call(command, cwd=cwd)
+        else:
+            subprocess.check_call(command)
     except subprocess.CalledProcessError as f:
         return False
 
@@ -488,8 +497,10 @@ def get_pip_list_output(python_executable: Optional[str] = None):
     """Uses the invoking python executable to get the output from pip list."""
     exe = python_executable or sys.executable
 
+    pip_cmd = get_pip_command(exe)
+
     out = subprocess.Popen(
-        [exe, "-m", "pip", "list", "--disable-pip-version-check", "--format", "freeze"],
+        pip_cmd + ["list", "--disable-pip-version-check", "--format", "freeze"],
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
     )

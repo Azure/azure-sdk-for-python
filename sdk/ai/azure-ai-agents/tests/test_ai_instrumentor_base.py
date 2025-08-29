@@ -13,6 +13,8 @@ from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 
 from azure.ai.agents.telemetry import AIAgentsInstrumentor
 
+from azure.ai.agents.models import DeepResearchTool
+
 from gen_ai_trace_verifier import GenAiTraceVerifier
 from memory_trace_exporter import MemoryTraceExporter
 from test_agents_client_base import TestAgentClientBase
@@ -49,6 +51,17 @@ class TestAiAgentsInstrumentorBase(TestAgentClientBase):
         trace._TRACER_PROVIDER = None
         os.environ.pop(CONTENT_TRACING_ENV_VARIABLE, None)
 
+    def _get_deep_research_tool(self, **kwargs):
+        """Get deep research tool."""
+        bing_conn_id = kwargs.pop("azure_ai_agents_tests_bing_connection_id")
+        deep_research_model = kwargs.pop("azure_ai_agents_tests_deep_research_model")
+
+        # Create DeepResearchTool
+        return DeepResearchTool(
+            bing_grounding_connection_id=bing_conn_id,
+            deep_research_model=deep_research_model,
+        )
+
     def _check_spans(
             self,
             model: str,
@@ -60,6 +73,7 @@ class TestAiAgentsInstrumentorBase(TestAgentClientBase):
             tool_message_attribute_content: str,
             event_contents: List[str],
             run_step_events: Optional[List[List[Dict[str, Any]]]] = None,
+            has_annotations: bool = False,
         ):
         """Check the spans for correctness."""
         spans = self.exporter.get_spans_by_name("create_agent my-agent")
@@ -210,7 +224,7 @@ class TestAiAgentsInstrumentorBase(TestAgentClientBase):
             assert events_match == True
         
         spans = self.exporter.get_spans_by_name("list_messages")
-        assert len(spans) == 2
+        assert len(spans) >= 2
         span = spans[0]
         expected_attributes = [
             ("gen_ai.system", "az.ai.agents"),
@@ -221,7 +235,13 @@ class TestAiAgentsInstrumentorBase(TestAgentClientBase):
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
         assert attributes_match == True
         
-        content = '{"content": {"text": {"value": "*"}}, "role": "assistant"}' if recording_enabled else '{"role": "assistant"}'
+        if recording_enabled:
+            if has_annotations:
+                content = '{"content": {"text": {"value": "*", "annotations": "*"}}, "role": "assistant"}'
+            else:
+                content = '{"content": {"text": {"value": "*"}}, "role": "assistant"}'
+        else:
+            content = '{"role": "assistant"}'
         expected_events = [
             {
                 "name": "gen_ai.assistant.message",
@@ -239,7 +259,7 @@ class TestAiAgentsInstrumentorBase(TestAgentClientBase):
         events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
         assert events_match == True
 
-        span = spans[1]
+        span = spans[-1]
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
         assert attributes_match == True
         
@@ -260,7 +280,6 @@ class TestAiAgentsInstrumentorBase(TestAgentClientBase):
         
         spans = self.exporter.get_spans_by_name("list_run_steps")
         if run_step_events:
-            assert len(spans) == len(run_step_events)
             expected_attributes = [
                 ("gen_ai.system", "az.ai.agents"),
                 ("gen_ai.operation.name", "list_run_steps"),
@@ -268,7 +287,14 @@ class TestAiAgentsInstrumentorBase(TestAgentClientBase):
                 ("gen_ai.thread.id", ""),
                 ("gen_ai.thread.run.id", ""),
             ]
-            for span, expected_span_events in zip(spans, run_step_events):
+            if len(spans) < 5:
+                assert len(spans) == len(run_step_events)
+                zip_obj = zip(spans, run_step_events)
+            else:
+                assert len(run_step_events) == 5
+                # If it is deep research there may be multiple run steps.
+                zip_obj = zip(spans[:3] + spans[-2:], run_step_events)
+            for span, expected_span_events in zip_obj:
                 attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
                 assert attributes_match == True
                 events_match = GenAiTraceVerifier().check_span_events(span, expected_span_events)
@@ -411,4 +437,57 @@ class TestAiAgentsInstrumentorBase(TestAgentClientBase):
         ])
         expected_spans.append([])
         return expected_spans
+
+    def get_expected_deep_research_spans(self):
+        expected_event_content = json.dumps(
+            {'tool_calls': 
+                [
+                    {
+                        "id": "*",
+                        "type": "deep_research",
+                        "deep_research": {
+                            "input": "*",
+                            "output": "*"
+                        },
+                    }
+                ]
+            }
+        )
         
+        expected_spans = [
+            [
+                {
+                    "name": "gen_ai.run_step.message_creation",
+                    "attributes": {
+                        "gen_ai.system": "az.ai.agents",
+                        "gen_ai.thread.id": "*",
+                        "gen_ai.agent.id": "*",
+                        "gen_ai.thread.run.id": "*",
+                        "gen_ai.message.id": "*",
+                        "gen_ai.run_step.status": "completed",
+                        "gen_ai.run_step.start.timestamp": "*",
+                        "gen_ai.run_step.end.timestamp": "*",
+                        "gen_ai.usage.input_tokens": 0,
+                        "gen_ai.usage.output_tokens": 0,
+                    },
+                },
+            ]
+        ] * 4
+        expected_spans.append([
+            {
+                "name": "gen_ai.run_step.tool_calls",
+                "attributes": {
+                    "gen_ai.system": "az.ai.agents",
+                    "gen_ai.thread.id": "*",
+                    "gen_ai.agent.id": "*",
+                    "gen_ai.thread.run.id": "*",
+                    "gen_ai.run_step.status": "completed",
+                    "gen_ai.run_step.start.timestamp": "*",
+                    "gen_ai.run_step.end.timestamp": "*",
+                    "gen_ai.usage.input_tokens": "+",
+                    "gen_ai.usage.output_tokens": "+",
+                    "gen_ai.event.content": expected_event_content
+                },
+            },
+        ])
+        return expected_spans

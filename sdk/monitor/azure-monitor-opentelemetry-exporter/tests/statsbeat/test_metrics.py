@@ -9,13 +9,9 @@ import unittest
 from unittest import mock
 
 from opentelemetry.sdk.metrics import Meter, MeterProvider, ObservableGauge
-from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
-from opentelemetry.sdk.resources import Resource
 
 from azure.monitor.opentelemetry.exporter._constants import (
     _ATTACH_METRIC_NAME,
-    _DEFAULT_EU_STATS_CONNECTION_STRING,
-    _DEFAULT_NON_EU_STATS_CONNECTION_STRING,
     _FEATURE_METRIC_NAME,
     _REQ_DURATION_NAME,
     _REQ_EXCEPTION_NAME,
@@ -24,18 +20,10 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _REQ_SUCCESS_NAME,
     _REQ_THROTTLE_NAME,
 )
-from azure.monitor.opentelemetry.exporter.statsbeat import _statsbeat
-from azure.monitor.opentelemetry.exporter.statsbeat._exporter import _StatsBeatExporter
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     _REQUESTS_MAP,
     _STATSBEAT_STATE,
-)
-from azure.monitor.opentelemetry.exporter._constants import (
-    _APPLICATIONINSIGHTS_STATS_CONNECTION_STRING_ENV_NAME,
-    _DEFAULT_STATS_LONG_EXPORT_INTERVAL,
-    _DEFAULT_STATS_SHORT_EXPORT_INTERVAL,
-    _APPLICATIONINSIGHTS_STATS_SHORT_EXPORT_INTERVAL_ENV_NAME,
-    _APPLICATIONINSIGHTS_STATS_LONG_EXPORT_INTERVAL_ENV_NAME,
+    _STATSBEAT_STATE_LOCK,
 )
 from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics import (
     _shorten_host,
@@ -62,206 +50,10 @@ def throw(exc_type, *args, **kwargs):
 
 # cSpell:disable
 
-
-# pylint: disable=protected-access
-class TestStatsbeat(unittest.TestCase):
-    def setUp(self):
-        _statsbeat._STATSBEAT_METRICS = None
-        _STATSBEAT_STATE["SHUTDOWN"] = False
-
-    @mock.patch.object(MeterProvider, "shutdown")
-    @mock.patch.object(MeterProvider, "force_flush")
-    @mock.patch.object(_StatsbeatMetrics, "init_non_initial_metrics")
-    def test_collect_statsbeat_metrics(self, non_init_mock, flush_mock, shutdown_mock):
-        exporter = mock.Mock()
-        exporter._endpoint = "test endpoint"
-        exporter._instrumentation_key = "test ikey"
-        self.assertIsNone(_statsbeat._STATSBEAT_METRICS)
-        _statsbeat.collect_statsbeat_metrics(exporter)
-        mp = _statsbeat._STATSBEAT_METRICS._meter_provider
-        self.assertTrue(isinstance(mp, MeterProvider))
-        self.assertEqual(mp._sdk_config.resource, Resource.get_empty())
-        self.assertTrue(len(mp._sdk_config.metric_readers), 1)
-        mr = mp._sdk_config.metric_readers[0]
-        self.assertTrue(isinstance(mr, PeriodicExportingMetricReader))
-        self.assertIsNotNone(mr._exporter)
-        self.assertTrue(isinstance(mr._exporter, _StatsBeatExporter))
-        non_init_mock.assert_called_once()
-        flush_mock.assert_called_once()
-
-    def test_collect_statsbeat_metrics_exists(self):
-        exporter = mock.Mock()
-        mock_metrics = mock.Mock()
-        self.assertIsNone(_statsbeat._STATSBEAT_METRICS)
-        _statsbeat._STATSBEAT_METRICS = mock_metrics
-        _statsbeat.collect_statsbeat_metrics(exporter)
-        self.assertEqual(_statsbeat._STATSBEAT_METRICS, mock_metrics)
-
-    @mock.patch.object(MeterProvider, "shutdown")
-    @mock.patch.object(MeterProvider, "force_flush")
-    @mock.patch.object(_StatsbeatMetrics, "init_non_initial_metrics")
-    def test_collect_statsbeat_metrics_non_eu(self, non_init_mock, flush_mock, shutdown_mock):
-        exporter = mock.Mock()
-        exporter._instrumentation_key = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3333"
-        exporter._endpoint = "https://westus-0.in.applicationinsights.azure.com/"
-        self.assertIsNone(_statsbeat._STATSBEAT_METRICS)
-        with mock.patch.dict(
-            os.environ,
-            {
-                _APPLICATIONINSIGHTS_STATS_CONNECTION_STRING_ENV_NAME: "",
-            },
-        ):
-            _statsbeat.collect_statsbeat_metrics(exporter)
-        self.assertIsNotNone(_statsbeat._STATSBEAT_METRICS)
-        mp = _statsbeat._STATSBEAT_METRICS._meter_provider
-        mr = mp._sdk_config.metric_readers[0]
-        stats_exporter = mr._exporter
-        self.assertEqual(
-            stats_exporter._instrumentation_key, _DEFAULT_NON_EU_STATS_CONNECTION_STRING.split(";")[0].split("=")[1]
-        )
-        self.assertEqual(
-            stats_exporter._endpoint, _DEFAULT_NON_EU_STATS_CONNECTION_STRING.split(";")[1].split("=")[1]  # noqa: E501
-        )
-
-    @mock.patch.object(MeterProvider, "shutdown")
-    @mock.patch.object(MeterProvider, "force_flush")
-    @mock.patch.object(_StatsbeatMetrics, "init_non_initial_metrics")
-    def test_collect_statsbeat_metrics_eu(self, non_init_mock, flush_mock, shutdown_mock):
-        exporter = mock.Mock()
-        exporter._instrumentation_key = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3333"
-        exporter._endpoint = "https://northeurope-0.in.applicationinsights.azure.com/"
-        self.assertIsNone(_statsbeat._STATSBEAT_METRICS)
-        with mock.patch.dict(
-            os.environ,
-            {
-                _APPLICATIONINSIGHTS_STATS_CONNECTION_STRING_ENV_NAME: "",
-            },
-        ):
-            _statsbeat.collect_statsbeat_metrics(exporter)
-        self.assertIsNotNone(_statsbeat._STATSBEAT_METRICS)
-        mp = _statsbeat._STATSBEAT_METRICS._meter_provider
-        mr = mp._sdk_config.metric_readers[0]
-        stats_exporter = mr._exporter
-        self.assertEqual(
-            stats_exporter._instrumentation_key, _DEFAULT_EU_STATS_CONNECTION_STRING.split(";")[0].split("=")[1]
-        )
-        self.assertEqual(
-            stats_exporter._endpoint, _DEFAULT_EU_STATS_CONNECTION_STRING.split(";")[1].split("=")[1]  # noqa: E501
-        )
-
-    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat._StatsbeatMetrics")
-    @mock.patch.dict(
-        "os.environ",
-        {
-            _APPLICATIONINSIGHTS_STATS_SHORT_EXPORT_INTERVAL_ENV_NAME: "",
-            _APPLICATIONINSIGHTS_STATS_LONG_EXPORT_INTERVAL_ENV_NAME: "",
-        },
-    )
-    def test_collect_statsbeat_metrics_aad(
-        self,
-        mock_statsbeat_metrics,
-    ):
-        exporter = mock.Mock()
-        TEST_ENDPOINT = "test endpoint"
-        TEST_IKEY = "test ikey"
-        TEST_CREDENTIAL = "test credential"
-        exporter._endpoint = TEST_ENDPOINT
-        exporter._instrumentation_key = TEST_IKEY
-        exporter._disable_offline_storage = False
-        exporter._credential = TEST_CREDENTIAL
-        exporter._distro_version = ""
-        _statsbeat.collect_statsbeat_metrics(exporter)
-        mock_statsbeat_metrics.assert_called_once_with(
-            mock.ANY,
-            TEST_IKEY,
-            TEST_ENDPOINT,
-            False,
-            _DEFAULT_STATS_LONG_EXPORT_INTERVAL / _DEFAULT_STATS_SHORT_EXPORT_INTERVAL,
-            True,
-            "",
-        )
-
-    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat._StatsbeatMetrics")
-    @mock.patch.dict(
-        "os.environ",
-        {
-            _APPLICATIONINSIGHTS_STATS_SHORT_EXPORT_INTERVAL_ENV_NAME: "",
-            _APPLICATIONINSIGHTS_STATS_LONG_EXPORT_INTERVAL_ENV_NAME: "",
-        },
-    )
-    def test_collect_statsbeat_metrics_no_aad(
-        self,
-        mock_statsbeat_metrics,
-    ):
-        exporter = mock.Mock()
-        TEST_ENDPOINT = "test endpoint"
-        TEST_IKEY = "test ikey"
-        TEST_CREDENTIAL = None
-        exporter._endpoint = TEST_ENDPOINT
-        exporter._instrumentation_key = TEST_IKEY
-        exporter._disable_offline_storage = False
-        exporter._credential = TEST_CREDENTIAL
-        exporter._distro_version = ""
-        _statsbeat.collect_statsbeat_metrics(exporter)
-        mock_statsbeat_metrics.assert_called_once_with(
-            mock.ANY,
-            TEST_IKEY,
-            TEST_ENDPOINT,
-            False,
-            _DEFAULT_STATS_LONG_EXPORT_INTERVAL / _DEFAULT_STATS_SHORT_EXPORT_INTERVAL,
-            False,
-            "",
-        )
-
-    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat._StatsbeatMetrics")
-    @mock.patch.dict(
-        "os.environ",
-        {
-            _APPLICATIONINSIGHTS_STATS_SHORT_EXPORT_INTERVAL_ENV_NAME: "",
-            _APPLICATIONINSIGHTS_STATS_LONG_EXPORT_INTERVAL_ENV_NAME: "",
-        },
-    )
-    def test_collect_statsbeat_metrics_distro_version(
-        self,
-        mock_statsbeat_metrics,
-    ):
-        exporter = mock.Mock()
-        TEST_ENDPOINT = "test endpoint"
-        TEST_IKEY = "test ikey"
-        TEST_CREDENTIAL = None
-        exporter._endpoint = TEST_ENDPOINT
-        exporter._instrumentation_key = TEST_IKEY
-        exporter._disable_offline_storage = False
-        exporter._credential = TEST_CREDENTIAL
-        exporter._distro_version = "1.0.0"
-        _statsbeat.collect_statsbeat_metrics(exporter)
-        mock_statsbeat_metrics.assert_called_once_with(
-            mock.ANY,
-            TEST_IKEY,
-            TEST_ENDPOINT,
-            False,
-            _DEFAULT_STATS_LONG_EXPORT_INTERVAL / _DEFAULT_STATS_SHORT_EXPORT_INTERVAL,
-            False,
-            "1.0.0",
-        )
-
-    def test_shutdown_statsbeat_metrics(self):
-        metric_mock = mock.Mock()
-        mp_mock = mock.Mock()
-        metric_mock._meter_provider = mp_mock
-        _statsbeat._STATSBEAT_METRICS = metric_mock
-        self.assertFalse(_STATSBEAT_STATE["SHUTDOWN"])
-        _statsbeat.shutdown_statsbeat_metrics()
-        mp_mock.shutdown.assert_called_once()
-        self.assertIsNone(_statsbeat._STATSBEAT_METRICS)
-        self.assertTrue(_STATSBEAT_STATE["SHUTDOWN"])
-
-
 _StatsbeatMetrics_COMMON_ATTRS = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
 _StatsbeatMetrics_NETWORK_ATTRS = dict(_StatsbeatMetrics._NETWORK_ATTRIBUTES)
 _StatsbeatMetrics_FEATURE_ATTRIBUTES = dict(_StatsbeatMetrics._FEATURE_ATTRIBUTES)
 _StatsbeatMetrics_INSTRUMENTATION_ATTRIBUTES = dict(_StatsbeatMetrics._INSTRUMENTATION_ATTRIBUTES)
-
 
 # pylint: disable=protected-access
 class TestStatsbeatMetrics(unittest.TestCase):
@@ -287,17 +79,18 @@ class TestStatsbeatMetrics(unittest.TestCase):
         )
 
     def setUp(self):
-        _statsbeat._STATSBEAT_METRICS = None
+        with _STATSBEAT_STATE_LOCK:
+            _STATSBEAT_STATE["INITIAL_FAILURE_COUNT"] = 0
+            _STATSBEAT_STATE["INITIAL_SUCCESS"] = False
+            _STATSBEAT_STATE["SHUTDOWN"] = False
+            _STATSBEAT_STATE["CUSTOM_EVENTS_FEATURE_SET"] = False
+            _STATSBEAT_STATE["LIVE_METRICS_FEATURE_SET"] = False
+        
         _StatsbeatMetrics._COMMON_ATTRIBUTES = dict(_StatsbeatMetrics_COMMON_ATTRS)
         _StatsbeatMetrics._NETWORK_ATTRIBUTES = dict(_StatsbeatMetrics_NETWORK_ATTRS)
         _StatsbeatMetrics._FEATURE_ATTRIBUTES = dict(_StatsbeatMetrics_FEATURE_ATTRIBUTES)
         _StatsbeatMetrics._INSTRUMENTATION_ATTRIBUTES = dict(_StatsbeatMetrics_INSTRUMENTATION_ATTRIBUTES)
         _REQUESTS_MAP.clear()
-        _STATSBEAT_STATE["INITIAL_FAILURE_COUNT"] = 0
-        _STATSBEAT_STATE["INITIAL_SUCCESS"] = False
-        _STATSBEAT_STATE["SHUTDOWN"] = False
-        _STATSBEAT_STATE["CUSTOM_EVENTS_FEATURE_SET"] = False
-        _STATSBEAT_STATE["LIVE_METRICS_FEATURE_SET"] = False
 
     def test_statsbeat_metric_init(self):
         mp = MeterProvider()
@@ -1101,6 +894,5 @@ class TestStatsbeatMetrics(unittest.TestCase):
         self.assertEqual(_shorten_host(url), "fakehost")
         url = "http://fakehost-5/"
         self.assertEqual(_shorten_host(url), "fakehost-5")
-
 
 # cSpell:enable

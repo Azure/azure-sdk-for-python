@@ -2123,7 +2123,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         # Patch will use WriteEndpoint since it uses PUT operation
         request_params = RequestObject(resource_type,
                                        documents._OperationType.Patch,
-                                       headers)
+                                       headers,
+                                       options.get("partitionKey", None))
         request_params.set_excluded_location_from_options(options)
         request_params.set_availability_strategy(options, self.availability_strategy)
         request_params.set_availability_strategy_executor(options, self.availability_strategy_executor)
@@ -2219,7 +2220,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                                   documents._OperationType.Batch, options)
         request_params = RequestObject(http_constants.ResourceType.Document,
                                        documents._OperationType.Batch,
-                                       headers)
+                                       headers,
+                                       options.get("partitionKey", None))
         request_params.set_excluded_location_from_options(options)
         request_params.set_retry_write(options, self.connection_policy.RetryNonIdempotentWrites)
         request_params.set_availability_strategy(options, self.availability_strategy)
@@ -2287,7 +2289,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                                   http_constants.ResourceType.PartitionKey, documents._OperationType.Delete, options)
         request_params = RequestObject(http_constants.ResourceType.PartitionKey,
                                        documents._OperationType.Delete,
-                                       headers)
+                                       headers,
+                                       options.get("partitionKey", None))
         request_params.set_excluded_location_from_options(options)
         request_params.set_availability_strategy(options, self.availability_strategy)
         request_params.set_availability_strategy_executor(options, self.availability_strategy_executor)
@@ -2663,7 +2666,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         request_params = RequestObject(http_constants.ResourceType.DatabaseAccount,
                                        documents._OperationType.Read,
                                        headers,
-                                       url_connection)
+                                       endpoint_override=url_connection)
         result, last_response_headers = self.__Get("", request_params, headers, **kwargs)
         self.last_response_headers = last_response_headers
         database_account = DatabaseAccount()
@@ -2715,7 +2718,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         request_params = RequestObject(http_constants.ResourceType.DatabaseAccount,
                                        documents._OperationType.Read,
                                        headers,
-                                       url_connection)
+                                       endpoint_override=url_connection)
         self.__Get("", request_params, headers, **kwargs)
 
 
@@ -2753,7 +2756,10 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         headers = base.GetHeaders(self, initial_headers, "post", path, id, resource_type,
                                     documents._OperationType.Create, options)
         # Create will use WriteEndpoint since it uses POST operation
-        request_params = RequestObject(resource_type, documents._OperationType.Create, headers)
+        request_params = RequestObject(resource_type,
+                                       documents._OperationType.Create,
+                                       headers,
+                                       options.get("partitionKey", None))
         request_params.set_excluded_location_from_options(options)
         request_params.set_availability_strategy(options, self.availability_strategy)
         request_params.set_availability_strategy_executor(options, self.availability_strategy_executor)
@@ -2803,7 +2809,10 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                                     documents._OperationType.Upsert, options)
         headers[http_constants.HttpHeaders.IsUpsert] = True
         # Upsert will use WriteEndpoint since it uses POST operation
-        request_params = RequestObject(resource_type, documents._OperationType.Upsert, headers)
+        request_params = RequestObject(resource_type,
+                                       documents._OperationType.Upsert,
+                                       headers,
+                                       options.get("partitionKey", None))
         request_params.set_excluded_location_from_options(options)
         request_params.set_availability_strategy(options, self.availability_strategy)
         request_params.set_availability_strategy_executor(options, self.availability_strategy_executor)
@@ -2851,7 +2860,10 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         headers = base.GetHeaders(self, initial_headers, "put", path, id, resource_type,
                                     documents._OperationType.Replace, options)
         # Replace will use WriteEndpoint since it uses PUT operation
-        request_params = RequestObject(resource_type, documents._OperationType.Replace, headers)
+        request_params = RequestObject(resource_type,
+                                       documents._OperationType.Replace,
+                                       headers,
+                                       options.get("partitionKey", None))
         request_params.set_excluded_location_from_options(options)
         request_params.set_availability_strategy(options, self.availability_strategy)
         request_params.set_availability_strategy_executor(options, self.availability_strategy_executor)
@@ -2898,7 +2910,10 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         headers = base.GetHeaders(self, initial_headers, "get", path, id, resource_type,
                                     documents._OperationType.Read, options)
         # Read will use ReadEndpoint since it uses GET operation
-        request_params = RequestObject(resource_type, documents._OperationType.Read, headers)
+        request_params = RequestObject(resource_type,
+                                       documents._OperationType.Read,
+                                       headers,
+                                       options.get("partitionKey", None))
         request_params.set_excluded_location_from_options(options)
         request_params.set_availability_strategy(options, self.availability_strategy)
         request_params.set_availability_strategy_executor(options, self.availability_strategy_executor)
@@ -2944,7 +2959,10 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         headers = base.GetHeaders(self, initial_headers, "delete", path, id, resource_type,
                                     documents._OperationType.Delete, options)
         # Delete will use WriteEndpoint since it uses DELETE operation
-        request_params = RequestObject(resource_type, documents._OperationType.Delete, headers)
+        request_params = RequestObject(resource_type,
+                                       documents._OperationType.Delete,
+                                       headers,
+                                       options.get("partitionKey", None))
         base.set_session_token_header(self, headers, path, request_params, options)
         request_params.set_retry_write(options, self.connection_policy.RetryNonIdempotentWrites)
         request_params.set_excluded_location_from_options(options)
@@ -3197,7 +3215,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             request_params = RequestObject(
                 resource_type,
                 op_type,
-                headers
+                headers,
+                options.get("partitionKey", None)
             )
             request_params.set_excluded_location_from_options(options)
             request_params.set_availability_strategy(options, self.availability_strategy)
@@ -3241,7 +3260,10 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             options,
             partition_key_range_id
         )
-        request_params = RequestObject(resource_type, documents._OperationType.SqlQuery, req_headers)
+        request_params = RequestObject(resource_type,
+                                       documents._OperationType.SqlQuery,
+                                       req_headers,
+                                       options.get("partitionKey", None))
         request_params.set_excluded_location_from_options(options)
         request_params.set_availability_strategy(options, self.availability_strategy)
         request_params.set_availability_strategy_executor(options, self.availability_strategy_executor)

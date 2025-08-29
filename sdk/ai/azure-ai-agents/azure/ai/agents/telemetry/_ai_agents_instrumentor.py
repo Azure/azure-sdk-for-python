@@ -459,6 +459,7 @@ class _AIAgentsInstrumentorPreview:
                     "server_label": t.server_label or ""
                 }
             else:
+                # Works for Deep research
                 tool_details = t.as_dict()[t.type]
 
                 tool_call = {
