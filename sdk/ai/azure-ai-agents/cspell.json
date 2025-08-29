@@ -16,6 +16,7 @@
       "oupfoo",
       "abcdabcdabcda",
       "abcdefghijklm",
+      "azureai"
     ],
     "ignorePaths": [
       "*.csv",

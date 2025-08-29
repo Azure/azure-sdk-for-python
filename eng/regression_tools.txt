@@ -23,4 +23,4 @@ pytest-cov==4.0.0
 coverage==7.2.5
 
 # local dev packages
-./tools/azure-sdk-tools[build]
+./eng/tools/azure-sdk-tools[build]

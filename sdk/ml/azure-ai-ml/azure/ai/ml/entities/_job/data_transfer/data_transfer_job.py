@@ -59,8 +59,6 @@ class DataTransferJob(Job, JobIOMixin):
     :type task: str
     :param data_copy_mode: data copy mode in copy task, possible value is "merge_with_overwrite", "fail_if_conflict".
     :type data_copy_mode: str
-    :keyword kwargs: A dictionary of additional configuration parameters.
-    :paramtype kwargs: dict
     """
 
     def __init__(

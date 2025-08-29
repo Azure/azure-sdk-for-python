@@ -35,11 +35,13 @@ from azure.ai.agents.models import (
     CodeInterpreterToolResource,
     ConnectedAgentTool,
     DeepResearchTool,
+    FabricTool,
     FilePurpose,
     FileSearchTool,
     FileSearchToolCallContent,
     FileSearchToolResource,
     FunctionTool,
+    McpTool,
     MessageAttachment,
     MessageDeltaChunk,
     MessageTextContent,
@@ -50,32 +52,47 @@ from azure.ai.agents.models import (
     FileInfo,
     OpenApiTool,
     OpenApiAnonymousAuthDetails,
+    RequiredMcpToolCall,
     ResponseFormatJsonSchema,
     ResponseFormatJsonSchemaType,
+    RunStepActivityDetails,
     RunAdditionalFieldList,
+    RunStepAzureFunctionToolCall,
     RunStepAzureAISearchToolCall,
     RunStepBingCustomSearchToolCall,
     RunStepBingGroundingToolCall,
     RunStepBrowserAutomationToolCall,
+    RunStepCodeInterpreterToolCall,
     RunStepConnectedAgentToolCall,
     RunStepDeepResearchToolCall,
+    RunStepDeltaAzureFunctionToolCall,
     RunStepDeltaAzureAISearchToolCall,
     RunStepDeltaChunk,
+    RunStepDeltaCodeInterpreterToolCall,
     RunStepDeltaCustomBingGroundingToolCall,
     RunStepDeltaBingGroundingToolCall,
     RunStepDeltaFileSearchToolCall,
+    RunStepDeltaMcpToolCall,
+    RunStepDeltaMicrosoftFabricToolCall,
     RunStepDeltaOpenAPIToolCall,
+    RunStepDeltaSharepointToolCall,
     RunStepDeltaToolCallObject,
     RunStepFileSearchToolCall,
     RunStepFileSearchToolCallResult,
     RunStepFileSearchToolCallResults,
+    RunStepMcpToolCall,
+    RunStepMicrosoftFabricToolCall,
     RunStepOpenAPIToolCall,
+    RunStepSharepointToolCall,
     RunStepToolCallDetails,
     RunStatus,
     RunStep,
+    SharepointTool,
+    SubmitToolApprovalAction,
     ThreadMessage,
     ThreadMessageOptions,
     ThreadRun,
+    ToolApproval,
     ToolResources,
     ToolSet,
     VectorStore,
@@ -642,7 +659,7 @@ class TestAgentClient(TestAgentClientBase):
     def test_list_messages(self, **kwargs):
         """test listing messages in a thread"""
         # create client
-        with self.create_client(**kwargs) as client:
+        with self.create_client(by_endpoint=True, **kwargs) as client:
             assert isinstance(client, AgentsClient)
 
             # create agent
@@ -673,14 +690,26 @@ class TestAgentClient(TestAgentClientBase):
             print("Created message, message ID", message2.id)
             messages2 = list(client.messages.list(thread_id=thread.id))
             assert len(messages2) == 2
-            assert messages2[0].id == message2.id or messages2[1].id == message2.id
+            assert any(msg.id == message2.id for msg in messages2)
 
             message3 = client.messages.create(thread_id=thread.id, role="user", content="Hello, tell me a third joke")
             assert message3.id
             print("Created message, message ID", message3.id)
             messages3 = list(client.messages.list(thread_id=thread.id))
             assert len(messages3) == 3
-            assert messages3[0].id == message3.id or messages3[1].id == message3.id or messages3[2].id == message3.id
+            assert any(msg.id == message3.id for msg in messages3)
+
+            client.messages.delete(thread_id=thread.id, message_id=message3.id)
+            messages4 = list(client.messages.list(thread_id=thread.id))
+            assert len(messages4) == 2
+            assert not any(msg.id == message3.id for msg in messages4)
+
+            # Check that we can add messages after deletion
+            message3 = client.messages.create(thread_id=thread.id, role="user", content="Bar")
+            assert message3.id
+            messages5 = list(client.messages.list(thread_id=thread.id))
+            assert len(messages5) == 3
+            assert any(msg.id == message3.id for msg in messages5)
 
             # delete agent and close client
             client.delete_agent(agent.id)
@@ -3077,31 +3106,35 @@ class TestAgentClient(TestAgentClientBase):
 
             assert output_file_exist
 
+    def _get_azure_function_tool(self, storage_queue: str) -> AzureFunctionTool:
+        """Helper method to get an AzureFunctionTool."""
+        return AzureFunctionTool(
+            name="foo",
+            description="Get answers from the foo bot.",
+            parameters={
+                "type": "object",
+                "properties": {
+                    "query": {"type": "string", "description": "The question to ask."},
+                    "outputqueueuri": {"type": "string", "description": "The full output queue uri."},
+                },
+            },
+            input_queue=AzureFunctionStorageQueue(
+                queue_name="azure-function-foo-input",
+                storage_service_endpoint=storage_queue,
+            ),
+            output_queue=AzureFunctionStorageQueue(
+                queue_name="azure-function-tool-output",
+                storage_service_endpoint=storage_queue,
+            ),
+        )
+
     @agentClientPreparer()
     @recorded_by_proxy
     def test_azure_function_call(self, **kwargs):
         """Test calling Azure functions."""
         storage_queue = kwargs["azure_ai_agents_tests_storage_queue"]
         with self.create_client(by_endpoint=True, **kwargs) as client:
-            azure_function_tool = AzureFunctionTool(
-                name="foo",
-                description="Get answers from the foo bot.",
-                parameters={
-                    "type": "object",
-                    "properties": {
-                        "query": {"type": "string", "description": "The question to ask."},
-                        "outputqueueuri": {"type": "string", "description": "The full output queue uri."},
-                    },
-                },
-                input_queue=AzureFunctionStorageQueue(
-                    queue_name="azure-function-foo-input",
-                    storage_service_endpoint=storage_queue,
-                ),
-                output_queue=AzureFunctionStorageQueue(
-                    queue_name="azure-function-tool-output",
-                    storage_service_endpoint=storage_queue,
-                ),
-            )
+            azure_function_tool = self._get_azure_function_tool(storage_queue)
 
             self._do_test_tool(
                 client=client,
@@ -3115,8 +3148,31 @@ class TestAgentClient(TestAgentClientBase):
                     '. Always responds with "Foo says" and then the response from the tool.'
                 ),
                 prompt="What is the most prevalent element in the universe? What would foo say?",
-                # TODO: Implement the run step for AzureFunction.
-                expected_class=None,
+                expected_class=RunStepAzureFunctionToolCall,
+                agent_message_regex="bar",
+            )
+
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_azure_function_call_streaming(self, **kwargs):
+        """Test calling Azure functions in streaming scenarios."""
+        storage_queue = kwargs["azure_ai_agents_tests_storage_queue"]
+        with self.create_client(by_endpoint=True, **kwargs) as client:
+            azure_function_tool = self._get_azure_function_tool(storage_queue)
+
+            self._do_test_tool_streaming(
+                client=client,
+                model_name="gpt-4o",
+                tool_to_test=azure_function_tool,
+                instructions=(
+                    "You are a helpful support agent. Use the provided function any "
+                    "time the prompt contains the string 'What would foo say?'. When "
+                    "you invoke the function, ALWAYS specify the output queue uri parameter as "
+                    f"'{storage_queue}/azure-function-tool-output'"
+                    '. Always responds with "Foo says" and then the response from the tool.'
+                ),
+                prompt="What is the most prevalent element in the universe? What would foo say?",
+                expected_delta_class=RunStepDeltaAzureFunctionToolCall,
                 agent_message_regex="bar",
             )
 
@@ -3489,6 +3545,118 @@ class TestAgentClient(TestAgentClientBase):
                 ),
             )
 
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_microsoft_fabric_tool(self, **kwargs):
+        """Test Microsoft Fabric tool call in non-streaming Scenario."""
+        with self.create_client(by_endpoint=True, **kwargs) as client:
+            model_name = "gpt-4o"
+            fabric_tool = FabricTool(connection_id=kwargs.get("azure_ai_agents_tests_fabric_connection_id"))
+
+            self._do_test_tool(
+                client=client,
+                model_name=model_name,
+                tool_to_test=fabric_tool,
+                instructions="You are helpful agent",
+                prompt="What are top 3 weather events with largest revenue loss?",
+                expected_class=RunStepMicrosoftFabricToolCall,
+            )
+
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_microsoft_fabric_tool_streaming(self, **kwargs):
+        """Test Microsoft Fabric tool call in streaming Scenario."""
+        with self.create_client(by_endpoint=True, **kwargs) as client:
+            model_name = "gpt-4o"
+            fabric_tool = FabricTool(connection_id=kwargs.get("azure_ai_agents_tests_fabric_connection_id"))
+
+            self._do_test_tool_streaming(
+                client=client,
+                model_name=model_name,
+                tool_to_test=fabric_tool,
+                instructions="You are helpful agent",
+                prompt="What are top 3 weather events with largest revenue loss?",
+                expected_delta_class=RunStepDeltaMicrosoftFabricToolCall,
+            )
+
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_sharepoint_tool(self, **kwargs):
+        """Test SharePoint tool call in non-streaming Scenario."""
+        with self.create_client(by_endpoint=True, **kwargs) as client:
+            model_name = "gpt-4o"
+            sharepoint_tool = SharepointTool(connection_id=kwargs.get("azure_ai_agents_tests_sharepoint_connection_id"))
+
+            self._do_test_tool(
+                client=client,
+                model_name=model_name,
+                tool_to_test=sharepoint_tool,
+                instructions="You are helpful agent",
+                prompt="Hello, summarize the key points of the first document in the list.",
+                expected_class=RunStepSharepointToolCall,
+            )
+
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_sharepoint_tool_streaming(self, **kwargs):
+        """Test SharePoint tool call in streaming Scenario."""
+        with self.create_client(by_endpoint=True, **kwargs) as client:
+            model_name = "gpt-4o"
+            sharepoint_tool = SharepointTool(connection_id=kwargs.get("azure_ai_agents_tests_sharepoint_connection_id"))
+
+            self._do_test_tool_streaming(
+                client=client,
+                model_name=model_name,
+                tool_to_test=sharepoint_tool,
+                instructions="You are helpful agent",
+                prompt="Hello, summarize the key points of the first document in the list.",
+                expected_delta_class=RunStepDeltaSharepointToolCall,
+            )
+
+    def _get_code_interpreter_tool(self, **kwargs):
+        """Helper method to get the code interpreter."""
+        ds = [
+            VectorStoreDataSource(
+                asset_identifier=kwargs["azure_ai_agents_tests_data_path"],
+                asset_type=VectorStoreDataSourceAssetType.URI_ASSET,
+            )
+        ]
+        return CodeInterpreterTool(data_sources=ds)
+
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_code_interpreter_tool(self, **kwargs):
+        """Test file search tool."""
+        with self.create_client(**kwargs, by_endpoint=True) as client:
+            model_name = "gpt-4o"
+            code_iterpreter = self._get_code_interpreter_tool(**kwargs)
+
+            self._do_test_tool(
+                client=client,
+                model_name=model_name,
+                tool_to_test=code_iterpreter,
+                instructions="You are helpful agent",
+                prompt="What feature does Smart Eyewear offer?",
+                expected_class=RunStepCodeInterpreterToolCall,
+            )
+
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_code_interpreter_tool_streaming(self, **kwargs):
+        """Test file search tool."""
+        with self.create_client(**kwargs, by_endpoint=True) as client:
+            model_name = "gpt-4o"
+            code_iterpreter = self._get_code_interpreter_tool(**kwargs)
+
+            self._do_test_tool_streaming(
+                client=client,
+                model_name=model_name,
+                tool_to_test=code_iterpreter,
+                instructions="You are helpful agent",
+                prompt="What feature does Smart Eyewear offer?",
+                expected_delta_class=RunStepDeltaCodeInterpreterToolCall,
+            )
+
     def _do_test_tool(
         self,
         client,
@@ -3569,7 +3737,7 @@ class TestAgentClient(TestAgentClientBase):
             # Search for the specific message when asked.
             text = "\n".join([t.text.value.lower() for t in text_messages])
             if agent_message_regex:
-                assert re.findall(agent_message_regex, text), f"{agent_message_regex} was not found in {text}."
+                assert re.findall(agent_message_regex, text.lower()), f"{agent_message_regex} was not found in {text}."
 
             # Search for the specific URL and title in the message annotation.
             if uri_annotation is not None:
@@ -3662,6 +3830,7 @@ class TestAgentClient(TestAgentClientBase):
                 has_file_annotation = file_annotation is None
                 # Agent message regex
                 has_agent_message_regex = agent_message_regex is None
+                received_messages = []
                 for event_type, event_data, _ in stream:
 
                     if isinstance(event_data, MessageDeltaChunk):
@@ -3682,7 +3851,10 @@ class TestAgentClient(TestAgentClientBase):
                                 )
                             for content in event_data.content:
                                 if not has_agent_message_regex and isinstance(content, MessageTextContent):
-                                    has_agent_message_regex = re.findall(agent_message_regex, content.text.value)
+                                    has_agent_message_regex = re.findall(
+                                        agent_message_regex, content.text.value.lower()
+                                    )
+                                    received_messages.append(content.text.value.lower())
 
                     elif isinstance(event_data, RunStepDeltaChunk):
                         if expected_delta_class is not None:
@@ -3713,7 +3885,9 @@ class TestAgentClient(TestAgentClientBase):
                 assert got_expected_delta, f"The delta tool call of type {expected_delta_class} was not found."
                 assert is_completed, "The stream was not completed."
                 assert is_run_step_created, "No run steps were created."
-                assert has_agent_message_regex, f"The text {agent_message_regex} was not found."
+                assert (
+                    has_agent_message_regex
+                ), f"The text {agent_message_regex} was not found: {' '.join(received_messages)}."
 
                 assert (
                     has_uri_annotation
@@ -3725,3 +3899,183 @@ class TestAgentClient(TestAgentClientBase):
         finally:
             client.delete_agent(agent.id)
             client.threads.delete(thread.id)
+
+    def _get_mcp_tool(self):
+        """Helper method to get an MCP tool."""
+        return McpTool(
+            server_label="github",
+            server_url="https://gitmcp.io/Azure/azure-rest-api-specs",
+            allowed_tools=[],  # Optional: specify allowed tools
+        )
+    
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_mcp_tool(self, **kwargs):
+        """Test MCP tool call."""
+        mcp_tool = self._get_mcp_tool()
+        with self.create_client(**kwargs, by_endpoint=True) as agents_client:
+            agent = agents_client.create_agent(
+                model="gpt-4o",
+                name="my-mcp-agent",
+                instructions="You are a helpful agent that can use MCP tools to assist users. Use the available MCP tools to answer questions and perform tasks.",
+                tools=mcp_tool.definitions,
+            )
+            thread = agents_client.threads.create()
+            try:
+                agents_client.messages.create(
+                    thread_id=thread.id,
+                    role="user",
+                    content="Please summarize the Azure REST API specifications Readme",
+                )
+                mcp_tool.update_headers("SuperSecret", "123456")
+                run = agents_client.runs.create(thread_id=thread.id, agent_id=agent.id, tool_resources=mcp_tool.resources)
+                was_approved = False
+                while run.status in [RunStatus.QUEUED, RunStatus.IN_PROGRESS, RunStatus.REQUIRES_ACTION]:
+                    time.sleep(self._sleep_time())
+                    run = agents_client.runs.get(thread_id=thread.id, run_id=run.id)
+            
+                    if run.status == RunStatus.REQUIRES_ACTION and isinstance(run.required_action, SubmitToolApprovalAction):
+                        tool_calls = run.required_action.submit_tool_approval.tool_calls
+                        assert tool_calls, "No tool calls to approve."
+            
+                        tool_approvals = []
+                        for tool_call in tool_calls:
+                            if isinstance(tool_call, RequiredMcpToolCall):
+                                tool_approvals.append(
+                                    ToolApproval(
+                                        tool_call_id=tool_call.id,
+                                        approve=True,
+                                        headers=mcp_tool.headers,
+                                    )
+                                )
+            
+                        if tool_approvals:
+                            was_approved = True
+                            agents_client.runs.submit_tool_outputs(
+                                thread_id=thread.id, run_id=run.id, tool_approvals=tool_approvals
+                            )
+                assert was_approved, "The run was never approved."
+                assert run.status != RunStatus.FAILED, run.last_error
+            
+                is_activity_step_found = False
+                is_tool_call_step_found = False
+                for run_step in agents_client.run_steps.list(thread_id=thread.id, run_id=run.id):
+                    if isinstance(run_step.step_details, RunStepActivityDetails):
+                        is_activity_step_found = True
+                    if isinstance(run_step.step_details, RunStepToolCallDetails):
+                        for tool_call in run_step.step_details.tool_calls:
+                            if isinstance(tool_call, RunStepMcpToolCall):
+                                is_tool_call_step_found = True
+                                break
+                assert is_activity_step_found, "RunStepMcpToolCall was not found."
+                assert is_tool_call_step_found, "No RunStepMcpToolCall"
+                messages = list(agents_client.messages.list(thread_id=thread.id))
+                assert len(messages) > 1
+            finally:
+                agents_client.threads.delete(thread.id)
+                agents_client.delete_agent(agent.id)
+
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_mcp_tool_streaming(self, **kwargs):
+        """Test MCP tool call in streaming scenarios."""
+        mcp_tool = self._get_mcp_tool()
+        with self.create_client(**kwargs, by_endpoint=True) as agents_client:
+            agent = agents_client.create_agent(
+                model="gpt-4o",
+                name="my-mcp-agent",
+                instructions="You are a helpful agent that can use MCP tools to assist users. Use the available MCP tools to answer questions and perform tasks.",
+                tools=mcp_tool.definitions,
+            )
+            thread = agents_client.threads.create()
+            agents_client.messages.create(
+                thread_id=thread.id,
+                role="user",
+                content="Please summarize the Azure REST API specifications Readme",
+            )
+            mcp_tool.update_headers("SuperSecret", "123456")
+
+            try:
+                with agents_client.runs.stream(thread_id=thread.id, agent_id=agent.id, tool_resources=mcp_tool.resources) as stream:
+                    is_started = False
+                    received_message = False
+                    got_expected_delta = False
+                    is_completed = False
+                    is_run_step_created = False
+                    found_activity_details = False
+                    found_tool_call_step = False
+                    for event_type, event_data, _ in stream:
+            
+                        if isinstance(event_data, MessageDeltaChunk):
+                            received_message = True
+            
+                        elif isinstance(event_data, RunStepDeltaChunk):
+                            tool_calls_details = getattr(event_data.delta.step_details, "tool_calls")
+                            if isinstance(tool_calls_details, list):
+                                for tool_call in tool_calls_details:
+                                    if isinstance(tool_call, RunStepDeltaMcpToolCall):
+                                        got_expected_delta = True
+            
+                        elif isinstance(event_data, ThreadRun):
+                            if event_type == AgentStreamEvent.THREAD_RUN_CREATED:
+                                is_started = True
+                            if event_data.status == RunStatus.FAILED:
+                                raise AssertionError(event_data.last_error)
+            
+                            if event_data.status == RunStatus.REQUIRES_ACTION and isinstance(
+                                event_data.required_action, SubmitToolApprovalAction
+                            ):
+                                tool_calls = event_data.required_action.submit_tool_approval.tool_calls
+                                assert tool_calls, "No tool calls to approve."
+            
+                                tool_approvals = []
+                                for tool_call in tool_calls:
+                                    if isinstance(tool_call, RequiredMcpToolCall):
+                                        tool_approvals.append(
+                                            ToolApproval(
+                                                tool_call_id=tool_call.id,
+                                                approve=True,
+                                                headers=mcp_tool.headers,
+                                            )
+                                        )
+            
+                                if tool_approvals:
+                                    # Once we receive 'requires_action' status, the next event will be DONE.
+                                    # Here we associate our existing event handler to the next stream.
+                                    agents_client.runs.submit_tool_outputs_stream(
+                                        thread_id=event_data.thread_id,
+                                        run_id=event_data.id,
+                                        tool_approvals=tool_approvals,
+                                        event_handler=stream,
+                                    )
+            
+                        elif isinstance(event_data, RunStep):
+                            if event_type == AgentStreamEvent.THREAD_RUN_STEP_CREATED:
+                                is_run_step_created = True
+                            step_details = event_data.get("step_details")
+                            if isinstance(step_details, RunStepActivityDetails):
+                                found_activity_details = True
+                            if isinstance(step_details, RunStepToolCallDetails):
+                                for tool_call in step_details.tool_calls:
+                                    if isinstance(tool_call, RunStepMcpToolCall):
+                                        found_tool_call_step = True
+                                
+            
+                        elif event_type == AgentStreamEvent.ERROR:
+                            raise AssertionError(event_data)
+            
+                        elif event_type == AgentStreamEvent.DONE:
+                            is_completed = True
+
+                    assert is_started, "The stream is missing Start event."
+                    assert received_message, "The message was never received."
+                    assert got_expected_delta, f"The delta tool call of type RunStepDeltaMcpToolCall was not found."
+                    assert found_activity_details, "RunStepActivityDetails was not found."
+                    assert is_completed, "The stream was not completed."
+                    assert is_run_step_created, "No run steps were created."
+                    assert found_tool_call_step, "No RunStepMcpToolCall found"
+                messages = list(agents_client.messages.list(thread_id=thread.id))
+                assert len(messages) > 1
+            finally:
+                agents_client.threads.delete(thread.id)
+                agents_client.delete_agent(agent.id)

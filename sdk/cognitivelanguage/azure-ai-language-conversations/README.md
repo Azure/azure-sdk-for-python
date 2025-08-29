@@ -3,7 +3,7 @@
 # Azure Conversational Language Understanding client library for Python
 Conversational Language Understanding - aka **CLU** for short - is a cloud-based conversational AI service which provides many language understanding capabilities like:
 - Conversation App: It's used in extracting intents and entities in conversations
-- Workflow app: Acts like an orchestrator to select the best candidate to analyze conversations to get best response from apps like Qna, Luis, and Conversation App
+- Workflow app: Acts like an orchestrator to select the best candidate to analyze conversations to get best response from apps like Qna and Conversation App
 - Conversational Summarization: Used to analyze conversations in the form of issues/resolution, chapter title, and narrative summarizations
 
 [Source code][conversationallanguage_client_src]
@@ -31,10 +31,10 @@ Install the Azure Conversations client library for Python with [pip][pip_link]:
 pip install azure-ai-language-conversations
 ```
 
-> Note: This version of the client library defaults to the 2023-04-01 version of the service
+> Note: This version of the client library defaults to the 2025-05-15-preview version of the service
 
 ### Authenticate the client
-In order to interact with the CLU service, you'll need to create an instance of the [ConversationAnalysisClient][conversationanalysisclient_class] class, or [ConversationAuthoringClient][conversationauthoringclient_class] class. You will need an **endpoint**, and an **API key** to instantiate a client object. For more information regarding authenticating with Cognitive Services, see [Authenticate requests to Azure Cognitive Services][cognitive_auth].
+In order to interact with the CLU service, you'll need to create an instance of the [ConversationAnalysisClient][conversationanalysisclient_class] class. You will need an **endpoint**, and an **API key** to instantiate a client object. For more information regarding authenticating with Cognitive Services, see [Authenticate requests to Azure Cognitive Services][cognitive_auth].
 
 #### Get an API key
 You can get the **endpoint** and an **API key** from the Cognitive Services resource in the [Azure Portal][azure_portal].
@@ -56,18 +56,6 @@ from azure.ai.language.conversations import ConversationAnalysisClient
 endpoint = "https://<my-custom-subdomain>.cognitiveservices.azure.com/"
 credential = AzureKeyCredential("<api-key>")
 client = ConversationAnalysisClient(endpoint, credential)
-```
-
-#### Create ConversationAuthoringClient
-Once you've determined your **endpoint** and **API key** you can instantiate a `ConversationAuthoringClient`:
-
-```python
-from azure.core.credentials import AzureKeyCredential
-from azure.ai.language.conversations.authoring import ConversationAuthoringClient
-
-endpoint = "https://<my-custom-subdomain>.cognitiveservices.azure.com/"
-credential = AzureKeyCredential("<api-key>")
-client = ConversationAuthoringClient(endpoint, credential)
 ```
 
 #### Create a client with an Azure Active Directory Credential
@@ -105,9 +93,6 @@ client = ConversationAnalysisClient(endpoint="https://<my-custom-subdomain>.cogn
 
 ### ConversationAnalysisClient
 The [ConversationAnalysisClient][conversationanalysisclient_class] is the primary interface for making predictions using your deployed Conversations models. For asynchronous operations, an async `ConversationAnalysisClient` is in the `azure.ai.language.conversation.aio` namespace.
-
-### ConversationAuthoringClient
-You can use the [ConversationAuthoringClient][conversationauthoringclient_class] to interface with the [Azure Language Portal][azure_language_portal] to carry out authoring operations on your language resource/project. For example, you can use it to create a project, populate with training data, train, test, and deploy. For asynchronous operations, an async `ConversationAuthoringClient` is in the `azure.ai.language.conversation.authoring.aio` namespace.
 
 ## Examples
 The `azure-ai-language-conversation` client library provides both synchronous and asynchronous APIs.
@@ -395,7 +380,6 @@ print(response)
 
 ```
 
-
 ## Optional Configuration
 
 Optional keyword arguments can be passed in at the client and per-operation level. The azure-core [reference documentation][azure_core_ref_docs] describes available configurations for retries, logging, transport protocols, and more.
@@ -486,7 +470,6 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [conversationallanguage_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/README.md
 [conversationallanguage_restdocs]: https://learn.microsoft.com/rest/api/language/
 [conversationanalysisclient_class]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-ai-language-conversations/latest/azure.ai.language.conversations.html#azure.ai.language.conversations.ConversationAnalysisClient
-[conversationauthoringclient_class]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-ai-language-conversations/latest/azure.ai.language.conversations.html#azure.ai.language.conversations.ConversationAuthoringClient
 [azure_core_exceptions]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md
 [azure_language_portal]: https://language.cognitive.azure.com/home
 [cognitive_authentication_aad]: https://learn.microsoft.com/azure/cognitive-services/authentication#authenticate-with-azure-active-directory
