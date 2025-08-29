@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 # pylint: skip-file
 
+from datetime import datetime
 from types import TracebackType
 from typing import Union, Optional, Any, Dict, List, Literal
 
@@ -24,6 +25,7 @@ from .._models import (
 )
 from .._shared.base_client import StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
+from .._shared.models import UserDelegationKey
 
 class ShareServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # type: ignore[misc]
     def __init__(
@@ -62,6 +64,15 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin
         max_range_size: int = 4 * 1024 * 1024,
         **kwargs: Any
     ) -> Self: ...
+    @distributed_trace_async
+    async def get_user_delegation_key(
+        self,
+        *,
+        expiry: datetime,
+        start: Optional[datetime] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
+    ) -> UserDelegationKey: ...
     @distributed_trace_async
     async def get_service_properties(self, *, timeout: Optional[int] = None, **kwargs: Any) -> Dict[str, Any]: ...
     @distributed_trace_async
