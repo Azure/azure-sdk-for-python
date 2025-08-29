@@ -25,6 +25,9 @@ parameters:
     default: []
 
 steps:
+  - checkout: self
+    fetchDepth: 3
+
   - task: UsePythonVersion@0
     displayName: 'Use Python $(PythonVersion)'
     condition: and(succeeded(), or(eq(variables['ENABLE_EXTENSION_BUILD'], 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
