@@ -54,11 +54,8 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
         self._resource_link = resource_link
         self._partitioned_query_ex_info = partitioned_query_execution_info
         # If the query uses parameters, we must save them to add them back to the component queries
-        self._parameters = getattr(
-            getattr(self._partitioned_query_ex_info, "_query_execution_info", None),
-            "parameters",
-            None
-        )
+        query_execution_info = getattr(self._partitioned_query_ex_info, "_query_execution_info", None)
+        self._parameters = getattr(query_execution_info, "parameters", None) if query_execution_info else None
         self._hybrid_search_query_info = hybrid_search_query_info
         self._final_results = []
         self._aggregated_global_statistics = None
