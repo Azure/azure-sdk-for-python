@@ -1,5 +1,6 @@
 # Confidential Ledger Certificate client library for Python
-<!-- write necessary description of service -->
+
+The Confidential Ledger Certificate client library is used to retrieve the TLS certificate required for connecting to a Confidential Ledger.
 
 ## Getting started
 
@@ -14,7 +15,6 @@ python -m pip install azure-confidentialledger-certificate
 - Python 3.9 or later is required to use this package.
 - You need an [Azure subscription][azure_sub] to use this package.
 - An existing Confidential Ledger Certificate instance.
-
 
 ## Contributing
 
@@ -34,6 +34,7 @@ see the Code of Conduct FAQ or contact opencode@microsoft.com with any
 additional questions or comments.
 
 <!-- LINKS -->
+
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [authenticate_with_token]: https://docs.microsoft.com/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-an-authentication-token
 [azure_identity_credentials]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#credentials
