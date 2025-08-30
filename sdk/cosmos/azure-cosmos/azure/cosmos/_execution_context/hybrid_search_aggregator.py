@@ -227,8 +227,6 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
         else:
             rewritten_query_infos = self._hybrid_search_query_info['componentQueryInfos']
 
-
-
         component_query_execution_list = []
         # for each of the query infos, run the component queries for the target partitions
         target_partition_key_ranges = self._get_target_partition_key_range(target_all_ranges=False)
