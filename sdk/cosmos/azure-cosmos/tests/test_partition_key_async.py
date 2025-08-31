@@ -15,7 +15,7 @@ import test_config
 from azure.cosmos.aio import CosmosClient, DatabaseProxy, ContainerProxy
 from typing import Any, Optional
 
-from tests.test_partition_key import _new_null_pk_doc, ItemDict, PkField, _assert_pk
+from test_partition_key import _new_null_pk_doc, ItemDict, PkField, _assert_pk
 
 
 async def _read_and_assert(container: ContainerProxy, doc_id: str, pk_field: Optional[str] = 'pk', pk_value: Any = None) -> None:

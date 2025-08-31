@@ -878,10 +878,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             Ignored if no query is provided.
         :paramtype parameters: [List[Dict[str, object]]]
         :keyword partition_key: Partition key at which the query request is targeted. If the partition key is set to
-        None, it will perform a cross partition query. To learn more about using partition keys, see
-        `here <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/docs/PartitionKeys.md>`_.
-        :type partition_key: Union[str, int, float, bool, Type[NonePartitionKeyValue], Type[NullPartitionKeyValue], None, Sequence[Union[str, int, float, bool, None]]]
-        :paramtype partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]]]
+            None, it will perform a cross partition query. To learn more about using partition keys, see `here
+            <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/docs/PartitionKeys.md>`_.
+        :paramtype partition_key: Union[str, int, float, bool, Type[NonePartitionKeyValue], Type[NullPartitionKeyValue], None, Sequence[Union[str, int, float, bool, None]]]
         :keyword bool populate_index_metrics: Used to obtain the index metrics to understand how the query engine used
             existing indexes and how it could use potential new indexes. Please note that this option will incur
             overhead, so it should be enabled only when debugging slow queries.
@@ -1663,10 +1662,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :param bool enable_cross_partition_query: Allows sending of more than one request to execute
             the query in the Azure Cosmos DB service.
             More than one request is necessary if the query is not scoped to single partition key value.
-        :keyword partition_key: Specifies the partition key value for the item. If the partition key is set to None,
+        :param partition_key: Specifies the partition key value for the item. If the partition key is set to None,
             it will perform a cross partition query. To learn more about using partition keys, see `here
             <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/docs/PartitionKeys.md>`_.
-        :paramtype partition_key: Union[str, int, float, bool, Type[NonePartitionKeyValue], Type[NullPartitionKeyValue], None, Sequence[Union[str, int, float, bool, None]]]
+        :type partition_key: Union[str, int, float, bool, Type[NonePartitionKeyValue], Type[NullPartitionKeyValue], None, Sequence[Union[str, int, float, bool, None]]]
         :param int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Optional[Callable[[Mapping[str, Any], ItemPaged[Dict[str, Any]]], None]] = None,
@@ -1882,12 +1881,13 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         return get_latest_session_token(feed_ranges_to_session_tokens, target_feed_range)
 
     def feed_range_from_partition_key(self, partition_key: _PartitionKeyType) -> Dict[str, Any]:
-        """ Gets the feed range for a given partition key.
-        :param partition_key: partition key to get feed range. If the partition key is set to None, it will create a
-            feed range for a partition key value of null. To learn more about using partition keys, see `here
-            <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/docs/PartitionKeys.md>`_.
+        """Gets the feed range for a given partition key.
+
+        :param partition_key: Partition key value used to derive the feed range. If set to ``None`` a feed range
+            representing the logical partition whose partition key value is JSON null will be created. To learn more
+            about using partition keys, see `Partition Keys <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/docs/PartitionKeys.md>`_.
         :type partition_key: PartitionKeyType
-        :returns: a feed range
+        :returns: A feed range corresponding to the supplied partition key value.
         :rtype: Dict[str, Any]
 
         .. warning::

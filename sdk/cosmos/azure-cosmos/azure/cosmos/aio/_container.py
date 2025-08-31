@@ -1774,12 +1774,13 @@ class ContainerProxy:
         return get_latest_session_token(feed_ranges_to_session_tokens, target_feed_range)
 
     async def feed_range_from_partition_key(self, partition_key: PartitionKeyType) -> Dict[str, Any]:
-        """ Gets the feed range for a given partition key.
-        :param partition_key: partition key to get feed range. If the partition key is set to None, it will create a
-            feed range for a partition key value of null. To learn more about using partition keys, see `here
-            <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/docs/PartitionKeys.md>`_.
+        """Gets the feed range for a given partition key.
+
+        :param partition_key: Partition key value used to derive the feed range. If set to ``None`` a feed range
+            representing the logical partition whose partition key value is JSON null will be created. To learn more
+            about using partition keys, see `Partition Keys <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/docs/PartitionKeys.md>`_.
         :type partition_key: PartitionKeyType
-        :returns: a feed range
+        :returns: A feed range corresponding to the supplied partition key value.
         :rtype: Dict[str, Any]
 
         .. warning::
