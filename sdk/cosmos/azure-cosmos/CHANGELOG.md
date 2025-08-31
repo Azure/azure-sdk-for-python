@@ -13,11 +13,10 @@
 * Fixed bug where containers named with spaces or special characters using session consistency would fall back to eventual consistency. See [PR 42608](https://github.com/Azure/azure-sdk-for-python/pull/42608)
 * Fixed bug where `excluded_locations` was not being honored for some metadata calls. See [PR 42266](https://github.com/Azure/azure-sdk-for-python/pull/42266).
 * Fixed partition scoping for per partition circuit breaker. See [PR 42751](https://github.com/Azure/azure-sdk-for-python/pull/42751)
-* Fixed bug where `partition_key` set to None was not properly handled for query operations. See [PR 42747](https://github.com/Azure/azure-sdk-for-python/pull/42747)
+* Fixed bug where `partition_key` set to None was not properly handled for some operations. See [PR 42747](https://github.com/Azure/azure-sdk-for-python/pull/42747)
 
 #### Other Changes
 * Added session token false progress merge logic. See [42393](https://github.com/Azure/azure-sdk-for-python/pull/42393)
-* `null` partition keys are now supported on all apis with partition keys. See [PR 42747](https://github.com/Azure/azure-sdk-for-python/pull/42747) 
 
 ### 4.14.0b2 (2025-08-12)
 
