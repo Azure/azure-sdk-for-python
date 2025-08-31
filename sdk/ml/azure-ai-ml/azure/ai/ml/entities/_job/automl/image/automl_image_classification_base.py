@@ -33,8 +33,6 @@ class AutoMLImageClassificationBase(AutoMLImage):
     :paramtype training_parameters: Optional[~azure.ai.ml.automl.ImageModelSettingsClassification]
     :keyword search_space: Search space for Automl image classification jobs. Defaults to None.
     :paramtype search_space: Optional[List[~azure.ai.ml.automl.ImageClassificationSearchSpace]]
-    :keyword kwargs: Other Keyword arguments for AutoMLImageClassificationBase class.
-    :paramtype kwargs: Dict[str, Any]
     """
 
     def __init__(

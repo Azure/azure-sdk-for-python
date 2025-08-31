@@ -125,8 +125,6 @@ class SynapseSparkCompute(Compute):
     :paramtype scale_settings: Optional[~azure.ai.ml.entities.AutoScaleSettings]
     :keyword auto_pause_settings: The auto pause settings for the compute.
     :paramtype auto_pause_settings: Optional[~azure.ai.ml.entities.AutoPauseSettings]
-    :keyword kwargs: Additional keyword arguments passed to the parent class.
-    :paramtype kwargs: Optional[dict]
 
     .. admonition:: Example:
 
