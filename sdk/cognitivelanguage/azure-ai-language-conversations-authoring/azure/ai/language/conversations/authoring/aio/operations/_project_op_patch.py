@@ -461,12 +461,12 @@ class ProjectOperations(ProjectOperationsGenerated):
 
         :param body: The copy project info. Required.
         :type body: ~azure.ai.language.conversations.authoring.models.CopyProjectDetails
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-        Default value is "application/json".
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body. Default value is "application/json".
         :paramtype content_type: str
         :return: An instance of LROPoller that returns None.
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
+
         """
 
     @overload
@@ -477,12 +477,12 @@ class ProjectOperations(ProjectOperationsGenerated):
 
         :param body: The copy project info. Required.
         :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-        Default value is "application/json".
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body. Default value is "application/json".
         :paramtype content_type: str
         :return: An instance of AsyncLROPoller that returns None.
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
+
         """
 
     @overload
@@ -493,12 +493,12 @@ class ProjectOperations(ProjectOperationsGenerated):
 
         :param body: The copy project info. Required.
         :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-        Default value is "application/json".
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body. Default value is "application/json".
         :keyword str content_type: Media type of the request body. Default is "application/json".
         :return: An instance of AsyncLROPoller that returns None.
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
+
         """
 
     @distributed_trace_async
@@ -509,12 +509,12 @@ class ProjectOperations(ProjectOperationsGenerated):
 
         :param body: The copy project info. Required.
         :type body: ~azure.ai.language.conversations.authoring.models.CopyProjectDetails or JSON or IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-        Default value is "application/json".
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body. Default value is "application/json".
         :paramtype content_type: str
         :return: An instance of LROPoller that returns None.
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
+        
         """
         return await super()._begin_copy_project(
             project_name=self._project_name, body=body, content_type=content_type, **kwargs

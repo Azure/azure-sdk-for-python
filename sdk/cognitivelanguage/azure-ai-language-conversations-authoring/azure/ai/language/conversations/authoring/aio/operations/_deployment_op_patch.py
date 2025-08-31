@@ -72,12 +72,12 @@ class DeploymentOperations(DeploymentOperationsGenerated):
         :type deployment_name: str
         :param body: The options for deleting the deployment. Required.
         :type body: ~azure.ai.language.conversations.authoring.models.DeleteDeploymentDetails
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-        Default value is "application/json".
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body. Default value is "application/json".
         :paramtype content_type: str
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
+
         """
 
     @overload
@@ -90,12 +90,12 @@ class DeploymentOperations(DeploymentOperationsGenerated):
         :type deployment_name: str
         :param body: The options for deleting the deployment. Required.
         :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-        Default value is "application/json".
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body. Default value is "application/json".
         :paramtype content_type: str
         :return: An instance of AsyncLROPoller that returns None.
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
+
         """
 
     @overload
@@ -108,12 +108,12 @@ class DeploymentOperations(DeploymentOperationsGenerated):
         :type deployment_name: str
         :param body: The options for deleting the deployment. Required.
         :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-        Default value is "application/json".
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body. Default value is "application/json".
         :paramtype content_type: str
         :return: An instance of AsyncLROPoller that returns None.
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
+
         """
 
     @distributed_trace_async
@@ -126,12 +126,12 @@ class DeploymentOperations(DeploymentOperationsGenerated):
         :type deployment_name: str
         :param body: The options for deleting the deployment. Required.
         :type body: ~azure.ai.language.conversations.authoring.models.DeleteDeploymentDetails or JSON or IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-        Default value is "application/json".
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body. Default value is "application/json".
         :paramtype content_type: str
         :return: An instance of AsyncLROPoller that returns None.
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
+
         """
         return await super()._begin_delete_deployment_from_resources(
             project_name=self._project_name,
@@ -156,12 +156,12 @@ class DeploymentOperations(DeploymentOperationsGenerated):
         :type deployment_name: str
         :param body: The new deployment info. Required.
         :type body: ~azure.ai.language.conversations.authoring.models.CreateDeploymentDetails
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-        Default value is "application/json".
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body. Default value is "application/json".
         :paramtype content_type: str
         :return: An instance of AsyncLROPoller that returns None.
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
+
         """
 
     @overload
@@ -174,12 +174,12 @@ class DeploymentOperations(DeploymentOperationsGenerated):
         :type deployment_name: str
         :param body: The new deployment info. Required.
         :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-        Default value is "application/json".
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body. Default value is "application/json".
         :paramtype content_type: str
         :return: An instance of AsyncLROPoller that returns None.
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
+
         """
 
     @overload
@@ -192,12 +192,12 @@ class DeploymentOperations(DeploymentOperationsGenerated):
         :type deployment_name: str
         :param body: The new deployment info. Required.
         :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-        Default value is "application/json".
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body. Default value is "application/json".
         :paramtype content_type: str
         :return: An instance of AsyncLROPoller that returns None.
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
+
         """
 
     @distributed_trace_async
@@ -210,12 +210,12 @@ class DeploymentOperations(DeploymentOperationsGenerated):
         :type deployment_name: str
         :param body: The new deployment info. Required.
         :type body: ~azure.ai.language.conversations.authoring.models.CreateDeploymentDetails or JSON or IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-        Default value is "application/json".
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body. Default value is "application/json".
         :paramtype content_type: str
         :return: An instance of AsyncLROPoller that returns None.
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
+        
         """
         return await super()._begin_deploy_project(
             project_name=self._project_name,
