@@ -6,3 +6,6 @@ isodate
 websockets
 pyaudio; platform_python_implementation == 'CPython' and python_version < '3.13'
 azure.identity
+pytest-rerunfailures>=13.0
+pytest-asyncio
+soundfile
