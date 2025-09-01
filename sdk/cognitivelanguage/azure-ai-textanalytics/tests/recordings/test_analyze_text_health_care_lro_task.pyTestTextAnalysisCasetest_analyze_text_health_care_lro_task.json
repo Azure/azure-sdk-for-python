@@ -1,0 +1,296 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2025-05-15-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "201",
+        "Content-Type": "application/json",
+        "Ocp-Apim-Subscription-Key": "Sanitized",
+        "User-Agent": "azsdk-python-ai-textanalytics/6.0.0b1 Python/3.13.7 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": {
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "Sanitized",
+              "text": "Prescribed 100mg ibuprofen, taken twice daily.",
+              "language": "en"
+            }
+          ]
+        },
+        "tasks": [
+          {
+            "kind": "Healthcare",
+            "taskName": "HealthcareOperationActionSample"
+          }
+        ]
+      },
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "apim-request-id": "9983b9fc-b3c9-4c8f-97e3-accc600ac88e",
+        "Content-Length": "0",
+        "Date": "Mon, 01 Sep 2025 20:33:24 GMT",
+        "operation-location": "https://Sanitized.cognitiveservices.azure.com/language/analyze-text/jobs/3cb28471-c32f-47e0-9f70-37f18a43c66e?api-version=2025-05-15-preview",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "65",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/analyze-text/jobs/3cb28471-c32f-47e0-9f70-37f18a43c66e?api-version=2025-05-15-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Ocp-Apim-Subscription-Key": "Sanitized",
+        "User-Agent": "azsdk-python-ai-textanalytics/6.0.0b1 Python/3.13.7 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "cff49c3a-a4fc-42b8-860f-75adc1d09268",
+        "Content-Length": "283",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 01 Sep 2025 20:33:24 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "9",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": {
+        "jobId": "3cb28471-c32f-47e0-9f70-37f18a43c66e",
+        "lastUpdatedDateTime": "2025-09-01T20:33:24Z",
+        "createdDateTime": "2025-09-01T20:33:24Z",
+        "expirationDateTime": "2025-09-02T20:33:24Z",
+        "status": "notStarted",
+        "errors": [],
+        "tasks": {
+          "completed": 0,
+          "failed": 0,
+          "inProgress": 1,
+          "total": 1,
+          "items": []
+        }
+      }
+    },
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/analyze-text/jobs/3cb28471-c32f-47e0-9f70-37f18a43c66e?api-version=2025-05-15-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Ocp-Apim-Subscription-Key": "Sanitized",
+        "User-Agent": "azsdk-python-ai-textanalytics/6.0.0b1 Python/3.13.7 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "702d370a-2d18-4609-98ce-82524b40154d",
+        "Content-Length": "2235",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 01 Sep 2025 20:33:54 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "21",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": {
+        "jobId": "3cb28471-c32f-47e0-9f70-37f18a43c66e",
+        "lastUpdatedDateTime": "2025-09-01T20:33:27Z",
+        "createdDateTime": "2025-09-01T20:33:24Z",
+        "expirationDateTime": "2025-09-02T20:33:24Z",
+        "status": "succeeded",
+        "errors": [],
+        "tasks": {
+          "completed": 1,
+          "failed": 0,
+          "inProgress": 0,
+          "total": 1,
+          "items": [
+            {
+              "kind": "HealthcareLROResults",
+              "taskName": "HealthcareOperationActionSample",
+              "lastUpdateDateTime": "2025-09-01T20:33:27.5091355Z",
+              "status": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "id": "Sanitized",
+                    "entities": [
+                      {
+                        "offset": 11,
+                        "length": 5,
+                        "text": "100mg",
+                        "category": "Dosage",
+                        "confidenceScore": 0.99
+                      },
+                      {
+                        "offset": 17,
+                        "length": 9,
+                        "text": "ibuprofen",
+                        "category": "MedicationName",
+                        "confidenceScore": 1.0,
+                        "name": "Sanitized",
+                        "links": [
+                          {
+                            "dataSource": "UMLS",
+                            "id": "Sanitized"
+                          },
+                          {
+                            "dataSource": "AOD",
+                            "id": "Sanitized"
+                          },
+                          {
+                            "dataSource": "ATC",
+                            "id": "Sanitized"
+                          },
+                          {
+                            "dataSource": "CCPSS",
+                            "id": "Sanitized"
+                          },
+                          {
+                            "dataSource": "CHV",
+                            "id": "Sanitized"
+                          },
+                          {
+                            "dataSource": "CSP",
+                            "id": "Sanitized"
+                          },
+                          {
+                            "dataSource": "DRUGBANK",
+                            "id": "Sanitized"
+                          },
+                          {
+                            "dataSource": "GS",
+                            "id": "Sanitized"
+                          },
+                          {
+                            "dataSource": "LCH_NW",
+                            "id": "Sanitized"
+                          },
+                          {
+                            "dataSource": "LNC",
+                            "id": "Sanitized"
+                          },
+                          {
+                            "dataSource": "MEDCIN",
+                            "id": "Sanitized"
+                          },
+                          {
+                            "dataSource": "MMSL",
+                            "id": "Sanitized"
+                          },
+                          {
+                            "dataSource": "MSH",
+                            "id": "Sanitized"
+                          },
+                          {
+                            "dataSource": "MTHSPL",
+                            "id": "Sanitized"
+                          },
+                          {
+                            "dataSource": "NCI",
+                            "id": "Sanitized"
+                          },
+                          {
+                            "dataSource": "NDDF",
+                            "id": "Sanitized"
+                          },
+                          {
+                            "dataSource": "PDQ",
+                            "id": "Sanitized"
+                          },
+                          {
+                            "dataSource": "RCD",
+                            "id": "Sanitized"
+                          },
+                          {
+                            "dataSource": "RXNORM",
+                            "id": "Sanitized"
+                          },
+                          {
+                            "dataSource": "SNM",
+                            "id": "Sanitized"
+                          },
+                          {
+                            "dataSource": "SNMI",
+                            "id": "Sanitized"
+                          },
+                          {
+                            "dataSource": "SNOMEDCT_US",
+                            "id": "Sanitized"
+                          },
+                          {
+                            "dataSource": "USP",
+                            "id": "Sanitized"
+                          },
+                          {
+                            "dataSource": "USPMG",
+                            "id": "Sanitized"
+                          },
+                          {
+                            "dataSource": "VANDF",
+                            "id": "Sanitized"
+                          }
+                        ]
+                      },
+                      {
+                        "offset": 34,
+                        "length": 11,
+                        "text": "twice daily",
+                        "category": "Frequency",
+                        "confidenceScore": 1.0
+                      }
+                    ],
+                    "relations": [
+                      {
+                        "confidenceScore": 1.0,
+                        "relationType": "DosageOfMedication",
+                        "entities": [
+                          {
+                            "ref": "#/results/documents/0/entities/0",
+                            "role": "Dosage"
+                          },
+                          {
+                            "ref": "#/results/documents/0/entities/1",
+                            "role": "Medication"
+                          }
+                        ]
+                      },
+                      {
+                        "confidenceScore": 1.0,
+                        "relationType": "FrequencyOfMedication",
+                        "entities": [
+                          {
+                            "ref": "#/results/documents/0/entities/1",
+                            "role": "Medication"
+                          },
+                          {
+                            "ref": "#/results/documents/0/entities/2",
+                            "role": "Frequency"
+                          }
+                        ]
+                      }
+                    ],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "modelVersion": "2023-12-01"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}
