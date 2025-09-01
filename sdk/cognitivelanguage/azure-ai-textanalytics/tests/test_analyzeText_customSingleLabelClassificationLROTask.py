@@ -33,8 +33,8 @@ class TestTextAnalysisCase(TestTextAnalysis):
     def test_analyze_text_custom_single_label_classification_lro_task(self, text_analysis_endpoint, text_analysis_key):
         client = self.create_client(text_analysis_endpoint, text_analysis_key)
 
-        project_name = "your_csc_project_name"
-        deployment_name = "your_csc_deployment_name"
+        project_name = "single-class-project"
+        deployment_name = "deployment1"
 
         text_a = (
             "I need a reservation for an indoor restaurant in China. Please don't stop the music. "
@@ -60,11 +60,12 @@ class TestTextAnalysisCase(TestTextAnalysis):
         )
 
         assert poller is not None
+
+        paged_actions = poller.result()
         details = poller.details
         assert "operation_id" in details
         assert details.get("status") is not None
 
-        paged_actions = poller.result()
         assert paged_actions is not None
 
         found_csc = False
@@ -84,8 +85,6 @@ class TestTextAnalysisCase(TestTextAnalysis):
                     for doc in result.documents:
                         assert isinstance(doc, ClassificationActionResult)
                         assert doc.id is not None
-                        # Python model typically exposes "classifications" (snake_case)
-                        assert getattr(doc, "classifications", None) is not None
 
                         for cls_item in doc.class_property:
                             assert isinstance(cls_item, ClassificationResult)
