@@ -10,17 +10,13 @@ Make sure your target tag is defined in `readme.md` and **default tag is same wi
 
 ![](default_tag.png)
 
-## 2.Configure `readme.python.md`
-
-
-
-## 3.Trigger pipeline
+## 2.Trigger pipeline
 
 Submit a PR or draft  PR to [Azure/azure-rest-api-specs](https://github.com/Azure/azure-rest-api-specs)
 
 ![](unreleased_package_guide_example1.png)
 
-## 4.Get private package
+## 3.Get private package
 
 Wait until pipelines finish, then there will be wheel and zip of the package. Just Click to download them.
 
@@ -30,7 +26,7 @@ If there is no link in the figure above, it may be folded. You can also find it 
 
 ![img.png](unreleased_package_guide_example3.png)
 
-## 5.Build private package locally (backup solution)
+## 4.Build private package locally (backup solution)
 
 Because of security issue, maybe there is no private link to download. Since there is still auto generated PR provided, you can build the private package locally based on the PR with [guidance](https://github.com/Azure/azure-sdk-for-python/wiki/Common-issues-about-Python-SDK#build-private-package-with-pr)
 
