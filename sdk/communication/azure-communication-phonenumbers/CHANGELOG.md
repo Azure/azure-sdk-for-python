@@ -6,7 +6,10 @@
 - Improved type safety and consistency across all client methods
   - Replaced `**kwargs` parameters with explicit typed parameters for better IDE support and type checking
   - Enhanced type annotations for Long Running Operation (LRO) methods with proper `Union[bool, "PollingMethod"]` typing
+  - Fixed type compatibility issues with optional parameters (e.g., `quantity` in search operations)
   - Added proper type hints for all method parameters while maintaining backward compatibility
+- Fixed pylint and mypy compliance issues
+- Improved code organization and import structure
 
 ## 1.4.0 (2025-08-28)
 
