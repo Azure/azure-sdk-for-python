@@ -75,7 +75,6 @@ class TestTextAnalysisCase(TestTextAnalysis):
             multi_language_inputs=[MultiLanguageInput(id="A", text=text_a, language="en")]
         )
 
-        # Start LRO (sync) – action defined inline
         poller = client.begin_analyze_text_job(
             text_input=text_input,
             actions=[

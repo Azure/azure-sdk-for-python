@@ -15,9 +15,9 @@ from urllib.parse import urlparse
 
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import PipelineResponse
-from azure.core.polling import AsyncLROPoller, AsyncPollingMethod, NoPolling
-from azure.core.polling.base_polling import LROBasePolling
-from azure.core.rest import HttpRequest, HttpResponse
+from azure.core.polling import AsyncLROPoller, AsyncPollingMethod, AsyncNoPolling
+from azure.core.polling.async_base_polling import AsyncLROBasePolling
+from azure.core.rest import HttpRequest, AsyncHttpResponse
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 from azure.core.credentials import AzureKeyCredential
@@ -35,7 +35,7 @@ JSON = MutableMapping[str, Any]
 _Unset: Any = object()
 T = TypeVar("T")
 PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -280,7 +280,7 @@ class TextAnalysisClient(AnalysisTextClientGenerated):
         ) -> AsyncItemPaged["TextActions"]:
             """Build an AsyncItemPaged over the single ``TextActions`` payload using ``next_link``."""
 
-            def extract_data(s: AnalyzeTextOperationState):
+            async def extract_data(s: AnalyzeTextOperationState):
                 next_link = s.next_link
                 actions_payload: TextActions = s.actions
                 return next_link, [actions_payload]
@@ -296,27 +296,26 @@ class TextAnalysisClient(AnalysisTextClientGenerated):
 
         poller_holder: Dict[str, AnalyzeTextAsyncLROPoller[AsyncItemPaged["TextActions"]]] = {}
 
-        async def get_long_running_output(
-            pipeline_response: PipelineResponse[HttpRequest, HttpResponse]
-        ):
-            """Convert the final polling response into the public return type."""
-            final_response = pipeline_response.http_response
-            if final_response.status_code == 200:
-                data = json.loads(final_response.text())
+        def get_long_running_output(pipeline_response):
+            final = pipeline_response.http_response
+            if final.status_code == 200:
+                data = json.loads(final.text())
                 op_state = AnalyzeTextOperationState(data)
+
                 poller_ref = poller_holder["poller"]
-                poller_ref._record_state_for_details(op_state)  # pylint: disable=protected-access
+                poller_ref._record_state_for_details(op_state) # pylint:disable=protected-access
+
                 paged = _build_pager_from_state(op_state)
                 return cls(pipeline_response, paged, {}) if cls else paged
-            raise HttpResponseError(response=final_response)
+            raise HttpResponseError(response=final)
 
         if polling is True:
             polling_method: AsyncPollingMethod[AsyncItemPaged["TextActions"]] = cast(
                 AsyncPollingMethod[AsyncItemPaged["TextActions"]],
-                LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
+                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
             )
         elif polling is False:
-            polling_method = cast(AsyncPollingMethod[AsyncItemPaged["TextActions"]], NoPolling())
+            polling_method = cast(AsyncPollingMethod[AsyncItemPaged["TextActions"]], AsyncNoPolling())
         else:
             polling_method = cast(AsyncPollingMethod[AsyncItemPaged["TextActions"]], polling)
 
