@@ -1,6 +1,6 @@
 # Release History
 
-## 1.4.1 (Unreleased)
+## 1.4.1 (2025-09-01)
 
 ### Other Changes
 - Improved type safety and consistency across all client methods
