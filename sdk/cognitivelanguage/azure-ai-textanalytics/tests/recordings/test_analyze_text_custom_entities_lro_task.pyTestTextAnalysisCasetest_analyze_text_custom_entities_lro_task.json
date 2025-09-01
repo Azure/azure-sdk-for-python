@@ -1,0 +1,147 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2025-05-15-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "564",
+        "Content-Type": "application/json",
+        "Ocp-Apim-Subscription-Key": "Sanitized",
+        "User-Agent": "azsdk-python-ai-textanalytics/6.0.0b1 Python/3.13.7 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": {
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "Sanitized",
+              "text": "We love this trail and make the trip every year. The views are breathtaking and well worth the hike! Yesterday was foggy though, so we missed the spectacular views. We tried again today and it was amazing. Everyone in my family liked the trail although it was too challenging for the less athletic among us.",
+              "language": "en"
+            }
+          ]
+        },
+        "tasks": [
+          {
+            "kind": "CustomEntityRecognition",
+            "taskName": "CustomEntitiesOperationActionSample",
+            "parameters": {
+              "projectName": "Example-ner-project",
+              "deploymentName": "TestDeployment"
+            }
+          }
+        ]
+      },
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "apim-request-id": "7dd76c70-b6e1-45de-810c-6c4371d0b5a9",
+        "azure-deprecating": "Training config used by Deployment name Example-ner-project and project name TestDeployment used in CustomEntityRecognition will retire on 2025-11-15. (https://aka.ms/text-analytics-deprecated-model-versions)",
+        "Content-Length": "0",
+        "Date": "Mon, 01 Sep 2025 07:23:44 GMT",
+        "operation-location": "https://Sanitized.cognitiveservices.azure.com/language/analyze-text/jobs/5e8980d2-e71b-4c5e-9ae1-55d170eaf427?api-version=2025-05-15-preview",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "422",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/analyze-text/jobs/5e8980d2-e71b-4c5e-9ae1-55d170eaf427?api-version=2025-05-15-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Ocp-Apim-Subscription-Key": "Sanitized",
+        "User-Agent": "azsdk-python-ai-textanalytics/6.0.0b1 Python/3.13.7 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "b5409fd9-ff0d-4ba7-ac0d-d8f9630f14fd",
+        "Content-Length": "283",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 01 Sep 2025 07:23:44 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "8",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": {
+        "jobId": "5e8980d2-e71b-4c5e-9ae1-55d170eaf427",
+        "lastUpdatedDateTime": "2025-09-01T07:23:44Z",
+        "createdDateTime": "2025-09-01T07:23:44Z",
+        "expirationDateTime": "2025-09-02T07:23:44Z",
+        "status": "notStarted",
+        "errors": [],
+        "tasks": {
+          "completed": 0,
+          "failed": 0,
+          "inProgress": 1,
+          "total": 1,
+          "items": []
+        }
+      }
+    },
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/analyze-text/jobs/5e8980d2-e71b-4c5e-9ae1-55d170eaf427?api-version=2025-05-15-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Ocp-Apim-Subscription-Key": "Sanitized",
+        "User-Agent": "azsdk-python-ai-textanalytics/6.0.0b1 Python/3.13.7 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "4fd2c1c0-b2c1-47e3-919e-ef55d51279af",
+        "Content-Length": "603",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 01 Sep 2025 07:24:14 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "20",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": {
+        "jobId": "5e8980d2-e71b-4c5e-9ae1-55d170eaf427",
+        "lastUpdatedDateTime": "2025-09-01T07:23:46Z",
+        "createdDateTime": "2025-09-01T07:23:44Z",
+        "expirationDateTime": "2025-09-02T07:23:44Z",
+        "status": "succeeded",
+        "errors": [],
+        "tasks": {
+          "completed": 1,
+          "failed": 0,
+          "inProgress": 0,
+          "total": 1,
+          "items": [
+            {
+              "kind": "CustomEntityRecognitionLROResults",
+              "taskName": "CustomEntitiesOperationActionSample",
+              "lastUpdateDateTime": "2025-09-01T07:23:46.1844495Z",
+              "status": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "id": "Sanitized",
+                    "entities": [],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "projectName": "Example-ner-project",
+                "deploymentName": "TestDeployment"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

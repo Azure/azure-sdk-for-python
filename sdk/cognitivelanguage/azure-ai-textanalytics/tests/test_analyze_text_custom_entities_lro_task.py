@@ -41,8 +41,8 @@ class TestTextAnalysisCase(TestTextAnalysis):
     @recorded_by_proxy
     def test_analyze_text_custom_entities_lro_task(self, text_analysis_endpoint, text_analysis_key):
         client = self.create_client(text_analysis_endpoint, text_analysis_key)
-        project_name = "your_project_name"
-        deployment_name = "your_deployment_name"
+        project_name = "Example-ner-project"
+        deployment_name = "TestDeployment"
         text_a = (
             "We love this trail and make the trip every year. The views are breathtaking and well worth the hike! "
             "Yesterday was foggy though, so we missed the spectacular views. We tried again today and it was "
@@ -70,11 +70,11 @@ class TestTextAnalysisCase(TestTextAnalysis):
         )
 
         assert poller is not None
+        
+        paged_actions = poller.result()
         details = poller.details
         assert "operation_id" in details
         assert details.get("status") is not None
-
-        paged_actions = poller.result()
         assert paged_actions is not None
 
         found_custom_entities = False

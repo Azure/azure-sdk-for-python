@@ -23,7 +23,6 @@ from azure.core.utils import case_insensitive_dict
 from azure.core.credentials import AzureKeyCredential
 from azure.core.paging import ItemPaged
 
-# ----- generated / local package symbols (align with your layout) -----
 from ._client import TextAnalysisClient as AnalysisTextClientGenerated
 from . import models as _models
 from .models import AnalyzeTextOperationState, TextActions  # convenience re-exports if present
@@ -32,7 +31,6 @@ from ._utils.serialization import Serializer
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
-# Match Conversation Inference style
 JSON = MutableMapping[str, Any]
 _Unset: Any = object()
 T = TypeVar("T")

@@ -1,0 +1,152 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2025-05-15-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "381",
+        "Content-Type": "application/json",
+        "Ocp-Apim-Subscription-Key": "Sanitized",
+        "User-Agent": "azsdk-python-ai-textanalytics/6.0.0b1 Python/3.13.7 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": {
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "Sanitized",
+              "text": "I need a reservation for an indoor restaurant in China. Please don't stop the music. Play music and add it to my playlist.",
+              "language": "en"
+            }
+          ]
+        },
+        "tasks": [
+          {
+            "kind": "CustomMultiLabelClassification",
+            "taskName": "CMCOperationActionSample",
+            "parameters": {
+              "projectName": "multi-class-project",
+              "deploymentName": "multiclassdeployment"
+            }
+          }
+        ]
+      },
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "apim-request-id": "f09e88bb-890a-43f9-9196-dea6a46abbfe",
+        "azure-deprecating": "Training config used by Deployment name multi-class-project and project name multiclassdeployment used in CustomMultiLabelClassification will retire on 2025-10-27. (https://aka.ms/text-analytics-deprecated-model-versions)",
+        "Content-Length": "0",
+        "Date": "Mon, 01 Sep 2025 20:25:17 GMT",
+        "operation-location": "https://Sanitized.cognitiveservices.azure.com/language/analyze-text/jobs/65c38c9e-10db-44f2-aae2-10c85d4a5eac?api-version=2025-05-15-preview",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "392",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/analyze-text/jobs/65c38c9e-10db-44f2-aae2-10c85d4a5eac?api-version=2025-05-15-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Ocp-Apim-Subscription-Key": "Sanitized",
+        "User-Agent": "azsdk-python-ai-textanalytics/6.0.0b1 Python/3.13.7 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "e24ac5dc-77b3-4036-b085-b8e46a9adcd3",
+        "Content-Length": "283",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 01 Sep 2025 20:25:17 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "7",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": {
+        "jobId": "65c38c9e-10db-44f2-aae2-10c85d4a5eac",
+        "lastUpdatedDateTime": "2025-09-01T20:25:18Z",
+        "createdDateTime": "2025-09-01T20:25:18Z",
+        "expirationDateTime": "2025-09-02T20:25:18Z",
+        "status": "notStarted",
+        "errors": [],
+        "tasks": {
+          "completed": 0,
+          "failed": 0,
+          "inProgress": 1,
+          "total": 1,
+          "items": []
+        }
+      }
+    },
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/analyze-text/jobs/65c38c9e-10db-44f2-aae2-10c85d4a5eac?api-version=2025-05-15-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Ocp-Apim-Subscription-Key": "Sanitized",
+        "User-Agent": "azsdk-python-ai-textanalytics/6.0.0b1 Python/3.13.7 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "3c410899-4ab9-4a5f-9c00-8cde1bd4b942",
+        "Content-Length": "645",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 01 Sep 2025 20:25:47 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "20",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": {
+        "jobId": "65c38c9e-10db-44f2-aae2-10c85d4a5eac",
+        "lastUpdatedDateTime": "2025-09-01T20:25:20Z",
+        "createdDateTime": "2025-09-01T20:25:18Z",
+        "expirationDateTime": "2025-09-02T20:25:18Z",
+        "status": "succeeded",
+        "errors": [],
+        "tasks": {
+          "completed": 1,
+          "failed": 0,
+          "inProgress": 0,
+          "total": 1,
+          "items": [
+            {
+              "kind": "CustomMultiLabelClassificationLROResults",
+              "taskName": "CMCOperationActionSample",
+              "lastUpdateDateTime": "2025-09-01T20:25:20.6146782Z",
+              "status": "succeeded",
+              "results": {
+                "documents": [
+                  {
+                    "id": "Sanitized",
+                    "class": [
+                      {
+                        "category": "Drama",
+                        "confidenceScore": 0.99
+                      }
+                    ],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "projectName": "multi-class-project",
+                "deploymentName": "multiclassdeployment"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

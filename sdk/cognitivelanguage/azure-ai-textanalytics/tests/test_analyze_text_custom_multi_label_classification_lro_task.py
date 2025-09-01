@@ -33,8 +33,8 @@ class TestTextAnalysisCase(TestTextAnalysis):
     def test_analyze_text_custom_multi_label_classification_lro_task(self, text_analysis_endpoint, text_analysis_key):
         client = self.create_client(text_analysis_endpoint, text_analysis_key)
 
-        project_name = "your_cmc_project_name"
-        deployment_name = "your_cmc_deployment_name"
+        project_name = "multi-class-project"
+        deployment_name = "multiclassdeployment"
 
         text_a = (
             "I need a reservation for an indoor restaurant in China. Please don't stop the music. "
@@ -60,11 +60,10 @@ class TestTextAnalysisCase(TestTextAnalysis):
         )
 
         assert poller is not None
+        paged_actions = poller.result()
         details = poller.details
         assert "operation_id" in details
         assert details.get("status") is not None
-
-        paged_actions = poller.result()
         assert paged_actions is not None
 
         found_cmc = False
@@ -84,9 +83,8 @@ class TestTextAnalysisCase(TestTextAnalysis):
                     for doc in result.documents:
                         assert isinstance(doc, ClassificationActionResult)
                         assert doc.id is not None
-                        # Multi-label returns a list of classifications
-                        assert getattr(doc, "classifications", None) is not None
 
+                        assert doc.class_property is not None
                         for cls_item in doc.class_property:
                             assert isinstance(cls_item, ClassificationResult)
                             assert cls_item.category is not None
