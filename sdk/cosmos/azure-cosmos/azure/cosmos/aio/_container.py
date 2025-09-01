@@ -326,7 +326,8 @@ class ContainerProxy:
         :param partition_key: Partition key for the item to retrieve. If the partition key is set to None, it will try
             to fetch an item with a partition key of null. To learn more about using partition keys, see `here
             <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/docs/PartitionKeys.md>`_.
-        :type partition_key: Union[str, int, float, bool, Type[NonePartitionKeyValue], Type[NullPartitionKeyValue], None, Sequence[Union[str, int, float, bool, None]]]
+        :type partition_key: Union[str, int, float, bool, Type[NonePartitionKeyValue], Type[NullPartitionKeyValue],
+            None, Sequence[Union[str, int, float, bool, None]]]
         :keyword str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.

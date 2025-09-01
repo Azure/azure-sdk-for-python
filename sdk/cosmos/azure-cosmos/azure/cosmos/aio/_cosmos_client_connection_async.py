@@ -76,15 +76,15 @@ from ..partition_key import (
     _PartitionKeyKind,
     _SequentialPartitionKeyType,
     _return_undefined_or_empty_partition_key,
-    NonePartitionKeyValue, _Empty,
-    _build_partition_key_from_properties, NullPartitionKeyValue,
+    _Empty,
+    _build_partition_key_from_properties
 )
 from ._auth_policy_async import AsyncCosmosBearerTokenCredentialPolicy
 from .._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
 from .._range_partition_resolver import RangePartitionResolver
 
 
-PartitionKeyType = Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], Type[NonePartitionKeyValue], Type[NullPartitionKeyValue]]  # pylint: disable=line-too-long
+PartitionKeyType = Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]]]  # pylint: disable=line-too-long
 
 
 class CredentialDict(TypedDict, total=False):
