@@ -1,6 +1,6 @@
 # Release History
 
-## 1.4.1 (2025-09-01)
+## 1.4.1 (Unreleased)
 
 ### Other Changes
 - Improved type safety and consistency across all client methods
@@ -45,7 +45,7 @@
 - GA release of Number Insight.
 - API version `2025-02-11` is the default.
 
-## Other changes
+### Other Changes
 - Updated `search_operator_information` method signature to enforce `options` as a keyword-only argument.
 
 ## 1.2.0b2 (2024-03-01)
