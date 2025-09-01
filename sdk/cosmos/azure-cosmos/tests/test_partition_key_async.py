@@ -149,10 +149,8 @@ class TestPartitionKeyAsync(unittest.IsolatedAsyncioTestCase):
         await _batch_and_assert(created_container, pk_field, pk_value)
         # Conflicts
         await self._assert_no_conflicts(created_container, pk_value)
-        # Delete
-        await created_container.delete_item(item=document_definition['id'], partition_key=pk_value)
         # Get Feed Range
-        feed_range = await created_container.feed_range_from_partition_key(partition_key=None)
+        feed_range = await created_container.feed_range_from_partition_key(partition_key=pk_value)
         assert feed_range is not None
         items_iter = created_container.query_items(query='SELECT * FROM c',
                                                    feed_range=feed_range)
@@ -160,6 +158,8 @@ class TestPartitionKeyAsync(unittest.IsolatedAsyncioTestCase):
         assert len(items_list) > 0
         for item in items_list:
             _assert_pk(item, pk_field)
+        # Delete
+        await created_container.delete_item(item=document_definition['id'], partition_key=pk_value)
         # recreate the item to test delete item api
         await created_container.create_item(body=document_definition)
         await created_container.delete_all_items_by_partition_key(partition_key=pk_value)

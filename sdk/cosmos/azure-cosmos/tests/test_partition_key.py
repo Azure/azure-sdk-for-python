@@ -182,7 +182,7 @@ class TestPartitionKey(unittest.TestCase):
         # Conflicts
         self._assert_no_conflicts(created_container, pk_value)
         # Get Feed Range
-        feed_range = created_container.feed_range_from_partition_key(partition_key=None)
+        feed_range = created_container.feed_range_from_partition_key(partition_key=pk_value)
         assert feed_range is not None
         items_iter = created_container.query_items(query='SELECT * FROM c',
                                                    feed_range=feed_range,

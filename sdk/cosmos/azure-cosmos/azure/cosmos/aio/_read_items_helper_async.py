@@ -35,14 +35,15 @@ from azure.cosmos import _base, exceptions
 from azure.core.utils import CaseInsensitiveDict
 from azure.cosmos._query_builder import _QueryBuilder
 from azure.cosmos.partition_key import _get_partition_key_from_partition_key_definition, \
-    NonePartitionKeyValue, _Empty, _Undefined
+    NonePartitionKeyValue, _Empty, _Undefined, NullPartitionKeyValue
 from azure.cosmos import CosmosList
 
 if TYPE_CHECKING:
     from azure.cosmos.aio._cosmos_client_connection_async import CosmosClientConnection
     PartitionKeyType = Union[
-        bool, float, int, str, type[NonePartitionKeyValue], _Empty, _Undefined, None,
-        Sequence[Union[bool, float, int, str, type[NonePartitionKeyValue], _Empty, _Undefined, None]]
+        bool, float, int, str, type[NonePartitionKeyValue], type[NullPartitionKeyValue], _Empty, _Undefined, None,
+        Sequence[Union[bool, float, int, str, type[NonePartitionKeyValue], type[NullPartitionKeyValue],
+        _Empty, _Undefined, None]]
     ]
 
 class ReadItemsHelperAsync:
