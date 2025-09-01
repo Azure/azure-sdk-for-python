@@ -28,7 +28,7 @@ from urllib.parse import urlparse
 import uuid
 from typing import (
     Callable, Dict, Any, Iterable, Mapping, Optional, List,
-    Sequence, Tuple, Type, Union, cast
+    Sequence, Tuple, Union, cast
 )
 
 from typing_extensions import TypedDict
@@ -84,7 +84,7 @@ from .._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
 from .._range_partition_resolver import RangePartitionResolver
 
 
-PartitionKeyType = Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]]]  # pylint: disable=line-too-long
+PartitionKeyType = Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], _Empty, _Undefined, None]  # pylint: disable=line-too-long
 
 
 class CredentialDict(TypedDict, total=False):
