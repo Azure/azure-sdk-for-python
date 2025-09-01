@@ -840,7 +840,7 @@ class CallAutomationClient:
     ) -> AsyncIterable[bytes]:
         """Download a stream of the call recording.
 
-        :param recording_url: Recording's url to be downloaded
+        :param recording_url: Recording's url to be downloaded. Required.
         :type recording_url: str
         :keyword offset: If provided, only download the bytes of the content in the specified range.
          Offset of starting byte.
@@ -852,10 +852,14 @@ class CallAutomationClient:
         :rtype: AsyncIterable[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+
+        if not recording_url:
+            raise ValueError("Recording URL must not be None.")
+
         response = await self._downloader.download_streaming(
             source_location=recording_url,
-            offset=cast(int, offset or 0),
-            length=cast(int, length or 0),
+            offset=offset,
+            length=length,
             **kwargs
         )
 
@@ -869,12 +873,16 @@ class CallAutomationClient:
     async def delete_recording(self, recording_url: str, **kwargs) -> None:
         """Delete a call recording from given recording url.
 
-        :param recording_url: Recording's url.
+        :param recording_url: Recording's url. Required.
         :type recording_url: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+
+        if not recording_url:
+            raise ValueError("Recording URL must not be None.")
+
         await self._downloader.delete_recording(recording_location=recording_url, **kwargs)
 
     async def __aenter__(self) -> "CallAutomationClient":

@@ -844,7 +844,7 @@ class CallAutomationClient:
     ) -> Iterable[bytes]:
         """Download a stream of the call recording.
 
-        :param recording_url: Recording's url to be downloaded
+        :param recording_url: Recording's url to be downloaded. Required.
         :type recording_url: str
         :keyword offset: If provided, only download the bytes of the content in the specified range.
          Offset of starting byte.
@@ -856,10 +856,14 @@ class CallAutomationClient:
         :rtype: Iterable[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+
+        if not recording_url:
+            raise ValueError("Recording URL must not be None.")
+
         stream = self._downloader.download_streaming(
             source_location=recording_url,
-            offset=cast(int, offset or 0),
-            length=cast(int, length or 0),
+            offset=offset,
+            length=length,
             **kwargs
         )
         return stream  # type: ignore[return-value]
@@ -874,6 +878,10 @@ class CallAutomationClient:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+
+        if not recording_url:
+            raise ValueError("Recording URL must not be None.")
+
         self._downloader.delete_recording(recording_location=recording_url, **kwargs)
 
     def __enter__(self) -> "CallAutomationClient":

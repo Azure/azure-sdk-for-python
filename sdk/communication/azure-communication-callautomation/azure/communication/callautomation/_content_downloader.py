@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Any
+from typing import Any, Optional
 
 from urllib.parse import ParseResult, urlparse
 from azure.core.exceptions import (
@@ -33,7 +33,7 @@ class ContentDownloader(object):
         self._call_recording_client = call_recording_client
 
     def download_streaming(  # pylint: disable=inconsistent-return-statements
-        self, source_location: str, offset: int, length: int, **kwargs: Any
+        self, source_location: str, offset: Optional[int], length: Optional[int], **kwargs: Any
     ) -> HttpResponse:
         """Download a stream of the call recording.
 

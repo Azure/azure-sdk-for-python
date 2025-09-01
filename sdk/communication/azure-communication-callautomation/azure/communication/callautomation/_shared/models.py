@@ -13,7 +13,7 @@ from azure.core import CaseInsensitiveEnumMeta
 
 class DeprecatedEnumMeta(CaseInsensitiveEnumMeta):
 
-    def __getattribute__(cls, item):
+    def __getattribute__(self, item):
         if item.upper() == "MICROSOFT_BOT":
             warnings.warn(
                 "MICROSOFT_BOT is deprecated and has been replaced by \
@@ -98,7 +98,7 @@ class CommunicationUserProperties(TypedDict):
     """ID of the Communication user as returned from Azure Communication Identity."""
 
 
-class CommunicationUserIdentifier:
+class CommunicationUserIdentifier(CommunicationIdentifier):
     """Represents a user in Azure Communication Service."""
 
     kind: Literal[CommunicationIdentifierKind.COMMUNICATION_USER] = CommunicationIdentifierKind.COMMUNICATION_USER
@@ -137,7 +137,7 @@ class PhoneNumberProperties(TypedDict):
     """True if the phone number is anonymous, e.g. when used to represent a hidden caller Id."""
 
 
-class PhoneNumberIdentifier:
+class PhoneNumberIdentifier(CommunicationIdentifier):
     """Represents a phone number."""
 
     kind: Literal[CommunicationIdentifierKind.PHONE_NUMBER] = CommunicationIdentifierKind.PHONE_NUMBER
@@ -165,7 +165,7 @@ class PhoneNumberIdentifier:
             props = {"value": value, "is_anonymous": is_anonymous}
             if has_asserted_id:
                 props["asserted_id"] = phone_number[asserted_id_index:]
-            self.properties = PhoneNumberProperties(**props)  # type: ignore
+            self.properties = PhoneNumberProperties(**props)
         else:
             self.properties = PhoneNumberProperties(value=value)
         self.raw_id = raw_id if raw_id is not None else self._format_raw_id(self.properties)
@@ -184,7 +184,7 @@ class PhoneNumberIdentifier:
         value = properties["value"]
         return f"{PHONE_NUMBER_PREFIX}{value}"
 
-class UnknownIdentifier:
+class UnknownIdentifier(CommunicationIdentifier):
     """Represents an identifier of an unknown type.
 
     It will be encountered in communications with endpoints that are not
@@ -228,7 +228,7 @@ class MicrosoftTeamsUserProperties(TypedDict):
     """Cloud environment that this identifier belongs to."""
 
 
-class MicrosoftTeamsUserIdentifier:
+class MicrosoftTeamsUserIdentifier(CommunicationIdentifier):
     """Represents an identifier for a Microsoft Teams user."""
 
     kind: Literal[CommunicationIdentifierKind.MICROSOFT_TEAMS_USER] = CommunicationIdentifierKind.MICROSOFT_TEAMS_USER
@@ -300,7 +300,7 @@ class _botbackcompatdict(dict):
             raise
 
 
-class MicrosoftTeamsAppIdentifier:
+class MicrosoftTeamsAppIdentifier(CommunicationIdentifier):
     """Represents an identifier for a Microsoft Teams application."""
 
     kind: Literal[CommunicationIdentifierKind.MICROSOFT_TEAMS_APP] = CommunicationIdentifierKind.MICROSOFT_TEAMS_APP
@@ -380,7 +380,7 @@ class TeamsExtensionUserProperties(TypedDict):
     """Cloud environment that this identifier belongs to."""
 
 
-class TeamsExtensionUserIdentifier:
+class TeamsExtensionUserIdentifier(CommunicationIdentifier):
     """Represents an identifier for a Teams Extension user."""
 
     kind: Literal[CommunicationIdentifierKind.TEAMS_EXTENSION_USER] = CommunicationIdentifierKind.TEAMS_EXTENSION_USER
@@ -461,57 +461,57 @@ def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:  # pylint: d
     :rtype: CommunicationIdentifier
     """
     if raw_id.startswith(PHONE_NUMBER_PREFIX):
-        return PhoneNumberIdentifier(value=raw_id[len(PHONE_NUMBER_PREFIX) :], raw_id=raw_id)  # type: ignore[return-value]
+        return PhoneNumberIdentifier(value=raw_id[len(PHONE_NUMBER_PREFIX) :], raw_id=raw_id)
 
     segments = raw_id.split(":", maxsplit=2)
     if len(segments) < 3:
-        return UnknownIdentifier(identifier=raw_id)  # type: ignore[return-value]
+        return UnknownIdentifier(identifier=raw_id)
 
     prefix = f"{segments[0]}:{segments[1]}:"
     suffix = segments[2]
     if prefix == TEAMS_USER_ANONYMOUS_PREFIX:
-        return MicrosoftTeamsUserIdentifier(user_id=suffix, is_anonymous=True, raw_id=raw_id)  # type: ignore[return-value]
+        return MicrosoftTeamsUserIdentifier(user_id=suffix, is_anonymous=True, raw_id=raw_id)
     if prefix == TEAMS_USER_PUBLIC_CLOUD_PREFIX:
-        return MicrosoftTeamsUserIdentifier(  # type: ignore[return-value]
+        return MicrosoftTeamsUserIdentifier(
             user_id=suffix,
             is_anonymous=False,
             cloud=CommunicationCloudEnvironment.PUBLIC,
             raw_id=raw_id,
         )
     if prefix == TEAMS_USER_DOD_CLOUD_PREFIX:
-        return MicrosoftTeamsUserIdentifier(  # type: ignore[return-value]
+        return MicrosoftTeamsUserIdentifier(
             user_id=suffix,
             is_anonymous=False,
             cloud=CommunicationCloudEnvironment.DOD,
             raw_id=raw_id,
         )
     if prefix == TEAMS_USER_GCCH_CLOUD_PREFIX:
-        return MicrosoftTeamsUserIdentifier(  # type: ignore[return-value]
+        return MicrosoftTeamsUserIdentifier(
             user_id=suffix,
             is_anonymous=False,
             cloud=CommunicationCloudEnvironment.GCCH,
             raw_id=raw_id,
         )
     if prefix == TEAMS_APP_PUBLIC_CLOUD_PREFIX:
-        return MicrosoftTeamsAppIdentifier(  # type: ignore[return-value]
+        return MicrosoftTeamsAppIdentifier(
             app_id=suffix,
             cloud=CommunicationCloudEnvironment.PUBLIC,
             raw_id=raw_id,
         )
     if prefix == TEAMS_APP_DOD_CLOUD_PREFIX:
-        return MicrosoftTeamsAppIdentifier(  # type: ignore[return-value]
+        return MicrosoftTeamsAppIdentifier(
             app_id=suffix,
             cloud=CommunicationCloudEnvironment.DOD,
             raw_id=raw_id,
         )
     if prefix == TEAMS_APP_GCCH_CLOUD_PREFIX:
-        return MicrosoftTeamsAppIdentifier(  # type: ignore[return-value]
+        return MicrosoftTeamsAppIdentifier(
             app_id=suffix,
             cloud=CommunicationCloudEnvironment.GCCH,
             raw_id=raw_id,
         )
     if prefix == SPOOL_USER_PREFIX:
-        return CommunicationUserIdentifier(id=raw_id, raw_id=raw_id)  # type: ignore[return-value]
+        return CommunicationUserIdentifier(id=raw_id, raw_id=raw_id)
 
     if prefix in [
         ACS_USER_PREFIX,
@@ -520,6 +520,6 @@ def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:  # pylint: d
     ]:
         identifier = try_create_teams_extension_user(prefix, suffix)
         if identifier is not None:
-            return identifier  # type: ignore[return-value]
-        return CommunicationUserIdentifier(id=raw_id, raw_id=raw_id)  # type: ignore[return-value]
-    return UnknownIdentifier(identifier=raw_id)  # type: ignore[return-value]
+            return identifier
+        return CommunicationUserIdentifier(id=raw_id, raw_id=raw_id)
+    return UnknownIdentifier(identifier=raw_id)
