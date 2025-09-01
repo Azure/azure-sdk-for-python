@@ -1,0 +1,62 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/:analyze-text?api-version=2025-05-15-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "604",
+        "Content-Type": "application/json",
+        "Ocp-Apim-Subscription-Key": "Sanitized",
+        "User-Agent": "azsdk-python-ai-textanalytics/6.0.0b1 Python/3.13.7 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": {
+        "kind": "LanguageDetection",
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "Sanitized",
+              "text": "Este documento está escrito en un lenguaje diferente al inglés. Su objectivo es demostrar cómo invocar el método de detección de lenguaje del servicio de Text Analytics en Microsoft Azure. También muestra cómo acceder a la información retornada por el servicio. Esta funcionalidad es útil para las aplicaciones que recopilan texto arbitrario donde el lenguaje no se conoce de antemano. Puede usarse para detectar una amplia gama de lenguajes, variantes, dialectos y algunos idiomas regionales o culturales."
+            }
+          ]
+        }
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "d5b503e8-f31c-4903-a08f-8e07884bca9d",
+        "Content-Length": "264",
+        "Content-Type": "application/json; charset=utf-8",
+        "csp-billing-usage": "CognitiveServices.TextAnalytics.Language.Text.LanguageDetection=1,CognitiveServices.TextAnalytics.TextRecords=1",
+        "Date": "Mon, 01 Sep 2025 21:15:26 GMT",
+        "Set-Cookie": "Sanitized",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "15",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": {
+        "kind": "LanguageDetectionResults",
+        "results": {
+          "documents": [
+            {
+              "id": "Sanitized",
+              "warnings": [],
+              "detectedLanguage": {
+                "name": "Sanitized",
+                "iso6391Name": "es",
+                "confidenceScore": 1.0,
+                "scriptName": "Latin",
+                "scriptIso15924Code": "Latn"
+              }
+            }
+          ],
+          "errors": [],
+          "modelVersion": "2024-11-01"
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}
