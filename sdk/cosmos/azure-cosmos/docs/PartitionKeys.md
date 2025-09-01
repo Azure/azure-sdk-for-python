@@ -110,6 +110,6 @@ results = list(container.query_items(
 ---
 ## Related Links
 - [Azure Cosmos DB partitioning overview](https://learn.microsoft.com/azure/cosmos-db/partitioning-overview)
-- [SDK samples](../samples/README.md)
+- [SDK samples](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/samples/README.md)
 
 ---
