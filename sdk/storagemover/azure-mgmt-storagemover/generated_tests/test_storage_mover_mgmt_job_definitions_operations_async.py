@@ -6,22 +6,23 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.storagemover import StorageMoverClient
+from azure.mgmt.storagemover.aio import StorageMoverMgmtClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils.aio import recorded_by_proxy_async
 
 AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestStorageMoverJobDefinitionsOperations(AzureMgmtRecordedTestCase):
+class TestStorageMoverMgmtJobDefinitionsOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(StorageMoverClient)
+        self.client = self.create_mgmt_client(StorageMoverMgmtClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_job_definitions_get(self, resource_group):
-        response = self.client.job_definitions.get(
+    @recorded_by_proxy_async
+    async def test_job_definitions_get(self, resource_group):
+        response = await self.client.job_definitions.get(
             resource_group_name=resource_group.name,
             storage_mover_name="str",
             project_name="str",
@@ -32,9 +33,9 @@ class TestStorageMoverJobDefinitionsOperations(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_job_definitions_create_or_update(self, resource_group):
-        response = self.client.job_definitions.create_or_update(
+    @recorded_by_proxy_async
+    async def test_job_definitions_create_or_update(self, resource_group):
+        response = await self.client.job_definitions.create_or_update(
             resource_group_name=resource_group.name,
             storage_mover_name="str",
             project_name="str",
@@ -96,9 +97,9 @@ class TestStorageMoverJobDefinitionsOperations(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_job_definitions_update(self, resource_group):
-        response = self.client.job_definitions.update(
+    @recorded_by_proxy_async
+    async def test_job_definitions_update(self, resource_group):
+        response = await self.client.job_definitions.update(
             resource_group_name=resource_group.name,
             storage_mover_name="str",
             project_name="str",
@@ -110,34 +111,36 @@ class TestStorageMoverJobDefinitionsOperations(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_job_definitions_begin_delete(self, resource_group):
-        response = self.client.job_definitions.begin_delete(
-            resource_group_name=resource_group.name,
-            storage_mover_name="str",
-            project_name="str",
-            job_definition_name="str",
+    @recorded_by_proxy_async
+    async def test_job_definitions_begin_delete(self, resource_group):
+        response = await (
+            await self.client.job_definitions.begin_delete(
+                resource_group_name=resource_group.name,
+                storage_mover_name="str",
+                project_name="str",
+                job_definition_name="str",
+            )
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_job_definitions_list(self, resource_group):
+    @recorded_by_proxy_async
+    async def test_job_definitions_list(self, resource_group):
         response = self.client.job_definitions.list(
             resource_group_name=resource_group.name,
             storage_mover_name="str",
             project_name="str",
         )
-        result = [r for r in response]
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_job_definitions_start_job(self, resource_group):
-        response = self.client.job_definitions.start_job(
+    @recorded_by_proxy_async
+    async def test_job_definitions_start_job(self, resource_group):
+        response = await self.client.job_definitions.start_job(
             resource_group_name=resource_group.name,
             storage_mover_name="str",
             project_name="str",
@@ -148,9 +151,9 @@ class TestStorageMoverJobDefinitionsOperations(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_job_definitions_stop_job(self, resource_group):
-        response = self.client.job_definitions.stop_job(
+    @recorded_by_proxy_async
+    async def test_job_definitions_stop_job(self, resource_group):
+        response = await self.client.job_definitions.stop_job(
             resource_group_name=resource_group.name,
             storage_mover_name="str",
             project_name="str",

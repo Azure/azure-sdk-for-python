@@ -6,22 +6,23 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.storagemover import StorageMoverClient
+from azure.mgmt.storagemover.aio import StorageMoverMgmtClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils.aio import recorded_by_proxy_async
 
 AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestStorageMoverJobRunsOperations(AzureMgmtRecordedTestCase):
+class TestStorageMoverMgmtJobRunsOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(StorageMoverClient)
+        self.client = self.create_mgmt_client(StorageMoverMgmtClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_job_runs_get(self, resource_group):
-        response = self.client.job_runs.get(
+    @recorded_by_proxy_async
+    async def test_job_runs_get(self, resource_group):
+        response = await self.client.job_runs.get(
             resource_group_name=resource_group.name,
             storage_mover_name="str",
             project_name="str",
@@ -33,14 +34,14 @@ class TestStorageMoverJobRunsOperations(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_job_runs_list(self, resource_group):
+    @recorded_by_proxy_async
+    async def test_job_runs_list(self, resource_group):
         response = self.client.job_runs.list(
             resource_group_name=resource_group.name,
             storage_mover_name="str",
             project_name="str",
             job_definition_name="str",
         )
-        result = [r for r in response]
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...

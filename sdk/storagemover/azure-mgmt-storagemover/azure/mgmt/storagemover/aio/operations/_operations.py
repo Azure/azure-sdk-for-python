@@ -9,7 +9,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, AsyncIterator, Callable, Dict, IO, List, Optional, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterator, Callable, IO, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -69,10 +69,11 @@ from ...operations._operations import (
     build_storage_movers_list_request,
     build_storage_movers_update_request,
 )
-from .._configuration import StorageMoverClientConfiguration
+from .._configuration import StorageMoverMgmtClientConfiguration
 
+List = list
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 JSON = MutableMapping[str, Any]
 
 
@@ -82,14 +83,14 @@ class Operations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.storagemover.aio.StorageMoverClient`'s
+        :class:`~azure.mgmt.storagemover.aio.StorageMoverMgmtClient`'s
         :attr:`operations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: StorageMoverClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: StorageMoverMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -183,14 +184,14 @@ class StorageMoversOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.storagemover.aio.StorageMoverClient`'s
+        :class:`~azure.mgmt.storagemover.aio.StorageMoverMgmtClient`'s
         :attr:`storage_movers` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: StorageMoverClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: StorageMoverMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -891,14 +892,14 @@ class AgentsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.storagemover.aio.StorageMoverClient`'s
+        :class:`~azure.mgmt.storagemover.aio.StorageMoverMgmtClient`'s
         :attr:`agents` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: StorageMoverClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: StorageMoverMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -1551,14 +1552,14 @@ class EndpointsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.storagemover.aio.StorageMoverClient`'s
+        :class:`~azure.mgmt.storagemover.aio.StorageMoverMgmtClient`'s
         :attr:`endpoints` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: StorageMoverClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: StorageMoverMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -2219,14 +2220,14 @@ class ProjectsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.storagemover.aio.StorageMoverClient`'s
+        :class:`~azure.mgmt.storagemover.aio.StorageMoverMgmtClient`'s
         :attr:`projects` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: StorageMoverClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: StorageMoverMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -2882,14 +2883,14 @@ class JobDefinitionsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.storagemover.aio.StorageMoverClient`'s
+        :class:`~azure.mgmt.storagemover.aio.StorageMoverMgmtClient`'s
         :attr:`job_definitions` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: StorageMoverClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: StorageMoverMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -3760,14 +3761,14 @@ class JobRunsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.storagemover.aio.StorageMoverClient`'s
+        :class:`~azure.mgmt.storagemover.aio.StorageMoverMgmtClient`'s
         :attr:`job_runs` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: StorageMoverClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: StorageMoverMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 

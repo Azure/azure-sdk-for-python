@@ -6,40 +6,48 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.storagemover import StorageMoverClient
+from azure.mgmt.storagemover.aio import StorageMoverMgmtClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils.aio import recorded_by_proxy_async
 
 AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestStorageMoverStorageMoversOperations(AzureMgmtRecordedTestCase):
+class TestStorageMoverMgmtEndpointsOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(StorageMoverClient)
+        self.client = self.create_mgmt_client(StorageMoverMgmtClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_storage_movers_get(self, resource_group):
-        response = self.client.storage_movers.get(
+    @recorded_by_proxy_async
+    async def test_endpoints_get(self, resource_group):
+        response = await self.client.endpoints.get(
             resource_group_name=resource_group.name,
             storage_mover_name="str",
+            endpoint_name="str",
         )
 
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_storage_movers_create_or_update(self, resource_group):
-        response = self.client.storage_movers.create_or_update(
+    @recorded_by_proxy_async
+    async def test_endpoints_create_or_update(self, resource_group):
+        response = await self.client.endpoints.create_or_update(
             resource_group_name=resource_group.name,
             storage_mover_name="str",
-            storage_mover={
-                "location": "str",
+            endpoint_name="str",
+            endpoint={
+                "properties": "endpoint_base_properties",
                 "id": "str",
+                "identity": {
+                    "type": "str",
+                    "principalId": "str",
+                    "tenantId": "str",
+                    "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                },
                 "name": "str",
-                "properties": {"description": "str", "provisioningState": "str"},
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
                     "createdBy": "str",
@@ -48,7 +56,6 @@ class TestStorageMoverStorageMoversOperations(AzureMgmtRecordedTestCase):
                     "lastModifiedBy": "str",
                     "lastModifiedByType": "str",
                 },
-                "tags": {"str": "str"},
                 "type": "str",
             },
         )
@@ -57,42 +64,47 @@ class TestStorageMoverStorageMoversOperations(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_storage_movers_update(self, resource_group):
-        response = self.client.storage_movers.update(
+    @recorded_by_proxy_async
+    async def test_endpoints_update(self, resource_group):
+        response = await self.client.endpoints.update(
             resource_group_name=resource_group.name,
             storage_mover_name="str",
-            storage_mover={"properties": {"description": "str"}, "tags": {"str": "str"}},
+            endpoint_name="str",
+            endpoint={
+                "identity": {
+                    "type": "str",
+                    "principalId": "str",
+                    "tenantId": "str",
+                    "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                },
+                "properties": "endpoint_base_update_properties",
+            },
         )
 
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_storage_movers_begin_delete(self, resource_group):
-        response = self.client.storage_movers.begin_delete(
-            resource_group_name=resource_group.name,
-            storage_mover_name="str",
+    @recorded_by_proxy_async
+    async def test_endpoints_begin_delete(self, resource_group):
+        response = await (
+            await self.client.endpoints.begin_delete(
+                resource_group_name=resource_group.name,
+                storage_mover_name="str",
+                endpoint_name="str",
+            )
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_storage_movers_list(self, resource_group):
-        response = self.client.storage_movers.list(
+    @recorded_by_proxy_async
+    async def test_endpoints_list(self, resource_group):
+        response = self.client.endpoints.list(
             resource_group_name=resource_group.name,
+            storage_mover_name="str",
         )
-        result = [r for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_storage_movers_list_by_subscription(self, resource_group):
-        response = self.client.storage_movers.list_by_subscription()
-        result = [r for r in response]
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...

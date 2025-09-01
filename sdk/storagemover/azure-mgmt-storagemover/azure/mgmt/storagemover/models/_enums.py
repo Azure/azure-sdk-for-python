@@ -128,8 +128,8 @@ class Minute(int, Enum, metaclass=CaseInsensitiveEnumMeta):
     defaults to 0.
     """
 
-    ENUM_0 = 0
-    ENUM_30 = 30
+    ZERO = 0
+    THIRTY = 30
 
 
 class NfsVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):

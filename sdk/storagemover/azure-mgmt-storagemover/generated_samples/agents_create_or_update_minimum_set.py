@@ -9,7 +9,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.storagemover import StorageMoverClient
+from azure.mgmt.storagemover import StorageMoverMgmtClient
 
 """
 # PREREQUISITES
@@ -26,7 +26,7 @@ from azure.mgmt.storagemover import StorageMoverClient
 
 
 def main():
-    client = StorageMoverClient(
+    client = StorageMoverMgmtClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )

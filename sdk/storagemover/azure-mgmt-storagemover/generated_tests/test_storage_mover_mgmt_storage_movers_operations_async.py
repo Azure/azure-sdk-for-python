@@ -6,38 +6,38 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.storagemover import StorageMoverClient
+from azure.mgmt.storagemover.aio import StorageMoverMgmtClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils.aio import recorded_by_proxy_async
 
 AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestStorageMoverProjectsOperations(AzureMgmtRecordedTestCase):
+class TestStorageMoverMgmtStorageMoversOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(StorageMoverClient)
+        self.client = self.create_mgmt_client(StorageMoverMgmtClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_projects_get(self, resource_group):
-        response = self.client.projects.get(
+    @recorded_by_proxy_async
+    async def test_storage_movers_get(self, resource_group):
+        response = await self.client.storage_movers.get(
             resource_group_name=resource_group.name,
             storage_mover_name="str",
-            project_name="str",
         )
 
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_projects_create_or_update(self, resource_group):
-        response = self.client.projects.create_or_update(
+    @recorded_by_proxy_async
+    async def test_storage_movers_create_or_update(self, resource_group):
+        response = await self.client.storage_movers.create_or_update(
             resource_group_name=resource_group.name,
             storage_mover_name="str",
-            project_name="str",
-            project={
+            storage_mover={
+                "location": "str",
                 "id": "str",
                 "name": "str",
                 "properties": {"description": "str", "provisioningState": "str"},
@@ -49,6 +49,7 @@ class TestStorageMoverProjectsOperations(AzureMgmtRecordedTestCase):
                     "lastModifiedBy": "str",
                     "lastModifiedByType": "str",
                 },
+                "tags": {"str": "str"},
                 "type": "str",
             },
         )
@@ -57,37 +58,44 @@ class TestStorageMoverProjectsOperations(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_projects_update(self, resource_group):
-        response = self.client.projects.update(
+    @recorded_by_proxy_async
+    async def test_storage_movers_update(self, resource_group):
+        response = await self.client.storage_movers.update(
             resource_group_name=resource_group.name,
             storage_mover_name="str",
-            project_name="str",
-            project={"properties": {"description": "str"}},
+            storage_mover={"properties": {"description": "str"}, "tags": {"str": "str"}},
         )
 
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_projects_begin_delete(self, resource_group):
-        response = self.client.projects.begin_delete(
-            resource_group_name=resource_group.name,
-            storage_mover_name="str",
-            project_name="str",
+    @recorded_by_proxy_async
+    async def test_storage_movers_begin_delete(self, resource_group):
+        response = await (
+            await self.client.storage_movers.begin_delete(
+                resource_group_name=resource_group.name,
+                storage_mover_name="str",
+            )
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_projects_list(self, resource_group):
-        response = self.client.projects.list(
+    @recorded_by_proxy_async
+    async def test_storage_movers_list(self, resource_group):
+        response = self.client.storage_movers.list(
             resource_group_name=resource_group.name,
-            storage_mover_name="str",
         )
-        result = [r for r in response]
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_storage_movers_list_by_subscription(self, resource_group):
+        response = self.client.storage_movers.list_by_subscription()
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...

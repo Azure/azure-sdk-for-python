@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.storagemover import StorageMoverClient
+from azure.mgmt.storagemover import StorageMoverMgmtClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -14,17 +14,17 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestStorageMoverEndpointsOperations(AzureMgmtRecordedTestCase):
+class TestStorageMoverMgmtProjectsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(StorageMoverClient)
+        self.client = self.create_mgmt_client(StorageMoverMgmtClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_endpoints_get(self, resource_group):
-        response = self.client.endpoints.get(
+    def test_projects_get(self, resource_group):
+        response = self.client.projects.get(
             resource_group_name=resource_group.name,
             storage_mover_name="str",
-            endpoint_name="str",
+            project_name="str",
         )
 
         # please add some check logic here by yourself
@@ -32,21 +32,15 @@ class TestStorageMoverEndpointsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_endpoints_create_or_update(self, resource_group):
-        response = self.client.endpoints.create_or_update(
+    def test_projects_create_or_update(self, resource_group):
+        response = self.client.projects.create_or_update(
             resource_group_name=resource_group.name,
             storage_mover_name="str",
-            endpoint_name="str",
-            endpoint={
-                "properties": "endpoint_base_properties",
+            project_name="str",
+            project={
                 "id": "str",
-                "identity": {
-                    "type": "str",
-                    "principalId": "str",
-                    "tenantId": "str",
-                    "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
-                },
                 "name": "str",
+                "properties": {"description": "str", "provisioningState": "str"},
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
                     "createdBy": "str",
@@ -64,20 +58,12 @@ class TestStorageMoverEndpointsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_endpoints_update(self, resource_group):
-        response = self.client.endpoints.update(
+    def test_projects_update(self, resource_group):
+        response = self.client.projects.update(
             resource_group_name=resource_group.name,
             storage_mover_name="str",
-            endpoint_name="str",
-            endpoint={
-                "identity": {
-                    "type": "str",
-                    "principalId": "str",
-                    "tenantId": "str",
-                    "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
-                },
-                "properties": "endpoint_base_update_properties",
-            },
+            project_name="str",
+            project={"properties": {"description": "str"}},
         )
 
         # please add some check logic here by yourself
@@ -85,11 +71,11 @@ class TestStorageMoverEndpointsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_endpoints_begin_delete(self, resource_group):
-        response = self.client.endpoints.begin_delete(
+    def test_projects_begin_delete(self, resource_group):
+        response = self.client.projects.begin_delete(
             resource_group_name=resource_group.name,
             storage_mover_name="str",
-            endpoint_name="str",
+            project_name="str",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -97,8 +83,8 @@ class TestStorageMoverEndpointsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_endpoints_list(self, resource_group):
-        response = self.client.endpoints.list(
+    def test_projects_list(self, resource_group):
+        response = self.client.projects.list(
             resource_group_name=resource_group.name,
             storage_mover_name="str",
         )

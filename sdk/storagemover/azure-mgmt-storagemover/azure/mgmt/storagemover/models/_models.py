@@ -9,7 +9,7 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
 from ._enums import CredentialType, EndpointType
@@ -371,7 +371,7 @@ class Credentials(_Model):
     :vartype type: str or ~azure.mgmt.storagemover.models.CredentialType
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create"])
     """The Credentials type. Required. \"AzureKeyVaultSmb\""""
 
@@ -457,7 +457,7 @@ class EndpointBaseProperties(_Model):
     :vartype provisioning_state: str or ~azure.mgmt.storagemover.models.ProvisioningState
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     endpoint_type: str = rest_discriminator(name="endpointType", visibility=["read", "create"])
     """The Endpoint resource type. Required. Known values are: \"AzureStorageBlobContainer\",
      \"NfsMount\", \"AzureStorageSmbFileShare\", \"SmbMount\", \"AzureMultiCloudConnector\", and
@@ -553,7 +553,7 @@ class EndpointBaseUpdateProperties(_Model):
     :vartype description: str
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     endpoint_type: str = rest_discriminator(name="endpointType", visibility=["read", "create"])
     """The Endpoint resource type. Required. Known values are: \"AzureStorageBlobContainer\",
      \"NfsMount\", \"AzureStorageSmbFileShare\", \"SmbMount\", \"AzureMultiCloudConnector\", and
@@ -969,9 +969,9 @@ class ErrorDetail(_Model):
     """The error message."""
     target: Optional[str] = rest_field(visibility=["read"])
     """The error target."""
-    details: Optional[List["_models.ErrorDetail"]] = rest_field(visibility=["read"])
+    details: Optional[list["_models.ErrorDetail"]] = rest_field(visibility=["read"])
     """The error details."""
-    additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = rest_field(
+    additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = rest_field(
         name="additionalInfo", visibility=["read"]
     )
     """The error additional info."""
@@ -1207,7 +1207,7 @@ class JobDefinitionPropertiesSourceTargetMap(_Model):
     :vartype value: list[~azure.mgmt.storagemover.models.SourceTargetMap]
     """
 
-    value: Optional[List["_models.SourceTargetMap"]] = rest_field(visibility=["read"])
+    value: Optional[list["_models.SourceTargetMap"]] = rest_field(visibility=["read"])
 
 
 class JobDefinitionUpdateParameters(_Model):
@@ -1616,7 +1616,7 @@ class ManagedServiceIdentity(_Model):
     )
     """The type of managed identity assigned to this resource. Required. Known values are: \"None\",
      \"SystemAssigned\", \"UserAssigned\", and \"SystemAssigned,UserAssigned\"."""
-    user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = rest_field(
+    user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = rest_field(
         name="userAssignedIdentities", visibility=["read", "create", "update", "delete", "query"]
     )
     """The identities assigned to this resource by the user."""
@@ -1626,7 +1626,7 @@ class ManagedServiceIdentity(_Model):
         self,
         *,
         type: Union[str, "_models.ManagedServiceIdentityType"],
-        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
+        user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = None,
     ) -> None: ...
 
     @overload
@@ -2239,7 +2239,7 @@ class TrackedResource(Resource):
     :vartype location: str
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     location: str = rest_field(visibility=["read", "create"])
     """The geo-location where the resource lives. Required."""
@@ -2249,7 +2249,7 @@ class TrackedResource(Resource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -2298,7 +2298,7 @@ class StorageMover(TrackedResource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.StorageMoverProperties"] = None,
     ) -> None: ...
 
@@ -2380,7 +2380,7 @@ class StorageMoverUpdateParameters(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The resource specific properties for the Storage Mover resource."""
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
 
     __flattened_items = ["description"]
@@ -2390,7 +2390,7 @@ class StorageMoverUpdateParameters(_Model):
         self,
         *,
         properties: Optional["_models.StorageMoverUpdateProperties"] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -2647,7 +2647,7 @@ class UploadLimitSchedule(_Model):
     :vartype weekly_recurrences: list[~azure.mgmt.storagemover.models.UploadLimitWeeklyRecurrence]
     """
 
-    weekly_recurrences: Optional[List["_models.UploadLimitWeeklyRecurrence"]] = rest_field(
+    weekly_recurrences: Optional[list["_models.UploadLimitWeeklyRecurrence"]] = rest_field(
         name="weeklyRecurrences", visibility=["read", "create", "update", "delete", "query"]
     )
     """The set of weekly repeating recurrences of the WAN-link upload limit schedule."""
@@ -2656,7 +2656,7 @@ class UploadLimitSchedule(_Model):
     def __init__(
         self,
         *,
-        weekly_recurrences: Optional[List["_models.UploadLimitWeeklyRecurrence"]] = None,
+        weekly_recurrences: Optional[list["_models.UploadLimitWeeklyRecurrence"]] = None,
     ) -> None: ...
 
     @overload
@@ -2684,7 +2684,7 @@ class WeeklyRecurrence(Recurrence):
     :vartype days: list[str or ~azure.mgmt.storagemover.models.DayOfWeek]
     """
 
-    days: List[Union[str, "_models.DayOfWeek"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    days: list[Union[str, "_models.DayOfWeek"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The set of days of week for the schedule recurrence. A day must not be specified more than once
      in a recurrence. Required."""
 
@@ -2694,7 +2694,7 @@ class WeeklyRecurrence(Recurrence):
         *,
         start_time: "_models.Time",
         end_time: "_models.Time",
-        days: List[Union[str, "_models.DayOfWeek"]],
+        days: list[Union[str, "_models.DayOfWeek"]],
     ) -> None: ...
 
     @overload
@@ -2742,7 +2742,7 @@ class UploadLimitWeeklyRecurrence(WeeklyRecurrence):
         *,
         start_time: "_models.Time",
         end_time: "_models.Time",
-        days: List[Union[str, "_models.DayOfWeek"]],
+        days: list[Union[str, "_models.DayOfWeek"]],
         limit_in_mbps: int,
     ) -> None: ...
 

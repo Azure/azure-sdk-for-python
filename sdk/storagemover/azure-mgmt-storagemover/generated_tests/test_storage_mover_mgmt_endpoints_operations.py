@@ -6,23 +6,22 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.storagemover.aio import StorageMoverClient
+from azure.mgmt.storagemover import StorageMoverMgmtClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
-from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
 AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestStorageMoverEndpointsOperationsAsync(AzureMgmtRecordedTestCase):
+class TestStorageMoverMgmtEndpointsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(StorageMoverClient, is_async=True)
+        self.client = self.create_mgmt_client(StorageMoverMgmtClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_endpoints_get(self, resource_group):
-        response = await self.client.endpoints.get(
+    @recorded_by_proxy
+    def test_endpoints_get(self, resource_group):
+        response = self.client.endpoints.get(
             resource_group_name=resource_group.name,
             storage_mover_name="str",
             endpoint_name="str",
@@ -32,9 +31,9 @@ class TestStorageMoverEndpointsOperationsAsync(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_endpoints_create_or_update(self, resource_group):
-        response = await self.client.endpoints.create_or_update(
+    @recorded_by_proxy
+    def test_endpoints_create_or_update(self, resource_group):
+        response = self.client.endpoints.create_or_update(
             resource_group_name=resource_group.name,
             storage_mover_name="str",
             endpoint_name="str",
@@ -64,9 +63,9 @@ class TestStorageMoverEndpointsOperationsAsync(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_endpoints_update(self, resource_group):
-        response = await self.client.endpoints.update(
+    @recorded_by_proxy
+    def test_endpoints_update(self, resource_group):
+        response = self.client.endpoints.update(
             resource_group_name=resource_group.name,
             storage_mover_name="str",
             endpoint_name="str",
@@ -85,26 +84,24 @@ class TestStorageMoverEndpointsOperationsAsync(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_endpoints_begin_delete(self, resource_group):
-        response = await (
-            await self.client.endpoints.begin_delete(
-                resource_group_name=resource_group.name,
-                storage_mover_name="str",
-                endpoint_name="str",
-            )
+    @recorded_by_proxy
+    def test_endpoints_begin_delete(self, resource_group):
+        response = self.client.endpoints.begin_delete(
+            resource_group_name=resource_group.name,
+            storage_mover_name="str",
+            endpoint_name="str",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_endpoints_list(self, resource_group):
+    @recorded_by_proxy
+    def test_endpoints_list(self, resource_group):
         response = self.client.endpoints.list(
             resource_group_name=resource_group.name,
             storage_mover_name="str",
         )
-        result = [r async for r in response]
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...
