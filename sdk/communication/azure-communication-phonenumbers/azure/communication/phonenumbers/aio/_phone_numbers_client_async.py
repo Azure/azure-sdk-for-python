@@ -321,10 +321,7 @@ class PhoneNumbersClient:
          ~azure.core.async_paging.AsyncItemPaged[~azure.communication.phonenumbers.PurchasedPhoneNumber]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return cast(
-            AsyncItemPaged[PurchasedPhoneNumber],
-            self._phone_number_client.phone_numbers.list_phone_numbers(skip=skip, top=top, **kwargs)
-        )
+        return self._phone_number_client.phone_numbers.list_phone_numbers(skip=skip, top=top, **kwargs)
 
     @distributed_trace
     def list_available_countries(
