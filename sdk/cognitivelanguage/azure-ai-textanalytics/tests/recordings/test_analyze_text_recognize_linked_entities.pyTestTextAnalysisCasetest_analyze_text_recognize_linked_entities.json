@@ -1,0 +1,235 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/:analyze-text?api-version=2025-05-15-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "511",
+        "Content-Type": "application/json",
+        "Ocp-Apim-Subscription-Key": "Sanitized",
+        "User-Agent": "azsdk-python-ai-textanalytics/6.0.0b1 Python/3.13.7 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": {
+        "kind": "EntityLinking",
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "Sanitized",
+              "text": "Microsoft was founded by Bill Gates with some friends he met at Harvard. One of his friends, Steve Ballmer, eventually became CEO after Bill Gates as well. Steve Ballmer eventually stepped down as CEO of Microsoft, and was succeeded by Satya Nadella. Microsoft originally moved its headquarters to Bellevue, Washington in January 1979, but is now headquartered in Redmond",
+              "language": "en"
+            }
+          ]
+        },
+        "parameters": {
+          "modelVersion": "latest"
+        }
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "e8942191-19e3-424f-97fa-4b0c123c0637",
+        "Content-Length": "2842",
+        "Content-Type": "application/json; charset=utf-8",
+        "csp-billing-usage": "CognitiveServices.TextAnalytics.Language.Text.EntityLinking=1,CognitiveServices.TextAnalytics.TextRecords=1",
+        "Date": "Mon, 01 Sep 2025 21:19:18 GMT",
+        "Set-Cookie": "Sanitized",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "23",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": {
+        "kind": "EntityLinkingResults",
+        "results": {
+          "documents": [
+            {
+              "id": "Sanitized",
+              "entities": [
+                {
+                  "bingId": "a093e9b9-90f5-a3d5-c4b8-5855e1b01f85",
+                  "name": "Sanitized",
+                  "matches": [
+                    {
+                      "text": "Microsoft",
+                      "offset": 0,
+                      "length": 9,
+                      "confidenceScore": 0.54
+                    },
+                    {
+                      "text": "Microsoft",
+                      "offset": 251,
+                      "length": 9,
+                      "confidenceScore": 0.54
+                    },
+                    {
+                      "text": "Microsoft",
+                      "offset": 204,
+                      "length": 9,
+                      "confidenceScore": 0.54
+                    }
+                  ],
+                  "language": "en",
+                  "id": "Sanitized",
+                  "url": "https://en.wikipedia.org/wiki/Microsoft",
+                  "dataSource": "Wikipedia"
+                },
+                {
+                  "bingId": "0d47c987-0042-5576-15e8-97af601614fa",
+                  "name": "Sanitized",
+                  "matches": [
+                    {
+                      "text": "Bill Gates",
+                      "offset": 25,
+                      "length": 10,
+                      "confidenceScore": 0.56
+                    },
+                    {
+                      "text": "Bill Gates",
+                      "offset": 136,
+                      "length": 10,
+                      "confidenceScore": 0.56
+                    }
+                  ],
+                  "language": "en",
+                  "id": "Sanitized",
+                  "url": "https://en.wikipedia.org/wiki/Bill_Gates",
+                  "dataSource": "Wikipedia"
+                },
+                {
+                  "bingId": "ca075eb3-d706-a9da-a322-243551d5317b",
+                  "name": "Sanitized",
+                  "matches": [
+                    {
+                      "text": "Harvard",
+                      "offset": 64,
+                      "length": 7,
+                      "confidenceScore": 0.1
+                    }
+                  ],
+                  "language": "en",
+                  "id": "Sanitized",
+                  "url": "https://en.wikipedia.org/wiki/Harvard_University",
+                  "dataSource": "Wikipedia"
+                },
+                {
+                  "bingId": "56ff0719-4791-406b-99de-0e99c3e8cefc",
+                  "name": "Sanitized",
+                  "matches": [
+                    {
+                      "text": "Steve Ballmer",
+                      "offset": 93,
+                      "length": 13,
+                      "confidenceScore": 0.93
+                    },
+                    {
+                      "text": "Steve Ballmer",
+                      "offset": 156,
+                      "length": 13,
+                      "confidenceScore": 0.93
+                    }
+                  ],
+                  "language": "en",
+                  "id": "Sanitized",
+                  "url": "https://en.wikipedia.org/wiki/Steve_Ballmer",
+                  "dataSource": "Wikipedia"
+                },
+                {
+                  "bingId": "cf5db860-9fd2-390d-0b6d-5ba856efed49",
+                  "name": "Sanitized",
+                  "matches": [
+                    {
+                      "text": "CEO",
+                      "offset": 197,
+                      "length": 3,
+                      "confidenceScore": 0.26
+                    },
+                    {
+                      "text": "CEO",
+                      "offset": 126,
+                      "length": 3,
+                      "confidenceScore": 0.26
+                    }
+                  ],
+                  "language": "en",
+                  "id": "Sanitized",
+                  "url": "https://en.wikipedia.org/wiki/Chief_executive_officer",
+                  "dataSource": "Wikipedia"
+                },
+                {
+                  "bingId": "e23e51ed-d16f-4800-9a31-ed056168b9a2",
+                  "name": "Sanitized",
+                  "matches": [
+                    {
+                      "text": "Satya Nadella",
+                      "offset": 236,
+                      "length": 13,
+                      "confidenceScore": 0.91
+                    }
+                  ],
+                  "language": "en",
+                  "id": "Sanitized",
+                  "url": "https://en.wikipedia.org/wiki/Satya_Nadella",
+                  "dataSource": "Wikipedia"
+                },
+                {
+                  "bingId": "a2e3a3eb-b83e-42f0-bf19-95b4c4c9d3c0",
+                  "name": "Sanitized",
+                  "matches": [
+                    {
+                      "text": "Bellevue, Washington",
+                      "offset": 298,
+                      "length": 20,
+                      "confidenceScore": 0.88
+                    }
+                  ],
+                  "language": "en",
+                  "id": "Sanitized",
+                  "url": "https://en.wikipedia.org/wiki/Bellevue,_Washington",
+                  "dataSource": "Wikipedia"
+                },
+                {
+                  "bingId": "19fb6fb4-3c50-f314-30e4-7b5470e08274",
+                  "name": "Sanitized",
+                  "matches": [
+                    {
+                      "text": "January",
+                      "offset": 322,
+                      "length": 7,
+                      "confidenceScore": 0.09
+                    }
+                  ],
+                  "language": "en",
+                  "id": "Sanitized",
+                  "url": "https://en.wikipedia.org/wiki/Briann_January",
+                  "dataSource": "Wikipedia"
+                },
+                {
+                  "bingId": "8769d4c0-b645-70ac-03ec-6eebabf6d26e",
+                  "name": "Sanitized",
+                  "matches": [
+                    {
+                      "text": "Redmond",
+                      "offset": 364,
+                      "length": 7,
+                      "confidenceScore": 0.4
+                    }
+                  ],
+                  "language": "en",
+                  "id": "Sanitized",
+                  "url": "https://en.wikipedia.org/wiki/Redmond,_Washington",
+                  "dataSource": "Wikipedia"
+                }
+              ],
+              "warnings": []
+            }
+          ],
+          "errors": [],
+          "modelVersion": "2021-06-01"
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}
