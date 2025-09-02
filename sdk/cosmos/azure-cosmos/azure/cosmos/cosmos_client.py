@@ -387,13 +387,11 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 " It will now be removed in the future.",
                 UserWarning)
 
-        offer_throughput = kwargs.pop("offer_throughput", None)
         id = args[0] if args else kwargs.pop("id")
         populate_query_metrics = args[1] if len(args) > 1 else kwargs.pop("populate_query_metrics", None)
         offer_throughput = args[2] if len(args) > 2 else kwargs.pop("offer_throughput", None)
         return_properties = kwargs.pop("return_properties", False)
         response_hook = kwargs.pop("response_hook", None)
-        populate_query_metrics = kwargs.pop("populate_query_metrics", None)
 
         if populate_query_metrics is not None:
             warnings.warn(

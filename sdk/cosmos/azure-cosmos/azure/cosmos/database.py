@@ -305,12 +305,13 @@ class DatabaseProxy(object):
         ...
 
     @distributed_trace
-    def create_container(  # pylint:disable=docstring-missing-param
+    def create_container(  # pylint:disable=docstring-missing-param, pylint:disable=too-many-statements
         self,
         *args: Any,
         **kwargs: Any
     ) -> Union[ContainerProxy, tuple[ContainerProxy, CosmosDict]]:
         """Create a new container with the given ID (name).
+
         If a container with the given ID already exists, a CosmosResourceExistsError is raised.
 
         :param Any args: args
@@ -338,12 +339,14 @@ class DatabaseProxy(object):
         :rtype: ~azure.cosmos.ContainerProxy or tuple[ ~azure.cosmos.ContainerProxy,  ~azure.cosmos.CosmosDict]
 
         .. admonition:: Example:
+
             .. literalinclude:: ../samples/examples.py
                 :start-after: [START create_container]
                 :end-before: [END create_container]
                 :language: python
                 :dedent: 0
                 :caption: Create a container with default settings:
+
             .. literalinclude:: ../samples/examples.py
                 :start-after: [START create_container_with_settings]
                 :end-before: [END create_container_with_settings]

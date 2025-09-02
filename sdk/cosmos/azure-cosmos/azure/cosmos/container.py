@@ -156,7 +156,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             return _return_undefined_or_empty_partition_key(self.is_system_key)
         return cast(Union[str, int, float, bool, List[Union[str, int, float, bool]]], partition_key)
 
-    def __get_client_container_caches(self) -> Dict[str, CosmosDict]:
+    def __get_client_container_caches(self) -> Dict[str, dict[str, Any]]:
         return self.client_connection._container_properties_cache
 
     @distributed_trace
