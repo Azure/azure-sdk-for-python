@@ -329,8 +329,7 @@ class PhoneNumbersClient:
         :returns: An iterator of purchased phone numbers.
         :rtype: ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.PurchasedPhoneNumber]
         """
-        return cast(ItemPaged[PurchasedPhoneNumber],
-                   self._phone_number_client.phone_numbers.list_phone_numbers(skip=skip, top=top, **kwargs))
+        return self._phone_number_client.phone_numbers.list_phone_numbers(skip=skip, top=top, **kwargs)
 
     @distributed_trace
     def list_available_countries(
@@ -538,10 +537,9 @@ class PhoneNumbersClient:
         # This allows mapping the generated model to the public model.
         # Internally, the generated client will create an instance of this iterator with each fetched page.
 
-        return cast(ItemPaged[PhoneNumbersReservation],
-                   self._phone_number_client.phone_numbers.list_reservations(
+        return self._phone_number_client.phone_numbers.list_reservations(
                        max_page_size=max_page_size, **kwargs
-                   ))
+                   )
 
     @distributed_trace
     def create_or_update_reservation(

@@ -415,14 +415,14 @@ class PhoneNumbersClient:
          ~azure.core.async_paging.AsyncItemPaged[~azure.communication.phonenumbers.PhoneNumberOffering]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return cast(AsyncItemPaged[PhoneNumberOffering], self._phone_number_client.phone_numbers.list_offerings(
+        return self._phone_number_client.phone_numbers.list_offerings(
             country_code,
             phone_number_type=phone_number_type,
             assignment_type=assignment_type,
             accept_language=self._accepted_language,
             skip=skip,
             **kwargs
-        ))
+        )
 
     @distributed_trace
     def list_available_area_codes(
@@ -459,7 +459,7 @@ class PhoneNumbersClient:
         :rtype: ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.PhoneNumberAreaCode]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return cast(AsyncItemPaged[PhoneNumberAreaCode], self._phone_number_client.phone_numbers.list_area_codes(
+        return self._phone_number_client.phone_numbers.list_area_codes(
             country_code,
             phone_number_type=phone_number_type,
             accept_language=self._accepted_language,
@@ -468,7 +468,7 @@ class PhoneNumbersClient:
             administrative_division=administrative_division,
             skip=skip,
             **kwargs
-        ))
+        )
 
     @distributed_trace_async
     async def search_operator_information(
@@ -544,9 +544,9 @@ class PhoneNumbersClient:
          ~azure.core.async_paging.AsyncItemPaged[~azure.communication.phonenumbers.PhoneNumbersReservation]
         """
 
-        return cast(AsyncItemPaged[PhoneNumbersReservation], self._phone_number_client.phone_numbers.list_reservations(
+        return self._phone_number_client.phone_numbers.list_reservations(
             max_page_size=max_page_size,
-            **kwargs))
+            **kwargs)
 
     @distributed_trace_async
     async def create_or_update_reservation(
