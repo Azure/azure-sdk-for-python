@@ -32,6 +32,17 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The entity was created by a key."""
 
 
+class EndpointStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current status of the compute endpoint."""
+
+    INIT = "init"
+    """The compute endpoint is currently initializing"""
+    ACTIVE = "active"
+    """The compute endpoint is currently active"""
+    IDLE = "idle"
+    """The compute endpoint is currently idle"""
+
+
 class EndpointType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The compute endpoint type. Either read_write or read_only."""
 
@@ -39,6 +50,19 @@ class EndpointType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ReadOnly compute endpoint type"""
     READ_WRITE = "read_write"
     """ReadWrite compute endpoint type"""
+
+
+class EntityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Entity types allowed for preflight deletion validation."""
+
+    BRANCH = "branch"
+    """Branch entity"""
+    NEON_ROLE = "neonRole"
+    """NeonRole entity"""
+    NEON_DATABASE = "neonDatabase"
+    """Database entity"""
+    ENDPOINT = "endpoint"
+    """Endpoint entity"""
 
 
 class MarketplaceSubscriptionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):

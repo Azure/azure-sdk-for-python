@@ -21,15 +21,14 @@ class TestNeonPostgresMgmtEndpointsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_endpoints_get(self, resource_group):
-        response = await self.client.endpoints.get(
+    async def test_endpoints_list(self, resource_group):
+        response = self.client.endpoints.list(
             resource_group_name=resource_group.name,
             organization_name="str",
             project_name="str",
             branch_name="str",
-            endpoint_name="str",
         )
-
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...
 
@@ -49,51 +48,17 @@ class TestNeonPostgresMgmtEndpointsOperationsAsync(AzureMgmtRecordedTestCase):
                     "properties": {
                         "attributes": [{"name": "str", "value": "str"}],
                         "branchId": "str",
+                        "computeName": "str",
                         "createdAt": "str",
+                        "endpointId": "str",
                         "endpointType": "str",
                         "entityId": "str",
                         "entityName": "str",
+                        "lastActive": "str",
                         "projectId": "str",
                         "provisioningState": "str",
-                    },
-                    "systemData": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "createdBy": "str",
-                        "createdByType": "str",
-                        "lastModifiedAt": "2020-02-20 00:00:00",
-                        "lastModifiedBy": "str",
-                        "lastModifiedByType": "str",
-                    },
-                    "type": "str",
-                },
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_endpoints_begin_update(self, resource_group):
-        response = await (
-            await self.client.endpoints.begin_update(
-                resource_group_name=resource_group.name,
-                organization_name="str",
-                project_name="str",
-                branch_name="str",
-                endpoint_name="str",
-                properties={
-                    "id": "str",
-                    "name": "str",
-                    "properties": {
-                        "attributes": [{"name": "str", "value": "str"}],
-                        "branchId": "str",
-                        "createdAt": "str",
-                        "endpointType": "str",
-                        "entityId": "str",
-                        "entityName": "str",
-                        "projectId": "str",
-                        "provisioningState": "str",
+                        "size": {"autoscalingLimitMaxCu": 0.0, "autoscalingLimitMinCu": 0.0},
+                        "status": "str",
                     },
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",
@@ -122,18 +87,5 @@ class TestNeonPostgresMgmtEndpointsOperationsAsync(AzureMgmtRecordedTestCase):
             endpoint_name="str",
         )
 
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_endpoints_list(self, resource_group):
-        response = self.client.endpoints.list(
-            resource_group_name=resource_group.name,
-            organization_name="str",
-            project_name="str",
-            branch_name="str",
-        )
-        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...

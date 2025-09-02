@@ -32,13 +32,13 @@ def main():
 
     client.endpoints.delete(
         resource_group_name="rgneon",
-        organization_name="test-org",
-        project_name="entity-name",
-        branch_name="entity-name",
-        endpoint_name="entity-name",
+        organization_name="myNeonOrg",
+        project_name="myProject",
+        branch_name="main",
+        endpoint_name="myEndpoint",
     )
 
 
-# x-ms-original-file: 2025-03-01/Endpoints_Delete_MaximumSet_Gen.json
+# x-ms-original-file: 2025-06-23-preview/Endpoints_Delete_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

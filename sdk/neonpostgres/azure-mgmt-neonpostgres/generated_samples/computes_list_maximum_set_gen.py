@@ -32,14 +32,14 @@ def main():
 
     response = client.computes.list(
         resource_group_name="rgneon",
-        organization_name="test-org",
-        project_name="entity-name",
-        branch_name="entity-name",
+        organization_name="myOrganization",
+        project_name="myProject",
+        branch_name="feature",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: 2025-03-01/Computes_List_MaximumSet_Gen.json
+# x-ms-original-file: 2025-06-23-preview/Computes_List_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

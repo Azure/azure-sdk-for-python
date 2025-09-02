@@ -44,15 +44,21 @@ class TestNeonPostgresMgmtBranchesOperations(AzureMgmtRecordedTestCase):
                 "name": "str",
                 "properties": {
                     "attributes": [{"name": "str", "value": "str"}],
+                    "branch": "str",
+                    "branchId": "str",
+                    "computeHours": "str",
                     "createdAt": "str",
+                    "dataSize": "str",
                     "databaseName": "str",
                     "databases": [
                         {
                             "attributes": [{"name": "str", "value": "str"}],
                             "branchId": "str",
                             "createdAt": "str",
+                            "databaseName": "str",
                             "entityId": "str",
                             "entityName": "str",
+                            "lastUpdated": "str",
                             "ownerName": "str",
                             "provisioningState": "str",
                         }
@@ -61,18 +67,26 @@ class TestNeonPostgresMgmtBranchesOperations(AzureMgmtRecordedTestCase):
                         {
                             "attributes": [{"name": "str", "value": "str"}],
                             "branchId": "str",
+                            "computeName": "str",
                             "createdAt": "str",
+                            "endpointId": "str",
                             "endpointType": "str",
                             "entityId": "str",
                             "entityName": "str",
+                            "lastActive": "str",
                             "projectId": "str",
                             "provisioningState": "str",
+                            "size": {"autoscalingLimitMaxCu": 0.0, "autoscalingLimitMinCu": 0.0},
+                            "status": "str",
                         }
                     ],
                     "entityId": "str",
                     "entityName": "str",
+                    "isDefault": bool,
+                    "lastActive": "str",
                     "parentId": "str",
                     "projectId": "str",
+                    "protected": bool,
                     "provisioningState": "str",
                     "roleName": "str",
                     "roles": [
@@ -83,80 +97,11 @@ class TestNeonPostgresMgmtBranchesOperations(AzureMgmtRecordedTestCase):
                             "entityId": "str",
                             "entityName": "str",
                             "isSuperUser": bool,
+                            "lastUpdated": "str",
+                            "owns": "str",
                             "permissions": ["str"],
                             "provisioningState": "str",
-                        }
-                    ],
-                },
-                "systemData": {
-                    "createdAt": "2020-02-20 00:00:00",
-                    "createdBy": "str",
-                    "createdByType": "str",
-                    "lastModifiedAt": "2020-02-20 00:00:00",
-                    "lastModifiedBy": "str",
-                    "lastModifiedByType": "str",
-                },
-                "type": "str",
-            },
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_branches_begin_update(self, resource_group):
-        response = self.client.branches.begin_update(
-            resource_group_name=resource_group.name,
-            organization_name="str",
-            project_name="str",
-            branch_name="str",
-            properties={
-                "id": "str",
-                "name": "str",
-                "properties": {
-                    "attributes": [{"name": "str", "value": "str"}],
-                    "createdAt": "str",
-                    "databaseName": "str",
-                    "databases": [
-                        {
-                            "attributes": [{"name": "str", "value": "str"}],
-                            "branchId": "str",
-                            "createdAt": "str",
-                            "entityId": "str",
-                            "entityName": "str",
-                            "ownerName": "str",
-                            "provisioningState": "str",
-                        }
-                    ],
-                    "endpoints": [
-                        {
-                            "attributes": [{"name": "str", "value": "str"}],
-                            "branchId": "str",
-                            "createdAt": "str",
-                            "endpointType": "str",
-                            "entityId": "str",
-                            "entityName": "str",
-                            "projectId": "str",
-                            "provisioningState": "str",
-                        }
-                    ],
-                    "entityId": "str",
-                    "entityName": "str",
-                    "parentId": "str",
-                    "projectId": "str",
-                    "provisioningState": "str",
-                    "roleName": "str",
-                    "roles": [
-                        {
-                            "attributes": [{"name": "str", "value": "str"}],
-                            "branchId": "str",
-                            "createdAt": "str",
-                            "entityId": "str",
-                            "entityName": "str",
-                            "isSuperUser": bool,
-                            "permissions": ["str"],
-                            "provisioningState": "str",
+                            "roleName": "str",
                         }
                     ],
                 },
@@ -197,5 +142,125 @@ class TestNeonPostgresMgmtBranchesOperations(AzureMgmtRecordedTestCase):
             project_name="str",
         )
         result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_branches_preflight(self, resource_group):
+        response = self.client.branches.preflight(
+            resource_group_name=resource_group.name,
+            organization_name="str",
+            project_name="str",
+            branch_name="str",
+            parameters={
+                "branchId": "str",
+                "entityType": "str",
+                "projectId": "str",
+                "branchProperties": {
+                    "attributes": [{"name": "str", "value": "str"}],
+                    "branch": "str",
+                    "branchId": "str",
+                    "computeHours": "str",
+                    "createdAt": "str",
+                    "dataSize": "str",
+                    "databaseName": "str",
+                    "databases": [
+                        {
+                            "attributes": [{"name": "str", "value": "str"}],
+                            "branchId": "str",
+                            "createdAt": "str",
+                            "databaseName": "str",
+                            "entityId": "str",
+                            "entityName": "str",
+                            "lastUpdated": "str",
+                            "ownerName": "str",
+                            "provisioningState": "str",
+                        }
+                    ],
+                    "endpoints": [
+                        {
+                            "attributes": [{"name": "str", "value": "str"}],
+                            "branchId": "str",
+                            "computeName": "str",
+                            "createdAt": "str",
+                            "endpointId": "str",
+                            "endpointType": "str",
+                            "entityId": "str",
+                            "entityName": "str",
+                            "lastActive": "str",
+                            "projectId": "str",
+                            "provisioningState": "str",
+                            "size": {"autoscalingLimitMaxCu": 0.0, "autoscalingLimitMinCu": 0.0},
+                            "status": "str",
+                        }
+                    ],
+                    "entityId": "str",
+                    "entityName": "str",
+                    "isDefault": bool,
+                    "lastActive": "str",
+                    "parentId": "str",
+                    "projectId": "str",
+                    "protected": bool,
+                    "provisioningState": "str",
+                    "roleName": "str",
+                    "roles": [
+                        {
+                            "attributes": [{"name": "str", "value": "str"}],
+                            "branchId": "str",
+                            "createdAt": "str",
+                            "entityId": "str",
+                            "entityName": "str",
+                            "isSuperUser": bool,
+                            "lastUpdated": "str",
+                            "owns": "str",
+                            "permissions": ["str"],
+                            "provisioningState": "str",
+                            "roleName": "str",
+                        }
+                    ],
+                },
+                "databaseProperties": {
+                    "attributes": [{"name": "str", "value": "str"}],
+                    "branchId": "str",
+                    "createdAt": "str",
+                    "databaseName": "str",
+                    "entityId": "str",
+                    "entityName": "str",
+                    "lastUpdated": "str",
+                    "ownerName": "str",
+                    "provisioningState": "str",
+                },
+                "endpointProperties": {
+                    "attributes": [{"name": "str", "value": "str"}],
+                    "branchId": "str",
+                    "computeName": "str",
+                    "createdAt": "str",
+                    "endpointId": "str",
+                    "endpointType": "str",
+                    "entityId": "str",
+                    "entityName": "str",
+                    "lastActive": "str",
+                    "projectId": "str",
+                    "provisioningState": "str",
+                    "size": {"autoscalingLimitMaxCu": 0.0, "autoscalingLimitMinCu": 0.0},
+                    "status": "str",
+                },
+                "roleProperties": {
+                    "attributes": [{"name": "str", "value": "str"}],
+                    "branchId": "str",
+                    "createdAt": "str",
+                    "entityId": "str",
+                    "entityName": "str",
+                    "isSuperUser": bool,
+                    "lastUpdated": "str",
+                    "owns": "str",
+                    "permissions": ["str"],
+                    "provisioningState": "str",
+                    "roleName": "str",
+                },
+            },
+        )
+
         # please add some check logic here by yourself
         # ...

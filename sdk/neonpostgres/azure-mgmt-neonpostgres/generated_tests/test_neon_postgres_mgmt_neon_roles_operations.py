@@ -20,15 +20,14 @@ class TestNeonPostgresMgmtNeonRolesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_neon_roles_get(self, resource_group):
-        response = self.client.neon_roles.get(
+    def test_neon_roles_list(self, resource_group):
+        response = self.client.neon_roles.list(
             resource_group_name=resource_group.name,
             organization_name="str",
             project_name="str",
             branch_name="str",
-            neon_role_name="str",
         )
-
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...
 
@@ -51,45 +50,11 @@ class TestNeonPostgresMgmtNeonRolesOperations(AzureMgmtRecordedTestCase):
                     "entityId": "str",
                     "entityName": "str",
                     "isSuperUser": bool,
+                    "lastUpdated": "str",
+                    "owns": "str",
                     "permissions": ["str"],
                     "provisioningState": "str",
-                },
-                "systemData": {
-                    "createdAt": "2020-02-20 00:00:00",
-                    "createdBy": "str",
-                    "createdByType": "str",
-                    "lastModifiedAt": "2020-02-20 00:00:00",
-                    "lastModifiedBy": "str",
-                    "lastModifiedByType": "str",
-                },
-                "type": "str",
-            },
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_neon_roles_begin_update(self, resource_group):
-        response = self.client.neon_roles.begin_update(
-            resource_group_name=resource_group.name,
-            organization_name="str",
-            project_name="str",
-            branch_name="str",
-            neon_role_name="str",
-            properties={
-                "id": "str",
-                "name": "str",
-                "properties": {
-                    "attributes": [{"name": "str", "value": "str"}],
-                    "branchId": "str",
-                    "createdAt": "str",
-                    "entityId": "str",
-                    "entityName": "str",
-                    "isSuperUser": bool,
-                    "permissions": ["str"],
-                    "provisioningState": "str",
+                    "roleName": "str",
                 },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -117,18 +82,5 @@ class TestNeonPostgresMgmtNeonRolesOperations(AzureMgmtRecordedTestCase):
             neon_role_name="str",
         )
 
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_neon_roles_list(self, resource_group):
-        response = self.client.neon_roles.list(
-            resource_group_name=resource_group.name,
-            organization_name="str",
-            project_name="str",
-            branch_name="str",
-        )
-        result = [r for r in response]
         # please add some check logic here by yourself
         # ...

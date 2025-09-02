@@ -32,110 +32,122 @@ def main():
 
     response = client.organizations.begin_update(
         resource_group_name="rgneon",
-        organization_name="test-org",
+        organization_name="myOrganization",
         properties={
             "properties": {
                 "companyDetails": {
-                    "businessPhone": "hucxvzcvpaupqjkgb",
-                    "companyName": "xtul",
-                    "country": "ycmyjdcpyjieemfrthfyxdlvn",
-                    "domain": "snoshqumfsthyofpnrsgyjhszvgtj",
-                    "numberOfEmployees": 12,
-                    "officeAddress": "icirtoqmmozijk",
+                    "businessPhone": "555-987-6543",
+                    "companyName": "Contoso Ltd.",
+                    "country": "United States",
+                    "domain": "contoso.com",
+                    "numberOfEmployees": 250,
+                    "officeAddress": "123 Main Street, Seattle, WA 98101",
+                },
+                "marketplaceDetails": {
+                    "offerDetails": {
+                        "offerId": "neon-postgres",
+                        "planId": "standard",
+                        "planName": "Standard Plan",
+                        "publisherId": "neon",
+                        "termId": "hjk5-pou9-mnb8",
+                        "termUnit": "P1M",
+                    },
+                    "subscriptionId": "11111111-2222-3333-4444-555555555555",
+                    "subscriptionStatus": "Fulfilled",
                 },
                 "partnerOrganizationProperties": {
-                    "organizationId": "fynmpcbivqkwqdfhrmsyusjd",
-                    "organizationName": "entity-name",
+                    "organizationId": "org-123456",
+                    "organizationName": "myOrganization",
                     "singleSignOnProperties": {
-                        "aadDomains": ["mdzbelaiphukhe"],
-                        "enterpriseAppId": "urtjzjfr",
-                        "singleSignOnState": "Initial",
-                        "singleSignOnUrl": "gcmlwvtxcsjozitm",
+                        "aadDomains": ["contoso.com"],
+                        "enterpriseAppId": "12345678-abcd-1234-efgh-123456789012",
+                        "singleSignOnState": "Configured",
+                        "singleSignOnUrl": "https://login.microsoftonline.com/contoso.com",
                     },
                 },
                 "projectProperties": {
-                    "attributes": [{"name": "trhvzyvaqy", "value": "evpkgsskyavybxwwssm"}],
+                    "attributes": [{"name": "environment", "value": "development"}],
                     "branch": {
-                        "attributes": [{"name": "trhvzyvaqy", "value": "evpkgsskyavybxwwssm"}],
-                        "databaseName": "duhxebzhd",
+                        "attributes": [{"name": "environment", "value": "development"}],
                         "databases": [
                             {
-                                "attributes": [{"name": "trhvzyvaqy", "value": "evpkgsskyavybxwwssm"}],
-                                "branchId": "orfdwdmzvfvlnrgussvcvoek",
-                                "entityName": "entity-name",
-                                "ownerName": "odmbeg",
+                                "attributes": [{"name": "environment", "value": "development"}],
+                                "branchId": "branch-123",
+                                "entityName": "appdb",
+                                "ownerName": "postgres",
                             }
                         ],
                         "endpoints": [
                             {
-                                "attributes": [{"name": "trhvzyvaqy", "value": "evpkgsskyavybxwwssm"}],
-                                "branchId": "rzsyrhpfbydxtfkpaa",
-                                "endpointType": "read_only",
-                                "entityName": "entity-name",
-                                "projectId": "rtvdeeflqzlrpfzhjqhcsfbldw",
+                                "attributes": [{"name": "environment", "value": "development"}],
+                                "branchId": "branch-123",
+                                "endpointType": "read_write",
+                                "entityName": "primary-endpoint",
+                                "projectId": "project-123",
+                                "size": {"autoscalingLimitMaxCu": 4, "autoscalingLimitMinCu": 1},
                             }
                         ],
-                        "entityName": "entity-name",
-                        "parentId": "entity-id",
-                        "projectId": "oik",
-                        "roleName": "qrrairsupyosxnqotdwhbpc",
+                        "entityName": "main",
+                        "parentId": "main-branch",
+                        "projectId": "project-123",
                         "roles": [
                             {
-                                "attributes": [{"name": "trhvzyvaqy", "value": "evpkgsskyavybxwwssm"}],
-                                "branchId": "wxbojkmdgaggkfiwqfakdkbyztm",
-                                "entityName": "entity-name",
+                                "attributes": [{"name": "environment", "value": "development"}],
+                                "branchId": "branch-123",
+                                "entityName": "read_only_role",
                                 "isSuperUser": True,
-                                "permissions": ["myucqecpjriewzohxvadgkhiudnyx"],
+                                "permissions": ["SELECT"],
                             }
                         ],
                     },
                     "databases": [
                         {
-                            "attributes": [{"name": "trhvzyvaqy", "value": "evpkgsskyavybxwwssm"}],
-                            "branchId": "orfdwdmzvfvlnrgussvcvoek",
-                            "entityName": "entity-name",
-                            "ownerName": "odmbeg",
+                            "attributes": [{"name": "environment", "value": "development"}],
+                            "branchId": "branch-123",
+                            "entityName": "postgres",
+                            "ownerName": "postgres",
                         }
                     ],
-                    "defaultEndpointSettings": {"autoscalingLimitMaxCu": 4, "autoscalingLimitMinCu": 8},
+                    "defaultEndpointSettings": {"autoscalingLimitMaxCu": 11, "autoscalingLimitMinCu": 11},
                     "endpoints": [
                         {
-                            "attributes": [{"name": "trhvzyvaqy", "value": "evpkgsskyavybxwwssm"}],
-                            "branchId": "rzsyrhpfbydxtfkpaa",
+                            "attributes": [{"name": "environment", "value": "development"}],
+                            "branchId": "branch-123",
                             "endpointType": "read_only",
-                            "entityName": "entity-name",
-                            "projectId": "rtvdeeflqzlrpfzhjqhcsfbldw",
+                            "entityName": "readonly-endpoint",
+                            "projectId": "project-123",
+                            "size": {"autoscalingLimitMaxCu": 2, "autoscalingLimitMinCu": 1},
                         }
                     ],
-                    "entityName": "entity-name",
+                    "entityName": "myProject",
                     "historyRetention": 16,
-                    "pgVersion": 16,
-                    "regionId": "vxvmjwuttpiakirzdf",
+                    "pgVersion": 23,
+                    "regionId": "westus",
                     "roles": [
                         {
-                            "attributes": [{"name": "trhvzyvaqy", "value": "evpkgsskyavybxwwssm"}],
-                            "branchId": "wxbojkmdgaggkfiwqfakdkbyztm",
-                            "entityName": "entity-name",
+                            "attributes": [{"name": "environment", "value": "development"}],
+                            "branchId": "branch-123",
+                            "entityName": "admin_role",
                             "isSuperUser": True,
-                            "permissions": ["myucqecpjriewzohxvadgkhiudnyx"],
+                            "permissions": ["ALL"],
                         }
                     ],
-                    "storage": 23,
+                    "storage": 22,
                 },
                 "userDetails": {
-                    "emailAddress": "test@contoso.com",
-                    "firstName": "zhelh",
-                    "lastName": "zbdhouyeozylnerrc",
-                    "phoneNumber": "zmejenytglrmjnt",
-                    "upn": "mixcikvxlnhkfugetqlngz",
+                    "emailAddress": "john.doe@example.com",
+                    "firstName": "John",
+                    "lastName": "Doe",
+                    "phoneNumber": "555-123-4567",
+                    "upn": "johndoe",
                 },
             },
-            "tags": {"key609": "qyosjypklxtiamqebd"},
+            "tags": {"key2979": "ovumlkykfrh"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-03-01/Organizations_Update_MaximumSet_Gen.json
+# x-ms-original-file: 2025-06-23-preview/Organizations_Update_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

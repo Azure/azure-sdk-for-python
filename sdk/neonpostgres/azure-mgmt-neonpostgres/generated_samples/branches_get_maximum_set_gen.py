@@ -32,13 +32,13 @@ def main():
 
     response = client.branches.get(
         resource_group_name="rgneon",
-        organization_name="test-org",
-        project_name="entity-name",
-        branch_name="entity-name",
+        organization_name="myOrganization",
+        project_name="myProject",
+        branch_name="feature",
     )
     print(response)
 
 
-# x-ms-original-file: 2025-03-01/Branches_Get_MaximumSet_Gen.json
+# x-ms-original-file: 2025-06-23-preview/Branches_Get_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

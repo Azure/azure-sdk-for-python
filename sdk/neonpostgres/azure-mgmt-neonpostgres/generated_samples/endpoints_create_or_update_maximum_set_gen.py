@@ -32,23 +32,24 @@ def main():
 
     response = client.endpoints.begin_create_or_update(
         resource_group_name="rgneon",
-        organization_name="test-org",
-        project_name="entity-name",
-        branch_name="entity-name",
-        endpoint_name="entity-name",
+        organization_name="myOrganization",
+        project_name="myProject",
+        branch_name="feature",
+        endpoint_name="primary-endpoint",
         resource={
             "properties": {
-                "attributes": [{"name": "trhvzyvaqy", "value": "evpkgsskyavybxwwssm"}],
-                "branchId": "rzsyrhpfbydxtfkpaa",
+                "attributes": [{"name": "on", "value": "qzp"}],
+                "branchId": "blclbeuzvywzagbuvdo",
                 "endpointType": "read_only",
-                "entityName": "entity-name",
-                "projectId": "rtvdeeflqzlrpfzhjqhcsfbldw",
+                "entityName": "PrimaryEndpoint",
+                "projectId": "vwwhykqyr",
+                "size": {"autoscalingLimitMaxCu": 14, "autoscalingLimitMinCu": 3},
             }
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-03-01/Endpoints_CreateOrUpdate_MaximumSet_Gen.json
+# x-ms-original-file: 2025-06-23-preview/Endpoints_CreateOrUpdate_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

@@ -15,7 +15,7 @@ from azure.mgmt.neonpostgres import NeonPostgresMgmtClient
     pip install azure-identity
     pip install azure-mgmt-neonpostgres
 # USAGE
-    python neon_databases_get_maximum_set_gen.py
+    python branches_preflight_maximum_set_gen.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,16 +30,27 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.neon_databases.get(
+    response = client.branches.preflight(
         resource_group_name="rgneon",
-        organization_name="test-org",
-        project_name="entity-name",
-        branch_name="entity-name",
-        neon_database_name="entity-name",
+        organization_name="myOrganization",
+        project_name="myProject",
+        branch_name="myBranch",
+        parameters={
+            "branchId": "branch-123",
+            "branchProperties": {
+                "branch": "myBranch",
+                "branchId": "branch-123",
+                "databaseName": "application",
+                "projectId": "project-123",
+                "roleName": "admin",
+            },
+            "entityType": "branch",
+            "projectId": "project-123",
+        },
     )
     print(response)
 
 
-# x-ms-original-file: 2025-03-01/NeonDatabases_Get_MaximumSet_Gen.json
+# x-ms-original-file: 2025-06-23-preview/Branches_Preflight_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

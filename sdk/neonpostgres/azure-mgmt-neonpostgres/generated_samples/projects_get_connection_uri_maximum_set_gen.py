@@ -32,20 +32,20 @@ def main():
 
     response = client.projects.get_connection_uri(
         resource_group_name="rgneon",
-        organization_name="test-org",
-        project_name="entity-name",
+        organization_name="myOrganization",
+        project_name="myProject",
         connection_uri_parameters={
-            "branchId": "iimmlbqv",
-            "databaseName": "xc",
-            "endpointId": "jcpdvsyjcn",
+            "branchId": "branch-123",
+            "databaseName": "application",
+            "endpointId": "endpoint-123",
             "isPooled": True,
-            "projectId": "riuifmoqtorrcffgksvfcobia",
-            "roleName": "xhmcvsgtp",
+            "projectId": "project-123",
+            "roleName": "admin",
         },
     )
     print(response)
 
 
-# x-ms-original-file: 2025-03-01/Projects_GetConnectionUri_MaximumSet_Gen.json
+# x-ms-original-file: 2025-06-23-preview/Projects_GetConnectionUri_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()
