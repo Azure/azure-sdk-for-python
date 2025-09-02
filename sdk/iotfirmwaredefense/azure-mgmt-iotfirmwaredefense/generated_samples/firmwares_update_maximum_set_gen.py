@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -36,20 +37,25 @@ def main():
         firmware_id="00000000-0000-0000-0000-000000000000",
         properties={
             "properties": {
-                "description": "nknvqnkgumzbupxe",
-                "fileName": "dmnqhyxssutvnewntlb",
+                "description": "User provided description of the firmware.",
+                "fileName": "FileNameThatWasUploaded.bin",
                 "fileSize": 30,
-                "model": "wmyfbyjsggbvxcuin",
+                "model": "ExampleModelOfDevice",
                 "status": "Pending",
-                "statusMessages": [{"errorCode": 20, "message": "edtylkjvj"}],
-                "vendor": "hymojocxpxqhtblioaavylnzyg",
-                "version": "nhtxzslgcbtptu",
+                "statusMessages": [
+                    {
+                        "errorCode": 5,
+                        "message": "Firmware image contained some file systems that are not supported for extraction so results may be incomplete.",
+                    }
+                ],
+                "vendor": "ExampleVendorName",
+                "version": "1.0.0",
             }
         },
     )
     print(response)
 
 
-# x-ms-original-file: 2025-04-01-preview/Firmwares_Update_MaximumSet_Gen.json
+# x-ms-original-file: 2025-08-02/Firmwares_Update_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()
