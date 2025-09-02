@@ -34,7 +34,7 @@ async def _drain_and_coalesce_results(document_producers_to_drain):
     return all_results, is_singleton
 
 
-class _HybridSearchContextAggregator(_QueryExecutionContextBase):
+class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: disable=too-many-instance-attributes
     """This class is a subclass of the query execution context base and serves for
     full text search and hybrid search queries. It is very similar to the existing MultiExecutionContextAggregator,
     but is needed since we have a lot more additional client-side logic to take care of.
