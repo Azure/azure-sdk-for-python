@@ -17,6 +17,9 @@ from typing import Any, Dict, Union
 
 ItemDict = Dict[str, Any]
 PkField = Union[str, None, type[partition_key.NonePartitionKeyValue], type[partition_key.NullPartitionKeyValue]]
+COLLECTION = "created_collection"
+DATABASE = "created_db"
+VERSIONS = [1, 2]
 
 
 def _new_null_pk_doc(pk_field: PkField) -> ItemDict:
@@ -86,9 +89,94 @@ def _batch_and_assert(container: ContainerProxy, pk_field: PkField = 'pk', pk_va
     assert len(items) == 1
     _assert_pk(items[0]['resourceBody'], pk_field)
 
+@pytest.fixture(scope="class")
+def setup():
+    if (TestPartitionKey.masterKey == '[YOUR_KEY_HERE]' or
+            TestPartitionKey.host == '[YOUR_ENDPOINT_HERE]'):
+        raise Exception(
+            "You must specify your Azure Cosmos account values for "
+            "'masterKey' and 'host' at the top of this class to run the "
+            "tests.")
+    test_client = cosmos_client.CosmosClient(TestPartitionKey.host, TestPartitionKey.masterKey),
+    created_db = test_client[0].get_database_client(TestPartitionKey.TEST_DATABASE_ID)
+    return {
+        DATABASE: created_db,
+        COLLECTION: created_db.get_container_client(TestPartitionKey.TEST_CONTAINER_ID)
+    }
+
+
+def _assert_no_conflicts(container: ContainerProxy, pk_value: PkField) -> None:
+    conflict_definition: ItemDict = {'id': 'new conflict', 'resourceId': 'doc1', 'operationType': 'create', 'resourceType': 'document'}
+    if pk_value:
+        assert len(list(container.query_conflicts(query='SELECT * FROM root r WHERE r.resourceType=\'' + conflict_definition.get('resourceType') + '\'', partition_key=pk_value))) == 0
+    else:
+        try:
+            list(container.query_conflicts(query='SELECT * FROM root r WHERE r.resourceType=\'' + conflict_definition.get('resourceType') + '\'', partition_key=pk_value))
+            pytest.fail("Should have thrown since cross partition query not allowed")
+        except CosmosHttpResponseError as ex:
+            assert ex.status_code, 400
+    for api_call in (container.get_conflict, container.delete_conflict):
+        try:
+            api_call(conflict_definition['id'], partition_key=pk_value)
+            pytest.fail("Should have thrown since there are no conflicts")
+        except AzureError as ex:
+            assert isinstance(ex, CosmosResourceNotFoundError)
+
+
+def _perform_operations_on_pk(created_container, pk_field, pk_value):
+    # Create initial null PK doc
+    document_definition = _new_null_pk_doc(pk_field)
+    item = created_container.create_item(body=document_definition)
+    _assert_pk(item, pk_field)
+    # Read & point reads
+    _read_and_assert(created_container, document_definition['id'], pk_field, pk_value)
+    items_iter = created_container.read_items(items=[(document_definition['id'], pk_value)])
+    items_list = list(items_iter)
+    assert len(items_list) == 1
+    _assert_pk(items_list[0], pk_field)
+    # Change feed
+    # If partition key is missing, change feed does not work
+    if pk_field:
+        _change_feed_and_assert(created_container, pk_field, pk_value)
+    # Query
+    if pk_value:
+        _query_and_assert_single(created_container, pk_field, pk_value)
+    else:
+        try:
+            # passing None directly should throw as requires cross partition param
+            _query_and_assert_single(created_container, pk_field, pk_value)
+            pytest.fail("Should have thrown")
+        except CosmosHttpResponseError as ex:
+            assert ex.status_code, 400
+    # Replace / Upsert cycle
+    _replace_update_cycle(created_container, document_definition, pk_field)
+    # Patch
+    _patch_and_assert(created_container, document_definition['id'], pk_field, pk_value)
+    # Batch
+    _batch_and_assert(created_container, pk_field, pk_value)
+    # Conflicts
+    _assert_no_conflicts(created_container, pk_value)
+    # Get Feed Range
+    feed_range = created_container.feed_range_from_partition_key(partition_key=pk_value)
+    assert feed_range is not None
+    items_iter = created_container.query_items(query='SELECT * FROM c',
+                                               feed_range=feed_range,
+                                               enable_cross_partition_query=True)
+    items_list = list(items_iter)
+    assert len(items_list) > 0
+    for item in items_list:
+        _assert_pk(item, pk_field)
+    # Delete
+    created_container.delete_item(item=document_definition['id'], partition_key=pk_value)
+    # recreate the item to test delete item api
+    created_container.create_item(body=document_definition)
+    created_container.delete_all_items_by_partition_key(partition_key=pk_value)
+
 
 @pytest.mark.cosmosEmulator
-class TestPartitionKey(unittest.TestCase):
+@pytest.mark.unittest
+@pytest.mark.usefixtures("setup")
+class TestPartitionKey:
     """Tests to verify if non-partitioned collections are properly accessed on migration with version 2018-12-31.
     """
 
@@ -101,114 +189,44 @@ class TestPartitionKey(unittest.TestCase):
     TEST_DATABASE_ID: str = test_config.TestConfig.TEST_DATABASE_ID
     TEST_CONTAINER_ID: str = test_config.TestConfig.TEST_MULTI_PARTITION_CONTAINER_ID
 
-    @classmethod
-    def setUpClass(cls) -> None:
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
-        cls.created_db = cls.client.get_database_client(cls.TEST_DATABASE_ID)
-        cls.created_collection = cls.created_db.get_container_client(cls.TEST_CONTAINER_ID)
-
-    def _assert_no_conflicts(self, container: ContainerProxy, pk_value: PkField) -> None:
-        conflict_definition: ItemDict = {'id': 'new conflict', 'resourceId': 'doc1', 'operationType': 'create', 'resourceType': 'document'}
-        if pk_value:
-            assert len(list(container.query_conflicts(query='SELECT * FROM root r WHERE r.resourceType=\'' + conflict_definition.get('resourceType') + '\'', partition_key=pk_value))) == 0
-        else:
-            try:
-                list(container.query_conflicts(query='SELECT * FROM root r WHERE r.resourceType=\'' + conflict_definition.get('resourceType') + '\'', partition_key=pk_value))
-                self.fail("Should have thrown since cross partition query not allowed")
-            except CosmosHttpResponseError as ex:
-                assert ex.status_code, 400
-        for api_call in (container.get_conflict, container.delete_conflict):
-            try:
-                api_call(conflict_definition['id'], partition_key=pk_value)
-                self.fail("Should have thrown since there are no conflicts")
-            except AzureError as ex:
-                assert isinstance(ex, CosmosResourceNotFoundError)
-
-    def test_multi_partition_collection_read_document_with_no_pk(self) -> None:
+    @pytest.mark.parametrize("version", VERSIONS)
+    def test_multi_partition_collection_read_document_with_no_pk(self, setup, version) -> None:
         pk_val: PkField = partition_key.NonePartitionKeyValue  # type: ignore[assignment]
-        created_container = self.created_db.create_container_if_not_exists(
+        created_container = setup[DATABASE].create_container_if_not_exists(
             id="container_with_no_pk" + str(uuid.uuid4()),
-            partition_key=PartitionKey(path="/pk", kind='Hash')
+            partition_key=PartitionKey(path="/pk", kind='Hash', version=version)
         )
         try:
-           self._perform_operations_on_pk(created_container, None, pk_val)
+           _perform_operations_on_pk(created_container, None, pk_val)
         finally:
-            self.created_db.delete_container(created_container)
+            setup[DATABASE].delete_container(created_container)
 
-    def test_with_null_pk(self) -> None:
+    @pytest.mark.parametrize("version", VERSIONS)
+    def test_with_null_pk(self, setup, version) -> None:
         pk_field = 'pk'
         pk_vals = [None, partition_key.NullPartitionKeyValue]
-        created_container = self.created_db.create_container_if_not_exists(
+        created_container = setup[DATABASE].create_container_if_not_exists(
             id="container_with_nul_pk" + str(uuid.uuid4()),
-            partition_key=PartitionKey(path="/pk", kind='Hash')
+            partition_key=PartitionKey(path="/pk", kind='Hash', version=version)
         )
         try:
             for pk_value in pk_vals:
-                self._perform_operations_on_pk(created_container, pk_field, pk_value)
+                _perform_operations_on_pk(created_container, pk_field, pk_value)
         finally:
-            self.created_db.delete_container(created_container)
+            setup[DATABASE].delete_container(created_container)
 
-    def _perform_operations_on_pk(self, created_container, pk_field, pk_value):
-        # Create initial null PK doc
-        document_definition = _new_null_pk_doc(pk_field)
-        item = created_container.create_item(body=document_definition)
-        _assert_pk(item, pk_field)
-        # Read & point reads
-        _read_and_assert(created_container, document_definition['id'], pk_field, pk_value)
-        items_iter = created_container.read_items(items=[(document_definition['id'], pk_value)])
-        items_list = list(items_iter)
-        assert len(items_list) == 1
-        _assert_pk(items_list[0], pk_field)
-        # Change feed
-        # If partition key is missing, change feed does not work
-        if pk_field:
-            _change_feed_and_assert(created_container, pk_field, pk_value)
-        # Query
-        if pk_value:
-            _query_and_assert_single(created_container, pk_field, pk_value)
-        else:
-            try:
-                # passing None directly should throw as requires cross partition param
-                _query_and_assert_single(created_container, pk_field, pk_value)
-                self.fail("Should have thrown")
-            except CosmosHttpResponseError as ex:
-                assert ex.status_code, 400
-        # Replace / Upsert cycle
-        _replace_update_cycle(created_container, document_definition, pk_field)
-        # Patch
-        _patch_and_assert(created_container, document_definition['id'], pk_field, pk_value)
-        # Batch
-        _batch_and_assert(created_container, pk_field, pk_value)
-        # Conflicts
-        self._assert_no_conflicts(created_container, pk_value)
-        # Get Feed Range
-        feed_range = created_container.feed_range_from_partition_key(partition_key=pk_value)
-        assert feed_range is not None
-        items_iter = created_container.query_items(query='SELECT * FROM c',
-                                                   feed_range=feed_range,
-                                                   enable_cross_partition_query=True)
-        items_list = list(items_iter)
-        assert len(items_list) > 0
-        for item in items_list:
-            _assert_pk(item, pk_field)
-        # Delete
-        created_container.delete_item(item=document_definition['id'], partition_key=pk_value)
-        # recreate the item to test delete item api
-        created_container.create_item(body=document_definition)
-        created_container.delete_all_items_by_partition_key(partition_key=pk_value)
+    def test_hash_v2_partition_key_definition(self, setup) -> None:
+        created_container_properties = setup[COLLECTION].read()
+        assert created_container_properties['partitionKey']['version'] == 2
 
-    def test_hash_v2_partition_key_definition(self) -> None:
-        created_container_properties = self.created_collection.read()
-        self.assertEqual(created_container_properties['partitionKey']['version'], 2)
-
-    def test_hash_v1_partition_key_definition(self) -> None:
-        created_container = self.created_db.create_container(
+    def test_hash_v1_partition_key_definition(self, setup) -> None:
+        created_container = setup[DATABASE].create_container(
             id='container_with_pkd_v2' + str(uuid.uuid4()),
             partition_key=partition_key.PartitionKey(path="/id", kind="Hash", version=1)
         )
         created_container_properties = created_container.read()
-        self.assertEqual(created_container_properties['partitionKey']['version'], 1)
-        self.created_db.delete_container(created_container)
+        assert created_container_properties['partitionKey']['version'] == 1
+        setup[DATABASE].delete_container(created_container)
 
 
 if __name__ == '__main__':
