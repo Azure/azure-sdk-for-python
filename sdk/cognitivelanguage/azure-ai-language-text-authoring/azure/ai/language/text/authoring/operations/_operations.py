@@ -2258,7 +2258,7 @@ class _TextAuthoringClientOperationsMixin(
         return deserialized  # type: ignore
 
     @distributed_trace
-    def _begin_delete_project(self, project_name: str, **kwargs: Any) -> LROPoller[None]:
+    def begin_delete_project(self, project_name: str, **kwargs: Any) -> LROPoller[None]:
         """Deletes a project.
 
         :param project_name: The name of the project to use. Required.

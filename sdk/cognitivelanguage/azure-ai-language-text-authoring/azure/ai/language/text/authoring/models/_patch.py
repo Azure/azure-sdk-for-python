@@ -47,6 +47,10 @@ from ._models import (
     CopyProjectDetails,
     EvaluationJobResult,
     EvaluationState,
+    ExportedCustomSingleLabelClassificationProjectAsset,
+    ExportedCustomSingleLabelClassificationDocument,
+    ExportedDocumentClass,
+    ExportedClass,
 )
 
 JSON = MutableMapping[str, Any]
@@ -337,4 +341,8 @@ __all__ = [
     "EvaluationJobResult",
     "EvaluationState",
     "AsyncJobsPollingMethod",
+    "ExportedCustomSingleLabelClassificationProjectAsset",
+    "ExportedCustomSingleLabelClassificationDocument",
+    "ExportedDocumentClass",
+    "ExportedClass",
 ]

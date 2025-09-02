@@ -3,11 +3,7 @@ import functools
 from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer, recorded_by_proxy
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.language.text.authoring import TextAuthoringClient
-from azure.ai.language.text.authoring.models import (
-    CreateProjectOptions,
-    ProjectDetails,
-    ProjectKind,
-)
+from azure.ai.language.text.authoring.models import ProjectDetails
 
 ConversationsPreparer = functools.partial(
     PowerShellPreparer,
@@ -23,24 +19,24 @@ class TestConversations(AzureRecordedTestCase):
 class TestConversationsCase(TestConversations):
     @ConversationsPreparer()
     @recorded_by_proxy
-    def test_create_project(self, authoring_endpoint, authoring_key):
-        authoring_client = self.create_client(authoring_endpoint, authoring_key)
+    def test_get_project(self, authoring_endpoint, authoring_key):
+        client = self.create_client(authoring_endpoint, authoring_key)
+
         project_name = "MyTextProject001"
-
-        # Arrange
-        body = CreateProjectOptions(
-            project_kind=ProjectKind.CUSTOM_MULTI_LABEL_CLASSIFICATION,
-            storage_input_container_name="multi-class-example",
-            project_name=project_name,
-            language="en",
-            description="Project description for a Custom Entity Recognition project",
-            multilingual=True,
-        )
-
         # Act
-        result = authoring_client.create_project(project_name=project_name, body=body)
+        result = client.get_project(project_name)
 
         # Assert
         assert isinstance(result, ProjectDetails)
         assert result.project_name == project_name
-        print(f"Created project: {result.project_name}, language: {result.language}, kind: {result.project_kind}")
+        assert result.language is not None
+        assert result.created_on is not None
+        assert result.last_modified_on is not None
+        assert result.storage_input_container_name is not None
+
+        print("Project details:")
+        print(f"  name: {result.project_name}")
+        print(f"  language: {result.language}")
+        print(f"  created: {result.created_on}")
+        print(f"  last modified: {result.last_modified_on}")
+        print(f"  storage container: {result.storage_input_container_name}")
