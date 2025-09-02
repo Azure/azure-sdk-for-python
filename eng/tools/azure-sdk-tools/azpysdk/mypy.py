@@ -53,18 +53,6 @@ class mypy(Check):
             
             executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, package_dir)
             logger.info(f"Processing {package_name} for mypy check")
-            
-            create_package_and_install(
-                distribution_directory=staging_directory,
-                target_setup=package_dir,
-                skip_install=False,
-                cache_dir=None,
-                work_dir=staging_directory,
-                force_create=False,
-                package_type="wheel",
-                pre_download_disabled=False,
-                python_executable=executable
-            )
 
             # install mypy
             try:
