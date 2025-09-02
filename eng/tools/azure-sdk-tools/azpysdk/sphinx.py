@@ -50,7 +50,7 @@ def copy_existing_docs(source: str, target: str) -> None:
         logger.info("Copying {}".format(file))
         shutil.copy(os.path.join(source, file), target)
 
-def mgmt_apidoc(working_dir: str, target_folder: str) -> None:
+def mgmt_apidoc(working_dir: str, target_folder: str) -> int:
     command_array = [
         sys.executable, # TODO replace with executable
         generate_mgmt_script,
@@ -73,9 +73,10 @@ def mgmt_apidoc(working_dir: str, target_folder: str) -> None:
                 working_dir, e.returncode
             )
         )
-        exit(1)
+        return 1
+    return 0
 
-def sphinx_apidoc(working_dir: str, namespace: str) -> None:
+def sphinx_apidoc(working_dir: str, namespace: str) -> int:
     working_doc_folder = os.path.join(working_dir, "unzipped", "doc")
     command_array = [
             "sphinx-apidoc",
@@ -117,7 +118,8 @@ def sphinx_apidoc(working_dir: str, namespace: str) -> None:
                 working_dir, e.returncode
             )
         )
-        exit(1)
+        return 1
+    return 0
 
 # TODO may not need these - 
 # def unzip_sdist_to_directory(containing_folder: str) -> str:
@@ -187,29 +189,35 @@ class sphinx(Check):
             default=False
         )
 
-    def setup_sphinx_env(self, args, package_name, package_dir):
-        # unzips package sdist, sets up folders, creates index file from readme, writes package version
+    # def setup_sphinx_env(self, args, package_name, package_dir):
+    #     # unzips package sdist, sets up folders, creates index file from readme, writes package version
 
-        # TODO directly use current directory rather than 
-        if should_build_docs(package_name):
-            source_location = move_and_rename(unzip_sdist_to_directory(args.dist_dir))
-            doc_folder = os.path.join(source_location, "docgen")
+    #     # TODO directly use current directory rather than 
+    #     if should_build_docs(package_name):
+    #         source_location = move_and_rename(unzip_sdist_to_directory(args.dist_dir))
+    #         doc_folder = os.path.join(source_location, "docgen")
 
-            create_index(doc_folder, source_location, pkg_details.namespace)
+    #         create_index(doc_folder, source_location, pkg_details.namespace)
 
-            site_folder = os.path.join(args.dist_dir, "site")
-            write_version(site_folder, pkg_details.version)
-        else:
-            logger.info("Skipping sphinx prep for {}".format(package_name.name))      
+    #         site_folder = os.path.join(args.dist_dir, "site")
+    #         write_version(site_folder, pkg_details.version)
+    #     else:
+    #         logger.info("Skipping sphinx prep for {}".format(package_name.name))      
 
-    def run_sphinx_apidoc(self, target_dir, package_dir, working_dir, output_dir, parsed):
+    def run_sphinx_apidoc(self, args: argparse.Namespace, parsed: ParsedSetup) -> int:
+        working_dir = args.working_directory 
+        output_dir = os.path.join(working_dir, "unzipped/docgen")
+
+        result: int = 0
+
         if should_build_docs(parsed.name):
             if is_mgmt_package(parsed.name):
-                mgmt_apidoc(output_dir, parsed.folder)
+                result = mgmt_apidoc(output_dir, parsed.folder)
             else:
-                sphinx_apidoc(working_dir, parsed.namespace)            
+                result = sphinx_apidoc(working_dir, parsed.namespace)            
         else:
             logger.info("Skipping sphinx source generation for {}".format(parsed.name))
+        return result
 
     def build_sphinx(self):
         # builds html, in CI compresses and moves output to central location, reports errors
@@ -244,9 +252,6 @@ class sphinx(Check):
             
             logger.info(f"Running sphinx against {package_name}")
 
-            output_dir = os.path.abspath(args.output_directory)
-            target_dir = os.path.abspath(args.working_directory)
-            package_dir = os.path.abspath(args.package_root)
-            
+            results.append(self.run_sphinx_apidoc(args, parsed))
 
         return max(results) if results else 0
