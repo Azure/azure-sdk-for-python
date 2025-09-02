@@ -347,10 +347,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     ) -> Union[DatabaseProxy, tuple[DatabaseProxy, CosmosDict]]:
         """
         Create a new database with the given ID (name).
-
-        :param str id: ID (name) of the database to create.
-        :param offer_throughput: The provisioned throughput for this offer.
-        :type offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
+        :param Any args: args
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
         :keyword int throughput_bucket: The desired throughput bucket for the client
@@ -392,6 +389,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
 
         offer_throughput = kwargs.pop("offer_throughput", None)
         id = args[0] if args else kwargs.pop("id")
+        populate_query_metrics = args[1] if len(args) > 1 else kwargs.pop("populate_query_metrics", None)
+        offer_throughput = args[2] if len(args) > 2 else kwargs.pop("offer_throughput", None)
         return_properties = kwargs.pop("return_properties", False)
         response_hook = kwargs.pop("response_hook", None)
         populate_query_metrics = kwargs.pop("populate_query_metrics", None)
@@ -416,9 +415,9 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     def create_database_if_not_exists(  # pylint:disable=docstring-missing-param
         self,
         id: str,
-        *,
         populate_query_metrics: Optional[bool] = None,
         offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
+        *,
         initial_headers: Optional[Dict[str, str]] = None,
         throughput_bucket: Optional[int] = None,
         return_properties: Literal[False] = False,
@@ -451,9 +450,9 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     def create_database_if_not_exists(  # pylint:disable=docstring-missing-param
             self,
             id: str,
-            *,
             populate_query_metrics: Optional[bool] = None,
             offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
+            *,
             initial_headers: Optional[Dict[str, str]] = None,
             throughput_bucket: Optional[int] = None,
             return_properties: Literal[True],
@@ -496,16 +495,13 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             This function does not check or update existing database settings or
             offer throughput if they differ from what is passed in.
 
-        :param str id: ID (name) of the database to read or create.
-        :param bool populate_query_metrics: Enable returning query metrics in response headers.
-        :param offer_throughput: The provisioned throughput for this offer.
-        :type offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
+        :param Any args: args
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :keyword bool return_properties: Specifies function to return either a DatabaseProxy
             or a Tuple of a DatabaseProxy and CosmosDict instance.
-        :returns: A DatabaseProxy instance representing the database or a tuple of DatabaseProxy
+        :returns: A `DatabaseProxy` instance representing the database or a tuple of `DatabaseProxy`
             and CosmosDict with the response headers
         :rtype: ~azure.cosmos.DatabaseProxy or tuple [~azure.cosmos.DatabaseProxy, ~azure.cosmos.CosmosDict]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The database read or creation failed.
@@ -531,8 +527,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 UserWarning)
 
         id = args[0] if args else kwargs.pop("id")
-        offer_throughput = kwargs.pop("offer_throughput", None)
-        populate_query_metrics = kwargs.pop("populate_query_metrics", None)
+        populate_query_metrics = args[1] if len(args) > 1 else kwargs.pop("populate_query_metrics", None)
+        offer_throughput = args[2] if len(args) > 2 else kwargs.pop("offer_throughput", None)
         return_properties = kwargs.pop("return_properties", False)
         try:
             database_proxy = self.get_database_client(id)

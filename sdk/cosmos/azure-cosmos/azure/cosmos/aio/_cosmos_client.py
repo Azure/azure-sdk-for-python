@@ -338,7 +338,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         """
         Create a new database with the given ID (name).
 
-        :param str id: ID (name) of the database to create.
+        :param Any args: args
         :keyword offer_throughput: The provisioned throughput for this offer.
         :paramtype offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
         :keyword bool return_properties: Specifies function to return either a DatabaseProxy
@@ -436,7 +436,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             This function does not check or update existing database settings or
             offer throughput if they differ from what is passed in.
 
-        :param str id: ID (name) of the database to read or create.
+        :param Any args: args
         :keyword offer_throughput: The provisioned throughput for this offer.
         :paramtype offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
         :keyword bool return_properties: Specifies function to return either a DatabaseProxy
