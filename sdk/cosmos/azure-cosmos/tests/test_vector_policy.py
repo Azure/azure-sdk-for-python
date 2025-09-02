@@ -152,7 +152,8 @@ class TestVectorPolicy(unittest.TestCase):
                 {"path": "/*"},
                 {"path": "/vector1/*"},
                 {"path": "/\"_etag\"/?"}
-            ], "fullTextIndexes": [],
+            ],
+            "fullTextIndexes": [],
             "vectorIndexes": [
                 {
                     "path": "/vector1",

@@ -148,7 +148,8 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
                 {"path": "/*"},
                 {"path": "/vector1/*"},
                 {"path": "/\"_etag\"/?"}
-            ], "fullTextIndexes": [],
+            ],
+            "fullTextIndexes": [],
             "vectorIndexes": [
                 {
                     "path": "/vector1",
