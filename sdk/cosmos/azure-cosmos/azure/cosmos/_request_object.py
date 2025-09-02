@@ -20,12 +20,13 @@
 # SOFTWARE.
 
 """Represents a request object."""
+import asyncio
+import threading
 from concurrent.futures.thread import ThreadPoolExecutor
-from typing import Optional, Mapping, Any, Dict, List
+from typing import Optional, Mapping, Any, Dict, List, Union
 
 from ._availability_strategy import CrossRegionHedgingStrategy
 from ._constants import _Constants as Constants
-from ._request_hedging_completion_status import HedgingCompletionStatus
 from .documents import _OperationType
 from .http_constants import ResourceType
 
@@ -56,7 +57,7 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
         self.pk_val = pk_val
         self.retry_write: bool = False
         self.is_hedging_request: bool = False # Flag to track if this is a hedged request
-        self.completion_status: Optional[HedgingCompletionStatus] = None # Status shared between parallel requests
+        self.completion_status: Optional[Union[threading.Event, asyncio.Event]] = None # Status shared between parallel requests
 
     def route_to_location_with_preferred_location_flag(  # pylint: disable=name-too-long
         self,
@@ -153,4 +154,4 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
         :return: True if request should be cancelled, False otherwise
         :rtype: bool
         """
-        return self.completion_status is not None and self.completion_status.is_completed
+        return self.completion_status is not None and self.completion_status.is_set()

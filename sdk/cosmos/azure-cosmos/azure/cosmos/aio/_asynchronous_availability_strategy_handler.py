@@ -22,13 +22,12 @@
 """Module for handling asynchronous request hedging strategies in Azure Cosmos DB."""
 import asyncio  # pylint: disable=do-not-import-asyncio
 import copy
-from asyncio import Task, CancelledError  # pylint: disable=do-not-import-asyncio
+from asyncio import Task, CancelledError, Event  # pylint: disable=do-not-import-asyncio
 from types import SimpleNamespace
 from typing import Any, Dict, List, Optional, Tuple, Callable, Awaitable, cast
 
 from azure.core.pipeline.transport import HttpRequest  # pylint: disable=no-legacy-azure-core-http-response-import
 
-from ._asynchronous_hedging_completion_status import AsyncHedgingCompletionStatus
 from ._global_partition_endpoint_manager_circuit_breaker_async import \
     _GlobalPartitionEndpointManagerForCircuitBreakerAsync
 from .._availability_strategy import CrossRegionHedgingStrategy
@@ -48,7 +47,7 @@ class CrossRegionAsyncHedgingHandler(AvailabilityStrategyHandlerMixin):
         execute_request_fn: Callable[..., Awaitable[ResponseType]],
         location_index: int,
         available_locations: List[str],
-        complete_status: AsyncHedgingCompletionStatus,
+        complete_status: Event,
         first_request_params_holder: SimpleNamespace
     ) -> ResponseType:
         """Execute a single request with appropriate delay based on location index.
@@ -74,7 +73,7 @@ class CrossRegionAsyncHedgingHandler(AvailabilityStrategyHandlerMixin):
         :param available_locations: List of available locations for request routing
         :type available_locations: List[str]
         :param complete_status: Object tracking whether any request has completed successfully
-        :type complete_status: AsyncHedgingCompletionStatus
+        :type complete_status: asyncio.Event
         :param first_request_params_holder: Namespace object storing request parameters for the initial request
         :type first_request_params_holder: SimpleNamespace
         :returns: Tuple containing response data and headers from the request
@@ -113,7 +112,7 @@ class CrossRegionAsyncHedgingHandler(AvailabilityStrategyHandlerMixin):
         if delay > 0:
             await asyncio.sleep(delay / 1000)
 
-        if complete_status is not None and complete_status.is_completed:
+        if complete_status is not None and complete_status.is_set():
             raise CancelledError("The request has been cancelled")
 
         return await execute_request_fn(params, req)
@@ -147,7 +146,7 @@ class CrossRegionAsyncHedgingHandler(AvailabilityStrategyHandlerMixin):
         """
         # Get available locations from global endpoint manager
         available_locations = self._get_applicable_endpoints(request_params, global_endpoint_manager)
-        completion_status = AsyncHedgingCompletionStatus()
+        completion_status = Event()
 
         tasks = []
         first_task: Optional[Task] = None
@@ -173,7 +172,7 @@ class CrossRegionAsyncHedgingHandler(AvailabilityStrategyHandlerMixin):
             for completed_task in asyncio.as_completed(tasks):
                 try:
                     result = await completed_task
-                    completion_status.set_completed()
+                    completion_status.set()
 
                     if completed_task is first_task:
                         return result
@@ -183,10 +182,10 @@ class CrossRegionAsyncHedgingHandler(AvailabilityStrategyHandlerMixin):
                     return result
                 except Exception as e: #pylint: disable=broad-exception-caught
                     if completed_task is first_task:
-                        completion_status.set_completed()
+                        completion_status.set()
                         raise e
                     if self._is_non_transient_error(e):
-                        completion_status.set_completed()
+                        completion_status.set()
                         await self._record_cancel_for_first_request(
                             first_request_params_holder,
                             global_endpoint_manager)
@@ -194,7 +193,7 @@ class CrossRegionAsyncHedgingHandler(AvailabilityStrategyHandlerMixin):
 
             # if we have reached here, it means all tasks completed_task but all failed with transient exceptions
             # in this case, raise the exception from the first task
-            completion_status.set_completed()
+            completion_status.set()
             if first_task is None or first_task.exception() is None:
                 raise RuntimeError("first task can not be none and it should have failed")
             raise first_task.exception()

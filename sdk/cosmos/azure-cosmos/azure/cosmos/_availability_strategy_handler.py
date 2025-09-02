@@ -23,6 +23,7 @@
 import copy
 import time
 from concurrent.futures import ThreadPoolExecutor, Future, as_completed, CancelledError
+from threading import Event
 from types import SimpleNamespace
 from typing import List, Dict, Any, Tuple, Callable, Optional, cast
 
@@ -31,7 +32,6 @@ from azure.core.pipeline.transport import HttpRequest  # pylint: disable=no-lega
 from ._availability_strategy import CrossRegionHedgingStrategy
 from ._availability_strategy_handler_base import AvailabilityStrategyHandlerMixin
 from ._global_partition_endpoint_manager_circuit_breaker import _GlobalPartitionEndpointManagerForCircuitBreaker
-from ._request_hedging_completion_status import HedgingCompletionStatus, SyncHedgingCompletionStatus
 from ._request_object import RequestObject
 
 ResponseType = Tuple[Dict[str, Any], Dict[str, Any]]
@@ -49,7 +49,7 @@ class CrossRegionHedgingHandler(AvailabilityStrategyHandlerMixin):
         execute_request_fn: Callable[..., ResponseType],
         location_index: int,
         available_locations: List[str],
-        complete_status: HedgingCompletionStatus,
+        complete_status: Event,
         first_request_params_holder: SimpleNamespace
     ) -> ResponseType:
         """Execute a single request.
@@ -65,7 +65,7 @@ class CrossRegionHedgingHandler(AvailabilityStrategyHandlerMixin):
         :param available_locations: List of available locations
         :type available_locations: List[str]
         :param complete_status: Value holder to track completion signal
-        :type complete_status: SimpleNamespace
+        :type complete_status: threading.Event
         :param first_request_params_holder: A value holder for request object for first/initial request
         :type first_request_params_holder: SimpleNamespace
         :returns: Response tuple
@@ -103,7 +103,7 @@ class CrossRegionHedgingHandler(AvailabilityStrategyHandlerMixin):
         if delay > 0:
             time.sleep(delay / 1000)
 
-        if complete_status.is_completed:
+        if complete_status.is_set():
             raise CancelledError("The request has been cancelled")
 
         return execute_request_fn(params, req)
@@ -136,7 +136,7 @@ class CrossRegionHedgingHandler(AvailabilityStrategyHandlerMixin):
         futures: List[Future] = []
         first_request_future: Optional[Future] = None
         first_request_params_holder: SimpleNamespace = SimpleNamespace(request_params=None)
-        completion_status = SyncHedgingCompletionStatus()
+        completion_status = Event()
 
         for i in range(len(available_locations)):
             future = effective_executor.submit(
@@ -158,24 +158,25 @@ class CrossRegionHedgingHandler(AvailabilityStrategyHandlerMixin):
 
             # if the result is from the first request, then always treat it as non-transient result
             if completed_future is first_request_future:
-                completion_status.set_completed()
+                completion_status.set()
                 if exception is None:
                     return completed_future.result()
                 raise exception
 
             # non-first futures
             if exception is None:
-                completion_status.set_completed()
+                completion_status.set()
                 self._record_cancel_for_first_request(first_request_params_holder, global_endpoint_manager)
                 return completed_future.result()
+
             if self._is_non_transient_error(exception):
-                completion_status.set_completed()
+                completion_status.set()
                 self._record_cancel_for_first_request(first_request_params_holder, global_endpoint_manager)
                 raise exception
 
         # if we have reached here,it means all the futures have completed but all failed with transient exceptions
         # in this case, return the result from the first futures
-        completion_status.set_completed()
+        completion_status.set()
         exc = cast(Future, first_request_future).exception()
         assert exc is not None
         raise exc
