@@ -229,7 +229,7 @@ class QueueServiceClient(  # type: ignore [misc]
         :return: The user delegation key.
         :rtype: ~azure.storage.queue.UserDelegationKey
         """
-        key_info = KeyInfo(start=_to_utc_datetime(start), expiry=_to_utc_datetime(expiry))
+        key_info = KeyInfo(start=_to_utc_datetime(start), expiry=_to_utc_datetime(expiry))  # type: ignore
         try:
             user_delegation_key = await self._client.service.get_user_delegation_key(
                 key_info=key_info, timeout=timeout, **kwargs
