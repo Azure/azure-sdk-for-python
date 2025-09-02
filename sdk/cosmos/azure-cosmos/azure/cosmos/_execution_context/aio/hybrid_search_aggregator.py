@@ -34,7 +34,7 @@ async def _drain_and_coalesce_results(document_producers_to_drain):
     return all_results, is_singleton
 
 
-class _HybridSearchContextAggregator(_QueryExecutionContextBase):
+class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: disable=too-many-instance-attributes
     """This class is a subclass of the query execution context base and serves for
     full text search and hybrid search queries. It is very similar to the existing MultiExecutionContextAggregator,
     but is needed since we have a lot more additional client-side logic to take care of.
@@ -53,6 +53,9 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
         self._client = client
         self._resource_link = resource_link
         self._partitioned_query_ex_info = partitioned_query_execution_info
+        # If the query uses parameters, we must save them to add them back to the component queries
+        query_execution_info = getattr(self._partitioned_query_ex_info, "_query_execution_info", None)
+        self._parameters = getattr(query_execution_info, "parameters", None) if query_execution_info else None
         self._hybrid_search_query_info = hybrid_search_query_info
         self._final_results = []
         self._aggregated_global_statistics = None
@@ -66,6 +69,12 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
             target_partition_key_ranges = await self._get_target_partition_key_range(target_all_ranges=True)
             global_statistics_doc_producers = []
             global_statistics_query = self._hybrid_search_query_info['globalStatisticsQuery']
+            # If query was given parameters we must add them back in
+            if self._parameters:
+                global_statistics_query = {
+                    'query': global_statistics_query,
+                    'parameters': self._parameters
+                }
             partitioned_query_execution_context_list = []
             for partition_key_target_range in target_partition_key_ranges:
                 # create a document producer for each partition key range
@@ -113,6 +122,11 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
         target_partition_key_ranges = await self._get_target_partition_key_range(target_all_ranges=False)
         for rewritten_query in rewritten_query_infos:
             for pk_range in target_partition_key_ranges:
+                if self._parameters:
+                    rewritten_query['rewrittenQuery'] = {
+                        'query': rewritten_query['rewrittenQuery'],
+                        'parameters': self._parameters
+                    }
                 component_query_execution_list.append(
                     document_producer._DocumentProducer(
                         pk_range,
