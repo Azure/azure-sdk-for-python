@@ -32,59 +32,14 @@ from ._asynchronous_hedging_completion_status import AsyncHedgingCompletionStatu
 from ._global_partition_endpoint_manager_circuit_breaker_async import \
     _GlobalPartitionEndpointManagerForCircuitBreakerAsync
 from .._availability_strategy import CrossRegionHedgingStrategy
+from .._availability_strategy_handler_base import AvailabilityStrategyHandlerMixin
 from .._request_object import RequestObject
-from ..documents import _OperationType
-from ..exceptions import CosmosHttpResponseError
 
 ResponseType = Tuple[Dict[str, Any], Dict[str, Any]]
 
-class CrossRegionAsyncHedgingHandler:
+class CrossRegionAsyncHedgingHandler(AvailabilityStrategyHandlerMixin):
     """Handler for CrossRegionHedgingStrategy that implements cross-region request hedging."""
 
-    def _setup_excluded_regions_for_hedging(
-        self,
-        location_index: int,
-        available_locations: List[str],
-        existing_excluded_locations: Optional[List[str]] = None
-    ) -> List[str]:
-        """Set up excluded regions for hedging requests.
-        
-        Excludes all regions except the target region, while preserving any existing exclusions.
-        
-        :param location_index: Index of current target location
-        :type location_index: int
-        :param available_locations: List of available locations
-        :type available_locations: List[str]
-        :param existing_excluded_locations: Existing excluded locations from request parameters
-        :type existing_excluded_locations: List[str]
-        :returns: List of regions to exclude
-        :rtype: List[str]
-        """
-        # Start with any existing excluded locations
-        excluded = list(existing_excluded_locations) if existing_excluded_locations else []
-
-        # Add additional excluded regions for hedging
-        if location_index > 0:
-            for i, loc in enumerate(available_locations):
-                if i != location_index and loc not in excluded:  # Exclude all non-target regions
-                    excluded.append(loc)
-
-        return excluded
-
-    def _is_non_transient_error(self, exception: Exception) -> bool:
-        """Check if exception a non-transient error.
-        
-        :param exception: exception
-        :type exception: Exception
-        :returns: True if exception is non-transient
-        :rtype: bool
-        """
-        if isinstance(exception, CosmosHttpResponseError):
-            status_code = exception.status_code
-            sub_status = exception.sub_status
-            return (status_code in [400, 409, 405, 412, 413, 401] or
-                    (status_code == 404 and sub_status == 0))
-        return False
 
     async def execute_single_request_with_delay(
         self,
@@ -256,38 +211,6 @@ class CrossRegionAsyncHedgingHandler:
         if request_params_holder.request_params is not None:
             await global_endpoint_manager.record_failure(request_params_holder.request_params)
 
-    def _get_applicable_endpoints(self, request: RequestObject, global_endpoint_manager: Any) -> List[str]:
-        """Get the list of applicable endpoints for request routing.
-
-        Determines the appropriate endpoints for request routing based on the operation type
-        (read or write) and the current state of regional routing contexts. For write
-        operations, it fetches write-specific routing contexts, while for read operations
-        it uses read-specific routing contexts.
-
-        :param request: The request object containing operation type and routing preferences
-        :type request: RequestObject
-        :param global_endpoint_manager: Manager handling endpoint routing and availability
-        :type global_endpoint_manager: Any
-        :returns: List of region names that are applicable for the request
-        :rtype: List[str]
-        """
-
-        applicable_endpoints = []
-        if _OperationType.IsWriteOperation(request.operation_type):
-            regional_context_list = global_endpoint_manager.get_applicable_write_regional_routing_contexts(request)
-        else:
-            regional_context_list = global_endpoint_manager.get_applicable_read_regional_routing_contexts(request)
-
-        if regional_context_list is not None:
-            for regional_context in regional_context_list:
-                applicable_endpoints.append(
-                    global_endpoint_manager.get_region_name(
-                        regional_context.get_primary(),
-                        _OperationType.IsWriteOperation(request.operation_type)
-                    )
-                )
-
-        return applicable_endpoints
 
 # Global handler instance
 _cross_region_hedging_handler = CrossRegionAsyncHedgingHandler()
