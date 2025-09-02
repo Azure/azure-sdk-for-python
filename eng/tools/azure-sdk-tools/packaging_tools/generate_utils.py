@@ -253,7 +253,38 @@ def judge_tag_preview(path: str, package_name: str) -> bool:
             _LOGGER.info(f"can not open {file}")
             continue
 
+        skip_decorator_block = False
+        decorator_depth = 0
+
         for line in list_in:
+            # skip the code of decorator @api_version_validation
+            stripped_line = line.strip()
+
+            # Check if we're starting an @api_version_validation decorator block
+            if "@api_version_validation" in stripped_line:
+                skip_decorator_block = True
+                decorator_depth = 0
+                continue
+
+            # If we're in a decorator block, track parentheses depth
+            if skip_decorator_block:
+                decorator_depth += stripped_line.count("(") - stripped_line.count(")")
+                # If we've closed all parentheses and hit a function definition, skip until next function/class
+                if decorator_depth == 0 and (
+                    stripped_line.startswith("def ") or stripped_line.startswith("async def ")
+                ):
+                    continue
+                # If we hit another decorator or function/class definition after closing parentheses, stop skipping
+                if decorator_depth == 0 and (
+                    stripped_line.startswith("@")
+                    or stripped_line.startswith("def ")
+                    or stripped_line.startswith("async def ")
+                    or stripped_line.startswith("class ")
+                ):
+                    skip_decorator_block = False
+                else:
+                    continue
+
             if "DEFAULT_API_VERSION = " in line:
                 default_api_version += line.split("=")[-1].strip("\n")  # collect all default api version
             if default_api_version == "" and "api_version" in line and "method_added_on" not in line:
