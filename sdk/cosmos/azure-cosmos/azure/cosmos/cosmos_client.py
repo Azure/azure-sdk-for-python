@@ -38,7 +38,6 @@ from .database import DatabaseProxy, _get_database_link
 from .documents import ConnectionPolicy, DatabaseAccount
 from .exceptions import CosmosResourceNotFoundError
 from ._cosmos_responses import CosmosDict
-from . import _utils as utils
 
 __all__ = ("CosmosClient",)
 
@@ -264,31 +263,80 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     def create_database(  # pylint:disable=docstring-missing-param
             self,
             id: str,
-            *,
             populate_query_metrics: Optional[bool] = None,
             offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
+            *,
             initial_headers: Optional[Dict[str, str]] = None,
             response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
             throughput_bucket: Optional[int] = None,
             return_properties: Literal[False] = False,
             **kwargs: Any
     ) -> DatabaseProxy:
+        """
+        Create a new database with the given ID (name).
+
+        :param str id: ID (name) of the database to create.
+        :param offer_throughput: The provisioned throughput for this offer.
+        :type offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
+        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword response_hook: A callable invoked with the response metadata.
+        :keyword int throughput_bucket: The desired throughput bucket for the client
+        :paramtype response_hook: Callable[[Mapping[str, str]], None]
+        :keyword bool return_properties: Specifies function to return either a DatabaseProxy
+            or a Tuple of a DatabaseProxy and CosmosDict instance.
+        :returns: A `DatabaseProxy` instance representing the database.
+        :rtype: ~azure.cosmos.DatabaseProxy
+        :raises ~azure.cosmos.exceptions.CosmosResourceExistsError: Database with the given ID already exists.
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/examples.py
+                :start-after: [START create_database]
+                :end-before: [END create_database]
+                :language: python
+                :dedent: 0
+                :caption: Create a database in the Cosmos DB account:
+        """
         ...
 
     @overload
     def create_database(  # pylint:disable=docstring-missing-param
             self,
             id: str,
-            *,
             populate_query_metrics: Optional[bool] = None,
             offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
+            *,
             initial_headers: Optional[Dict[str, str]] = None,
             response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
             throughput_bucket: Optional[int] = None,
             return_properties: Literal[True],
             **kwargs: Any
     ) -> tuple[DatabaseProxy, CosmosDict]:
+        """
+        Create a new database with the given ID (name).
 
+        :param str id: ID (name) of the database to create.
+        :param offer_throughput: The provisioned throughput for this offer.
+        :type offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
+        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword response_hook: A callable invoked with the response metadata.
+        :keyword int throughput_bucket: The desired throughput bucket for the client
+        :paramtype response_hook: Callable[[Mapping[str, str]], None]
+        :keyword bool return_properties: Specifies function to return either a DatabaseProxy
+            or a Tuple of a DatabaseProxy and CosmosDict instance.
+        :returns: A tuple of `DatabaseProxy` and CosmosDict with the response headers
+        :rtype: tuple [~azure.cosmos.DatabaseProxy, ~azure.cosmos.CosmosDict]
+        :raises ~azure.cosmos.exceptions.CosmosResourceExistsError: Database with the given ID already exists.
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/examples.py
+                :start-after: [START create_database]
+                :end-before: [END create_database]
+                :language: python
+                :dedent: 0
+                :caption: Create a database in the Cosmos DB account:
+        """
         ...
 
     @distributed_trace
@@ -309,7 +357,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :paramtype response_hook: Callable[[Mapping[str, str]], None]
         :keyword bool return_properties: Specifies function to return either a DatabaseProxy
             or a Tuple of a DatabaseProxy and CosmosDict instance.
-        :returns: A DatabaseProxy instance representing the database or a tuple of DatabaseProxy
+        :returns: A `DatabaseProxy` instance representing the database or a tuple of `DatabaseProxy`
             and CosmosDict with the response headers
         :rtype: ~azure.cosmos.DatabaseProxy or tuple [~azure.cosmos.DatabaseProxy, ~azure.cosmos.CosmosDict]
         :raises ~azure.cosmos.exceptions.CosmosResourceExistsError: Database with the given ID already exists.
@@ -341,11 +389,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 UserWarning)
-        # if throughput_bucket is not None:
-        #     kwargs["throughput_bucket"] = throughput_bucket
 
-        # if initial_headers is not None:
-        #     kwargs["initial_headers"] = initial_headers
         offer_throughput = kwargs.pop("offer_throughput", None)
         id = args[0] if args else kwargs.pop("id")
         return_properties = kwargs.pop("return_properties", False)
@@ -380,6 +424,27 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         return_properties: Literal[False] = False,
         **kwargs: Any
     ) -> DatabaseProxy:
+        """
+        Create the database if it does not exist already.
+        If the database already exists, the existing settings are returned.
+
+        ..note::
+            This function does not check or update existing database settings or
+            offer throughput if they differ from what is passed in.
+
+        :param str id: ID (name) of the database to read or create.
+        :param bool populate_query_metrics: Enable returning query metrics in response headers.
+        :param offer_throughput: The provisioned throughput for this offer.
+        :type offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
+        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword int throughput_bucket: The desired throughput bucket for the client
+        :keyword bool return_properties: Specifies function to return either a DatabaseProxy
+            or a Tuple of a DatabaseProxy and CosmosDict instance.
+        :returns: A `DatabaseProxy` instance representing the database.
+        :rtype: ~azure.cosmos.DatabaseProxy
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The database read or creation failed.
+        """
         ...
 
     @overload
@@ -394,7 +459,27 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             return_properties: Literal[True],
             **kwargs: Any
     ) -> tuple[DatabaseProxy, CosmosDict]:
+        """
+        Create the database if it does not exist already.
+        If the database already exists, the existing settings are returned.
 
+        ..note::
+            This function does not check or update existing database settings or
+            offer throughput if they differ from what is passed in.
+
+        :param str id: ID (name) of the database to read or create.
+        :param bool populate_query_metrics: Enable returning query metrics in response headers.
+        :param offer_throughput: The provisioned throughput for this offer.
+        :type offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
+        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword int throughput_bucket: The desired throughput bucket for the client
+        :keyword bool return_properties: Specifies function to return either a DatabaseProxy
+            or a Tuple of a DatabaseProxy and CosmosDict instance.
+        :returns: A tuple of `DatabaseProxy` and CosmosDict with the response headers
+        :rtype: tuple [~azure.cosmos.DatabaseProxy, ~azure.cosmos.CosmosDict]
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The database read or creation failed.
+        """
         ...
 
     @distributed_trace
