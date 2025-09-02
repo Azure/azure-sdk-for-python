@@ -33,6 +33,7 @@ from azure.core.pipeline.transport import (
 from azure.core.rest import HttpResponse, HttpRequest, AsyncHttpResponse
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.exceptions import HttpResponseError
+from ..tools import parse_resource_id
 
 HTTPResponseType = TypeVar("HTTPResponseType", HttpResponse, LegacyHttpResponse)
 HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
@@ -55,11 +56,11 @@ def _create_acquire_policy_request(request: PipelineRequest[HTTPRequestType]) ->
     :raises ~azure.core.exceptions.HttpResponseError: If subscription ID cannot be extracted from request URL
     """
     # try to get subscriptionId from request.http_request.url
-    subscription_id = (
-        request.http_request.url.split("subscriptions/")[1].split("/")[0]
-        if "subscriptions/" in request.http_request.url
-        else None
-    )
+    try:
+        resource_info = parse_resource_id(request.http_request.url)
+        subscription_id = resource_info.get("subscription")
+    except Exception:  # pylint: disable=broad-except
+        subscription_id = None
     if not subscription_id:
         raise HttpResponseError("Failed to get subscriptionId from request url: {}".format(request.http_request.url))
 
