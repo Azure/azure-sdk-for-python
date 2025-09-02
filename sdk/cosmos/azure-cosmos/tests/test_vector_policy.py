@@ -374,6 +374,29 @@ class TestVectorPolicy(unittest.TestCase):
             indexing_policy=indexing_policy,
             vector_embedding_policy=vector_embedding_policy
         )
+        # don't provide vector embedding policy
+        try:
+            self.test_db.replace_container(
+                created_container,
+                PartitionKey(path="/id"),
+                indexing_policy=indexing_policy)
+            pytest.fail("Container replace should have failed for missing embedding policy.")
+        except exceptions.CosmosHttpResponseError as e:
+            assert e.status_code == 400
+            assert ("The Vector Indexing Policy's path::/vector1 not matching in Embedding's path."
+                    in e.http_error_message)
+        # don't provide vector indexing policy
+        try:
+            self.test_db.replace_container(
+                created_container,
+                PartitionKey(path="/id"),
+                vector_embedding_policy=vector_embedding_policy)
+            pytest.fail("Container replace should have failed for missing indexing policy.")
+        except exceptions.CosmosHttpResponseError as e:
+            assert e.status_code == 400
+            assert ("The Vector Indexing Policy cannot be changed in Collection Replace."
+                    in e.http_error_message)
+        # using a new indexing policy
         new_indexing_policy = {
             "vectorIndexes": [
                 {"path": "/vector1", "type": "quantizedFlat"}]
@@ -382,11 +405,31 @@ class TestVectorPolicy(unittest.TestCase):
             self.test_db.replace_container(
                 created_container,
                 PartitionKey(path="/id"),
+                vector_embedding_policy=vector_embedding_policy,
                 indexing_policy=new_indexing_policy)
-            pytest.fail("Container replace should have failed for indexing policy.")
+            pytest.fail("Container replace should have failed for new indexing policy.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
-            assert ("The Vector Indexing Policy's path::/vector1 not matching in Embedding's path."
+            assert ("Paths in existing vector indexing policy cannot be modified in Collection Replace"
+                    in e.http_error_message)
+        # using a new vector embedding policy
+        new_embedding_policy = {
+            "vectorEmbeddings": [
+                {
+                    "path": "/vector1",
+                    "dataType": "float32",
+                    "dimensions": 384,
+                    "distanceFunction": "euclidean"}]}
+        try:
+            self.test_db.replace_container(
+                created_container,
+                PartitionKey(path="/id"),
+                vector_embedding_policy=new_embedding_policy,
+                indexing_policy=indexing_policy)
+            pytest.fail("Container replace should have failed for new embedding policy.")
+        except exceptions.CosmosHttpResponseError as e:
+            assert e.status_code == 400
+            assert ("The Vector Embedding Policy cannot be changed in Collection Replace"
                     in e.http_error_message)
         self.test_db.delete_container(container_id)
 
