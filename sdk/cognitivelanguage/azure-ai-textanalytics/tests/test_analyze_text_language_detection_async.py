@@ -38,12 +38,7 @@ class TestTextAnalysisCaseAsync(TestTextAnalysisAsync):
     ):
         async with self.create_client(text_analysis_endpoint, text_analysis_key) as client:
             text_a = (
-                "Este documento está escrito en un lenguaje diferente al inglés. Su objectivo es demostrar cómo "
-                "invocar el método de detección de lenguaje del servicio de Text Analytics en Microsoft Azure. "
-                "También muestra cómo acceder a la información retornada por el servicio. Esta funcionalidad es "
-                "útil para las aplicaciones que recopilan texto arbitrario donde el lenguaje no se conoce de "
-                "antemano. Puede usarse para detectar una amplia gama de lenguajes, variantes, dialectos y "
-                "algunos idiomas regionales o culturales."
+                "Sentences in different languages."
             )
 
             body = TextLanguageDetectionInput(
