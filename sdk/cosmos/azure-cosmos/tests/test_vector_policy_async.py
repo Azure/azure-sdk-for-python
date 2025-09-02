@@ -90,6 +90,83 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
         assert properties["indexingPolicy"]["vectorIndexes"] == indexing_policy["vectorIndexes"]
         await self.test_db.delete_container(container_id)
 
+    async def test_replace_vector_indexing_policy_async(self):
+        # Replace should work so long as the new indexing policy doesn't change the vector indexes, and as long as
+        # the previously defined vector embedding policy is also provided.
+        vector_embedding_policy = {
+            "vectorEmbeddings": [
+                {
+                    "path": "/vector1",
+                    "dataType": "float32",
+                    "dimensions": 256,
+                    "distanceFunction": "euclidean"
+                }
+            ]
+        }
+        indexing_policy = {
+            "indexingMode": "consistent",
+            "automatic": True,
+            "includedPaths": [
+                {
+                    "path": "/*"
+                }
+            ],
+            "excludedPaths": [
+                {
+                    "path": "/vector1/*"
+                },
+                {
+                    "path": "/\"_etag\"/?"
+                }
+            ],
+            "fullTextIndexes": [],
+            "vectorIndexes": [
+                {
+                    "path": "/vector1",
+                    "type": "diskANN",
+                    "quantizationByteSize": 128,
+                    "indexingSearchListSize": 100
+                }
+            ]
+        }
+        container_id = "vector_container" + str(uuid.uuid4())
+        created_container = await self.test_db.create_container(
+            id=container_id,
+            partition_key=PartitionKey(path="/id"),
+            indexing_policy=indexing_policy,
+            vector_embedding_policy=vector_embedding_policy
+        )
+        new_indexing_policy = {
+            "indexingMode": "consistent",
+            "automatic": True,
+            "includedPaths": [
+                {"path": "/color/?"},
+                {"path": "/description/?"},
+                {"path": "/cost/?"}
+            ],
+            "excludedPaths": [
+                {"path": "/*"},
+                {"path": "/vector1/*"},
+                {"path": "/\"_etag\"/?"}
+            ], "fullTextIndexes": [],
+            "vectorIndexes": [
+                {
+                    "path": "/vector1",
+                    "type": "diskANN",
+                    "quantizationByteSize": 128,
+                    "indexingSearchListSize": 100
+                }]
+        }
+        await self.test_db.replace_container(
+            created_container,
+            PartitionKey(path="/id"),
+            vector_embedding_policy=vector_embedding_policy,
+            indexing_policy=new_indexing_policy)
+        properties = await created_container.read()
+        assert properties["vectorEmbeddingPolicy"] == vector_embedding_policy
+        assert properties["indexingPolicy"]["vectorIndexes"] == indexing_policy["vectorIndexes"]
+        await self.test_db.delete_container(container_id)
+
     async def test_fail_create_vector_indexing_policy_async(self):
         vector_embedding_policy = {
             "vectorEmbeddings": [
