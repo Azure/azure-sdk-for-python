@@ -306,7 +306,8 @@ class AIAgentConverter:
             if single_turn.role == _AGENT:
                 # We are required to put the run_id in the assistant message.
                 final_messages.append(
-                    AssistantMessage(content=content_list, run_id=single_turn.run_id, createdAt=single_turn.created_at)
+                    AssistantMessage(content=[content_list], run_id=single_turn.run_id, createdAt=single_turn.created_at,
+                                     assistant_id=single_turn.agent_id if hasattr(single_turn, 'agent_id') else None)  # type: ignore[assignment]
                 )
                 continue
 
