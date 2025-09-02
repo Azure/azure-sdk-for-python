@@ -864,7 +864,9 @@
         "Effile",
         "gont",
         "mundo",
-        "naam"
+        "naam",
+        "DBAUTH",
+        "Kelvey"
       ],
       "caseSensitive": false
     },
