@@ -19,15 +19,15 @@ from .. import models as _models
 from .._utils.serialization import Deserializer, Serializer
 from ._configuration import AzureCommunicationCallAutomationServiceConfiguration
 from .operations import (
-    AzureCommunicationCallAutomationServiceOperationsMixin,
     CallConnectionOperations,
     CallDialogOperations,
     CallMediaOperations,
     CallRecordingOperations,
+    _AzureCommunicationCallAutomationServiceOperationsMixin,
 )
 
 
-class AzureCommunicationCallAutomationService(AzureCommunicationCallAutomationServiceOperationsMixin):
+class AzureCommunicationCallAutomationService(_AzureCommunicationCallAutomationServiceOperationsMixin):
     """Azure Communication Service Call Automation APIs.
 
     :ivar call_connection: CallConnectionOperations operations

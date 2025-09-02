@@ -8,6 +8,8 @@ import pytest
 import time
 import unittest
 
+from azure.communication.callautomation._generated.models._enums import RedactionType
+from azure.communication.callautomation._models import PiiRedactionOptions, SummarizationOptions
 from devtools_testutils import recorded_by_proxy
 from azure.communication.callautomation import (
     FileSource,
@@ -52,7 +54,7 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
 
         # play media to all participants
         file_source = FileSource(url=self.file_source_url)
-        call_connection.play_media_to_all(
+        call_connection.play_media(
             play_source=file_source,
         )
 
@@ -365,7 +367,7 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
         ]
 
         # play media to all 
-        call_connection.play_media_to_all(
+        call_connection.play_media(
             play_source=play_multiple_file_source
         )
 
@@ -438,7 +440,7 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
         random_unique_id = self._unique_key_gen(caller, target)
 
         # play media to all 
-        call_connection.play_media_to_all(
+        call_connection.play_media(
             play_source=play_multiple_file_source,
             operation_callback_url=(self.dispatcher_callback + "?q={}".format(random_unique_id))
         )
@@ -547,7 +549,7 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
             TextSource(text="this is test three", voice_name="en-US-NancyNeural")
         ]
 
-        call_connection.play_media_to_all(
+        call_connection.play_media(
             play_source=play_multiple_text_source
         )
 
@@ -614,7 +616,7 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
             TextSource(text="this is test.", voice_name="en-US-NancyNeural"),
         ]
 
-        call_connection.play_media_to_all(
+        call_connection.play_media(
             play_source=play_multiple_source
         )
 
@@ -644,7 +646,7 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
         
         file_prompt = [FileSource(url="https://dummy.com/dummyurl.wav")]
 
-        call_connection.play_media_to_all(
+        call_connection.play_media(
             play_source=file_prompt
         )
 
@@ -673,7 +675,7 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
         
         file_prompt = [FileSource(url=self.file_source_url), FileSource(url="https://dummy.com/dummyurl.wav")]
 
-        call_connection.play_media_to_all(
+        call_connection.play_media(
             play_source=file_prompt
         )
 
@@ -702,7 +704,7 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
         
         file_prompt = [FileSource(url="https://dummy.com/dummyurl.wav")]
 
-        call_connection._play_media(
+        call_connection.play_media(
             play_source=file_prompt,
             play_to=[target]
         )
@@ -732,7 +734,7 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
         
         file_prompt = [FileSource(url=self.file_source_url), FileSource(url="https://dummy.com/dummyurl.wav")]
 
-        call_connection._play_media(
+        call_connection.play_media(
             play_source=file_prompt,
             play_to=[target]
         )
@@ -904,6 +906,181 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
 
         if get_participant_result.is_on_hold is True:
             raise ValueError("Failed to unhold participant")
+
+        self.terminate_call(unique_id)
+        return
+
+    @recorded_by_proxy
+    def test_start_stop_transcription_in_call_with_redaction_call_summary(self):
+        # try to establish the call
+        caller = self.identity_client.create_user()
+        target = self.identity_client.create_user()
+
+        pii_redaction_options = PiiRedactionOptions(
+            enable=True,
+            redaction_type=RedactionType.MASK_WITH_CHARACTER
+        )
+
+        locale_list = ["en-us","en-au"]
+
+        summarization_options = SummarizationOptions(
+            enable_end_call_summary=True,
+            locale="en-us"
+        )
+        transcription_options=TranscriptionOptions(
+            transport_url=self.transport_url,
+            transport_type=TranscriptionTransportType.WEBSOCKET,
+            locale=locale_list,
+            start_transcription=True,
+            pii_redaction=pii_redaction_options,
+            enable_sentiment_analysis=True,
+            summarization=summarization_options
+            )
+
+        unique_id, call_connection, _ = self.establish_callconnection_voip_with_streaming_options(caller, target, transcription_options, True)
+
+        # check returned events
+        connected_event = self.check_for_event('CallConnected', call_connection._call_connection_id, timedelta(seconds=15))
+        participant_updated_event = self.check_for_event('ParticipantsUpdated', call_connection._call_connection_id, timedelta(seconds=15))
+
+        if connected_event is None:
+            raise ValueError("Caller CallConnected event is None")
+        if participant_updated_event is None:
+            raise ValueError("Caller ParticipantsUpdated event is None")
+        
+        # check for TranscriptionStarted event
+        transcription_started = self.check_for_event('TranscriptionStarted', call_connection._call_connection_id, timedelta(seconds=30))
+        if transcription_started is None:
+            raise ValueError("TranscriptionStarted event is None")
+
+        # check for transcription subscription from call connection properties for transcription started event
+        call_connection_properties=call_connection.get_call_properties()
+        if call_connection_properties is None:
+            raise ValueError("call_connection_properties is None")
+        if call_connection_properties.transcription_subscription is None:
+            raise ValueError("call_connection_properties.transcription_subscription is None")
+        if call_connection_properties.transcription_subscription.state!='active':
+            raise ValueError("transcription subscription state is invalid for TranscriptionStarted event")
+
+        time.sleep(3)
+        call_connection.update_transcription(locale="en-gb")
+
+        # check for TranscriptionUpdated event
+        transcription_updated = self.check_for_event('TranscriptionUpdated', call_connection._call_connection_id, timedelta(seconds=30))
+        if transcription_updated is None:
+            raise ValueError("TranscriptionUpdated event is None")
+
+        time.sleep(3)
+
+        # stop transcription
+        call_connection.stop_transcription()
+
+        # check for TranscriptionStopped event
+        transcription_stopped = self.check_for_event('TranscriptionStopped', call_connection._call_connection_id, timedelta(seconds=30))
+        if transcription_stopped is None:
+            raise ValueError("TranscriptionStopped event is None")
+
+        # check for transcription subscription from call connection properties for transcription stopped event
+        call_connection_properties=call_connection.get_call_properties()
+        if call_connection_properties is None:
+            raise ValueError("call_connection_properties is None")
+        if call_connection_properties.transcription_subscription is None:
+            raise ValueError("call_connection_properties.transcription_subscription is None")
+        if call_connection_properties.transcription_subscription.state!='inactive':
+            raise ValueError("transcription subscription state is invalid for TranscriptionStopped event")
+
+        self.terminate_call(unique_id)
+        return
+
+    @recorded_by_proxy
+    def test_summarize_call(self):
+        # try to establish the call
+        caller = self.identity_client.create_user()
+        target = self.identity_client.create_user()
+
+        pii_redaction_options = PiiRedactionOptions(
+            enable=True,
+            redaction_type=RedactionType.MASK_WITH_CHARACTER
+        )
+
+        locale_list = ["en-us","en-au"]
+
+        summarization_options = SummarizationOptions(
+            enable_end_call_summary=True,
+            locale="en-us"
+        )
+        transcription_options=TranscriptionOptions(
+            transport_url=self.transport_url,
+            transport_type=TranscriptionTransportType.WEBSOCKET,
+            locale=locale_list,
+            start_transcription=True,
+            pii_redaction=pii_redaction_options,
+            enable_sentiment_analysis=True,
+            summarization=summarization_options
+            )
+
+        unique_id, call_connection, _ = self.establish_callconnection_voip_with_streaming_options(caller, target, transcription_options, True)
+
+        # check returned events
+        connected_event = self.check_for_event('CallConnected', call_connection._call_connection_id, timedelta(seconds=15))
+        participant_updated_event = self.check_for_event('ParticipantsUpdated', call_connection._call_connection_id, timedelta(seconds=15))
+
+        if connected_event is None:
+            raise ValueError("Caller CallConnected event is None")
+        if participant_updated_event is None:
+            raise ValueError("Caller ParticipantsUpdated event is None")
+        
+        # check for TranscriptionStarted event
+        transcription_started = self.check_for_event('TranscriptionStarted', call_connection._call_connection_id, timedelta(seconds=30))
+        if transcription_started is None:
+            raise ValueError("TranscriptionStarted event is None")
+
+        # check for transcription subscription from call connection properties for transcription started event
+        call_connection_properties=call_connection.get_call_properties()
+        if call_connection_properties is None:
+            raise ValueError("call_connection_properties is None")
+        if call_connection_properties.transcription_subscription is None:
+            raise ValueError("call_connection_properties.transcription_subscription is None")
+        if call_connection_properties.transcription_subscription.state!='active':
+            raise ValueError("transcription subscription state is invalid for TranscriptionStarted event")
+
+        time.sleep(3)
+        summarization_options = SummarizationOptions(
+            locale="en-us"
+        )
+        call_connection.summarize_call(operation_context="summarize_call_context", summarization=summarization_options)
+        
+        # check for TranscriptionCallSummaryUpdated event
+        transcription_call_summary_updated = self.check_for_event('TranscriptionCallSummaryUpdated', call_connection._call_connection_id, timedelta(seconds=30))
+        if transcription_call_summary_updated is None:
+            raise ValueError("TranscriptionCallSummaryUpdated event is None")
+        
+        time.sleep(3)
+        call_connection.update_transcription(locale="en-gb")
+
+        # check for TranscriptionUpdated event
+        transcription_updated = self.check_for_event('TranscriptionUpdated', call_connection._call_connection_id, timedelta(seconds=30))
+        if transcription_updated is None:
+            raise ValueError("TranscriptionUpdated event is None")
+
+        time.sleep(3)
+
+        # stop transcription
+        call_connection.stop_transcription()
+
+        # check for TranscriptionStopped event
+        transcription_stopped = self.check_for_event('TranscriptionStopped', call_connection._call_connection_id, timedelta(seconds=30))
+        if transcription_stopped is None:
+            raise ValueError("TranscriptionStopped event is None")
+
+        # check for transcription subscription from call connection properties for transcription stopped event
+        call_connection_properties=call_connection.get_call_properties()
+        if call_connection_properties is None:
+            raise ValueError("call_connection_properties is None")
+        if call_connection_properties.transcription_subscription is None:
+            raise ValueError("call_connection_properties.transcription_subscription is None")
+        if call_connection_properties.transcription_subscription.state!='inactive':
+            raise ValueError("transcription subscription state is invalid for TranscriptionStopped event")
 
         self.terminate_call(unique_id)
         return

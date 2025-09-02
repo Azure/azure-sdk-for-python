@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -12,7 +13,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from ._patch import *  # pylint: disable=unused-wildcard-import
 
-from ._operations import AzureCommunicationCallAutomationServiceOperationsMixin  # type: ignore
+from ._operations import _AzureCommunicationCallAutomationServiceOperationsMixin  # type: ignore # pylint: disable=unused-import
 from ._operations import CallConnectionOperations  # type: ignore
 from ._operations import CallMediaOperations  # type: ignore
 from ._operations import CallDialogOperations  # type: ignore
@@ -23,7 +24,6 @@ from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "AzureCommunicationCallAutomationServiceOperationsMixin",
     "CallConnectionOperations",
     "CallMediaOperations",
     "CallDialogOperations",

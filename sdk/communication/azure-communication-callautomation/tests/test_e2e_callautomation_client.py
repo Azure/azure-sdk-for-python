@@ -145,7 +145,7 @@ class TestCallAutomationClientAutomatedLiveTest(CallAutomationRecordedTestCase):
             raise ValueError("Start recording is failed")
         
         stop_recording = call_automation_client.stop_recording(recording_id= recording_id)
-        time.sleep(3)
+        time.sleep(5)
 
         recording_responce = call_automation_client.get_recording_response(recording_id= recording_id)
         if recording_responce.recording_duration_ms is None:
