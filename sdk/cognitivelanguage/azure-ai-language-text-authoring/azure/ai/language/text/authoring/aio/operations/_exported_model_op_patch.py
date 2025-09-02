@@ -21,6 +21,7 @@ from ...models import (
     ExportedModelDetails,
     ExportedModelState,
     ExportedTrainedModel,
+    ExportedModelManifest,
 )
 from ._operations import ExportedModelOperations as ExportedModelOperationsGenerated
 
@@ -155,5 +156,23 @@ class ExportedModelOperations(ExportedModelOperationsGenerated):
             project_name=self._project_name,
             exported_model_name=exported_model_name,
             job_id=job_id,
+            **kwargs,
+        )
+
+    @distributed_trace 
+    async def get_exported_model_manifest(
+        self, exported_model_name: str, **kwargs: Any
+    ) -> ExportedModelManifest:
+        """Gets the details and URL needed to download the exported model.
+
+        :param exported_model_name: The exported model name. Required.
+        :type exported_model_name: str
+        :return: ExportedModelManifest. The ExportedModelManifest is compatible with MutableMapping
+        :rtype: ~azure.ai.language.text.authoring.models.ExportedModelManifest
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        return await super()._get_exported_model_manifest(
+            project_name=self._project_name,
+            exported_model_name=exported_model_name,
             **kwargs,
         )
