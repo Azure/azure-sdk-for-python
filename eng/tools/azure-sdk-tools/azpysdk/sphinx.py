@@ -17,6 +17,7 @@ from ci_tools.environment_exclusions import (
     is_check_enabled, is_typing_ignored
 )
 from ci_tools.variables import discover_repo_root
+from ci_tools.variables import in_analyze_weekly
 
 from ci_tools.logging import logger
 
@@ -26,19 +27,6 @@ REPO_ROOT = discover_repo_root()
 ci_doc_dir = os.path.join(REPO_ROOT, '_docs')
 sphinx_conf_dir = os.path.join(REPO_ROOT, 'doc/sphinx')
 generate_mgmt_script = os.path.join(REPO_ROOT, "doc/sphinx/generate_doc.py")
-
-# TODO build helper functions
-
-def move_output_and_compress(target_dir: str, package_dir: str, package_name: str) -> None:
-    if not os.path.exists(ci_doc_dir):
-        os.mkdir(ci_doc_dir)
-
-    # TODO....? i think this is a bug in the original script to have package_name twice?
-    individual_zip_location = os.path.join(ci_doc_dir, package_name, package_name)
-    shutil.make_archive(individual_zip_location, 'gztar', target_dir)
-
-def should_build_docs(package_name: str) -> bool:
-    return not ("nspkg" in package_name or package_name in ["azure", "azure-mgmt", "azure-keyvault", "azure-documentdb", "azure-mgmt-documentdb", "azure-servicemanagement-legacy", "azure-core-tracing-opencensus"])
 
 # apidoc helper functions
 
@@ -131,6 +119,52 @@ def sphinx_apidoc(working_dir: str, namespace: str) -> int:
 #         tars = glob.glob(os.path.join(containing_folder, "*.tar.gz"))
 #         return unzip_file_to_directory(tars[0], containing_folder)
 
+# build helper functions
+
+def move_output_and_compress(target_dir: str, package_dir: str, package_name: str) -> None:
+    if not os.path.exists(ci_doc_dir):
+        os.mkdir(ci_doc_dir)
+
+    # TODO....? i think this is a bug in the original script to have package_name twice?
+    individual_zip_location = os.path.join(ci_doc_dir, package_name, package_name)
+    shutil.make_archive(individual_zip_location, 'gztar', target_dir)
+
+def should_build_docs(package_name: str) -> bool:
+    return not ("nspkg" in package_name or package_name in ["azure", "azure-mgmt", "azure-keyvault", "azure-documentdb", "azure-mgmt-documentdb", "azure-servicemanagement-legacy", "azure-core-tracing-opencensus"])
+
+def sphinx_build(package_dir: str, target_dir: str, output_dir: str, fail_on_warning: bool) -> int:
+    command_array = [
+                "sphinx-build",
+                "-b",
+                "html",
+                "-A",
+                "include_index_link=True",
+                "-c",
+                sphinx_conf_dir,
+                target_dir,
+                output_dir
+            ]
+    if fail_on_warning:
+        command_array.append("-W")
+        command_array.append("--keep-going")
+
+    try:
+        logger.info("Sphinx build command: {}".format(command_array))
+        check_call(
+            command_array
+        )
+    except CalledProcessError as e:
+        logger.error(
+            "sphinx-build failed for path {} exited with error {}".format(
+                target_dir, e.returncode
+            )
+        )
+        if in_analyze_weekly():
+            from gh_tools.vnext_issue_creator import create_vnext_issue
+            create_vnext_issue(package_dir, "sphinx")
+        return 1
+    return 0
+
 class sphinx(Check):
     def __init__(self) -> None:
         super().__init__()
@@ -173,7 +207,7 @@ class sphinx(Check):
             required=True,
         )
 
-        # TODO is this necessary?
+        # TODO is this necessary? is this the same as target?
         p.add_argument(
             "-r",
             "--root",
@@ -219,10 +253,6 @@ class sphinx(Check):
             logger.info("Skipping sphinx source generation for {}".format(parsed.name))
         return result
 
-    def build_sphinx(self):
-        # builds html, in CI compresses and moves output to central location, reports errors
-        pass
-
     def run(self, args: argparse.Namespace) -> int:
         """Run the sphinx check command."""
         logger.info("Running sphinx check in isolated venv...")
@@ -252,6 +282,32 @@ class sphinx(Check):
             
             logger.info(f"Running sphinx against {package_name}")
 
+            output_dir = os.path.abspath(args.output_directory)
+            target_dir = os.path.abspath(args.working_directory)
+
+            # prep env
+
+            # apidoc
             results.append(self.run_sphinx_apidoc(args, parsed))
+            
+            # build
+            if should_build_docs(package_name):
+                # Only data-plane libraries run strict sphinx at the moment
+                fail_on_warning = not is_mgmt_package(package_name)
+                sphinx_build(
+                    package_dir,
+                    target_dir,
+                    output_dir,
+                    fail_on_warning=fail_on_warning,
+                )
+
+                if in_ci() or args.in_ci:
+                    move_output_and_compress(output_dir, package_dir, package_name)
+                    if in_analyze_weekly():
+                        from gh_tools.vnext_issue_creator import close_vnext_issue
+                        close_vnext_issue(package_name, "sphinx")
+
+            else:
+                logger.info("Skipping sphinx build for {}".format(package_name))
 
         return max(results) if results else 0
