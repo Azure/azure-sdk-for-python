@@ -23,7 +23,7 @@
 """
 import asyncio # pylint: disable=do-not-import-asyncio
 from datetime import datetime
-from typing import (Any, Dict, Mapping, Optional, Sequence, Type, Union, List, Tuple, cast, overload, AsyncIterable,
+from typing import (Any, Dict, Mapping, Optional, Sequence, Union, List, Tuple, cast, overload, AsyncIterable,
                     Callable)
 import warnings
 from typing_extensions import Literal
