@@ -65,14 +65,14 @@ class TrainedModelOperations(TrainedModelOperationsGenerated):
         :param trained_model_label: The trained model label. Required.
         :type trained_model_label: str
         :param body: The training input parameters. Required.
-        :type body: ~azure.ai.language.conversations.authoring.models.EvaluationDetails
+        :type body: ~azure.ai.language.text.authoring.models.EvaluationDetails
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: An instance of LROPoller that returns EvaluationJobResult. The EvaluationJobResult is
          compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.LROPoller[~azure.ai.language.conversations.authoring.models.EvaluationJobResult]
+         ~azure.core.polling.LROPoller[~azure.ai.language.text.authoring.models.EvaluationJobResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -92,7 +92,7 @@ class TrainedModelOperations(TrainedModelOperationsGenerated):
         :return: An instance of LROPoller that returns EvaluationJobResult. The EvaluationJobResult is
          compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.LROPoller[~azure.ai.language.conversations.authoring.models.EvaluationJobResult]
+         ~azure.core.polling.LROPoller[~azure.ai.language.text.authoring.models.EvaluationJobResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -112,7 +112,7 @@ class TrainedModelOperations(TrainedModelOperationsGenerated):
         :return: An instance of LROPoller that returns EvaluationJobResult. The EvaluationJobResult is
          compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.LROPoller[~azure.ai.language.conversations.authoring.models.EvaluationJobResult]
+         ~azure.core.polling.LROPoller[~azure.ai.language.text.authoring.models.EvaluationJobResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -140,7 +140,7 @@ class TrainedModelOperations(TrainedModelOperationsGenerated):
         :param trained_model_label: The trained model label. Required.
         :type trained_model_label: str
         :return: An instance of LROPoller that returns LoadSnapshotState.
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.language.conversations.authoring.models.LoadSnapshotState]
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.language.text.authoring.models.LoadSnapshotState]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}

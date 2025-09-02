@@ -8,62 +8,50 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Any, Callable, Dict, IO, Iterator, List, Optional, TypeVar, Union, cast, overload
-from azure.core.polling import LROPoller, NoPolling, PollingMethod
-from azure.core.tracing.decorator import distributed_trace
-from ._project_op_patch_deployment_relate import _ProjectOperationsDeploymentsRelated
-from ._operations import (
-    ProjectOperations as ProjectOperationsGenerated,
-    DeploymentOperations as DeploymentOperationsGenerated,
-    ExportedModelOperations as ExportedModelOperationsGenerated,
-    TrainedModelOperations as TrainedModelOperationsGenerated,
-)
-from .._utils.model_base import SdkJSONEncoder, _deserialize
-from azure.core.utils import case_insensitive_dict
-from azure.core.polling.base_polling import LROBasePolling
-from ..models import (
-    AssignDeploymentResourcesDetails,
-    TrainingJobResult,
-    CopyProjectDetails,
-    TrainingJobDetails,
-    AssignDeploymentResourcesDetails,
-    UnassignDeploymentResourcesDetails,
-    SwapDeploymentsDetails,
-    CopyProjectDetails,
-    DeploymentResourcesState,
-    CopyProjectState,
-    ExportProjectState,
-    ProjectDetails,
-    ProjectDeletionState,
-    SwapDeploymentsState,
-    TrainingState,
-    DeploymentResourcesState,
-    AssignedDeploymentResource,
-    ProjectDeployment,
-    ExportedTrainedModel,
-    ProjectTrainedModel,
-    ExportedTrainedModel,
-    ProjectTrainedModel,
-    EvalSummary,
-    StringIndexType,
-    JobsPollingMethod,
-    DeploymentResourcesState,
-    ExportedProject,
-    ImportProjectState,
-    ProjectKind,
-)
+from collections.abc import MutableMapping # pylint:disable=import-error
+from typing import IO, Any, Callable, Dict, Optional, TypeVar, Union, cast, overload
+
 from azure.core.paging import ItemPaged
-from collections.abc import MutableMapping
 from azure.core.pipeline import PipelineResponse
+from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.core.rest import HttpRequest, HttpResponse
+from azure.core.tracing.decorator import distributed_trace
+
+from .._utils.model_base import _deserialize
+from ..models import (
+    AssignedDeploymentResource,
+    AssignDeploymentResourcesDetails,
+    CopyProjectDetails,
+    CopyProjectState,
+    DeploymentResourcesState,
+    ExportProjectState,
+    ExportedProject,
+    ExportedTrainedModel,
+    JobsPollingMethod,
+    ProjectDeletionState,
+    ProjectDeployment,
+    ProjectDetails,
+    ProjectKind,
+    ProjectTrainedModel,
+    StringIndexType,
+    SwapDeploymentsDetails,
+    SwapDeploymentsState,
+    TrainingJobDetails,
+    TrainingJobResult,
+    TrainingState,
+    UnassignDeploymentResourcesDetails,
+)
+from ._operations import ProjectOperations as ProjectOperationsGenerated
 
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 _Unset: Any = object()
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[
+    Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]
+]
 
 
-class ProjectOperations(_ProjectOperationsDeploymentsRelated):
+class ProjectOperations(ProjectOperationsGenerated):
     """Patched ProjectOperationsOperations that auto-injects project_name."""
 
     def __init__(self, *args, project_name: str, **kwargs: Any):
@@ -78,83 +66,314 @@ class ProjectOperations(_ProjectOperationsDeploymentsRelated):
         format: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[ImportProjectState]:
+    ) -> LROPoller[None]:
         """Triggers a job to import a project. If a project with the same name already exists,
         the data of that project is replaced.
 
         :param body: The project data to import. Required.
         :type body: ~azure.ai.language.text.authoring.models.ExportedProject
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-        Default value is "application/json".
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body. Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns ImportProjectState.
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.language.text.authoring.models.ImportProjectState]
+        :return: An instance of LROPoller that returns None.
+        :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def begin_import(
         self, body: JSON, *, format: Optional[str] = None, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[ImportProjectState]:
+    ) -> LROPoller[None]:
         """Triggers a job to import a project. If a project with the same name already exists,
         the data of that project is replaced.
 
         :param body: The project data to import. Required.
         :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-        Default value is "application/json".
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body. Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns ImportProjectState.
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.language.text.authoring.models.ImportProjectState]
+        :return: An instance of LROPoller that returns None.
+        :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def begin_import(
         self, body: IO[bytes], *, format: Optional[str] = None, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[ImportProjectState]:
+    ) -> LROPoller[None]:
         """Triggers a job to import a project. If a project with the same name already exists,
         the data of that project is replaced.
 
         :param body: The project data to import. Required.
         :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-        Default value is "application/json".
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body. Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns ImportProjectState.
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.language.text.authoring.models.ImportProjectState]
+        :return: An instance of LROPoller that returns None.
+        :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
     def begin_import(
         self, body: Union[ExportedProject, JSON, IO[bytes]], *, format: Optional[str] = None, **kwargs: Any
-    ) -> LROPoller[ImportProjectState]:
+    ) -> LROPoller[None]:
         """Triggers a job to import a project. If a project with the same name already exists,
         the data of that project is replaced.
 
         :param body: The project data to import. Required.
         :type body: ~azure.ai.language.text.authoring.models.ExportedProject or JSON or IO[bytes]
-        :return: An instance of LROPoller that returns ImportProjectState.
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.language.text.authoring.models.ImportProjectState]
+        :return: An instance of LROPoller that returns None.
+        :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        return super()._begin_import_method(
+            project_name=self._project_name,
+            body=body,
+            format=format,
+            **kwargs,
+        )
+
+    @overload
+    def begin_assign_deployment_resources(
+        self, body: AssignDeploymentResourcesDetails, *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[None]:
+        """Assign new Azure resources to a project to allow deploying new deployments to them. This API is
+        available only via AAD authentication and not supported via subscription key authentication.
+        For more details about AAD authentication, check here:
+        `https://learn.microsoft.com/en-us/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-azure-active-directory
+        <https://learn.microsoft.com/en-us/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-azure-active-directory>`_.
+
+        :param body: The new project resources info. Required.
+        :type body: ~azure.ai.language.text.authoring.models.AssignDeploymentResourcesDetails
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+        Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns None.
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_assign_deployment_resources(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[None]:
+        """Assign new Azure resources to a project to allow deploying new deployments to them. This API is
+        available only via AAD authentication and not supported via subscription key authentication.
+        For more details about AAD authentication, check here:
+        `https://learn.microsoft.com/en-us/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-azure-active-directory
+        <https://learn.microsoft.com/en-us/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-azure-active-directory>`_.
+
+        :param body: The new project resources info. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+        Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns None.
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_assign_deployment_resources(
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[None]:
+        """Assign new Azure resources to a project to allow deploying new deployments to them. This API is
+        available only via AAD authentication and not supported via subscription key authentication.
+        For more details about AAD authentication, check here:
+        `https://learn.microsoft.com/en-us/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-azure-active-directory
+        <https://learn.microsoft.com/en-us/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-azure-active-directory>`_.
+
+        :param body: The new project resources info. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+        Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns None.
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def begin_assign_deployment_resources(
+        self, body: Union[AssignDeploymentResourcesDetails, JSON, IO[bytes]], *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[None]:
+        """Assign new Azure resources to a project to allow deploying new deployments to them.
+        This API is available only via AAD authentication and not supported via subscription key authentication.
+        For more details about AAD authentication, see:
+        https://learn.microsoft.com/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-azure-active-directory
+
+        :param body: The new project resources info. Required.
+        :type body: ~azure.ai.language.text.authoring.models.AssignDeploymentResourcesDetails or JSON or IO[bytes]
+        :keyword str content_type: Media type of the request body. Default is "application/json".
+        :return: An instance of LROPoller that returns None.
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        return super()._begin_assign_deployment_resources(
+            project_name=self._project_name, body=body, content_type=content_type, **kwargs
+        )
+
+    @overload
+    def begin_swap_deployments(
+        self, body: SwapDeploymentsDetails, *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[None]:
+        """Swaps two existing deployments with each other.
+
+        :param body: The job object to swap two deployments. Required.
+        :type body: ~azure.ai.language.text.authoring.models.SwapDeploymentsDetails
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+        Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns None.
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_swap_deployments(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[None]:
+        """Swaps two existing deployments with each other.
+
+        :param body: The job object to swap two deployments. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+        Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns None.
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_swap_deployments(
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[None]:
+        """Swaps two existing deployments with each other.
+
+        :param body: The job object to swap two deployments. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+        Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns None.
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def begin_swap_deployments(
+        self, body: Union[SwapDeploymentsDetails, JSON, IO[bytes]], *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[None]:
+        """Swaps two existing deployments with each other.
+
+        :param body: The job object to swap two deployments. Required.
+        :type body: ~azure.ai.language.text.authoring.models.SwapDeploymentsDetails or JSON or IO[bytes]
+        :keyword str content_type: Media type of the request body. Default is "application/json".
+        :return: An instance of LROPoller that returns None.
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        return super()._begin_swap_deployments(
+            project_name=self._project_name, body=body, content_type=content_type, **kwargs
+        )
+
+    @overload
+    def begin_unassign_deployment_resources(
+        self, body: UnassignDeploymentResourcesDetails, *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[None]:
+        """Unassign resources from a project. This disallows deploying new deployments to these resources,
+        and deletes existing deployments assigned to them.
+
+        :param body: The info for the deployment resources to be deleted. Required.
+        :type body: ~azure.ai.language.text.authoring.models.UnassignDeploymentResourcesDetails
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+        Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns None.
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_unassign_deployment_resources(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[None]:
+        """Unassign resources from a project. This disallows deploying new deployments to these resources,
+        and deletes existing deployments assigned to them.
+
+        :param body: The info for the deployment resources to be deleted. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+        Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns None.
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_unassign_deployment_resources(
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[None]:
+        """Unassign resources from a project. This disallows deploying new deployments to these resources,
+        and deletes existing deployments assigned to them.
+
+        :param body: The info for the deployment resources to be deleted. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+        Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns None.
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def begin_unassign_deployment_resources(
+        self, body: Union[UnassignDeploymentResourcesDetails, JSON, IO[bytes]], *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[None]:
+        """Unassign resources from a project. This disallows deploying new deployments to these resources,
+        and deletes existing deployments assigned to them.
+
+        :param body: The info for the deployment resources to be deleted. Required.
+        :type body: ~azure.ai.language.text.authoring.models.UnassignDeploymentResourcesDetails or JSON or IO[bytes]
+        :keyword str content_type: Media type of the request body. Default is "application/json".
+        :return: An instance of LROPoller that returns None.
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        return super()._begin_unassign_deployment_resources(
+            project_name=self._project_name, body=body, content_type=content_type, **kwargs
+        )
+
+    @distributed_trace
+    def begin_cancel_training_job(  # pylint: disable=function-redefined
+        self,
+        job_id: str,
+        **kwargs: Any
+    ) -> LROPoller[TrainingJobResult]:
+        """
+        Cancel a training job without requiring project_name explicitly.
+        
+        :param job_id: The identifier of the training job to cancel. Required.
+        :type job_id: str
+        :return: An instance of LROPoller that returns TrainingJobResult.
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.language.text.authoring.models.TrainingJobResult]
+
+        """
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[ImportProjectState] = kwargs.pop("cls", None)
+        cls: ClsType[TrainingJobResult] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
 
         if cont_token is None:
-            initial = self._import_method_initial(
-                project_name=self._project_name,  # ← use instance project name
-                body=body,
-                format=format,
-                content_type=content_type,
-                cls=lambda x, y, z: x,  # return PipelineResponse
+            # 1) Send initial cancel request; keep PipelineResponse for the poller
+            initial = self._cancel_training_job_initial(
+                project_name=self._project_name,
+                job_id=job_id,
+                cls=lambda x, y, z: x,  # return PipelineResponse unchanged
                 headers=_headers,
                 params=_params,
                 **kwargs,
@@ -162,24 +381,28 @@ class ProjectOperations(_ProjectOperationsDeploymentsRelated):
             initial.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
+        # 2) Deserializer: extract nested "result" as TrainingJobResult
         def get_long_running_output(pipeline_response):
-            # Final payload is at the ROOT of the jobs response
-            obj = _deserialize(ImportProjectState, pipeline_response.http_response.json())
+            body = pipeline_response.http_response.json() or {}
+            result_dict = body.get("result", {}) or {}
+            obj = _deserialize(TrainingJobResult, result_dict)
             if cls:
                 return cls(pipeline_response, obj, {})  # type: ignore
             return obj
 
+        # 3) Resolve {Endpoint} in Operation-Location for your poller
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
+        # 4) Choose polling method: your JobsPollingMethod by default
         if polling is True:
             polling_method: PollingMethod = cast(
                 PollingMethod,
                 JobsPollingMethod(
                     polling_interval=lro_delay,
-                    path_format_arguments=path_format_arguments,  # resolves {Endpoint} in Operation-Location
-                    **kwargs,
+                    path_format_arguments=path_format_arguments,
+                    # any extra kwargs your poller needs
                 ),
             )
         elif polling is False:
@@ -187,29 +410,30 @@ class ProjectOperations(_ProjectOperationsDeploymentsRelated):
         else:
             polling_method = polling
 
+        # 5) Continuation-token path
         if cont_token:
-            return LROPoller[ImportProjectState].from_continuation_token(
+            return LROPoller[TrainingJobResult].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
 
-        return LROPoller[ImportProjectState](
-            self._client, initial, get_long_running_output, polling_method  # type: ignore
+        # 6) Return the poller
+        return LROPoller[TrainingJobResult](
+            self._client,
+            initial, # type: ignore
+            get_long_running_output,
+            polling_method,  # type: ignore
         )
-
-    @distributed_trace
-    def begin_cancel_training_job(  # type: ignore[override]
-        self, job_id: str, **kwargs: Any
-    ) -> LROPoller[TrainingJobResult]:
-        """Cancel a training job without requiring project_name explicitly."""
-        return super().begin_cancel_training_job(project_name=self._project_name, job_id=job_id, **kwargs)
+        # return super()._begin_cancel_training_job(
+        #     project_name=self._project_name, job_id=job_id, **kwargs
+        # )
 
     @overload
     def begin_copy_project(
         self, body: CopyProjectDetails, *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[CopyProjectState]:
+    ) -> LROPoller[None]:
         """Copies an existing project to another Azure resource.
 
         :param body: The copy project info. Required.
@@ -217,15 +441,15 @@ class ProjectOperations(_ProjectOperationsDeploymentsRelated):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
         Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns CopyProjectState.
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.language.text.authoring.models.CopyProjectState]
+        :return: An instance of LROPoller that returns None.
+        :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def begin_copy_project(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[CopyProjectState]:
+    ) -> LROPoller[None]:
         """Copies an existing project to another Azure resource.
 
         :param body: The copy project info. Required.
@@ -233,15 +457,15 @@ class ProjectOperations(_ProjectOperationsDeploymentsRelated):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
         Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns CopyProjectState.
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.language.text.authoring.models.CopyProjectState]
+        :return: An instance of LROPoller that returns None.
+        :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def begin_copy_project(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[CopyProjectState]:
+    ) -> LROPoller[None]:
         """Copies an existing project to another Azure resource.
 
         :param body: The copy project info. Required.
@@ -249,80 +473,26 @@ class ProjectOperations(_ProjectOperationsDeploymentsRelated):
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
         Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns CopyProjectState.
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.language.text.authoring.models.CopyProjectState]
+        :return: An instance of LROPoller that returns None.
+        :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
     def begin_copy_project(
-        self, body: Union[CopyProjectDetails, JSON, IO[bytes]], **kwargs: Any
-    ) -> LROPoller[CopyProjectState]:
+        self, body: Union[CopyProjectDetails, JSON, IO[bytes]], *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[None]:
         """Copies an existing project to another Azure resource.
 
         :param body: The copy project info. Required.
         :type body: ~azure.ai.language.text.authoring.models.CopyProjectDetails or JSON or IO[bytes]
-        :return: An instance of LROPoller that returns CopyProjectState.
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.language.text.authoring.models.CopyProjectState]
+        :keyword str content_type: Media type of the request body. Default is "application/json".
+        :return: An instance of LROPoller that returns None.
+        :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[CopyProjectState] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-
-        if cont_token is None:
-            initial = self._copy_project_initial(
-                project_name=self._project_name,  # ← use instance project name
-                body=body,
-                content_type=content_type,
-                cls=lambda x, y, z: x,  # return PipelineResponse
-                headers=_headers,
-                params=_params,
-                **kwargs,
-            )
-            initial.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            # Final payload is at the root of the jobs response
-            obj = _deserialize(CopyProjectState, pipeline_response.http_response.json())
-            if cls:
-                return cls(pipeline_response, obj, {})  # type: ignore
-            return obj
-
-        path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod,
-                JobsPollingMethod(
-                    polling_interval=lro_delay,
-                    path_format_arguments=path_format_arguments,  # resolves {Endpoint} in Operation-Location
-                    **kwargs,
-                ),
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-
-        if cont_token:
-            return LROPoller[CopyProjectState].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-
-        return LROPoller[CopyProjectState](
-            self._client, initial, get_long_running_output, polling_method  # type: ignore
+        return super()._begin_copy_project(
+            project_name=self._project_name, body=body, content_type=content_type, **kwargs
         )
 
     @overload
@@ -383,7 +553,19 @@ class ProjectOperations(_ProjectOperationsDeploymentsRelated):
     def begin_train(  # type: ignore[override]
         self, body: Union[TrainingJobDetails, JSON, IO[bytes]], *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[TrainingJobResult]:
-        """Begin training without requiring project_name explicitly."""
+        """Triggers a training job for a project.
+
+        :param body: The training input parameters. Required.
+        :type body: Union[TrainingJobDetails, JSON, IO[bytes]]
+        :keyword content_type: Body Parameter content-type. Content type parameter for the request body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns TrainingJobResult. The TrainingJobResult is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.ai.language.text.authoring.models.TrainingJobResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
         return super()._begin_train(project_name=self._project_name, body=body, content_type=content_type, **kwargs)
 
     @distributed_trace
@@ -394,7 +576,7 @@ class ProjectOperations(_ProjectOperationsDeploymentsRelated):
         asset_kind: Optional[str] = None,
         trained_model_label: Optional[str] = None,
         **kwargs: Any
-    ) -> LROPoller[ExportProjectState]:
+    ) -> LROPoller[None]:
         """Triggers a job to export a project's data.
 
         :keyword string_index_type: Specifies the method used to interpret string offsets. See
@@ -405,66 +587,16 @@ class ProjectOperations(_ProjectOperationsDeploymentsRelated):
         :paramtype asset_kind: str
         :keyword trained_model_label: Trained model label to export. If None, exports the working copy.
         :paramtype trained_model_label: str
-        :return: An instance of LROPoller that returns ExportProjectState.
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.language.text.authoring.models.ExportProjectState]
+        :return: An instance of LROPoller that returns None.
+        :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[ExportProjectState] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-
-        if cont_token is None:
-            initial = self._export_initial(
-                project_name=self._project_name,  # ← use instance-scoped project name
-                string_index_type=string_index_type,
-                asset_kind=asset_kind,
-                trained_model_label=trained_model_label,
-                cls=lambda x, y, z: x,  # return PipelineResponse
-                headers=_headers,
-                params=_params,
-                **kwargs,
-            )
-            initial.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            obj = _deserialize(ExportProjectState, pipeline_response.http_response.json())
-            if cls:
-                return cls(pipeline_response, obj, {})  # type: ignore
-            return obj
-
-        path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod,
-                JobsPollingMethod(
-                    polling_interval=lro_delay,
-                    path_format_arguments=path_format_arguments,  # resolves {Endpoint} in Operation-Location
-                    **kwargs,
-                ),
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-
-        if cont_token:
-            return LROPoller[ExportProjectState].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-
-        return LROPoller[ExportProjectState](
-            self._client, initial, get_long_running_output, polling_method  # type: ignore
+        return super()._begin_export(
+            project_name=self._project_name,
+            string_index_type=string_index_type,
+            asset_kind=asset_kind,
+            trained_model_label=trained_model_label,
+            **kwargs,
         )
 
     @overload
@@ -479,9 +611,8 @@ class ProjectOperations(_ProjectOperationsDeploymentsRelated):
     ) -> CopyProjectDetails:
         """Generates a copy project operation authorization to the current target Azure resource.
 
-        :keyword project_kind: Represents the project kind. Known values are:
-         "CustomSingleLabelClassification", "CustomMultiLabelClassification", "CustomEntityRecognition",
-         "CustomAbstractiveSummarization", "CustomHealthcare", and "CustomTextSentiment". Required.
+        :keyword project_kind: Represents the project kind. Known values are: "Conversation",
+         "Orchestration", and "Customtextummarization". Required.
         :paramtype project_kind: str or ~azure.ai.language.text.authoring.models.ProjectKind
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
