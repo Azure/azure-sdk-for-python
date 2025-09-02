@@ -836,7 +836,7 @@ class _TextAuthoringClientOperationsMixin(
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def _begin_delete_project(self, project_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
+    async def begin_delete_project(self, project_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
         """Deletes a project.
 
         :param project_name: The name of the project to use. Required.
@@ -4025,7 +4025,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def begin_cancel_training_job(
+    async def _begin_cancel_training_job(
         self, project_name: str, job_id: str, **kwargs: Any
     ) -> AsyncLROPoller[_models.TrainingJobResult]:
         """Triggers a cancellation for a running training job.
