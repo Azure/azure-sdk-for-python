@@ -379,15 +379,23 @@ def _get_scope(aad_audience=None):
 
 
 class Singleton(type):
-    _instance = None
+    """Metaclass for creating thread-safe singleton instances.
+    
+    Supports multiple singleton classes by maintaining a separate instance
+    for each class that uses this metaclass.
+    """
+    _instances = {}
     _lock = threading.Lock()
 
     def __call__(cls, *args: Any, **kwargs: Any):
-        if not cls._instance:
+        """Control the creation of instances."""
+        if cls not in cls._instances:
             with cls._lock:
-                if not cls._instance:
-                    cls._instance = super(Singleton, cls).__call__(*args, **kwargs)
-        return cls._instance
+                # Double-check pattern to avoid race conditions
+                if cls not in cls._instances:
+                    instance = super().__call__(*args, **kwargs)
+                    cls._instances[cls] = instance
+        return cls._instances[cls]
 
 def _get_telemetry_type(item: TelemetryItem):
     if hasattr(item, "data") and item.data is not None:

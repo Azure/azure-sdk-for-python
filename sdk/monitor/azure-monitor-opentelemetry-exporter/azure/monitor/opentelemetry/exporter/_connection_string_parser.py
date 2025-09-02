@@ -37,7 +37,7 @@ class ConnectionStringParser:
         self.live_endpoint = ""
         self._connection_string = connection_string
         self.aad_audience = ""
-        self.region = None
+        self.region = ""
         self._initialize()
         self._validate_instrumentation_key()
 
@@ -79,12 +79,8 @@ class ConnectionStringParser:
         self.region = self._extract_region()
 
     def _extract_region(self) -> typing.Optional[str]:
-        """Extract region from connection string or endpoint URL.
-        
-        :param code_cs: Parsed connection string from code
-        :type code_cs: typing.Dict
-        :param env_cs: Parsed connection string from environment
-        :type env_cs: typing.Dict
+        """Extract region from endpoint URL.
+
         :return: Extracted region or None if not found
         :rtype: typing.Optional[str]
         """
