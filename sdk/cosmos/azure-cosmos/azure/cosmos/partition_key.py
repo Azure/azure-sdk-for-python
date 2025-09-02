@@ -23,7 +23,6 @@
 from io import BytesIO
 import binascii
 import struct
-from types import NoneType
 from typing import Any, Dict, IO, List, Sequence, Type, Union, cast, overload
 from typing_extensions import Literal
 
@@ -409,7 +408,7 @@ def _to_hex_encoded_binary_string(components: Sequence[object]) -> str:
 def _to_hex_encoded_binary_string_v1(components: Sequence[object]) -> str:
     ms = BytesIO()
     for component in components:
-        if isinstance(component, (bool, int, float, str, _Infinity, _Undefined, NoneType)):
+        if isinstance(component, (bool, int, float, str, _Infinity, _Undefined)) or component is None:
             component = cast(_SingularPartitionKeyType, component)
             _write_for_binary_encoding_v1(component, ms)
         else:
