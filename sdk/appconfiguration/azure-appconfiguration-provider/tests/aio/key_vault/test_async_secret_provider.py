@@ -492,7 +492,7 @@ class TestSecretProviderAsync(AppConfigTestCase, unittest.IsolatedAsyncioTestCas
             self.skipTest("No Key Vault secret URL provided")
 
         # Get a credential
-        credential = self.get_credential(SecretClient)
+        credential = self.get_credential(SecretClient, is_async=True)
 
         # Create a SecretProvider with the credential
         secret_provider = SecretProvider(keyvault_credential=credential)
