@@ -1,0 +1,1 @@
+This package have been moved to https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics/azure/ai/textanalytics with latest preview version 6.0.0b1.
