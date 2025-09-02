@@ -33,7 +33,6 @@ from azure.core.pipeline.transport import (
     HttpRequest as LegacyHttpRequest,
 )
 from ._policy_token_header import _create_acquire_policy_request, _update_request_with_policy_token
-from ._authentication_async import await_result
 
 if TYPE_CHECKING:
     from .._async_pipeline_client import AsyncARMPipelineClient
@@ -99,5 +98,5 @@ class AsyncPolicyTokenHeaderPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPRes
         :return: The pipeline response object
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
-        await await_result(self.on_request, request)
+        await self.on_request(request)
         return await self.next.send(request)

@@ -61,6 +61,9 @@ class MockHttpResponse:
     def text(self):
         return str(self._json_data)
 
+    def reason(self):
+        return ""
+
 
 async def test_async_policy_token_header_policy_adds_header():
     """Test that the async policy adds the correct header when policy token is acquired successfully."""

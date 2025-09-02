@@ -25,15 +25,14 @@
 # --------------------------------------------------------------------------
 import json
 from typing import TypeVar, Any, Union, TYPE_CHECKING, Dict
-from azure.core.pipeline import PipelineRequest
+from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.transport import (
     HttpResponse as LegacyHttpResponse,
     HttpRequest as LegacyHttpRequest,
 )
 from azure.core.rest import HttpResponse, HttpRequest, AsyncHttpResponse
-from azure.core.pipeline.policies import SansIOHTTPPolicy
+from azure.core.pipeline.policies import HTTPPolicy
 from azure.core.exceptions import HttpResponseError
-from ..tools import parse_resource_id
 
 HTTPResponseType = TypeVar("HTTPResponseType", HttpResponse, LegacyHttpResponse)
 HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
@@ -56,11 +55,11 @@ def _create_acquire_policy_request(request: PipelineRequest[HTTPRequestType]) ->
     :raises ~azure.core.exceptions.HttpResponseError: If subscription ID cannot be extracted from request URL
     """
     # try to get subscriptionId from request.http_request.url
-    try:
-        resource_info = parse_resource_id(request.http_request.url)
-        subscription_id = resource_info.get("subscription")
-    except Exception:  # pylint: disable=broad-except
-        subscription_id = None
+    subscription_id = (
+        request.http_request.url.split("subscriptions/")[1].split("/")[0]
+        if "subscriptions/" in request.http_request.url
+        else None
+    )
     if not subscription_id:
         raise HttpResponseError("Failed to get subscriptionId from request url: {}".format(request.http_request.url))
 
@@ -110,7 +109,8 @@ def _update_request_with_policy_token(
         raise HttpResponseError(
             "status code is {} instead of expected 200 when trying call {} to get policy token: {}".format(
                 acquire_policy_response.status_code, acquire_policy_request.url, acquire_policy_response.text()
-            )
+            ),
+            response=acquire_policy_response,
         )
 
     result = acquire_policy_response.json()
@@ -120,7 +120,7 @@ def _update_request_with_policy_token(
         raise HttpResponseError("Failed to acquire policy token: {}".format(acquire_policy_response.text()))
 
 
-class PolicyTokenHeaderPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
+class PolicyTokenHeaderPolicy(HTTPPolicy[HTTPRequestType, HTTPResponseType]):
     """HTTP pipeline policy for adding policy token headers to Azure Resource Manager requests.
 
     This policy handles the acquisition and application of Azure Policy tokens for external
@@ -163,3 +163,17 @@ class PolicyTokenHeaderPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType
         except Exception:
             request.context.options["acquire_policy_token"] = True
             raise
+
+    def send(self, request: PipelineRequest[HTTPRequestType]) -> PipelineResponse[HTTPRequestType, HTTPResponseType]:
+        """Authorize request with a bearer token and send it to the next policy.
+
+        This method processes the request by calling on_request to potentially add
+        policy token headers, then forwards the request to the next policy in the pipeline.
+
+        :param request: The pipeline request object
+        :type request: ~azure.core.pipeline.PipelineRequest
+        :return: The pipeline response object
+        :rtype: ~azure.core.pipeline.PipelineResponse
+        """
+        self.on_request(request)
+        return self.next.send(request)
