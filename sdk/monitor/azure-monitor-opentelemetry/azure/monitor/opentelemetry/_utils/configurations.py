@@ -50,6 +50,8 @@ from azure.monitor.opentelemetry._types import ConfigurationValue
 from azure.monitor.opentelemetry._version import VERSION
 
 
+_Unset: Any = object()
+
 _INVALID_FLOAT_MESSAGE = "Value of %s must be a float. Defaulting to %s: %s"
 _INVALID_TRACES_PER_SECOND_MESSAGE = "Value of %s must be a positive number for traces per second. Defaulting to %s: %s"
 _SUPPORTED_RESOURCE_DETECTORS = (
@@ -63,7 +65,8 @@ def _get_configurations(**kwargs) -> Dict[str, ConfigurationValue]:
     configurations = {}
 
     for key, val in kwargs.items():
-        configurations[key] = val
+        if val is not _Unset:
+            configurations[key] = val
     configurations[DISTRO_VERSION_ARG] = VERSION
 
     _default_disable_logging(configurations)
