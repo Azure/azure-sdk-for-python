@@ -215,9 +215,10 @@ class CustomerSdkStatsMetrics(metaclass=Singleton): # pylint: disable=too-many-i
             DropCode.CLIENT_READONLY: "Client readonly",
             DropCode.CLIENT_STORAGE_DISABLED: "Client local storage disabled",
             DropCode.CLIENT_PERSISTENCE_CAPACITY: "Client persistence capacity",
+            DropCode.UNKNOWN: "Unknown reason"
         }
 
-        return drop_code_reasons.get(drop_code, "Unknown reason")
+        return drop_code_reasons.get(drop_code, DropCode.UNKNOWN)
 
     def _get_retry_reason(self, retry_code: RetryCodeType, exception_message: Optional[str] = None) -> str:
         if isinstance(retry_code, int):
@@ -230,7 +231,7 @@ class CustomerSdkStatsMetrics(metaclass=Singleton): # pylint: disable=too-many-i
             RetryCode.CLIENT_TIMEOUT: "Client timeout",
             RetryCode.UNKNOWN: "Unknown reason",
         }
-        return retry_code_reasons.get(retry_code, "Unknown reason")
+        return retry_code_reasons.get(retry_code, RetryCode.UNKNOWN)
 
 # Global customer sdkstats singleton
 _CUSTOMER_SDKSTATS_METRICS = None
