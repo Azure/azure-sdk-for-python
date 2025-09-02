@@ -123,7 +123,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(self, model_config, *, threshold=_DEFAULT_TOOL_CALL_ACCURACY_SCORE, **kwargs):
+    def __init__(self, model_config, *, threshold=_DEFAULT_TOOL_CALL_ACCURACY_SCORE, credential=None, **kwargs):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         self.threshold = threshold
@@ -131,6 +131,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             model_config=model_config,
             prompty_file=prompty_path,
             result_key=self._RESULT_KEY,
+            credential=credential,
             **kwargs,
         )
 
