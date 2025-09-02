@@ -23,7 +23,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     RetryCodeType,
     CustomerSdkStatsMetricName,
     _CUSTOMER_SDKSTATS_LANGUAGE,
-    exception_categories,
+    _exception_categories,
 )
 
 
@@ -209,7 +209,7 @@ class CustomerSdkStatsMetrics(metaclass=Singleton): # pylint: disable=too-many-i
             return categorize_status_code(drop_code)
 
         if drop_code == DropCode.CLIENT_EXCEPTION:
-            return exception_message if exception_message else exception_categories.CLIENT_EXCEPTION.value
+            return exception_message if exception_message else _exception_categories.CLIENT_EXCEPTION.value
 
         drop_code_reasons = {
             DropCode.CLIENT_READONLY: "Client readonly",
@@ -224,7 +224,7 @@ class CustomerSdkStatsMetrics(metaclass=Singleton): # pylint: disable=too-many-i
             return categorize_status_code(retry_code)
 
         if retry_code == RetryCode.CLIENT_EXCEPTION:
-            return exception_message if exception_message else exception_categories.CLIENT_EXCEPTION.value
+            return exception_message if exception_message else _exception_categories.CLIENT_EXCEPTION.value
 
         retry_code_reasons = {
             RetryCode.CLIENT_TIMEOUT: "Client timeout",

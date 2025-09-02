@@ -37,7 +37,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     DropCode,
     RetryCode,
     _UNKNOWN,
-    exception_categories,
+    _exception_categories,
 )
 from azure.monitor.opentelemetry.exporter._generated import AzureMonitorClient
 from azure.monitor.opentelemetry.exporter._generated.models import (
@@ -1532,7 +1532,7 @@ class TestBaseExporter(unittest.TestCase):
                 
                 retry_code, message = _determine_client_retry_code(error)
                 self.assertEqual(retry_code, RetryCode.CLIENT_EXCEPTION)
-                self.assertEqual(message, exception_categories.CLIENT_EXCEPTION.value)
+                self.assertEqual(message, _exception_categories.CLIENT_EXCEPTION.value)
 
     def test_determine_client_retry_code_http_status_codes(self):
         exporter = BaseExporter(disable_offline_storage=True)
@@ -1555,7 +1555,7 @@ class TestBaseExporter(unittest.TestCase):
         
         retry_code, message = _determine_client_retry_code(error)
         self.assertEqual(retry_code, RetryCode.CLIENT_EXCEPTION)
-        self.assertEqual(message, exception_categories.CLIENT_EXCEPTION.value)
+        self.assertEqual(message, _exception_categories.CLIENT_EXCEPTION.value)
 
     def test_determine_client_retry_code_service_request_error_with_message(self):
         exporter = BaseExporter(disable_offline_storage=True)
@@ -1564,7 +1564,7 @@ class TestBaseExporter(unittest.TestCase):
         
         retry_code, message = _determine_client_retry_code(error)
         self.assertEqual(retry_code, RetryCode.CLIENT_TIMEOUT)
-        self.assertEqual(message, exception_categories.TIMEOUT_EXCEPTION.value)
+        self.assertEqual(message, _exception_categories.TIMEOUT_EXCEPTION.value)
 
 
 def validate_telemetry_item(item1, item2):

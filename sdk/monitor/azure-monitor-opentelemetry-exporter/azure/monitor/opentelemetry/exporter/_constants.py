@@ -196,7 +196,7 @@ _TYPE_MAP = {
             }
 
 # Exception categories
-class exception_categories(Enum):
+class _exception_categories(Enum):
     CLIENT_EXCEPTION = "Client exception"
     STORAGE_EXCEPTION = "Storage exception"
     NETWORK_EXCEPTION = "Network exception"

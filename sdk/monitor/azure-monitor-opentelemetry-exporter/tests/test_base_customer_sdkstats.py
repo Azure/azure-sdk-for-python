@@ -26,7 +26,7 @@ from azure.monitor.opentelemetry.exporter.statsbeat._customer_sdkstats import (
 )
 
 from azure.monitor.opentelemetry.exporter._constants import (
-    exception_categories,
+    _exception_categories,
 )
 
 class MockResponse:
@@ -256,7 +256,7 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
         },
     )
     def test_track_retry_items_connection_error_network_exception(self):
-        """Test that ConnectionError is properly categorized as _NETWORK_EXCEPTION in retry items tracking."""
+        """Test that ConnectionError is properly categorized as NETWORK_EXCEPTION in retry items tracking."""
         exporter = self._create_exporter_with_customer_sdkstats_enabled()
         
         exporter._customer_sdkstats_metrics.count_retry_items = mock.Mock()
@@ -282,7 +282,7 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
                     1,
                     'UNKNOWN',
                     RetryCode.CLIENT_EXCEPTION,
-                    exception_categories.NETWORK_EXCEPTION.value
+                    _exception_categories.NETWORK_EXCEPTION.value
                 )
     @mock.patch.dict(
         os.environ,
@@ -309,7 +309,7 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
             1,
             'UNKNOWN',
             RetryCode.CLIENT_TIMEOUT,
-            exception_categories.TIMEOUT_EXCEPTION.value
+            _exception_categories.TIMEOUT_EXCEPTION.value
         )
 
     @mock.patch.dict(
@@ -322,14 +322,14 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
     def test_transmit_general_exception_customer_sdkstats_track_dropped_items(self, track_dropped_mock):
         """Test that _track_dropped_items is called on general exceptions"""
         exporter = self._create_exporter_with_customer_sdkstats_enabled()
-        with mock.patch.object(AzureMonitorClient, "track", side_effect=Exception(exception_categories.CLIENT_EXCEPTION.value)):
+        with mock.patch.object(AzureMonitorClient, "track", side_effect=Exception(_exception_categories.CLIENT_EXCEPTION.value)):
             result = exporter._transmit(self._envelopes_to_export)
 
         track_dropped_mock.assert_called_once()
         # Verify called with CLIENT_EXCEPTION drop code and error message
         args, kwargs = track_dropped_mock.call_args
         self.assertEqual(args[2], DropCode.CLIENT_EXCEPTION)
-        self.assertEqual(args[3], exception_categories.CLIENT_EXCEPTION.value)
+        self.assertEqual(args[3], _exception_categories.CLIENT_EXCEPTION.value)
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
 
     @mock.patch.dict(
@@ -399,7 +399,7 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
         track_dropped_items_mock.assert_called_once()
         dropped_args = track_dropped_items_mock.call_args[0]
         self.assertEqual(dropped_args[2], DropCode.CLIENT_EXCEPTION)
-        self.assertEqual(dropped_args[3], exception_categories.STORAGE_EXCEPTION.value)
+        self.assertEqual(dropped_args[3], _exception_categories.STORAGE_EXCEPTION.value)
 
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)  # Storage makes it NOT_RETRYABLE
 
