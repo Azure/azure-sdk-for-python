@@ -62,8 +62,6 @@ class ParameterizedCommand:
     :type environment: Optional[Union[str, ~azure.ai.ml.entities.Environment]]
     :param queue_settings: The queue settings for the job.
     :type queue_settings: Optional[~azure.ai.ml.entities.QueueSettings]
-    :keyword kwargs: A dictionary of additional configuration parameters.
-    :paramtype kwargs: dict
     """
 
     def __init__(

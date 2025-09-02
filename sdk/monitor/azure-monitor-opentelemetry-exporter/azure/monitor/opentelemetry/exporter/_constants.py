@@ -90,14 +90,15 @@ _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS = 3600  # 60 minutes
 
 # Statsbeat
 # (OpenTelemetry metric name, Statsbeat metric name)
+# Note: OpenTelemetry SDK normalizes metric names to lowercase, so first element should be lowercase
 _ATTACH_METRIC_NAME = ("attach", "Attach")
 _FEATURE_METRIC_NAME = ("feature", "Feature")
-_REQ_EXCEPTION_NAME = ("statsbeat_exception_count", "Exception_Count")
-_REQ_DURATION_NAME = ("statsbeat_duration", "Request_Duration")
-_REQ_FAILURE_NAME = ("statsbeat_failure_count", "Request_Failure_Count")
-_REQ_RETRY_NAME = ("statsbeat_retry_count", "Retry_Count")
-_REQ_SUCCESS_NAME = ("statsbeat_success_count", "Request_Success_Count")
-_REQ_THROTTLE_NAME = ("statsbeat_throttle_count", "Throttle_Count")
+_REQ_EXCEPTION_NAME = ("exception_count", "Exception_Count")
+_REQ_DURATION_NAME = ("request_duration", "Request_Duration")
+_REQ_FAILURE_NAME = ("request_failure_count", "Request_Failure_Count")
+_REQ_RETRY_NAME = ("retry_count", "Retry_Count")
+_REQ_SUCCESS_NAME = ("request_success_count", "Request_Success_Count")
+_REQ_THROTTLE_NAME = ("throttle_count", "Throttle_Count")
 
 _STATSBEAT_METRIC_NAME_MAPPINGS = dict(
     [
@@ -117,8 +118,8 @@ _APPLICATIONINSIGHTS_STATS_LONG_EXPORT_INTERVAL_ENV_NAME = "APPLICATIONINSIGHTS_
 # pylint: disable=line-too-long
 _DEFAULT_NON_EU_STATS_CONNECTION_STRING = "InstrumentationKey=c4a29126-a7cb-47e5-b348-11414998b11e;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/"
 _DEFAULT_EU_STATS_CONNECTION_STRING = "InstrumentationKey=7dc56bab-3c0c-4e9f-9ebb-d1acadee8d0f;IngestionEndpoint=https://westeurope-5.in.applicationinsights.azure.com/"
-_DEFAULT_STATS_SHORT_EXPORT_INTERVAL = 900  # 15 minutes
-_DEFAULT_STATS_LONG_EXPORT_INTERVAL = 86400  # 24 hours
+_DEFAULT_STATS_SHORT_EXPORT_INTERVAL = 15 * 60  # 15 minutes in s
+_DEFAULT_STATS_LONG_EXPORT_INTERVAL = 24 * 60 * 60  # 24 hours in s
 _EU_ENDPOINTS = [
     "westeurope",
     "northeurope",
@@ -146,10 +147,10 @@ _REQUEST = "REQUEST"
 _TRACE = "TRACE"
 _UNKNOWN = "UNKNOWN"
 
-# Customer Facing Statsbeat
-_APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW = "APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW"
-
-_CUSTOMER_STATSBEAT_LANGUAGE = "python"
+# Customer Facing SDKStats
+_APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW = "APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW"
+_APPLICATIONINSIGHTS_SDKSTATS_EXPORT_INTERVAL = "APPLICATIONINSIGHTS_SDKSTATS_EXPORT_INTERVAL"
+_CUSTOMER_SDKSTATS_LANGUAGE = "python"
 
 class DropCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CLIENT_READONLY = "CLIENT_READONLY"
@@ -167,12 +168,12 @@ class RetryCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 RetryCodeType = Union[RetryCode, int]
 
-class CustomerStatsbeatMetricName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class CustomerSdkStatsMetricName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ITEM_SUCCESS_COUNT = "preview.item.success.count"
     ITEM_DROP_COUNT = "preview.item.dropped.count"
     ITEM_RETRY_COUNT = "preview.item.retry.count"
 
-class CustomerStatsbeatProperties:
+class CustomerSdkStatsProperties:
     language: str
     version: str
     compute_type: str

@@ -32,6 +32,10 @@ agentClientPreparer = functools.partial(
     azure_ai_agents_tests_playwright_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.CognitiveServices/accounts/00000/projects/00000/connections/00000",
     azure_ai_agents_tests_deep_research_model="gpt-4o-deep-research",
     azure_ai_agents_tests_is_test_run="True",
+    azure_ai_agents_tests_bing_custom_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.CognitiveServices/accounts/00000/projects/00000/connections/00000",
+    azure_ai_agents_tests_bing_configuration_name="sample_configuration",
+    azure_ai_agents_tests_fabric_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.CognitiveServices/accounts/00000/projects/00000/connections/00000",
+    azure_ai_agents_tests_sharepoint_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.CognitiveServices/accounts/00000/projects/00000/connections/00000",
 )
 
 # Set to True to enable SDK logging
