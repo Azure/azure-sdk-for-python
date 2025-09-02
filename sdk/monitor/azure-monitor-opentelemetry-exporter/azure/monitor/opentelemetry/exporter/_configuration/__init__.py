@@ -7,11 +7,11 @@ from threading import Lock
 
 from azure.monitor.opentelemetry.exporter._constants import (
     _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS,
-    _ONE_SETTINGS_PYTHON_KEY,
     _ONE_SETTINGS_CHANGE_URL,
     _ONE_SETTINGS_CONFIG_URL,
 )
 from azure.monitor.opentelemetry.exporter._configuration._utils import make_onesettings_request
+from azure.monitor.opentelemetry.exporter._utils import Singleton
 
 # Set up logger
 logger = logging.getLogger(__name__)
@@ -35,54 +35,38 @@ class _ConfigurationState:
         )
 
 
-class _ConfigurationManager:
+class _ConfigurationManager(metaclass=Singleton):
     """Singleton class to manage configuration settings."""
 
-    _instance = None
-    _configuration_worker = None
-    _instance_lock = Lock()
-    _state_lock = Lock()  # Single lock for all state
-    _current_state = _ConfigurationState()
-    _region = None  # Store the region for the singleton instance
-    _callbacks = []
+    def __init__(self):
+        """Initialize the ConfigurationManager instance."""
 
-    def __new__(cls, region: Optional[str] = None):
-        """Create or return the singleton ConfigurationManager instance.
-        
-        :param region: The Azure region name (e.g., "westeurope", "eastus").
-                      If provided and no region is already set, it will be stored.
-                      If a region is already set, this parameter is ignored.
-        :type region: Optional[str]
-        """
-        with cls._instance_lock:
-            if cls._instance is None:
-                cls._instance = super(_ConfigurationManager, cls).__new__(cls)
-                if region is not None and region.strip() and cls._region is None:
-                    cls._region = region.strip()
-                cls._instance._initialize_worker()
-            return cls._instance
+        self._configuration_worker = None
+        self._state_lock = Lock()  # Single lock for all state
+        self._current_state = _ConfigurationState()
+        self._callbacks = []
+        self._initialize_worker()
+
     def _initialize_worker(self):
         """Initialize the ConfigurationManager and start the configuration worker."""
         # Lazy import to avoid circular import
         from azure.monitor.opentelemetry.exporter._configuration._worker import _ConfigurationWorker
 
         # Get initial refresh interval from state
-        with _ConfigurationManager._state_lock:
-            initial_refresh_interval = _ConfigurationManager._current_state.refresh_interval
+        with self._state_lock:
+            initial_refresh_interval = self._current_state.refresh_interval
 
-        self._configuration_worker = _ConfigurationWorker(initial_refresh_interval)
+        self._configuration_worker = _ConfigurationWorker(self, initial_refresh_interval)
 
-    @classmethod
-    def register_callback(cls, callback):
+    def register_callback(self, callback):
         """Register a callback to be invoked when configuration changes."""
-        cls._callbacks.append(callback)
+        self._callbacks.append(callback)
 
-    @classmethod
-    def _notify_callbacks(cls, new_state):
+    def _notify_callbacks(self, settings: Dict[str, str]):
         """Notify all registered callbacks of configuration changes."""
-        for cb in cls._callbacks:
+        for cb in self._callbacks:
             try:
-                cb(new_state)
+                cb(settings)
             except Exception as ex:
                 logger.warning("Callback failed: %s", ex)
 
@@ -145,8 +129,8 @@ class _ConfigurationManager:
         headers = {}
 
         # Read current state atomically
-        with _ConfigurationManager._state_lock:
-            current_state = _ConfigurationManager._current_state
+        with self._state_lock:
+            current_state = self._current_state
             if current_state.etag:
                 headers["If-None-Match"] = current_state.etag
             if current_state.refresh_interval:
@@ -168,8 +152,8 @@ class _ConfigurationManager:
         # Handle version and settings updates
         elif response.settings and response.version is not None:
             needs_config_fetch = False
-            with _ConfigurationManager._state_lock:
-                current_state = _ConfigurationManager._current_state
+            with self._state_lock:
+                current_state = self._current_state
 
                 if response.version > current_state.version_cache:
                     # Version increase: new config available
@@ -211,129 +195,35 @@ class _ConfigurationManager:
         state_for_callbacks = None
 
         # Atomic state update
-        with _ConfigurationManager._state_lock:
-            latest_state = _ConfigurationManager._current_state  # Always use latest state
-            _ConfigurationManager._current_state = latest_state.with_updates(**new_state_updates)
-            current_refresh_interval = _ConfigurationManager._current_state.refresh_interval
+        with self._state_lock:
+            latest_state = self._current_state  # Always use latest state
+            self._current_state = latest_state.with_updates(**new_state_updates)
+            current_refresh_interval = self._current_state.refresh_interval
             if 'settings_cache' in new_state_updates:
                 notify_callbacks = True
-                state_for_callbacks = _ConfigurationManager._current_state
+                state_for_callbacks = self._current_state
 
         # Handle configuration updates throughout the SDK
-        if notify_callbacks and state_for_callbacks is not None:
-            _ConfigurationManager._notify_callbacks(state_for_callbacks)
+        if notify_callbacks and state_for_callbacks is not None and state_for_callbacks.settings_cache:
+            self._notify_callbacks(state_for_callbacks.settings_cache)
         
         return current_refresh_interval
 
     def get_settings(self) -> Dict[str, str]:  # pylint: disable=C4741,C4742
         """Get current settings cache."""
-        with _ConfigurationManager._state_lock:
-            return _ConfigurationManager._current_state.settings_cache.copy()
+        with self._state_lock:
+            return self._current_state.settings_cache.copy()
 
     def get_current_version(self) -> int:  # pylint: disable=C4741,C4742
         """Get current version."""
-        with _ConfigurationManager._state_lock:
-            return _ConfigurationManager._current_state.version_cache
-
-    def get_stats_connection_string_for_region(self) -> Optional[str]:
-        """Get the appropriate stats connection string for the configured region.
-
-        This method determines which data boundary the configured region
-        belongs to and returns the corresponding stats connection string. The logic:
-
-        1. Gets current settings from the cache
-        2. Checks if the configured region is in any of the supported data boundary regions
-        3. Returns the matching stats connection string for that boundary
-        4. Falls back to DEFAULT if region is not found in any boundary
-
-        :return: The stats connection string for the region's data boundary,
-                or None if no configuration is available
-        :rtype: Optional[str]
-        
-        Thread Safety:
-            This method is thread-safe and uses the existing state lock to ensure
-            consistent reads from the settings cache.
-        """
-        target_region = self._region
-        
-        if not target_region:
-            logger.warning("No region configured for stats connection string lookup")
-            return None
-            
-        with _ConfigurationManager._state_lock:
-            settings = _ConfigurationManager._current_state.settings_cache.copy()
-        
-        if not settings:
-            logger.warning("No settings available for stats connection string lookup")
-            return None
-        
-        try:
-            # Get supported data boundaries
-            supported_boundaries = settings.get("SUPPORTED_DATA_BOUNDARIES")
-            if not supported_boundaries:
-                logger.warning("SUPPORTED_DATA_BOUNDARIES not found in configuration")
-                return None
-            
-            # Parse if it's a JSON string
-            if isinstance(supported_boundaries, str):
-                import json
-                supported_boundaries = json.loads(supported_boundaries)
-            
-            # Check each supported boundary to find the region
-            for boundary in supported_boundaries:
-                boundary_regions_key = f"{boundary}_REGIONS"
-                boundary_regions = settings.get(boundary_regions_key)
-                
-                if boundary_regions:
-                    # Parse if it's a JSON string
-                    if isinstance(boundary_regions, str):
-                        import json
-                        boundary_regions = json.loads(boundary_regions)
-                    
-                    # Check if the region is in this boundary's regions
-                    if isinstance(boundary_regions, list) and target_region.lower() in [r.lower() for r in boundary_regions]:
-                        # Found the boundary, get the corresponding connection string
-                        connection_string_key = f"{boundary}_STATS_CONNECTION_STRING"
-                        connection_string = settings.get(connection_string_key)
-                        
-                        if connection_string:
-                            logger.debug("Found stats connection string for region '%s' in boundary '%s'", 
-                                       target_region, boundary)
-                            return connection_string
-                        else:
-                            logger.warning("Connection string key '%s' not found in configuration", 
-                                         connection_string_key)
-            
-            # Region not found in any specific boundary, try DEFAULT
-            default_connection_string = settings.get("DEFAULT_STATS_CONNECTION_STRING")
-            if default_connection_string:
-                logger.debug("Using DEFAULT stats connection string for region '%s'", target_region)
-                return default_connection_string
-            else:
-                logger.warning("DEFAULT_STATS_CONNECTION_STRING not found in configuration")
-                return None
-                
-        except (ValueError, TypeError, KeyError) as ex:
-            logger.warning("Error parsing configuration for region '%s': %s", target_region, str(ex))
-            return None
-        except Exception as ex:  # pylint: disable=broad-exception-caught
-            logger.warning("Unexpected error getting stats connection string for region '%s': %s", 
-                         target_region, str(ex))
-            return None
+        with self._state_lock:
+            return self._current_state.version_cache
 
     def shutdown(self) -> None:
         """Shutdown the configuration worker."""
-        with _ConfigurationManager._instance_lock:
-            if self._configuration_worker:
-                self._configuration_worker.shutdown()
-                self._configuration_worker = None
-            if _ConfigurationManager._instance:
-                _ConfigurationManager._instance = None
-                _ConfigurationManager._region = None
-
-
-def _update_configuration_and_get_refresh_interval() -> int:
-    targeting = {
-        "namespaces": _ONE_SETTINGS_PYTHON_KEY,
-    }
-    return _ConfigurationManager().get_configuration_and_refresh_interval(targeting)
+        if self._configuration_worker:
+            self._configuration_worker.shutdown()
+            self._configuration_worker = None
+        # Clear the singleton instance from the metaclass
+        if self.__class__ in Singleton._instances:
+            del Singleton._instances[self.__class__]

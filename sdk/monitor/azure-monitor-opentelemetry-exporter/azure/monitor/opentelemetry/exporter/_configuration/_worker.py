@@ -4,7 +4,7 @@
 import logging
 import threading
 import random
-from azure.monitor.opentelemetry.exporter._configuration import _update_configuration_and_get_refresh_interval
+from azure.monitor.opentelemetry.exporter._constants import _ONE_SETTINGS_PYTHON_TARGETING
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +28,7 @@ class _ConfigurationWorker:
         _running (bool): Flag indicating if the worker is currently running
     """
 
-    def __init__(self, refresh_interval=None) -> None:
+    def __init__(self, configuration_manager, refresh_interval=None) -> None:
         """Initialize and start the configuration worker thread.
 
         Creates and starts a background daemon thread that will periodically refresh
@@ -36,6 +36,7 @@ class _ConfigurationWorker:
         with a random startup delay to prevent thundering herd issues.
 
         Args:
+            configuration_manager: The ConfigurationManager instance to update
             refresh_interval (Optional[int]): Initial refresh interval in seconds.
                 If None, defaults to 3600 seconds (1 hour).
 
@@ -44,6 +45,7 @@ class _ConfigurationWorker:
             0-15 second startup delay to stagger configuration requests across multiple
             SDK instances during startup or recovery from outages.
         """
+        self._configuration_manager = configuration_manager
         self._default_refresh_interval = 3600  # Default to 60 minutes in seconds
         self._interval_lock = threading.Lock()
         self._state_lock = threading.Lock()
@@ -132,9 +134,8 @@ class _ConfigurationWorker:
 
         while not self._shutdown_event.is_set():
             try:
-                # Perform the refresh operation
                 with self._interval_lock:
-                    self._refresh_interval = _update_configuration_and_get_refresh_interval()
+                    self._refresh_interval = self._configuration_manager.get_configuration_and_refresh_interval(_ONE_SETTINGS_PYTHON_TARGETING)
             except Exception as ex:  # pylint: disable=broad-exception-caught
                 logger.warning("Configuration refresh failed: %s", ex)
 
