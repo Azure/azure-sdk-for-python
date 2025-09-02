@@ -32,8 +32,6 @@ These sample programs show common scenarios for the Text Analytics client's offe
 |[sample_recognize_custom_entities.py][recognize_custom_entities_sample] and [sample_recognize_custom_entities_async.py][recognize_custom_entities_sample_async]|Use a custom model to recognize custom entities in documents|
 |[sample_single_label_classify.py][single_label_classify_sample] and [sample_single_label_classify_async.py][single_label_classify_sample_async]|Use a custom model to classify documents into a single category|
 |[sample_multi_label_classify.py][multi_label_classify_sample] and [sample_multi_label_classify_async.py][multi_label_classify_sample_async]|Use a custom model to classify documents into multiple categories|
-|[sample_model_version.py][sample_model_version] and [sample_model_version_async.py][sample_model_version_async]|Set the model version for pre-built Text Analytics models|
-|[sample_analyze_healthcare_action.py][sample_analyze_healthcare_action] and [sample_analyze_healthcare_action_async.py][sample_analyze_healthcare_action_async]|Run a healthcare and PII analysis together|
 |[sample_extract_summary.py][extract_summary_sample] and [sample_extract_summary_async.py][extract_summary_sample_async]|Run extractive text summarization on documents|
 |[sample_abstract_summary.py][abstract_summary_sample] and [sample_abstract_summary_async.py][abstract_summary_sample_async]|Run abstractive text summarization on documents|
 
@@ -70,50 +68,34 @@ For more information about how the versioning story of the SDK corresponds to th
 Check out the [API reference documentation][api_reference_documentation] to learn more about
 what you can do with the Azure Text Analytics client library.
 
-|**Advanced Sample File Name**|**Description**|
-|----------------|-------------|
-|[sample_analyze_sentiment_with_opinion_mining.py][sample_analyze_sentiment_with_opinion_mining] and [sample_analyze_sentiment_with_opinion_mining_async.py][sample_analyze_sentiment_with_opinion_mining_async]|Analyze sentiment in documents with granular analysis into individual opinions present in a sentence. Only available with API version v3.1 and up.|
-|[sample_get_detailed_diagnostics_information.py][get_detailed_diagnostics_information] and [sample_get_detailed_diagnostics_information_async.py][get_detailed_diagnostics_information_async]|Get the request batch statistics, model version, and raw response in JSON format through a callback|
-|[sample_analyze_healthcare_entities_with_cancellation.py][sample_analyze_healthcare_entities_with_cancellation] and [sample_analyze_healthcare_entities_with_cancellation_async.py][sample_analyze_healthcare_entities_with_cancellation_async]|Cancel an analyze healthcare entities operation after it's started.|
-
-[versioning_story_readme]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/textanalytics/azure-ai-textanalytics#install-the-package
+[versioning_story_readme]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics#install-the-package
 [azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity
-[sample_authentication]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_authentication.py
-[sample_authentication_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_authentication_async.py
-[detect_language]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_detect_language.py
-[detect_language_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_detect_language_async.py
-[recognize_entities]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_recognize_entities.py
-[recognize_entities_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_recognize_entities_async.py
-[recognize_linked_entities]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_recognize_linked_entities.py
-[recognize_linked_entities_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_recognize_linked_entities_async.py
-[recognize_pii_entities]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_recognize_pii_entities.py
-[recognize_pii_entities_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_recognize_pii_entities_async.py
-[extract_key_phrases]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_extract_key_phrases.py
-[extract_key_phrases_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_extract_key_phrases_async.py
-[analyze_sentiment]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_analyze_sentiment.py
-[analyze_sentiment_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_analyze_sentiment_async.py
-[get_detailed_diagnostics_information]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_get_detailed_diagnostics_information.py
-[get_detailed_diagnostics_information_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_get_detailed_diagnostics_information_async.py
-[sample_alternative_document_input]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_alternative_document_input.py
-[sample_alternative_document_input_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_alternative_document_input_async.py
-[sample_analyze_sentiment_with_opinion_mining]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_analyze_sentiment_with_opinion_mining.py
-[sample_analyze_sentiment_with_opinion_mining_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_analyze_sentiment_with_opinion_mining_async.py
+[sample_authentication]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/sample_authentication.py
+[sample_authentication_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/async_samples/sample_authentication_async.py
+[detect_language]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/sample_detect_language.py
+[detect_language_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/async_samples/sample_detect_language_async.py
+[recognize_entities]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/sample_recognize_entities.py
+[recognize_entities_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/async_samples/sample_recognize_entities_async.py
+[recognize_linked_entities]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/sample_recognize_linked_entities.py
+[recognize_linked_entities_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/async_samples/sample_recognize_linked_entities_async.py
+[recognize_pii_entities]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/sample_recognize_pii_entities.py
+[recognize_pii_entities_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/async_samples/sample_recognize_pii_entities_async.py
+[extract_key_phrases]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/sample_extract_key_phrases.py
+[extract_key_phrases_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/async_samples/sample_extract_key_phrases_async.py
+[analyze_sentiment]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/sample_analyze_sentiment.py
+[analyze_sentiment_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/async_samples/sample_analyze_sentiment_async.py
+[sample_alternative_document_input]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/sample_alternative_document_input.py
+[sample_alternative_document_input_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/async_samples/sample_alternative_document_input_async.py
 [analyze_healthcare_entities_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/sample_analyze_healthcare_entities.py
 [analyze_healthcare_entities_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/async_samples/sample_analyze_healthcare_entities_async.py
 [analyze_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/sample_analyze_actions.py
 [analyze_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/async_samples/sample_analyze_actions_async.py
-[sample_analyze_healthcare_entities_with_cancellation]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/sample_analyze_healthcare_entities_with_cancellation.py
-[sample_analyze_healthcare_entities_with_cancellation_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/async_samples/sample_analyze_healthcare_entities_with_cancellation_async.py
 [recognize_custom_entities_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/sample_recognize_custom_entities.py
 [recognize_custom_entities_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/async_samples/sample_recognize_custom_entities_async.py
 [single_label_classify_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/sample_single_label_classify.py
 [single_label_classify_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/async_samples/sample_single_label_classify_async.py
 [multi_label_classify_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/sample_multi_label_classify.py
 [multi_label_classify_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/async_samples/sample_multi_label_classify_async.py
-[sample_model_version]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/sample_model_version.py
-[sample_model_version_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/async_samples/sample_model_version_async.py
-[sample_analyze_healthcare_action]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/sample_analyze_healthcare_action.py
-[sample_analyze_healthcare_action_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/async_samples/sample_analyze_healthcare_action_async.py
 [extract_summary_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/sample_extract_summary.py
 [extract_summary_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/async_samples/sample_extract_summary_async.py
 [abstract_summary_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/sample_abstract_summary.py
