@@ -17,7 +17,7 @@ from azure.identity._internal.utils import within_dac  # pylint:disable=protecte
 from ._utils import wrap_exceptions, resolve_tenant, is_wsl
 
 if TYPE_CHECKING:
-    from azure.identity import TokenCachePersistenceOptions
+    from azure.identity._persistent_cache import TokenCachePersistenceOptions
 
 
 class PopTokenRequestOptions(TokenRequestOptions):
@@ -86,7 +86,7 @@ class InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):
         client_id: Optional[str] = None,
         login_hint: Optional[str] = None,
         cache_persistence_options: Optional["TokenCachePersistenceOptions"] = None,
-        timeout: Optional[int] = None,
+        timeout: int = 300,
         parent_window_handle: Optional[int] = None,
         use_default_broker_account: Optional[bool] = None,
         enable_msa_passthrough: Optional[bool] = None,

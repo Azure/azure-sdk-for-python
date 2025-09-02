@@ -81,7 +81,7 @@ class InteractiveBrowserCredential(InteractiveCredential):
         authentication_record: Optional["AuthenticationRecord"] = None,
         disable_automatic_authentication: Optional[bool] = None,
         cache_persistence_options: Optional["TokenCachePersistenceOptions"] = None,
-        timeout: Optional[int] = None,
+        timeout: int = 300,
         disable_instance_discovery: Optional[bool] = None,
         enable_support_logging: Optional[bool] = None,
         **kwargs: Any
@@ -94,7 +94,7 @@ class InteractiveBrowserCredential(InteractiveCredential):
             self._parsed_url = None
 
         self._login_hint = login_hint
-        self._timeout = timeout if timeout is not None else 300
+        self._timeout = timeout
         self._server_class = kwargs.pop("_server_class", AuthCodeRedirectServer)
 
         client_id = client_id or DEVELOPER_SIGN_ON_CLIENT_ID

@@ -164,7 +164,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         shared_cache_username: Optional[str] = None,
         shared_cache_tenant_id: Optional[str] = None,
         visual_studio_code_tenant_id: Optional[str] = None,
-        process_timeout: Optional[int] = None,
+        process_timeout: int = 10,
         require_envvar: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
@@ -185,9 +185,6 @@ class DefaultAzureCredential(ChainedTokenCredential):
         broker_tenant_id = broker_tenant_id or os.environ.get(EnvironmentVariables.AZURE_TENANT_ID)
         shared_cache_username = shared_cache_username or os.environ.get(EnvironmentVariables.AZURE_USERNAME)
         shared_cache_tenant_id = shared_cache_tenant_id or os.environ.get(EnvironmentVariables.AZURE_TENANT_ID)
-
-        if process_timeout is None:
-            process_timeout = 10
 
         if require_envvar and not os.environ.get(EnvironmentVariables.AZURE_TOKEN_CREDENTIALS):
             raise ValueError(
