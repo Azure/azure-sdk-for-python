@@ -150,7 +150,9 @@
     "conda/conda-recipes/msrest/meta.yaml",
     "conda/conda-recipes/uamqp/meta.yaml",
     "conda/conda-releaselogs/azure-mgmt.md",
-    ".github/workflows/azure-sdk-tools.yml"
+    ".github/workflows/azure-sdk-tools.yml",
+    "sdk/ai/azure-ai-voicelive/azure/ai/voicelive/models/_*.py",
+    "sdk/ai/azure-ai-voicelive/samples/**"
   ],
   "words": [
     "msedge",
@@ -515,7 +517,17 @@
     "WINDOWSVMIMAGE",
     "LINUXVMIMAGE",
     "MACVMIMAGE",
-    "myuseragent"
+    "myuseragent",
+    "viseme",
+    "Viseme",
+    "VISEME",
+    "ulaw",
+    "ULAW",
+    "logprobs",
+    "pyaudio",
+    "PyAudio",
+	"libasound",
+    "ingraph"
   ],
   "overrides": [
     {
@@ -806,7 +818,7 @@
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-conversations/**",
-      "words": [ "conv", "summ" ],
+      "words": [ "conv", "summ", "Enviar", "presentación", "CLU's"],
       "caseSensitive": false
     },
     {
@@ -2054,6 +2066,10 @@
         "TPEG",
         "Hundredkm"
       ]
+    },
+    {
+      "filename": "sdk/ai/azure-ai-voicelive/**",
+      "words": ["viseme","VISEME","ulaw","ULAW","logprobs","pyaudio","PyAudio","libasound"]
     }
   ],
   "allowCompoundWords": true
