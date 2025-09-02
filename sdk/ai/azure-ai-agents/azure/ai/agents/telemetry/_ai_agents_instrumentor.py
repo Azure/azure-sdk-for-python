@@ -26,6 +26,7 @@ from azure.ai.agents.models import (
     MessageAttachment,
     MessageDeltaChunk,
     MessageIncompleteDetails,
+    MessageInputTextBlock,
     RunStep,
     RunStepDeltaChunk,
     RunStepError,
@@ -36,6 +37,7 @@ from azure.ai.agents.models import (
     RunStepCodeInterpreterToolCall,
     RunStepBingGroundingToolCall,
     ThreadMessage,
+    ThreadMessageOptions,
     ThreadRun,
     ToolDefinition,
     ToolOutput,
@@ -369,31 +371,39 @@ class _AIAgentsInstrumentorPreview:
     def add_thread_message_event(
         self,
         span,
-        message: ThreadMessage,
+        message: Union[ThreadMessage, ThreadMessageOptions],
         usage: Optional[_models.RunStepCompletionUsage] = None,
     ) -> None:
         content_body = {}
         if _trace_agents_content:
-            for content in message.content:
-                typed_content = content.get(content.type, None)
-                if typed_content:
-                    content_details = {"value": self._get_field(typed_content, "value")}
-                    annotations = self._get_field(typed_content, "annotations")
-                    if annotations:
-                        content_details["annotations"] = [a.as_dict() for a in annotations]
-                    content_body[content.type] = content_details
+            if isinstance(message, ThreadMessage):
+                for content in message.content:
+                    typed_content = content.get(content.type, None)
+                    if typed_content:
+                        content_details = {"value": self._get_field(typed_content, "value")}
+                        annotations = self._get_field(typed_content, "annotations")
+                        if annotations:
+                            content_details["annotations"] = [a.as_dict() for a in annotations]
+                        content_body[content.type] = content_details
+            elif isinstance(message, ThreadMessageOptions):
+                if isinstance(message.content, str):
+                    content_body = {"text": {"value": message.content}}
+                elif isinstance(message.content, List):
+                    for content in message.content:
+                        if isinstance(content, MessageInputTextBlock):
+                            content_body[content.type] = {"value": content.text}
 
         self._add_message_event(
             span,
             self._get_role(message.role),
             content_body,
-            attachments=message.attachments,
-            thread_id=message.thread_id,
-            agent_id=message.agent_id,
-            message_id=message.id,
-            thread_run_id=message.run_id,
-            message_status=message.status,
-            incomplete_details=message.incomplete_details,
+            attachments=getattr(message, "attachments", None),
+            thread_id=getattr(message, "thread_id", None),
+            agent_id=getattr(message, "agent_id", None),
+            message_id=getattr(message, "id", None),
+            thread_run_id=getattr(message, "run_id", None),
+            message_status=getattr(message, "status", None),
+            incomplete_details=getattr(message, "incomplete_details", None),
             usage=usage,
         )
 
@@ -809,7 +819,7 @@ class _AIAgentsInstrumentorPreview:
     def start_create_thread_span(
         self,
         server_address: Optional[str] = None,
-        messages: Optional[List[ThreadMessage]] = None,
+        messages: Optional[Union[List[ThreadMessage], List[ThreadMessageOptions]]] = None,
         _tool_resources: Optional[ToolResources] = None,
     ) -> "Optional[AbstractSpan]":
         span = start_span(OperationName.CREATE_THREAD, server_address=server_address)
