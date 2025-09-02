@@ -33,7 +33,7 @@ class TestConversationsCase(TestConversations):
     def test_import(self, authoring_endpoint, authoring_key):
         client = self.create_client(authoring_endpoint, authoring_key)
         
-        project_name = "MyImportTextProject0717"
+        project_name = "MyImportTextProject0902"
         project_client = client.get_project_client(project_name)
         # Arrange - metadata
         project_metadata = CreateProjectOptions(
@@ -79,7 +79,7 @@ class TestConversationsCase(TestConversations):
         )
 
         # Act - long-running import
-        poller = project_client.project.begin_import(project_name=project_name, body=exported_project)
+        poller = project_client.project.begin_import(body=exported_project)
         
         try:
             poller.result()

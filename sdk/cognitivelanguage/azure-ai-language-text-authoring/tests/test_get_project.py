@@ -22,7 +22,7 @@ class TestConversationsCase(TestConversations):
     def test_get_project(self, authoring_endpoint, authoring_key):
         client = self.create_client(authoring_endpoint, authoring_key)
 
-        project_name = "MyTextProject001"
+        project_name = "single-class-project"
         # Act
         result = client.get_project(project_name)
 

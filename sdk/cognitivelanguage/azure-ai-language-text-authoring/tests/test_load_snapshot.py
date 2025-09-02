@@ -24,7 +24,7 @@ class TestConversationsLoadSnapshotPrintResultSync(TestConversations):
     def test_load_snapshot(self, authoring_endpoint, authoring_key):
         client = self.create_client(authoring_endpoint, authoring_key)
         project_name = "single-class-project"
-        trained_model_label = "model1"
+        trained_model_label = "model3"
 
         project_client = client.get_project_client(project_name)
 

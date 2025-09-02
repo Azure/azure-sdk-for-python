@@ -22,7 +22,7 @@ class TestConversationsCase(TestConversations):
     def test_delete_project(self, authoring_endpoint, authoring_key):
         client = self.create_client(authoring_endpoint, authoring_key)
 
-        project_name = "MyImportTextProject"
+        project_name = "MyPythonProject0811"
 
         # Act: begin delete (LRO)
         poller = client.begin_delete_project(project_name)

@@ -27,7 +27,7 @@ class TestTextAuthoringGetModelEvaluationSummarySync(TestTextAuthoring):
         client = self.create_client(authoring_endpoint, authoring_key)
 
         project_name = "single-class-project"
-        trained_model_label = "model1"
+        trained_model_label = "model3"
 
         # Trained-model–scoped call
         project_client = client.get_project_client(project_name)
@@ -66,7 +66,7 @@ class TestTextAuthoringGetModelEvaluationSummarySync(TestTextAuthoring):
             for row_key, row_val in cmatrix.items():
                 print(f"Row: {row_key}")
                 for col_key, cell in row_val.items():
-                    print(f"    Column: {col_key}, Normalized Value: {cell.normalized_value}, Raw Value: {cell.raw_value}")
+                    print(f"    Column: {col_key}, Normalized Value: {cell['normalizedValue']}, Raw Value: {cell['rawValue']}")
 
         # Class-specific metrics
         classes_map = sl_eval.classes

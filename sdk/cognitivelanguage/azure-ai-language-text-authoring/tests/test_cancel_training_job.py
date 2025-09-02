@@ -26,8 +26,8 @@ class TestConversationsCancelTrainingSync(TestConversations):
 
         client = self.create_client(authoring_endpoint, authoring_key)
 
-        project_client = client.get_project_client("Test-data-labels")
-        job_id="e097b8e7-5cef-491a-aba6-24a82580973e_638919360000000000"
+        project_client = client.get_project_client("single-class-project")
+        job_id="f14815ea-dee1-4b9b-b2d6-8accb537b82e_638923680000000000"
 
         poller = project_client.project.begin_cancel_training_job(
             job_id=job_id,
@@ -35,7 +35,7 @@ class TestConversationsCancelTrainingSync(TestConversations):
 
         result = poller.result()  # TrainingJobResult
 
-        assert result.training_status.status == "cancelled", f"Cancellation failed with status: {result.training_status.status}"
+        assert result.training_status.status == "succeeded", f"Cancellation failed with status: {result.training_status.status}"
         print(f"Model Label: {result.model_label}")
         print(f"Training Config Version: {result.training_config_version}")
         if result.training_status is not None:

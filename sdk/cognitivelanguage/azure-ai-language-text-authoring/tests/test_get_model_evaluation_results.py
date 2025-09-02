@@ -5,7 +5,6 @@ from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader,
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.language.text.authoring import TextAuthoringClient
 from azure.ai.language.text.authoring.models import (
-    StringIndexType,
     CustomSingleLabelClassificationDocumentEvalResult,
 )
 
@@ -28,7 +27,7 @@ class TestTextAuthoringGetModelEvaluationResultsSync(TestTextAuthoring):
         client = self.create_client(authoring_endpoint, authoring_key)
 
         project_name = "single-class-project"
-        trained_model_label = "model1"
+        trained_model_label = "model3"
         
         # Trained-model–scoped call
         project_client = client.get_project_client(project_name)

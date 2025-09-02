@@ -33,7 +33,7 @@ class TestTextAuthoringTrain(TestTextAuthoring):
 
         # Arrange – object model (snake_case), as in conversation authoring reference
         training_job_details = TrainingJobDetails(
-            model_label="model1",
+            model_label="model0902",
             training_config_version="2022-05-01",
             evaluation_options=EvaluationDetails(
                 kind=EvaluationKind.PERCENTAGE,
@@ -42,7 +42,6 @@ class TestTextAuthoringTrain(TestTextAuthoring):
             ),
         )
 
-        # Act – start training (LRO) and assert initial 202 like WaitUntil.Started
         poller = project_client.project.begin_train(body=training_job_details)
 
         try:

@@ -28,7 +28,6 @@ class TestConversationsCase(TestConversations):
 
         # Act – LRO export
         poller = project_client.project.begin_export(
-            project_name=project_name,
             string_index_type=StringIndexType.UTF16_CODE_UNIT,
         )
 
