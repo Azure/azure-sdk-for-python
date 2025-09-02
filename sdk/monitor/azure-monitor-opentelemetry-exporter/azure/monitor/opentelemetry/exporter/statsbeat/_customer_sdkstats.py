@@ -23,6 +23,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     RetryCodeType,
     CustomerSdkStatsMetricName,
     _CUSTOMER_SDKSTATS_LANGUAGE,
+    _exception_categories,
 )
 
 
@@ -218,28 +219,29 @@ class CustomerSdkStatsMetrics(metaclass=Singleton): # pylint: disable=too-many-i
             return categorize_status_code(drop_code)
 
         if drop_code == DropCode.CLIENT_EXCEPTION:
-            return exception_message if exception_message else "unknown_exception"
+            return exception_message if exception_message else _exception_categories.CLIENT_EXCEPTION.value
 
         drop_code_reasons = {
-            DropCode.CLIENT_READONLY: "readonly_mode",
-            DropCode.CLIENT_STORAGE_DISABLED: "local storage is disabled",
-            DropCode.CLIENT_PERSISTENCE_CAPACITY: "persistence_full",
+            DropCode.CLIENT_READONLY: "Client readonly",
+            DropCode.CLIENT_STORAGE_DISABLED: "Client local storage disabled",
+            DropCode.CLIENT_PERSISTENCE_CAPACITY: "Client persistence capacity",
+            DropCode.UNKNOWN: "Unknown reason"
         }
 
-        return drop_code_reasons.get(drop_code, "unknown_reason")
+        return drop_code_reasons.get(drop_code, DropCode.UNKNOWN)
 
     def _get_retry_reason(self, retry_code: RetryCodeType, exception_message: Optional[str] = None) -> str:
         if isinstance(retry_code, int):
             return categorize_status_code(retry_code)
 
         if retry_code == RetryCode.CLIENT_EXCEPTION:
-            return exception_message if exception_message else "unknown_exception"
+            return exception_message if exception_message else _exception_categories.CLIENT_EXCEPTION.value
 
         retry_code_reasons = {
-            RetryCode.CLIENT_TIMEOUT: "client_timeout",
-            RetryCode.UNKNOWN: "unknown_reason",
+            RetryCode.CLIENT_TIMEOUT: "Client timeout",
+            RetryCode.UNKNOWN: "Unknown reason",
         }
-        return retry_code_reasons.get(retry_code, "unknown_reason")
+        return retry_code_reasons.get(retry_code, RetryCode.UNKNOWN)
 
 _CUSTOMER_SDKSTATS_METRICS_LOCK = threading.Lock()
 

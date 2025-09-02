@@ -34,6 +34,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _TYPE_MAP,
     DropCode,
     RetryCode,
+    _exception_categories,
 )
 
 from opentelemetry import trace
@@ -182,7 +183,7 @@ class TestCustomerSdkStats(unittest.TestCase):
 
             # Verify the metrics methods don't do anything when disabled
             metrics.count_successful_items(5, _REQUEST)
-            metrics.count_dropped_items(3, _REQUEST, DropCode.CLIENT_EXCEPTION, "Test exception")
+            metrics.count_dropped_items(3, _REQUEST, DropCode.CLIENT_EXCEPTION, _exception_categories.NETWORK_EXCEPTION.value)
 
             # Verify callbacks return empty lists when disabled
             self.assertEqual(metrics._item_success_callback(mock.Mock()), [])
@@ -341,7 +342,7 @@ class TestCustomerSdkStats(unittest.TestCase):
                 if should_fail:
                     nonlocal dropped_items
                     
-                    failure_type = random.choice(["http_status", "client_exception"])
+                    failure_type = random.choice(["http_status", "exception"])
                     
                     if failure_type == "http_status":
                         status_codes = [401, 401, 403, 500, 500, 503, 402] 
@@ -353,38 +354,12 @@ class TestCustomerSdkStats(unittest.TestCase):
                         metrics.count_dropped_items(failure_count, telemetry_type, status_code, None)
                     else:
                         exception_scenarios = [
-                            "timeout_exception"
-                            "Connection timed out after 30 seconds",
-                            "Request timed out after 60 seconds",
-                            "Operation timed out",
-
-                            "network_exception",
-                            "Network connection failed: Connection refused",
-                            "Network error: Host unreachable",
-
-                            "authentication_exception",
-                            "Authentication failed: Invalid credentials",
-                            "Auth error: Token expired",
-                            
-                            "Failed to parse response: Invalid JSON format",
-                            "Parse error: Malformed XML",
-                            "parse_exception",
-                            
-                            "Out of memory: Cannot allocate buffer",
-                            "Memory allocation failed",
-                            "memory_exception",
-                            
-                            "HTTP 401 Unauthorized",
-                            "HTTP 401 Invalid token",
-                            "HTTP 500 Internal Server Error",
-                            "HTTP 500 Database error",
-                            
-                            "Unknown transmission error",
-                            "Unexpected error occurred"
-
-                            "storage_exception",
-                            "other_exception"
+                            _exception_categories.CLIENT_EXCEPTION.value,
+                            _exception_categories.NETWORK_EXCEPTION.value,
+                            _exception_categories.STORAGE_EXCEPTION.value,
+                            _exception_categories.TIMEOUT_EXCEPTION.value
                         ]
+
                         
                         exception_message = random.choice(exception_scenarios)
                         
@@ -519,7 +494,7 @@ class TestCustomerSdkStats(unittest.TestCase):
                 if should_retry:
                     nonlocal retried_items
                     
-                    retry_type = random.choice(["http_status", "client_timeout", "unknown"])
+                    retry_type = random.choice(["http_status", "Client timeout", "Unknown"])
                     
                     if retry_type == "http_status":
                         # HTTP status codes that would trigger retries
@@ -530,7 +505,7 @@ class TestCustomerSdkStats(unittest.TestCase):
                         retried_items += failure_count
                         
                         metrics.count_retry_items(failure_count, telemetry_type, status_code, None)
-                    elif retry_type == "client_timeout":
+                    elif retry_type == "Client timeout":
                         timeout_messages = [
                             "Connection timed out after 30 seconds",
                             "Request timed out after 60 seconds",
@@ -548,10 +523,10 @@ class TestCustomerSdkStats(unittest.TestCase):
                     else:
                         # Unknown retry reasons
                         unknown_messages = [
-                            "Unknown network error",
-                            "Unexpected retry condition",
-                            "Network instability detected",
-                            "Connection reset by peer"
+                            _exception_categories.CLIENT_EXCEPTION.value,
+                            _exception_categories.NETWORK_EXCEPTION.value,
+                            _exception_categories.STORAGE_EXCEPTION.value,
+                            _exception_categories.TIMEOUT_EXCEPTION.value
                         ]
                         
                         exception_message = random.choice(unknown_messages)
