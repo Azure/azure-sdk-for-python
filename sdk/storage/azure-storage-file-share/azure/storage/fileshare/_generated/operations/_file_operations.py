@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, Callable, Dict, IO, Iterator, Literal, Optional, TypeVar, Union
+from typing import Any, Callable, IO, Iterator, Literal, Optional, TypeVar, Union
 
 from azure.core import PipelineClient
 from azure.core.exceptions import (
@@ -30,7 +30,7 @@ from .._configuration import AzureFileStorageConfiguration
 from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -47,7 +47,7 @@ def build_create_request(
     file_cache_control: Optional[str] = None,
     file_content_md5: Optional[bytes] = None,
     file_content_disposition: Optional[str] = None,
-    metadata: Optional[Dict[str, str]] = None,
+    metadata: Optional[dict[str, str]] = None,
     file_permission: str = "inherit",
     file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
     file_permission_key: Optional[str] = None,
@@ -388,7 +388,7 @@ def build_set_metadata_request(
     url: str,
     *,
     timeout: Optional[int] = None,
-    metadata: Optional[Dict[str, str]] = None,
+    metadata: Optional[dict[str, str]] = None,
     lease_id: Optional[str] = None,
     allow_trailing_dot: Optional[bool] = None,
     file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
@@ -833,7 +833,7 @@ def build_start_copy_request(
     *,
     copy_source: str,
     timeout: Optional[int] = None,
-    metadata: Optional[Dict[str, str]] = None,
+    metadata: Optional[dict[str, str]] = None,
     file_permission: str = "inherit",
     file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
     file_permission_key: Optional[str] = None,
@@ -1088,7 +1088,7 @@ def build_rename_request(
     file_permission: str = "inherit",
     file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
     file_permission_key: Optional[str] = None,
-    metadata: Optional[Dict[str, str]] = None,
+    metadata: Optional[dict[str, str]] = None,
     file_content_type: Optional[str] = None,
     allow_trailing_dot: Optional[bool] = None,
     allow_source_trailing_dot: Optional[bool] = None,
@@ -1166,7 +1166,7 @@ def build_create_symbolic_link_request(
     *,
     link_text: str,
     timeout: Optional[int] = None,
-    metadata: Optional[Dict[str, str]] = None,
+    metadata: Optional[dict[str, str]] = None,
     file_creation_time: str = "now",
     file_last_write_time: str = "now",
     request_id_parameter: Optional[str] = None,
@@ -1332,7 +1332,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         self,
         file_content_length: int,
         timeout: Optional[int] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         file_permission: str = "inherit",
         file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
         file_permission_key: Optional[str] = None,
@@ -1441,7 +1441,10 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         _params = kwargs.pop("params", {}) or {}
 
         file_type_constant: Literal["file"] = kwargs.pop("file_type_constant", _headers.pop("x-ms-type", "file"))
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/octet-stream"))
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/octet-stream")
+        )
+        content_type = content_type if optionalbody else None
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _file_content_type = None
@@ -2077,7 +2080,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
     def set_metadata(  # pylint: disable=inconsistent-return-statements
         self,
         timeout: Optional[int] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> None:
@@ -2568,7 +2571,10 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         comp: Literal["range"] = kwargs.pop("comp", _params.pop("comp", "range"))
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/octet-stream"))
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/octet-stream")
+        )
+        content_type = content_type if optionalbody else None
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _lease_id = None
@@ -2871,7 +2877,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         self,
         copy_source: str,
         timeout: Optional[int] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         file_permission: str = "inherit",
         file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
         file_permission_key: Optional[str] = None,
@@ -3297,7 +3303,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         file_permission: str = "inherit",
         file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
         file_permission_key: Optional[str] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         source_lease_access_conditions: Optional[_models.SourceLeaseAccessConditions] = None,
         destination_lease_access_conditions: Optional[_models.DestinationLeaseAccessConditions] = None,
         copy_file_smb_info: Optional[_models.CopyFileSmbInfo] = None,
@@ -3467,7 +3473,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         self,
         link_text: str,
         timeout: Optional[int] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         file_creation_time: str = "now",
         file_last_write_time: str = "now",
         request_id_parameter: Optional[str] = None,

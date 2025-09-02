@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, AsyncIterator, Callable, Dict, IO, Literal, Optional, TypeVar, Union
+from typing import Any, AsyncIterator, Callable, IO, Literal, Optional, TypeVar, Union
 
 from azure.core import AsyncPipelineClient
 from azure.core.exceptions import (
@@ -53,7 +53,7 @@ from ...operations._file_operations import (
 from .._configuration import AzureFileStorageConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
 
 class FileOperations:  # pylint: disable=too-many-public-methods
@@ -80,7 +80,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         self,
         file_content_length: int,
         timeout: Optional[int] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         file_permission: str = "inherit",
         file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
         file_permission_key: Optional[str] = None,
@@ -189,7 +189,10 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         _params = kwargs.pop("params", {}) or {}
 
         file_type_constant: Literal["file"] = kwargs.pop("file_type_constant", _headers.pop("x-ms-type", "file"))
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/octet-stream"))
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/octet-stream")
+        )
+        content_type = content_type if optionalbody else None
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _file_content_type = None
@@ -825,7 +828,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
     async def set_metadata(
         self,
         timeout: Optional[int] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> None:
@@ -1316,7 +1319,10 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         comp: Literal["range"] = kwargs.pop("comp", _params.pop("comp", "range"))
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/octet-stream"))
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/octet-stream")
+        )
+        content_type = content_type if optionalbody else None
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _lease_id = None
@@ -1619,7 +1625,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         self,
         copy_source: str,
         timeout: Optional[int] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         file_permission: str = "inherit",
         file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
         file_permission_key: Optional[str] = None,
@@ -2045,7 +2051,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         file_permission: str = "inherit",
         file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
         file_permission_key: Optional[str] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         source_lease_access_conditions: Optional[_models.SourceLeaseAccessConditions] = None,
         destination_lease_access_conditions: Optional[_models.DestinationLeaseAccessConditions] = None,
         copy_file_smb_info: Optional[_models.CopyFileSmbInfo] = None,
@@ -2215,7 +2221,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         self,
         link_text: str,
         timeout: Optional[int] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         file_creation_time: str = "now",
         file_last_write_time: str = "now",
         request_id_parameter: Optional[str] = None,
