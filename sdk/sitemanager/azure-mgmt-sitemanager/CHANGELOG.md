@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0(it should be perview) (2025-09-04)
+## 1.0.0 (2025-09-04)
 
 ### Other Changes
 
