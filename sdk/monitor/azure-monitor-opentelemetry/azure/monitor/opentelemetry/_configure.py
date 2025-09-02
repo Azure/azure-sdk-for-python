@@ -64,6 +64,7 @@ from azure.monitor.opentelemetry._diagnostics.diagnostic_logging import (
 from azure.monitor.opentelemetry._utils.configurations import (
     _get_configurations,
     _is_instrumentation_enabled,
+    _Unset,
 )
 from azure.monitor.opentelemetry._utils.instrumentation import (
     get_dist_dependency_conflicts,
@@ -72,7 +73,20 @@ from azure.monitor.opentelemetry._utils.instrumentation import (
 _logger = getLogger(__name__)
 
 
-def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
+def configure_azure_monitor(
+    *,
+    connection_string: str = _Unset,
+    credential: TokenCredential = _Unset,
+    disable_offline_storage: bool = _Unset,
+    logger_name: str = _Unset,
+    instrumentation_options: Mapping[str, Any] = _Unset,
+    resource: Resource = _Unset,
+    span_processors: Sequence[SpanProcessor]] = _Unset,
+    enable_live_metrics: bool = _Unset,
+    storage_directory: str = _Unset,
+    views: Sequence[View] = _Unset,
+    **kwargs
+) -> None:
     """This function works as a configuration layer that allows the
     end user to configure OpenTelemetry and Azure monitor components. The
     configuration can be done via arguments passed to this function.
@@ -104,7 +118,19 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
 
     _send_attach_warning()
 
-    configurations = _get_configurations(**kwargs)
+    configurations = _get_configurations(
+        connection_string=connection_string,
+        credential=credential,
+        disable_offline_storage=disable_offline_storage,
+        logger_name=logger_name,
+        instrumentation_options=instrumentation_options,
+        resource=resource,
+        span_processors=span_processors,
+        enable_live_metrics=enable_live_metrics,
+        storage_directory=storage_directory,
+        views=views,
+        **kwargs
+    )
 
     disable_tracing = configurations[DISABLE_TRACING_ARG]
     disable_logging = configurations[DISABLE_LOGGING_ARG]
