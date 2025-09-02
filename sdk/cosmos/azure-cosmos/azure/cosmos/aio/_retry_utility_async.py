@@ -65,6 +65,10 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
     :returns: the result of running the passed in function as a (result, headers) tuple
     :rtype: tuple of (dict, dict)
     """
+    # Capture the client timeout and start time at the beginning
+    client_timeout = kwargs.get('timeout')
+    operation_start_time = time.time()
+
     pk_range_wrapper = None
     if args and global_endpoint_manager.is_circuit_breaker_applicable(args[0]):
         pk_range_wrapper = await global_endpoint_manager.create_pk_range_wrapper(args[0])
@@ -109,14 +113,25 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
             client, client._container_properties_cache, None, *args)
 
     while True:
-        client_timeout = kwargs.get('timeout')
         start_time = time.time()
+        # Check timeout before executing function
+        if client_timeout:
+            elapsed = time.time() - operation_start_time
+            if elapsed >= client_timeout:
+                raise exceptions.CosmosClientTimeoutError()
+            # Update timeout for this attempt
+            kwargs['timeout'] = client_timeout - elapsed
         try:
             if args:
                 result = await ExecuteFunctionAsync(function, global_endpoint_manager, *args, **kwargs)
                 await global_endpoint_manager.record_success(args[0])
             else:
                 result = await ExecuteFunctionAsync(function, *args, **kwargs)
+            # Check timeout after successful execution
+            if client_timeout:
+                elapsed = time.time() - operation_start_time
+                if elapsed >= client_timeout:
+                   raise exceptions.CosmosClientTimeoutError()
             if not client.last_response_headers:
                 client.last_response_headers = {}
 
@@ -158,9 +173,10 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
             return result
         except (exceptions.CosmosHttpResponseError, ServiceRequestError, ServiceResponseError) as e:
             if client_timeout:
-                kwargs['timeout'] = client_timeout - (time.time() - start_time)
-                if kwargs['timeout'] <= 0:
+                elapsed = time.time() - operation_start_time
+                if elapsed >= client_timeout:
                     raise exceptions.CosmosClientTimeoutError()
+                kwargs['timeout'] = client_timeout - elapsed
 
             if isinstance(e, exceptions.CosmosHttpResponseError):
                 if request:

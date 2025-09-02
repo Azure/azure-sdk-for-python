@@ -30,6 +30,7 @@ from typing import (
     Optional,
     TYPE_CHECKING, Union, Mapping
 )
+import time
 
 from azure.cosmos import _base, exceptions
 from azure.core.utils import CaseInsensitiveDict
@@ -72,6 +73,8 @@ class ReadItemsHelperAsync:
         self.kwargs = kwargs
         self.max_concurrency = max_concurrency
         self.max_items_per_query = 1000
+        # Extract timeout from kwargs if present
+        self.timeout = kwargs.get('timeout')
 
     async def read_items(self) -> 'CosmosList':
         """Executes the read-many operation.
@@ -79,6 +82,12 @@ class ReadItemsHelperAsync:
         :return: A list of the retrieved items in the same order as the input.
         :rtype: ~azure.cosmos.CosmosList
         """
+        # Set operation start time for timeout tracking
+        if self.timeout:
+            # Add to options for query iterator to use
+            self.options['timeout'] = self.timeout
+            self.options['operation_start_time'] = time.time()
+
         if not self.items:
             return CosmosList([], response_headers=CaseInsensitiveDict())
 

@@ -1043,6 +1043,215 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
             with self.assertRaises(exceptions.CosmosClientTimeoutError):
                 databases = [database async for database in databases]
 
+    async def test_absolute_timeout_for_read_items_async(self):
+        """Test that timeout is properly maintained across multiple partition requests for a single logical operation
+        read_items is different as the results of this api are not paginated and we present the complete result set
+        """
+
+        # Create a container with multiple partitions
+        created_container = await self.database_for_test.create_container(
+            id='multi_partition_container_' + str(uuid.uuid4()),
+            partition_key=PartitionKey(path="/pk"),
+            offer_throughput=11000
+        )
+        pk_ranges = [
+            pk async for pk in
+            created_container.client_connection._ReadPartitionKeyRanges(created_container.container_link)
+        ]
+        self.assertGreater(len(pk_ranges), 1, "Container should have multiple physical partitions.")
+
+        # 2. Create items across different logical partitions
+        items_to_read = []
+        all_item_ids = set()
+        for i in range(200):
+            doc_id = f"item_{i}_{uuid.uuid4()}"
+            pk = i % 10
+            all_item_ids.add(doc_id)
+            await created_container.create_item({'id': doc_id, 'pk': pk, 'data': i})
+            items_to_read.append((doc_id, pk))
+
+        # Create a custom transport that introduces delays
+        class DelayedTransport(AioHttpTransport):
+            def __init__(self, delay_per_request=2):
+                self.delay_per_request = delay_per_request
+                self.request_count = 0
+                super().__init__()
+
+            def send(self, request, **kwargs):
+                self.request_count += 1
+                # Delay each request to simulate slow network
+                time.sleep(self.delay_per_request)
+                return super().send(request, **kwargs)
+
+        # Verify timeout fails when cumulative time exceeds limit
+        delayed_transport = DelayedTransport(delay_per_request=2)
+
+        async with CosmosClient(
+                self.host, self.masterKey, transport=delayed_transport
+        ) as client_with_delay:
+
+            container_with_delay = client_with_delay.get_database_client(
+                self.database_for_test.id
+            ).get_container_client(created_container.id)
+
+            start_time = time.time()
+
+            with self.assertRaises(exceptions.CosmosClientTimeoutError):
+                # This should timeout because multiple partition requests * 2s delay > 5s timeout
+                await container_with_delay.read_items(
+                    items=items_to_read,
+                    timeout=5  # 5 second total timeout
+                )
+
+        elapsed_time = time.time() - start_time
+        print(f"elapsed time is {elapsed_time}")
+        # Should fail close to 5 seconds (not wait for all requests)
+        self.assertLess(elapsed_time, 7)  # Allow some overhead
+        self.assertGreater(elapsed_time, 5)  # Should wait at least close to timeout
+
+    async def test_point_operation_timeout_async(self):
+        """Test that point operations respect client timeout"""
+
+        # Create a container for testing
+        created_container = await self.database_for_test.create_container(
+            id='point_op_timeout_container_' + str(uuid.uuid4()),
+            partition_key=PartitionKey(path="/pk")
+        )
+
+        # Create a test item
+        test_item = {
+            'id': 'test_item_1',
+            'pk': 'partition1',
+            'data': 'test_data'
+        }
+        await created_container.create_item(test_item)
+
+        # Create a transport that introduces significant delay for point operations
+        class SlowPointOperationTransport(AioHttpTransport):
+            async def send(self, request, **kwargs):
+                # Delay point read operations (GET requests to docs endpoint)
+                if request.method == 'GET' and 'docs' in request.url and 'test_item_1' in request.url:
+                    time.sleep(2.0)  # 2 second delay
+
+                return await super().send(request, **kwargs)
+
+        # Create client with slow transport
+        slow_transport = SlowPointOperationTransport()
+        async with CosmosClient(
+                self.host,
+                self.masterKey,
+                transport=slow_transport
+        ) as client_with_slow_transport:
+            container_with_slow_transport = client_with_slow_transport.get_database_client(
+                self.database_for_test.id
+            ).get_container_client(created_container.id)
+
+            # Test 1: Short timeout should fail
+            with self.assertRaises(exceptions.CosmosClientTimeoutError):
+                await container_with_slow_transport.read_item(
+                    item='test_item_1',
+                    partition_key='partition1',
+                    timeout=1.0  # 1 second timeout, but operation takes 2 seconds
+                )
+
+            # Test 2: Long timeout should succeed
+            result = await container_with_slow_transport.read_item(
+                item='test_item_1',
+                partition_key='partition1',
+                timeout=3.0  # 3 second timeout, operation takes 2 seconds
+            )
+            self.assertEqual(result['id'], 'test_item_1')
+
+    async def test_timeout_applies_per_page_request_async(self):
+        """Test that timeout applies to each individual page request, not cumulatively"""
+
+        test_cases = [
+            {
+                "name": "timeout_per_page_success",
+                "description": "Each page request succeeds within timeout",
+                "delay_per_request": 0.3,
+                "timeout": 0.5,
+                "client_processing_delay": 0.1,
+                "should_succeed": True,
+                "expected_items": 250
+            }
+
+        ]
+
+        for test_case in test_cases:
+            with self.subTest(test_case=test_case["name"]):
+                print(f"\nRunning test case: {test_case['name']} - {test_case['description']}")
+
+                # Create a container
+                created_container = await self.database_for_test.create_container(
+                    id='timeout_test_container_' + str(uuid.uuid4()),
+                    partition_key=PartitionKey(path="/pk")
+                )
+
+                # Create enough items to ensure multiple pages
+                num_items = 250
+                for i in range(num_items):
+                    await created_container.create_item({
+                        'id': f'item_{i}',
+                        'pk': 'partition1',
+                        'data': f'test_data_{i}'
+                    })
+
+                # Create a transport that introduces delays per request
+                class AsyncDelayedQueryTransport(AioHttpTransport):
+                    def __init__(self, delay_per_request):
+                        super().__init__()
+                        self.delay_per_request = delay_per_request
+                        self.request_count = 0
+
+                    async def send(self, request, **kwargs):
+                        # Only delay query requests (not container metadata requests)
+                        if 'docs' in request.url and request.method == 'POST':
+                            self.request_count += 1
+                            await asyncio.sleep(self.delay_per_request)
+
+                        return await super().send(request, **kwargs)
+
+                delayed_transport = AsyncDelayedQueryTransport(delay_per_request=test_case["delay_per_request"])
+                async with CosmosClient(
+                        self.host,
+                        self.masterKey,
+                        transport=delayed_transport
+                ) as client_with_delay:
+                    container_with_delay = client_with_delay.get_database_client(
+                        self.database_for_test.id
+                    ).get_container_client(created_container.id)
+
+                    items_processed = 0
+
+                    if test_case["should_succeed"]:
+                        # Should process all items successfully
+                        async for item in container_with_delay.query_items(
+                                query="SELECT * FROM c",
+                                timeout=test_case["timeout"],
+                                max_item_count=100,
+                                # enable_cross_partition_query=True why I can't pass it , need to look into it?
+                        ):
+                            items_processed += 1
+                            # Simulate client-side processing
+                            await asyncio.sleep(test_case["client_processing_delay"])
+
+                        self.assertEqual(items_processed, test_case["expected_items"])
+                        self.assertGreater(delayed_transport.request_count, 1)
+                    else:
+                        # Should fail with timeout
+                        with self.assertRaises(exceptions.CosmosClientTimeoutError):
+                            async for item in container_with_delay.query_items(
+                                    query="SELECT * FROM c",
+                                    timeout=test_case["timeout"],
+                                    max_item_count=100,
+                                    # enable_cross_partition_query=True
+                            ):
+                                items_processed += 1
+                                await asyncio.sleep(test_case["client_processing_delay"])
+
+
+
     async def test_query_iterable_functionality_async(self):
 
         collection = await self.database_for_test.create_container("query-iterable-container-async",

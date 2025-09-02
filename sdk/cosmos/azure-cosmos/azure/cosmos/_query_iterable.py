@@ -76,7 +76,7 @@ class QueryIterable(PageIterator):
         # Capture timeout and start time
         self._client_timeout = options.get('timeout')
         # Use passed start time if available, otherwise use current time
-        self._operation_start_time = options.get('_operation_start_time') or (
+        self.operation_start_time = options.get('operation_start_time') or (
             time.time() if self._client_timeout else None)
         self._fetch_function = fetch_function
         self._collection_link = collection_link
@@ -108,7 +108,7 @@ class QueryIterable(PageIterator):
         """
         # Check timeout before fetching next block
         if self._client_timeout:
-            elapsed = time.time() - self._operation_start_time
+            elapsed = time.time() - self.operation_start_time
             if elapsed >= self._client_timeout:
                 raise exceptions.CosmosClientTimeoutError()
 
@@ -122,7 +122,7 @@ class QueryIterable(PageIterator):
         block = self._ex_context.fetch_next_block()
         # Check timeout after fetching block
         if self._client_timeout:
-            elapsed = time.time() - self._operation_start_time
+            elapsed = time.time() - self.operation_start_time
             if elapsed >= self._client_timeout:
                 raise exceptions.CosmosClientTimeoutError()
         if not block:
