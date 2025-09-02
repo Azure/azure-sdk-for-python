@@ -107,7 +107,7 @@ class ContainerProxy:
             kwargs['excluded_locations'] = options['excludedLocations']
         return await self._get_properties(**kwargs)
 
-    async def _get_properties(self, **kwargs: Any) -> Dict[str, Any]:
+    async def _get_properties(self, **kwargs: Any) -> CosmosDict:
         if self.container_link not in self.client_connection._container_properties_cache:
             await self.read(**kwargs)
         return self.client_connection._container_properties_cache[self.container_link]

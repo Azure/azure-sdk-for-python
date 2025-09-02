@@ -187,7 +187,7 @@ async def run_sample():
                 db = await client.create_database(id=DATABASE_ID, offer_throughput=throughput_properties)
 
             except exceptions.CosmosResourceExistsError:
-                db = await client.get_database_client(DATABASE_ID)
+                db = client.get_database_client(DATABASE_ID)
 
             # demonstrate database operations
             print("\n=== Database Operations ===")
