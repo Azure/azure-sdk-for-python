@@ -106,28 +106,6 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
     def set_excluded_locations_from_circuit_breaker(self, excluded_locations: List[str]) -> None: # pylint: disable=name-too-long
         self.excluded_locations_circuit_breaker = excluded_locations
 
-    def set_is_hedging_request(self, is_hedging_request: bool) -> None:
-        self.is_hedging_request = is_hedging_request
-
-    def set_completion_status(self, status: HedgingCompletionStatus) -> None:
-        """Set the shared completion status between parallel requests.
-        
-        :param status: Thread-safe or async-safe completion status tracker
-        :type status: HedgingCompletionStatus
-        :raises ValueError: If status is None
-        """
-        if status is None:
-            raise ValueError("completion status argument can not be None")
-        self.completion_status = status
-
-    def get_completion_status(self) -> Optional[HedgingCompletionStatus]:
-        """Get the shared completion status.
-        
-        :return: The completion status or None if not set
-        :rtype: Optional[HedgingCompletionStatus]
-        """
-        return self.completion_status
-
     def set_availability_strategy(
             self,
             options: Mapping[str, Any],
@@ -143,7 +121,7 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
         """
         # setup availabilityStrategy
         # First try to get from options
-        if options is not None and 'availabilityStrategy' in options and options['availabilityStrategy'] is not None:
+        if 'availabilityStrategy' in options:
             self.availability_strategy = options['availabilityStrategy']
         # If not in options, use client default
         elif client_strategy is not None:
@@ -175,5 +153,4 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
         :return: True if request should be cancelled, False otherwise
         :rtype: bool
         """
-        status = self.get_completion_status()
-        return status is not None and status.is_completed
+        return self.completion_status is not None and self.completion_status.is_completed

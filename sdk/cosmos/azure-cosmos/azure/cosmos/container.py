@@ -61,6 +61,7 @@ from .partition_key import (
 from .scripts import ScriptsProxy
 
 __all__ = ("ContainerProxy",)
+_Unset: Any = object()
 
 # pylint: disable=too-many-lines,disable=protected-access
 # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
@@ -227,7 +228,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         max_integrated_cache_staleness_in_ms: Optional[int] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         throughput_bucket: Optional[int] = None,
-        availability_strategy: Optional[CrossRegionHedgingStrategy] = None,
+        availability_strategy: Optional[CrossRegionHedgingStrategy] = _Unset,
         availability_strategy_executor: Optional[ThreadPoolExecutor] = None,
         response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
         **kwargs: Any
@@ -261,7 +262,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword availability_strategy_executor: Optional ThreadPoolExecutor used by the availability strategy
              for executing concurrent cross-region requests. If not provided but availability_strategy is enabled,
              a new executor will be created as needed.
-        :paramtype availability_strategy: ~concurrent.futures.thread.ThreadPoolExecutor
+        :paramtype availability_strategy_executor: ~concurrent.futures.thread.ThreadPoolExecutor
         :returns: A CosmosDict representing the item to be retrieved.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item couldn't be retrieved.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
@@ -284,7 +285,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             kwargs['priority'] = priority
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
-        if availability_strategy is not None:
+        if availability_strategy is not _Unset:
             kwargs[Constants.Kwargs.AVAILABILITY_STRATEGY] = availability_strategy
         if availability_strategy_executor is not None:
             kwargs[Constants.Kwargs.AVAILABILITY_STRATEGY_EXECUTOR] = availability_strategy_executor
@@ -320,7 +321,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             excluded_locations: Optional[List[str]] = None,
             priority: Optional[Literal["High", "Low"]] = None,
             throughput_bucket: Optional[int] = None,
-            availability_strategy: Optional[CrossRegionHedgingStrategy] = None,
+            availability_strategy: Optional[CrossRegionHedgingStrategy] = _Unset,
             availability_strategy_executor: Optional[ThreadPoolExecutor] = None,
             **kwargs: Any
     ) -> CosmosList:
@@ -350,7 +351,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword availability_strategy_executor: Optional ThreadPoolExecutor used by the availability strategy
              for executing concurrent cross-region requests. If not provided but availability_strategy is enabled,
              a new executor will be created as needed.
-        :paramtype availability_strategy: ~concurrent.futures.thread.ThreadPoolExecutor
+        :paramtype availability_strategy_executor: ~concurrent.futures.thread.ThreadPoolExecutor
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The read-many operation failed.
         :returns: A CosmosList containing the retrieved items. Items that were not found are omitted from the list.
         :rtype: ~azure.cosmos.CosmosList
@@ -368,7 +369,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             kwargs['priority'] = priority
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
-        if availability_strategy is not None:
+        if availability_strategy is not _Unset:
             kwargs[Constants.Kwargs.AVAILABILITY_STRATEGY] = availability_strategy
         if availability_strategy_executor is not None:
             kwargs[Constants.Kwargs.AVAILABILITY_STRATEGY_EXECUTOR] = availability_strategy_executor
@@ -400,7 +401,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         max_integrated_cache_staleness_in_ms: Optional[int] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         throughput_bucket: Optional[int] = None,
-        availability_strategy: Optional[CrossRegionHedgingStrategy] = None,
+        availability_strategy: Optional[CrossRegionHedgingStrategy] = _Unset,
         availability_strategy_executor: Optional[ThreadPoolExecutor] = None,
         response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
         **kwargs: Any
@@ -442,7 +443,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             kwargs['priority'] = priority
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
-        if availability_strategy is not None:
+        if availability_strategy is not _Unset:
             kwargs[Constants.Kwargs.AVAILABILITY_STRATEGY] = availability_strategy
         if availability_strategy_executor is not None:
             kwargs[Constants.Kwargs.AVAILABILITY_STRATEGY_EXECUTOR] = availability_strategy_executor
@@ -479,7 +480,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             partition_key: _PartitionKeyType,
             priority: Optional[Literal["High", "Low"]] = None,
             mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]] = None,
-            availability_strategy: Optional[CrossRegionHedgingStrategy] = None,
+            availability_strategy: Optional[CrossRegionHedgingStrategy] = _Unset,
             availability_strategy_executor: Optional[ThreadPoolExecutor] = None,
             response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
             **kwargs: Any
@@ -516,7 +517,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword availability_strategy_executor: Optional ThreadPoolExecutor used by the availability strategy
              for executing concurrent cross-region requests. If not provided but availability_strategy is enabled,
              a new executor will be created as needed.
-        :paramtype availability_strategy: ~concurrent.futures.thread.ThreadPoolExecutor
+        :paramtype availability_strategy_executor: ~concurrent.futures.thread.ThreadPoolExecutor
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
         :returns: An Iterable of items (dicts).
@@ -533,7 +534,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
             priority: Optional[Literal["High", "Low"]] = None,
             mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]] = None,
-            availability_strategy: Optional[CrossRegionHedgingStrategy] = None,
+            availability_strategy: Optional[CrossRegionHedgingStrategy] = _Unset,
             availability_strategy_executor: Optional[ThreadPoolExecutor] = None,
             response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
             **kwargs: Any
@@ -569,7 +570,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword availability_strategy_executor: Optional ThreadPoolExecutor used by the availability strategy
              for executing concurrent cross-region requests. If not provided but availability_strategy is enabled,
              a new executor will be created as needed.
-        :paramtype availability_strategy: ~concurrent.futures.thread.ThreadPoolExecutor
+        :paramtype availability_strategy_executor: ~concurrent.futures.thread.ThreadPoolExecutor
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
         :returns: An Iterable of items (dicts).
@@ -584,7 +585,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             continuation: str,
             max_item_count: Optional[int] = None,
             priority: Optional[Literal["High", "Low"]] = None,
-            availability_strategy: Optional[CrossRegionHedgingStrategy] = None,
+            availability_strategy: Optional[CrossRegionHedgingStrategy] = _Unset,
             availability_strategy_executor: Optional[ThreadPoolExecutor] = None,
             response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
             **kwargs: Any
@@ -609,7 +610,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword availability_strategy_executor: Optional ThreadPoolExecutor used by the availability strategy
              for executing concurrent cross-region requests. If not provided but availability_strategy is enabled,
              a new executor will be created as needed.
-        :paramtype availability_strategy: ~concurrent.futures.thread.ThreadPoolExecutor
+        :paramtype availability_strategy_executor: ~concurrent.futures.thread.ThreadPoolExecutor
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
         :returns: An Iterable of items (dicts).
@@ -625,7 +626,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
             priority: Optional[Literal["High", "Low"]] = None,
             mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]] = None,
-            availability_strategy: Optional[CrossRegionHedgingStrategy] = None,
+            availability_strategy: Optional[CrossRegionHedgingStrategy] = _Unset,
             availability_strategy_executor: Optional[ThreadPoolExecutor] = None,
             response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
             **kwargs: Any
@@ -660,7 +661,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword availability_strategy_executor: Optional ThreadPoolExecutor used by the availability strategy
              for executing concurrent cross-region requests. If not provided but availability_strategy is enabled,
              a new executor will be created as needed.
-        :paramtype availability_strategy: ~concurrent.futures.thread.ThreadPoolExecutor
+        :paramtype availability_strategy_executor: ~concurrent.futures.thread.ThreadPoolExecutor
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
         :returns: An Iterable of items (dicts).
@@ -702,10 +703,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             This excluded_location will override existing excluded_locations in client level.
         :keyword availability_strategy: The availability strategy to use for this request. If not provided,
              the client's default strategy will be used.
+        :paramtype availability_strategy: ~azure.cosmos.CrossRegionHedgingStrategy
         :keyword availability_strategy_executor: Optional ThreadPoolExecutor used by the availability strategy
              for executing concurrent cross-region requests. If not provided but availability_strategy is enabled,
              a new executor will be created as needed.
-        :paramtype availability_strategy: ~azure.cosmos.CrossRegionHedgingStrategy
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
         :param Any args: args
@@ -770,7 +771,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
             session_token: Optional[str] = None,
             throughput_bucket: Optional[int] = None,
-            availability_strategy: Optional[CrossRegionHedgingStrategy] = None,
+            availability_strategy: Optional[CrossRegionHedgingStrategy] = _Unset,
             availability_strategy_executor: Optional[ThreadPoolExecutor] = None,
             **kwargs: Any
     ):
@@ -823,7 +824,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword availability_strategy_executor: Optional ThreadPoolExecutor used by the availability strategy
              for executing concurrent cross-region requests. If not provided but availability_strategy is enabled,
              a new executor will be created as needed.
-        :paramtype availability_strategy: ~concurrent.futures.thread.ThreadPoolExecutor
+        :paramtype availability_strategy_executor: ~concurrent.futures.thread.ThreadPoolExecutor
         :returns: An Iterable of items (dicts).
         :rtype: ItemPaged[Dict[str, Any]]
 
@@ -864,7 +865,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
             session_token: Optional[str] = None,
             throughput_bucket: Optional[int] = None,
-            availability_strategy: Optional[CrossRegionHedgingStrategy] = None,
+            availability_strategy: Optional[CrossRegionHedgingStrategy] = _Unset,
             availability_strategy_executor: Optional[ThreadPoolExecutor] = None,
             **kwargs: Any
     ):
@@ -916,7 +917,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword availability_strategy_executor: Optional ThreadPoolExecutor used by the availability strategy
              for executing concurrent cross-region requests. If not provided but availability_strategy is enabled,
              a new executor will be created as needed.
-        :paramtype availability_strategy: ~concurrent.futures.thread.ThreadPoolExecutor
+        :paramtype availability_strategy_executor: ~concurrent.futures.thread.ThreadPoolExecutor
         :returns: An Iterable of items (dicts).
         :rtype: ItemPaged[Dict[str, Any]]
 
@@ -1089,7 +1090,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         no_response: Optional[bool] = None,
         retry_write: Optional[bool] = None,
         throughput_bucket: Optional[int] = None,
-        availability_strategy: Optional["CrossRegionHedgingStrategy"] = None,
+        availability_strategy: Optional["CrossRegionHedgingStrategy"] = _Unset,
         response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
         **kwargs: Any
     ) -> CosmosDict:
@@ -1155,7 +1156,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
-        if availability_strategy is not None:
+        if availability_strategy is not _Unset:
             kwargs[Constants.Kwargs.AVAILABILITY_STRATEGY] = availability_strategy
         if response_hook is not None:
             kwargs['response_hook'] = response_hook
@@ -1193,7 +1194,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         no_response: Optional[bool] = None,
         retry_write: Optional[bool] = None,
         throughput_bucket: Optional[int] = None,
-        availability_strategy: Optional[CrossRegionHedgingStrategy] = None,
+        availability_strategy: Optional[CrossRegionHedgingStrategy] = _Unset,
         availability_strategy_executor: Optional[ThreadPoolExecutor] = None,
         response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
         **kwargs: Any
@@ -1258,7 +1259,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             kwargs['no_response'] = no_response
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
-        if availability_strategy is not None:
+        if availability_strategy is not _Unset:
             kwargs[Constants.Kwargs.AVAILABILITY_STRATEGY] = availability_strategy
         if availability_strategy_executor is not None:
             kwargs[Constants.Kwargs.AVAILABILITY_STRATEGY_EXECUTOR] = availability_strategy_executor
@@ -1301,7 +1302,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         no_response: Optional[bool] = None,
         retry_write: Optional[bool] = None,
         throughput_bucket: Optional[int] = None,
-        availability_strategy: Optional[CrossRegionHedgingStrategy] = None,
+        availability_strategy: Optional[CrossRegionHedgingStrategy] = _Unset,
         availability_strategy_executor: Optional[ThreadPoolExecutor] = None,
         response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
         **kwargs: Any
@@ -1378,7 +1379,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
-        if availability_strategy is not None:
+        if availability_strategy is not _Unset:
             kwargs[Constants.Kwargs.AVAILABILITY_STRATEGY] = availability_strategy
         if availability_strategy_executor is not None:
             kwargs[Constants.Kwargs.AVAILABILITY_STRATEGY_EXECUTOR] = availability_strategy_executor
@@ -1417,7 +1418,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         no_response: Optional[bool] = None,
         retry_write: Optional[bool] = None,
         throughput_bucket: Optional[int] = None,
-        availability_strategy: Optional[CrossRegionHedgingStrategy] = None,
+        availability_strategy: Optional[CrossRegionHedgingStrategy] = _Unset,
         availability_strategy_executor: Optional[ThreadPoolExecutor] = None,
         response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
         **kwargs: Any
@@ -1488,7 +1489,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
-        if availability_strategy is not None:
+        if availability_strategy is not _Unset:
             kwargs[Constants.Kwargs.AVAILABILITY_STRATEGY] = availability_strategy
         if availability_strategy_executor is not None:
             kwargs[Constants.Kwargs.AVAILABILITY_STRATEGY_EXECUTOR] = availability_strategy_executor
@@ -1521,7 +1522,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         priority: Optional[Literal["High", "Low"]] = None,
         retry_write: Optional[bool] = None,
         throughput_bucket: Optional[int] = None,
-        availability_strategy: Optional[CrossRegionHedgingStrategy] = None,
+        availability_strategy: Optional[CrossRegionHedgingStrategy] = _Unset,
         availability_strategy_executor: Optional[ThreadPoolExecutor] = None,
         response_hook: Optional[Callable[[Mapping[str, str], List[Dict[str, Any]]], None]] = None,
         **kwargs: Any
@@ -1549,7 +1550,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword availability_strategy_executor: Optional ThreadPoolExecutor used by the availability strategy
              for executing concurrent cross-region requests. If not provided but availability_strategy is enabled,
              a new executor will be created as needed.
-        :paramtype availability_strategy: ~concurrent.futures.thread.ThreadPoolExecutor
+        :paramtype availability_strategy_executor: ~concurrent.futures.thread.ThreadPoolExecutor
         :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
@@ -1586,7 +1587,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             kwargs["throughput_bucket"] = throughput_bucket
         if retry_write is not None:
             kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
-        if availability_strategy is not None:
+        if availability_strategy is not _Unset:
             kwargs[Constants.Kwargs.AVAILABILITY_STRATEGY] = availability_strategy
         if availability_strategy_executor is not None:
             kwargs[Constants.Kwargs.AVAILABILITY_STRATEGY_EXECUTOR] = availability_strategy_executor
@@ -1616,7 +1617,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         priority: Optional[Literal["High", "Low"]] = None,
         retry_write: Optional[bool] = None,
         throughput_bucket: Optional[int] = None,
-        availability_strategy: Optional[CrossRegionHedgingStrategy] = None,
+        availability_strategy: Optional[CrossRegionHedgingStrategy] = _Unset,
         availability_strategy_executor: Optional[ThreadPoolExecutor] = None,
         response_hook: Optional[Callable[[Mapping[str, str], None], None]] = None,
         **kwargs: Any
@@ -1675,7 +1676,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
-        if availability_strategy is not None:
+        if availability_strategy is not _Unset:
             kwargs[Constants.Kwargs.AVAILABILITY_STRATEGY] = availability_strategy
         if availability_strategy_executor is not None:
             kwargs[Constants.Kwargs.AVAILABILITY_STRATEGY_EXECUTOR] = availability_strategy_executor

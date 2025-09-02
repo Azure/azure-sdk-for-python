@@ -130,8 +130,8 @@ class CrossRegionHedgingHandler:
         """
         # Create request parameters for this location
         params = copy.deepcopy(request_params)
-        params.set_is_hedging_request(location_index > 0)
-        params.set_completion_status(complete_status)
+        params.is_hedging_request = location_index > 0
+        params.completion_status = complete_status
 
         # Setup excluded regions for hedging requests
         params.excluded_locations = self._setup_excluded_regions_for_hedging(
@@ -144,22 +144,21 @@ class CrossRegionHedgingHandler:
 
         if location_index == 0:
             # No delay for initial request
-            delay: float = 0
+            delay: int = 0
             first_request_params_holder.request_params = params
         elif location_index == 1:
             # First hedged request after threshold
             delay = (cast(CrossRegionHedgingStrategy, request_params.availability_strategy)
-                     .threshold
-                     .total_seconds())
+                     .threshold_ms)
         else:
             # Subsequent requests after threshold steps
             steps = location_index - 1
             cross_region_hedging_strategy = cast(CrossRegionHedgingStrategy, request_params.availability_strategy)
-            delay = (cross_region_hedging_strategy.threshold.total_seconds() +
-                     (steps * cross_region_hedging_strategy.threshold_steps.total_seconds()))
+            delay = (cross_region_hedging_strategy.threshold_ms +
+                     (steps * cross_region_hedging_strategy.threshold_steps_ms))
 
         if delay > 0:
-            time.sleep(delay)
+            time.sleep(delay / 1000)
 
         if complete_status.is_completed:
             raise CancelledError("The request has been cancelled")
@@ -315,5 +314,5 @@ def execute_with_hedging(
             request,
             execute_request_fn
         )
-    raise ValueError("Unsupported availability strategy type: {0}".format(CrossRegionHedgingStrategy.__class__))
+    raise ValueError(f"Unsupported availability strategy type: {type(CrossRegionHedgingStrategy)}")
 

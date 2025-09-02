@@ -26,7 +26,6 @@ availability in multi-region deployments. Strategies can be configured at the cl
 and overridden per request.
 """
 
-from datetime import timedelta
 
 class CrossRegionHedgingStrategy:
     """Configuration for cross-region request routing using availability thresholds.
@@ -34,13 +33,6 @@ class CrossRegionHedgingStrategy:
     Controls whether and how requests are routed across regions for improved availability
     and latency. Uses time-based thresholds to determine when to route requests to alternate
     regions. Can be configured at the client level and overridden per request.
-    
-    :param enabled: Whether cross-region request routing is enabled, defaults to True
-    :type enabled: bool
-    :param threshold: Time to wait before routing to an alternate region, defaults to 500ms
-    :type threshold: ~datetime.timedelta
-    :param threshold_steps: Time interval between subsequent region routing attempts, defaults to 100ms
-    :type threshold_steps: ~datetime.timedelta
     
     Example:
         ```python
@@ -55,8 +47,8 @@ class CrossRegionHedgingStrategy:
         # Custom routing thresholds
         strategy = CrossRegionHedgingStrategy(
             enabled=True,
-            threshold=timedelta(milliseconds=500),  # Try alternate region after 500ms
-            threshold_steps=timedelta(milliseconds=100)  # Wait 100ms between region attempts
+            threshold_ms=500,  # Try alternate region after 500ms
+            threshold_steps_ms=100  # Wait 100ms between region attempts
         )
         
         # Set at client level
@@ -74,35 +66,24 @@ class CrossRegionHedgingStrategy:
         )
         ```
     """
+
+    threshold_ms: int
+    """Wait time in milliseconds before routing to alternate region. Default value is 500."""
+    threshold_steps_ms: int
+    """Time interval in milliseconds between subsequent region routing attempts. Default value is 100."""
+
     
     def __init__(
         self,
-        enabled: bool = True,
-        threshold: timedelta = timedelta(milliseconds=500),
-        threshold_steps: timedelta = timedelta(milliseconds=100)
+        threshold_ms: int = 500,
+        threshold_steps_ms: int = 100
     ) -> None:
         """Initialize availability strategy with specified configuration."""
-        if enabled:
-            if threshold.total_seconds() <= 0:
-                raise ValueError("threshold must be positive when enabled is True")
-            if threshold_steps.total_seconds() <= 0:
-                raise ValueError("threshold_steps must be positive when enabled is True")
-                
-        self._enabled = enabled
-        self._threshold = threshold
-        self._threshold_steps = threshold_steps
-    
-    @property
-    def enabled(self) -> bool:
-        """Whether cross-region request routing is enabled."""
-        return self._enabled
-        
-    @property
-    def threshold(self) -> timedelta:
-        """Wait time before routing to alternate region."""
-        return self._threshold
-        
-    @property
-    def threshold_steps(self) -> timedelta:
-        """Time interval between subsequent region routing attempts."""
-        return self._threshold_steps
+        if threshold_ms <= 0:
+            raise ValueError("threshold must be positive when enabled is True")
+        if threshold_steps_ms <= 0:
+            raise ValueError("threshold_steps must be positive when enabled is True")
+
+        self.threshold_ms = threshold_ms
+        self.threshold_steps_ms = threshold_steps_ms
+

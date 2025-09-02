@@ -130,7 +130,7 @@ class CrossRegionAsyncHedgingHandler:
         # Create request parameters for this location
         params = copy.deepcopy(request_params)
         params.is_hedging_request = location_index > 0
-        params.set_completion_status(complete_status)
+        params.completion_status = complete_status
 
         # Setup excluded regions for hedging requests
         params.excluded_locations = self._setup_excluded_regions_for_hedging(
@@ -143,20 +143,20 @@ class CrossRegionAsyncHedgingHandler:
 
         # Calculate delay based on location index
         if location_index == 0:
-            delay: float = 0  # No delay for initial request
+            delay: int = 0  # No delay for initial request
             first_request_params_holder.request_params = params
         elif location_index == 1:
             # First hedged request after threshold
-            delay = cast(CrossRegionHedgingStrategy, request_params.availability_strategy).threshold.total_seconds()
+            delay = cast(CrossRegionHedgingStrategy, request_params.availability_strategy).threshold_ms
         else:
             # Subsequent requests after threshold steps
             steps = location_index - 1
             cross_region_hedging_strategy = cast(CrossRegionHedgingStrategy, request_params.availability_strategy)
-            delay = (cross_region_hedging_strategy.threshold.total_seconds() +
-                     (steps * cross_region_hedging_strategy.threshold_steps.total_seconds()))
+            delay = (cross_region_hedging_strategy.threshold_ms +
+                     (steps * cross_region_hedging_strategy.threshold_steps_ms))
 
         if delay > 0:
-            await asyncio.sleep(delay)
+            await asyncio.sleep(delay / 1000)
 
         if complete_status is not None and complete_status.is_completed:
             raise CancelledError("The request has been cancelled")
@@ -240,8 +240,8 @@ class CrossRegionAsyncHedgingHandler:
             # if we have reached here, it means all tasks completed_task but all failed with transient exceptions
             # in this case, raise the exception from the first task
             completion_status.set_completed()
-            assert first_task is not None
-            assert first_task.exception() is not None
+            if first_task is None or first_task.exception() is None:
+                raise RuntimeError("first task can not be none and it should have failed")
             raise first_task.exception()
         finally:
             for task in tasks:
@@ -331,5 +331,5 @@ async def execute_with_availability_strategy(
             execute_request_fn
         )
 
-    raise ValueError("Unsupported availability strategy type: {0}".format(CrossRegionHedgingStrategy.__class__))
+    raise ValueError(f"Unsupported availability strategy type: {type(CrossRegionHedgingStrategy)}")
 

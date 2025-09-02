@@ -6,19 +6,20 @@ import os
 import re
 import unittest
 import uuid
-from datetime import timedelta
-from typing import Optional, List
+from typing import Optional, List, Any
 
 import pytest
+from azure.core.exceptions import ServiceResponseError
+
 import test_config
 from _fault_injection_transport import FaultInjectionTransport
-from azure.core.exceptions import ServiceResponseError
 from azure.cosmos import CosmosClient, _location_cache
 from azure.cosmos._availability_strategy import CrossRegionHedgingStrategy
 from azure.cosmos.documents import _OperationType as OperationType
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos.http_constants import ResourceType
 
+_Unset: Any = object()
 class MockHandler(logging.Handler):
     def __init__(self):
         super(MockHandler, self).__init__()
@@ -68,18 +69,19 @@ def perform_read_operation(
         created_doc,
         expected_uris,
         excluded_uris,
-        availability_strategy=None,
-        excluded_locations:Optional[List[str]] = None,
+        availability_strategy: Optional[CrossRegionHedgingStrategy] = _Unset,
+        excluded_locations: Optional[List[str]] = None,
         **kwargs):
     excluded_locations = [] if excluded_locations is None else excluded_locations
 
     """Execute different types of read operations"""
+    if availability_strategy is not _Unset:
+        kwargs['availability_strategy'] = availability_strategy
     if operation == READ:
         container.read_item(
             item=created_doc['id'],
             partition_key=created_doc['pk'],
             excluded_locations=excluded_locations,
-            availability_strategy=availability_strategy,
             **kwargs)
     elif operation == QUERY:
         response = list(container.query_items(
@@ -87,7 +89,6 @@ def perform_read_operation(
             parameters=[{"name": "@id", "value": created_doc['id']}],
             enable_cross_partition_query=True,
             excluded_locations=excluded_locations,
-            availability_strategy=availability_strategy,
             **kwargs
         ))
         assert response[0]['id'] == created_doc['id']
@@ -97,7 +98,6 @@ def perform_read_operation(
             parameters=[{"name": "@id", "value": created_doc['id']}, {"name": "@pk", "value": created_doc['pk']}],
             partition_key=created_doc['pk'],
             excluded_locations=excluded_locations,
-            availability_strategy=availability_strategy,
             **kwargs
         ))
         assert response[0]['id'] == created_doc['id']
@@ -105,7 +105,6 @@ def perform_read_operation(
         response = list(
             container.read_all_items(
                 excluded_locations=excluded_locations,
-                availability_strategy=availability_strategy,
                 **kwargs))
         assert any(item['id'] == created_doc['id'] for item in response)
 
@@ -114,7 +113,6 @@ def perform_read_operation(
             container.query_items_change_feed(
                 partition_key=created_doc['pk'],
                 excluded_locations=excluded_locations,
-                availability_strategy=availability_strategy,
                 **kwargs))
         any(item['id'] == created_doc['id'] for item in response)
 
@@ -131,19 +129,21 @@ def perform_write_operation(
         expected_uris,
         excluded_uris,
         retry_write=False,
-        availability_strategy=None,
+        availability_strategy: Optional[CrossRegionHedgingStrategy] = _Unset,
         excluded_locations: Optional[List[str]] = None,
         **kwargs):
     """Execute different types of write operations"""
 
     excluded_locations = [] if excluded_locations is None else excluded_locations
+    if availability_strategy is not _Unset:
+        kwargs['availability_strategy'] = availability_strategy
+
     if operation == CREATE:
         doc = create_doc()
         container.create_item(
             body=doc,
             retry_write=retry_write,
             excluded_locations=excluded_locations,
-            availability_strategy=availability_strategy,
             **kwargs)
 
     elif operation == UPSERT:
@@ -152,7 +152,6 @@ def perform_write_operation(
             body=doc,
             retry_write=retry_write,
             excluded_locations=excluded_locations,
-            availability_strategy=availability_strategy,
             **kwargs)
 
     elif operation == REPLACE:
@@ -162,7 +161,6 @@ def perform_write_operation(
             body=created_doc,
             retry_write=retry_write,
             excluded_locations=excluded_locations,
-            availability_strategy=availability_strategy,
             **kwargs)
 
     elif operation == DELETE:
@@ -171,7 +169,6 @@ def perform_write_operation(
             partition_key=created_doc['pk'],
             retry_write=retry_write,
             excluded_locations=excluded_locations,
-            availability_strategy=availability_strategy,
             **kwargs)
 
     elif operation == PATCH:
@@ -182,19 +179,18 @@ def perform_write_operation(
             patch_operations=operations,
             retry_write=retry_write,
             excluded_locations=excluded_locations,
-            availability_strategy=availability_strategy,
             **kwargs)
 
     elif operation == BATCH:
+        doc = create_doc()
         batch_ops = [
-            ("upsert", (create_doc(),))
+            ("upsert", (doc,))
         ]
         container.execute_item_batch(
             batch_ops,
-            partition_key=created_doc['pk'],
+            partition_key=doc['pk'],
             retry_write=retry_write,
             excluded_locations=excluded_locations,
-            availability_strategy=availability_strategy,
             **kwargs)
 
     validate_response_uris(
@@ -324,45 +320,23 @@ class TestAvailabilityStrategy:
         custom_transport.add_fault(predicate, error_lambda)
         return custom_transport
 
-    @pytest.mark.parametrize("threshold,threshold_steps", [
-        (timedelta(milliseconds=-1), timedelta(milliseconds=100)),
-        (timedelta(milliseconds=0), timedelta(milliseconds=100)),
-        (timedelta(milliseconds=100), timedelta(milliseconds=-1)),
-        (timedelta(milliseconds=100), timedelta(milliseconds=0))
+    @pytest.mark.parametrize("threshold_ms,threshold_steps_ms", [
+        (-1, 100),
+        (0, 100),
+        (100, -1),
+        (100,0)
     ])
-    def test_invalid_thresholds_when_enabled(self, threshold, threshold_steps):
+    def test_invalid_thresholds_when_enabled(self, threshold_ms, threshold_steps_ms):
         """Test that creating strategy with non-positive thresholds raises ValueError when enabled"""
         with pytest.raises(ValueError):
-            CrossRegionHedgingStrategy(
-                enabled=True,
-                threshold=threshold,
-                threshold_steps=threshold_steps
-            )
-
-    def test_allows_any_thresholds_when_disabled(self):
-        """Test that any threshold values are allowed when strategy is disabled"""
-        # These should not raise errors since enabled=False
-        CrossRegionHedgingStrategy(
-            enabled=False,
-            threshold=timedelta(milliseconds=-1),
-            threshold_steps=timedelta(milliseconds=-1)
-        )
-        CrossRegionHedgingStrategy(
-            enabled=False,
-            threshold=timedelta(milliseconds=0),
-            threshold_steps=timedelta(milliseconds=0)
-        )
+            CrossRegionHedgingStrategy(threshold_ms=threshold_ms, threshold_steps_ms=threshold_steps_ms)
 
     @pytest.mark.parametrize("operation", [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED, CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
     @pytest.mark.parametrize("availability_strategy_level", ["client", "request"])
     def test_availability_strategy_in_steady_state(self, operation, availability_strategy_level):
         """Test for steady state, operations go to first preferred location even with availability strategy enabled"""
         # Setup client with availability strategy
-        strategy = CrossRegionHedgingStrategy(
-            enabled=True,
-            threshold=timedelta(milliseconds=150),
-            threshold_steps=timedelta(milliseconds=50)
-        )
+        strategy = CrossRegionHedgingStrategy(threshold_ms=150,  threshold_steps_ms=50 )
 
         setup = self.setup_method_with_custom_transport(
             None,
@@ -409,10 +383,7 @@ class TestAvailabilityStrategy:
         )
         custom_transport = self.get_custom_transport_with_fault_injection(predicate, error_lambda)
 
-        strategy = CrossRegionHedgingStrategy(
-            enabled=True,
-            threshold=timedelta(milliseconds=100),
-            threshold_steps=timedelta(milliseconds=50)
+        strategy = CrossRegionHedgingStrategy(threshold_ms=100, threshold_steps_ms=50
         )
         setup = self.setup_method_with_custom_transport(
             custom_transport,
@@ -426,6 +397,10 @@ class TestAvailabilityStrategy:
         expected_uris = [uri_down, failed_over_uri]
         # Test operation with fault injection
 
+        kwargs = {}
+        if availability_strategy_level == "request":
+            kwargs['availability_strategy'] = strategy
+
         if operation in [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED]:
             perform_read_operation(
                 operation,
@@ -433,7 +408,7 @@ class TestAvailabilityStrategy:
                 doc,
                 expected_uris,
                 [],
-                availability_strategy=strategy if availability_strategy_level == "request" else None)
+                **kwargs)
         else:
             perform_write_operation(
                 operation,
@@ -442,7 +417,7 @@ class TestAvailabilityStrategy:
                 expected_uris,
                 [],
                 retry_write=True,
-                availability_strategy=strategy if availability_strategy_level == "request" else None)
+                **kwargs)
 
     @pytest.mark.parametrize("operation", [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED, CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
     @pytest.mark.parametrize("status_code, sub_status_code", NON_TRANSIENT_STATUS_CODES)
@@ -472,11 +447,7 @@ class TestAvailabilityStrategy:
         )
         custom_transport.add_fault(predicate_first_region, error_lambda_first_region)
 
-        strategy = CrossRegionHedgingStrategy(
-            enabled=True,
-            threshold=timedelta(milliseconds=100),
-            threshold_steps=timedelta(milliseconds=50)
-        )
+        strategy = CrossRegionHedgingStrategy(threshold_ms=100, threshold_steps_ms=50)
         setup = self.setup_method_with_custom_transport(
             custom_transport,
             multiple_write_locations=True)
@@ -525,11 +496,7 @@ class TestAvailabilityStrategy:
         )
         custom_transport.add_fault(predicate_first_region, error_lambda_first_region)
 
-        strategy = CrossRegionHedgingStrategy(
-            enabled=True,
-            threshold=timedelta(milliseconds=100),
-            threshold_steps=timedelta(milliseconds=50)
-        )
+        strategy = CrossRegionHedgingStrategy(threshold_ms=100, threshold_steps_ms=50)
         setup = self.setup_method_with_custom_transport(
             custom_transport,
             multiple_write_locations=True)
@@ -554,11 +521,7 @@ class TestAvailabilityStrategy:
     def test_request_level_disable_override_client_strategy(self, operation):
         """Test that request-level disabled policy overrides client-level enabled policy"""
         # Setup client with enabled hedging policy
-        client_strategy = CrossRegionHedgingStrategy(
-            enabled=True,
-            threshold=timedelta(milliseconds=100),
-            threshold_steps=timedelta(milliseconds=50)
-        )
+        client_strategy = CrossRegionHedgingStrategy(threshold_ms=100, threshold_steps_ms=50)
 
         uri_down = _location_cache.LocationCache.GetLocationalEndpoint(self.host, self.REGION_1)
         failed_over_uri = _location_cache.LocationCache.GetLocationalEndpoint(self.host, self.REGION_2)
@@ -577,18 +540,15 @@ class TestAvailabilityStrategy:
         doc = create_doc()
         setup_without_fault['col'].create_item(body=doc)
 
-        # Create request-level policy to disable hedging
-        request_strategy = CrossRegionHedgingStrategy(enabled=False)
-
         expected_uris = [uri_down]
         excluded_uris = [failed_over_uri]
 
         # Test should fail with error from the first region
         with pytest.raises(CosmosHttpResponseError) as exc_info:
             if operation in [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED]:
-                perform_read_operation(operation, setup['col'], doc, expected_uris, excluded_uris, availability_strategy=request_strategy)
+                perform_read_operation(operation, setup['col'], doc, expected_uris, excluded_uris, availability_strategy=None)
             else:
-                perform_write_operation(operation, setup['col'], doc, expected_uris, excluded_uris, retry_write=True, availability_strategy=request_strategy)
+                perform_write_operation(operation, setup['col'], doc, expected_uris, excluded_uris, retry_write=True, availability_strategy=None)
 
         # Verify error code
         assert exc_info.value.status_code == 400
@@ -596,8 +556,6 @@ class TestAvailabilityStrategy:
     @pytest.mark.parametrize("operation", [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED, CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
     def test_request_level_enable_override_client_disable(self, operation):
         """Test that request-level enabled policy overrides client-level disabled policy"""
-        client_strategy = CrossRegionHedgingStrategy(enabled=False)
-
         uri_down = _location_cache.LocationCache.GetLocationalEndpoint(self.host, self.REGION_1)
         failed_over_uri = _location_cache.LocationCache.GetLocationalEndpoint(self.host, self.REGION_2)
 
@@ -613,19 +571,14 @@ class TestAvailabilityStrategy:
         custom_transport = self.get_custom_transport_with_fault_injection(predicate, error_lambda)
         setup = self.setup_method_with_custom_transport(
             custom_transport,
-            multiple_write_locations=True,
-            availability_strategy=client_strategy)
+            multiple_write_locations=True)
         setup_without_fault = self.setup_method_with_custom_transport(None)
 
         doc = create_doc()
         setup_without_fault['col'].create_item(body=doc)
 
         # Create request-level policy to enable hedging
-        request_strategy = CrossRegionHedgingStrategy(
-            enabled=True,
-            threshold=timedelta(milliseconds=100),
-            threshold_steps=timedelta(milliseconds=50)
-        )
+        request_strategy = CrossRegionHedgingStrategy(threshold_ms=100, threshold_steps_ms=50)
 
         expected_uris = [uri_down, failed_over_uri]
         # Test operation with fault injection
@@ -663,11 +616,7 @@ class TestAvailabilityStrategy:
         excluded_uris = [failed_over_uri]
 
         # Test should fail with error from the first region
-        strategy = CrossRegionHedgingStrategy(
-            enabled=True,
-            threshold=timedelta(milliseconds=100),
-            threshold_steps=timedelta(milliseconds=50)
-        )
+        strategy = CrossRegionHedgingStrategy( threshold_ms=100, threshold_steps_ms=50)
         with pytest.raises(CosmosHttpResponseError) as exc_info:
             if operation in [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED]:
                 perform_read_operation(
@@ -718,11 +667,7 @@ class TestAvailabilityStrategy:
         expected_uris = [uri_down]
         excluded_uris = [failed_over_uri]
 
-        strategy = CrossRegionHedgingStrategy(
-            enabled=True,
-            threshold=timedelta(milliseconds=100),
-            threshold_steps=timedelta(milliseconds=50)
-        )
+        strategy = CrossRegionHedgingStrategy(threshold_ms=100, threshold_steps_ms=50)
 
         # Test should fail with error from the first region
         with pytest.raises(CosmosHttpResponseError) as exc_info:
@@ -757,11 +702,7 @@ class TestAvailabilityStrategy:
 
             custom_transport = self.get_custom_transport_with_fault_injection(predicate, error_lambda)
 
-            strategy = CrossRegionHedgingStrategy(
-                enabled=True,
-                threshold=timedelta(milliseconds=100),
-                threshold_steps=timedelta(milliseconds=50)
-            )
+            strategy = CrossRegionHedgingStrategy(threshold_ms=100, threshold_steps_ms=50)
 
             setup_with_fault_injection = self.setup_method_with_custom_transport(
                 custom_transport,

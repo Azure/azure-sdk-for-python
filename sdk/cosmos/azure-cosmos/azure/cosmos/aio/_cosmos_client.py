@@ -185,9 +185,6 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         is unavailable or slow. This helps optimize performance and availability for multi-region accounts.
         The default value is None.
     :paramtype availability_strategy: ~azure.cosmos.CrossRegionHedgingStrategy
-    :keyword availability_strategy_executor: Optional thread pool executor for executing availability strategy operations.
-            Allows customizing the threading behavior of the strategy. If not provided, a default executor will be used.
-    :paramtype availability_strategy_executor: Optional[concurrent.futures.ThreadPoolExecutor]
 
     .. admonition:: Example:
 

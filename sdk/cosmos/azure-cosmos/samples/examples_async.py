@@ -4,14 +4,11 @@
 # license information.
 # -------------------------------------------------------------------------
 import asyncio
-from datetime import timedelta
-
-from azure.cosmos import exceptions, PartitionKey
-from azure.cosmos.aio import CosmosClient
-
 import json
 import os
 
+from azure.cosmos import exceptions, PartitionKey
+from azure.cosmos.aio import CosmosClient
 from cosmos import CrossRegionHedgingStrategy
 
 
@@ -316,9 +313,8 @@ async def examples_async():
         # configure availability strategy on request level
         # [START read_item_with_availability_strategy]
         strategy = CrossRegionHedgingStrategy(
-            enabled=True,
-            threshold=timedelta(milliseconds=500),  # Try alternate region after 500ms
-            threshold_steps=timedelta(milliseconds=100))  # Wait 100ms between region attempt
+            threshold_ms=500,  # Try alternate region after 500ms
+            threshold_steps_ms=100)  # Wait 100ms between region attempt
 
         await container.read_item(
             item="id1",
@@ -328,12 +324,10 @@ async def examples_async():
 
         # disable availability strategy on request level
         # [START read_item_with_disabled_availability_strategy]
-        strategy = CrossRegionHedgingStrategy(enabled=False)
-
         await container.read_item(
             item="id1",
             partition_key="pk1",
-            availability_strategy=strategy
+            availability_strategy=None
         )
         # [END read_item_with_disabled_availability_strategy]
 

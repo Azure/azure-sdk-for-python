@@ -60,6 +60,7 @@ from ..partition_key import (
     _get_partition_key_from_partition_key_definition
 )
 __all__ = ("ContainerProxy",)
+_Unset: Any = object()
 
 # pylint: disable=protected-access, too-many-lines
 # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
@@ -228,7 +229,7 @@ class ContainerProxy:
         no_response: Optional[bool] = None,
         retry_write: Optional[bool] = None,
         throughput_bucket: Optional[int] = None,
-        availability_strategy: Optional[CrossRegionHedgingStrategy] = None,
+        availability_strategy: Optional[CrossRegionHedgingStrategy] = _Unset,
         **kwargs: Any
     ) -> CosmosDict:
         """Create an item in the container.
@@ -297,7 +298,7 @@ class ContainerProxy:
             kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
-        if availability_strategy is not None:
+        if availability_strategy is not _Unset:
             kwargs[Constants.Kwargs.AVAILABILITY_STRATEGY] = availability_strategy
         request_options = _build_options(kwargs)
         request_options["disableAutomaticIdGeneration"] = not enable_automatic_id_generation
@@ -323,7 +324,7 @@ class ContainerProxy:
         max_integrated_cache_staleness_in_ms: Optional[int] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         throughput_bucket: Optional[int] = None,
-        availability_strategy: Optional[CrossRegionHedgingStrategy] = None,
+        availability_strategy: Optional[CrossRegionHedgingStrategy] = _Unset,
         **kwargs: Any
     ) -> CosmosDict:
         """Get the item identified by `item`.
@@ -376,7 +377,7 @@ class ContainerProxy:
             kwargs['priority'] = priority
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
-        if availability_strategy is not None:
+        if availability_strategy is not _Unset:
             kwargs[Constants.Kwargs.AVAILABILITY_STRATEGY] = availability_strategy
         request_options = _build_options(kwargs)
 
@@ -399,7 +400,7 @@ class ContainerProxy:
         max_integrated_cache_staleness_in_ms: Optional[int] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         throughput_bucket: Optional[int] = None,
-        availability_strategy: Optional[CrossRegionHedgingStrategy] = None,
+        availability_strategy: Optional[CrossRegionHedgingStrategy] = _Unset,
         **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """List all the items in the container.
@@ -434,7 +435,7 @@ class ContainerProxy:
             kwargs['priority'] = priority
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
-        if availability_strategy is not None:
+        if availability_strategy is not _Unset:
             kwargs[Constants.Kwargs.AVAILABILITY_STRATEGY] = availability_strategy
         feed_options = _build_options(kwargs)
         if max_item_count is not None:
@@ -466,7 +467,7 @@ class ContainerProxy:
             excluded_locations: Optional[List[str]] = None,
             priority: Optional[Literal["High", "Low"]] = None,
             throughput_bucket: Optional[int] = None,
-            availability_strategy: Optional[CrossRegionHedgingStrategy] = None,
+            availability_strategy: Optional[CrossRegionHedgingStrategy] = _Unset,
             **kwargs: Any
     ) -> CosmosList:
         """Reads multiple items from the container.
@@ -507,7 +508,7 @@ class ContainerProxy:
             kwargs['priority'] = priority
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
-        if availability_strategy is not None:
+        if availability_strategy is not _Unset:
             kwargs[Constants.Kwargs.AVAILABILITY_STRATEGY] = availability_strategy
 
         kwargs['max_concurrency'] = max_concurrency
@@ -540,7 +541,7 @@ class ContainerProxy:
             response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
             session_token: Optional[str] = None,
             throughput_bucket: Optional[int] = None,
-            availability_strategy: Optional[CrossRegionHedgingStrategy] = None,
+            availability_strategy: Optional[CrossRegionHedgingStrategy] = _Unset,
             **kwargs: Any
     ):
         """Return all results matching the given `query`.
@@ -624,7 +625,7 @@ class ContainerProxy:
             response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
             session_token: Optional[str] = None,
             throughput_bucket: Optional[int] = None,
-            availability_strategy: Optional[CrossRegionHedgingStrategy] = None,
+            availability_strategy: Optional[CrossRegionHedgingStrategy] = _Unset,
             **kwargs: Any
     ):
         """Return all results matching the given `query`.
@@ -826,7 +827,7 @@ class ContainerProxy:
             priority: Optional[Literal["High", "Low"]] = None,
             mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]] = None,
             response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
-            availability_strategy: Optional[CrossRegionHedgingStrategy] = None,
+            availability_strategy: Optional[CrossRegionHedgingStrategy] = _Unset,
             **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Get a sorted list of items that were changed, in the order in which they were modified.
@@ -874,7 +875,7 @@ class ContainerProxy:
             priority: Optional[Literal["High", "Low"]] = None,
             mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]] = None,
             response_hook: Optional[Callable[[Mapping[str, Any], Dict[str, Any]], None]] = None,
-            availability_strategy: Optional[CrossRegionHedgingStrategy] = None,
+            availability_strategy: Optional[CrossRegionHedgingStrategy] = _Unset,
             **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Get a sorted list of items that were changed, in the order in which they were modified.
@@ -917,7 +918,7 @@ class ContainerProxy:
             continuation: str,
             max_item_count: Optional[int] = None,
             priority: Optional[Literal["High", "Low"]] = None,
-            availability_strategy: Optional[CrossRegionHedgingStrategy] = None,
+            availability_strategy: Optional[CrossRegionHedgingStrategy] = _Unset,
             response_hook: Optional[Callable[[Mapping[str, Any], Dict[str, Any]], None]] = None,
             **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
@@ -953,7 +954,7 @@ class ContainerProxy:
             start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
             priority: Optional[Literal["High", "Low"]] = None,
             mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]] = None,
-            availability_strategy: Optional[CrossRegionHedgingStrategy] = None,
+            availability_strategy: Optional[CrossRegionHedgingStrategy] = _Unset,
             response_hook: Optional[Callable[[Mapping[str, Any], Dict[str, Any]], None]] = None,
             **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
@@ -1085,7 +1086,7 @@ class ContainerProxy:
         no_response: Optional[bool] = None,
         retry_write: Optional[bool] = None,
         throughput_bucket: Optional[int] = None,
-        availability_strategy: Optional[CrossRegionHedgingStrategy] = None,
+        availability_strategy: Optional[CrossRegionHedgingStrategy] = _Unset,
         **kwargs: Any
     ) -> CosmosDict:
         """Insert or update the specified item.
@@ -1146,7 +1147,7 @@ class ContainerProxy:
             kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
-        if availability_strategy is not None:
+        if availability_strategy is not _Unset:
             kwargs[Constants.Kwargs.AVAILABILITY_STRATEGY] = availability_strategy
         request_options = _build_options(kwargs)
         request_options["disableAutomaticIdGeneration"] = True
@@ -1177,7 +1178,7 @@ class ContainerProxy:
         no_response: Optional[bool] = None,
         retry_write: Optional[bool] = None,
         throughput_bucket: Optional[int] = None,
-        availability_strategy: Optional[CrossRegionHedgingStrategy] = None,
+        availability_strategy: Optional[CrossRegionHedgingStrategy] = _Unset,
         **kwargs: Any
     ) -> CosmosDict:
         """Replaces the specified item if it exists in the container.
@@ -1241,7 +1242,7 @@ class ContainerProxy:
             kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
-        if availability_strategy is not None:
+        if availability_strategy is not _Unset:
             kwargs[Constants.Kwargs.AVAILABILITY_STRATEGY] = availability_strategy
         request_options = _build_options(kwargs)
         request_options["disableAutomaticIdGeneration"] = True
@@ -1270,7 +1271,7 @@ class ContainerProxy:
         no_response: Optional[bool] = None,
         retry_write: Optional[bool] = None,
         throughput_bucket: Optional[int] = None,
-        availability_strategy: Optional[CrossRegionHedgingStrategy] = None,
+        availability_strategy: Optional[CrossRegionHedgingStrategy] = _Unset,
         **kwargs: Any
     ) -> CosmosDict:
         """ Patches the specified item with the provided operations if it
@@ -1334,7 +1335,7 @@ class ContainerProxy:
             kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
-        if availability_strategy is not None:
+        if availability_strategy is not _Unset:
             kwargs[Constants.Kwargs.AVAILABILITY_STRATEGY] = availability_strategy
         request_options = _build_options(kwargs)
         request_options["disableAutomaticIdGeneration"] = True
@@ -1364,7 +1365,7 @@ class ContainerProxy:
         priority: Optional[Literal["High", "Low"]] = None,
         retry_write: Optional[bool] = None,
         throughput_bucket: Optional[int] = None,
-        availability_strategy: Optional[CrossRegionHedgingStrategy] = None,
+        availability_strategy: Optional[CrossRegionHedgingStrategy] = _Unset,
         **kwargs: Any
     ) -> None:
         """Delete the specified item from the container.
@@ -1421,7 +1422,7 @@ class ContainerProxy:
             kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
-        if availability_strategy is not None:
+        if availability_strategy is not _Unset:
             kwargs[Constants.Kwargs.AVAILABILITY_STRATEGY] = availability_strategy
         request_options = _build_options(kwargs)
         request_options["partitionKey"] = await self._set_partition_key(partition_key)
@@ -1704,7 +1705,7 @@ class ContainerProxy:
         priority: Optional[Literal["High", "Low"]] = None,
         retry_write: Optional[bool] = None,
         throughput_bucket: Optional[int] = None,
-        availability_strategy: Optional[CrossRegionHedgingStrategy] = None,
+        availability_strategy: Optional[CrossRegionHedgingStrategy] = _Unset,
         **kwargs: Any
     ) -> CosmosList:
         """ Executes the transactional batch for the specified partition key.
@@ -1761,7 +1762,7 @@ class ContainerProxy:
             kwargs["throughput_bucket"] = throughput_bucket
         if retry_write is not None:
             kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
-        if availability_strategy is not None:
+        if availability_strategy is not _Unset:
             kwargs[Constants.Kwargs.AVAILABILITY_STRATEGY] = availability_strategy
         request_options = _build_options(kwargs)
         request_options["partitionKey"] = await self._set_partition_key(partition_key)

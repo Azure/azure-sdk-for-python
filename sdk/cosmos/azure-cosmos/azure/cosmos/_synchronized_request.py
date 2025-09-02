@@ -32,6 +32,7 @@ from azure.core.exceptions import DecodeError  # type: ignore
 from . import _retry_utility, _availability_strategy_handler
 from . import exceptions
 from . import http_constants
+from ._request_object import RequestObject
 from .documents import _OperationType
 from .http_constants import ResourceType
 
@@ -193,7 +194,7 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
     return result, headers
 
 
-def _is_availability_strategy_applicable(request_params):
+def _is_availability_strategy_applicable(request_params: RequestObject) -> bool:
     """Determine if availability strategy should be applied to the request.
     
     :param request_params: Request parameters containing operation details
@@ -202,7 +203,6 @@ def _is_availability_strategy_applicable(request_params):
     :rtype: bool
     """
     return (request_params.availability_strategy is not None and
-            request_params.availability_strategy.enabled and
             not request_params.is_hedging_request and
             request_params.resource_type == ResourceType.Document and
             (not _OperationType.IsWriteOperation(request_params.operation_type) or
@@ -238,7 +238,8 @@ def SynchronizedRequest(
     """Performs one synchronized http request according to the parameters.
 
     :param object client: Document client instance
-    :param dict request_params:
+    :param request_params: Request parameters containing operation details
+    :type request_params: ~azure.cosmos._request_object.RequestObject
     :param _GlobalEndpointManager global_endpoint_manager:
     :param documents.ConnectionPolicy connection_policy:
     :param azure.core.PipelineClient pipeline_client: PipelineClient to process the request.

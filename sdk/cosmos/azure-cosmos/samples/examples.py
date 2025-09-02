@@ -7,15 +7,12 @@
 # displayed in the SDK reference documentation. When editing these
 # example snippets, take into consideration how this might affect
 # the readability and usability of the reference documentation.
-from datetime import timedelta
+
+import os
 
 # All interaction with Cosmos DB starts with an instance of the CosmosClient
 # [START create_client]
 from azure.cosmos import exceptions, CosmosClient, PartitionKey
-from typing import Dict, Any
-
-import os
-
 from cosmos import CrossRegionHedgingStrategy
 
 url = os.environ["ACCOUNT_URI"]
@@ -309,9 +306,8 @@ for queried_item in container.query_items_change_feed(feed_range=feed_ranges[0],
 # configure availability strategy on request level
 # [START read_item_with_availability_strategy]
 strategy = CrossRegionHedgingStrategy(
-    enabled=True,
-    threshold=timedelta(milliseconds=500),  # Try alternate region after 500ms
-    threshold_steps=timedelta(milliseconds=100))  # Wait 100ms between region attempt
+    threshold_ms=500,  # Try alternate region after 500ms
+    threshold_steps_ms=100)  # Wait 100ms between region attempt
 
 container.read_item(
     item="id1",
@@ -321,11 +317,9 @@ container.read_item(
 
 # disable availability strategy on request level
 # [START read_item_with_disabled_availability_strategy]
-strategy = CrossRegionHedgingStrategy(enabled=False)
-
 container.read_item(
     item="id1",
     partition_key="pk1",
-    availability_strategy=strategy
+    availability_strategy=None
 )
 # [END read_item_with_disabled_availability_strategy]

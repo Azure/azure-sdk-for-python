@@ -26,7 +26,6 @@ from typing import List, Optional, TYPE_CHECKING, Union, Dict, Any
 
 from typing_extensions import Literal, TypedDict
 
-from . import CrossRegionHedgingStrategy
 from ._retry_options import RetryOptions
 
 if TYPE_CHECKING:
