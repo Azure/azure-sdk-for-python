@@ -9,44 +9,33 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-from typing import Any, Callable, Dict, IO, Iterator, List, Optional, TypeVar, Union, cast, overload
-from azure.core.polling import LROPoller, NoPolling, PollingMethod
+from collections.abc import MutableMapping # pylint:disable=import-error
+from typing import IO, Any, Callable, Dict, Optional, TypeVar, Union, overload
+
+from azure.core.async_paging import AsyncItemPaged
+from azure.core.pipeline import PipelineResponse
+from azure.core.polling import AsyncLROPoller
+from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.polling.base_polling import LROBasePolling
-from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
 from azure.core.tracing.decorator_async import distributed_trace_async
 
-from ._operations import (
-    ProjectOperations as ProjectOperationsGenerated,
-    DeploymentOperations as DeploymentOperationsGenerated,
-    ExportedModelOperations as ExportedModelOperationsGenerated,
-    TrainedModelOperations as TrainedModelOperationsGenerated,
-)
-from ..._utils.model_base import SdkJSONEncoder, _deserialize
-from azure.core.utils import case_insensitive_dict
-from azure.core.polling.base_polling import LROBasePolling
 from ...models import (
-    ProjectTrainedModel,
+    EvalSummary,
     EvaluationDetails,
     EvaluationJobResult,
     EvaluationState,
     LoadSnapshotState,
     ProjectTrainedModel,
-    EvalSummary,
     StringIndexType,
     DocumentEvalResult,
-    AsyncJobsPollingMethod,
 )
-from azure.core.paging import ItemPaged
-from collections.abc import MutableMapping
-from azure.core.pipeline import PipelineResponse
-from azure.core.rest import HttpRequest, HttpResponse
+from ._operations import TrainedModelOperations as TrainedModelOperationsGenerated
 
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
-_Unset: Any = object()
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[
+    Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]
+]
 
 
 class TrainedModelOperations(TrainedModelOperationsGenerated):
@@ -62,21 +51,21 @@ class TrainedModelOperations(TrainedModelOperationsGenerated):
         body: EvaluationDetails,
         *,
         content_type: str = "application/json",
-        **kwargs: Any,
+        **kwargs: Any
     ) -> AsyncLROPoller[EvaluationJobResult]:
         """Triggers evaluation operation on a trained model.
 
         :param trained_model_label: The trained model label. Required.
         :type trained_model_label: str
         :param body: The training input parameters. Required.
-        :type body: ~azure.ai.language.conversations.authoring.models.EvaluationDetails
+        :type body: ~azure.ai.language.text.authoring.models.EvaluationDetails
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: An instance of AsyncLROPoller that returns EvaluationJobResult. The EvaluationJobResult is
          compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.ai.language.conversations.authoring.models.EvaluationJobResult]
+         ~azure.core.polling.AsyncLROPoller[~azure.ai.language.text.authoring.models.EvaluationJobResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -96,7 +85,7 @@ class TrainedModelOperations(TrainedModelOperationsGenerated):
         :return: An instance of AsyncLROPoller that returns EvaluationJobResult. The EvaluationJobResult is
          compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.ai.language.conversations.authoring.models.EvaluationJobResult]
+         ~azure.core.polling.AsyncLROPoller[~azure.ai.language.text.authoring.models.EvaluationJobResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -116,7 +105,7 @@ class TrainedModelOperations(TrainedModelOperationsGenerated):
         :return: An instance of AsyncLROPoller that returns EvaluationJobResult. The EvaluationJobResult is
          compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.ai.language.conversations.authoring.models.EvaluationJobResult]
+         ~azure.core.polling.AsyncLROPoller[~azure.ai.language.text.authoring.models.EvaluationJobResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -124,10 +113,10 @@ class TrainedModelOperations(TrainedModelOperationsGenerated):
     async def begin_evaluate_model(  # type: ignore[override]
         self,
         trained_model_label: str,
-        body: Union[EvaluationDetails, dict, IO[bytes]],
+        body: Union[EvaluationDetails, JSON, IO[bytes]],
         *,
         content_type: str = "application/json",
-        **kwargs: Any,
+        **kwargs: Any
     ) -> AsyncLROPoller[EvaluationJobResult]:
         return await super()._begin_evaluate_model(
             project_name=self._project_name,
@@ -138,72 +127,19 @@ class TrainedModelOperations(TrainedModelOperationsGenerated):
         )
 
     @distributed_trace_async
-    async def begin_load_snapshot(self, trained_model_label: str, **kwargs: Any) -> AsyncLROPoller[LoadSnapshotState]:
+    async def begin_load_snapshot(self, trained_model_label: str, **kwargs: Any) -> AsyncLROPoller[None]:
         """Restores the snapshot of this trained model to be the current working directory of the project.
 
         :param trained_model_label: The trained model label. Required.
         :type trained_model_label: str
-        :return: An instance of AsyncLROPoller that returns LoadSnapshotState.
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.language.conversations.authoring.models.LoadSnapshotState]
+        :return: An instance of LROPoller that returns None.
+        :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[LoadSnapshotState] = kwargs.pop("cls", None)
-        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-
-        if cont_token is None:
-            initial = await self._load_snapshot_initial(
-                project_name=self._project_name,  # instance-scoped project name
-                trained_model_label=trained_model_label,
-                cls=lambda x, y, z: x,  # return PipelineResponse
-                headers=_headers,
-                params=_params,
-                **kwargs,
-            )
-            await initial.http_response.read()  # type: ignore[func-returns-value]
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            obj = _deserialize(LoadSnapshotState, pipeline_response.http_response.json())
-            if cls:
-                return cls(pipeline_response, obj, {})  # type: ignore[misc]
-            return obj
-
-        path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method = cast(
-                AsyncPollingMethod,
-                AsyncJobsPollingMethod(
-                    polling_interval=lro_delay,
-                    path_format_arguments=path_format_arguments,  # resolves {Endpoint} in Operation-Location
-                    **kwargs,
-                ),
-            )
-        elif polling is False:
-            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else:
-            polling_method = polling  # user-supplied AsyncPollingMethod
-
-        if cont_token:
-            return AsyncLROPoller[LoadSnapshotState].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-
-        return AsyncLROPoller[LoadSnapshotState](
-            self._client,
-            initial,  # type: ignore
-            get_long_running_output,
-            polling_method,
+        return await super()._begin_load_snapshot(
+            project_name=self._project_name,
+            trained_model_label=trained_model_label,
+            **kwargs,
         )
 
     @distributed_trace_async
@@ -236,22 +172,22 @@ class TrainedModelOperations(TrainedModelOperationsGenerated):
             **kwargs,
         )
 
-    @distributed_trace_async
-    async def get_model_evaluation_results(  # type: ignore[override]
+    @distributed_trace
+    def get_model_evaluation_results(  # type: ignore[override]
         self,
         trained_model_label: str,
         *,
+        skip: Optional[int] = None,
         string_index_type: Union[str, StringIndexType],
         top: Optional[int] = None,
-        skip: Optional[int] = None,
-        **kwargs: Any,
+        **kwargs: Any
     ) -> AsyncItemPaged[DocumentEvalResult]:
         return super().get_model_evaluation_results(
             project_name=self._project_name,
             trained_model_label=trained_model_label,
+            skip=skip,
             string_index_type=string_index_type,
             top=top,
-            skip=skip,
             **kwargs,
         )
 
