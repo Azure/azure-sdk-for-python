@@ -3,6 +3,9 @@ import os
 import sys
 import tempfile
 import shutil
+import glob
+import zipfile
+import tarfile
 
 from typing import Optional, List
 from subprocess import CalledProcessError, check_call
@@ -22,11 +25,109 @@ from ci_tools.variables import in_analyze_weekly
 from ci_tools.logging import logger
 
 SPHINX_VERSION = "8.2.0"
+RST_EXTENSION_FOR_INDEX = """
 
+## Indices and tables
+
+- {{ref}}`genindex`
+- {{ref}}`modindex`
+- {{ref}}`search`
+
+```{{toctree}}
+:caption: Developer Documentation
+:glob: true
+:maxdepth: 5
+
+{}
+
+```
+
+"""
 REPO_ROOT = discover_repo_root()
 ci_doc_dir = os.path.join(REPO_ROOT, '_docs')
 sphinx_conf_dir = os.path.join(REPO_ROOT, 'doc/sphinx')
 generate_mgmt_script = os.path.join(REPO_ROOT, "doc/sphinx/generate_doc.py")
+
+# env prep helper functions TODO is this sdist unzipping logic still needed?
+
+def unzip_sdist_to_directory(containing_folder: str) -> str:
+    zips = glob.glob(os.path.join(containing_folder, "*.zip"))
+
+    if zips:
+        return unzip_file_to_directory(zips[0], containing_folder)
+    else:
+        tars = glob.glob(os.path.join(containing_folder, "*.tar.gz"))
+        return unzip_file_to_directory(tars[0], containing_folder)
+
+def unzip_file_to_directory(path_to_zip_file: str, extract_location: str) -> str:
+    if path_to_zip_file.endswith(".zip"):
+        with zipfile.ZipFile(path_to_zip_file, "r") as zip_ref:
+            zip_ref.extractall(extract_location)
+            extracted_dir = os.path.basename(os.path.splitext(path_to_zip_file)[0])
+            return os.path.join(extract_location, extracted_dir)
+    else:
+        with tarfile.open(path_to_zip_file) as tar_ref:
+            tar_ref.extractall(extract_location)
+            extracted_dir = os.path.basename(path_to_zip_file).replace(".tar.gz", "")
+            return os.path.join(extract_location, extracted_dir)
+
+def move_and_rename(source_location):
+    new_location = os.path.join(os.path.dirname(source_location), "unzipped")
+
+    if os.path.exists(new_location):
+        shutil.rmtree(new_location)
+
+    os.rename(source_location, new_location)
+    return new_location
+
+def create_index_file(readme_location, package_rst):
+    readme_ext = os.path.splitext(readme_location)[1]
+
+    output = ""
+    if readme_ext == ".md":
+        with open(readme_location, "r") as file:
+            output = file.read()
+    else:
+        logger.error(
+            "{} is not a valid readme type. Expecting RST or MD.".format(
+                readme_location
+            )
+        )
+
+    output += RST_EXTENSION_FOR_INDEX.format(package_rst)
+
+    return output
+
+def create_index(doc_folder, source_location, namespace):
+    index_content = ""
+
+    package_rst = "{}.rst".format(namespace)
+    content_destination = os.path.join(doc_folder, "index.md")
+
+    if not os.path.exists(doc_folder):
+        os.mkdir(doc_folder)
+
+    # grep all content
+    markdown_readmes = glob.glob(os.path.join(source_location, "README.md"))
+
+    # if markdown, take that, otherwise rst
+    if markdown_readmes:
+        index_content = create_index_file(markdown_readmes[0], package_rst)
+    else:
+        logger.warning("No readmes detected for this namespace {}".format(namespace))
+        index_content = RST_EXTENSION_FOR_INDEX.format(package_rst)
+
+    # write index
+    with open(content_destination, "w+", encoding='utf-8') as f:
+        f.write(index_content)
+
+def write_version(site_folder, version):
+
+    if not os.path.isdir(site_folder):
+        os.mkdir(site_folder)
+
+    with open(os.path.join(site_folder, "version.txt"), "w") as f:
+        f.write(version)
 
 # apidoc helper functions
 
@@ -38,9 +139,9 @@ def copy_existing_docs(source: str, target: str) -> None:
         logger.info("Copying {}".format(file))
         shutil.copy(os.path.join(source, file), target)
 
-def mgmt_apidoc(working_dir: str, target_folder: str) -> int:
+def mgmt_apidoc(working_dir: str, target_folder: str, executable: str) -> int:
     command_array = [
-        sys.executable, # TODO replace with executable
+        executable,
         generate_mgmt_script,
         "-p",
         target_folder,
@@ -108,16 +209,6 @@ def sphinx_apidoc(working_dir: str, namespace: str) -> int:
         )
         return 1
     return 0
-
-# TODO may not need these - 
-# def unzip_sdist_to_directory(containing_folder: str) -> str:
-#     zips = glob.glob(os.path.join(containing_folder, "*.zip"))
-
-#     if zips:
-#         return unzip_file_to_directory(zips[0], containing_folder)
-#     else:
-#         tars = glob.glob(os.path.join(containing_folder, "*.tar.gz"))
-#         return unzip_file_to_directory(tars[0], containing_folder)
 
 # build helper functions
 
@@ -223,22 +314,7 @@ class sphinx(Check):
             default=False
         )
 
-    # def setup_sphinx_env(self, args, package_name, package_dir):
-    #     # unzips package sdist, sets up folders, creates index file from readme, writes package version
-
-    #     # TODO directly use current directory rather than 
-    #     if should_build_docs(package_name):
-    #         source_location = move_and_rename(unzip_sdist_to_directory(args.dist_dir))
-    #         doc_folder = os.path.join(source_location, "docgen")
-
-    #         create_index(doc_folder, source_location, pkg_details.namespace)
-
-    #         site_folder = os.path.join(args.dist_dir, "site")
-    #         write_version(site_folder, pkg_details.version)
-    #     else:
-    #         logger.info("Skipping sphinx prep for {}".format(package_name.name))      
-
-    def run_sphinx_apidoc(self, args: argparse.Namespace, parsed: ParsedSetup) -> int:
+    def run_sphinx_apidoc(self, args: argparse.Namespace, parsed: ParsedSetup, executable: str) -> int:
         working_dir = args.working_directory 
         output_dir = os.path.join(working_dir, "unzipped/docgen")
 
@@ -246,7 +322,7 @@ class sphinx(Check):
 
         if should_build_docs(parsed.name):
             if is_mgmt_package(parsed.name):
-                result = mgmt_apidoc(output_dir, parsed.folder)
+                result = mgmt_apidoc(output_dir, parsed.folder, executable)
             else:
                 result = sphinx_apidoc(working_dir, parsed.namespace)            
         else:
@@ -285,21 +361,32 @@ class sphinx(Check):
             output_dir = os.path.abspath(args.output_directory)
             target_dir = os.path.abspath(args.working_directory)
 
-            # prep env
+            # prep env for sphinx
+            # TODO directly use current directory rather than 
+            if should_build_docs(package_name):
+                source_location = move_and_rename(unzip_sdist_to_directory(args.dist_dir))
+                doc_folder = os.path.join(source_location, "docgen")
 
-            # apidoc
-            results.append(self.run_sphinx_apidoc(args, parsed))
+                create_index(doc_folder, source_location, parsed.namespace)
+
+                site_folder = os.path.join(args.dist_dir, "site")
+                write_version(site_folder, parsed.version)
+            else:
+                logger.info("Skipping sphinx prep for {}".format(package_name))      
+
+            # run apidoc
+            results.append(self.run_sphinx_apidoc(args, parsed, executable))
             
             # build
             if should_build_docs(package_name):
                 # Only data-plane libraries run strict sphinx at the moment
                 fail_on_warning = not is_mgmt_package(package_name)
-                sphinx_build(
+                results.append(sphinx_build(
                     package_dir,
                     target_dir,
                     output_dir,
                     fail_on_warning=fail_on_warning,
-                )
+                ))
 
                 if in_ci() or args.in_ci:
                     move_output_and_compress(output_dir, package_dir, package_name)
