@@ -31,19 +31,19 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "dd3b9520-282f-480e-9256-112a3ef1a5ad",
+        "apim-request-id": "b66b3824-6b8b-49fb-a875-157ba1dc35a5",
         "Content-Length": "0",
-        "Date": "Mon, 01 Sep 2025 07:05:10 GMT",
-        "operation-location": "https://Sanitized.cognitiveservices.azure.com/language/analyze-text/jobs/54c5d8d0-a117-4342-889f-83807e5a978f?api-version=2025-05-15-preview",
+        "Date": "Tue, 02 Sep 2025 00:00:31 GMT",
+        "operation-location": "https://Sanitized.cognitiveservices.azure.com/language/analyze-text/jobs/2702d31a-13e8-49a8-a119-1e4701a6b642?api-version=2025-05-15-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "97",
+        "x-envoy-upstream-service-time": "74",
         "x-ms-region": "East US"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/analyze-text/jobs/54c5d8d0-a117-4342-889f-83807e5a978f?api-version=2025-05-15-preview",
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/analyze-text/jobs/2702d31a-13e8-49a8-a119-1e4701a6b642?api-version=2025-05-15-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -55,20 +55,20 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "14ade88a-94de-4223-95f4-26ceaebadd07",
+        "apim-request-id": "1fa366f6-7180-4c90-ac8b-b922d6353e05",
         "Content-Length": "283",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 01 Sep 2025 07:05:10 GMT",
+        "Date": "Tue, 02 Sep 2025 00:00:31 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "6",
+        "x-envoy-upstream-service-time": "7",
         "x-ms-region": "East US"
       },
       "ResponseBody": {
-        "jobId": "54c5d8d0-a117-4342-889f-83807e5a978f",
-        "lastUpdatedDateTime": "2025-09-01T07:05:11Z",
-        "createdDateTime": "2025-09-01T07:05:10Z",
-        "expirationDateTime": "2025-09-02T07:05:10Z",
+        "jobId": "2702d31a-13e8-49a8-a119-1e4701a6b642",
+        "lastUpdatedDateTime": "2025-09-02T00:00:32Z",
+        "createdDateTime": "2025-09-02T00:00:32Z",
+        "expirationDateTime": "2025-09-03T00:00:32Z",
         "status": "notStarted",
         "errors": [],
         "tasks": {
@@ -81,7 +81,7 @@
       }
     },
     {
-      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/analyze-text/jobs/54c5d8d0-a117-4342-889f-83807e5a978f?api-version=2025-05-15-preview",
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/analyze-text/jobs/2702d31a-13e8-49a8-a119-1e4701a6b642?api-version=2025-05-15-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -93,96 +93,20 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "0869beac-7cf4-4fc0-9a2e-bacd2d06c03c",
-        "Content-Length": "280",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 01 Sep 2025 07:05:40 GMT",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "7",
-        "x-ms-region": "East US"
-      },
-      "ResponseBody": {
-        "jobId": "54c5d8d0-a117-4342-889f-83807e5a978f",
-        "lastUpdatedDateTime": "2025-09-01T07:05:12Z",
-        "createdDateTime": "2025-09-01T07:05:10Z",
-        "expirationDateTime": "2025-09-02T07:05:10Z",
-        "status": "running",
-        "errors": [],
-        "tasks": {
-          "completed": 0,
-          "failed": 0,
-          "inProgress": 1,
-          "total": 1,
-          "items": []
-        }
-      }
-    },
-    {
-      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/analyze-text/jobs/54c5d8d0-a117-4342-889f-83807e5a978f?api-version=2025-05-15-preview",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
-        "Ocp-Apim-Subscription-Key": "Sanitized",
-        "User-Agent": "azsdk-python-ai-textanalytics/6.0.0b1 Python/3.13.7 (Windows-11-10.0.26100-SP0)"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "apim-request-id": "bcfee324-0d8a-488b-84e7-7fe24168a195",
-        "Content-Length": "280",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 01 Sep 2025 07:06:10 GMT",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "9",
-        "x-ms-region": "East US"
-      },
-      "ResponseBody": {
-        "jobId": "54c5d8d0-a117-4342-889f-83807e5a978f",
-        "lastUpdatedDateTime": "2025-09-01T07:05:12Z",
-        "createdDateTime": "2025-09-01T07:05:10Z",
-        "expirationDateTime": "2025-09-02T07:05:10Z",
-        "status": "running",
-        "errors": [],
-        "tasks": {
-          "completed": 0,
-          "failed": 0,
-          "inProgress": 1,
-          "total": 1,
-          "items": []
-        }
-      }
-    },
-    {
-      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/analyze-text/jobs/54c5d8d0-a117-4342-889f-83807e5a978f?api-version=2025-05-15-preview",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
-        "Ocp-Apim-Subscription-Key": "Sanitized",
-        "User-Agent": "azsdk-python-ai-textanalytics/6.0.0b1 Python/3.13.7 (Windows-11-10.0.26100-SP0)"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "apim-request-id": "0a2085cb-4887-4e00-a3c1-4d64b730a008",
+        "apim-request-id": "45246c81-53a7-4bd7-9456-c8c2806e6db9",
         "Content-Length": "1839",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 01 Sep 2025 07:06:40 GMT",
+        "Date": "Tue, 02 Sep 2025 00:01:01 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "23",
+        "x-envoy-upstream-service-time": "22",
         "x-ms-region": "East US"
       },
       "ResponseBody": {
-        "jobId": "54c5d8d0-a117-4342-889f-83807e5a978f",
-        "lastUpdatedDateTime": "2025-09-01T07:06:25Z",
-        "createdDateTime": "2025-09-01T07:05:10Z",
-        "expirationDateTime": "2025-09-02T07:05:10Z",
+        "jobId": "2702d31a-13e8-49a8-a119-1e4701a6b642",
+        "lastUpdatedDateTime": "2025-09-02T00:00:40Z",
+        "createdDateTime": "2025-09-02T00:00:32Z",
+        "expirationDateTime": "2025-09-03T00:00:32Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -194,7 +118,7 @@
             {
               "kind": "AbstractiveSummarizationLROResults",
               "taskName": "AbsractiveSummarizationOperationActionSample",
-              "lastUpdateDateTime": "2025-09-01T07:06:25.9758452Z",
+              "lastUpdateDateTime": "2025-09-02T00:00:40.6160957Z",
               "status": "succeeded",
               "results": {
                 "documents": [

@@ -7,7 +7,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "564",
+        "Content-Length": "374",
         "Content-Type": "application/json",
         "Ocp-Apim-Subscription-Key": "Sanitized",
         "User-Agent": "azsdk-python-ai-textanalytics/6.0.0b1 Python/3.13.7 (Windows-11-10.0.26100-SP0)"
@@ -17,38 +17,38 @@
           "documents": [
             {
               "id": "Sanitized",
-              "text": "We love this trail and make the trip every year. The views are breathtaking and well worth the hike! Yesterday was foggy though, so we missed the spectacular views. We tried again today and it was amazing. Everyone in my family liked the trail although it was too challenging for the less athletic among us.",
+              "text": "I need a reservation for an indoor restaurant in China. Please don't stop the music. Play music and add it to my playlist.",
               "language": "en"
             }
           ]
         },
         "tasks": [
           {
-            "kind": "CustomEntityRecognition",
-            "taskName": "CustomEntitiesOperationActionSample",
+            "kind": "CustomSingleLabelClassification",
+            "taskName": "CSCOperationActionSample",
             "parameters": {
-              "projectName": "Example-ner-project",
-              "deploymentName": "TestDeployment"
+              "projectName": "single-class-project",
+              "deploymentName": "deployment1"
             }
           }
         ]
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "f19d255d-40ae-4142-8daa-5afa5c1a3501",
-        "azure-deprecating": "Training config used by Deployment name Example-ner-project and project name TestDeployment used in CustomEntityRecognition will retire on 2025-11-15. (https://aka.ms/text-analytics-deprecated-model-versions)",
+        "apim-request-id": "58b5d0bb-35b0-493e-9a99-3fe1159b1ba9",
+        "azure-deprecating": "Training config used by Deployment name single-class-project and project name deployment1 used in CustomSingleLabelClassification will retire on 2025-10-27. (https://aka.ms/text-analytics-deprecated-model-versions)",
         "Content-Length": "0",
-        "Date": "Tue, 02 Sep 2025 00:01:32 GMT",
-        "operation-location": "https://Sanitized.cognitiveservices.azure.com/language/analyze-text/jobs/00f853e1-1cfc-4100-9a78-781ea7cfea71?api-version=2025-05-15-preview",
+        "Date": "Tue, 02 Sep 2025 00:03:35 GMT",
+        "operation-location": "https://Sanitized.cognitiveservices.azure.com/language/analyze-text/jobs/ac411c60-69ba-41c5-bb87-4b47f7dbaa10?api-version=2025-05-15-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "337",
+        "x-envoy-upstream-service-time": "317",
         "x-ms-region": "East US"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/analyze-text/jobs/00f853e1-1cfc-4100-9a78-781ea7cfea71?api-version=2025-05-15-preview",
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/analyze-text/jobs/ac411c60-69ba-41c5-bb87-4b47f7dbaa10?api-version=2025-05-15-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -60,20 +60,20 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "18716b95-b9be-427a-82ca-c66eb1097aa0",
+        "apim-request-id": "710c526e-0cb0-4277-82e3-50f0221abe42",
         "Content-Length": "283",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 02 Sep 2025 00:01:33 GMT",
+        "Date": "Tue, 02 Sep 2025 00:03:35 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "10",
+        "x-envoy-upstream-service-time": "8",
         "x-ms-region": "East US"
       },
       "ResponseBody": {
-        "jobId": "00f853e1-1cfc-4100-9a78-781ea7cfea71",
-        "lastUpdatedDateTime": "2025-09-02T00:01:33Z",
-        "createdDateTime": "2025-09-02T00:01:33Z",
-        "expirationDateTime": "2025-09-03T00:01:33Z",
+        "jobId": "ac411c60-69ba-41c5-bb87-4b47f7dbaa10",
+        "lastUpdatedDateTime": "2025-09-02T00:03:35Z",
+        "createdDateTime": "2025-09-02T00:03:35Z",
+        "expirationDateTime": "2025-09-03T00:03:35Z",
         "status": "notStarted",
         "errors": [],
         "tasks": {
@@ -86,7 +86,7 @@
       }
     },
     {
-      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/analyze-text/jobs/00f853e1-1cfc-4100-9a78-781ea7cfea71?api-version=2025-05-15-preview",
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/analyze-text/jobs/ac411c60-69ba-41c5-bb87-4b47f7dbaa10?api-version=2025-05-15-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -98,20 +98,20 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "35d1cd91-bf77-412a-b979-5918afdf0fe9",
-        "Content-Length": "603",
+        "apim-request-id": "665453a7-f058-4b1a-aac0-6d62b2262428",
+        "Content-Length": "650",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 02 Sep 2025 00:02:02 GMT",
+        "Date": "Tue, 02 Sep 2025 00:04:05 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "27",
+        "x-envoy-upstream-service-time": "22",
         "x-ms-region": "East US"
       },
       "ResponseBody": {
-        "jobId": "00f853e1-1cfc-4100-9a78-781ea7cfea71",
-        "lastUpdatedDateTime": "2025-09-02T00:01:35Z",
-        "createdDateTime": "2025-09-02T00:01:33Z",
-        "expirationDateTime": "2025-09-03T00:01:33Z",
+        "jobId": "ac411c60-69ba-41c5-bb87-4b47f7dbaa10",
+        "lastUpdatedDateTime": "2025-09-02T00:03:38Z",
+        "createdDateTime": "2025-09-02T00:03:35Z",
+        "expirationDateTime": "2025-09-03T00:03:35Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -121,21 +121,26 @@
           "total": 1,
           "items": [
             {
-              "kind": "CustomEntityRecognitionLROResults",
-              "taskName": "CustomEntitiesOperationActionSample",
-              "lastUpdateDateTime": "2025-09-02T00:01:35.6343568Z",
+              "kind": "CustomSingleLabelClassificationLROResults",
+              "taskName": "CSCOperationActionSample",
+              "lastUpdateDateTime": "2025-09-02T00:03:38.1676952Z",
               "status": "succeeded",
               "results": {
                 "documents": [
                   {
                     "id": "Sanitized",
-                    "entities": [],
+                    "class": [
+                      {
+                        "category": "Civil_engineering",
+                        "confidenceScore": 0.15
+                      }
+                    ],
                     "warnings": []
                   }
                 ],
                 "errors": [],
-                "projectName": "Example-ner-project",
-                "deploymentName": "TestDeployment"
+                "projectName": "single-class-project",
+                "deploymentName": "deployment1"
               }
             }
           ]

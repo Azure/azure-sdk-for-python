@@ -6,7 +6,7 @@
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "3546",
+        "Content-Length": "3545",
         "Content-Type": "application/json",
         "Ocp-Apim-Subscription-Key": "Sanitized",
         "User-Agent": "azsdk-python-ai-textanalytics/6.0.0b1 Python/3.13.7 (Windows-11-10.0.26100-SP0)"
@@ -23,26 +23,26 @@
         },
         "tasks": [
           {
-            "kind": "AbstractiveSummarization",
-            "taskName": "AbsractiveSummarizationOperationActionSample"
+            "kind": "ExtractiveSummarization",
+            "taskName": "ExtractiveSummarizationOperationActionSample"
           }
         ]
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "1d2c0534-fc11-4c53-a599-170780a9bdb8",
+        "apim-request-id": "122ec3f3-f908-4cbb-a89c-88f82307c34e",
         "Content-Length": "0",
-        "Date": "Tue, 02 Sep 2025 00:01:02 GMT",
-        "operation-location": "https://Sanitized.cognitiveservices.azure.com/language/analyze-text/jobs/9f7571bb-b3ab-46cb-a7d2-a258a28e978d?api-version=2025-05-15-preview",
+        "Date": "Tue, 02 Sep 2025 00:05:07 GMT",
+        "operation-location": "https://Sanitized.cognitiveservices.azure.com/language/analyze-text/jobs/59aff13b-2a83-47df-b31e-34e6c106e818?api-version=2025-05-15-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "109",
+        "x-envoy-upstream-service-time": "88",
         "x-ms-region": "East US"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/analyze-text/jobs/9f7571bb-b3ab-46cb-a7d2-a258a28e978d?api-version=2025-05-15-preview",
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/analyze-text/jobs/59aff13b-2a83-47df-b31e-34e6c106e818?api-version=2025-05-15-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -53,20 +53,20 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "4babf9cd-d5bb-4bbe-90bf-fe494175e760",
+        "apim-request-id": "7e6b3dff-7f50-4876-bb90-c079266a6f28",
         "Content-Length": "283",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 02 Sep 2025 00:01:02 GMT",
+        "Date": "Tue, 02 Sep 2025 00:05:07 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
         "x-envoy-upstream-service-time": "8",
         "x-ms-region": "East US"
       },
       "ResponseBody": {
-        "jobId": "9f7571bb-b3ab-46cb-a7d2-a258a28e978d",
-        "lastUpdatedDateTime": "2025-09-02T00:01:02Z",
-        "createdDateTime": "2025-09-02T00:01:02Z",
-        "expirationDateTime": "2025-09-03T00:01:02Z",
+        "jobId": "59aff13b-2a83-47df-b31e-34e6c106e818",
+        "lastUpdatedDateTime": "2025-09-02T00:05:07Z",
+        "createdDateTime": "2025-09-02T00:05:07Z",
+        "expirationDateTime": "2025-09-03T00:05:07Z",
         "status": "notStarted",
         "errors": [],
         "tasks": {
@@ -79,7 +79,7 @@
       }
     },
     {
-      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/analyze-text/jobs/9f7571bb-b3ab-46cb-a7d2-a258a28e978d?api-version=2025-05-15-preview",
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/analyze-text/jobs/59aff13b-2a83-47df-b31e-34e6c106e818?api-version=2025-05-15-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -90,20 +90,20 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "ea020ede-ddfb-4d72-a006-2cc80c3b164d",
-        "Content-Length": "1839",
+        "apim-request-id": "67fc9318-bbb4-43d4-9273-6db4d8fcf160",
+        "Content-Length": "1131",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 02 Sep 2025 00:01:32 GMT",
+        "Date": "Tue, 02 Sep 2025 00:05:37 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "30",
+        "x-envoy-upstream-service-time": "19",
         "x-ms-region": "East US"
       },
       "ResponseBody": {
-        "jobId": "9f7571bb-b3ab-46cb-a7d2-a258a28e978d",
-        "lastUpdatedDateTime": "2025-09-02T00:01:22Z",
-        "createdDateTime": "2025-09-02T00:01:02Z",
-        "expirationDateTime": "2025-09-03T00:01:02Z",
+        "jobId": "59aff13b-2a83-47df-b31e-34e6c106e818",
+        "lastUpdatedDateTime": "2025-09-02T00:05:09Z",
+        "createdDateTime": "2025-09-02T00:05:07Z",
+        "expirationDateTime": "2025-09-03T00:05:07Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -113,30 +113,39 @@
           "total": 1,
           "items": [
             {
-              "kind": "AbstractiveSummarizationLROResults",
-              "taskName": "AbsractiveSummarizationOperationActionSample",
-              "lastUpdateDateTime": "2025-09-02T00:01:22.3952098Z",
+              "kind": "ExtractiveSummarizationLROResults",
+              "taskName": "ExtractiveSummarizationOperationActionSample",
+              "lastUpdateDateTime": "2025-09-02T00:05:09.8425463Z",
               "status": "succeeded",
               "results": {
                 "documents": [
                   {
-                    "summaries": [
+                    "id": "Sanitized",
+                    "sentences": [
                       {
-                        "text": "The COVID-19 pandemic accelerated the development and adoption of Windows 365, a cloud-based solution that allows remote workers to seamlessly access their work environment from any device with internet connectivity. The service provides a personalized workspace that retains the user's background settings, apps, and content, managed entirely in the cloud, ensuring security without local data storage. Organizations, particularly those hesitant about virtualization, are finding value in Windows 365 for its ease of use and potential to support a global workforce. The Government of Nunavut, after abandoning traditional virtual desktop infrastructure due to inefficiency and the challenges of satellite internet, engaged in a pilot program for Windows 365, recognizing its benefits for securely managing a distributed workforce and accessing external expertise. This technology promises to enhance not only work flexibility but also to contribute to improvements in healthcare, education, and economic development within communities. The shift towards services like Windows 365 reflects a broader strategy by Microsoft to adapt products such as Teams and 365 for a hybrid workforce in the post-pandemic era.",
-                        "contexts": [
-                          {
-                            "offset": 0,
-                            "length": 3314
-                          }
-                        ]
+                        "text": "The ability to login to a Cloud PC from anywhere on any device is part of Microsoft’s larger strategy around tailoring products such as Microsoft Teams and Microsoft 365 for the post-pandemic hybrid workforce of the future, she added.",
+                        "rankScore": 1.0,
+                        "offset": 1064,
+                        "length": 234
+                      },
+                      {
+                        "text": "It enables employees accustomed to working from home to continue working from home;",
+                        "rankScore": 0.92,
+                        "offset": 1299,
+                        "length": 83
+                      },
+                      {
+                        "text": "Manchester’s team recruited the Government of Nunavut to pilot Windows 365.",
+                        "rankScore": 0.88,
+                        "offset": 2610,
+                        "length": 75
                       }
                     ],
-                    "id": "Sanitized",
                     "warnings": []
                   }
                 ],
                 "errors": [],
-                "modelVersion": "2024-10-25-phi35"
+                "modelVersion": "2024-11-04"
               }
             }
           ]

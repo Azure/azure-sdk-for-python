@@ -35,20 +35,20 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "f09e88bb-890a-43f9-9196-dea6a46abbfe",
+        "apim-request-id": "826f6449-45d3-4828-a22b-0572691b78c1",
         "azure-deprecating": "Training config used by Deployment name multi-class-project and project name multiclassdeployment used in CustomMultiLabelClassification will retire on 2025-10-27. (https://aka.ms/text-analytics-deprecated-model-versions)",
         "Content-Length": "0",
-        "Date": "Mon, 01 Sep 2025 20:25:17 GMT",
-        "operation-location": "https://Sanitized.cognitiveservices.azure.com/language/analyze-text/jobs/65c38c9e-10db-44f2-aae2-10c85d4a5eac?api-version=2025-05-15-preview",
+        "Date": "Tue, 02 Sep 2025 00:02:33 GMT",
+        "operation-location": "https://Sanitized.cognitiveservices.azure.com/language/analyze-text/jobs/40d91047-6318-4223-9ba6-6ac471bcf16e?api-version=2025-05-15-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "392",
+        "x-envoy-upstream-service-time": "134",
         "x-ms-region": "East US"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/analyze-text/jobs/65c38c9e-10db-44f2-aae2-10c85d4a5eac?api-version=2025-05-15-preview",
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/analyze-text/jobs/40d91047-6318-4223-9ba6-6ac471bcf16e?api-version=2025-05-15-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -60,20 +60,20 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "e24ac5dc-77b3-4036-b085-b8e46a9adcd3",
+        "apim-request-id": "91a1fb6b-fed0-412f-beec-5a7b516bd54f",
         "Content-Length": "283",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 01 Sep 2025 20:25:17 GMT",
+        "Date": "Tue, 02 Sep 2025 00:02:34 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
         "x-envoy-upstream-service-time": "7",
         "x-ms-region": "East US"
       },
       "ResponseBody": {
-        "jobId": "65c38c9e-10db-44f2-aae2-10c85d4a5eac",
-        "lastUpdatedDateTime": "2025-09-01T20:25:18Z",
-        "createdDateTime": "2025-09-01T20:25:18Z",
-        "expirationDateTime": "2025-09-02T20:25:18Z",
+        "jobId": "40d91047-6318-4223-9ba6-6ac471bcf16e",
+        "lastUpdatedDateTime": "2025-09-02T00:02:34Z",
+        "createdDateTime": "2025-09-02T00:02:34Z",
+        "expirationDateTime": "2025-09-03T00:02:34Z",
         "status": "notStarted",
         "errors": [],
         "tasks": {
@@ -86,7 +86,7 @@
       }
     },
     {
-      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/analyze-text/jobs/65c38c9e-10db-44f2-aae2-10c85d4a5eac?api-version=2025-05-15-preview",
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/analyze-text/jobs/40d91047-6318-4223-9ba6-6ac471bcf16e?api-version=2025-05-15-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -98,20 +98,20 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "3c410899-4ab9-4a5f-9c00-8cde1bd4b942",
+        "apim-request-id": "8640f6aa-36e3-4afe-a30d-13a0f3f3fcc5",
         "Content-Length": "645",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 01 Sep 2025 20:25:47 GMT",
+        "Date": "Tue, 02 Sep 2025 00:03:04 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "20",
+        "x-envoy-upstream-service-time": "21",
         "x-ms-region": "East US"
       },
       "ResponseBody": {
-        "jobId": "65c38c9e-10db-44f2-aae2-10c85d4a5eac",
-        "lastUpdatedDateTime": "2025-09-01T20:25:20Z",
-        "createdDateTime": "2025-09-01T20:25:18Z",
-        "expirationDateTime": "2025-09-02T20:25:18Z",
+        "jobId": "40d91047-6318-4223-9ba6-6ac471bcf16e",
+        "lastUpdatedDateTime": "2025-09-02T00:02:36Z",
+        "createdDateTime": "2025-09-02T00:02:34Z",
+        "expirationDateTime": "2025-09-03T00:02:34Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -123,7 +123,7 @@
             {
               "kind": "CustomMultiLabelClassificationLROResults",
               "taskName": "CMCOperationActionSample",
-              "lastUpdateDateTime": "2025-09-01T20:25:20.6146782Z",
+              "lastUpdateDateTime": "2025-09-02T00:02:36.1652495Z",
               "status": "succeeded",
               "results": {
                 "documents": [

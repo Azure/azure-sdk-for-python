@@ -1,12 +1,11 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2025-05-15-preview",
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com//language/analyze-text/jobs?api-version=2025-05-15-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
         "Content-Length": "564",
         "Content-Type": "application/json",
         "Ocp-Apim-Subscription-Key": "Sanitized",
@@ -35,45 +34,44 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "f19d255d-40ae-4142-8daa-5afa5c1a3501",
+        "apim-request-id": "bd9ddbe6-8a81-47f9-bce6-1bd6ffeec949",
         "azure-deprecating": "Training config used by Deployment name Example-ner-project and project name TestDeployment used in CustomEntityRecognition will retire on 2025-11-15. (https://aka.ms/text-analytics-deprecated-model-versions)",
         "Content-Length": "0",
-        "Date": "Tue, 02 Sep 2025 00:01:32 GMT",
-        "operation-location": "https://Sanitized.cognitiveservices.azure.com/language/analyze-text/jobs/00f853e1-1cfc-4100-9a78-781ea7cfea71?api-version=2025-05-15-preview",
+        "Date": "Tue, 02 Sep 2025 00:02:03 GMT",
+        "operation-location": "https://Sanitized.cognitiveservices.azure.com/language/analyze-text/jobs/b0e5db55-2387-4faf-9013-4c69fed5c745?api-version=2025-05-15-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "337",
+        "x-envoy-upstream-service-time": "404",
         "x-ms-region": "East US"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/analyze-text/jobs/00f853e1-1cfc-4100-9a78-781ea7cfea71?api-version=2025-05-15-preview",
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/analyze-text/jobs/b0e5db55-2387-4faf-9013-4c69fed5c745?api-version=2025-05-15-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
         "Ocp-Apim-Subscription-Key": "Sanitized",
         "User-Agent": "azsdk-python-ai-textanalytics/6.0.0b1 Python/3.13.7 (Windows-11-10.0.26100-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "18716b95-b9be-427a-82ca-c66eb1097aa0",
+        "apim-request-id": "d063cb22-201b-42ae-9e91-e1a3ced6e22f",
         "Content-Length": "283",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 02 Sep 2025 00:01:33 GMT",
+        "Date": "Tue, 02 Sep 2025 00:02:03 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "10",
+        "x-envoy-upstream-service-time": "9",
         "x-ms-region": "East US"
       },
       "ResponseBody": {
-        "jobId": "00f853e1-1cfc-4100-9a78-781ea7cfea71",
-        "lastUpdatedDateTime": "2025-09-02T00:01:33Z",
-        "createdDateTime": "2025-09-02T00:01:33Z",
-        "expirationDateTime": "2025-09-03T00:01:33Z",
+        "jobId": "b0e5db55-2387-4faf-9013-4c69fed5c745",
+        "lastUpdatedDateTime": "2025-09-02T00:02:04Z",
+        "createdDateTime": "2025-09-02T00:02:04Z",
+        "expirationDateTime": "2025-09-03T00:02:04Z",
         "status": "notStarted",
         "errors": [],
         "tasks": {
@@ -86,32 +84,31 @@
       }
     },
     {
-      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/analyze-text/jobs/00f853e1-1cfc-4100-9a78-781ea7cfea71?api-version=2025-05-15-preview",
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/analyze-text/jobs/b0e5db55-2387-4faf-9013-4c69fed5c745?api-version=2025-05-15-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
         "Ocp-Apim-Subscription-Key": "Sanitized",
         "User-Agent": "azsdk-python-ai-textanalytics/6.0.0b1 Python/3.13.7 (Windows-11-10.0.26100-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "35d1cd91-bf77-412a-b979-5918afdf0fe9",
+        "apim-request-id": "32a911d1-2b7e-4e0d-8708-b23481dfbaae",
         "Content-Length": "603",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 02 Sep 2025 00:02:02 GMT",
+        "Date": "Tue, 02 Sep 2025 00:02:33 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "27",
+        "x-envoy-upstream-service-time": "24",
         "x-ms-region": "East US"
       },
       "ResponseBody": {
-        "jobId": "00f853e1-1cfc-4100-9a78-781ea7cfea71",
-        "lastUpdatedDateTime": "2025-09-02T00:01:35Z",
-        "createdDateTime": "2025-09-02T00:01:33Z",
-        "expirationDateTime": "2025-09-03T00:01:33Z",
+        "jobId": "b0e5db55-2387-4faf-9013-4c69fed5c745",
+        "lastUpdatedDateTime": "2025-09-02T00:02:05Z",
+        "createdDateTime": "2025-09-02T00:02:04Z",
+        "expirationDateTime": "2025-09-03T00:02:04Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -123,7 +120,7 @@
             {
               "kind": "CustomEntityRecognitionLROResults",
               "taskName": "CustomEntitiesOperationActionSample",
-              "lastUpdateDateTime": "2025-09-02T00:01:35.6343568Z",
+              "lastUpdateDateTime": "2025-09-02T00:02:05.5952628Z",
               "status": "succeeded",
               "results": {
                 "documents": [

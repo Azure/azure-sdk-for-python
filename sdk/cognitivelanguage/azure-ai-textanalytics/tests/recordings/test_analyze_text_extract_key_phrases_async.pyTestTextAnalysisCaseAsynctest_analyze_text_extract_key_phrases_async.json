@@ -1,12 +1,11 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/:analyze-text?api-version=2025-05-15-preview",
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com//language/:analyze-text?api-version=2025-05-15-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
         "Content-Length": "581",
         "Content-Type": "application/json",
         "Ocp-Apim-Subscription-Key": "Sanitized",
@@ -29,7 +28,7 @@
       },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "6170aae3-6938-4188-bb8c-85552f55043b",
+        "apim-request-id": "9c7553a1-6bd9-4e8d-9764-33f94beccace",
         "Content-Length": "268",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.Language.Text.KeyPhraseExtraction=1,CognitiveServices.TextAnalytics.TextRecords=1",
@@ -37,7 +36,7 @@
         "Set-Cookie": "Sanitized",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "42",
+        "x-envoy-upstream-service-time": "41",
         "x-ms-region": "East US"
       },
       "ResponseBody": {
