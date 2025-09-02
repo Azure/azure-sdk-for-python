@@ -19,19 +19,13 @@ from packaging.version import Version
 from . import build_packaging
 from .change_log import main as change_log_main
 
-DEFAULT_DEST_FOLDER = "./dist"
-
 _LOGGER = logging.getLogger(__name__)
 
 
 # prefolder: "sdk/compute"; name: "azure-mgmt-compute"
-def create_package(prefolder, name, dest_folder=DEFAULT_DEST_FOLDER):
+def create_package(prefolder, name):
     absdirpath = Path(prefolder, name).absolute()
-    check_call(["python", "setup.py", "bdist_wheel", "-d", dest_folder], cwd=absdirpath)
-    check_call(
-        ["python", "setup.py", "sdist", "--format", "zip", "-d", dest_folder],
-        cwd=absdirpath,
-    )
+    check_call(["python", "-m", "build"], cwd=absdirpath)
 
 
 @return_origin_path
