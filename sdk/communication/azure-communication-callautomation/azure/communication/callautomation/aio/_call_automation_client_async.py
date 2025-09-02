@@ -179,6 +179,7 @@ class CallAutomationClient:
         operation_context: Optional[str] = None,
         media_streaming: Optional['MediaStreamingOptions'] = None,
         transcription: Optional['TranscriptionOptions'] = None,
+        enable_loopback_audio: Optional[bool] = None,
         **kwargs
     ) -> CallConnectionProperties:
         """The request payload for creating a connection to a room CallLocator.
@@ -201,6 +202,8 @@ class CallAutomationClient:
         :keyword transcription: Configuration of live transcription.
         :paramtype transcription: ~azure.communication.callautomation.TranscriptionOptions
          or None
+        :keyword enable_loopback_audio: Enables loopback audio functionality for the call.
+        :paramtype enable_loopback_audio: bool or None
         :return: CallConnectionProperties
         :rtype: ~azure.communication.callautomation.CallConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -217,6 +220,7 @@ class CallAutomationClient:
         operation_context: Optional[str] = None,
         media_streaming: Optional['MediaStreamingOptions'] = None,
         transcription: Optional['TranscriptionOptions'] = None,
+        enable_loopback_audio: Optional[bool] = None,
         **kwargs
     ) -> CallConnectionProperties:
         """The request payload for creating a connection to a room CallLocator.
@@ -239,6 +243,8 @@ class CallAutomationClient:
         :keyword transcription: Configuration of live transcription.
         :paramtype transcription: ~azure.communication.callautomation.TranscriptionOptions
          or None
+        :keyword enable_loopback_audio: Enables loopback audio functionality for the call.
+        :paramtype enable_loopback_audio: bool or None
         :return: CallConnectionProperties
         :rtype: ~azure.communication.callautomation.CallConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -255,6 +261,7 @@ class CallAutomationClient:
         operation_context: Optional[str] = None,
         media_streaming: Optional['MediaStreamingOptions'] = None,
         transcription: Optional['TranscriptionOptions'] = None,
+        enable_loopback_audio: Optional[bool] = None,
         **kwargs
     ) -> CallConnectionProperties:
         """The request payload for creating a connection to a room CallLocator.
@@ -277,6 +284,8 @@ class CallAutomationClient:
         :keyword transcription: Configuration of live transcription.
         :paramtype transcription: ~azure.communication.callautomation.TranscriptionOptions
          or None
+        :keyword enable_loopback_audio: Enables loopback audio functionality for the call.
+        :paramtype enable_loopback_audio: bool or None
         :return: CallConnectionProperties
         :rtype: ~azure.communication.callautomation.CallConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -299,6 +308,7 @@ class CallAutomationClient:
         transcription_options : Optional[TranscriptionOptions] = None
         media_streaming_options = kwargs.pop("media_streaming", None)
         transcription_options = kwargs.pop("transcription", None)
+        enable_loopback_audio = kwargs.pop("enable_loopback_audio", None)
         call_locator = build_call_locator(
             kwargs.pop("call_locator", None),
             kwargs.pop("server_call_id", None),
@@ -311,7 +321,8 @@ class CallAutomationClient:
             operation_context=kwargs.pop("operation_context", None),
             call_intelligence_options=call_intelligence_options,
             media_streaming_options=media_streaming_options.to_generated() if media_streaming_options else None,
-            transcription_options=transcription_options.to_generated() if transcription_options else None
+            transcription_options=transcription_options.to_generated() if transcription_options else None,
+            enable_loopback_audio=enable_loopback_audio
         )
 
         process_repeatability_first_sent(kwargs)
@@ -338,6 +349,7 @@ class CallAutomationClient:
         media_streaming: Optional['MediaStreamingOptions'] = None,
         transcription: Optional['TranscriptionOptions'] = None,
         teams_app_source: Optional['MicrosoftTeamsAppIdentifier'] = None,
+        enable_loopback_audio: Optional[bool] = None,
         **kwargs
     ) -> CallConnectionProperties:
         """Create a call connection request to a target identity.
@@ -375,6 +387,8 @@ class CallAutomationClient:
          Required for creating call with Teams resource account ID.
          This is per-operation setting and does not change the client's default source.
         :paramtype teams_app_source: ~azure.communication.callautomation.MicrosoftTeamsAppIdentifier or None
+        :keyword enable_loopback_audio: Enables loopback audio functionality for the call.
+        :paramtype enable_loopback_audio: bool or None
         :return: CallConnectionProperties
         :rtype: ~azure.communication.callautomation.CallConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -417,6 +431,7 @@ class CallAutomationClient:
             cognitive_services_endpoint=cognitive_services_endpoint,
             CustomCallingContext=user_custom_context,
             call_intelligence_options=call_intelligence_options,
+            enable_loopback_audio=enable_loopback_audio
         )
         process_repeatability_first_sent(kwargs)
         result = await self._client.create_call(create_call_request=create_call_request, **kwargs)
@@ -432,6 +447,7 @@ class CallAutomationClient:
         source_display_name: Optional[str] = None,
         operation_context: Optional[str] = None,
         cognitive_services_endpoint: Optional[str] = None,
+        enable_loopback_audio: Optional[bool] = None,
         **kwargs,
     ) -> CallConnectionProperties:
         """Create a call connection request to a list of multiple target identities.
@@ -452,6 +468,8 @@ class CallAutomationClient:
         :keyword cognitive_services_endpoint:
          The identifier of the Cognitive Service resource assigned to this call.
         :paramtype cognitive_services_endpoint: str
+        :keyword enable_loopback_audio: Enables loopback audio functionality for the call.
+        :paramtype enable_loopback_audio: bool
         :return: CallConnectionProperties
         :rtype: ~azure.communication.callautomation.CallConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -467,6 +485,7 @@ class CallAutomationClient:
             source_display_name=source_display_name,
             operation_context=operation_context,
             cognitive_services_endpoint=cognitive_services_endpoint,
+            enable_loopback_audio=enable_loopback_audio,
             **kwargs,
         )
 
@@ -483,6 +502,7 @@ class CallAutomationClient:
         transcription: Optional['TranscriptionOptions'] = None,
         sip_headers: Optional[Dict[str, str]] = None,
         voip_headers: Optional[Dict[str, str]] = None,
+        enable_loopback_audio: Optional[bool] = None,
         **kwargs
     ) -> CallConnectionProperties:
         """Answer incoming call with Azure Communication Service's IncomingCall event
@@ -511,6 +531,8 @@ class CallAutomationClient:
         :paramtype sip_headers: Dict[str, str] or None
         :keyword voip_headers: Voip Headers for Voip Call
         :paramtype voip_headers: Dict[str, str] or None
+        :keyword enable_loopback_audio: Enables loopback audio functionality for the call.
+        :paramtype enable_loopback_audio: bool or None
         :return: CallConnectionProperties
         :rtype: ~azure.communication.callautomation.CallConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -539,7 +561,8 @@ class CallAutomationClient:
             answered_by=serialize_communication_user_identifier(self.source) if self.source else None,
             call_intelligence_options=call_intelligence_options,
             operation_context=operation_context,
-            custom_calling_context=user_custom_context
+            custom_calling_context=user_custom_context,
+            enable_loopback_audio=enable_loopback_audio
         )
 
         process_repeatability_first_sent(kwargs)

@@ -6,8 +6,9 @@
 import json
 import unittest
 
+from azure.communication.callautomation._models import MoveParticipantsResult
 from azure.core.credentials import AzureKeyCredential
-from azure.communication.callautomation import CommunicationUserIdentifier, CallConnectionClient, TransferCallResult, MoveParticipantsResult
+from azure.communication.callautomation import CommunicationUserIdentifier, CallConnectionClient, TransferCallResult
 from azure.core.paging import ItemPaged
 
 from azure.communication.callautomation._generated.models import (

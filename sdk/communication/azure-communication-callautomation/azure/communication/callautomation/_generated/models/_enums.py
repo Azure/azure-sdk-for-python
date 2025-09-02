@@ -269,6 +269,12 @@ class RecordingStorageKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Storage managed by provided Azure blob"""
 
 
+class RedactionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Gets or sets the type of PII redaction to be used."""
+
+    MASK_WITH_CHARACTER = "maskWithCharacter"
+
+
 class TranscriptionResultType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """TranscriptionResultType."""
 
@@ -284,6 +290,7 @@ class TranscriptionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     TRANSCRIPTION_RESUMED = "transcriptionResumed"
     TRANSCRIPTION_UPDATED = "transcriptionUpdated"
     TRANSCRIPTION_STOPPED = "transcriptionStopped"
+    CALL_SUMMARY_UPDATED = "callSummaryUpdated"
     UNSPECIFIED_ERROR = "unspecifiedError"
 
 
@@ -305,6 +312,8 @@ class TranscriptionStatusDetails(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FORBIDDEN = "forbidden"
     SERVICE_TIMEOUT = "serviceTimeout"
     TRANSCRIPTION_LOCALE_UPDATED = "transcriptionLocaleUpdated"
+    CALL_SUMMARY_SUCCESS = "callSummarySuccess"
+    CALL_SUMMARY_FAILURE = "callSummaryFailure"
 
 
 class TranscriptionSubscriptionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):

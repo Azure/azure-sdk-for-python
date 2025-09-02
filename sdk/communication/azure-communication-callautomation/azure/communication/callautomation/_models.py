@@ -18,6 +18,8 @@ from ._generated.models import (
     ChannelAffinity as ChannelAffinityInternal,
     MediaStreamingSubscription as MediaStreamingSubscriptionInternal,
     TranscriptionSubscription as TranscriptionSubscriptionInternal,
+    SummarizationOptions as SummarizationOptionsInternal,
+    PiiRedactionOptions as PiiRedactionOptionsInternal,
     RecordingStorageInfo,
     Error
 )
@@ -26,7 +28,7 @@ from ._shared.models import (
     CommunicationUserIdentifier,
     PhoneNumberIdentifier,
 )
-from ._generated.models._enums import PlaySourceType
+from ._generated.models._enums import PlaySourceType, RedactionType
 from ._generated.models._enums import RecordingStorageKind
 from ._generated.models._enums import CallSessionEndReason
 from ._utils import (
@@ -378,6 +380,8 @@ class MediaStreamingOptions:
     :type enable_bidirectional: bool
     :param audio_format: Specifies the audio format used for encoding
     :type audio_format: ~azure.communication.callautomation.AudioFormat
+    :param enable_dtmf_tones: A value that indicates whether to stream the DTMF tones.
+    :type enable_dtmf_tones: bool
     """
 
     transport_url: str
@@ -395,7 +399,8 @@ class MediaStreamingOptions:
     """A value indicating whether bidirectional streaming is enabled"""
     audio_format: Optional[Union[str, 'AudioFormat']] = None
     """Specifies the audio format used for encoding."""
-
+    enable_dtmf_tones: Optional[bool] = None
+    """A value that indicates whether to stream the DTMF tones."""
     def __init__(
         self,
         transport_url: str,
@@ -405,6 +410,7 @@ class MediaStreamingOptions:
         start_media_streaming: Optional[bool] = None,
         enable_bidirectional: Optional[bool] = None,
         audio_format: Optional[Union[str, 'AudioFormat']] = None,
+        enable_dtmf_tones: Optional[bool] = None,
     ):
         self.transport_url = transport_url
         self.transport_type = transport_type
@@ -413,6 +419,7 @@ class MediaStreamingOptions:
         self.start_media_streaming = start_media_streaming
         self.enable_bidirectional = enable_bidirectional
         self.audio_format = audio_format
+        self.enable_dtmf_tones = enable_dtmf_tones
 
     def to_generated(self):
         return MediaStreamingOptionsRest(
@@ -421,8 +428,9 @@ class MediaStreamingOptions:
             content_type=self.content_type,
             audio_channel_type=self.audio_channel_type,
             start_media_streaming=self.start_media_streaming,
-            enable_bidirectional = self.enable_bidirectional,
-            audio_format=self.audio_format
+            enable_bidirectional=self.enable_bidirectional,
+            audio_format=self.audio_format,
+            enable_dtmf_tones=self.enable_dtmf_tones
         )
 
 class TranscriptionOptions:
@@ -442,6 +450,14 @@ class TranscriptionOptions:
     :type speech_recognition_model_endpoint_id: str
     :param enable_intermediate_results: Enables intermediate results for the transcribed speech
     :type enable_intermediate_results: bool
+    :param pii_redaction: PII redaction configuration options.
+    :type pii_redaction: ~azure.communication.callautomation.PiiRedactionOptions
+    :param enable_sentiment_analysis: Indicating if sentiment analysis should be used.
+    :type enable_sentiment_analysis: bool
+    :param locales: List of languages for Language Identification.
+    :type locales: list[str]
+    :param summarization: Summarization configuration options.
+    :type summarization: ~azure.communication.callautomation.SummarizationOptions
     """
 
     transport_url: str
@@ -456,6 +472,14 @@ class TranscriptionOptions:
     """Endpoint where the custom model was deployed."""
     enable_intermediate_results: Optional[bool] = None
     """Enables intermediate results for the transcribed speech."""
+    pii_redaction: Optional["PiiRedactionOptions"] = None
+    """PII redaction configuration options."""
+    enable_sentiment_analysis: Optional[bool] = None
+    """Indicating if sentiment analysis should be used."""
+    locales: Optional[List[str]] = None
+    """List of languages for Language Identification."""
+    summarization: Optional["SummarizationOptions"] = None
+    """Summarization configuration options."""
 
     def __init__(
         self,
@@ -465,6 +489,10 @@ class TranscriptionOptions:
         start_transcription: bool,
         speech_recognition_model_endpoint_id: Optional[str] = None,
         enable_intermediate_results: Optional[bool] = None,
+        pii_redaction: Optional["PiiRedactionOptions"] = None,
+        enable_sentiment_analysis: Optional[bool] = None,
+        locales: Optional[List[str]] = None,
+        summarization: Optional["SummarizationOptions"] = None,
     ):
         self.transport_url = transport_url
         self.transport_type = transport_type
@@ -472,6 +500,10 @@ class TranscriptionOptions:
         self.start_transcription = start_transcription
         self.speech_recognition_model_endpoint_id = speech_recognition_model_endpoint_id
         self.enable_intermediate_results = enable_intermediate_results
+        self.pii_redaction = pii_redaction
+        self.enable_sentiment_analysis = enable_sentiment_analysis
+        self.locales = locales
+        self.summarization = summarization
 
     def to_generated(self):
         return TranscriptionOptionsRest(
@@ -480,7 +512,11 @@ class TranscriptionOptions:
             locale=self.locale,
             start_transcription=self.start_transcription,
             speech_recognition_model_endpoint_id=self.speech_recognition_model_endpoint_id,
-            enable_intermediate_results=self.enable_intermediate_results
+            enable_intermediate_results=self.enable_intermediate_results,
+            pii_redaction_options=self.pii_redaction._to_generated() if self.pii_redaction else None, # pylint:disable=protected-access
+            enable_sentiment_analysis=self.enable_sentiment_analysis,
+            locales=self.locales,
+            summarization_options=self.summarization._to_generated() if self.summarization else None # pylint:disable=protected-access
         )
 
 class MediaStreamingSubscription:
@@ -1063,3 +1099,45 @@ class CancelAddParticipantOperationResult:
             invitation_id=cancel_add_participant_operation_result_generated.invitation_id,
             operation_context=cancel_add_participant_operation_result_generated.operation_context,
         )
+
+class PiiRedactionOptions:
+    """PII redaction configuration options.
+
+    :keyword enable: Gets or sets a value indicating whether PII redaction is enabled.
+    :paramtype enable: bool
+    :keyword redaction_type: Gets or sets the type of PII redaction to be used. "maskWithCharacter"
+    :paramtype redaction_type: str or ~azure.communication.callautomation.models.RedactionType
+    """
+
+    enable: Optional[bool] = False
+    """Gets or sets a value indicating whether PII redaction is enabled."""
+    redaction_type: Optional[Union[str, "RedactionType"]] = "maskWithCharacter"
+    """Gets or sets the type of PII redaction to be used."""
+
+    def __init__(self, *, enable: bool = None, redaction_type: Optional[Union[str, "RedactionType"]] = None):
+        self.enable = enable
+        self.redaction_type = redaction_type
+
+    def _to_generated(self):
+        return PiiRedactionOptionsInternal(enable=self.enable, redaction_type=self.redaction_type)
+
+class SummarizationOptions:
+    """Configuration options for call summarization.
+
+    :keyword enable_end_call_summary: Indicating whether end call summary should be enabled.
+    :paramtype enable_end_call_summary: bool
+    :keyword locale: Locale for summarization (e.g., en-US).
+    :paramtype locale: str
+    """
+
+    enable_end_call_summary: Optional[bool]
+    """Indicating whether end call summary should be enabled."""
+    locale: Optional[str]
+    """Gets or sets the locale for summarization (e.g., en-US)."""
+
+    def __init__(self, *, enable_end_call_summary: bool = None, locale: Optional[str] = None):
+        self.enable_end_call_summary = enable_end_call_summary
+        self.locale = locale
+
+    def _to_generated(self):
+        return SummarizationOptionsInternal(enable_end_call_summary=self.enable_end_call_summary, locale=self.locale)

@@ -20,8 +20,10 @@ from ._models import (
     CallParticipant,
     CallConnectionProperties,
     AddParticipantResult,
+    PiiRedactionOptions,
     RemoveParticipantResult,
     MoveParticipantsResult,
+    SummarizationOptions,
     TransferCallResult,
     MuteParticipantResult,
     SendDtmfTonesResult,
@@ -53,6 +55,7 @@ from ._generated.models import (
     StartMediaStreamingRequest,
     StopMediaStreamingRequest,
     InterruptAudioAndAnnounceRequest,
+    SummarizeCallRequest,
 )
 from ._generated.models._enums import RecognizeInputType
 from ._shared.auth_policy_utils import get_authentication_policy
@@ -677,11 +680,12 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         dtmf_inter_tone_timeout: Optional[int] = None,
         dtmf_max_tones_to_collect: Optional[int] = None,
         dtmf_stop_tones: Optional[List[str or "DtmfTone"]] = None,
-        speech_language: Optional[str] = None,
+        speech_language: Optional[Union[str, List[str]]] = None,
         choices: Optional[List["RecognitionChoice"]] = None,
         end_silence_timeout: Optional[int] = None,
         speech_recognition_model_endpoint_id: Optional[str] = None,
         operation_callback_url: Optional[str] = None,
+        enable_sentiment_analysis: Optional[bool] = None,
         **kwargs,
     ) -> None:
         """Recognize inputs from specific participant in this call.
@@ -715,8 +719,9 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         :keyword dtmf_stop_tones: List of tones that will stop recognizing. Will be ignored
          unless input_type is 'dtmf' or 'speechOrDtmf'.
         :paramtype dtmf_stop_tones: list[str or ~azure.communication.callautomation.DtmfTone]
-        :keyword speech_language: Speech language to be recognized, If not set default is en-US.
-        :paramtype speech_language: str
+        :keyword speech_language: Speech language to be recognized, If not set default is en-US 
+         or list of languages for language identification.
+        :paramtype speech_language: str or list[str]
         :keyword choices: Defines Ivr choices for recognize. Will be ignored unless input_type is 'choices'.
         :paramtype choices: list[~azure.communication.callautomation.RecognitionChoice]
         :keyword end_silence_timeout: The length of end silence when user stops speaking and cogservice
@@ -729,6 +734,9 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
          This setup is per-action. If this is not set, the default callback URL set by
          CreateCall/AnswerCall will be used.
         :paramtype operation_callback_url: str or None
+        :keyword enable_sentiment_analysis: Gets or sets a value indicating if sentiment analysis should
+         be used.
+        :paramtype enable_sentiment_analysis: bool
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -737,8 +745,10 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             interrupt_prompt=interrupt_prompt,
             initial_silence_timeout_in_seconds=initial_silence_timeout,
             target_participant=serialize_identifier(target_participant),
-            speech_language=speech_language,
+            speech_language=speech_language if not isinstance(speech_language, list) else None,
+            speech_languages=speech_language if isinstance(speech_language, list) else None,
             speech_recognition_model_endpoint_id=speech_recognition_model_endpoint_id,
+            enable_sentiment_analysis=enable_sentiment_analysis,
         )
 
         play_prompt_single: Optional[Union['FileSource', 'TextSource', 'SsmlSource']] = None
@@ -963,16 +973,20 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
     def start_transcription(
         self,
         *,
-        locale: Optional[str] = None,
+        locale:  Optional[Union[str, List[str]]] = None,
         operation_context: Optional[str] = None,
         speech_recognition_model_endpoint_id: Optional[str] = None,
         operation_callback_url: Optional[str] = None,
+        pii_redaction: Optional["PiiRedactionOptions"] = None,
+        enable_sentiment_analysis: Optional[bool] = None,
+        summarization: Optional["SummarizationOptions"] = None,
         **kwargs
     ) -> None:
         """Starts transcription in the call.
 
         :keyword locale: Defines Locale for the transcription e,g en-US.
-        :paramtype locale: str
+         List of languages for Language Identification.
+        :paramtype locale: str or list[str]
         :keyword operation_context: The value to identify context of the operation.
         :paramtype operation_context: str
         :keyword speech_recognition_model_endpoint_id: Endpoint where the custom model was deployed.
@@ -982,16 +996,27 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
          This setup is per-action. If this is not set, the default callback URL set by
          CreateCall/AnswerCall will be used.
         :paramtype operation_callback_url: str or None
+        :keyword pii_redaction: PII redaction configuration options.
+        :paramtype pii_redaction: ~azure.communication.callautomation.models.PiiRedactionOptions
+        :keyword enable_sentiment_analysis: Indicating if sentiment analysis should be used.
+        :paramtype enable_sentiment_analysis: bool
+        :keyword summarization: Summarization configuration options.
+        :paramtype summarization:
+         ~azure.communication.callautomation.models.SummarizationOptions
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         start_transcription_request = StartTranscriptionRequest(
-            locale=locale,
+            locale=locale if not isinstance(locale, list) else None,
+            locales=locale if isinstance(locale, list) else None,
             operation_context=operation_context,
             speech_recognition_model_endpoint_id=speech_recognition_model_endpoint_id,
             operation_callback_uri=operation_callback_url,
+            pii_redaction_options=pii_redaction._to_generated() if pii_redaction else None,  # pylint:disable=protected-access
+            enable_sentiment_analysis=enable_sentiment_analysis,
+            summarization_options=summarization._to_generated() if summarization else None,  # pylint:disable=protected-access
             **kwargs
         )
         self._call_media_client.start_transcription(self._call_connection_id, start_transcription_request)
@@ -1031,6 +1056,9 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         operation_context: Optional[str] = None,
         speech_recognition_model_endpoint_id: Optional[str] = None,
         operation_callback_url: Optional[str] = None,
+        pii_redaction: Optional["PiiRedactionOptions"] = None,
+        enable_sentiment_analysis: Optional[bool] = None,
+        summarization: Optional["SummarizationOptions"] = None,
         **kwargs) -> None:
         """API to change transcription language.
 
@@ -1045,6 +1073,12 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
          This setup is per-action. If this is not set, the default callback URL set by
          CreateCall/AnswerCall will be used.
         :paramtype operation_callback_url: str or None
+        :keyword pii_redaction: PII redaction configuration options.
+        :paramtype pii_redaction: ~azure.communication.callautomation.models.PiiRedactionOptions
+        :keyword enable_sentiment_analysis: Indicating if sentiment analysis should be used.
+        :paramtype enable_sentiment_analysis: bool
+        :keyword summarization: Summarization configuration options.
+        :paramtype summarization: ~azure.communication.callautomation.models.SummarizationOptions
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1055,9 +1089,47 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             operation_context=operation_context,
             speech_recognition_model_endpoint_id=speech_recognition_model_endpoint_id,
             operation_callback_uri=operation_callback_url,
+            pii_redaction_options=pii_redaction._to_generated() if pii_redaction else None,  # pylint:disable=protected-access
+            enable_sentiment_analysis=enable_sentiment_analysis,
+            summarization_options=summarization._to_generated() if summarization else None,  # pylint:disable=protected-access
             **kwargs
         )
         self._call_media_client.update_transcription(self._call_connection_id, update_transcription_request)
+
+    @distributed_trace
+    def summarize_call(
+        self,
+        *,
+        operation_context: Optional[str] = None,
+        operation_callback_url: Optional[str] = None,
+        summarization: Optional[SummarizationOptions] = None,
+        **kwargs
+        ) -> None:
+        """ Summary details of call.
+
+        :keyword operation_context: The value to identify context of the operation.
+        :paramtype operation_context: str
+        :keyword operation_callback_url: Set a callback URL that overrides the default callback URL set
+         by CreateCall/AnswerCall for this operation.
+         This setup is per-action. If this is not set, the default callback URL set by
+         CreateCall/AnswerCall will be used.
+        :paramtype operation_callback_url: str or None
+        :keyword summarization: Summarization configuration options.
+        :paramtype summarization: ~azure.communication.callautomation.models.SummarizationOptions
+        :type locale: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+        summarize_call_request = SummarizeCallRequest(
+            operation_context=operation_context,
+            operation_callback_uri=operation_callback_url,
+            summarization_options=summarization._to_generated() if summarization else None,  # pylint:disable=protected-access
+            **kwargs
+        )
+
+        self._call_media_client.summarize_call(self._call_connection_id, summarize_call_request)
 
     @distributed_trace
     def hold(

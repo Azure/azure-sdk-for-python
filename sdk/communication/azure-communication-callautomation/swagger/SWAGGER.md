@@ -17,7 +17,7 @@ autorest SWAGGER.md
 
 ```yaml
 tag: package-2024-09-01-preview
-require: https://github.com/Azure/azure-rest-api-specs/blob/1a08384511e96c42aaf18edd646baf01e5e5fc84/specification/communication/data-plane/CallAutomation/readme.md
+require: https://github.com/Azure/azure-rest-api-specs/blob/97209ee6c07fbb540b4afdfed2e1ebb2fa384169/specification/communication/data-plane/CallAutomation/readme.md
 output-folder: ../azure/communication/callautomation/_generated
 models-mode: msrest
 namespace: azure.communication.callautomation
