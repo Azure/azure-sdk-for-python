@@ -97,6 +97,7 @@ class BaseExporter:
         parsed_connection_string = ConnectionStringParser(kwargs.get("connection_string"))
 
         # TODO: Re-add this once all parts of OneSettings is finished
+        # Initialize the configuration manager to begin fetching settings
         # self._configuration_manager = _ConfigurationManager()
 
         self._api_version = kwargs.get("api_version") or _SERVICE_API_LATEST
@@ -109,6 +110,7 @@ class BaseExporter:
         self._consecutive_redirects = 0  # To prevent circular redirects
         self._disable_offline_storage = kwargs.get("disable_offline_storage", False)
         self._endpoint = parsed_connection_string.endpoint
+        self._region = parsed_connection_string.region
         self._instrumentation_key = parsed_connection_string.instrumentation_key
         self._aad_audience = parsed_connection_string.aad_audience
         self._storage_maintenance_period = kwargs.get(
