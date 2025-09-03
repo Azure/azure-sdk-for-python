@@ -124,19 +124,19 @@ def get_repeatability_timestamp() -> str:
     return datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S GMT")
 
 
-def serialize_identifier(identifier: CommunicationIdentifier) -> Dict[str, Any]:
+def serialize_identifier(identifier: CommunicationIdentifier) -> CommunicationIdentifierModel:
     """Serialize the Communication identifier into CommunicationIdentifierModel
 
     :param identifier: Identifier object
     :type identifier: CommunicationIdentifier
     :return: CommunicationIdentifierModel
-    :rtype: dict[str, any]
+    :rtype: CommunicationIdentifierModel
     """
     try:
-        request_model: dict[str, Any] = {"raw_id": identifier.raw_id}
+        request_model= {"raw_id": identifier.raw_id}
         if identifier.kind and identifier.kind != CommunicationIdentifierKind.UNKNOWN:
             request_model[identifier.kind] = dict(identifier.properties)
-        return request_model
+        return CommunicationIdentifierModel(**request_model)
     except AttributeError:
         raise TypeError(f"Unsupported identifier type: {identifier.__class__.__name__}") from None
 
