@@ -36,6 +36,7 @@ from azure.ai.agents.models import (
     RunStepActivityDetails,
     SubmitToolApprovalAction,
     ToolApproval,
+    ToolSet,
 )
 
 # Get MCP server configuration from environment variables
@@ -54,6 +55,8 @@ mcp_tool = McpTool(
     server_url=mcp_server_url,
     allowed_tools=[],  # Optional: specify allowed tools
 )
+toolSet = ToolSet()
+toolSet.add(mcp_tool)
 
 # You can also add or remove allowed tools dynamically
 search_api_code = "search_azure_rest_api_code"
@@ -93,7 +96,7 @@ with project_client:
     # Create and process agent run in thread with MCP tools
     mcp_tool.update_headers("SuperSecret", "123456")
     # mcp_tool.set_approval_mode("never")  # Uncomment to disable approval requirement
-    run = agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id, tool_resources=mcp_tool.resources)
+    run = agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id, toolset=toolSet)
     print(f"Created run, ID: {run.id}")
 
     while run.status in ["requires_action"]:
