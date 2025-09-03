@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -32,11 +33,11 @@ def main():
 
     client.jobs.begin_stop_execution(
         resource_group_name="rg",
-        job_name="testcontainerappsjob0",
+        job_name="testcontainerAppsJob0",
         job_execution_name="jobExecution1",
     ).result()
 
 
-# x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/Job_Stop_Execution.json
+# x-ms-original-file: specification/app/resource-manager/Microsoft.App/preview/2025-02-02-preview/examples/Job_Stop_Execution.json
 if __name__ == "__main__":
     main()

@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 from functools import cached_property
 from logging import getLogger, Formatter
-from typing import Dict, List, cast
+from typing import Dict, List, Optional, cast
 
 from opentelemetry.instrumentation.instrumentor import (  # type: ignore
     BaseInstrumentor,
@@ -35,6 +35,7 @@ from azure.monitor.opentelemetry._constants import (
     LOGGING_FORMATTER_ARG,
     RESOURCE_ARG,
     SAMPLING_RATIO_ARG,
+    SAMPLING_TRACES_PER_SECOND_ARG,
     SPAN_PROCESSORS_ARG,
     VIEWS_ARG,
 )
@@ -50,6 +51,7 @@ from azure.monitor.opentelemetry.exporter import (  # pylint: disable=import-err
     ApplicationInsightsSampler,
     AzureMonitorMetricExporter,
     AzureMonitorTraceExporter,
+    RateLimitedSampler,
 )
 from azure.monitor.opentelemetry.exporter._utils import (  # pylint: disable=import-error,no-name-in-module
     _is_attach_enabled,
@@ -133,10 +135,21 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
 
 def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
     resource: Resource = configurations[RESOURCE_ARG]  # type: ignore
-    sampling_ratio = configurations[SAMPLING_RATIO_ARG]
-    tracer_provider = TracerProvider(
-        sampler=ApplicationInsightsSampler(sampling_ratio=cast(float, sampling_ratio)), resource=resource
-    )
+    if SAMPLING_TRACES_PER_SECOND_ARG in configurations:
+        traces_per_second = configurations[SAMPLING_TRACES_PER_SECOND_ARG]
+        tracer_provider = TracerProvider(
+            sampler=RateLimitedSampler(
+                target_spans_per_second_limit=cast(float, traces_per_second)
+            ),
+            resource=resource
+        )
+    else:
+        sampling_ratio = configurations[SAMPLING_RATIO_ARG]
+        tracer_provider = TracerProvider(
+            sampler=ApplicationInsightsSampler(sampling_ratio=cast(float, sampling_ratio)), resource=resource
+        )
+
+
     for span_processor in configurations[SPAN_PROCESSORS_ARG]:  # type: ignore
         tracer_provider.add_span_processor(span_processor)  # type: ignore
     if configurations.get(ENABLE_LIVE_METRICS_ARG):
@@ -194,7 +207,7 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
         logger_provider.add_log_record_processor(log_record_processor)
         set_logger_provider(logger_provider)
         logger_name: str = configurations[LOGGER_NAME_ARG]  # type: ignore
-        logging_formatter: Formatter = configurations[LOGGING_FORMATTER_ARG]  # type: ignore
+        logging_formatter: Optional[Formatter] = configurations.get(LOGGING_FORMATTER_ARG)  # type: ignore
         logger = getLogger(logger_name)
         # Only add OpenTelemetry LoggingHandler if logger does not already have the handler
         # This is to prevent most duplicate logging telemetry
@@ -322,7 +335,6 @@ def _setup_additional_azure_sdk_instrumentations(configurations: Dict[str, Confi
 
     instrumentors = [
         ("azure.ai.inference.tracing", "AIInferenceInstrumentor"),
-        ("azure.ai.projects.telemetry.agents", "AIAgentsInstrumentor"),
         ("azure.ai.agents.telemetry", "AIAgentsInstrumentor"),
     ]
 

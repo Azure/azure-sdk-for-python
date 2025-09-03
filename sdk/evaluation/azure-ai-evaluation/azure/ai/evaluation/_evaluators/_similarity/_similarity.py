@@ -41,13 +41,13 @@ class SimilarityEvaluator(PromptyEvaluatorBase):
             :caption: Initialize and call a SimilarityEvaluator with a four-gram rouge type.
 
     .. admonition:: Example using Azure AI Project URL:
-        
+
         .. literalinclude:: ../samples/evaluation_samples_evaluate_fdp.py
             :start-after: [START similarity_evaluator]
             :end-before: [END similarity_evaluator]
             :language: python
             :dedent: 8
-            :caption: Initialize and call SimilarityEvaluator using Azure AI Project URL in the following format 
+            :caption: Initialize and call SimilarityEvaluator using Azure AI Project URL in the following format
                 https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
 
     .. admonition:: Example:
@@ -71,11 +71,11 @@ class SimilarityEvaluator(PromptyEvaluatorBase):
     _PROMPTY_FILE = "similarity.prompty"
     _RESULT_KEY = "similarity"
 
-    id = "similarity"
+    id = "azureai://built-in/evaluators/similarity"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(self, model_config, *, threshold=3):
+    def __init__(self, model_config, *, threshold=3, credential=None):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         self._threshold = threshold
@@ -85,7 +85,8 @@ class SimilarityEvaluator(PromptyEvaluatorBase):
             prompty_file=prompty_path,
             result_key=self._RESULT_KEY,
             threshold=threshold,
-            _higher_is_better=self._higher_is_better
+            credential=credential,
+            _higher_is_better=self._higher_is_better,
         )
 
     # Ignoring a mypy error about having only 1 overload function.

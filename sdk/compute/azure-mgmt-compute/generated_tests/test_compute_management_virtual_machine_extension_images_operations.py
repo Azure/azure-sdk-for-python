@@ -20,20 +20,6 @@ class TestComputeManagementVirtualMachineExtensionImagesOperations(AzureMgmtReco
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_virtual_machine_extension_images_get(self, resource_group):
-        response = self.client.virtual_machine_extension_images.get(
-            location="str",
-            publisher_name="str",
-            type="str",
-            version="str",
-            api_version="2024-11-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
     def test_virtual_machine_extension_images_list_types(self, resource_group):
         response = self.client.virtual_machine_extension_images.list_types(
             location="str",
@@ -51,6 +37,20 @@ class TestComputeManagementVirtualMachineExtensionImagesOperations(AzureMgmtReco
             location="str",
             publisher_name="str",
             type="str",
+            api_version="2024-11-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_virtual_machine_extension_images_get(self, resource_group):
+        response = self.client.virtual_machine_extension_images.get(
+            location="str",
+            publisher_name="str",
+            type="str",
+            version="str",
             api_version="2024-11-01",
         )
 

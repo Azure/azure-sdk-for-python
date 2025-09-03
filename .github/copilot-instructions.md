@@ -13,6 +13,9 @@
 - Use this as the authoritative source for SDK development guidance
 
 ### RULE 3: VERIFY ENVIRONMENT FIRST
+**REQUIRED CONDITIONS:**
+- To use Azure MCP tool calls, users must have PowerShell installed. Provide [PowerShell installation instructions](https://learn.microsoft.com/powershell/scripting/install/installing-powershell) if not installed, and recommend restarting the IDE to start the MCP server.
+
 **BEFORE any commands:**
 1. Get path to azure-sdk-for-python repo root, and path to tox.ini file
 2. Use `verify_setup` tool from azure-sdk-python-mcp server
@@ -73,9 +76,9 @@ curl -s "https://api.github.com/repos/Azure/azure-rest-api-specs/commits?path=<p
 ## EXECUTION SEQUENCE - 7 MANDATORY STEPS
 
 **ESTIMATED TOTAL TIME: 10-15 minutes**
-- SDK Generation: 5-6 minutes
-- Static Validation: 3-5 minutes  
-- Documentation & Commit: 2-4 minutes
+- SDK Generation: ~2 minutes
+- Static Validation: ~3-5 minutes
+- Documentation & Commit: ~2-4 minutes
 
 **ALWAYS inform users of time expectations before starting any long-running operations.**
 
@@ -89,10 +92,7 @@ IF missing dependencies:
 
 ### STEP 2: SDK GENERATION
 ```
-ACTION: Use azure-sdk-python-mcp sdk generation server tools (init, init_local)
-TIMING: ALWAYS inform user before starting: "This SDK generation step will take approximately 5-6 minutes to complete."
-IF local path provided:
-    USE local mcp tools with tspconfig.yaml path
+ACTION: Use azure-sdk-python-mcp sdk generation server tools (init for new packages, update for existing packages)
 IF commands fail:
     ANALYZE error messages
     DIRECT user to fix TypeSpec errors in source repo
@@ -100,7 +100,6 @@ IF commands fail:
 
 ### STEP 3: STATIC VALIDATION (SEQUENTIAL)
 ```
-TIMING: Inform user: "Static validation will take approximately 3-5 minutes for each step."
 FOR EACH validation step:
     RUN validation (tox mcp tool)
     IF errors/warnings found:
@@ -280,3 +279,25 @@ Mypy: FAIL
 Tests - CI: FAIL
 
 This library is failing two release blocking checks - Mypy and Tests - CI. The library needs attention primarily due to Pylint warnings, disabled sample tests, and open customer-reported issues.
+
+---
+
+## SDK release
+
+There are two tools to help with SDK releases:
+- Check SDK release readiness
+- Release SDK
+
+### Check SDK Release Readiness
+Run `CheckPackageReleaseReadiness` to verify if the package is ready for release. This tool checks:
+- API review status
+- Change log status
+- Package name approval(If package is new and releasing a preview version)
+- Release date is set in release tracker
+
+### Release SDK
+Run `ReleasePackage` to release the package. This tool requires package name and language as inputs. It will:
+- Check if the package is ready for release
+- Identify the release pipeline
+- Trigger the release pipeline.
+User needs to approve the release stage in the pipeline after it is triggered.

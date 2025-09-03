@@ -6,6 +6,7 @@ pytest-custom-exit-code==0.3.0
 pytest-xdist==3.2.1
 coverage==7.6.1
 bandit==1.6.2
+stevedore==5.4.1
 pyproject-api==1.8.0
 build==1.2.2.post1
 

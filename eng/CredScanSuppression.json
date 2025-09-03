@@ -35,6 +35,12 @@
                 "eng/common/testproxy/dotnet-devcert.pfx",
                 "sdk/confidentialledger/azure-confidentialledger/tests/_shared/constants.py",
                 "sdk/keyvault/azure-keyvault-certificates/tests/ca.key",
+                "sdk/keyvault/azure-keyvault-securitydomain/tests/resources/certificate0.cer",
+                "sdk/keyvault/azure-keyvault-securitydomain/tests/resources/certificate1.cer",
+                "sdk/keyvault/azure-keyvault-securitydomain/tests/resources/certificate2.cer",
+                "sdk/keyvault/azure-keyvault-securitydomain/tests/resources/certificate0.pem",
+                "sdk/keyvault/azure-keyvault-securitydomain/tests/resources/certificate1.pem",
+                "sdk/keyvault/azure-keyvault-securitydomain/tests/resources/certificate2.pem",
                 "sdk/identity/azure-identity/tests/certificate.pfx",
                 "sdk/identity/azure-identity/tests/certificate.pem",
                 "sdk/identity/azure-identity/tests/certificate-with-password.pfx",
@@ -42,8 +48,8 @@
                 "sdk/identity/azure-identity/tests/ec-certificate.pem",
                 "sdk/core/azure-servicemanagement-legacy/tests/legacy_mgmt_settings_fake.py",
                 "sdk/storage/azure-storage-blob/tests/fake_credentials.py",
-                "tools/azure-sdk-tools/devtools_testutils/fake_credentials.py",
-                "tools/azure-sdk-tools/devtools_testutils/mgmt_settings_fake.py"
+                "eng/tools/azure-sdk-tools/devtools_testutils/fake_credentials.py",
+                "eng/tools/azure-sdk-tools/devtools_testutils/mgmt_settings_fake.py"
             ],
             "_justification": "File contains private key used by test code."
         },

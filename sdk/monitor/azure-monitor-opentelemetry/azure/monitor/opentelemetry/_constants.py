@@ -24,7 +24,9 @@ RESOURCE_ARG = "resource"
 SAMPLING_RATIO_ARG = "sampling_ratio"
 SPAN_PROCESSORS_ARG = "span_processors"
 VIEWS_ARG = "views"
-
+RATE_LIMITED_SAMPLER = "microsoft.rate_limited"
+FIXED_PERCENTAGE_SAMPLER = "microsoft.fixed.percentage"
+SAMPLING_TRACES_PER_SECOND_ARG = "traces_per_second"
 
 # --------------------Autoinstrumentation Configuration------------------------------------------
 
@@ -32,6 +34,9 @@ LOG_EXPORTER_NAMES_ARG = "log_exporter_names"
 METRIC_EXPORTER_NAMES_ARG = "metric_exporter_names"
 SAMPLER_ARG = "sampler"
 TRACE_EXPORTER_NAMES_ARG = "trace_exporter_names"
+
+LOGGER_NAME_ENV_ARG = "PYTHON_APPLICATIONINSIGHTS_LOGGER_NAME"
+LOGGING_FORMAT_ENV_ARG = "PYTHON_APPLICATIONINSIGHTS_LOGGING_FORMAT"
 
 
 # --------------------Diagnostic/status logging------------------------------

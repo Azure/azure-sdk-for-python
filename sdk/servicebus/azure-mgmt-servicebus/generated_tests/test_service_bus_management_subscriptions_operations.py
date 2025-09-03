@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.servicebus.v2021_11_01 import ServiceBusManagementClient
+from azure.mgmt.servicebus import ServiceBusManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -25,7 +25,7 @@ class TestServiceBusManagementSubscriptionsOperations(AzureMgmtRecordedTestCase)
             resource_group_name=resource_group.name,
             namespace_name="str",
             topic_name="str",
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -78,7 +78,7 @@ class TestServiceBusManagementSubscriptionsOperations(AzureMgmtRecordedTestCase)
                 "type": "str",
                 "updatedAt": "2020-02-20 00:00:00",
             },
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -92,7 +92,7 @@ class TestServiceBusManagementSubscriptionsOperations(AzureMgmtRecordedTestCase)
             namespace_name="str",
             topic_name="str",
             subscription_name="str",
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -106,7 +106,7 @@ class TestServiceBusManagementSubscriptionsOperations(AzureMgmtRecordedTestCase)
             namespace_name="str",
             topic_name="str",
             subscription_name="str",
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
 
         # please add some check logic here by yourself

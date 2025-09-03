@@ -281,7 +281,7 @@ class RegressionTest:
             logging.info("Extending dev requirement to include azure-sdk-tools")
             extend_dev_requirements(
                 filtered_dev_req_path,
-                ["../../../tools/azure-sdk-tools"],
+                ["../../../eng/tools/azure-sdk-tools"],
             )
             logging.info("Installing filtered dev requirements from {}".format(filtered_dev_req_path))
             run_check_call(
@@ -328,7 +328,7 @@ def find_package_dependency(glob_string, repo_root_dir, dependent_service):
             parsed = ParsedSetup.from_path(pkg_root)
 
             # Get a list of package names from install requires
-            required_pkgs = [parse_require(r).key for r in parsed.requires]
+            required_pkgs = [parse_require(r).name for r in parsed.requires]
             required_pkgs = [p for p in required_pkgs if p.startswith("azure")]
 
             for req_pkg in required_pkgs:

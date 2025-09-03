@@ -108,6 +108,14 @@ DefaultAzureCredential(managed_identity_client_id=client_id)
 
 Alternatively, set the environment variable `AZURE_CLIENT_ID` to the identity's client ID.
 
+#### Authenticate Using Visual Studio Code with `DefaultAzureCredential`
+
+To authenticate using Visual Studio Code, ensure you have signed in through the **Azure Resources** extension. The signed-in user is then picked up automatically by `DefaultAzureCredential`. Currently, this is only supported on Windows and WSL. To use this method of authentication, ensure the following prerequisites are met:
+
+- [Azure Resources Extension](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azureresourcegroups) is installed in Visual Studio Code.
+- You are signed in using the `Azure: Sign In` command in VS Code.
+- You have the [`azure-identity-broker`][azure_identity_broker] package installed.
+
 ### Define a custom authentication flow with `ChainedTokenCredential`
 
 While `DefaultAzureCredential` is generally the quickest way to authenticate apps for Azure, you can create a customized chain of credentials to be considered. `ChainedTokenCredential` enables users to combine multiple credential instances to define a customized chain of credentials. For more information, see [ChainedTokenCredential overview][ctc_overview].
@@ -271,6 +279,7 @@ Not all credentials require this configuration. Credentials that authenticate th
 |[`AzureCliCredential`][cli_cred_ref]| Authenticates in a development environment with the Azure CLI. | [Azure CLI authentication](https://learn.microsoft.com/cli/azure/authenticate-azure-cli)
 |[`AzureDeveloperCliCredential`][azd_cli_cred_ref]| Authenticates in a development environment with the Azure Developer CLI. | [Azure Developer CLI Reference](https://learn.microsoft.com/azure/developer/azure-developer-cli/reference)
 |[`AzurePowerShellCredential`][powershell_cred_ref]| Authenticates in a development environment with the Azure PowerShell. | [Azure PowerShell authentication](https://learn.microsoft.com/powershell/azure/authenticate-azureps)
+|[`VisualStudioCodeCredential`][vsc_cred_ref]| Authenticates in a development environment with Visual Studio Code. |
 
 ## Environment variables
 
@@ -313,7 +322,7 @@ The Azure Identity library offers both in-memory and persistent disk caching. Fo
 
 ## Brokered authentication
 
-An authentication broker is an application that runs on a user’s machine and manages the authentication handshakes and token maintenance for connected accounts. Currently, only the Windows Web Account Manager (WAM) is supported. To enable support, use the [`azure-identity-broker`][azure_identity_broker] package. For details on authenticating using WAM, see the [broker plugin documentation][azure_identity_broker_readme].
+An authentication broker is an application that runs on a user’s machine and manages the authentication handshakes and token maintenance for connected accounts. Currently, only the Windows Web Account Manager (WAM) is supported. Authentication via WAM is used by `DefaultAzureCredential` to enable secure sign-in. To enable support, use the [`azure-identity-broker`][azure_identity_broker] package. For details on authenticating using WAM, see the [broker plugin documentation][azure_identity_broker_readme].
 
 ## Troubleshooting
 
@@ -396,4 +405,5 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 [token_cred_ref]: https://learn.microsoft.com/python/api/azure-core/azure.core.credentials.tokencredential?view=azure-python
 [supports_token_info_ref]: https://learn.microsoft.com/python/api/azure-core/azure.core.credentials.supportstokeninfo?view=azure-python
 [troubleshooting_guide]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/TROUBLESHOOTING.md
+[vsc_cred_ref]: https://aka.ms/azsdk/python/identity/vscodecredential
 [workload_id_cred_ref]: https://aka.ms/azsdk/python/identity/workloadidentitycredential

@@ -4,6 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 from collections import namedtuple
+import base64
 import time
 from itertools import product
 from requests import Response
@@ -16,7 +17,7 @@ from azure.core.credentials import (
     AccessTokenInfo,
 )
 from azure.core.exceptions import ServiceRequestError
-from azure.core.pipeline import Pipeline, PipelineRequest, PipelineContext
+from azure.core.pipeline import Pipeline, PipelineRequest, PipelineContext, PipelineResponse
 from azure.core.pipeline.transport import HttpTransport, HttpRequest
 from azure.core.pipeline.policies import (
     BearerTokenCredentialPolicy,
@@ -791,3 +792,48 @@ def test_access_token_subscriptable():
     assert len(token) == 2
     assert token[0] == "token"
     assert token[1] == 42
+
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_bearer_policy_on_challenge_caches_token_with_claims(http_request):
+    """Test that on_challenge caches the token when handling claims challenges"""
+    # Setup credentials that return different tokens for different calls
+    initial_token = AccessToken("initial_token", int(time.time()) + 3600)
+    claims_token = AccessToken("claims_token", int(time.time()) + 3600)
+
+    call_count = 0
+
+    def mock_get_token_info(*scopes, options):
+        nonlocal call_count
+        call_count += 1
+        if options and "claims" in options:
+            return claims_token
+        return initial_token
+
+    fake_credential = Mock(spec_set=["get_token_info"], get_token_info=mock_get_token_info)
+    policy = BearerTokenCredentialPolicy(fake_credential, "scope")
+
+    # Create request and initial response
+    http_req = http_request("GET", "https://example.com")
+    request = PipelineRequest(
+        http_req, PipelineContext(None)
+    )  # Create a 401 response with insufficient_claims challenge
+    test_claims = '{"access_token":{"foo":"bar"}}'
+    encoded_claims = base64.urlsafe_b64encode(test_claims.encode()).decode().rstrip("=")
+    challenge_header = f'Bearer error="insufficient_claims", claims="{encoded_claims}"'
+
+    response_mock = Mock(status_code=401, headers={"WWW-Authenticate": challenge_header})
+    response = PipelineResponse(request, response_mock, PipelineContext(None))
+
+    # Call on_challenge
+    result = policy.on_challenge(request, response)
+
+    # Verify the challenge was handled successfully
+    assert result is True
+
+    # Verify the token was cached
+    assert policy._token is claims_token
+    assert policy._token.token == "claims_token"
+
+    # Verify the Authorization header was set correctly
+    assert request.http_request.headers["Authorization"] == "Bearer claims_token"

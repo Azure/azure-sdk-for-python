@@ -5,6 +5,7 @@
 """End-to-end test.
 """
 import asyncio
+import logging
 import os
 import time
 import unittest
@@ -85,6 +86,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         if os.environ.get("AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER", "False") == "True":
             use_multiple_write_locations = True
         self.client = CosmosClient(self.host, self.masterKey, multiple_write_locations=use_multiple_write_locations)
+        await self.client.__aenter__()
         self.database_for_test = self.client.get_database_client(self.configs.TEST_DATABASE_ID)
 
     async def asyncTearDown(self):
@@ -441,7 +443,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         await created_collection.delete_item(item=upserted_document, partition_key=upserted_document['pk'])
         await created_collection.delete_item(item=new_document, partition_key=new_document['pk'])
 
-        # read documents after delete and verify count is same as original
+        # read documents after delete and verify count remains the same
         document_list = [document async for document in created_collection.read_all_items()]
         assert len(document_list) == before_create_documents_count
 
@@ -919,6 +921,25 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
                 await container.create_item(body=item)
                 await container.read_item(item=item['id'], partition_key=item['id'])
                 print('Async Initialization')
+
+    async def test_read_collection_only_once_async(self):
+        # Add filter to the filtered diagnostics handler
+        mock_handler = test_config.MockHandler()
+        logger = logging.getLogger("azure.cosmos")
+        logger.setLevel(logging.INFO)
+        logger.addHandler(mock_handler)
+
+        async with CosmosClient(self.host, self.masterKey) as client:
+            database = client.get_database_client(self.configs.TEST_DATABASE_ID)
+            container = database.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
+
+            # Perform 10 concurrent upserts
+            tasks = [
+                container.upsert_item(body={'id': str(uuid.uuid4()), 'name': f'sample-{i}'})
+                for i in range(10)
+            ]
+            await asyncio.gather(*tasks)
+        assert sum("'x-ms-thinclient-proxy-resource-type': 'colls'" in response.message for response in mock_handler.messages) == 1
 
     # TODO: Skipping this test to debug later
     @unittest.skip
@@ -1500,3 +1521,4 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
 
 if __name__ == '__main__':
     unittest.main()
+

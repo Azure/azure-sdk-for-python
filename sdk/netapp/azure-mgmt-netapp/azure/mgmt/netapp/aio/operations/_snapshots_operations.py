@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterator, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -70,7 +70,7 @@ class SnapshotsOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, account_name: str, pool_name: str, volume_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.Snapshot"]:
+    ) -> AsyncItemPaged["_models.Snapshot"]:
         """Describe all snapshots.
 
         List all snapshots associated with the volume.

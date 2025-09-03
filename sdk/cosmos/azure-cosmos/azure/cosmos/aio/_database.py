@@ -807,6 +807,7 @@ class DatabaseProxy(object):
         computed_properties: Optional[List[Dict[str, str]]] = None,
         full_text_policy: Optional[Dict[str, Any]] = None,
         return_properties: Literal[False] = False,
+        vector_embedding_policy: Optional[Dict[str, Any]] = None,
         **kwargs: Any
     ) -> ContainerProxy:
         """Reset the properties of the container.
@@ -867,6 +868,7 @@ class DatabaseProxy(object):
         computed_properties: Optional[List[Dict[str, str]]] = None,
         full_text_policy: Optional[Dict[str, Any]] = None,
         return_properties: Literal[True],
+        vector_embedding_policy: Optional[Dict[str, Any]] = None,
         **kwargs: Any
     ) -> tuple[ContainerProxy, CosmosDict]:
         """Reset the properties of the container.
@@ -1006,7 +1008,8 @@ class DatabaseProxy(object):
                 "conflictResolutionPolicy": conflict_resolution_policy,
                 "analyticalStorageTtl": analytical_storage_ttl,
                 "computedProperties": computed_properties,
-                "fullTextPolicy": full_text_policy
+                "fullTextPolicy": full_text_policy,
+                "vectorEmbeddingPolicy": vector_embedding_policy
             }.items()
             if value is not None
         }

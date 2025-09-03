@@ -6,12 +6,21 @@ import logging
 from typing import Union, Any, Dict
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.ai.evaluation._common.onedp import AIProjectClient as RestEvaluationServiceClient
-from azure.ai.evaluation._common.onedp.models import (PendingUploadRequest, PendingUploadType, EvaluationResult,
-                                                      ResultType, AssetCredentialRequest, EvaluationUpload, InputDataset, RedTeamUpload)
+from azure.ai.evaluation._common.onedp.models import (
+    PendingUploadRequest,
+    PendingUploadType,
+    EvaluationResult,
+    ResultType,
+    AssetCredentialRequest,
+    EvaluationUpload,
+    InputDataset,
+    RedTeamUpload,
+)
 from azure.storage.blob import ContainerClient
 from .utils import upload
 
 LOGGER = logging.getLogger(__name__)
+
 
 class EvaluationServiceOneDPClient:
 
@@ -23,7 +32,15 @@ class EvaluationServiceOneDPClient:
         )
 
     def create_evaluation_result(
-            self, *, name: str, path: str, version=1, metrics: Dict[str, int]=None, result_type: ResultType=ResultType.EVALUATION, **kwargs) -> EvaluationResult:
+        self,
+        *,
+        name: str,
+        path: str,
+        version=1,
+        metrics: Dict[str, int] = None,
+        result_type: ResultType = ResultType.EVALUATION,
+        **kwargs,
+    ) -> EvaluationResult:
         """Create and upload evaluation results to Azure evaluation service.
 
         This method uploads evaluation results from a local path to Azure Blob Storage
@@ -49,17 +66,20 @@ class EvaluationServiceOneDPClient:
         :raises: Various exceptions from the underlying API calls or upload process
         """
 
-        LOGGER.debug(f"Creating evaluation result for {name} with version {version} type {result_type} from path {path}")
+        LOGGER.debug(
+            f"Creating evaluation result for {name} with version {version} type {result_type} from path {path}"
+        )
         start_pending_upload_response = self.rest_client.evaluation_results.start_pending_upload(
             name=name,
             version=version,
             body=PendingUploadRequest(pending_upload_type=PendingUploadType.TEMPORARY_BLOB_REFERENCE),
-            **kwargs
+            **kwargs,
         )
 
         LOGGER.debug(f"Uploading {path} to {start_pending_upload_response.blob_reference_for_consumption.blob_uri}")
         with ContainerClient.from_container_url(
-            start_pending_upload_response.blob_reference_for_consumption.credential.sas_uri) as container_client:
+            start_pending_upload_response.blob_reference_for_consumption.credential.sas_uri
+        ) as container_client:
             upload(path=path, container_client=container_client, logger=LOGGER)
 
         LOGGER.debug(f"Creating evaluation result version for {name} with version {version}")
@@ -73,7 +93,7 @@ class EvaluationServiceOneDPClient:
             ),
             name=name,
             version=version,
-            **kwargs
+            **kwargs,
         )
 
         return create_version_response
@@ -90,10 +110,7 @@ class EvaluationServiceOneDPClient:
         :rtype: EvaluationUpload
         :raises: Various exceptions from the underlying API calls
         """
-        upload_run_response = self.rest_client.evaluations.upload_run(
-            evaluation=evaluation,
-            **kwargs
-        )
+        upload_run_response = self.rest_client.evaluations.upload_run(evaluation=evaluation, **kwargs)
 
         return upload_run_response
 
@@ -112,11 +129,7 @@ class EvaluationServiceOneDPClient:
         :rtype: EvaluationUpload
         :raises: Various exceptions from the underlying API calls
         """
-        update_run_response = self.rest_client.evaluations.upload_update_run(
-            name=name,
-            evaluation=evaluation,
-            **kwargs
-        )
+        update_run_response = self.rest_client.evaluations.upload_update_run(name=name, evaluation=evaluation, **kwargs)
 
         return update_run_response
 
@@ -132,10 +145,7 @@ class EvaluationServiceOneDPClient:
         :rtype: ~azure.ai.evaluation._common.onedp.models.RedTeamUpload
         :raises: Various exceptions from the underlying API calls
         """
-        upload_run_response = self.rest_client.red_teams.upload_run(
-            redteam=red_team,
-            **kwargs
-        )
+        upload_run_response = self.rest_client.red_teams.upload_run(redteam=red_team, **kwargs)
 
         return upload_run_response
 
@@ -154,10 +164,6 @@ class EvaluationServiceOneDPClient:
         :rtype: ~azure.ai.evaluation._common.onedp.models.RedTeamUpload
         :raises: Various exceptions from the underlying API calls
         """
-        update_run_response = self.rest_client.red_teams.upload_update_run(
-            name=name,
-            redteam=red_team,
-            **kwargs
-        )
+        update_run_response = self.rest_client.red_teams.upload_update_run(name=name, redteam=red_team, **kwargs)
 
         return update_run_response

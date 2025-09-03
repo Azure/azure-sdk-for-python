@@ -79,8 +79,6 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
     :paramtype limits: Optional[~azure.ai.ml.entities.CommandJobLimits]
     :keyword parent_job_name: parent job id for command job
     :paramtype parent_job_name: Optional[str]
-    :keyword kwargs: A dictionary of additional configuration parameters.
-    :paramtype kwargs: dict
 
 
     .. admonition:: Example:
