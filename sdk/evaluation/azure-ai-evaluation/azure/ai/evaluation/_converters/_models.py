@@ -16,13 +16,15 @@ if TYPE_CHECKING:
         except ImportError:
             # Create a protocol for type checking when the real class isn't available
             from typing import Protocol
-            
+
             class RunStepFunctionToolCall(Protocol):
                 """Protocol defining the expected interface for RunStepFunctionToolCall."""
+
                 id: str
                 type: str
-                
+
                 def get(self, key: str, default: Any = None) -> Any: ...
+
 else:
     # At runtime, we don't need the actual class since it's only used in type annotations
     RunStepFunctionToolCall = Any
