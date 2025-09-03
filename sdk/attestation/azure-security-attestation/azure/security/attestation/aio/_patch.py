@@ -269,7 +269,7 @@ class AttestationClient:
             enclave was initialized, JSON encoded.
         :keyword bytes runtime_data: Data presented at the time that the open_enclave
             report was created.
-        :param bytes runtime_json: Data presented at the time that the open_enclave
+        :keyword bytes runtime_json: Data presented at the time that the open_enclave
             report was created. JSON Encoded.
         :keyword str draft_policy: "draft" or "experimental" policy to be used with
             this attestation request. If this parameter is provided, then this
