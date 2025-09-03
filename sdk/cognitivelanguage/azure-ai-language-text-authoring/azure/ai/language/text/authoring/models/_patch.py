@@ -38,6 +38,7 @@ from ._models import (
     ExportedCustomSingleLabelClassificationDocument,
     ExportedDocumentClass,
     ExportedClass,
+    ResourceMetadata
 )
 
 def patch_sdk():
@@ -78,4 +79,5 @@ __all__ = [
     "ExportedCustomSingleLabelClassificationDocument",
     "ExportedDocumentClass",
     "ExportedClass",
+    "ResourceMetadata",
 ]
