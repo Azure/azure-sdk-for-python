@@ -10,7 +10,7 @@ from datetime import datetime
 from functools import partial
 from typing import (
     Any, AnyStr, AsyncIterable, Callable, cast, Dict, IO,
-    Iterable, List, Optional, Tuple, Union,
+    Iterable, List, Optional, overload, Tuple, Union,
     TYPE_CHECKING
 )
 from typing_extensions import Self
@@ -645,6 +645,26 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         if blob_type == BlobType.PageBlob:
             return cast(Dict[str, Any], await upload_page_blob(**options))
         return cast(Dict[str, Any], await upload_append_blob(**options))
+
+    @overload
+    async def download_blob(
+        self, offset: Optional[int] = None,
+        length: Optional[int] = None,
+        *,
+        encoding: str,
+        **kwargs: Any
+    ) -> StorageStreamDownloader[str]:
+        ...
+
+    @overload
+    async def download_blob(
+        self, offset: Optional[int] = None,
+        length: Optional[int] = None,
+        *,
+        encoding: None = None,
+        **kwargs: Any
+    ) -> StorageStreamDownloader[bytes]:
+        ...
 
     @distributed_trace_async
     async def download_blob(

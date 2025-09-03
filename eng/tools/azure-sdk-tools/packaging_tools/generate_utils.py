@@ -113,6 +113,7 @@ def call_build_config(package_name: str, folder_name: str):
         os.environ.get("GH_TOKEN", None),
         packages=[package_name],
         build_conf=True,
+        template_names=["README.md", "__init__.py"],
     )
     # Replace this check_call by in process equivalent call, for better debugging
     # check_call(
@@ -156,10 +157,31 @@ def generate_packaging_files(package_name, folder_name):
             sdk_packaging_toml.rename(pyproject_toml)
 
     if "azure-mgmt-" in package_name:
+        # if codegen generate pyproject.toml instead of setup.py, we delete existing setup.py
+        setup_py = output_path / "setup.py"
+        if setup_py.exists():
+            _LOGGER.info(f"delete {setup_py} since codegen generate pyproject.toml")
+            with open(pyproject_toml, "rb") as f:
+                pyproject_content = toml.load(f)
+            if pyproject_content.get("project"):
+                setup_py.unlink()
+
         call_build_config(package_name, folder_name)
+
+        # load pyproject.toml and replace "azure-core" with "azure-mgmt" (after codegen fix bug, we could remove this logic)
+        if pyproject_toml.exists():
+            with open(pyproject_toml, "rb") as f:
+                pyproject_content = toml.load(f)
+            if pyproject_content.get("project"):
+                for idx in range(len(pyproject_content["project"].get("dependencies", []))):
+                    if pyproject_content["project"]["dependencies"][idx].startswith("azure-core"):
+                        pyproject_content["project"]["dependencies"][idx] = "azure-mgmt-core>=1.5.0"
+
+            with open(pyproject_toml, "wb") as f:
+                tomlw.dump(pyproject_content, f)
     else:
-        if not (output_path / CONF_NAME).exists():
-            with open(output_path / CONF_NAME, "w") as file_out:
+        if not pyproject_toml.exists():
+            with open(pyproject_toml, "w") as file_out:
                 file_out.write("[packaging]\nauto_update = false")
 
     # add ci.yaml
@@ -243,7 +265,38 @@ def judge_tag_preview(path: str, package_name: str) -> bool:
             _LOGGER.info(f"can not open {file}")
             continue
 
+        skip_decorator_block = False
+        decorator_depth = 0
+
         for line in list_in:
+            # skip the code of decorator @api_version_validation
+            stripped_line = line.strip()
+
+            # Check if we're starting an @api_version_validation decorator block
+            if "@api_version_validation" in stripped_line:
+                skip_decorator_block = True
+                decorator_depth = 0
+                continue
+
+            # If we're in a decorator block, track parentheses depth
+            if skip_decorator_block:
+                decorator_depth += stripped_line.count("(") - stripped_line.count(")")
+                # If we've closed all parentheses and hit a function definition, skip until next function/class
+                if decorator_depth == 0 and (
+                    stripped_line.startswith("def ") or stripped_line.startswith("async def ")
+                ):
+                    continue
+                # If we hit another decorator or function/class definition after closing parentheses, stop skipping
+                if decorator_depth == 0 and (
+                    stripped_line.startswith("@")
+                    or stripped_line.startswith("def ")
+                    or stripped_line.startswith("async def ")
+                    or stripped_line.startswith("class ")
+                ):
+                    skip_decorator_block = False
+                else:
+                    continue
+
             if "DEFAULT_API_VERSION = " in line:
                 default_api_version += line.split("=")[-1].strip("\n")  # collect all default api version
             if default_api_version == "" and "api_version" in line and "method_added_on" not in line:
@@ -462,13 +515,11 @@ def gen_typespec(
             tsp_dir = (Path(spec_folder) / typespec_relative_path).resolve()
             repo_url = rest_repo_url.replace("https://github.com/", "")
             tspconfig = tsp_dir / "tspconfig.yaml"
-            if tspconfig.exists():
+            if tspconfig.exists() and api_version:
                 with open(tspconfig, "r") as file_in:
                     content = yaml.safe_load(file_in)
                     if content.get("options", {}).get("@azure-tools/typespec-python"):
-                        content["options"]["@azure-tools/typespec-python"]["keep-setup-py"] = True
-                        if api_version:
-                            content["options"]["@azure-tools/typespec-python"]["api-version"] = api_version
+                        content["options"]["@azure-tools/typespec-python"]["api-version"] = api_version
                 with open(tspconfig, "w") as file_out:
                     yaml.dump(content, file_out)
             cmd = f"tsp-client init --tsp-config {tsp_dir} --local-spec-repo {tsp_dir} --commit {head_sha} --repo {repo_url}"
