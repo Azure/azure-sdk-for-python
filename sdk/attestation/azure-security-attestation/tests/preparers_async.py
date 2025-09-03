@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from typing import Awaitable, List
-from azure.security.attestation import AttestationType
+from azure.security.attestation.models import AttestationType
 
 try:
     from typing import TYPE_CHECKING

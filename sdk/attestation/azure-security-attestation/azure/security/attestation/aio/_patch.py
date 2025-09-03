@@ -15,10 +15,10 @@ from typing import List, Any, TYPE_CHECKING, Tuple, Union, Dict
 from cryptography.hazmat.primitives import serialization
 from cryptography.x509.base import load_pem_x509_certificate
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.core.exceptions import raise_with_traceback # pylint: disable=no-raise-with-traceback
+from azure.core.exceptions import raise_with_traceback  # pylint: disable=no-raise-with-traceback
 
 from ._client import AttestationClient as AzureAttestationRestClient
-from ..models import ( # pylint: disable=reimported
+from ..models import (  # pylint: disable=reimported
     AttestationResult as GeneratedAttestationResult,
     RuntimeData,
     InitTimeData,
