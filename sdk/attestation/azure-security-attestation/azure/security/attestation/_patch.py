@@ -793,7 +793,7 @@ class AttestationAdministrationClient:
 
     @distributed_trace
     def add_policy_management_certificate(
-        self, *args: str, **kwargs: Any
+        self, certificate_to_add: str, **kwargs: Any
     ) -> Tuple[AttestationPolicyCertificateResult, AttestationToken]:
         """Adds a new policy management certificate to the set of policy management certificates for the instance.
 
@@ -847,12 +847,6 @@ class AttestationAdministrationClient:
 
         """
 
-        if len(args) != 1:
-            raise TypeError(
-                "add_policy_management_certificate takes a single positional parameter. found {}".format(len(args))
-            )
-        certificate_to_add = args[0]
-
         signing_key = kwargs.pop("signing_key", self._signing_key)
         signing_certificate = kwargs.pop("signing_certificate", self._signing_certificate)
 
@@ -895,7 +889,7 @@ class AttestationAdministrationClient:
 
     @distributed_trace
     def remove_policy_management_certificate(
-        self, *args: str, **kwargs: Any
+        self, certificate_to_remove: str, **kwargs: Any
     ) -> Tuple[AttestationPolicyCertificateResult, AttestationToken]:
         """Removes a policy management certificate from the set of policy management certificates for the instance.
 
@@ -944,12 +938,6 @@ class AttestationAdministrationClient:
                 :caption: Removing a policy management certificate.
 
         """
-
-        if len(args) != 1:
-            raise TypeError(
-                "remove_policy_management_certificate takes a single positional parameter. found {}".format(len(args))
-            )
-        certificate_to_remove = args[0]
 
         signing_key = kwargs.pop("signing_key", self._signing_key)
         signing_certificate = kwargs.pop("signing_certificate", self._signing_certificate)
