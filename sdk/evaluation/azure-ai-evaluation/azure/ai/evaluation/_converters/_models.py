@@ -3,17 +3,31 @@ import json
 
 from pydantic import BaseModel
 
-from typing import List, Optional, Union
+from typing import TYPE_CHECKING, Any, List, Optional, Union
 
 # Models moved in a later version of agents SDK, so try a few different locations
-try:
-    from azure.ai.projects.models import RunStepFunctionToolCall
-except ImportError:
-    pass
-try:
-    from azure.ai.agents.models import RunStepFunctionToolCall
-except ImportError:
-    pass
+# Only import for type checking to avoid runtime import errors
+if TYPE_CHECKING:
+    try:
+        from azure.ai.projects.models import RunStepFunctionToolCall
+    except ImportError:
+        try:
+            from azure.ai.agents.models import RunStepFunctionToolCall
+        except ImportError:
+            # Create a protocol for type checking when the real class isn't available
+            from typing import Protocol
+
+            class RunStepFunctionToolCall(Protocol):
+                """Protocol defining the expected interface for RunStepFunctionToolCall."""
+
+                id: str
+                type: str
+
+                def get(self, key: str, default: Any = None) -> Any: ...
+
+else:
+    # At runtime, we don't need the actual class since it's only used in type annotations
+    RunStepFunctionToolCall = Any
 
 # Message roles constants.
 _SYSTEM = "system"

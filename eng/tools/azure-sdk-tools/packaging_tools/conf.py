@@ -42,14 +42,19 @@ def read_conf(folder: Path) -> Dict[str, Any]:
 
 def build_default_conf(folder: Path, package_name: str) -> None:
     conf_path = folder / CONF_NAME
+    existing_conf = {_SECTION: {}}
     if conf_path.exists():
-        _LOGGER.info("Skipping default conf since the file exists")
-        return
+        with open(conf_path, "rb") as fd:
+            existing_conf = toml.load(fd)
+        if _SECTION not in existing_conf:
+            existing_conf[_SECTION] = {}
 
     _LOGGER.info("Build default conf for %s", package_name)
-    conf = {_SECTION: _CONFIG.copy()}
-    conf[_SECTION]["package_name"] = package_name
-    conf[_SECTION]["package_nspkg"] = package_name[: package_name.rindex("-")] + "-nspkg"
+    for k in _CONFIG:
+        if k not in existing_conf[_SECTION]:
+            existing_conf[_SECTION][k] = _CONFIG[k]
+    existing_conf[_SECTION]["package_name"] = package_name
+    existing_conf[_SECTION]["package_nspkg"] = package_name[: package_name.rindex("-")] + "-nspkg"
 
     with open(conf_path, "wb") as fd:
-        tomlw.dump(conf, fd)
+        tomlw.dump(existing_conf, fd)

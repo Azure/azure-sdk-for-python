@@ -35,8 +35,6 @@ class JobServiceBase(RestTranslatableMixin, DictMixin):
     :paramtype properties: Optional[dict[str, str]]
     :keyword status: The status of the endpoint.
     :paramtype status: Optional[str]
-    :keyword kwargs: A dictionary of additional configuration parameters.
-    :paramtype kwargs: dict
     """
 
     def __init__(  # pylint: disable=unused-argument
@@ -159,8 +157,6 @@ class JobService(JobServiceBase):
     :paramtype properties: Optional[dict[str, str]]
     :keyword status: The status of the endpoint.
     :paramtype status: Optional[str]
-    :keyword kwargs: A dictionary of additional configuration parameters.
-    :paramtype kwargs: dict
     """
 
     @classmethod
@@ -188,8 +184,6 @@ class SshJobService(JobServiceBase):
     :paramtype status: Optional[str]
     :keyword ssh_public_keys: The SSH Public Key to access the job container.
     :paramtype ssh_public_keys: Optional[str]
-    :keyword kwargs: A dictionary of additional configuration parameters.
-    :paramtype kwargs: dict
 
     .. admonition:: Example:
 
@@ -251,8 +245,6 @@ class TensorBoardJobService(JobServiceBase):
     :paramtype status: Optional[str]
     :keyword log_dir: The directory path for the log file.
     :paramtype log_dir: Optional[str]
-    :keyword kwargs: A dictionary of additional configuration parameters.
-    :paramtype kwargs: dict
 
     .. admonition:: Example:
 
@@ -312,8 +304,6 @@ class JupyterLabJobService(JobServiceBase):
     :paramtype properties: Optional[dict[str, str]]
     :keyword status: The status of the endpoint.
     :paramtype status: Optional[str]
-    :keyword kwargs: A dictionary of additional configuration parameters.
-    :paramtype kwargs: dict
 
     .. admonition:: Example:
 
@@ -368,8 +358,6 @@ class VsCodeJobService(JobServiceBase):
     :paramtype properties: Optional[dict[str, str]]
     :keyword status: The status of the endpoint.
     :paramtype status: Optional[str]
-    :keyword kwargs: A dictionary of additional configuration parameters.
-    :paramtype kwargs: dict
 
     .. admonition:: Example:
 

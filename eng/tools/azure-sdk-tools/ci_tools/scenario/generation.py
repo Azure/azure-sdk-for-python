@@ -316,7 +316,7 @@ def build_whl_for_req(req: str, package_path: str, wheel_dir: Optional[str]) -> 
     """Builds a whl from the dev_requirements file.
 
     :param str req: a requirement from the dev_requirements.txt
-    :param str package_path: the absolute path to the package's root
+    :param str package_path: the absolute path to the package's root (used as relative path root)
     :param Optional[str] wheel_dir: the absolute path to the prebuilt wheel directory
     :return: The absolute path to the whl built or the requirement if a third-party package
     """
