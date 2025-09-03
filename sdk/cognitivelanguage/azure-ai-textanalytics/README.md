@@ -64,11 +64,12 @@ pip install azure-ai-textanalytics
 ```python
 import os
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.textanalytics import TextAnalyticsClient
-endpoint = os.environ["AZURE_LANGUAGE_ENDPOINT"]
-key = os.environ["AZURE_LANGUAGE_KEY"]
+from azure.ai.language.text import TextAnalysisClient
 
-text_analytics_client = TextAnalyticsClient(endpoint, AzureKeyCredential(key))
+endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
+key = os.environ["AZURE_TEXT_KEY"]
+
+text_client = TextAnalysisClient(endpoint, AzureKeyCredential(key))
 ```
 
 <!-- END SNIPPET -->
@@ -119,11 +120,12 @@ to authenticate the client:
 ```python
 import os
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.textanalytics import TextAnalyticsClient
-endpoint = os.environ["AZURE_LANGUAGE_ENDPOINT"]
-key = os.environ["AZURE_LANGUAGE_KEY"]
+from azure.ai.language.text import TextAnalysisClient
 
-text_analytics_client = TextAnalyticsClient(endpoint, AzureKeyCredential(key))
+endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
+key = os.environ["AZURE_TEXT_KEY"]
+
+text_client = TextAnalysisClient(endpoint, AzureKeyCredential(key))
 ```
 
 <!-- END SNIPPET -->
@@ -155,13 +157,13 @@ Use the returned token credential to authenticate the client:
 
 ```python
 import os
-from azure.ai.textanalytics import TextAnalyticsClient
+from azure.ai.language.text import TextAnalysisClient
 from azure.identity import DefaultAzureCredential
 
-endpoint = os.environ["AZURE_LANGUAGE_ENDPOINT"]
+endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
 credential = DefaultAzureCredential()
 
-text_analytics_client = TextAnalyticsClient(endpoint, credential=credential)
+text_client = TextAnalysisClient(endpoint, credential=credential)
 ```
 
 <!-- END SNIPPET -->
@@ -284,7 +286,7 @@ from azure.ai.language.text.models import (
 )
 
 
-def sample_text_sentiment_analysis():
+def sample_analyze_sentiment():
     # settings
     endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
     credential = DefaultAzureCredential()
@@ -363,7 +365,7 @@ from azure.ai.language.text.models import (
 )
 
 
-def sample_text_entities_recognition():
+def sample_recognize_entities():
     # settings
     endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
     credential = DefaultAzureCredential()
@@ -437,7 +439,7 @@ from azure.ai.language.text.models import (
 )
 
 
-def sample_text_entity_linking():
+def sample_recognize_linked_entities():
     # settings
     endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
     credential = DefaultAzureCredential()
@@ -517,7 +519,7 @@ from azure.ai.language.text.models import (
 )
 
 
-def sample_text_pii_recognition():
+def sample_recognize_pii_entities():
     # settings
     endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
     credential = DefaultAzureCredential()
@@ -589,7 +591,7 @@ from azure.ai.language.text.models import (
 )
 
 
-def sample_text_key_phrase_extraction():
+def sample_extract_key_phrases():
     # get settings
     endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
     credential = DefaultAzureCredential()
@@ -662,7 +664,7 @@ from azure.ai.language.text.models import (
 )
 
 
-def sample_text_language_detection():
+def sample_detect_language():
     # get settings
     endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
     credential = DefaultAzureCredential()
@@ -730,7 +732,7 @@ from azure.ai.language.text.models import (
 )
 
 
-def sample_text_healthcare():
+def sample_analyze_healthcare_entities():
     # get settings
     endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
     credential = DefaultAzureCredential()
@@ -851,103 +853,110 @@ Note: Healthcare Entities Analysis is only available with API version v3.1 and n
 
 ```python
 import os
+
+from azure.identity import DefaultAzureCredential
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.textanalytics import (
-    TextAnalyticsClient,
-    RecognizeEntitiesAction,
-    RecognizeLinkedEntitiesAction,
-    RecognizePiiEntitiesAction,
-    ExtractKeyPhrasesAction,
-    AnalyzeSentimentAction,
+from azure.ai.language.text import TextAnalysisClient
+from azure.ai.language.text.models import (
+    MultiLanguageTextInput,
+    MultiLanguageInput,
+    EntitiesLROTask,
+    KeyPhraseLROTask,
+    EntityRecognitionOperationResult,
+    KeyPhraseExtractionOperationResult,
+    EntityTag,
 )
 
-endpoint = os.environ["AZURE_LANGUAGE_ENDPOINT"]
-key = os.environ["AZURE_LANGUAGE_KEY"]
 
-text_analytics_client = TextAnalyticsClient(
-    endpoint=endpoint,
-    credential=AzureKeyCredential(key),
-)
+def sample_analyze():
+    # get settings
+    endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
+    credential = DefaultAzureCredential()
 
-documents = [
-    'We went to Contoso Steakhouse located at midtown NYC last week for a dinner party, and we adore the spot! '
-    'They provide marvelous food and they have a great menu. The chief cook happens to be the owner (I think his name is John Doe) '
-    'and he is super nice, coming out of the kitchen and greeted us all.'
-    ,
+    client = TextAnalysisClient(endpoint, credential=credential)
 
-    'We enjoyed very much dining in the place! '
-    'The Sirloin steak I ordered was tender and juicy, and the place was impeccably clean. You can even pre-order from their '
-    'online menu at www.contososteakhouse.com, call 312-555-0176 or send email to order@contososteakhouse.com! '
-    'The only complaint I have is the food didn\'t come fast enough. Overall I highly recommend it!'
-]
+    text_a = (
+        "We love this trail and make the trip every year. The views are breathtaking and well worth the hike!"
+        " Yesterday was foggy though, so we missed the spectacular views. We tried again today and it was"
+        " amazing. Everyone in my family liked the trail although it was too challenging for the less"
+        " athletic among us. Not necessarily recommended for small children. A hotel close to the trail"
+        " offers services for childcare in case you want that."
+    )
 
-poller = text_analytics_client.begin_analyze_actions(
-    documents,
-    display_name="Sample Text Analysis",
-    actions=[
-        RecognizeEntitiesAction(),
-        RecognizePiiEntitiesAction(),
-        ExtractKeyPhrasesAction(),
-        RecognizeLinkedEntitiesAction(),
-        AnalyzeSentimentAction(),
-    ],
-)
+    text_b = (
+        "Sentences in different languages."
+    )
 
-document_results = poller.result()
-for doc, action_results in zip(documents, document_results):
-    print(f"\nDocument text: {doc}")
-    for result in action_results:
-        if result.kind == "EntityRecognition":
-            print("...Results of Recognize Entities Action:")
-            for entity in result.entities:
-                print(f"......Entity: {entity.text}")
-                print(f".........Category: {entity.category}")
-                print(f".........Confidence Score: {entity.confidence_score}")
-                print(f".........Offset: {entity.offset}")
+    text_c = (
+        "That was the best day of my life! We went on a 4 day trip where we stayed at Hotel Foo. They had"
+        " great amenities that included an indoor pool, a spa, and a bar. The spa offered couples massages"
+        " which were really good. The spa was clean and felt very peaceful. Overall the whole experience was"
+        " great. We will definitely come back."
+    )
 
-        elif result.kind == "PiiEntityRecognition":
-            print("...Results of Recognize PII Entities action:")
-            for pii_entity in result.entities:
-                print(f"......Entity: {pii_entity.text}")
-                print(f".........Category: {pii_entity.category}")
-                print(f".........Confidence Score: {pii_entity.confidence_score}")
+    text_d = ""
 
-        elif result.kind == "KeyPhraseExtraction":
-            print("...Results of Extract Key Phrases action:")
-            print(f"......Key Phrases: {result.key_phrases}")
+    # Prepare documents (you can batch multiple docs)
+    text_input = MultiLanguageTextInput(
+        multi_language_inputs=[
+            MultiLanguageInput(id="A", text=text_a, language="en"),
+            MultiLanguageInput(id="B", text=text_b, language="es"),
+            MultiLanguageInput(id="C", text=text_c, language="en"),
+            MultiLanguageInput(id="D", text=text_d),
+        ]
+    )
 
-        elif result.kind == "EntityLinking":
-            print("...Results of Recognize Linked Entities action:")
-            for linked_entity in result.entities:
-                print(f"......Entity name: {linked_entity.name}")
-                print(f".........Data source: {linked_entity.data_source}")
-                print(f".........Data source language: {linked_entity.language}")
-                print(
-                    f".........Data source entity ID: {linked_entity.data_source_entity_id}"
-                )
-                print(f".........Data source URL: {linked_entity.url}")
-                print(".........Document matches:")
-                for match in linked_entity.matches:
-                    print(f"............Match text: {match.text}")
-                    print(f"............Confidence Score: {match.confidence_score}")
-                    print(f"............Offset: {match.offset}")
-                    print(f"............Length: {match.length}")
+    actions = [
+        EntitiesLROTask(name="EntitiesOperationActionSample"),
+        KeyPhraseLROTask(name="KeyPhraseOperationActionSample"),
+    ]
 
-        elif result.kind == "SentimentAnalysis":
-            print("...Results of Analyze Sentiment action:")
-            print(f"......Overall sentiment: {result.sentiment}")
-            print(
-                f"......Scores: positive={result.confidence_scores.positive}; \
-                neutral={result.confidence_scores.neutral}; \
-                negative={result.confidence_scores.negative} \n"
-            )
+    # Submit a multi-action analysis job (LRO)
+    poller = client.begin_analyze_text_job(text_input=text_input, actions=actions)
+    paged_actions = poller.result()
 
-        elif result.is_error is True:
-            print(
-                f"...Is an error with code '{result.error.code}' and message '{result.error.message}'"
-            )
+    # Iterate through each action's results
+    for action_result in paged_actions:
+        print()  # spacing between action blocks
 
-    print("------------------------------------------")
+        # --- Entities ---
+        if isinstance(action_result, EntityRecognitionOperationResult):
+            print("=== Entity Recognition Results ===")
+            for doc in action_result.results.documents:
+                print(f'Result for document with Id = "{doc.id}":')
+                print(f"  Recognized {len(doc.entities)} entities:")
+                for entity in doc.entities:
+                    print(f"    Text: {entity.text}")
+                    print(f"    Offset: {entity.offset}")
+                    print(f"    Length: {entity.length}")
+                    print(f"    Category: {entity.category}")
+                    if hasattr(entity, "type") and entity.type is not None:
+                        print(f"    Type: {entity.type}")
+                    if hasattr(entity, "subcategory") and entity.subcategory:
+                        print(f"    Subcategory: {entity.subcategory}")
+                    if hasattr(entity, "tags") and entity.tags:
+                        print("    Tags:")
+                        for tag in entity.tags:
+                            if isinstance(tag, EntityTag):
+                                print(f"        TagName: {tag.name}")
+                                print(f"        TagConfidenceScore: {tag.confidence_score}")
+                    print(f"    Confidence score: {entity.confidence_score}")
+                    print()
+            for err in action_result.results.errors:
+                print(f'  Error in document: {err.id}!')
+                print(f"  Document error: {err.error}")
+
+        # --- Key Phrases ---
+        elif isinstance(action_result, KeyPhraseExtractionOperationResult):
+            print("=== Key Phrase Extraction Results ===")
+            for doc in action_result.results.documents:
+                print(f'Result for document with Id = "{doc.id}":')
+                for kp in doc.key_phrases:
+                    print(f"    {kp}")
+                print()
+            for err in action_result.results.errors:
+                print(f'  Error in document: {err.id}!')
+                print(f"  Document error: {err.error}")
 ```
 
 <!-- END SNIPPET -->
