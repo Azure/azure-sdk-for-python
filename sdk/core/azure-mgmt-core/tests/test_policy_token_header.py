@@ -27,7 +27,7 @@ import pytest
 from unittest.mock import Mock
 from azure.core.exceptions import HttpResponseError
 from azure.mgmt.core.policies._policy_token_header import (
-    PolicyTokenHeaderPolicy,
+    PolicyEvaluationTokenPolicy,
 )
 from azure.core.pipeline.transport import HttpRequest
 
@@ -66,7 +66,7 @@ def test_policy_token_header_policy_adds_header():
     mock_response = MockHttpResponse(200, {"token": "test-token-123", "result": "Succeeded"})
     mock_client = MockARMPipelineClient(mock_response)
 
-    policy = PolicyTokenHeaderPolicy(mock_client)
+    policy = PolicyEvaluationTokenPolicy(mock_client)
 
     # Test with a subscription URL
     request = HttpRequest("PUT", "https://management.azure.com/subscriptions/12345/resourceGroups/test")
@@ -86,7 +86,7 @@ def test_policy_token_header_policy_no_subscription_id():
     mock_response = MockHttpResponse(200, {"token": "test-token-123", "result": "Succeeded"})
     mock_client = MockARMPipelineClient(mock_response)
 
-    policy = PolicyTokenHeaderPolicy(mock_client)
+    policy = PolicyEvaluationTokenPolicy(mock_client)
 
     # Test with a URL without subscription ID
     request = HttpRequest("POST", "https://management.azure.com/providers/Microsoft.Resources")
@@ -105,7 +105,7 @@ def test_policy_token_header_policy_failed_response():
     mock_response = MockHttpResponse(500, {"error": "Internal server error"})
     mock_client = MockARMPipelineClient(mock_response)
 
-    policy = PolicyTokenHeaderPolicy(mock_client)
+    policy = PolicyEvaluationTokenPolicy(mock_client)
 
     request = HttpRequest("PUT", "https://management.azure.com/subscriptions/12345/resourceGroups/test")
     pipeline_request = Mock()
@@ -123,7 +123,7 @@ def test_policy_token_header_policy_unsuccessful_result():
     mock_response = MockHttpResponse(200, {"result": "Failed", "error": "Token acquisition failed"})
     mock_client = MockARMPipelineClient(mock_response)
 
-    policy = PolicyTokenHeaderPolicy(mock_client)
+    policy = PolicyEvaluationTokenPolicy(mock_client)
 
     request = HttpRequest("PUT", "https://management.azure.com/subscriptions/12345/resourceGroups/test")
     pipeline_request = Mock()
@@ -141,7 +141,7 @@ def test_policy_token_header_policy_disabled_by_default():
     mock_client = MockARMPipelineClient(mock_response)
 
     # Policy without acquire_policy_token=True
-    policy = PolicyTokenHeaderPolicy(mock_client)
+    policy = PolicyEvaluationTokenPolicy(mock_client)
 
     request = HttpRequest("PUT", "https://management.azure.com/subscriptions/12345/resourceGroups/test")
     pipeline_request = Mock()
@@ -171,7 +171,7 @@ def test_policy_token_header_policy_with_content():
     mock_client.send_request = verify_policy_request
     mock_client.format_url = lambda url: url  # Add format_url method
 
-    policy = PolicyTokenHeaderPolicy(mock_client)
+    policy = PolicyEvaluationTokenPolicy(mock_client)
 
     request_content = '{"properties": {"location": "eastus"}}'
     request = HttpRequest("PUT", "https://management.azure.com/subscriptions/12345/resourceGroups/test")
@@ -193,7 +193,7 @@ def test_policy_token_header_policy_get_request_no_token():
     mock_response = MockHttpResponse(200, {"token": "test-token-123", "result": "Succeeded"})
     mock_client = MockARMPipelineClient(mock_response)
 
-    policy = PolicyTokenHeaderPolicy(mock_client)
+    policy = PolicyEvaluationTokenPolicy(mock_client)
 
     request = HttpRequest("GET", "https://management.azure.com/providers/Microsoft.Resources")
     pipeline_request = Mock()

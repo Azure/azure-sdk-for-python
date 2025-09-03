@@ -41,7 +41,7 @@ AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType", AsyncHttpResponse, Lega
 HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
 
 
-class AsyncPolicyTokenHeaderPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]):
+class AsyncPolicyEvaluationTokenPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]):
     """Async HTTP pipeline policy for adding policy token headers to Azure Resource Manager requests.
 
     This policy handles the acquisition and application of Azure Policy tokens for external

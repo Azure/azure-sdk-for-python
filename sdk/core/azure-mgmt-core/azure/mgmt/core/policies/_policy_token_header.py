@@ -120,7 +120,7 @@ def _update_request_with_policy_token(
         raise HttpResponseError("Failed to acquire policy token: {}".format(acquire_policy_response.text()))
 
 
-class PolicyTokenHeaderPolicy(HTTPPolicy[HTTPRequestType, HTTPResponseType]):
+class PolicyEvaluationTokenPolicy(HTTPPolicy[HTTPRequestType, HTTPResponseType]):
     """HTTP pipeline policy for adding policy token headers to Azure Resource Manager requests.
 
     This policy handles the acquisition and application of Azure Policy tokens for external
