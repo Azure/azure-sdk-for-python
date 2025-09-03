@@ -97,7 +97,7 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
         self._fetched_query_plan = True
         query_to_use = self._query if self._query is not None else "Select * from root r"
         query_execution_info = _PartitionedQueryExecutionInfo(self._client._GetQueryPlanThroughGateway
-        (query_to_use, self._resource_link, self._options.get('excludedLocations')))
+        (query_to_use, self._resource_link, self._options.get('excludedLocations'), read_timeout = self._options.get('read_timeout')))
         self._execution_context = self._create_pipelined_execution_context(query_execution_info)
 
     def __next__(self):

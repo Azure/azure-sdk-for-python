@@ -1174,8 +1174,25 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
                 "client_processing_delay": 0.1,
                 "should_succeed": True,
                 "expected_items": 250
+            },
+            {
+                "name": "timeout_per_page_failure",
+                "description": "Page requests exceed timeout",
+                "delay_per_request": 0.6,
+                "timeout": 0.5,
+                "client_processing_delay": 0.1,
+                "should_succeed": False,
+                "expected_items": 0
+            },
+            {
+                "name": "client_processing_ignored",
+                "description": "Client processing time doesn't affect timeout",
+                "delay_per_request": 0.4,
+                "timeout": 0.5,
+                "client_processing_delay": 0.2,
+                "should_succeed": True,
+                "expected_items": 250
             }
-
         ]
 
         for test_case in test_cases:
@@ -1230,7 +1247,6 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
                                 query="SELECT * FROM c",
                                 timeout=test_case["timeout"],
                                 max_item_count=100,
-                                # enable_cross_partition_query=True why I can't pass it , need to look into it?
                         ):
                             items_processed += 1
                             # Simulate client-side processing
@@ -1245,10 +1261,84 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
                                     query="SELECT * FROM c",
                                     timeout=test_case["timeout"],
                                     max_item_count=100,
-                                    # enable_cross_partition_query=True
+
                             ):
                                 items_processed += 1
                                 await asyncio.sleep(test_case["client_processing_delay"])
+
+
+    async def test_query_operation_single_partition_read_timeout_async(self):
+        """Test that timeout is properly maintained across multiple network requests for a single logical operation
+        """
+        # Create a container with multiple partitions
+        container = await self.database_for_test.create_container(
+            id='single_partition_container_' + str(uuid.uuid4()),
+            partition_key=PartitionKey(path="/pk"),
+        )
+        single_partition_key = 0
+
+        large_string = 'a' * 1000  # 1KB string
+        for i in range(200):  # Insert 500 documents
+            await container.create_item({
+                'id': f'item_{i}',
+                'pk': single_partition_key,
+                'data': large_string,
+                'order_field': i
+            })
+
+        start_time = time.time()
+        with self.assertRaises(exceptions.CosmosClientTimeoutError):
+            async for item in container.query_items(
+                    query="SELECT * FROM c ORDER BY c.order_field ASC",
+                    max_item_count=200,
+                    read_timeout=0.00005,
+                    partition_key=single_partition_key
+            ):
+                pass
+
+        elapsed_time = time.time() - start_time
+        print(f"elapsed time is {elapsed_time}")
+
+    async def test_query_operation_cross_partition_read_timeout_async(self):
+        """Test that timeout is properly maintained across multiple partition requests for a single logical operation
+        """
+        # Create a container with multiple partitions
+        container = await self.database_for_test.create_container(
+            id='multi_partition_container_' + str(uuid.uuid4()),
+            partition_key=PartitionKey(path="/pk"),
+            offer_throughput=11000
+        )
+
+        # 2. Create large documents to increase payload size
+        large_string = 'a' * 1000  # 1KB string
+        for i in range(1000):  # Insert 500 documents
+            await container.create_item({
+                'id': f'item_{i}',
+                'pk': i % 2,
+                'data': large_string,
+                'order_field': i
+            })
+
+        pk_ranges = [
+            pk async for pk in container.client_connection._ReadPartitionKeyRanges(container.container_link)
+        ]
+
+        self.assertGreater(len(pk_ranges), 1, "Container should have multiple physical partitions.")
+
+        with self.assertRaises(exceptions.CosmosClientTimeoutError):
+            # This should timeout because of multiple partition requests
+            items = [doc async for doc in container.query_items(
+                query="SELECT * FROM c ORDER BY c.order_field ASC",
+                max_item_count=100,
+                read_timeout=0.00005,
+            )]
+        # This shouldn't result in any error because the default 65seconds is respected
+
+        items = [doc async for doc in container.query_items(
+            query="SELECT * FROM c ORDER BY c.order_field ASC",
+            max_item_count=100,
+        )]
+        self.assertEqual(len(items), 1000)
 
 
 

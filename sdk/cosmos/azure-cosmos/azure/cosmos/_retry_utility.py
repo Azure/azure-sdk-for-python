@@ -26,11 +26,12 @@ import time
 import logging
 from typing import Optional
 
+import requests
 from azure.core.exceptions import AzureError, ClientAuthenticationError, ServiceRequestError, ServiceResponseError
 from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.policies import RetryPolicy
 
-from . import _container_recreate_retry_policy, _database_account_retry_policy
+from . import _container_recreate_retry_policy, _database_account_retry_policy, http_constants
 from . import _default_retry_policy
 from . import _endpoint_discovery_retry_policy
 from . import _gone_retry_policy
@@ -407,6 +408,10 @@ class ConnectionRetryPolicy(RetryPolicy):
                     if retry_active:
                         self.sleep(retry_settings, request.context.transport)
                         continue
+                # for read timeouts azure-core returns a ServiceResponseError
+                if isinstance(err.exc_value, requests.exceptions.ReadTimeout):
+                   message = "Read timed out. {}".format(err)
+                   raise exceptions.CosmosClientTimeoutError(message)
                 raise err
             except CosmosHttpResponseError as err:
                 raise err

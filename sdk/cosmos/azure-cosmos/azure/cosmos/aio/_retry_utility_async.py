@@ -26,7 +26,9 @@ import json
 import time
 import logging
 
-from azure.core.exceptions import AzureError, ClientAuthenticationError, ServiceRequestError, ServiceResponseError
+import requests
+from azure.core.exceptions import (AzureError, ClientAuthenticationError, ServiceRequestError,
+                                   ServiceResponseError, ServiceResponseTimeoutError)
 from azure.core.pipeline.policies import AsyncRetryPolicy
 
 from .. import _default_retry_policy, _database_account_retry_policy
@@ -363,6 +365,12 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
                             if retry_active:
                                 await self.sleep(retry_settings, request.context.transport)
                                 continue
+                        if isinstance(err, ServiceResponseTimeoutError) or isinstance(
+                                getattr(err, "exc_value", None), requests.exceptions.ReadTimeout
+                        ):
+                            message = "Read timed out. {}".format(err)
+                            raise exceptions.CosmosClientTimeoutError(message)
+
                 except ImportError:
                     raise err # pylint: disable=raise-missing-from
                 raise err

@@ -3145,7 +3145,11 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :raises SystemError: If the query compatibility mode is undefined.
         """
         if options is None:
-            options = {}
+             options = {}
+        read_timeout = options.get("read_timeout")
+        if read_timeout is not None:
+            # we need to set read_timeout in kwargs as thats where it is looked at while sending the request
+            kwargs.setdefault("read_timeout", read_timeout)
 
         if query:
             __GetBodiesFromQueryResult = result_fn
@@ -3326,7 +3330,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             "contentType": runtime_constants.MediaTypes.Json,
             "isQueryPlanRequest": True,
             "supportedQueryFeatures": supported_query_features,
-            "queryVersion": http_constants.Versions.QueryVersion
+            "queryVersion": http_constants.Versions.QueryVersion,
+            "read_timeout" : kwargs.pop("read_timeout", None)
         }
         if excluded_locations is not None:
             options["excludedLocations"] = excluded_locations

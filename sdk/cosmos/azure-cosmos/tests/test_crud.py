@@ -1509,6 +1509,100 @@ class TestCRUDOperations(unittest.TestCase):
         )
         self.assertEqual(result['id'], 'test_item_1')
 
+    def test_point_operation_read_timeout(self):
+        """Test that point operations respect client provided read timeout"""
+
+        # Create a container for testing
+        container = self.databaseForTest.create_container(
+            id='point_op_timeout_container_' + str(uuid.uuid4()),
+            partition_key=PartitionKey(path="/pk")
+        )
+
+        # Create a test item
+        test_item = {
+            'id': 'test_item_1',
+            'pk': 'partition1',
+            'data': 'test_data'
+        }
+        container.create_item(test_item)
+        try:
+            container.read_item(
+                item='test_item_1',
+                partition_key='partition1',
+                read_timeout=0.000003
+            )
+        except Exception as e:
+            print(f"Exception is {e}")
+
+    def test_query_operation_single_partition_read_timeout(self):
+        """Test that timeout is properly maintained across multiple network requests for a single logical operation
+        """
+        # Create a container with multiple partitions
+        container = self.databaseForTest.create_container(
+            id='single_partition_container_' + str(uuid.uuid4()),
+            partition_key=PartitionKey(path="/pk"),
+        )
+        single_partition_key = 0
+
+        large_string = 'a' * 1000  # 1KB string
+        for i in range(500):  # Insert 500 documents
+            container.create_item({
+                'id': f'item_{i}',
+                'pk': single_partition_key,
+                'data': large_string,
+                'order_field': i
+            })
+
+        with self.assertRaises(exceptions.CosmosClientTimeoutError):
+            items = list(container.query_items(
+                query="SELECT * FROM c ORDER BY c.order_field ASC",
+                max_item_count=100,
+                read_timeout=0.00005,
+                partition_key=single_partition_key
+            ))
+            self.assertEqual(len(items), 500)
+
+    def test_query_operation_cross_partition_read_timeout(self):
+        """Test that timeout is properly maintained across multiple partition requests for a single logical operation
+        """
+        # Create a container with multiple partitions
+        container = self.databaseForTest.create_container(
+            id='multi_partition_container_' + str(uuid.uuid4()),
+            partition_key=PartitionKey(path="/pk"),
+            offer_throughput=11000
+        )
+
+        # 2. Create large documents to increase payload size
+        large_string = 'a' * 1000  # 1KB string
+        for i in range(500):  # Insert 500 documents
+            container.create_item({
+                'id': f'item_{i}',
+                'pk': i % 2,
+                'data': large_string,
+                'order_field': i
+            })
+
+        pk_ranges = list(container.client_connection._ReadPartitionKeyRanges(
+            container.container_link))
+
+        self.assertGreater(len(pk_ranges), 1, "Container should have multiple physical partitions.")
+        with self.assertRaises(exceptions.CosmosClientTimeoutError):
+            # This should timeout because of multiple partition requests
+            list(container.query_items(
+                query="SELECT * FROM c ORDER BY c.order_field ASC",
+                enable_cross_partition_query=True,
+                max_item_count=100,
+                read_timeout=0.00005,
+            ))
+        # This shouldn't result in any error because the default 65seconds is respected
+
+        items = list(container.query_items(
+             query="SELECT * FROM c ORDER BY c.order_field ASC",
+             enable_cross_partition_query=True,
+             max_item_count=100,
+        ))
+        self.assertEqual(len(items), 500)
+
 
     def test_query_iterable_functionality(self):
         collection = self.databaseForTest.create_container("query-iterable-container",
