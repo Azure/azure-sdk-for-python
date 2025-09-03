@@ -333,7 +333,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
             name = indexer.name  # type: ignore
         except AttributeError:
             name = indexer
-        
+
         # Create IndexerResyncBody from the list of options
         resync_body = IndexerResyncBody(options=indexer_resync_options)
         await self._client.indexers.resync(name, resync_body, **kwargs)
