@@ -41,7 +41,14 @@ _SERIALIZER.client_side_validation = False
 
 
 def _parse_operation_id(op_loc: Optional[str]) -> Optional[str]:
-    """Extract the operation ID from an Operation-Location URL."""
+    """Extract the operation ID from an Operation-Location URL.
+
+    :param op_loc: The ``Operation-Location`` header value or URL to parse.
+        If ``None`` or malformed, no ID can be extracted.
+    :type op_loc: Optional[str]
+    :return: The trailing path segment as the operation ID, or ``None`` if not found.
+    :rtype: Optional[str]
+    """
     if not op_loc:
         return None
     path = urlparse(op_loc).path.rstrip("/")
@@ -305,18 +312,19 @@ class TextAnalysisClient(AnalysisTextClientGenerated):
                 continuation_token=cont_token,
             )
 
-        initial_kwargs = dict(
-            text_input=text_input,
-            actions=actions,
-            display_name=display_name,
-            default_language=default_language,
-            cancel_after=cancel_after,
-            content_type=content_type,
-            cls=lambda x, y, z: x,  # passthrough raw pipeline response
-            headers=_headers,
-            params=_params,
-            **kwargs,
-        )
+        initial_kwargs: Dict[str, Any] = {
+            "text_input": text_input,
+            "actions": actions,
+            "display_name": display_name,
+            "default_language": default_language,
+            "cancel_after": cancel_after,
+            "content_type": content_type,
+            "cls": (lambda x, y, z: x),  # passthrough raw pipeline response
+            "headers": _headers,
+            "params": _params,
+            **kwargs,  # keep last so caller overrides take precedence
+        }
+
         if body is not _Unset and body is not None:
             initial_kwargs["body"] = body
 

@@ -42,7 +42,14 @@ _SERIALIZER.client_side_validation = False
 
 
 def _parse_operation_id(op_loc: Optional[str]) -> Optional[str]:
-    """Extract the operation ID from an Operation-Location URL."""
+    """Extract the operation ID from an Operation-Location URL.
+
+    :param op_loc: The ``Operation-Location`` header value or URL to parse.
+        If ``None`` or malformed, no ID can be extracted.
+    :type op_loc: Optional[str]
+    :return: The trailing path segment as the operation ID, or ``None`` if not found.
+    :rtype: Optional[str]
+    """
     if not op_loc:
         return None
     path = urlparse(op_loc).path.rstrip("/")
@@ -166,7 +173,8 @@ class TextAnalysisClient(AnalysisTextClientGenerated):
         :keyword cancel_after: Optional duration in seconds after which the job will be canceled if not
          completed. Default value is ``None``.
         :paramtype cancel_after: float
-        :return: A poller whose ``result()`` yields ``AsyncItemPaged[TextActions]`` and exposes metadata via ``.details``.
+        :return: A poller whose ``result()`` yields ``AsyncItemPaged[TextActions]`` and exposes metadata via 
+         ``.details``.
         :rtype: ~azure.ai.language.text.AnalyzeTextAsyncLROPoller[
                 ~azure.core.async_paging.AsyncItemPaged[~azure.ai.language.text.models.TextActions]]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -184,7 +192,8 @@ class TextAnalysisClient(AnalysisTextClientGenerated):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is ``"application/json"``.
         :paramtype content_type: str
-        :return: A poller whose ``result()`` yields ``AsyncItemPaged[TextActions]`` and exposes metadata via ``.details``.
+        :return: A poller whose ``result()`` yields ``AsyncItemPaged[TextActions]`` and exposes metadata via 
+         ``.details``.
         :rtype: ~azure.ai.language.text.AnalyzeTextAsyncLROPoller[
                 ~azure.core.async_paging.AsyncItemPaged[~azure.ai.language.text.models.TextActions]]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -202,7 +211,8 @@ class TextAnalysisClient(AnalysisTextClientGenerated):
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is ``"application/json"``.
         :paramtype content_type: str
-        :return: A poller whose ``result()`` yields ``AsyncItemPaged[TextActions]`` and exposes metadata via ``.details``.
+        :return: A poller whose ``result()`` yields ``AsyncItemPaged[TextActions]`` and exposes metadata via 
+         ``.details``.
         :rtype: ~azure.ai.language.text.AnalyzeTextAsyncLROPoller[
                 ~azure.core.async_paging.AsyncItemPaged[~azure.ai.language.text.models.TextActions]]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -237,10 +247,8 @@ class TextAnalysisClient(AnalysisTextClientGenerated):
         :keyword cancel_after: Optional duration in seconds after which the job will be canceled if not
          completed. Default value is ``None``.
         :paramtype cancel_after: float
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON or binary body.
-         Default value is ``"application/json"``.
-        :paramtype content_type: str
-        :return: A poller whose ``result()`` yields ``AsyncItemPaged[TextActions]`` and exposes metadata via ``.details``.
+        :return: A poller whose ``result()`` yields ``AsyncItemPaged[TextActions]`` and exposes metadata via 
+         ``.details``.
         :rtype: ~azure.ai.language.text.AnalyzeTextAsyncLROPoller[
                 ~azure.core.async_paging.AsyncItemPaged[~azure.ai.language.text.models.TextActions]]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -264,7 +272,6 @@ class TextAnalysisClient(AnalysisTextClientGenerated):
         }
 
         async def _fetch_state_by_next_link(next_link: str) -> AnalyzeTextOperationState:
-            """Fetch a subsequent page of operation state from ``next_link``."""
             req = HttpRequest("GET", next_link)
             resp = await self._client.send_request(req)  # type: ignore[attr-defined]
             if resp.status_code != 200:
@@ -275,8 +282,6 @@ class TextAnalysisClient(AnalysisTextClientGenerated):
         def _build_pager_from_state(
             state: AnalyzeTextOperationState,
         ) -> AsyncItemPaged["TextActions"]:
-            """Build an AsyncItemPaged over the single ``TextActions`` payload using ``next_link``."""
-
             async def extract_data(s: AnalyzeTextOperationState):
                 next_link = s.next_link
                 actions_payload: TextActions = s.actions
@@ -322,18 +327,18 @@ class TextAnalysisClient(AnalysisTextClientGenerated):
                 continuation_token=cont_token,
             )
 
-        initial_kwargs = dict(
-            text_input=text_input,
-            actions=actions,
-            display_name=display_name,
-            default_language=default_language,
-            cancel_after=cancel_after,
-            content_type=content_type,
-            cls=lambda x, y, z: x,  # passthrough raw pipeline response
-            headers=_headers,
-            params=_params,
-            **kwargs,
-        )
+        initial_kwargs: Dict[str, Any] = {
+            "text_input": text_input,
+            "actions": actions,
+            "display_name": display_name,
+            "default_language": default_language,
+            "cancel_after": cancel_after,
+            "content_type": content_type,
+            "cls": (lambda x, y, z: x),  # passthrough raw pipeline response
+            "headers": _headers,
+            "params": _params,
+            **kwargs,  # keep last so caller overrides take precedence
+        }
         if body is not _Unset and body is not None:
             initial_kwargs["body"] = body
 
@@ -345,7 +350,7 @@ class TextAnalysisClient(AnalysisTextClientGenerated):
         )
         poller_holder["poller"] = lro
         return lro
-     
+
 def patch_sdk():
     """Do not remove from this file.
 
