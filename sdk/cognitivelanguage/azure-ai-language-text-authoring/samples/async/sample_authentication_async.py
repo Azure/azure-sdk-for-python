@@ -1,5 +1,4 @@
 # coding=utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -7,7 +6,7 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_authentication.py
+FILE: sample_authentication_async.py
 DESCRIPTION:
     This sample demonstrates how to authenticate to the Text Analytics
     **Authoring** service.
@@ -18,7 +17,7 @@ DESCRIPTION:
     Note: the endpoint must be formatted to use the custom domain name for your resource:
     https://<NAME-OF-YOUR-RESOURCE>.cognitiveservices.azure.com/
 USAGE:
-    python sample_authentication.py
+    python sample_authentication_async.py
     Set the environment variables with your own values before running the sample:
     For API Key authentication:
         1) AZURE_TEXT_ENDPOINT - the endpoint to your Text Analytics resource
@@ -31,27 +30,28 @@ USAGE:
 """
 
 import os
+import asyncio
 
 
-def sample_authentication_api_key():
-    # [START create_text_client_with_key]
+async def sample_authentication_api_key_async():
+    # [START create_text_client_with_key_async]
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.language.text.authoring import TextAuthoringClient
+    from azure.ai.language.text.authoring.aio import TextAuthoringClient
 
     endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
     key = os.environ["AZURE_TEXT_KEY"]
 
     text_client = TextAuthoringClient(endpoint, AzureKeyCredential(key))
-    # [END create_text_client_with_key]
+    # [END create_text_client_with_key_async]
 
 
-def sample_authentication_with_azure_active_directory():
+async def sample_authentication_with_azure_active_directory():
     """DefaultAzureCredential will use the values from these environment
     variables: AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
     """
     print("\n.. authentication_with_azure_active_directory")
-    from azure.ai.language.text.authoring import TextAuthoringClient
-    from azure.identity import DefaultAzureCredential
+    from azure.ai.language.text.authoring.aio import TextAuthoringClient
+    from azure.identity.aio import DefaultAzureCredential
 
     endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
     credential = DefaultAzureCredential()
@@ -59,9 +59,10 @@ def sample_authentication_with_azure_active_directory():
     text_client = TextAuthoringClient(endpoint, credential=credential)
 
 
-def main():
-    sample_authentication_api_key()
+async def main():
+    await sample_authentication_api_key_async()
 
 
 if __name__ == "__main__":
-    main()
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())
