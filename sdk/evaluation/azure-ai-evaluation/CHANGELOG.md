@@ -1,18 +1,20 @@
 # Release History
 
-## 1.11.0 (Unreleased)
-
-### Breaking Changes
+## 1.11.0 (2025-09-02)
 
 ### Features Added
 - Added support for user-supplied tags in the `evaluate` function. Tags are key-value pairs that can be used for experiment tracking, A/B testing, filtering, and organizing evaluation runs. The function accepts a `tags` parameter.
+- Added support for user-supplied TokenCredentials with LLM based evaluators.
 - Enhanced `GroundednessEvaluator` to support AI agent evaluation with tool calls. The evaluator now accepts agent response data containing tool calls and can extract context from `file_search` tool results for groundedness assessment. This enables evaluation of AI agents that use tools to retrieve information and generate responses. Note: Agent groundedness evaluation is currently supported only when the `file_search` tool is used.
+- Added `language` parameter to `RedTeam` class for multilingual red team scanning support. The parameter accepts values from `SupportedLanguages` enum including English, Spanish, French, German, Italian, Portuguese, Japanese, Korean, and Simplified Chinese, enabling red team attacks to be generated and conducted in multiple languages.
+- Added support for IndirectAttack and UngroundedAttributes risk categories in `RedTeam` scanning. These new risk categories expand red team capabilities to detect cross-platform indirect attacks and evaluate ungrounded inferences about human attributes including emotional state and protected class information.
 
 ### Bugs Fixed
 - Fixed issue where evaluation results were not properly aligned with input data, leading to incorrect metrics being reported.
 
 ### Other Changes
 - Deprecating `AdversarialSimulator` in favor of the [AI Red Teaming Agent](https://aka.ms/airedteamingagent-sample). `AdversarialSimulator` will be removed in the next minor release. 
+- Moved retry configuration constants (`MAX_RETRY_ATTEMPTS`, `MAX_RETRY_WAIT_SECONDS`, `MIN_RETRY_WAIT_SECONDS`) from `RedTeam` class to new `RetryManager` class for better code organization and configurability.
 
 ## 1.10.0 (2025-07-31)
 

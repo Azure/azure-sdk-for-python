@@ -11,6 +11,7 @@ from ci_tools.parsing import ParsedSetup
 from ci_tools.functions import discover_targeted_packages, get_venv_call
 from ci_tools.variables import discover_repo_root
 from ci_tools.scenario import install_into_venv, get_venv_python
+from ci_tools.logging import logger
 
 # right now, we are assuming you HAVE to be in the azure-sdk-tools repo
 # we assume this because we don't know how a dev has installed this package, and might be
@@ -84,8 +85,8 @@ class Check(abc.ABC):
             try:
                 targeted.append(ParsedSetup.from_path(targeted_dir))
             except Exception as e:
-                print("Error: Current directory does not appear to be a Python package (no setup.py or setup.cfg found). Remove '.' argument to run on child directories.")
-                print(f"Exception: {e}")
+                logger.error("Error: Current directory does not appear to be a Python package (no setup.py or setup.cfg found). Remove '.' argument to run on child directories.")
+                logger.error(f"Exception: {e}")
                 return []
         else:
             targeted_packages = discover_targeted_packages(args.target, targeted_dir)
@@ -93,8 +94,8 @@ class Check(abc.ABC):
                 try:
                     targeted.append(ParsedSetup.from_path(pkg))
                 except Exception as e:
-                    print(f"Unable to parse {pkg} as a Python package. Dumping exception detail and skipping.")
-                    print(f"Exception: {e}")
-                    print(traceback.format_exc())
+                    logger.error(f"Unable to parse {pkg} as a Python package. Dumping exception detail and skipping.")
+                    logger.error(f"Exception: {e}")
+                    logger.error(traceback.format_exc())
 
         return targeted

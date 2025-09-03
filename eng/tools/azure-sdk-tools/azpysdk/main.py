@@ -15,6 +15,9 @@ from typing import Sequence, Optional
 from .whl import whl
 from .import_all import import_all
 from .mypy import mypy
+from .pylint import pylint
+
+from ci_tools.logging import configure_logging, logger
 
 __all__ = ["main", "build_parser"]
 __version__ = "0.0.0"
@@ -28,6 +31,26 @@ def build_parser() -> argparse.ArgumentParser:
     # global flag: allow --isolate to appear before the subcommand as well
     parser.add_argument("--isolate", action="store_true", default=False,
                         help="If set, run in an isolated virtual environment.")
+
+    # mutually exclusive logging options
+    log_group = parser.add_mutually_exclusive_group()
+    log_group.add_argument(
+        "--quiet",
+        action="store_true",
+        default=False,
+        help="Enable quiet mode (only shows ERROR logs)"
+    )
+    log_group.add_argument(
+        "--verbose",
+        action="store_true",
+        default=False,
+        help="Enable verbose mode (shows DEBUG logs)"
+    )
+    log_group.add_argument(
+        "--log-level",
+        choices=["DEBUG", "INFO", "WARN", "ERROR", "FATAL"],
+        help="Set the logging level."
+    )
 
     common = argparse.ArgumentParser(add_help=False)
     common.add_argument(
@@ -50,6 +73,7 @@ def build_parser() -> argparse.ArgumentParser:
     whl().register(subparsers, [common])
     import_all().register(subparsers, [common])
     mypy().register(subparsers, [common])
+    pylint().register(subparsers, [common])
 
     return parser
 
@@ -65,6 +89,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
 
+    configure_logging(args)
+
     if not hasattr(args, "func"):
         parser.print_help()
         return 1
@@ -73,10 +99,10 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         result = args.func(args)
         return int(result or 0)
     except KeyboardInterrupt:
-        print("Interrupted by user", file=sys.stderr)
+        logger.error("Interrupted by user")
         return 130
     except Exception as exc:  # pragma: no cover - simple top-level error handling
-        print(f"Error: {exc}", file=sys.stderr)
+        logger.error(f"Error: {exc}")
         return 2
 
 if __name__ == "__main__":
