@@ -82,10 +82,9 @@ jobs:
       value: ${{ parameters.InjectedPackages }}
 
     steps:
-    - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
-      parameters:
-        Paths:
-          - '**'
+    - checkout: self
+      sparseCheckoutPatterns: |
+        /**
 
     - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
 

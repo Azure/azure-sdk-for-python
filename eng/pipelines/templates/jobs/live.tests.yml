@@ -107,10 +107,9 @@ jobs:
       container: $[ variables['Container'] ]
 
     steps:
-      - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
-        parameters:
-          Paths:
-            - '**'
+      - checkout: self
+        sparseCheckoutPatterns: |
+          /**
 
       - ${{ parameters.PreSteps }}
 
