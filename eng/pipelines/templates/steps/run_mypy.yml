@@ -14,19 +14,18 @@ steps:
     condition: and(succeededOrFailed(), ne(variables['Skip.MyPy'],'true'))
 
   - script: |
-      python -m pip install -r eng/ci_tools.txt
+      $(PIP_EXE) install -r eng/ci_tools.txt
     displayName: 'Prep Environment'
     condition: and(succeededOrFailed(), ne(variables['Skip.MyPy'],'true'))
 
   - task: PythonScript@0
     displayName: 'Run MyPy'
     inputs:
-      scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
+      scriptPath: 'eng/scripts/dispatch_checks.py'
       arguments: >-
         "$(TargetingString)"
-        --mark_arg="${{ parameters.TestMarkArgument }}"
         --service="${{ parameters.ServiceDirectory }}"
-        --toxenv="mypy"
+        --checks="mypy"
         --disablecov
         ${{ parameters.AdditionalTestArgs }}
     env: ${{ parameters.EnvVars }}
