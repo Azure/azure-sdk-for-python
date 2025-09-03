@@ -50,9 +50,9 @@ from devtools_testutils import (
 )
 
 from test_agents_client_base import agentClientPreparer
-from test_ai_instrumentor_base import TestAiAgentsInstrumentorBase, MessageCreationMode
+from test_ai_instrumentor_base import TestAiAgentsInstrumentorBase, MessageCreationMode, CONTENT_TRACING_ENV_VARIABLE
 
-CONTENT_TRACING_ENV_VARIABLE = "OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT"
+#CONTENT_TRACING_ENV_VARIABLE = "OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT"
 settings.tracing_implementation = "OpenTelemetry"
 _utils._span_impl_type = settings.tracing_implementation()
 
@@ -75,18 +75,18 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
         yield
         self.cleanup()
 
-    def setup_telemetry(self):
-        trace._TRACER_PROVIDER = TracerProvider()
-        self.exporter = MemoryTraceExporter()
-        span_processor = SimpleSpanProcessor(self.exporter)
-        trace.get_tracer_provider().add_span_processor(span_processor)
-        AIAgentsInstrumentor().instrument()
+    # def setup_telemetry(self):
+    #     trace._TRACER_PROVIDER = TracerProvider()
+    #     self.exporter = MemoryTraceExporter()
+    #     span_processor = SimpleSpanProcessor(self.exporter)
+    #     trace.get_tracer_provider().add_span_processor(span_processor)
+    #     AIAgentsInstrumentor().instrument()
 
-    def cleanup(self):
-        self.exporter.shutdown()
-        AIAgentsInstrumentor().uninstrument()
-        trace._TRACER_PROVIDER = None
-        os.environ.pop(CONTENT_TRACING_ENV_VARIABLE, None)
+    # def cleanup(self):
+    #     self.exporter.shutdown()
+    #     AIAgentsInstrumentor().uninstrument()
+    #     trace._TRACER_PROVIDER = None
+    #     os.environ.pop(CONTENT_TRACING_ENV_VARIABLE, None)
 
     # helper function: create client and using environment variables
     def create_client(self, **kwargs):
