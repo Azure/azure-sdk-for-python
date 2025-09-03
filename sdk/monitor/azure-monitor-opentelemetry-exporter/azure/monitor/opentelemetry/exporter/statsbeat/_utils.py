@@ -14,7 +14,6 @@ from azure.monitor.opentelemetry.exporter._constants import (
 )
 from azure.monitor.opentelemetry.exporter._utils import _get_telemetry_type
 from azure.monitor.opentelemetry.exporter._generated.models import TelemetryItem
-from azure.monitor.opentelemetry.exporter._storage import StorageExportResult
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     get_local_storage_setup_state_exception,
     get_customer_sdkstats_metrics,
@@ -218,24 +217,24 @@ def _track_dropped_items_from_storage(result_from_storage_put, envelopes):
     # Use delayed import to avoid circular import
     from azure.monitor.opentelemetry.exporter._storage import StorageExportResult
 
-        if result_from_storage_put == StorageExportResult.CLIENT_STORAGE_DISABLED:
-            # Track items that would have been retried but are dropped since client has local storage disabled
-            _track_dropped_items(customer_sdkstats_metrics, envelopes, DropCode.CLIENT_STORAGE_DISABLED)
-        elif result_from_storage_put == StorageExportResult.CLIENT_READONLY:
-            # If filesystem is readonly, track dropped items in customer sdkstats
-            _track_dropped_items(customer_sdkstats_metrics, envelopes, DropCode.CLIENT_READONLY)
-        elif result_from_storage_put == StorageExportResult.CLIENT_PERSISTENCE_CAPACITY_REACHED:
-            # If data has to be dropped due to persistent storage being full, track dropped items
-            _track_dropped_items(customer_sdkstats_metrics, envelopes, DropCode.CLIENT_PERSISTENCE_CAPACITY)
-        elif get_local_storage_setup_state_exception() != "":
-            # For exceptions caught in _check_and_set_folder_permissions during storage setup
-            _track_dropped_items(customer_sdkstats_metrics, envelopes, DropCode.CLIENT_EXCEPTION, _exception_categories.STORAGE_EXCEPTION.value) # pylint: disable=line-too-long
-        elif isinstance(result_from_storage_put, str):
-            # For any exceptions occurred in put method of either LocalFileStorage or LocalFileBlob, track dropped item with reason # pylint: disable=line-too-long
-            _track_dropped_items(customer_sdkstats_metrics, envelopes, DropCode.CLIENT_EXCEPTION, _exception_categories.STORAGE_EXCEPTION.value) # pylint: disable=line-too-long
-        else:
-            # LocalFileBlob.put returns StorageExportResult.LOCAL_FILE_BLOB_SUCCESS here. Don't need to track anything in this case. # pylint: disable=line-too-long
-            pass
+    if result_from_storage_put == StorageExportResult.CLIENT_STORAGE_DISABLED:
+        # Track items that would have been retried but are dropped since client has local storage disabled
+        _track_dropped_items(envelopes, DropCode.CLIENT_STORAGE_DISABLED)
+    elif result_from_storage_put == StorageExportResult.CLIENT_READONLY:
+        # If filesystem is readonly, track dropped items in customer sdkstats
+        _track_dropped_items(envelopes, DropCode.CLIENT_READONLY)
+    elif result_from_storage_put == StorageExportResult.CLIENT_PERSISTENCE_CAPACITY_REACHED:
+        # If data has to be dropped due to persistent storage being full, track dropped items
+        _track_dropped_items(envelopes, DropCode.CLIENT_PERSISTENCE_CAPACITY)
+    elif get_local_storage_setup_state_exception() != "":
+        # For exceptions caught in _check_and_set_folder_permissions during storage setup
+        _track_dropped_items(envelopes, DropCode.CLIENT_EXCEPTION, _exception_categories.STORAGE_EXCEPTION.value) # pylint: disable=line-too-long
+    elif isinstance(result_from_storage_put, str):
+        # For any exceptions occurred in put method of either LocalFileStorage or LocalFileBlob, track dropped item with reason # pylint: disable=line-too-long
+        _track_dropped_items(envelopes, DropCode.CLIENT_EXCEPTION, _exception_categories.STORAGE_EXCEPTION.value) # pylint: disable=line-too-long
+    else:
+        # LocalFileBlob.put returns StorageExportResult.LOCAL_FILE_BLOB_SUCCESS here. Don't need to track anything in this case. # pylint: disable=line-too-long
+        pass
 
 def _get_customer_sdkstats_export_interval() -> int:
     customer_sdkstats_ei_env = os.environ.get(_APPLICATIONINSIGHTS_SDKSTATS_EXPORT_INTERVAL)

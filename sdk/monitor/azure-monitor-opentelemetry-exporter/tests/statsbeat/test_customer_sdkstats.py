@@ -252,7 +252,7 @@ class TestCustomerSdkStats(unittest.TestCase):
     def test_successful_items_count(self):
         successful_dependencies = 0
 
-        metrics = self.mock_options.metrics
+        metrics = get_customer_sdkstats_metrics()
         metrics._counters.total_item_success_count.clear()
 
         exporter = AzureMonitorTraceExporter(connection_string=self.mock_options.connection_string)
@@ -320,11 +320,13 @@ class TestCustomerSdkStats(unittest.TestCase):
             f"Expected {successful_dependencies} successful dependencies, got {actual_count}"
         )
 
+        set_customer_sdkstats_metrics(None)
+
 
     def test_dropped_items_count(self):
         dropped_items = 0
 
-        metrics = self.mock_options.metrics
+        metrics = get_customer_sdkstats_metrics()
         metrics._counters.total_item_drop_count.clear()
 
         exporter = AzureMonitorTraceExporter(connection_string=self.mock_options.connection_string)
@@ -462,20 +464,13 @@ class TestCustomerSdkStats(unittest.TestCase):
         self.assertGreater(len(http_status_totals) + len(client_exception_totals), 0, 
                           "At least one type of drop should have occurred")
         
-        # Verify that both integer and enum drop codes are being stored properly
-        drop_code_types = set()
-        for telemetry_type, drop_code_data in metrics._counters.total_item_drop_count.items():
-            for drop_code in drop_code_data.keys():
-                drop_code_types.add(type(drop_code).__name__)
-        
-        # Additional assertion to verify aggregation works
-        multi_count_categories = [cat for cat, count in category_totals.items() if count > 1]
+        set_customer_sdkstats_metrics(None)
 
     def test_retry_items_count(self):
         """Test retry item counting with both RetryCode enums and integer status codes."""
         retried_items = 0
 
-        metrics = self.mock_options.metrics
+        metrics = get_customer_sdkstats_metrics()
         metrics._counters.total_item_retry_count.clear()
 
         exporter = AzureMonitorTraceExporter(connection_string=self.mock_options.connection_string)
@@ -629,12 +624,5 @@ class TestCustomerSdkStats(unittest.TestCase):
         # Verify aggregation occurred
         self.assertGreater(len(http_status_totals) + len(client_timeout_totals) + len(unknown_retry_totals), 0, 
                           "At least one type of retry should have occurred")
-        
-        # Verify that both integer and enum retry codes are being stored properly
-        retry_code_types = set()
-        for telemetry_type, retry_code_data in metrics._counters.total_item_retry_count.items():
-            for retry_code in retry_code_data.keys():
-                retry_code_types.add(type(retry_code).__name__)
-        
-        # Additional assertion to verify aggregation works
-        multi_count_categories = [cat for cat, count in category_totals.items() if count > 1]
+
+        set_customer_sdkstats_metrics(None)

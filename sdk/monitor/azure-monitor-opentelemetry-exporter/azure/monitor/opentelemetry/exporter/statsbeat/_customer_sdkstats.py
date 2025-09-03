@@ -8,14 +8,12 @@ metrics that track the usage and performance of the Azure Monitor OpenTelemetry 
 
 import threading
 from typing import List, Dict, Any, Iterable, Optional
-import os
 
 from opentelemetry.metrics import CallbackOptions, Observation
 from opentelemetry.sdk.metrics import MeterProvider
 from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
 
 from azure.monitor.opentelemetry.exporter._constants import (
-    _APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW,
     CustomerSdkStatsProperties,
     DropCode,
     DropCodeType,

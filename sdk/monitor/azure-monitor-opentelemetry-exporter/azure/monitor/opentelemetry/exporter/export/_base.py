@@ -463,7 +463,7 @@ class BaseExporter:
         )
 
 
-    # check to see whether its the case of customer stats collection
+    # check to see whether its the case of customer sdkstats collection
     def _should_collect_customer_sdkstats(self):
         # Don't collect customer sdkstats for instrumentation collection, sdkstats exporter or customer sdkstats exporter
         return (
