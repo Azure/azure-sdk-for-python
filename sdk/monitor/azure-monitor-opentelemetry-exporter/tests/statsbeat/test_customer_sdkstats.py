@@ -41,30 +41,10 @@ from opentelemetry import trace
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor
-from azure.monitor.opentelemetry.exporter.export._base import (
-    BaseExporter,
-    ExportResult,
-    )
+from azure.monitor.opentelemetry.exporter.export._base import ExportResult
 from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
 from azure.monitor.opentelemetry.exporter.statsbeat._state import _REQUESTS_MAP
-from azure.monitor.opentelemetry.exporter.statsbeat._utils import (
-    categorize_status_code,
-    _get_customer_sdkstats_export_interval
-)
-
-def convert_envelope_names_to_base_type(envelope_name):
-    if not envelope_name.endswith("Data"):
-        return envelope_name + "Data"
-    return envelope_name
-class EnvelopeTypeMapper:
-    @classmethod
-    def get_type_map(cls):
-        return {
-            convert_envelope_names_to_base_type(envelope_name): telemetry_type
-            for envelope_name, telemetry_type in _TYPE_MAP.items()
-        }
-
-_BASE_TYPE_MAP = EnvelopeTypeMapper.get_type_map()
+from azure.monitor.opentelemetry.exporter.statsbeat._utils import _get_customer_sdkstats_export_interval
 
 class TestCustomerSdkStats(unittest.TestCase):
     """Tests for CustomerSdkStatsMetrics."""
@@ -481,7 +461,6 @@ class TestCustomerSdkStats(unittest.TestCase):
                 if not hasattr(envelope, "data") or not envelope.data:
                     continue
 
-                # envelope_name = "Microsoft.ApplicationInsights." + envelope.data.base_type
                 telemetry_type = _TYPE_MAP.get(envelope.data.base_type, _UNKNOWN)
 
                 should_retry = random.choice([True, False])
