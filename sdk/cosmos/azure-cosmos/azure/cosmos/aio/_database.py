@@ -28,7 +28,6 @@ import warnings
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
-from zope.interface.verify import verifyClass
 
 from ._cosmos_client_connection_async import CosmosClientConnection
 from .._base import build_options as _build_options, _set_throughput_options, _deserialize_throughput, \
