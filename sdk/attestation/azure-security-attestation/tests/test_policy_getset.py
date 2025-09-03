@@ -27,11 +27,13 @@ from helpers import pem_from_base64
 from azure.security.attestation import (
     AttestationAdministrationClient,
     AttestationToken,
-    PolicyModification,
-    CertificateModification,
     AttestationPolicyToken,
 )
-from azure.security.attestation.models import AttestationType
+from azure.security.attestation.models import (
+    AttestationType,
+    PolicyModification,
+    CertificateModification,
+)
 
 
 class TestPolicyGetSet(AzureRecordedTestCase):
