@@ -1,6 +1,5 @@
 ## DO NOT MODIFY THIS FILE MANUALLY. This is part of auto-baselining from 1ES Pipeline Templates. Go to [https://aka.ms/1espt-autobaselining] for more details.
 
-
 pipelines:
   '*':
     mainPipelineId: 983
@@ -14,8 +13,8 @@ pipelines:
           lastModifiedDate: 2024-09-13
       binary:
         credscan:
-          lastModifiedDate: 2025-09-02
+          lastModifiedDate: 2025-09-03
         binskim:
-          lastModifiedDate: 2025-09-02
+          lastModifiedDate: 2025-09-03
         spotbugs:
-          lastModifiedDate: 2025-09-02
+          lastModifiedDate: 2025-09-03
