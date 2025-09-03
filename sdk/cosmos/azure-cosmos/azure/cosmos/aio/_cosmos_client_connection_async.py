@@ -77,14 +77,13 @@ from ..partition_key import (
     _SequentialPartitionKeyType,
     _return_undefined_or_empty_partition_key,
     _Empty,
-    _build_partition_key_from_properties
+    _build_partition_key_from_properties, _PartitionKeyType
 )
 from ._auth_policy_async import AsyncCosmosBearerTokenCredentialPolicy
 from .._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
 from .._range_partition_resolver import RangePartitionResolver
 
 
-PartitionKeyType = Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], _Empty, _Undefined, None]  # pylint: disable=line-too-long
 
 
 class CredentialDict(TypedDict, total=False):
@@ -2260,7 +2259,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
     async def read_items(
             self,
             collection_link: str,
-            items: Sequence[Tuple[str, PartitionKeyType]],
+            items: Sequence[Tuple[str, _PartitionKeyType]],
             options: Optional[Mapping[str, Any]] = None,
             **kwargs: Any
      ) -> CosmosList:
@@ -2268,7 +2267,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         :param str collection_link: The link to the document collection.
         :param items: A list of tuples, where each tuple contains an item's ID and partition key.
-        :type items: Sequence[Tuple[str, PartitionKeyType]]
+        :type items: Sequence[Tuple[str, _PartitionKeyType]]
         :param dict options: The request options for the request.
         :return: The list of read items.
         :rtype: CosmosList
@@ -2323,7 +2322,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         database_or_container_link: str,
         query: Optional[Union[str, Dict[str, Any]]],
         options: Optional[Mapping[str, Any]] = None,
-        partition_key: Optional[PartitionKeyType] = None,
+        partition_key: Optional[_PartitionKeyType] = None,
         response_hook: Optional[Callable[[Mapping[str, Any], Dict[str, Any]], None]] = None,
         **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:

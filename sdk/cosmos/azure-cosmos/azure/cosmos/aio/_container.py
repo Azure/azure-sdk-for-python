@@ -24,7 +24,7 @@
 import asyncio # pylint: disable=do-not-import-asyncio
 from datetime import datetime
 from typing import (Any, Dict, Mapping, Optional, Sequence, Union, List, Tuple, cast, overload, AsyncIterable,
-                    Callable)
+                    Callable, Type)
 import warnings
 from typing_extensions import Literal
 from azure.core import MatchConditions
@@ -53,9 +53,7 @@ from ..offer import ThroughputProperties
 from ..partition_key import (
     NonePartitionKeyValue,
     _return_undefined_or_empty_partition_key,
-    _Empty,
-    _Undefined,
-    _get_partition_key_from_partition_key_definition, NullPartitionKeyValue
+    _get_partition_key_from_partition_key_definition, NullPartitionKeyValue, _PartitionKeyType
 )
 __all__ = ("ContainerProxy",)
 
@@ -64,7 +62,7 @@ __all__ = ("ContainerProxy",)
 # pylint: disable=too-many-public-methods
 # pylint: disable=docstring-keyword-should-match-keyword-only
 
-PartitionKeyType = Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], None, _Empty, _Undefined]  # pylint: disable=line-too-long
+PartitionKeyType = Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], None, Type[NonePartitionKeyValue], Type[NullPartitionKeyValue]]  # pylint: disable=line-too-long
 
 
 class ContainerProxy:
@@ -147,8 +145,8 @@ class ContainerProxy:
 
     async def _set_partition_key(
         self,
-        partition_key: PartitionKeyType
-    ) -> Union[str, int, float, bool, None, List[Union[str, int, float, bool]], _Empty, _Undefined]:
+        partition_key: _PartitionKeyType
+    ) -> _PartitionKeyType:
         if partition_key == NonePartitionKeyValue:
             return _return_undefined_or_empty_partition_key(await self.is_system_key)
         if partition_key == NullPartitionKeyValue:
@@ -157,7 +155,7 @@ class ContainerProxy:
 
     async def _get_epk_range_for_partition_key(
             self,
-            partition_key_value: PartitionKeyType,
+            partition_key_value: _PartitionKeyType,
             feed_options: Optional[Dict[str, Any]] = None) -> Range:
         container_properties = await self._get_properties_with_options(feed_options)
         partition_key_definition = container_properties["partitionKey"]
