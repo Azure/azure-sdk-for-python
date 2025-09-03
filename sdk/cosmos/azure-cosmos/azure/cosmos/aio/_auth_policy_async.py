@@ -6,19 +6,24 @@
 
 from typing import Any, MutableMapping, TypeVar, cast, Optional
 
+from azure.cosmos import _constants as Constants
 from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
 from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.transport import HttpRequest as LegacyHttpRequest
 from azure.core.rest import HttpRequest
 from azure.core.credentials import AccessToken
+from azure.core.exceptions import HttpResponseError
 
 from ..http_constants import HttpHeaders
 
 HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
 
-
+# NOTE: This class accesses protected members (_scopes, _token) of the parent class
+# to implement fallback and scope-switching logic not exposed by the public API.
+# Composition was considered, but still required accessing protected members, so inheritance is retained
+# for seamless Azure SDK pipeline integration.
 class AsyncCosmosBearerTokenCredentialPolicy(AsyncBearerTokenCredentialPolicy):
-    AadDefaultScope = "https://cosmos.azure.com/.default"
+    AadDefaultScope = Constants._Constants.AAD_DEFAULT_SCOPE
 
     def __init__(self, credential, account_scope: str, override_scope: Optional[str] = None):
         self._account_scope = account_scope
@@ -49,7 +54,7 @@ class AsyncCosmosBearerTokenCredentialPolicy(AsyncBearerTokenCredentialPolicy):
                 # The None-check for self._token is done in the parent on_request
                 self._update_headers(request.http_request.headers, cast(AccessToken, self._token).token)
                 break
-            except Exception as ex:
+            except HttpResponseError as ex:
                 # Only fallback if not using override, not already tried, and error is AADSTS500011
                 if (
                         not self._override_scope and

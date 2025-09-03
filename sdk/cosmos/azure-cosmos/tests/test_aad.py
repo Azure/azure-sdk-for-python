@@ -14,7 +14,7 @@ from azure.core.credentials import AccessToken
 import azure.cosmos.cosmos_client as cosmos_client
 import test_config
 from azure.cosmos import DatabaseProxy, ContainerProxy, exceptions
-
+from azure.core.exceptions import HttpResponseError
 
 def _remove_padding(encoded_string):
     while encoded_string.endswith("="):
@@ -216,7 +216,7 @@ class TestAAD(unittest.TestCase):
             def get_token(self, *scopes, **kwargs):
                 self.call_count += 1
                 if self.call_count == 1:
-                    raise Exception("AADSTS500011: Simulated error for fallback")
+                    raise HttpResponseError(message="AADSTS500011: Simulated error for fallback")
                 return super().get_token(*scopes, **kwargs)
 
         def action(scopes_captured):
