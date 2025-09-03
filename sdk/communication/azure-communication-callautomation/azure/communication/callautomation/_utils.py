@@ -214,31 +214,31 @@ def deserialize_identifier(identifier_model: CommunicationIdentifierModel) -> Co
     raw_id = identifier_model.raw_id
 
     if identifier_model.communication_user:
-        return cast(CommunicationIdentifier, CommunicationUserIdentifier(id=identifier_model.communication_user.id, raw_id=raw_id))
+        return CommunicationUserIdentifier(raw_id, raw_id=raw_id)
     if identifier_model.phone_number:
-        return cast(CommunicationIdentifier, PhoneNumberIdentifier(identifier_model.phone_number.value, raw_id=raw_id))
+        return PhoneNumberIdentifier(identifier_model.phone_number.value, raw_id=raw_id)
     if identifier_model.microsoft_teams_user:
-        return cast(CommunicationIdentifier, MicrosoftTeamsUserIdentifier(
+        return MicrosoftTeamsUserIdentifier(
             raw_id=raw_id,
             user_id=identifier_model.microsoft_teams_user.user_id,
             is_anonymous=identifier_model.microsoft_teams_user.is_anonymous,
             cloud=identifier_model.microsoft_teams_user.cloud,
-        ))
+        )
     if identifier_model.microsoft_teams_app:
-        return cast(CommunicationIdentifier, MicrosoftTeamsAppIdentifier(
+        return MicrosoftTeamsAppIdentifier(
             raw_id=raw_id,
             app_id=identifier_model.microsoft_teams_app.app_id,
             cloud=identifier_model.microsoft_teams_app.cloud,
-        ))
+        )
     if identifier_model.teams_extension_user:
-        return cast(CommunicationIdentifier, TeamsExtensionUserIdentifier(
+        return TeamsExtensionUserIdentifier(
             raw_id=raw_id,
             user_id=identifier_model.teams_extension_user.user_id,
-            tenant_id= identifier_model.teams_extension_user.tenant_id,
+            tenant_id=identifier_model.teams_extension_user.tenant_id,
             resource_id=identifier_model.teams_extension_user.resource_id,
             cloud=identifier_model.teams_extension_user.cloud,
-        ))
-    return cast(CommunicationIdentifier, UnknownIdentifier(raw_id if raw_id is not None else ""))
+        )
+    return UnknownIdentifier(raw_id)
 
 
 def deserialize_phone_identifier(identifier_model: PhoneNumberIdentifierModel) -> Union[PhoneNumberIdentifier, None]:

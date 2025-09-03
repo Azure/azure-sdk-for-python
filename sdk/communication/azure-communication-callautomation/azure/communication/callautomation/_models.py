@@ -829,7 +829,7 @@ class AddParticipantResult:
             invitation_id=add_participant_result_generated.invitation_id,
             participant=CallParticipant._from_generated(  # pylint:disable=protected-access
                 add_participant_result_generated.participant
-            ) ,
+            ) if add_participant_result_generated.participant else None,
             operation_context=add_participant_result_generated.operation_context,
         )
 
