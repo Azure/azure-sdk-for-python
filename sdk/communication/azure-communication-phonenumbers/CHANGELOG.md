@@ -1,5 +1,16 @@
 # Release History
 
+## 1.5.0 (Unreleased)
+- Improved type safety and consistency across all client methods
+
+### Other Changes
+- Replaced `**kwargs` parameters with explicit typed parameters for better IDE support and type checking
+- Enhanced type annotations for Long Running Operation (LRO) methods with proper `Union[bool, "PollingMethod"]` typing
+- Fixed type compatibility issues with optional parameters (e.g., `quantity` in search operations)
+- Added proper type hints for all method parameters while maintaining backward compatibility
+- Fixed pylint and mypy compliance issues
+- Improved code organization and import structure
+
 ## 1.4.0 (2025-08-28)
 
 ### Features Added
@@ -34,7 +45,7 @@
 - GA release of Number Insight.
 - API version `2025-02-11` is the default.
 
-## Other changes
+### Other Changes
 - Updated `search_operator_information` method signature to enforce `options` as a keyword-only argument.
 
 ## 1.2.0b2 (2024-03-01)
