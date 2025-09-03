@@ -5,13 +5,13 @@
 # ------------------------------------
 
 """
-FILE: sample_text_sentiment_analysis.py
+FILE: sample_analyze_sentiment.py
 
 DESCRIPTION:
     This sample demonstrates how to run **sentiment analysis** over text.
 
 USAGE:
-    python sample_text_sentiment_analysis.py
+    python sample_analyze_sentiment.py
 
 REQUIRED ENV VARS (for AAD / DefaultAzureCredential):
     AZURE_TEXT_ENDPOINT
@@ -25,7 +25,7 @@ NOTE:
       - AZURE_TEXT_KEY
 """
 
-# [START text_sentiment_analysis]
+# [START analyze_sentiment]
 import os
 
 from azure.identity import DefaultAzureCredential
@@ -38,7 +38,7 @@ from azure.ai.language.text.models import (
 )
 
 
-def sample_text_sentiment_analysis():
+def sample_analyze_sentiment():
     # settings
     endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
     credential = DefaultAzureCredential()
@@ -89,11 +89,11 @@ def sample_text_sentiment_analysis():
                 print("No sentence-level results returned.")
     else:
         print("No documents in the response or unexpected result type.")
-# [END text_sentiment_analysis]
+# [END analyze_sentiment]
 
 
 def main():
-    sample_text_sentiment_analysis()
+    sample_analyze_sentiment()
 
 
 if __name__ == "__main__":

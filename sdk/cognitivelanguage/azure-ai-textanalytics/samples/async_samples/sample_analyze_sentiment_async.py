@@ -5,13 +5,13 @@
 # ------------------------------------
 
 """
-FILE: sample_text_sentiment_analysis_async.py
+FILE: sample_analyze_sentiment_async.py
 
 DESCRIPTION:
     This sample demonstrates how to run **sentiment analysis** over text (async).
 
 USAGE:
-    python sample_text_sentiment_analysis_async.py
+    python sample_analyze_sentiment_async.py
 
 REQUIRED ENV VARS (for AAD / DefaultAzureCredential):
     AZURE_TEXT_ENDPOINT
@@ -25,7 +25,7 @@ NOTE:
       - AZURE_TEXT_KEY
 """
 
-# [START text_sentiment_analysis_async]
+# [START analyze_sentiment_async]
 import os
 import asyncio
 
@@ -39,7 +39,7 @@ from azure.ai.language.text.models import (
 )
 
 
-async def sample_text_sentiment_analysis_async():
+async def sample_analyze_sentiment_async():
     # settings
     endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
     credential = DefaultAzureCredential()
@@ -89,11 +89,11 @@ async def sample_text_sentiment_analysis_async():
                     print("No sentence-level results returned.")
         else:
             print("No documents in the response or unexpected result type.")
-# [END text_sentiment_analysis_async]
+# [END analyze_sentiment_async]
 
 
 async def main():
-    await sample_text_sentiment_analysis_async()
+    await sample_analyze_sentiment_async()
 
 
 if __name__ == "__main__":

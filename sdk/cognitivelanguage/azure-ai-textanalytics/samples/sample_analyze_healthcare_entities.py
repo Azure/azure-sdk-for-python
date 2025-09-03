@@ -5,13 +5,13 @@
 # ------------------------------------
 
 """
-FILE: sample_text_healthcare.py
+FILE: sample_analyze_healthcare_entities.py
 
 DESCRIPTION:
     This sample demonstrates how to run a **healthcare** action over text.
 
 USAGE:
-    python sample_text_healthcare.py
+    python sample_analyze_healthcare_entities.py
 
 REQUIRED ENV VARS (for AAD / DefaultAzureCredential):
     AZURE_TEXT_ENDPOINT
@@ -25,7 +25,7 @@ NOTE:
       - AZURE_TEXT_KEY
 """
 
-# [START text_healthcare]
+# [START analyze_healthcare_entities]
 import os
 
 from azure.identity import DefaultAzureCredential
@@ -39,7 +39,7 @@ from azure.ai.language.text.models import (
 )
 
 
-def sample_text_healthcare():
+def sample_analyze_healthcare_entities():
     # get settings
     endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
     credential = DefaultAzureCredential()
@@ -135,11 +135,11 @@ def sample_text_healthcare():
                 except Exception:
                     print("\n[Non-healthcare action present]")
 
-# [END text_healthcare]
+# [END analyze_healthcare_entities]
 
 
 def main():
-    sample_text_healthcare()
+    sample_analyze_healthcare_entities()
 
 
 if __name__ == "__main__":

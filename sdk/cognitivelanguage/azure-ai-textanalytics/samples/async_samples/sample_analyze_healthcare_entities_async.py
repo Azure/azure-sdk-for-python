@@ -5,13 +5,13 @@
 # ------------------------------------
 
 """
-FILE: sample_text_healthcare_async.py
+FILE: sample_analyze_healthcare_entities_async.py
 
 DESCRIPTION:
     This sample demonstrates how to run a **healthcare** action over text (async LRO).
 
 USAGE:
-    python sample_text_healthcare_async.py
+    python sample_analyze_healthcare_entities_async.py
 
 REQUIRED ENV VARS (for AAD / DefaultAzureCredential):
     AZURE_TEXT_ENDPOINT
@@ -25,7 +25,7 @@ NOTE:
       - AZURE_TEXT_KEY
 """
 
-# [START text_healthcare_async]
+# [START analyze_healthcare_entities_async]
 import os
 import asyncio
 
@@ -40,7 +40,7 @@ from azure.ai.language.text.models import (
 )
 
 
-async def sample_text_healthcare_async():
+async def sample_analyze_healthcare_entities_async():
     # get settings
     endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
     credential = DefaultAzureCredential()
@@ -136,11 +136,11 @@ async def sample_text_healthcare_async():
                         )
                     except Exception:
                         print("\n[Other action present]")
-# [END text_healthcare_async]
+# [END analyze_healthcare_entities_async]
 
 
 async def main():
-    await sample_text_healthcare_async()
+    await sample_analyze_healthcare_entities_async()
 
 
 if __name__ == "__main__":

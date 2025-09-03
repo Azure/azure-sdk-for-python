@@ -27,12 +27,12 @@ USAGE:
     2) AZURE_TEXT_KEY - your Text Analytics API key
 """
 
-import os
 import asyncio
 
 
 async def sample_authentication_api_key_async():
-    # [START create_text_client_with_key_async]
+    # [START create_ta_client_with_key_async]
+    import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.language.text.aio import TextAnalysisClient
 
@@ -40,7 +40,7 @@ async def sample_authentication_api_key_async():
     key = os.environ["AZURE_TEXT_KEY"]
 
     text_client = TextAnalysisClient(endpoint, AzureKeyCredential(key))
-    # [END create_text_client_with_key_async]
+    # [END create_ta_client_with_key_async]
 
 
 async def sample_authentication_with_azure_active_directory():
@@ -48,6 +48,8 @@ async def sample_authentication_with_azure_active_directory():
     variables: AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
     """
     print("\n.. authentication_with_azure_active_directory")
+    # [START create_ta_client_with_aad_async]
+    import os
     from azure.ai.language.text.aio import TextAnalysisClient
     from azure.identity.aio import DefaultAzureCredential
 
@@ -55,7 +57,7 @@ async def sample_authentication_with_azure_active_directory():
     credential = DefaultAzureCredential()
 
     text_client = TextAnalysisClient(endpoint, credential=credential)
-
+    # [END create_ta_client_with_aad_async]
 
 async def main():
     await sample_authentication_api_key_async()

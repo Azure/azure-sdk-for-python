@@ -5,13 +5,13 @@
 # ------------------------------------
 
 """
-FILE: sample_text_entities_recognition.py
+FILE: sample_recognize_entities.py
 
 DESCRIPTION:
     This sample demonstrates how to run **entity recognition** over text.
 
 USAGE:
-    python sample_text_entities_recognition.py
+    python sample_recognize_entities.py
 
 REQUIRED ENV VARS (for AAD / DefaultAzureCredential):
     AZURE_TEXT_ENDPOINT
@@ -25,7 +25,7 @@ NOTE:
       - AZURE_TEXT_KEY
 """
 
-# [START text_entities_recognition]
+# [START recognize_entities]
 import os
 
 from azure.identity import DefaultAzureCredential
@@ -39,7 +39,7 @@ from azure.ai.language.text.models import (
 )
 
 
-def sample_text_entities_recognition():
+def sample_recognize_entities():
     # settings
     endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
     credential = DefaultAzureCredential()
@@ -83,11 +83,11 @@ def sample_text_entities_recognition():
     else:
         print("No documents in the response or unexpected result type.")
 
-# [END text_entities_recognition]
+# [END recognize_entities]
 
 
 def main():
-    sample_text_entities_recognition()
+    sample_recognize_entities()
 
 
 if __name__ == "__main__":

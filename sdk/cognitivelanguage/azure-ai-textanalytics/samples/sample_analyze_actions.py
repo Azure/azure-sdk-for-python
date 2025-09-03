@@ -27,7 +27,7 @@ NOTE:
       - AZURE_TEXT_KEY
 """
 
-# [START text_multiple_actions]
+# [START analyze]
 import os
 
 from azure.identity import DefaultAzureCredential
@@ -44,7 +44,7 @@ from azure.ai.language.text.models import (
 )
 
 
-def sample_text_multiple_actions():
+def sample_analyze():
     # get settings
     endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
     credential = DefaultAzureCredential()
@@ -134,11 +134,11 @@ def sample_text_multiple_actions():
                 print(f'  Error in document: {err.id}!')
                 print(f"  Document error: {err.error}")
 
-# [END text_multiple_actions]
+# [END analyze]
 
 
 def main():
-    sample_text_multiple_actions()
+    sample_analyze()
 
 
 if __name__ == "__main__":

@@ -28,11 +28,10 @@ USAGE:
     2) AZURE_TEXT_KEY - your Text Analytics API key
 """
 
-import os
-
 
 def sample_authentication_api_key():
-    # [START create_text_client_with_key]
+    # [START create_ta_client_with_key]
+    import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.language.text import TextAnalysisClient
 
@@ -40,7 +39,7 @@ def sample_authentication_api_key():
     key = os.environ["AZURE_TEXT_KEY"]
 
     text_client = TextAnalysisClient(endpoint, AzureKeyCredential(key))
-    # [END create_text_client_with_key]
+    # [END create_ta_client_with_key]
 
 
 def sample_authentication_with_azure_active_directory():
@@ -48,6 +47,8 @@ def sample_authentication_with_azure_active_directory():
     variables: AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
     """
     print("\n.. authentication_with_azure_active_directory")
+    # [START create_ta_client_with_aad]
+    import os
     from azure.ai.language.text import TextAnalysisClient
     from azure.identity import DefaultAzureCredential
 
@@ -55,6 +56,8 @@ def sample_authentication_with_azure_active_directory():
     credential = DefaultAzureCredential()
 
     text_client = TextAnalysisClient(endpoint, credential=credential)
+    # [END create_ta_client_with_aad]
+
 
 def main():
     sample_authentication_api_key()

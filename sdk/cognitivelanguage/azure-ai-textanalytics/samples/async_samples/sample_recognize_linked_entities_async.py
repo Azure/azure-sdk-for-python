@@ -5,13 +5,13 @@
 # ------------------------------------
 
 """
-FILE: sample_text_entity_linking_async.py
+FILE: sample_recognize_linked_entities_async.py
 
 DESCRIPTION:
     This sample demonstrates how to run **entity linking** over text (async, non-LRO).
 
 USAGE:
-    python sample_text_entity_linking_async.py
+    python sample_recognize_linked_entities_async.py
 
 REQUIRED ENV VARS (for AAD / DefaultAzureCredential):
     AZURE_TEXT_ENDPOINT
@@ -25,7 +25,7 @@ NOTE:
       - AZURE_TEXT_KEY
 """
 
-# [START text_entity_linking_async]
+# [START recognize_linked_entities_async]
 import os
 import asyncio
 
@@ -40,7 +40,7 @@ from azure.ai.language.text.models import (
 )
 
 
-async def sample_text_entity_linking_async():
+async def sample_recognize_linked_entities_async():
     # settings
     endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
     credential = DefaultAzureCredential()
@@ -91,11 +91,11 @@ async def sample_text_entity_linking_async():
     else:
         print("No documents in the response or unexpected result type.")
 
-# [END text_entity_linking_async]
+# [END recognize_linked_entities_async]
 
 
 async def main():
-    await sample_text_entity_linking_async()
+    await sample_recognize_linked_entities_async()
 
 
 if __name__ == "__main__":

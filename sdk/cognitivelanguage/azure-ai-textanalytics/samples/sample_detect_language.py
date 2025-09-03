@@ -5,13 +5,13 @@
 # ------------------------------------
 
 """
-FILE: sample_text_language_detection.py
+FILE: sample_detect_language.py
 
 DESCRIPTION:
     This sample demonstrates how to run **language detection** over text.
 
 USAGE:
-    python sample_text_language_detection.py
+    python sample_detect_language.py
 
 REQUIRED ENV VARS (for AAD / DefaultAzureCredential):
     AZURE_TEXT_ENDPOINT
@@ -25,7 +25,7 @@ NOTE:
       - AZURE_TEXT_KEY
 """
 
-# [START text_language_detection]
+# [START detect_language]
 import os
 
 from azure.identity import DefaultAzureCredential
@@ -38,7 +38,7 @@ from azure.ai.language.text.models import (
 )
 
 
-def sample_text_language_detection():
+def sample_detect_language():
     # get settings
     endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
     credential = DefaultAzureCredential()
@@ -78,11 +78,11 @@ def sample_text_language_detection():
         else:
             print("No detected language returned for this document.")
 
-# [END text_language_detection]
+# [END detect_language]
 
 
 def main():
-    sample_text_language_detection()
+    sample_detect_language()
 
 
 if __name__ == "__main__":

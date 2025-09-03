@@ -27,7 +27,7 @@ NOTE:
       - AZURE_TEXT_KEY
 """
 
-# [START text_multiple_actions_async]
+# [START analyze_async]
 import os
 import asyncio
 
@@ -130,7 +130,7 @@ async def sample_analyze_actions_async():
                     print(f'  Error in document: {err.id}!')
                     print(f"  Document error: {err.error}")
 
-# [END text_multiple_actions_async]
+# [END analyze_async]
 
 
 async def main():

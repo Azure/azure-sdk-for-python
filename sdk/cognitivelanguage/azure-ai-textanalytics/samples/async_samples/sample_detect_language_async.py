@@ -5,13 +5,13 @@
 # ------------------------------------
 
 """
-FILE: sample_text_language_detection_async.py
+FILE: sample_detect_language_async.py
 
 DESCRIPTION:
     This sample demonstrates how to run **language detection** over text (async).
 
 USAGE:
-    python sample_text_language_detection_async.py
+    python sample_detect_language_async.py
 
 REQUIRED ENV VARS (for AAD / DefaultAzureCredential):
     AZURE_TEXT_ENDPOINT
@@ -25,7 +25,7 @@ NOTE:
       - AZURE_TEXT_KEY
 """
 
-# [START text_language_detection_async]
+# [START detect_language_async]
 import os
 import asyncio
 
@@ -39,7 +39,7 @@ from azure.ai.language.text.models import (
 )
 
 
-async def sample_text_language_detection_async():
+async def sample_detect_language_async():
     # get settings
     endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
     credential = DefaultAzureCredential()
@@ -76,11 +76,11 @@ async def sample_text_language_detection_async():
                 print(f"Confidence score: {dl.confidence_score}")
             else:
                 print("No detected language returned for this document.")
-# [END text_language_detection_async]
+# [END detect_language_async]
 
 
 async def main():
-    await sample_text_language_detection_async()
+    await sample_detect_language_async()
 
 
 if __name__ == "__main__":

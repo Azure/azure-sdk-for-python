@@ -5,13 +5,13 @@
 # ------------------------------------
 
 """
-FILE: sample_text_entity_linking.py
+FILE: sample_recognize_linked_entities.py
 
 DESCRIPTION:
     This sample demonstrates how to run **entity linking** over text.
 
 USAGE:
-    python sample_text_entity_linking.py
+    python sample_recognize_linked_entities.py
 
 REQUIRED ENV VARS (for AAD / DefaultAzureCredential):
     AZURE_TEXT_ENDPOINT
@@ -25,7 +25,7 @@ NOTE:
       - AZURE_TEXT_KEY
 """
 
-# [START text_entity_linking]
+# [START recognize_linked_entities]
 import os
 
 from azure.identity import DefaultAzureCredential
@@ -39,7 +39,7 @@ from azure.ai.language.text.models import (
 )
 
 
-def sample_text_entity_linking():
+def sample_recognize_linked_entities():
     # settings
     endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
     credential = DefaultAzureCredential()
@@ -91,11 +91,11 @@ def sample_text_entity_linking():
     else:
         print("No documents in the response or unexpected result type.")
 
-# [END text_entity_linking]
+# [END recognize_linked_entities]
 
 
 def main():
-    sample_text_entity_linking()
+    sample_recognize_linked_entities()
 
 
 if __name__ == "__main__":

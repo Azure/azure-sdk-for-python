@@ -5,13 +5,13 @@
 # ------------------------------------
 
 """
-FILE: sample_text_key_phrase_extraction_async.py
+FILE: sample_extract_key_phrases_async.py
 
 DESCRIPTION:
     This sample demonstrates how to run **key phrase extraction** over text (async).
 
 USAGE:
-    python sample_text_key_phrase_extraction_async.py
+    python sample_extract_key_phrases_async.py
 
 REQUIRED ENV VARS (for AAD / DefaultAzureCredential):
     AZURE_TEXT_ENDPOINT
@@ -25,7 +25,7 @@ NOTE:
       - AZURE_TEXT_KEY
 """
 
-# [START text_key_phrase_extraction_async]
+# [START extract_key_phrases_async]
 import os
 import asyncio
 
@@ -40,7 +40,7 @@ from azure.ai.language.text.models import (
 )
 
 
-async def sample_text_key_phrase_extraction_async():
+async def sample_extract_key_phrases_async():
     # get settings
     endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
     credential = DefaultAzureCredential()
@@ -85,11 +85,11 @@ async def sample_text_key_phrase_extraction_async():
                     print(f"  - {phrase}")
             else:
                 print("No key phrases found for this document.")
-# [END text_key_phrase_extraction_async]
+# [END extract_key_phrases_async]
 
 
 async def main():
-    await sample_text_key_phrase_extraction_async()
+    await sample_extract_key_phrases_async()
 
 
 if __name__ == "__main__":

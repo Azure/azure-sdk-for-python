@@ -5,13 +5,13 @@
 # ------------------------------------
 
 """
-FILE: sample_text_key_phrase_extraction.py
+FILE: sample_extract_key_phrases.py
 
 DESCRIPTION:
     This sample demonstrates how to run **key phrase extraction** over text.
 
 USAGE:
-    python sample_text_key_phrase_extraction.py
+    python sample_extract_key_phrases.py
 
 REQUIRED ENV VARS (for AAD / DefaultAzureCredential):
     AZURE_TEXT_ENDPOINT
@@ -25,7 +25,7 @@ NOTE:
       - AZURE_TEXT_KEY
 """
 
-# [START text_key_phrase_extraction]
+# [START extract_key_phrases]
 import os
 
 from azure.identity import DefaultAzureCredential
@@ -39,7 +39,7 @@ from azure.ai.language.text.models import (
 )
 
 
-def sample_text_key_phrase_extraction():
+def sample_extract_key_phrases():
     # get settings
     endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
     credential = DefaultAzureCredential()
@@ -86,11 +86,11 @@ def sample_text_key_phrase_extraction():
         else:
             print("No key phrases found for this document.")
 
-# [END text_key_phrase_extraction]
+# [END extract_key_phrases]
 
 
 def main():
-    sample_text_key_phrase_extraction()
+    sample_extract_key_phrases()
 
 
 if __name__ == "__main__":
