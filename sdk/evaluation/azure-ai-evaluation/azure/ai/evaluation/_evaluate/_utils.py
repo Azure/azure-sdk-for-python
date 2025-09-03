@@ -460,7 +460,7 @@ class JSONLDataFileLoader:
         self.filename = filename
 
     def load(self) -> pd.DataFrame:
-        return pd.read_json(self.filename, lines=True)
+        return pd.read_json(self.filename, lines=True, dtype=False)
 
 
 class CSVDataFileLoader:
@@ -468,7 +468,7 @@ class CSVDataFileLoader:
         self.filename = filename
 
     def load(self) -> pd.DataFrame:
-        return pd.read_csv(self.filename)
+        return pd.read_csv(self.filename, dtype=False)
 
 
 class DataLoaderFactory:
