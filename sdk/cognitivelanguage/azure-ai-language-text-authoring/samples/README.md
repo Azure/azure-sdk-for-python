@@ -124,8 +124,8 @@ Check out the [API reference documentation][api_reference_authoring] to explore 
 [sample_swap_deployments]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-text-authoring/samples/sample_swap_deployments.py
 [sample_swap_deployments_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-text-authoring/samples/async/sample_swap_deployments_async.py
 
-[sample_train]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-text-authoring/samples/sample_train.py
-[sample_train_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-text-authoring/samples/async/sample_train_async.py
+[sample_train]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-text-authoring/samples/sample_train_project.py
+[sample_train_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-text-authoring/samples/async/sample_train_project_async.py
 
 [sample_unassign_deployment_resources]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-text-authoring/samples/sample_unassign_deployment_resources.py
 [sample_unassign_deployment_resources_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-text-authoring/samples/async/sample_unassign_deployment_resources_async.py
