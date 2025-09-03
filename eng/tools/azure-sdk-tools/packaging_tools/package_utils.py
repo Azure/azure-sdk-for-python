@@ -19,19 +19,13 @@ from packaging.version import Version
 from . import build_packaging
 from .change_log import main as change_log_main
 
-DEFAULT_DEST_FOLDER = "./dist"
-
 _LOGGER = logging.getLogger(__name__)
 
 
 # prefolder: "sdk/compute"; name: "azure-mgmt-compute"
-def create_package(prefolder, name, dest_folder=DEFAULT_DEST_FOLDER):
+def create_package(prefolder, name):
     absdirpath = Path(prefolder, name).absolute()
-    check_call(["python", "setup.py", "bdist_wheel", "-d", dest_folder], cwd=absdirpath)
-    check_call(
-        ["python", "setup.py", "sdist", "--format", "zip", "-d", dest_folder],
-        cwd=absdirpath,
-    )
+    check_call(["python", "-m", "build"], cwd=absdirpath)
 
 
 @return_origin_path
@@ -233,6 +227,7 @@ class CheckFile:
 
         # add `title` and update `is_stable` in pyproject.toml
         pyproject_toml = Path(self.whole_package_name) / "pyproject.toml"
+        is_stable = self.tag_is_stable and self.next_version != "1.0.0b1"
         if pyproject_toml.exists():
             with open(pyproject_toml, "rb") as fd:
                 toml_data = toml.load(fd)
@@ -240,15 +235,38 @@ class CheckFile:
                 toml_data["packaging"] = {}
             if title and not toml_data["packaging"].get("title"):
                 toml_data["packaging"]["title"] = title
-            toml_data["packaging"]["is_stable"] = self.tag_is_stable and self.next_version != "1.0.0b1"
+            toml_data["packaging"]["is_stable"] = is_stable
             with open(pyproject_toml, "wb") as fd:
                 tomlw.dump(toml_data, fd)
             _LOGGER.info(f"Update {pyproject_toml} successfully")
         else:
             _LOGGER.info(f"{os.getcwd()}/{pyproject_toml} does not exist")
 
-        build_packaging(output_folder=".", packages=[self.whole_package_name], build_conf=True)
+        build_packaging(
+            output_folder=".",
+            packages=[self.whole_package_name],
+            build_conf=True,
+            template_names=["README.md", "__init__.py"],
+        )
         _LOGGER.info("packaging_tools --build-conf successfully")
+
+        if pyproject_toml.exists():
+            stable_classifier = "Development Status :: 5 - Production/Stable"
+            beta_classifier = "Development Status :: 4 - Beta"
+
+            def edit_file(content: List[str]):
+                for i in range(0, len(content)):
+                    if "Development Status" in content[i]:
+                        if is_stable and beta_classifier in content[i]:
+                            content[i] = content[i].replace(beta_classifier, stable_classifier)
+                            _LOGGER.info(f"Replace '{beta_classifier}' with '{stable_classifier}' in {pyproject_toml}")
+                        if (not is_stable) and stable_classifier in content[i]:
+                            content[i] = content[i].replace(stable_classifier, beta_classifier)
+                            _LOGGER.info(f"Replace '{stable_classifier}' with '{beta_classifier}' in {pyproject_toml}")
+                        break
+
+            modify_file(str(pyproject_toml), edit_file)
+            _LOGGER.info(f"Check {pyproject_toml} for classifiers successfully")
 
     def sdk_code_path(self) -> str:
         return str(Path(f"sdk/{self.sdk_folder}/{self.whole_package_name}"))

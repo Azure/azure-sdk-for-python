@@ -9,31 +9,18 @@ from __future__ import annotations
 
 import argparse
 import sys
+import os
 from typing import Sequence, Optional
+
+from .whl import whl
+from .import_all import import_all
+from .mypy import mypy
+from .pylint import pylint
+
+from ci_tools.logging import configure_logging, logger
 
 __all__ = ["main", "build_parser"]
 __version__ = "0.0.0"
-
-
-def _cmd_greet(args: argparse.Namespace) -> int:
-    """Simple greet command: prints a greeting."""
-    name = args.name or "world"
-    print(f"Hello, {name}!")
-    return 0
-
-
-def _cmd_echo(args: argparse.Namespace) -> int:
-    """Echo command: prints back the provided message."""
-    print(args.message)
-    return 0
-
-
-def _cmd_run(args: argparse.Namespace) -> int:
-    """Run command: placeholder for running a task or pipeline."""
-    print(f"Running task: {args.task}")
-    # TODO: implement real behaviour
-    return 0
-
 
 def build_parser() -> argparse.ArgumentParser:
     """Create and return the top-level ArgumentParser for the CLI."""
@@ -41,26 +28,54 @@ def build_parser() -> argparse.ArgumentParser:
         prog="azpysdk", description="Azure SDK Python tools (minimal CLI)"
     )
     parser.add_argument("-V", "--version", action="version", version=__version__)
+    # global flag: allow --isolate to appear before the subcommand as well
+    parser.add_argument("--isolate", action="store_true", default=False,
+                        help="If set, run in an isolated virtual environment.")
+
+    # mutually exclusive logging options
+    log_group = parser.add_mutually_exclusive_group()
+    log_group.add_argument(
+        "--quiet",
+        action="store_true",
+        default=False,
+        help="Enable quiet mode (only shows ERROR logs)"
+    )
+    log_group.add_argument(
+        "--verbose",
+        action="store_true",
+        default=False,
+        help="Enable verbose mode (shows DEBUG logs)"
+    )
+    log_group.add_argument(
+        "--log-level",
+        choices=["DEBUG", "INFO", "WARN", "ERROR", "FATAL"],
+        help="Set the logging level."
+    )
+
+    common = argparse.ArgumentParser(add_help=False)
+    common.add_argument(
+        "target",
+        nargs="?",
+        default="**",
+        help="Glob pattern for packages. Defaults to '**', but will match patterns below CWD if a value is provided."
+    )
+    # allow --isolate to be specified after the subcommand as well
+    common.add_argument(
+        "--isolate",
+        action="store_true",
+        default=False,
+        help="If set, run in an isolated virtual environment."
+    )
 
     subparsers = parser.add_subparsers(title="commands", dest="command")
 
-    # greet
-    p = subparsers.add_parser("greet", help="Greet someone")
-    p.add_argument("-n", "--name", help="Name to greet")
-    p.set_defaults(func=_cmd_greet)
-
-    # echo
-    p = subparsers.add_parser("echo", help="Echo a message")
-    p.add_argument("message", help="Message to echo")
-    p.set_defaults(func=_cmd_echo)
-
-    # run
-    p = subparsers.add_parser("run", help="Run a placeholder task")
-    p.add_argument("-t", "--task", default="default", help="Task name to run")
-    p.set_defaults(func=_cmd_run)
+    # register our checks with the common params as their parent
+    whl().register(subparsers, [common])
+    import_all().register(subparsers, [common])
+    mypy().register(subparsers, [common])
+    pylint().register(subparsers, [common])
 
     return parser
-
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
     """CLI entrypoint.
@@ -74,6 +89,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
 
+    configure_logging(args)
+
     if not hasattr(args, "func"):
         parser.print_help()
         return 1
@@ -82,12 +99,11 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         result = args.func(args)
         return int(result or 0)
     except KeyboardInterrupt:
-        print("Interrupted by user", file=sys.stderr)
+        logger.error("Interrupted by user")
         return 130
     except Exception as exc:  # pragma: no cover - simple top-level error handling
-        print(f"Error: {exc}", file=sys.stderr)
+        logger.error(f"Error: {exc}")
         return 2
-
 
 if __name__ == "__main__":
     raise SystemExit(main())

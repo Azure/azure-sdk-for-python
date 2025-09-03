@@ -23,7 +23,7 @@ class TestRiskCategoryEnum:
         assert RiskCategory.ProtectedMaterial.value == "protected_material"
         assert RiskCategory.CodeVulnerability.value == "code_vulnerability"
         assert RiskCategory.UngroundedAttributes.value == "ungrounded_attributes"
-        assert RiskCategory.XPIA.value == "xpia"
+        assert RiskCategory.IndirectAttack.value == "indirect_attack"
 
         # Ensure all values are lower case with underscores
         for category in RiskCategory:

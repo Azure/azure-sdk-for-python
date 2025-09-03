@@ -163,19 +163,25 @@ def glob_packages(glob_string: str, target_root_dir: str) -> List[str]:
     collected_top_level_directories = []
 
     for glob_string in individual_globs:
-        globbed = glob.glob(os.path.join(target_root_dir, glob_string, "setup.py")) + glob.glob(
+        globbed = glob.glob(os.path.join(target_root_dir, glob_string, "setup.py"), recursive=True) + glob.glob(
             os.path.join(target_root_dir, "sdk/*/", glob_string, "setup.py")
         )
         collected_top_level_directories.extend([os.path.dirname(p) for p in globbed])
 
     # handle pyproject.toml separately, as we need to filter them by the presence of a `[project]` section
     for glob_string in individual_globs:
-        globbed = glob.glob(os.path.join(target_root_dir, glob_string, "pyproject.toml")) + glob.glob(
+        globbed = glob.glob(os.path.join(target_root_dir, glob_string, "pyproject.toml"), recursive=True) + glob.glob(
             os.path.join(target_root_dir, "sdk/*/", glob_string, "pyproject.toml")
         )
         for p in globbed:
             if get_pyproject(os.path.dirname(p)):
                 collected_top_level_directories.append(os.path.dirname(p))
+
+    # drop any packages that exist within a tests or test directory
+    collected_top_level_directories = [
+        p for p in collected_top_level_directories
+        if not any(part in ("test", "tests") for part in p.split(os.sep))
+    ]
 
     # deduplicate, in case we have double coverage from the glob strings. Example: "azure-mgmt-keyvault,azure-mgmt-*"
     return list(set(collected_top_level_directories))
@@ -438,15 +444,15 @@ def find_sdist(dist_dir: str, pkg_name: str, pkg_version: str) -> Optional[str]:
 
 
 def pip_install(
-    requirements: List[str], include_dependencies: bool = True, python_executable: Optional[str] = None
+    requirements: List[str], include_dependencies: bool = True, python_executable: Optional[str] = None, cwd: Optional[str] = None
 ) -> bool:
     """
     Attempts to invoke an install operation using the invoking python's pip. Empty requirements are auto-success.
     """
 
-    exe = python_executable or sys.executable
+    exe = get_pip_command(python_executable)
 
-    command = [exe, "-m", "pip", "install"]
+    command = exe + ["install"]
 
     if requirements:
         command.extend([req.strip() for req in requirements])
@@ -454,7 +460,10 @@ def pip_install(
         return True
 
     try:
-        subprocess.check_call(command)
+        if cwd:
+            subprocess.check_call(command, cwd=cwd)
+        else:
+            subprocess.check_call(command)
     except subprocess.CalledProcessError as f:
         return False
 
@@ -488,8 +497,10 @@ def get_pip_list_output(python_executable: Optional[str] = None):
     """Uses the invoking python executable to get the output from pip list."""
     exe = python_executable or sys.executable
 
+    pip_cmd = get_pip_command(exe)
+
     out = subprocess.Popen(
-        [exe, "-m", "pip", "list", "--disable-pip-version-check", "--format", "freeze"],
+        pip_cmd + ["list", "--disable-pip-version-check", "--format", "freeze"],
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
     )
@@ -929,6 +940,25 @@ def verify_package_classifiers(package_name: str, package_version: str, package_
             return False, f"{package_name} has version {package_version} and is a GA release, but had development status '{c}'. Expecting a development classifier that is equal or greater than 'Development Status :: 5 - Production/Stable'."
     return True, None
 
+
+def get_venv_call(python_exe: Optional[str] = None) -> List[str]:
+    """
+    Determine whether to use 'uv venv' or regular 'python -m venv' based on environment.
+
+    :param str python_exe: The Python executable to use (if not using the default).
+    :return: List of command arguments for venv.
+    :rtype: List[str]
+
+    """
+    # Check TOX_PIP_IMPL environment variable (aligns with tox.ini configuration)
+    pip_impl = os.environ.get('TOX_PIP_IMPL', 'pip').lower()
+
+    # soon we will change this to default to uv
+    if pip_impl == 'uv':
+        return ["uv", "venv"]
+    else:
+        return [python_exe if python_exe else sys.executable, "-m", "venv"]
+
 def get_pip_command(python_exe: Optional[str] = None) -> List[str]:
     """
     Determine whether to use 'uv pip' or regular 'pip' based on environment.
@@ -941,7 +971,27 @@ def get_pip_command(python_exe: Optional[str] = None) -> List[str]:
     # Check TOX_PIP_IMPL environment variable (aligns with tox.ini configuration)
     pip_impl = os.environ.get('TOX_PIP_IMPL', 'pip').lower()
 
+    # soon we will change this to default to uv
     if pip_impl == 'uv':
         return ["uv", "pip"]
     else:
         return [python_exe if python_exe else sys.executable, "-m", "pip"]
+
+
+def is_error_code_5_allowed(target_pkg: str, pkg_name: str):
+    """
+    Determine if error code 5 (no pytests run) is allowed for the given package.
+    """
+    if (
+        all(
+            map(
+                lambda x: any([pkg_id in x for pkg_id in MANAGEMENT_PACKAGE_IDENTIFIERS]),
+                [target_pkg],
+            )
+        )
+        or pkg_name in MANAGEMENT_PACKAGE_IDENTIFIERS
+        or pkg_name in NO_TESTS_ALLOWED
+    ):
+        return True
+    else:
+        return False

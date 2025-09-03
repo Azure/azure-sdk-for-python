@@ -126,6 +126,9 @@ class DefaultAzureCredential(ChainedTokenCredential):
         record file used by the Azure Resources extension.
     :keyword int process_timeout: The timeout in seconds to use for developer credentials that run
         subprocesses (e.g. AzureCliCredential, AzurePowerShellCredential). Defaults to **10** seconds.
+    :keyword bool require_envvar: If **True**, require that the AZURE_TOKEN_CREDENTIALS environment variable be set
+        to a value denoting the credential type or credential group to use. If unset or empty, DefaultAzureCredential
+        will raise a `ValueError`. Defaults to **False**.
 
     .. admonition:: Example:
 
@@ -168,6 +171,12 @@ class DefaultAzureCredential(ChainedTokenCredential):
         )
 
         process_timeout = kwargs.pop("process_timeout", 10)
+        require_envvar = kwargs.pop("require_envvar", False)
+        if require_envvar and not os.environ.get(EnvironmentVariables.AZURE_TOKEN_CREDENTIALS):
+            raise ValueError(
+                "AZURE_TOKEN_CREDENTIALS environment variable is required but is not set or is empty. "
+                "Set it to 'dev', 'prod', or a specific credential name."
+            )
 
         # Define credential configuration mapping
         credential_config = {
