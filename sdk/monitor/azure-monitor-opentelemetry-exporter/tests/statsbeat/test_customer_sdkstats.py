@@ -228,14 +228,13 @@ class TestCustomerSdkStats(unittest.TestCase):
             _APPLICATIONINSIGHTS_SDKSTATS_EXPORT_INTERVAL: ""
         }):
             # Get the export interval
-            actual_interval = _get_customer_sdkstats_export_interval() * 1000
-            default_interval = _DEFAULT_STATS_SHORT_EXPORT_INTERVAL * 1000
+            actual_interval = _get_customer_sdkstats_export_interval()
 
             # Verify it matches the default value
             self.assertEqual(
                 actual_interval,
-                default_interval,
-                f"Expected export interval to be default {default_interval}, got {actual_interval}"
+                _DEFAULT_STATS_SHORT_EXPORT_INTERVAL,
+                f"Expected export interval to be default {_DEFAULT_STATS_SHORT_EXPORT_INTERVAL}, got {actual_interval}"
             )
             
             # Verify the CustomerSdkStatsMetrics instance picks up the default interval
