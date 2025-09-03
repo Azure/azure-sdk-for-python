@@ -4,7 +4,7 @@
 
 ### Features Added
 
-  - Model `StorageDiscoveryMgmtClient` added parameter `cloud_setting` in method `__init__`
+  - Client `StorageDiscoveryMgmtClient` added parameter `cloud_setting` in method `__init__`
 
 ## 1.0.0b1 (2025-07-17)
 
