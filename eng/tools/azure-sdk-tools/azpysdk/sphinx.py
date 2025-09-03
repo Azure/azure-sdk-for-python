@@ -371,7 +371,7 @@ class sphinx(Check):
 
             # run apidoc
             working_dir = os.path.abspath(parsed.folder)
-            output_dir = os.path.join(working_dir, "docgen") # TODO
+            output_dir = os.path.join(working_dir, "docgen") # TODO??
 
             if should_build_docs(parsed.name):
                 if is_mgmt_package(parsed.name):
@@ -389,9 +389,9 @@ class sphinx(Check):
                 # Only data-plane libraries run strict sphinx at the moment
                 fail_on_warning = not is_mgmt_package(package_name)
                 results.append(sphinx_build(
-                    package_dir,
-                    staging_directory, # TODO
-                    site_folder, # TODO
+                    package_dir, # package
+                    doc_folder, # target / 'source'
+                    site_folder, # output
                     fail_on_warning=fail_on_warning,
                 ))
 
