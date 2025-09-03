@@ -366,7 +366,7 @@ class CallAutomationClient:
         media_config = media_streaming._to_generated() if media_streaming else None # pylint:disable=protected-access
         transcription_config = transcription._to_generated() if transcription else None # pylint:disable=protected-access
         create_call_request = CreateCallRequest(
-            targets=cast(list, targets),
+            targets=targets,
             callback_uri=callback_url,
             source_caller_id_number=serialize_phone_identifier(source_caller_id_number),
             source_display_name=source_display_name,
@@ -762,7 +762,7 @@ class CallAutomationClient:
             kwargs.pop("server_call_id", None),
             kwargs.pop("group_call_id", None),
             kwargs.pop("room_id", None),
-            cast(list, list(args))
+            args
         )
         call_connection_id = kwargs.pop("call_connection_id", None)
         if not call_locator and not call_connection_id:
