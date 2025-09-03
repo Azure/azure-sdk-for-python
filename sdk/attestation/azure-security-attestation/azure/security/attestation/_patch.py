@@ -10,7 +10,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 import base64
 import json
-from typing import Dict, List, Any, Tuple, Union
+from typing import Dict, List, Any, Tuple, Union, Optional, Callable
 
 try:
     from typing import Self
@@ -136,7 +136,25 @@ class AttestationClient:
         return [AttestationSigner._from_generated(key) for key in signing_certificates["keys"]]
 
     @distributed_trace
-    def attest_sgx_enclave(self, quote: bytes, **kwargs) -> Tuple[AttestationResult, AttestationToken]:
+    def attest_sgx_enclave(
+        self,
+        quote: bytes,
+        *,
+        inittime_data: Optional[bytes] = None,
+        inittime_json: Optional[bytes] = None,
+        runtime_data: Optional[bytes] = None,
+        runtime_json: Optional[bytes] = None,
+        draft_policy: Optional[str] = None,
+        validate_token: Optional[bool] = None,
+        validation_callback: Optional[Callable[["AttestationToken", "AttestationSigner"], None]] = None,
+        validate_signature: Optional[bool] = None,
+        validate_expiration: Optional[bool] = None,
+        issuer: Optional[str] = None,
+        validation_slack: Optional[float] = None,
+        validate_issuer: Optional[bool] = None,
+        validate_not_before_time: Optional[bool] = None,
+        **kwargs
+    ) -> Tuple[AttestationResult, AttestationToken]:
         """Attests the validity of an SGX quote.
 
         :param bytes quote: An SGX quote generated from an Intel(tm) SGX enclave
@@ -189,10 +207,21 @@ class AttestationClient:
 
         """
 
-        inittime_json = kwargs.pop("inittime_json", None)  # type: bytes
-        inittime_data = kwargs.pop("inittime_data", None)  # type: bytes
-        runtime_json = kwargs.pop("runtime_json", None)  # type: bytes
-        runtime_data = kwargs.pop("runtime_data", None)  # type: bytes
+        # Handle explicit validation parameters
+        validation_args = {
+            'validate_token': validate_token,
+            'validation_callback': validation_callback,
+            'validate_signature': validate_signature,
+            'validate_expiration': validate_expiration,
+            'issuer': issuer,
+            'validation_slack': validation_slack,
+            'validate_issuer': validate_issuer,
+            'validate_not_before_time': validate_not_before_time,
+        }
+        # Remove None values
+        validation_args = {k: v for k, v in validation_args.items() if v is not None}
+        # Add validation args to kwargs for merge_validation_args
+        kwargs.update(validation_args)
 
         if inittime_json and inittime_data:
             raise ValueError("Cannot provide both inittime_json and inittime_data.")
@@ -230,7 +259,7 @@ class AttestationClient:
             quote=quote,
             init_time_data=inittime,
             runtime_data=runtime,
-            draft_policy_for_attestation=kwargs.pop("draft_policy", None),
+            draft_policy_for_attestation=draft_policy,
         )
 
         # Merge our existing config options with the options for this API call.
@@ -251,7 +280,25 @@ class AttestationClient:
         )
 
     @distributed_trace
-    def attest_open_enclave(self, report: bytes, **kwargs) -> Tuple[AttestationResult, AttestationToken]:
+    def attest_open_enclave(
+        self,
+        report: bytes,
+        *,
+        inittime_data: Optional[bytes] = None,
+        inittime_json: Optional[bytes] = None,
+        runtime_data: Optional[bytes] = None,
+        runtime_json: Optional[bytes] = None,
+        draft_policy: Optional[str] = None,
+        validate_token: Optional[bool] = None,
+        validation_callback: Optional[Callable[["AttestationToken", "AttestationSigner"], None]] = None,
+        validate_signature: Optional[bool] = None,
+        validate_expiration: Optional[bool] = None,
+        issuer: Optional[str] = None,
+        validation_slack: Optional[float] = None,
+        validate_issuer: Optional[bool] = None,
+        validate_not_before_time: Optional[bool] = None,
+        **kwargs
+    ) -> Tuple[AttestationResult, AttestationToken]:
         """Attests the validity of an Open Enclave report.
 
         :param bytes report: An open_enclave report generated from an Intel(tm)
@@ -313,10 +360,21 @@ class AttestationClient:
 
         """
 
-        inittime_json = kwargs.pop("inittime_json", None)  # type: bytes
-        inittime_data = kwargs.pop("inittime_data", None)  # type: bytes
-        runtime_json = kwargs.pop("runtime_json", None)  # type: bytes
-        runtime_data = kwargs.pop("runtime_data", None)  # type: bytes
+        # Handle explicit validation parameters
+        validation_args = {
+            'validate_token': validate_token,
+            'validation_callback': validation_callback,
+            'validate_signature': validate_signature,
+            'validate_expiration': validate_expiration,
+            'issuer': issuer,
+            'validation_slack': validation_slack,
+            'validate_issuer': validate_issuer,
+            'validate_not_before_time': validate_not_before_time,
+        }
+        # Remove None values
+        validation_args = {k: v for k, v in validation_args.items() if v is not None}
+        # Add validation args to kwargs for merge_validation_args
+        kwargs.update(validation_args)
 
         if inittime_json and inittime_data:
             raise ValueError("Cannot provide both inittime_json and inittime_data.")
@@ -356,7 +414,7 @@ class AttestationClient:
             report=report,
             init_time_data=inittime,
             runtime_data=runtime,
-            draft_policy_for_attestation=kwargs.pop("draft_policy", None),
+            draft_policy_for_attestation=draft_policy,
         )
 
         # Merge our existing config options with the options for this API call.
@@ -481,7 +539,20 @@ class AttestationAdministrationClient:
             self._signing_key, self._signing_certificate = validate_signing_keys(signing_key, signing_certificate)
 
     @distributed_trace
-    def get_policy(self, attestation_type: Union[str, AttestationType], **kwargs: Any) -> Tuple[str, AttestationToken]:
+    def get_policy(
+        self,
+        attestation_type: Union[str, AttestationType],
+        *,
+        validation_slack: float = 0.0,
+        validate_signature: bool = True,
+        validate_issuer: bool = True,
+        validation_callback: Optional[Callable[[AttestationToken, AttestationSigner], None]] = None,
+        validate_expiration: bool = True,
+        issuer: Optional[str] = None,
+        validate_token: bool = True,
+        validate_not_before_time: bool = True,
+        **kwargs: Any
+    ) -> Tuple[str, AttestationToken]:
         """Retrieves the attestation policy for a specified attestation type.
 
         :param attestation_type: :class:`azure.security.attestation.AttestationType` for
@@ -526,7 +597,19 @@ class AttestationAdministrationClient:
         # Note that this must be done before calling into the implementation
         # layer because the implementation layer doesn't like keyword args that
         # it doesn't expect :(.
-        options = merge_validation_args(self._config._kwargs, kwargs)
+        validation_args = {
+            "validation_slack": validation_slack,
+            "validate_signature": validate_signature,
+            "validate_issuer": validate_issuer,
+            "validation_callback": validation_callback,
+            "validate_expiration": validate_expiration,
+            "issuer": issuer,
+            "validate_token": validate_token,
+            "validate_not_before_time": validate_not_before_time,
+        }
+        # Merge validation_args with kwargs to include any additional parameters
+        validation_args.update(kwargs)
+        options = merge_validation_args(self._config._kwargs, validation_args)
 
         policyResult = self._client.policy.get(attestation_type, **kwargs)
         token = AttestationToken(token=policyResult.token, body_type=GeneratedPolicyResult)
@@ -543,7 +626,21 @@ class AttestationAdministrationClient:
 
     @distributed_trace
     def set_policy(
-        self, attestation_type: Union[str, AttestationType], attestation_policy: str, **kwargs: Any
+        self,
+        attestation_type: Union[str, AttestationType],
+        attestation_policy: str,
+        *,
+        validation_slack: float = 0.0,
+        validate_not_before_time: bool = True,
+        validation_callback: Optional[Callable[[AttestationToken, AttestationSigner], None]] = None,
+        issuer: Optional[str] = None,
+        signing_certificate: Optional[str] = None,
+        signing_key: Optional[str] = None,
+        validate_issuer: bool = True,
+        validate_signature: bool = True,
+        validate_token: bool = True,
+        validate_expiration: bool = True,
+        **kwargs: Any
     ) -> Tuple[AttestationPolicyResult, AttestationToken]:
         """Sets the attestation policy for the specified attestation type.
 
@@ -613,8 +710,10 @@ class AttestationAdministrationClient:
         # object. The self._signing_key and self._signing_certificate are cryptography
         # objects, the keyword arguments are strings. The AttestationToken knows
         # how to tease these two apart.
-        signing_key = kwargs.pop("signing_key", self._signing_key)
-        signing_certificate = kwargs.pop("signing_certificate", self._signing_certificate)
+        if not signing_key:
+            signing_key = self._signing_key
+        if not signing_certificate:
+            signing_certificate = self._signing_certificate
 
         policy_token = AttestationToken(
             body=GeneratedStoredAttestationPolicy(attestation_policy=attestation_policy.encode("ascii")),
@@ -627,7 +726,19 @@ class AttestationAdministrationClient:
         # Note that this must be done before calling into the implementation
         # layer because the implementation layer doesn't like keyword args that
         # it doesn't expect :(.
-        options = merge_validation_args(self._config._kwargs, kwargs)
+        validation_args = {
+            "validation_slack": validation_slack,
+            "validate_not_before_time": validate_not_before_time,
+            "validation_callback": validation_callback,
+            "issuer": issuer,
+            "validate_issuer": validate_issuer,
+            "validate_signature": validate_signature,
+            "validate_token": validate_token,
+            "validate_expiration": validate_expiration,
+        }
+        # Merge validation_args with kwargs to include any additional parameters
+        validation_args.update(kwargs)
+        options = merge_validation_args(self._config._kwargs, validation_args)
 
         policyResult = self._client.policy.set(
             attestation_type=attestation_type, new_attestation_policy=policy_token.to_jwt_string(), **kwargs
@@ -644,7 +755,20 @@ class AttestationAdministrationClient:
 
     @distributed_trace
     def reset_policy(
-        self, attestation_type: Union[str, AttestationType], **kwargs: Any
+        self,
+        attestation_type: Union[str, AttestationType],
+        *,
+        validation_callback: Optional[Callable[[AttestationToken, AttestationSigner], None]] = None,
+        validate_issuer: bool = True,
+        validate_token: bool = True,
+        validation_slack: float = 0.0,
+        signing_key: Optional[str] = None,
+        signing_certificate: Optional[str] = None,
+        issuer: Optional[str] = None,
+        validate_signature: bool = True,
+        validate_not_before_time: bool = True,
+        validate_expiration: bool = True,
+        **kwargs: Any
     ) -> Tuple[AttestationPolicyResult, AttestationToken]:
         """Resets the attestation policy for the specified attestation type to the default value.
 
@@ -708,8 +832,10 @@ class AttestationAdministrationClient:
 
         # If the caller provided a signing key and certificate, validate that,
         # otherwise use the default values from the service.
-        signing_key = kwargs.pop("signing_key", self._signing_key)
-        signing_certificate = kwargs.pop("signing_certificate", self._signing_certificate)
+        if not signing_key:
+            signing_key = self._signing_key
+        if not signing_certificate:
+            signing_certificate = self._signing_certificate
 
         policy_token = AttestationToken(body=None, signing_key=signing_key, signing_certificate=signing_certificate)
 
@@ -717,7 +843,19 @@ class AttestationAdministrationClient:
         # Note that this must be done before calling into the implementation
         # layer because the implementation layer doesn't like keyword args that
         # it doesn't expect :(.
-        options = merge_validation_args(self._config._kwargs, kwargs)
+        validation_args = {
+            "validation_callback": validation_callback,
+            "validate_issuer": validate_issuer,
+            "validate_token": validate_token,
+            "validation_slack": validation_slack,
+            "issuer": issuer,
+            "validate_signature": validate_signature,
+            "validate_not_before_time": validate_not_before_time,
+            "validate_expiration": validate_expiration,
+        }
+        # Merge validation_args with kwargs to include any additional parameters
+        validation_args.update(kwargs)
+        options = merge_validation_args(self._config._kwargs, validation_args)
 
         policyResult = self._client.policy.reset(
             attestation_type=attestation_type, policy_jws=policy_token.to_jwt_string(), **kwargs
@@ -730,7 +868,19 @@ class AttestationAdministrationClient:
         return (AttestationPolicyResult._from_generated(token._get_body()), token)
 
     @distributed_trace
-    def get_policy_management_certificates(self, **kwargs: Any) -> Tuple[List[List[str]], AttestationToken]:
+    def get_policy_management_certificates(
+        self,
+        *,
+        validate_issuer: bool = True,
+        validate_token: bool = True,
+        validate_expiration: bool = True,
+        validate_not_before_time: bool = True,
+        issuer: Optional[str] = None,
+        validation_slack: float = 0.0,
+        validate_signature: bool = True,
+        validation_callback: Optional[Callable[[AttestationToken, AttestationSigner], None]] = None,
+        **kwargs: Any
+    ) -> Tuple[List[List[str]], AttestationToken]:
         """Retrieves the set of policy management certificates for the instance.
 
         The list of policy management certificates will only have values if the
@@ -775,7 +925,19 @@ class AttestationAdministrationClient:
         # Note that this must be done before calling into the implementation
         # layer because the implementation layer doesn't like keyword args that
         # it doesn't expect :(.
-        options = merge_validation_args(self._config._kwargs, kwargs)
+        validation_args = {
+            "validate_issuer": validate_issuer,
+            "validate_token": validate_token,
+            "validate_expiration": validate_expiration,
+            "validate_not_before_time": validate_not_before_time,
+            "issuer": issuer,
+            "validation_slack": validation_slack,
+            "validate_signature": validate_signature,
+            "validation_callback": validation_callback,
+        }
+        # Merge validation_args with kwargs to include any additional parameters
+        validation_args.update(kwargs)
+        options = merge_validation_args(self._config._kwargs, validation_args)
 
         cert_response = self._client.policy_certificates.get(**kwargs)
         token = AttestationToken(token=cert_response.token, body_type=GeneratedPolicyCertificatesResult)
@@ -793,7 +955,20 @@ class AttestationAdministrationClient:
 
     @distributed_trace
     def add_policy_management_certificate(
-        self, certificate_to_add: str, **kwargs: Any
+        self,
+        certificate_to_add: str,
+        *,
+        signing_certificate: Optional[str] = None,
+        validate_signature: bool = True,
+        validate_expiration: bool = True,
+        validation_callback: Optional[Callable[[AttestationToken, AttestationSigner], None]] = None,
+        validation_slack: float = 0.0,
+        validate_not_before_time: bool = True,
+        validate_issuer: bool = True,
+        signing_key: Optional[str] = None,
+        issuer: Optional[str] = None,
+        validate_token: bool = True,
+        **kwargs: Any
     ) -> Tuple[AttestationPolicyCertificateResult, AttestationToken]:
         """Adds a new policy management certificate to the set of policy management certificates for the instance.
 
@@ -847,8 +1022,10 @@ class AttestationAdministrationClient:
 
         """
 
-        signing_key = kwargs.pop("signing_key", self._signing_key)
-        signing_certificate = kwargs.pop("signing_certificate", self._signing_certificate)
+        if not signing_key:
+            signing_key = self._signing_key
+        if not signing_certificate:
+            signing_certificate = self._signing_certificate
 
         if not signing_key or not signing_certificate:
             raise ValueError("A signing certificate and key must be provided to add_policy_management_certificate.")
@@ -872,7 +1049,19 @@ class AttestationAdministrationClient:
         # Note that this must be done before calling into the implementation
         # layer because the implementation layer doesn't like keyword args that
         # it doesn't expect :(.
-        options = merge_validation_args(self._config._kwargs, kwargs)
+        validation_args = {
+            "validate_signature": validate_signature,
+            "validate_expiration": validate_expiration,
+            "validation_callback": validation_callback,
+            "validation_slack": validation_slack,
+            "validate_not_before_time": validate_not_before_time,
+            "validate_issuer": validate_issuer,
+            "issuer": issuer,
+            "validate_token": validate_token,
+        }
+        # Merge validation_args with kwargs to include any additional parameters
+        validation_args.update(kwargs)
+        options = merge_validation_args(self._config._kwargs, validation_args)
 
         cert_response = self._client.policy_certificates.add(cert_add_token.to_jwt_string(), **kwargs)
         token = AttestationToken(
@@ -889,7 +1078,20 @@ class AttestationAdministrationClient:
 
     @distributed_trace
     def remove_policy_management_certificate(
-        self, certificate_to_remove: str, **kwargs: Any
+        self,
+        certificate_to_remove: str,
+        *,
+        signing_key: Optional[str] = None,
+        validate_token: bool = True,
+        issuer: Optional[str] = None,
+        signing_certificate: Optional[str] = None,
+        validate_issuer: bool = True,
+        validation_callback: Optional[Callable[[AttestationToken, AttestationSigner], None]] = None,
+        validation_slack: float = 0.0,
+        validate_signature: bool = True,
+        validate_not_before_time: bool = True,
+        validate_expiration: bool = True,
+        **kwargs: Any
     ) -> Tuple[AttestationPolicyCertificateResult, AttestationToken]:
         """Removes a policy management certificate from the set of policy management certificates for the instance.
 
@@ -939,8 +1141,10 @@ class AttestationAdministrationClient:
 
         """
 
-        signing_key = kwargs.pop("signing_key", self._signing_key)
-        signing_certificate = kwargs.pop("signing_certificate", self._signing_certificate)
+        if not signing_key:
+            signing_key = self._signing_key
+        if not signing_certificate:
+            signing_certificate = self._signing_certificate
 
         if not signing_key or not signing_certificate:
             raise ValueError("A signing certificate and key must be provided to remove_policy_management_certificate.")
@@ -963,7 +1167,19 @@ class AttestationAdministrationClient:
         # Note that this must be done before calling into the implementation
         # layer because the implementation layer doesn't like keyword args that
         # it doesn't expect :(.
-        options = merge_validation_args(self._config._kwargs, kwargs)
+        validation_args = {
+            "validate_token": validate_token,
+            "issuer": issuer,
+            "validate_issuer": validate_issuer,
+            "validation_callback": validation_callback,
+            "validation_slack": validation_slack,
+            "validate_signature": validate_signature,
+            "validate_not_before_time": validate_not_before_time,
+            "validate_expiration": validate_expiration,
+        }
+        # Merge validation_args with kwargs to include any additional parameters
+        validation_args.update(kwargs)
+        options = merge_validation_args(self._config._kwargs, validation_args)
 
         cert_response = self._client.policy_certificates.remove(cert_add_token.to_jwt_string(), **kwargs)
         token = AttestationToken(
