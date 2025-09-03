@@ -28,6 +28,7 @@ import warnings
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
+from zope.interface.verify import verifyClass
 
 from ._cosmos_client_connection_async import CosmosClientConnection
 from .._base import build_options as _build_options, _set_throughput_options, _deserialize_throughput, \
@@ -239,7 +240,7 @@ class DatabaseProxy(object):
         ...
 
     @overload
-    async def create_container(
+    async def create_container( # pylint: disable=too-many-statements
             self,
             id: str,
             partition_key: PartitionKey,
@@ -389,7 +390,6 @@ class DatabaseProxy(object):
         change_feed_policy = kwargs.pop('change_feed_policy', None)
         full_text_policy = kwargs.pop('full_text_policy', None)
         return_properties = kwargs.pop('return_properties', False)
-        vector_embedding_policy = kwargs.pop('vector_embedding_policy', None)
 
         session_token = kwargs.get('session_token')
         if session_token is not None:
@@ -980,6 +980,7 @@ class DatabaseProxy(object):
         computed_properties = kwargs.pop('computed_properties', None)
         full_text_policy = kwargs.pop('full_text_policy', None)
         return_properties = kwargs.pop('return_properties', False)
+        vector_embedding_policy = kwargs.pop('vector_embedding_policy', None)
 
         session_token = kwargs.get('session_token')
         if session_token is not None:

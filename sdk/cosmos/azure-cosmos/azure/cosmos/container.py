@@ -113,7 +113,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             kwargs['excluded_locations'] = options['excludedLocations']
         return self._get_properties(**kwargs)
 
-    def _get_properties(self, **kwargs: Any) -> CosmosDict:
+    def _get_properties(self, **kwargs: Any) -> dict[str, Any]:
         if self.container_link not in self.__get_client_container_caches():
             with self.container_cache_lock:
                 if self.container_link not in self.__get_client_container_caches():
