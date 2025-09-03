@@ -63,4 +63,8 @@ def get_attack_objective_from_risk_category(risk_category: Union[RiskCategory]) 
     :return: The corresponding attack objective string
     :rtype: str
     """
-    return "isa" if risk_category == RiskCategory.UngroundedAttributes else risk_category.value
+    return (
+        "isa"
+        if risk_category == RiskCategory.UngroundedAttributes
+        else "xpia" if risk_category == RiskCategory.IndirectAttack else risk_category.value
+    )
