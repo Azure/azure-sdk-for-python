@@ -327,18 +327,18 @@ class TextAnalysisClient(AnalysisTextClientGenerated):
                 continuation_token=cont_token,
             )
 
-        initial_kwargs: Dict[str, Any] = {
-            "text_input": text_input,
-            "actions": actions,
-            "display_name": display_name,
-            "default_language": default_language,
-            "cancel_after": cancel_after,
-            "content_type": content_type,
-            "cls": (lambda x, y, z: x),  # passthrough raw pipeline response
-            "headers": _headers,
-            "params": _params,
-            **kwargs,  # keep last so caller overrides take precedence
-        }
+        initial_kwargs = dict( # pylint:disable=use-dict-literal
+            text_input=text_input,
+            actions=actions,
+            display_name=display_name,
+            default_language=default_language,
+            cancel_after=cancel_after,
+            content_type=content_type,
+            cls=lambda x, y, z: x,  # passthrough raw pipeline response
+            headers=_headers,
+            params=_params,
+            **kwargs,
+        )
         if body is not _Unset and body is not None:
             initial_kwargs["body"] = body
 
