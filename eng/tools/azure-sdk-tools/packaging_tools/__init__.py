@@ -51,6 +51,8 @@ def build_packaging(
     jenkins: bool = False,
     packages: List[str] = None,
     build_conf: bool = False,
+    *,
+    template_names: Optional[List[str]] = None,
 ) -> None:
     package_names = set(packages) or set()
     if jenkins:
@@ -69,10 +71,12 @@ def build_packaging(
         raise ValueError("Was unable to find out the package names.")
 
     for package_name in package_names:
-        build_packaging_by_package_name(package_name, output_folder, build_conf)
+        build_packaging_by_package_name(package_name, output_folder, build_conf, template_names)
 
 
-def build_packaging_by_package_name(package_name: str, output_folder: str, build_conf: bool = False) -> None:
+def build_packaging_by_package_name(
+    package_name: str, output_folder: str, build_conf: bool = False, template_names: Optional[List[str]] = None
+) -> None:
     _LOGGER.info("Building template %s", package_name)
     package_folder = Path(output_folder) / Path(package_name)
 
@@ -90,7 +94,11 @@ def build_packaging_by_package_name(package_name: str, output_folder: str, build
     env = Environment(loader=PackageLoader("packaging_tools", "templates/packaging_files"), keep_trailing_newline=True)
     conf = build_config(conf)
 
+    template_names = template_names or env.list_templates()
     for template_name in env.list_templates():
+        if template_name not in template_names:
+            _LOGGER.info("Skipping template %s", template_name)
+            continue
         future_filepath = Path(output_folder) / package_name / template_name
 
         # Might decide to make it more generic one day
