@@ -10,7 +10,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import base64
 from datetime import datetime
 import json
-from typing import Optional, TypeVar, List, Any, Dict, Type, Union
+from typing import Optional, TypeVar, List, Any, Dict, Type, Union, Callable
 
 try:
     from typing import Self
@@ -44,6 +44,8 @@ from ._enums import (
     PolicyModification,
     CertificateModification,
 )
+
+from .._utils.model_base import _serialize
 
 T = TypeVar("T")
 
@@ -411,8 +413,8 @@ class StoredAttestationPolicy:
         """
         self._policy = policy.encode("ascii")
 
-    def serialize(self, **kwargs: Any) -> str:
-        return GeneratedStoredAttestationPolicy(attestation_policy=self._policy).serialize(**kwargs)
+    def serialize(self, **kwargs: Any) -> str: # pylint: disable=unused-argument
+        return _serialize(GeneratedStoredAttestationPolicy(attestation_policy=self._policy))
 
     @classmethod
     def _from_generated(cls, generated: GeneratedStoredAttestationPolicy) -> "StoredAttestationPolicy":
@@ -624,7 +626,7 @@ class AttestationToken:
         :rtype: JSONWebKey or None
         """
         jwk = self._header.get("jwk")
-        return JSONWebKey._deserialize(jwk, [])
+        return JSONWebKey._deserialize(jwk, []) # pylint: disable=protected-access
 
     def to_jwt_string(self) -> str:
         """Returns a string serializing the JSON Web Token
@@ -634,12 +636,23 @@ class AttestationToken:
         """
         return self._token
 
-    def _validate_token(self, signers: Optional[List[AttestationSigner]] = None, **kwargs: Any) -> None:
+    def _validate_token(
+        self,
+        signers: Optional[List[AttestationSigner]] = None,
+        *,
+        validate_token: Optional[bool] = None,
+        validation_callback: Optional[Callable] = None,
+        validate_signature: Optional[bool] = None,
+        validate_expiration: Optional[bool] = None,
+        issuer: Optional[str] = None,
+        validation_slack: Optional[float] = None,
+        validate_issuer: Optional[bool] = None,
+        validate_not_before_time: Optional[bool] = None,
+        **kwargs: Any
+    ) -> None:
         """Validate the attestation token based on the options specified in the
          :class:`TokenValidationOptions`.
 
-        :param azure.security.attestation.TokenValidationOptions options: Options to be used when validating
-            the token.
         :param List[azure.security.attestation.AttestationSigner] signers: Potential signers for the token.
             If the signers parameter is specified, validate_token will only
             consider the signers as potential signatories for the token, otherwise
@@ -660,22 +673,44 @@ class AttestationToken:
         :raises: ~azure.security.attestation.AttestationTokenValidationException
         """
 
-        if not kwargs.get("validate_token", True):
-            self._validate_static_properties(**kwargs)
-            if "validation_callback" in kwargs:
-                kwargs.get("validation_callback")(self, None)
+        # Combine explicitly specified parameters with kwargs
+        options: dict[str, Any] = {}
+        if validate_token is not None:
+            options["validate_token"] = validate_token
+        if validation_callback is not None:
+            options["validation_callback"] = validation_callback
+        if validate_signature is not None:
+            options["validate_signature"] = validate_signature
+        if validate_expiration is not None:
+            options["validate_expiration"] = validate_expiration
+        if issuer is not None:
+            options["issuer"] = issuer
+        if validation_slack is not None:
+            options["validation_slack"] = validation_slack
+        if validate_issuer is not None:
+            options["validate_issuer"] = validate_issuer
+        if validate_not_before_time is not None:
+            options["validate_not_before_time"] = validate_not_before_time
+
+        # Merge with kwargs (kwargs take precedence)
+        options.update(kwargs)
+
+        if not options.get("validate_token", True):
+            self._validate_static_properties(**options)
+            if "validation_callback" in options:
+                options.get("validation_callback")(self, None)
 
         signer = None
-        if self.algorithm != "none" and kwargs.get("validate_signature", True):
+        if self.algorithm != "none" and options.get("validate_signature", True):
             # validate the signature for the token.
             candidate_certificates = self._get_candidate_signing_certificates(signers)
             signer = self._validate_signature(candidate_certificates)
             if signer is None:
                 raise AttestationTokenValidationException("Could not find the certificate used to sign the token.")
-        self._validate_static_properties(**kwargs)
+        self._validate_static_properties(**options)
 
-        if "validation_callback" in kwargs:
-            kwargs.get("validation_callback")(self, signer)
+        if "validation_callback" in options:
+            options.get("validation_callback")(self, signer)
 
     def _get_body(self) -> Any:
         """Returns the body of the attestation token as an object.
@@ -688,7 +723,7 @@ class AttestationToken:
         :rtype: Any
         """
         try:
-            return self._body_type._deserialize(self._body, [])
+            return self._body_type._deserialize(self._body, [])  # pylint: disable=protected-access
         except AttributeError:
             return self._body
 
@@ -708,6 +743,7 @@ class AttestationToken:
                 jwk = self._json_web_key()
                 if jwk is not None:
                     if jwk.kid == desired_key_id:
+                        signers: list[str] = []
                         if jwk.x5_c:
                             signers = jwk.x5_c
                         candidates.append(AttestationSigner(signers, desired_key_id))
@@ -816,7 +852,7 @@ class AttestationToken:
         return return_value
 
     @staticmethod
-    def _create_secured_jwt(body, **kwargs) -> str:
+    def _create_secured_jwt(body, *, key=None, certificate=None, **kwargs) -> str: # pylint: disable=unused-argument
         """Return a secured JWT expressing the body, secured with the specified signing key.
 
         :param Any body: The body of the token to be serialized.
@@ -828,8 +864,7 @@ class AttestationToken:
         :return: A secured JWT token as a string.
         :rtype: str
         """
-        key = kwargs.pop("key", None)
-        certificate = kwargs.pop("certificate", None)
+        # Parameters key and certificate are now directly available from the method signature
 
         header = {
             "alg": "RSA256" if isinstance(key, RSAPrivateKey) else "ECDH256",
