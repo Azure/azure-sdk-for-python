@@ -4,7 +4,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING, Dict, Any, List, Optional, Union, cast
+from typing import TYPE_CHECKING, Dict, Any, List, Optional, Sequence, Union, cast
 from datetime import datetime
 
 from ._shared.models import (
@@ -59,7 +59,7 @@ def build_call_locator(
     server_call_id: Optional[str],
     group_call_id: Optional[str],
     room_id: Optional[str],
-    args: Optional[List[Union['ServerCallLocator', 'GroupCallLocator','RoomCallLocator']]] = None,
+    args: Optional[Sequence[Union['ServerCallLocator', 'GroupCallLocator','RoomCallLocator']]] = None,
 ) -> Optional[CallLocator]:
     """Build the generated callLocator object from args in kwargs with support for legacy models.
 
@@ -133,9 +133,9 @@ def serialize_identifier(identifier: CommunicationIdentifier) -> Dict[str, Any]:
     :rtype: dict[str, any]
     """
     try:
-        request_model = {"raw_id": identifier.raw_id}
+        request_model: dict[str, Any] = {"raw_id": identifier.raw_id}
         if identifier.kind and identifier.kind != CommunicationIdentifierKind.UNKNOWN:
-            request_model[identifier.kind] = dict(identifier.properties)  # type: ignore[assignment]
+            request_model[identifier.kind] = dict(identifier.properties)
         return request_model
     except AttributeError:
         raise TypeError(f"Unsupported identifier type: {identifier.__class__.__name__}") from None

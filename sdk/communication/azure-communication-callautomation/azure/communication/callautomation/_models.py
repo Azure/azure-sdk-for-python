@@ -771,17 +771,17 @@ class CallParticipant:
 
     identifier: Optional[CommunicationIdentifier]
     """Communication identifier of the participant."""
-    is_muted: bool
+    is_muted: Optional[bool]
     """Is participant muted."""
-    is_on_hold: bool
+    is_on_hold: Optional[bool]
     """Is participant on hold."""
 
     def __init__(
         self,
         *,
         identifier: Optional[CommunicationIdentifier] = None,
-        is_muted: bool = False,
-        is_on_hold: bool = False,
+        is_muted: Optional[bool] = None,
+        is_on_hold: Optional[bool] = None,
     ):
         self.identifier = identifier
         self.is_muted = is_muted
@@ -791,8 +791,8 @@ class CallParticipant:
     def _from_generated(cls, call_participant_generated: "CallParticipantRest"):
         return cls(
             identifier=deserialize_identifier(call_participant_generated.identifier) if call_participant_generated.identifier else None,
-            is_muted=call_participant_generated.is_muted or False,
-            is_on_hold=call_participant_generated.is_on_hold or False,
+            is_muted=call_participant_generated.is_muted,
+            is_on_hold=call_participant_generated.is_on_hold,
         )
 
 
@@ -805,7 +805,7 @@ class AddParticipantResult:
     :paramtype operation_context: str
     """
 
-    invitation_id: str
+    invitation_id: Optional[str]
     """invitation ID used to add participant."""
     participant: Optional[CallParticipant]
     """Participant that was added with this request."""
@@ -815,7 +815,7 @@ class AddParticipantResult:
     def __init__(
         self,
         *,
-        invitation_id: str,
+        invitation_id: Optional[str] = None,
         participant: Optional[CallParticipant] = None,
         operation_context: Optional[str] = None,
     ):
@@ -826,10 +826,10 @@ class AddParticipantResult:
     @classmethod
     def _from_generated(cls, add_participant_result_generated: "AddParticipantResultRest"):
         return cls(
-            invitation_id=add_participant_result_generated.invitation_id or "",
+            invitation_id=add_participant_result_generated.invitation_id,
             participant=CallParticipant._from_generated(  # pylint:disable=protected-access
                 add_participant_result_generated.participant
-            ) if add_participant_result_generated.participant else None,
+            ) ,
             operation_context=add_participant_result_generated.operation_context,
         )
 
