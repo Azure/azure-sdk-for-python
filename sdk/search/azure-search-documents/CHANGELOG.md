@@ -1,16 +1,57 @@
 # Release History
 
-## 11.6.0b13 (Unreleased)
+## 11.7.0b1 (Unreleased)
 
 ### Features Added
 
 - Added `azure.search.documents.models.DebugInfo`.
+- Added `azure.search.documents.models.AzureBlobKnowledgeSource`.
+- Added `azure.search.documents.models.AzureBlobKnowledgeSourceParameters`.
+- Added `azure.search.documents.models.IndexerResyncBody`.
+- Added `azure.search.documents.models.KnowledgeAgentOutputConfiguration`.
+- Added `azure.search.documents.models.KnowledgeAgentOutputConfigurationModality`.
+- Added `azure.search.documents.models.KnowledgeAgentOutputOptimization`.
+- Added `azure.search.documents.models.KnowledgeSource`.
+- Added `azure.search.documents.models.KnowledgeSourceKind`.
+- Added `azure.search.documents.models.KnowledgeSourceReference`.
+- Added `azure.search.documents.models.SearchIndexKnowledgeSource`.
+- Added `azure.search.documents.models.SearchIndexKnowledgeSourceParameters`.
+- Added `azure.search.documents.models.WebKnowledgeSource`.
+- Added `azure.search.documents.models.WebKnowledgeSourceAllowedDomain`.
+- Added `azure.search.documents.models.WebKnowledgeSourceBlockedDomain`.
+- Added `azure.search.documents.models.WebKnowledgeSourceParameters`.
+- Added `azure.search.documents.models.WebKnowledgeSourceRankingAdjustment`.
+- Deprecated `azure.search.documents.models.KnowledgeAgentTargetIndex`.
+- Added `azure.search.documents.indexes.models.SearchIndex.description`.
+- Added `azure.search.documents.agent.models.KnowledgeAgentAzureBlobActivityArguments`.
+- Added `azure.search.documents.agent.models.KnowledgeAgentAzureBlobActivityRecord`.
+- Added `azure.search.documents.agent.models.KnowledgeAgentAzureBlobReference`.
+- Added `azure.search.documents.agent.models.KnowledgeAgentModelAnswerSynthesisActivityRecord`.
+- Added `azure.search.documents.agent.models.KnowledgeAgentRetrievalActivityRecord`.
+- Added `azure.search.documents.agent.models.KnowledgeAgentSearchIndexActivityArguments`.
+- Added `azure.search.documents.agent.models.KnowledgeAgentSearchIndexActivityRecord`.
+- Added `azure.search.documents.agent.models.KnowledgeAgentSearchIndexReference`.
+- Added `azure.search.documents.agent.models.KnowledgeAgentSemanticRerankerActivityRecord`.
+- Added `azure.search.documents.agent.models.KnowledgeAgentWebActivityArguments`.
+- Added `azure.search.documents.agent.models.KnowledgeAgentWebActivityRecord`.
+- Added `azure.search.documents.agent.models.KnowledgeAgentWebReference`.
+- Added `azure.search.documents.agent.models.KnowledgeSourceParams`.
+- Added `azure.search.documents.agent.models.SearchIndexKnowledgeSourceParams`.
+- Added `azure.search.documents.agent.models.WebKnowledgeSourceParams`.
+- Deprecated `azure.search.documents.agent.models.KnowledgeAgentAzureSearchDocReference`.
+- Deprecated `azure.search.documents.agent.models.KnowledgeAgentIndexParams`.
+- Deprecated `azure.search.documents.agent.models.KnowledgeAgentSearchActivityRecord`.
+- Deprecated `azure.search.documents.agent.models.KnowledgeAgentSearchActivityRecordQuery`.
+- Deprecated `azure.search.documents.agent.models.KnowledgeAgentSemanticRankerActivityRecord`.
+- Added KnowledgeSource operations in `SearchIndexClient`.
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
+
+- Updated default API version to `2025-08-01-preview`.
 
 ## 11.6.0b12 (2025-05-14)
 
