@@ -93,14 +93,12 @@ with project_client:
     # Create and process agent run in thread with MCP tools
     mcp_tool.update_headers("SuperSecret", "123456")
     # mcp_tool.set_approval_mode("never")  # Uncomment to disable approval requirement
-    run = agents_client.runs.create(thread_id=thread.id, agent_id=agent.id, tool_resources=mcp_tool.resources)
+    run = agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id, tool_resources=mcp_tool.resources)
     print(f"Created run, ID: {run.id}")
 
-    while run.status in ["queued", "in_progress", "requires_action"]:
-        time.sleep(1)
-        run = agents_client.runs.get(thread_id=thread.id, run_id=run.id)
+    while run.status in ["requires_action"]:
 
-        if run.status == "requires_action" and isinstance(run.required_action, SubmitToolApprovalAction):
+        if isinstance(run.required_action, SubmitToolApprovalAction):
             tool_calls = run.required_action.submit_tool_approval.tool_calls
             if not tool_calls:
                 print("No tool calls provided - cancelling run")
@@ -127,6 +125,7 @@ with project_client:
                 agents_client.runs.submit_tool_outputs(
                     thread_id=thread.id, run_id=run.id, tool_approvals=tool_approvals
                 )
+                run = agents_client.runs.process(thread_id=thread.id, run_id=run.id)
 
         print(f"Current run status: {run.status}")
         # [END handle_tool_approvals]

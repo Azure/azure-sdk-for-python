@@ -419,6 +419,149 @@ class RunsOperations(RunsOperationsGenerated):
             raise ValueError("Invalid combination of arguments provided.")
 
         return response
+    
+    @distributed_trace
+    def process(
+        self,
+        thread_id: str,
+        *,
+        run_id: str,
+        polling_interval: int = 1,
+        **kwargs: Any,
+    ) -> _models.ThreadRun:
+        """Create a run and process it to completion.
+
+        :param thread_id: The ID of the thread to run.
+        :type thread_id: str
+        :keyword agent_id: The ID of agent used for runs execution.
+        :paramtype agent_id: str
+        :keyword include: A list of additional fields to include in the response.
+         Currently the only supported value is
+         ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
+         content. Default value is None.
+        :paramtype include: list[str or ~azure.ai.agents.models.RunAdditionalFieldList]
+        :keyword model: The overridden model name that the agent should use to run the thread.
+         Default value is None.
+        :paramtype model: str
+        :keyword instructions: The overridden system instructions that the agent should use to run
+         the thread. Default value is None.
+        :paramtype instructions: str
+        :keyword additional_instructions: Additional instructions to append at the end of the
+         instructions for the run. This is useful for modifying the behavior
+         on a per-run basis without overriding other instructions. Default value is None.
+        :paramtype additional_instructions: str
+        :keyword additional_messages: Adds additional messages to the thread before creating the run.
+         Default value is None.
+        :paramtype additional_messages: list[~azure.ai.agents.models.ThreadMessageOptions]
+        :keyword toolset: The Collection of tools and resources (alternative to `tools` and
+         `tool_resources`). Default value is None.
+        :paramtype toolset: ~azure.ai.agents.models.ToolSet
+        :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
+         will make the output
+         more random, while lower values like 0.2 will make it more focused and deterministic. Default
+         value is None.
+        :paramtype temperature: float
+        :keyword top_p: An alternative to sampling with temperature, called nucleus sampling, where the
+         model
+         considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens
+         comprising the top 10% probability mass are considered.
+
+         We generally recommend altering this or temperature but not both. Default value is None.
+        :paramtype top_p: float
+        :keyword max_prompt_tokens: The maximum number of prompt tokens that may be used over the
+         course of the run. The run will make a best effort to use only
+         the number of prompt tokens specified, across multiple turns of the run. If the run exceeds
+         the number of prompt tokens specified,
+         the run will end with status ``incomplete``. See ``incomplete_details`` for more info. Default
+         value is None.
+        :paramtype max_prompt_tokens: int
+        :keyword max_completion_tokens: The maximum number of completion tokens that may be used over
+         the course of the run. The run will make a best effort
+         to use only the number of completion tokens specified, across multiple turns of the run. If
+         the run exceeds the number of
+         completion tokens specified, the run will end with status ``incomplete``. See
+         ``incomplete_details`` for more info. Default value is None.
+        :paramtype max_completion_tokens: int
+        :keyword truncation_strategy: The strategy to use for dropping messages as the context windows
+         moves forward. Default value is None.
+        :paramtype truncation_strategy: ~azure.ai.agents.models.TruncationObject
+        :keyword tool_choice: Controls whether or not and which tool is called by the model. Is one of
+         the following types: str, Union[str, "_models.AgentsToolChoiceOptionMode"],
+         AgentsNamedToolChoice Default value is None.
+        :paramtype tool_choice: str or str or
+         ~azure.ai.agents.models.AgentsToolChoiceOptionMode or
+         ~azure.ai.agents.models.AgentsNamedToolChoice
+        :keyword response_format: Specifies the format that the model must output. Is one of the
+         following types: str, Union[str, "_models.AgentsResponseFormatMode"],
+         AgentsResponseFormat Default value is None.
+        :paramtype response_format: Optional[Union[str,
+                               ~azure.ai.agents.models.AgentsResponseFormatMode,
+                               ~azure.ai.agents.models.AgentsResponseFormat,
+                               ~azure.ai.agents.models.ResponseFormatJsonSchemaType]]
+        :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
+         Default value is None.
+        :paramtype parallel_tool_calls: bool
+        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
+         for storing additional information about that object in a structured format. Keys may be up to
+         64 characters in length and values may be up to 512 characters in length. Default value is
+         None.
+        :paramtype metadata: dict[str, str]
+        :keyword polling_interval: The time in seconds to wait between polling the service for run status.
+            Default value is 1.
+        :paramtype polling_interval: int
+        :return: AgentRunStream.  AgentRunStream is compatible with Iterable and supports streaming.
+        :rtype: ~azure.ai.agents.models.AgentRunStream
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        run = self.get(thread_id=thread_id, run_id=run_id)
+        
+        # Monitor and process the run status
+        current_retry = 0
+        while run.status in [
+            RunStatus.QUEUED,
+            RunStatus.IN_PROGRESS,
+            RunStatus.REQUIRES_ACTION,
+        ]:
+            time.sleep(polling_interval)
+            run = self.get(thread_id=thread_id, run_id=run_id)
+
+            if run.status == RunStatus.REQUIRES_ACTION and isinstance(
+                run.required_action, _models.SubmitToolOutputsAction
+            ):
+                tool_calls = run.required_action.submit_tool_outputs.tool_calls
+                if not tool_calls:
+                    logger.warning("No tool calls provided - cancelling run")
+                    self.cancel(thread_id=thread_id, run_id=run.id)
+                    break
+                # We need tool set only if we are executing local function. In case if
+                # the tool is azure_function we just need to wait when it will be finished.
+                if any(tool_call.type == "function" for tool_call in tool_calls):
+                    toolset = _models.ToolSet()
+                    toolset.add(self._function_tool)
+                    tool_outputs = toolset.execute_tool_calls(tool_calls)
+
+                    if _has_errors_in_toolcalls_output(tool_outputs):
+                        if current_retry >= self._function_tool_max_retry:  # pylint:disable=no-else-return
+                            logger.warning(
+                                "Tool outputs contain errors - reaching max retry %s", self._function_tool_max_retry
+                            )
+                            return self.cancel(thread_id=thread_id, run_id=run.id)
+                        else:
+                            logger.warning("Tool outputs contain errors - retrying")
+                            current_retry += 1
+
+                    logger.debug("Tool outputs: %s", tool_outputs)
+                    if tool_outputs:
+                        run2 = self.submit_tool_outputs(thread_id=thread_id, run_id=run.id, tool_outputs=tool_outputs)
+                        logger.debug("Tool outputs submitted to run: %s", run2.id)
+            elif isinstance(run.required_action, _models.SubmitToolApprovalAction):
+                logger.warning("Automatic MCP tool approval is not supported.")
+                break
+
+            logger.debug("Current run ID: %s with status: %s", run.id, run.status)
+
+        return run
+    
 
     @distributed_trace
     def create_and_process(
@@ -551,52 +694,7 @@ class RunsOperations(RunsOperationsGenerated):
             **kwargs,
         )
 
-        # Monitor and process the run status
-        current_retry = 0
-        while run.status in [
-            RunStatus.QUEUED,
-            RunStatus.IN_PROGRESS,
-            RunStatus.REQUIRES_ACTION,
-        ]:
-            time.sleep(polling_interval)
-            run = self.get(thread_id=thread_id, run_id=run.id)
-
-            if run.status == RunStatus.REQUIRES_ACTION and isinstance(
-                run.required_action, _models.SubmitToolOutputsAction
-            ):
-                tool_calls = run.required_action.submit_tool_outputs.tool_calls
-                if not tool_calls:
-                    logger.warning("No tool calls provided - cancelling run")
-                    self.cancel(thread_id=thread_id, run_id=run.id)
-                    break
-                # We need tool set only if we are executing local function. In case if
-                # the tool is azure_function we just need to wait when it will be finished.
-                if any(tool_call.type == "function" for tool_call in tool_calls):
-                    toolset = _models.ToolSet()
-                    toolset.add(self._function_tool)
-                    tool_outputs = toolset.execute_tool_calls(tool_calls)
-
-                    if _has_errors_in_toolcalls_output(tool_outputs):
-                        if current_retry >= self._function_tool_max_retry:  # pylint:disable=no-else-return
-                            logger.warning(
-                                "Tool outputs contain errors - reaching max retry %s", self._function_tool_max_retry
-                            )
-                            return self.cancel(thread_id=thread_id, run_id=run.id)
-                        else:
-                            logger.warning("Tool outputs contain errors - retrying")
-                            current_retry += 1
-
-                    logger.debug("Tool outputs: %s", tool_outputs)
-                    if tool_outputs:
-                        run2 = self.submit_tool_outputs(thread_id=thread_id, run_id=run.id, tool_outputs=tool_outputs)
-                        logger.debug("Tool outputs submitted to run: %s", run2.id)
-            elif isinstance(run.required_action, _models.SubmitToolApprovalAction):
-                logger.warning("Automatic MCP tool approval is not supported.")
-                self.cancel(thread_id=thread_id, run_id=run.id)
-
-            logger.debug("Current run ID: %s with status: %s", run.id, run.status)
-
-        return run
+        return self.process(thread_id=thread_id, run_id=run.id, toolset=toolset, polling_interval=polling_interval, **kwargs)    
 
     @overload
     def stream(
