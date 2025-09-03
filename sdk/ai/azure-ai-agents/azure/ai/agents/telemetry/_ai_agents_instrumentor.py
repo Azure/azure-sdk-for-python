@@ -25,6 +25,7 @@ from azure.ai.agents.models._enums import (
 from azure.ai.agents.models import (
     MessageAttachment,
     MessageDeltaChunk,
+    MessageContent,
     MessageIncompleteDetails,
     MessageInputContentBlock,
     MessageInputTextBlock,
@@ -375,7 +376,8 @@ class _AIAgentsInstrumentorPreview:
         message: Union[ThreadMessage, ThreadMessageOptions],
         usage: Optional[_models.RunStepCompletionUsage] = None,
     ) -> None:
-        content_body = {}
+
+        content_body: Optional[Union[str, Dict[str, Any]]] = None
         if _trace_agents_content:
             if isinstance(message, ThreadMessage):
                 for content in message.content:
@@ -385,14 +387,15 @@ class _AIAgentsInstrumentorPreview:
                         annotations = self._get_field(typed_content, "annotations")
                         if annotations:
                             content_details["annotations"] = [a.as_dict() for a in annotations]
+                        content_body = {}
                         content_body[content.type] = content_details
             elif isinstance(message, ThreadMessageOptions):
                 if isinstance(message.content, str):
-                    content_body = {"text": {"value": message.content}}
+                    content_body = message.content
                 elif isinstance(message.content, List):
-                    for content2 in message.content:
-                        if isinstance(content2, MessageInputTextBlock):
-                            content_body[content2.type] = {"value": content2.text}
+                    for block in message.content:
+                        if isinstance(block, MessageInputTextBlock):
+                            content_body = block.text
                             break
 
         self._add_message_event(

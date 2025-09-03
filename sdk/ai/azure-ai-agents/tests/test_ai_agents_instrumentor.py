@@ -5,7 +5,6 @@
 # ------------------------------------
 # cSpell:disable# cSpell:disable
 import pytest
-from enum import Enum, IntEnum
 import os
 import json
 import jsonref
@@ -19,7 +18,6 @@ from azure.ai.agents.models import (
     McpTool,
     MessageDeltaChunk,
     MessageDeltaTextContent,
-    MessageInputContentBlock,
     MessageInputTextBlock,
     OpenApiAnonymousAuthDetails,
     OpenApiTool,
@@ -52,7 +50,7 @@ from devtools_testutils import (
 )
 
 from test_agents_client_base import agentClientPreparer
-from test_ai_instrumentor_base import TestAiAgentsInstrumentorBase
+from test_ai_instrumentor_base import TestAiAgentsInstrumentorBase, MessageCreationMode
 
 CONTENT_TRACING_ENV_VARIABLE = "OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT"
 settings.tracing_implementation = "OpenTelemetry"
@@ -228,17 +226,11 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
             self.cleanup()  # This also undefines CONTENT_TRACING_ENV_VARIABLE
             os.environ.pop(OLD_CONTENT_TRACING_ENV_VARIABLE, None)
 
-    class MessageCreationMode(IntEnum):
-        MESSAGE_CREATE_STR = 1 # Test calls `client.messages.create(content="...", ...)` to create the messages in a dedicated call
-        MESSAGE_CREATE_INPUT_TEXT_BLOCK = 2 # Test calls `client.messages.create(content=[MessageInputTextBlock(...)], ...)` to create the message in a dedicated call
-        THREAD_CREATE_STR = 3 # Test calls `client.threads.create(messages=[ThreadMessageOptions(...)])`.
-        THREAD_CREATE_INPUT_TEXT_BLOCK = 4 # Test calls `client.threads.create(messages=[ThreadMessageOptions(content=[MessageInputTextBlock(...)])])`.
-
     @pytest.mark.usefixtures("instrument_with_content")
     @agentClientPreparer()
     @recorded_by_proxy
     @pytest.mark.parametrize("message_creation_mode", [m.value for m in MessageCreationMode])
-    def test_agent_chat_with_tracing_content_recording_enabled(self, message_creation_mode: MessageCreationMode = MessageCreationMode.THREAD_CREATE_INPUT_TEXT_BLOCK, **kwargs):
+    def test_agent_chat_with_tracing_content_recording_enabled(self, message_creation_mode: MessageCreationMode, **kwargs):
         assert True == AIAgentsInstrumentor().is_content_recording_enabled()
         assert True == AIAgentsInstrumentor().is_instrumented()
 
@@ -246,15 +238,16 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
         agent = client.create_agent(model="gpt-4o-mini", name="my-agent", instructions="You are helpful agent")
         user_content = "Hello, tell me a joke"
 
-        if message_creation_mode == self.MessageCreationMode.MESSAGE_CREATE_STR:
+        # Test 4 different patterns of thread & message creation
+        if message_creation_mode == MessageCreationMode.MESSAGE_CREATE_STR:
             thread = client.threads.create()
             client.messages.create(thread_id=thread.id, role="user", content=user_content)
-        elif message_creation_mode == self.MessageCreationMode.MESSAGE_CREATE_INPUT_TEXT_BLOCK:
+        elif message_creation_mode == MessageCreationMode.MESSAGE_CREATE_INPUT_TEXT_BLOCK:
             thread = client.threads.create()
             client.messages.create(thread_id=thread.id, role="user", content=[MessageInputTextBlock(text=user_content)])
-        elif message_creation_mode == self.MessageCreationMode.THREAD_CREATE_STR:
+        elif message_creation_mode == MessageCreationMode.THREAD_CREATE_STR:
             thread = client.threads.create(messages=[ThreadMessageOptions(role="user", content=user_content)])
-        elif message_creation_mode == self.MessageCreationMode.THREAD_CREATE_INPUT_TEXT_BLOCK:
+        elif message_creation_mode == MessageCreationMode.THREAD_CREATE_INPUT_TEXT_BLOCK:
             thread = client.threads.create(messages=[ThreadMessageOptions(role="user", content=[MessageInputTextBlock(text=user_content)])])
         else:
             assert False, f"Unknown message creation mode: {message_creation_mode}"
@@ -316,13 +309,13 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
         assert attributes_match == True
 
-        if message_creation_mode in (self.MessageCreationMode.THREAD_CREATE_STR, self.MessageCreationMode.THREAD_CREATE_INPUT_TEXT_BLOCK):
+        if message_creation_mode in (MessageCreationMode.THREAD_CREATE_STR, MessageCreationMode.THREAD_CREATE_INPUT_TEXT_BLOCK):
             expected_events = [
                 {
                     "name": "gen_ai.user.message",
                     "attributes": {
                         "gen_ai.system": "az.ai.agents",
-                        "gen_ai.event.content": '{"content": {"text": {"value": "Hello, tell me a joke"}}, "role": "user"}',
+                        "gen_ai.event.content": '{"content": "Hello, tell me a joke", "role": "user"}',
                     },
                 }
             ]
@@ -330,7 +323,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
             assert events_match == True
 
         # ------------------------- Validate "create_message" span ---------------------------------
-        if message_creation_mode in (self.MessageCreationMode.MESSAGE_CREATE_STR, self.MessageCreationMode.MESSAGE_CREATE_INPUT_TEXT_BLOCK):
+        if message_creation_mode in (MessageCreationMode.MESSAGE_CREATE_STR, MessageCreationMode.MESSAGE_CREATE_INPUT_TEXT_BLOCK):
             spans = self.exporter.get_spans_by_name("create_message")
             assert len(spans) == 1
             span = spans[0]
