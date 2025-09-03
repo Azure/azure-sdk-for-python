@@ -7,11 +7,11 @@
 """
 DESCRIPTION:
     This sample demonstrates how to use agent operations with the
-    Model Context Protocol (MCP) tool from the Azure Agents service using a synchronous client.
+    Model Context Protocol (MCP) tool in runs.create_and_run using a synchronous client.
     To learn more about Model Context Protocol, visit https://modelcontextprotocol.io/
 
 USAGE:
-    python sample_agents_mcp.py
+    python sample_agents_mcp in_create_and_run.py
 
     Before running the sample:
 
@@ -36,6 +36,7 @@ from azure.ai.agents.models import (
     RunStepActivityDetails,
     SubmitToolApprovalAction,
     ToolApproval,
+    ToolSet,
 )
 
 # Get MCP server configuration from environment variables
@@ -54,6 +55,8 @@ mcp_tool = McpTool(
     server_url=mcp_server_url,
     allowed_tools=[],  # Optional: specify allowed tools
 )
+toolSet = ToolSet()
+toolSet.add(mcp_tool)
 
 # You can also add or remove allowed tools dynamically
 search_api_code = "search_azure_rest_api_code"
@@ -93,16 +96,12 @@ with project_client:
     # Create and process agent run in thread with MCP tools
     mcp_tool.update_headers("SuperSecret", "123456")
     # mcp_tool.set_approval_mode("never")  # Uncomment to disable approval requirement
-    run = agents_client.runs.create(
-        thread_id=thread.id, agent_id=agent.id, tool_resources=mcp_tool.resources
-    )
+    run = agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id, toolset=toolSet)
     print(f"Created run, ID: {run.id}")
 
-    while run.status in ["queued", "in_progress", "requires_action"]:
-        time.sleep(1)
-        run = agents_client.runs.get(thread_id=thread.id, run_id=run.id)
+    while run.status in ["requires_action"]:
 
-        if run.status == "requires_action" and isinstance(run.required_action, SubmitToolApprovalAction):
+        if isinstance(run.required_action, SubmitToolApprovalAction):
             tool_calls = run.required_action.submit_tool_approval.tool_calls
             if not tool_calls:
                 print("No tool calls provided - cancelling run")
@@ -126,7 +125,7 @@ with project_client:
 
             print(f"tool_approvals: {tool_approvals}")
             if tool_approvals:
-                agents_client.runs.submit_tool_outputs(
+                run = agents_client.runs.submit_tool_outputs_and_process(
                     thread_id=thread.id, run_id=run.id, tool_approvals=tool_approvals
                 )
 

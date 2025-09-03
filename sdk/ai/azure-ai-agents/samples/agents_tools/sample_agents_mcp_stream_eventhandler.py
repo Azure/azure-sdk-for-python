@@ -7,11 +7,11 @@
 """
 DESCRIPTION:
     This sample demonstrates how to use agent operations with the
-    Model Context Protocol (MCP) tool from the Azure Agents service using a synchronous client.
+    Model Context Protocol (MCP) tool in stream with iteration from the Azure Agents service using a synchronous client.
     To learn more about Model Context Protocol, visit https://modelcontextprotocol.io/
 
 USAGE:
-    python sample_agents_mcp.py
+    python sample_agents_mcp_stream_iteration.py
 
     Before running the sample:
 
@@ -27,15 +27,21 @@ USAGE:
 """
 
 import os, time
+from azure.ai.agents import AgentsClient
+from azure.ai.agents.models._models import RunStep, ThreadRun
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.agents.models import (
+    AgentEventHandler,
     ListSortOrder,
     McpTool,
+    MessageDeltaChunk,
     RequiredMcpToolCall,
     RunStepActivityDetails,
     SubmitToolApprovalAction,
+    ThreadMessage,
     ToolApproval,
+    ToolSet,
 )
 
 # Get MCP server configuration from environment variables
@@ -54,60 +60,33 @@ mcp_tool = McpTool(
     server_url=mcp_server_url,
     allowed_tools=[],  # Optional: specify allowed tools
 )
+toolset = ToolSet()
+toolset.add(mcp_tool)
 
 # You can also add or remove allowed tools dynamically
 search_api_code = "search_azure_rest_api_code"
 mcp_tool.allow_tool(search_api_code)
 print(f"Allowed tools: {mcp_tool.allowed_tools}")
 
-# Create agent with MCP tool and process agent run
-with project_client:
-    agents_client = project_client.agents
+class MyEventHandler(AgentEventHandler):
 
-    # Create a new agent.
-    # NOTE: To reuse existing agent, fetch it with get_agent(agent_id)
-    agent = agents_client.create_agent(
-        model=os.environ["MODEL_DEPLOYMENT_NAME"],
-        name="my-mcp-agent",
-        instructions="You are a helpful agent that can use MCP tools to assist users. Use the available MCP tools to answer questions and perform tasks.",
-        tools=mcp_tool.definitions,
-    )
-    # [END create_agent_with_mcp_tool]
+    def __init__(self, agents_client: AgentsClient) -> None:
+        super().__init__()
+        self.agents_client = agents_client
+        
+    def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
+        print(f"Text delta received: {delta.text}")
 
-    print(f"Created agent, ID: {agent.id}")
-    print(f"MCP Server: {mcp_tool.server_label} at {mcp_tool.server_url}")
+    def on_thread_message(self, message: "ThreadMessage") -> None:
+        print(f"ThreadMessage created. ID: {message.id}, Status: {message.status}")
 
-    # Create thread for communication
-    thread = agents_client.threads.create()
-    print(f"Created thread, ID: {thread.id}")
-
-    # Create message to thread
-    message = agents_client.messages.create(
-        thread_id=thread.id,
-        role="user",
-        content="Please summarize the Azure REST API specifications Readme",
-    )
-    print(f"Created message, ID: {message.id}")
-
-    # [START handle_tool_approvals]
-    # Create and process agent run in thread with MCP tools
-    mcp_tool.update_headers("SuperSecret", "123456")
-    # mcp_tool.set_approval_mode("never")  # Uncomment to disable approval requirement
-    run = agents_client.runs.create(
-        thread_id=thread.id, agent_id=agent.id, tool_resources=mcp_tool.resources
-    )
-    print(f"Created run, ID: {run.id}")
-
-    while run.status in ["queued", "in_progress", "requires_action"]:
-        time.sleep(1)
-        run = agents_client.runs.get(thread_id=thread.id, run_id=run.id)
-
-        if run.status == "requires_action" and isinstance(run.required_action, SubmitToolApprovalAction):
+    def on_thread_run(self, run: "ThreadRun") -> None:
+        if isinstance(run.required_action, SubmitToolApprovalAction):
             tool_calls = run.required_action.submit_tool_approval.tool_calls
             if not tool_calls:
                 print("No tool calls provided - cancelling run")
                 agents_client.runs.cancel(thread_id=thread.id, run_id=run.id)
-                break
+                return
 
             tool_approvals = []
             for tool_call in tool_calls:
@@ -124,25 +103,15 @@ with project_client:
                     except Exception as e:
                         print(f"Error approving tool_call {tool_call.id}: {e}")
 
-            print(f"tool_approvals: {tool_approvals}")
+                print(f"tool_approvals: {tool_approvals}")
             if tool_approvals:
-                agents_client.runs.submit_tool_outputs(
-                    thread_id=thread.id, run_id=run.id, tool_approvals=tool_approvals
-                )
+                self.agents_client.runs.submit_tool_outputs_stream(
+                    thread_id=thread.id, run_id=run.id, tool_approvals=tool_approvals, event_handler=self
+                        )
 
-        print(f"Current run status: {run.status}")
-        # [END handle_tool_approvals]
 
-    print(f"Run completed with status: {run.status}")
-    if run.status == "failed":
-        print(f"Run failed: {run.last_error}")
-
-    # Display run steps and tool calls
-    run_steps = agents_client.run_steps.list(thread_id=thread.id, run_id=run.id)
-
-    # Loop through each step
-    for step in run_steps:
-        print(f"Step {step['id']} status: {step['status']}")
+    def on_run_step(self, step: "RunStep") -> None:
+        print(f"Step {step.id} status: {step.status}")
 
         # Check if there are tool calls in the step details
         step_details = step.get("step_details", {})
@@ -169,7 +138,43 @@ with project_client:
                     else:
                         print("This function has no parameters")
 
-        print()  # add an extra newline between steps
+        print()  # add an extra newline between steps                
+
+
+# Create agent with MCP tool and process agent run
+with project_client:
+    agents_client = project_client.agents
+
+    # Create a new agent.
+    # NOTE: To reuse existing agent, fetch it with get_agent(agent_id)
+    agent = agents_client.create_agent(
+        model=os.environ["MODEL_DEPLOYMENT_NAME"],
+        name="my-mcp-agent",
+        instructions="You are a helpful agent that can use MCP tools to assist users. Use the available MCP tools to answer questions and perform tasks.",
+        toolset=toolset,
+    )
+
+    print(f"Created agent, ID: {agent.id}")
+    print(f"MCP Server: {mcp_tool.server_label} at {mcp_tool.server_url}")
+
+    # Create thread for communication
+    thread = agents_client.threads.create()
+    print(f"Created thread, ID: {thread.id}")
+
+    # Create message to thread
+    message = agents_client.messages.create(
+        thread_id=thread.id,
+        role="user",
+        content="Please summarize the Azure REST API specifications Readme",
+    )
+    print(f"Created message, ID: {message.id}")
+
+    # Create and process agent run in thread with MCP tools
+    mcp_tool.update_headers("SuperSecret", "123456")
+    # mcp_tool.set_approval_mode("never")  # Uncomment to disable approval requirement
+    event_handler = MyEventHandler(agents_client=agents_client)
+    with agents_client.runs.stream(thread_id=thread.id, agent_id=agent.id, event_handler=event_handler) as stream:
+        stream.until_done()
 
     # Fetch and log all messages
     messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
