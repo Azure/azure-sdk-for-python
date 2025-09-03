@@ -40,6 +40,7 @@ class TextAuthoringProjectClient(AuthoringProjectClientGenerated):
         self,
         endpoint: str,
         credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
+        *,
         project_name: str,
         **kwargs: Any
     ) -> None:

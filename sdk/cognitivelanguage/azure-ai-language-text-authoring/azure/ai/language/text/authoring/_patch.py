@@ -37,7 +37,7 @@ class TextAuthoringProjectClient(AuthoringProjectClientGenerated):
     trained_model: TrainedModelOperations
 
     def __init__(
-        self, endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], project_name: str, **kwargs: Any
+        self, endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], *, project_name: str, **kwargs: Any
     ) -> None:
         self._project_name = project_name
         _endpoint = f"{endpoint}/language"
