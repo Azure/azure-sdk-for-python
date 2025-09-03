@@ -29,42 +29,10 @@ and overridden per request.
 
 class CrossRegionHedgingStrategy:
     """Configuration for cross-region request routing using availability thresholds.
-    
+
     Controls whether and how requests are routed across regions for improved availability
     and latency. Uses time-based thresholds to determine when to route requests to alternate
     regions. Can be configured at the client level and overridden per request.
-    
-    Example:
-        ```python
-        from datetime import timedelta
-        
-        # Enable cross-region routing with default settings
-        strategy = CrossRegionHedgingStrategy()
-        
-        # Disable cross-region routing
-        strategy = CrossRegionHedgingStrategy(enabled=False)
-        
-        # Custom routing thresholds
-        strategy = CrossRegionHedgingStrategy(
-            enabled=True,
-            threshold_ms=500,  # Try alternate region after 500ms
-            threshold_steps_ms=100  # Wait 100ms between region attempts
-        )
-        
-        # Set at client level
-        client = CosmosClient(
-            url,
-            key,
-            availability_strategy=strategy
-        )
-        
-        # Override per request
-        container.read_item(
-            item="id1",
-            partition_key="pk1",
-            availability_strategy=strategy
-        )
-        ```
     """
 
     threshold_ms: int
@@ -86,4 +54,3 @@ class CrossRegionHedgingStrategy:
 
         self.threshold_ms = threshold_ms
         self.threshold_steps_ms = threshold_steps_ms
-

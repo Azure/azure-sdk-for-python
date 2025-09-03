@@ -21,12 +21,14 @@
 
 """Module containing base classes and mixins for availability strategy handlers."""
 
-from typing import List, Optional, Any
+from typing import List, Optional, Union
 
 from . import exceptions
 from ._request_object import RequestObject
 from .documents import _OperationType
 
+GlobalEndpointManagerType = Union['_GlobalPartitionEndpointManagerForCircuitBreaker',
+                                '_GlobalPartitionEndpointManagerForCircuitBreakerAsync']
 
 class AvailabilityStrategyHandlerMixin:
     """Mixin class providing shared functionality for availability strategy handlers."""
@@ -61,7 +63,7 @@ class AvailabilityStrategyHandlerMixin:
 
         return excluded
 
-    def _is_non_transient_error(self, result: Exception) -> bool:
+    def _is_non_transient_error(self, result: BaseException) -> bool:
         """Check if exception represents a non-transient error.
         
         Determines if an error is non-transient based on HTTP status codes and sub-status.
@@ -86,7 +88,9 @@ class AvailabilityStrategyHandlerMixin:
                     (status_code == 404 and sub_status == 0))
         return False
 
-    def _get_applicable_endpoints(self, request: RequestObject, global_endpoint_manager: Any) -> List[str]:
+    def _get_applicable_endpoints(
+            self,
+            request: RequestObject, global_endpoint_manager: GlobalEndpointManagerType) -> List[str]:
         """Get list of applicable endpoints for hedging based on operation type.
         
         :param request: Request object containing operation type and other parameters
@@ -104,11 +108,11 @@ class AvailabilityStrategyHandlerMixin:
 
         if regional_context_list is not None:
             for regional_context in regional_context_list:
-                applicable_endpoints.append(
+                region_name = (
                     global_endpoint_manager.get_region_name(
                         regional_context.get_primary(),
-                        _OperationType.IsWriteOperation(request.operation_type)
-                    )
-                )
+                        _OperationType.IsWriteOperation(request.operation_type)))
+                if region_name is not None:
+                    applicable_endpoints.append(region_name)
 
         return applicable_endpoints
