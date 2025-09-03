@@ -11,6 +11,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import base64
 import json
 from typing import Dict, List, Any, Tuple, Union
+
 try:
     from typing import Self
 except ImportError:
@@ -59,6 +60,7 @@ from .models._enums import (
 )
 
 from ._common import pem_from_base64, validate_signing_keys, merge_validation_args
+
 
 class AttestationClient:
     # pylint: disable=protected-access
@@ -1044,7 +1046,6 @@ __all__: List[str] = [
     "AttestationClient",
     "AttestationAdministrationClient",
     "AttestationSigner",
-    "AttestationType",
     "AttestationToken",
     "AttestationTokenValidationException",
     "AttestationPolicyToken",

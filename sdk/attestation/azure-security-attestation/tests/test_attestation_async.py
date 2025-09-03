@@ -16,7 +16,7 @@ from azure.security.attestation.aio import (
     AttestationClient,
     AttestationAdministrationClient,
 )
-from azure.security.attestation import AttestationType
+from azure.security.attestation.models import AttestationType
 import cryptography
 import cryptography.x509
 from cryptography.hazmat.backends import default_backend
