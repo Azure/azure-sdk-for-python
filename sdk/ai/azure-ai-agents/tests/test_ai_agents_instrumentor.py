@@ -229,8 +229,18 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
     @pytest.mark.usefixtures("instrument_with_content")
     @agentClientPreparer()
     @recorded_by_proxy
-    @pytest.mark.parametrize("message_creation_mode", [m.value for m in MessageCreationMode])
-    def test_agent_chat_with_tracing_content_recording_enabled(self, message_creation_mode: MessageCreationMode, **kwargs):
+    def test_agent_chat_with_tracing_content_recording_enabled(self, **kwargs):
+        # Note: The proper way to invoke the same test over and over again with different parameter values is to use @pytest.mark.parametrize. However,
+        # this does not work together with @recorded_by_proxy. So we call the helper function 4 times instead in a single recorded test.
+        self._agent_chat_with_tracing_content_recording_enabled(message_creation_mode=MessageCreationMode.MESSAGE_CREATE_STR, **kwargs)
+        self._agent_chat_with_tracing_content_recording_enabled(message_creation_mode=MessageCreationMode.MESSAGE_CREATE_INPUT_TEXT_BLOCK, **kwargs)
+        self._agent_chat_with_tracing_content_recording_enabled(message_creation_mode=MessageCreationMode.THREAD_CREATE_STR, **kwargs)
+        self._agent_chat_with_tracing_content_recording_enabled(message_creation_mode=MessageCreationMode.THREAD_CREATE_INPUT_TEXT_BLOCK, **kwargs)
+
+    def _agent_chat_with_tracing_content_recording_enabled(self, message_creation_mode: MessageCreationMode, **kwargs):
+        self.cleanup()
+        os.environ.update({CONTENT_TRACING_ENV_VARIABLE: "True"})
+        self.setup_telemetry()
         assert True == AIAgentsInstrumentor().is_content_recording_enabled()
         assert True == AIAgentsInstrumentor().is_instrumented()
 
