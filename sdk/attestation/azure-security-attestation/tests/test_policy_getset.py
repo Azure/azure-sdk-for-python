@@ -26,12 +26,12 @@ from helpers import pem_from_base64
 
 from azure.security.attestation import (
     AttestationAdministrationClient,
-    AttestationType,
     AttestationToken,
     PolicyModification,
     CertificateModification,
     AttestationPolicyToken,
 )
+from azure.security.attestation.models import AttestationType
 
 
 class TestPolicyGetSet(AzureRecordedTestCase):

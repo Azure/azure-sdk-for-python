@@ -171,104 +171,106 @@ class AttestationResult(_Model):
     """An RFC 7800 Proof of Possession Key."""
     nonce: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The Nonce input to the attestation request, if provided."""
-    version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    version: Optional[str] = rest_field(name="x-ms-ver", visibility=["read", "create", "update", "delete", "query"])
     """The Schema version of this structure. Current Value: 1.0."""
     runtime_claims: Optional[Dict[str, str]] = rest_field(
-        name="runtimeClaims", visibility=["read", "create", "update", "delete", "query"]
+        name="x-ms-runtime", visibility=["read", "create", "update", "delete", "query"]
     )
     """Runtime Claims."""
     inittime_claims: Optional[Dict[str, str]] = rest_field(
-        name="inittimeClaims", visibility=["read", "create", "update", "delete", "query"]
+        name="x-ms-inittime", visibility=["read", "create", "update", "delete", "query"]
     )
     """Inittime Claims."""
     policy_claims: Optional[Dict[str, str]] = rest_field(
-        name="policyClaims", visibility=["read", "create", "update", "delete", "query"]
+        name="x-ms-policy", visibility=["read", "create", "update", "delete", "query"]
     )
     """Policy Generated Claims."""
     verifier_type: Optional[str] = rest_field(
-        name="verifierType", visibility=["read", "create", "update", "delete", "query"]
+        name="x-ms-attestation-type", visibility=["read", "create", "update", "delete", "query"]
     )
     """The Attestation type being attested."""
     policy_signer: Optional["_models.JsonWebKey"] = rest_field(
-        name="policySigner", visibility=["read", "create", "update", "delete", "query"]
+        name="x-ms-policy-signer", visibility=["read", "create", "update", "delete", "query"]
     )
     """The certificate used to sign the policy object, if specified."""
     policy_hash: Optional[bytes] = rest_field(
-        name="policyHash", visibility=["read", "create", "update", "delete", "query"], format="base64"
+        name="x-ms-policy-hash", visibility=["read", "create", "update", "delete", "query"], format="base64"
     )
     """The SHA256 hash of the BASE64URL encoded policy text used for attestation."""
     is_debuggable: Optional[bool] = rest_field(
-        name="IsDebuggable", visibility=["read", "create", "update", "delete", "query"]
+        name="x-ms-sgx-is-debuggable", visibility=["read", "create", "update", "delete", "query"]
     )
     """True if the enclave is debuggable, false otherwise."""
     product_id: Optional[float] = rest_field(
-        name="productId", visibility=["read", "create", "update", "delete", "query"]
+        name="x-ms-sgx-product-id", visibility=["read", "create", "update", "delete", "query"]
     )
     """The SGX Product ID for the enclave."""
-    mr_enclave: Optional[str] = rest_field(name="mrEnclave", visibility=["read", "create", "update", "delete", "query"])
+    mr_enclave: Optional[str] = rest_field(
+        name="x-ms-sgx-mrenclave", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The HEX encoded SGX MRENCLAVE value for the enclave."""
-    mr_signer: Optional[str] = rest_field(name="mrSigner", visibility=["read", "create", "update", "delete", "query"])
+    mr_signer: Optional[str] = rest_field(
+        name="x-ms-sgx-mrsigner", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The HEX encoded SGX MRSIGNER value for the enclave."""
     svn: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The SGX SVN value for the enclave."""
     enclave_held_data: Optional[bytes] = rest_field(
-        name="enclaveHeldData", visibility=["read", "create", "update", "delete", "query"], format="base64"
+        name="x-ms-sgx-ehd", visibility=["read", "create", "update", "delete", "query"], format="base64"
     )
     """A copy of the RuntimeData specified as an input to the attest call."""
     sgx_collateral: Optional[Dict[str, str]] = rest_field(
-        name="sgxCollateral", visibility=["read", "create", "update", "delete", "query"]
+        name="x-ms-sgx-collateral", visibility=["read", "create", "update", "delete", "query"]
     )
     """The SGX SVN value for the enclave."""
     deprecated_version: Optional[str] = rest_field(
-        name="deprecatedVersion", visibility=["read", "create", "update", "delete", "query"]
+        name="ver", visibility=["read", "create", "update", "delete", "query"]
     )
     """DEPRECATED: Private Preview version of x-ms-ver claim."""
     deprecated_is_debuggable: Optional[bool] = rest_field(
-        name="deprecatedIsDebuggable", visibility=["read", "create", "update", "delete", "query"]
+        name="is-debuggable", visibility=["read", "create", "update", "delete", "query"]
     )
     """DEPRECATED: Private Preview version of x-ms-sgx-is-debuggable claim."""
     deprecated_sgx_collateral: Optional[Dict[str, str]] = rest_field(
-        name="deprecatedSgxCollateral", visibility=["read", "create", "update", "delete", "query"]
+        name="maa-attestationcollateral", visibility=["read", "create", "update", "delete", "query"]
     )
     """DEPRECATED: Private Preview version of x-ms-sgx-collateral claim."""
     deprecated_enclave_held_data: Optional[bytes] = rest_field(
-        name="deprecatedEnclaveHeldData", visibility=["read", "create", "update", "delete", "query"], format="base64"
+        name="aas-ehd", visibility=["read", "create", "update", "delete", "query"], format="base64"
     )
     """DEPRECATED: Private Preview version of x-ms-sgx-ehd claim."""
     deprecated_enclave_held_data2: Optional[bytes] = rest_field(
-        name="deprecatedEnclaveHeldData2", visibility=["read", "create", "update", "delete", "query"], format="base64"
+        name="maa-ehd", visibility=["read", "create", "update", "delete", "query"], format="base64"
     )
     """DEPRECATED: Private Preview version of x-ms-sgx-ehd claim."""
     deprecated_product_id: Optional[float] = rest_field(
-        name="deprecatedProductId", visibility=["read", "create", "update", "delete", "query"]
+        name="product-id", visibility=["read", "create", "update", "delete", "query"]
     )
     """DEPRECATED: Private Preview version of x-ms-sgx-product-id."""
     deprecated_mr_enclave: Optional[str] = rest_field(
-        name="deprecatedMrEnclave", visibility=["read", "create", "update", "delete", "query"]
+        name="sgx-mrenclave", visibility=["read", "create", "update", "delete", "query"]
     )
     """DEPRECATED: Private Preview version of x-ms-sgx-mrenclave."""
     deprecated_mr_signer: Optional[str] = rest_field(
-        name="deprecatedMrSigner", visibility=["read", "create", "update", "delete", "query"]
+        name="sgx-mrsigner", visibility=["read", "create", "update", "delete", "query"]
     )
     """DEPRECATED: Private Preview version of x-ms-sgx-mrsigner."""
     deprecated_svn: Optional[float] = rest_field(
         name="deprecatedSvn", visibility=["read", "create", "update", "delete", "query"]
     )
     """DEPRECATED: Private Preview version of x-ms-sgx-svn."""
-    deprecated_tee: Optional[str] = rest_field(
-        name="deprecatedTee", visibility=["read", "create", "update", "delete", "query"]
-    )
+    deprecated_tee: Optional[str] = rest_field(name="tee", visibility=["read", "create", "update", "delete", "query"])
     """DEPRECATED: Private Preview version of x-ms-tee."""
     deprecated_policy_signer: Optional["_models.JsonWebKey"] = rest_field(
-        name="deprecatedPolicySigner", visibility=["read", "create", "update", "delete", "query"]
+        name="policy_signer", visibility=["read", "create", "update", "delete", "query"]
     )
     """DEPRECATED: Private Preview version of x-ms-policy-signer."""
     deprecated_policy_hash: Optional[bytes] = rest_field(
-        name="deprecatedPolicyHash", visibility=["read", "create", "update", "delete", "query"], format="base64"
+        name="policy_hash", visibility=["read", "create", "update", "delete", "query"], format="base64"
     )
     """DEPRECATED: Private Preview version of x-ms-policy-hash."""
     deprecated_rp_data: Optional[str] = rest_field(
-        name="deprecatedRpData", visibility=["read", "create", "update", "delete", "query"]
+        name="rp_data", visibility=["read", "create", "update", "delete", "query"]
     )
     """DEPRECATED: Private Preview version of nonce."""
 
@@ -773,12 +775,12 @@ class PolicyCertificatesModificationResult(_Model):
     """
 
     certificate_thumbprint: Optional[str] = rest_field(
-        name="certificateThumbprint", visibility=["read", "create", "update", "delete", "query"]
+        name="x-ms-certificate-thumbprint", visibility=["read", "create", "update", "delete", "query"]
     )
     """Hex encoded SHA1 Hash of the binary representation certificate which was added
      or removed."""
     certificate_resolution: Optional[Union[str, "_models.CertificateModification"]] = rest_field(
-        name="certificateResolution", visibility=["read", "create", "update", "delete", "query"]
+        name="x-ms-certificate-result", visibility=["read", "create", "update", "delete", "query"]
     )
     """The result of the operation. Known values are: \"IsPresent\" and \"IsAbsent\"."""
 
@@ -870,7 +872,7 @@ class PolicyCertificatesResult(_Model):
     """
 
     policy_certificates: Optional["_models.JsonWebKeySet"] = rest_field(
-        name="policyCertificates", visibility=["read", "create", "update", "delete", "query"]
+        name="x-ms-policy-certificates", visibility=["read", "create", "update", "delete", "query"]
     )
     """SHA256 Hash of the binary representation certificate which was added or removed."""
 
@@ -936,18 +938,18 @@ class PolicyResult(_Model):
     """
 
     policy_resolution: Optional[Union[str, "_models.PolicyModification"]] = rest_field(
-        name="policyResolution", visibility=["read", "create", "update", "delete", "query"]
+        name="x-ms-policy-result", visibility=["read", "create", "update", "delete", "query"]
     )
     """The result of the operation. Known values are: \"Updated\" and \"Removed\"."""
     policy_token_hash: Optional[bytes] = rest_field(
-        name="policyTokenHash", visibility=["read", "create", "update", "delete", "query"], format="base64"
+        name="x-ms-policy-token-hash", visibility=["read", "create", "update", "delete", "query"], format="base64"
     )
     """The SHA256 hash of the policy object modified."""
     policy_signer: Optional["_models.JsonWebKey"] = rest_field(
-        name="policySigner", visibility=["read", "create", "update", "delete", "query"]
+        name="x-ms-policy-signer", visibility=["read", "create", "update", "delete", "query"]
     )
     """The certificate used to sign the policy object, if specified."""
-    policy: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    policy: Optional[str] = rest_field(name="x-ms-policy", visibility=["read", "create", "update", "delete", "query"])
     """A JSON Web Token containing a StoredAttestationPolicy object with the
      attestation policy."""
 
@@ -1056,7 +1058,7 @@ class StoredAttestationPolicy(_Model):
     """
 
     attestation_policy: Optional[bytes] = rest_field(
-        name="attestationPolicy", visibility=["read", "create", "update", "delete", "query"], format="base64"
+        name="AttestationPolicy", visibility=["read", "create", "update", "delete", "query"], format="base64"
     )
     """Policy text to set as a sequence of UTF-8 encoded octets."""
 
