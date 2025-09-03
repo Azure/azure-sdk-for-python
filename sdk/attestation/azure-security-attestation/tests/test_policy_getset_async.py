@@ -28,11 +28,11 @@ from attestation_preparer import AttestationPreparer
 
 from azure.security.attestation.aio import AttestationAdministrationClient
 from azure.security.attestation import (
-    AttestationType,
     AttestationPolicyToken,
     PolicyModification,
     CertificateModification,
 )
+from azure.security.attestation.models import AttestationType
 
 from dotenv import find_dotenv, load_dotenv
 

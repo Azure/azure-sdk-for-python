@@ -21,8 +21,8 @@ import json
 from azure.security.attestation import (
     AttestationClient,
     AttestationAdministrationClient,
-    AttestationType,
 )
+from azure.security.attestation.models import AttestationType
 
 """ cspell:disable """
 _open_enclave_report = (

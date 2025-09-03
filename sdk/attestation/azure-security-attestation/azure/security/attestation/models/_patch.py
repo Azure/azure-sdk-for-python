@@ -11,6 +11,7 @@ import base64
 from datetime import datetime
 import json
 from typing import Optional, TypeVar, List, Any, Dict, Type, Union
+
 try:
     from typing import Self
 except ImportError:
@@ -83,9 +84,7 @@ class AttestationPolicyCertificateResult:
     """
 
     def __init__(
-            self,
-            certificate_thumbprint: str,
-            certificate_resolution: Union[str, CertificateModification]
+        self, certificate_thumbprint: str, certificate_resolution: Union[str, CertificateModification]
     ) -> None:
         self.certificate_thumbprint = certificate_thumbprint
         self.certificate_resolution = certificate_resolution
@@ -118,17 +117,14 @@ class AttestationPolicyResult:
     """
 
     def __init__(
-            self,
-            policy_resolution: PolicyModification,
-            policy_signer: AttestationSigner,
-            policy_token_hash: str
+        self, policy_resolution: PolicyModification, policy_signer: AttestationSigner, policy_token_hash: str
     ) -> None:
         self.policy_resolution = policy_resolution
         self.policy_signer = policy_signer
         self.policy_token_hash = policy_token_hash
 
     @classmethod
-    def _from_generated(cls, generated: GeneratedPolicyResult) -> 'AttestationPolicyResult':
+    def _from_generated(cls, generated: GeneratedPolicyResult) -> "AttestationPolicyResult":
         # If we have a generated policy result or policy text, return that.
         if not generated:
             return None
@@ -195,7 +191,7 @@ class AttestationResult:  # pylint: disable=too-many-instance-attributes
         self._sgx_collateral = kwargs.pop("sgx_collateral")  # type: Dict
 
     @classmethod
-    def _from_generated(cls, generated: GeneratedAttestationResult) -> 'AttestationResult':
+    def _from_generated(cls, generated: GeneratedAttestationResult) -> "AttestationResult":
         if not generated:
             return None
         return AttestationResult(
@@ -419,7 +415,7 @@ class StoredAttestationPolicy:
         return GeneratedStoredAttestationPolicy(attestation_policy=self._policy).serialize(**kwargs)
 
     @classmethod
-    def _from_generated(cls, generated: GeneratedStoredAttestationPolicy) -> 'StoredAttestationPolicy':
+    def _from_generated(cls, generated: GeneratedStoredAttestationPolicy) -> "StoredAttestationPolicy":
         if not generated:
             return None
         return StoredAttestationPolicy(generated.attestation_policy)
@@ -488,7 +484,7 @@ class AttestationToken:
         See `RFC 7515 Section 4.1.1 <https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.1>`_ for details.
 
         If the value of algorithm is "none" it indicates that the token is unsecured.
-        
+
         :rtype: str or None
         """
         return self._header.get("alg")
@@ -623,7 +619,7 @@ class AttestationToken:
 
     def _json_web_key(self) -> Optional[JSONWebKey]:
         """Extract and deserialize the JSON Web Key from the token header.
-        
+
         :return: The JSON Web Key from the token header, or None if not present.
         :rtype: JSONWebKey or None
         """
@@ -697,9 +693,8 @@ class AttestationToken:
             return self._body
 
     def _get_candidate_signing_certificates(
-            self,
-            signing_certificates: List[AttestationSigner]
-        ) -> List[AttestationSigner]:
+        self, signing_certificates: List[AttestationSigner]
+    ) -> List[AttestationSigner]:
         candidates = []
         desired_key_id = self.key_id
         if desired_key_id is not None:
@@ -760,7 +755,7 @@ class AttestationToken:
 
     def _validate_static_properties(self, **kwargs: Any) -> bool:
         """Validate the static properties in the attestation token.
-        
+
         :return: True if all validations pass.
         :rtype: bool
         """
@@ -796,7 +791,7 @@ class AttestationToken:
     @staticmethod
     def _create_unsecured_jwt(body: Any) -> str:
         """Return an unsecured JWT expressing the body.
-        
+
         :param Any body: The body of the token to be serialized.
         :return: An unsecured JWT token as a string.
         :rtype: str
@@ -823,7 +818,7 @@ class AttestationToken:
     @staticmethod
     def _create_secured_jwt(body, **kwargs) -> str:
         """Return a secured JWT expressing the body, secured with the specified signing key.
-        
+
         :param Any body: The body of the token to be serialized.
         :keyword key: Signing key used to sign the token.
         :kwtype key: cryptography.hazmat.primitives.asymmetric.ec or cryptography.hazmat.primitives.asymmetric.rsa
