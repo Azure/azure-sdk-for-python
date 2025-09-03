@@ -252,12 +252,14 @@ In the case of an environment invoking `pytest`, results can be collected in a j
 
     if args.wheel_dir:
         os.environ["PREBUILT_WHEEL_DIR"] = args.wheel_dir
-    else:
-        os.environ["PREBUILT_WHEEL_DIR"] = os.path.join(root_dir, ".wheels")
+
+    if (not os.path.exists(os.path.join(root_dir, ".wheels"))):
+        os.makedirs(os.path.join(root_dir, ".wheels"))
 
     if in_ci():
         # prepare a build of eng/tools/azure-sdk-tools
-        build_whl_for_req("eng/tools/azure-sdk-tools", root_dir, os.environ.get("PREBUILT_WHEEL_DIR"))
+        # todo: ensure that we honor this .wheels directory when replacing for dev reqs
+        build_whl_for_req("eng/tools/azure-sdk-tools", root_dir, os.path.join(root_dir, ".wheels"))
 
     # so if we have checks whl,import_all and selected package paths `sdk/core/azure-core`, `sdk/storage/azure-storage-blob` we should
     # shell out to `azypysdk <checkname>` with cwd of the package directory, which is what is in `targeted_packages` array
