@@ -25,10 +25,10 @@ parameters:
     default: []
 
 steps:
-  - checkout: self
-    fetchTags: false
-    sparseCheckoutPatterns: |
-      **
+  - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
+    parameters:
+      Paths:
+        - '**'
 
   - task: UsePythonVersion@0
     displayName: 'Use Python $(PythonVersion)'
