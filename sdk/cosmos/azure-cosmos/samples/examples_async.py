@@ -142,7 +142,7 @@ async def examples_async():
         # Retrieve the properties of a database
         # [START get_database_properties]
         read_properties = await database.read()
-        print(json.dumps(properties, indent=True))
+        print(json.dumps(read_properties, indent=True))
         # [END get_database_properties]
 
         # Retrieve the properties of a container

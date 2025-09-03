@@ -389,6 +389,7 @@ class DatabaseProxy(object):
         change_feed_policy = kwargs.pop('change_feed_policy', None)
         full_text_policy = kwargs.pop('full_text_policy', None)
         return_properties = kwargs.pop('return_properties', False)
+        vector_embedding_policy = kwargs.pop('vector_embedding_policy', None)
 
         session_token = kwargs.get('session_token')
         if session_token is not None:
@@ -855,7 +856,7 @@ class DatabaseProxy(object):
         ...
 
     @overload
-    async def replace_container(
+    async def replace_container( # pylint:disable=docstring-missing-param
         self,
         container: Union[str, ContainerProxy, Mapping[str, Any]],
         partition_key: PartitionKey,
@@ -881,8 +882,6 @@ class DatabaseProxy(object):
         :type container: Union[str, Dict[str, Any], ~azure.cosmos.aio.ContainerProxy]
         :param partition_key: The partition key to use for the container.
         :type partition_key: ~azure.cosmos.PartitionKey
-        :keyword bool return_properties: Specifies function to return either a ContainerProxy
-            or a Tuple of a ContainerProxy and CosmosDict instance.
         :keyword dict[str, str] indexing_policy: The indexing policy to apply to the container.
         :keyword int default_ttl: Default time to live (TTL) for items in the container.
             If unspecified, items do not expire.
@@ -899,6 +898,11 @@ class DatabaseProxy(object):
         :keyword Dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
+        :keyword bool return_properties: Specifies function to return either a ContainerProxy
+            or a Tuple of a ContainerProxy and CosmosDict instance.
+        :keyword Dict[str, Any] vector_embedding_policy: The vector embedding policy for the container.
+            Each vector embedding possesses a predetermined number of dimensions, is associated with an underlying
+            data type, and is generated for a particular distance function.
         :returns: A tuple of the `ContainerProxy` and CosmosDict with the response headers.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be replaced.
             This includes if the container with given id does not exist.
@@ -928,8 +932,6 @@ class DatabaseProxy(object):
         will be reset to their default values.
 
         :param Any args: args
-        :keyword bool return_properties: Specifies function to return either a ContainerProxy
-            or a Tuple of a ContainerProxy and CosmosDict instance.
         :keyword dict[str, str] indexing_policy: The indexing policy to apply to the container.
         :keyword int default_ttl: Default time to live (TTL) for items in the container.
             If unspecified, items do not expire.
@@ -946,6 +948,11 @@ class DatabaseProxy(object):
         :keyword Dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
+        :keyword bool return_properties: Specifies function to return either a ContainerProxy
+            or a Tuple of a ContainerProxy and CosmosDict instance.
+        :keyword Dict[str, Any] vector_embedding_policy: The vector embedding policy for the container.
+            Each vector embedding possesses a predetermined number of dimensions, is associated with an underlying
+            data type, and is generated for a particular distance function.
         :returns: A `ContainerProxy` instance representing the new container or a tuple of the ContainerProxy
             and CosmosDict with the response headers.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be replaced.

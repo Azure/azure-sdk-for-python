@@ -1006,6 +1006,7 @@ class DatabaseProxy(object):
         computed_properties = kwargs.pop('computed_properties', None)
         full_text_policy = kwargs.pop('full_text_policy', None)
         return_properties = kwargs.pop('return_properties', False)
+        vector_embedding_policy = kwargs.pop('vector_embedding_policy', None)
 
         session_token = kwargs.get('session_token')
         if session_token is not None:
