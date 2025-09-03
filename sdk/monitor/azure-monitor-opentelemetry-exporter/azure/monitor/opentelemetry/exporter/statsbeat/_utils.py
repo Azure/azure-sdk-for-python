@@ -281,7 +281,7 @@ def _get_connection_string_for_region_from_config(target_region: str, settings: 
                     boundary_regions = json.loads(boundary_regions)
                 
                 # Check if the region is in this boundary's regions
-                if isinstance(boundary_regions, list) and target_region.lower() in [r.lower() for r in boundary_regions]:
+                if isinstance(boundary_regions, list) and any(target_region.lower() == r.lower() for r in boundary_regions):
                     # Found the boundary, get the corresponding connection string
                     connection_string_key = f"{boundary}_STATS_CONNECTION_STRING"
                     connection_string = settings.get(connection_string_key)

@@ -36,9 +36,15 @@ class StatsbeatConfig:
                  credential: Optional[Any] = None,
                  distro_version: Optional[str] = None,
                  connection_string: Optional[str] = None) -> None:
+        # Customer specific information
         self.endpoint = endpoint
         self.region = region
         self.instrumentation_key = instrumentation_key
+
+        # features
+        self.disable_offline_storage = disable_offline_storage
+        self.credential = credential
+        self.distro_version = distro_version
         
         # Use provided connection_string or generate from endpoint
         if connection_string:
@@ -46,21 +52,11 @@ class StatsbeatConfig:
                 # Validate connection string
                 parsed_conn_str = ConnectionStringParser(connection_string)
                 self.connection_string = connection_string
-                self.endpoint = parsed_conn_str.endpoint or endpoint
-                self.region = parsed_conn_str.region or region  # Fallback to provided region
-                # Only override instrumentation key if parser provides a valid one
-                if parsed_conn_str.instrumentation_key:
-                    self.instrumentation_key = parsed_conn_str.instrumentation_key
-            except ValueError as e:
+            except Exception:
                 logger.error("Invalid connection string obtained from config. Reverting to default.")
                 self.connection_string = _get_stats_connection_string(endpoint)
         else:
             self.connection_string = _get_stats_connection_string(endpoint)
-            
-        self.distro_version = distro_version
-        # features
-        self.disable_offline_storage = disable_offline_storage
-        self.credential = credential
 
     @classmethod
     def from_exporter(cls, exporter: Any) -> Optional['StatsbeatConfig']:
