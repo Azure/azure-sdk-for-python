@@ -26,6 +26,7 @@ from azure.ai.agents.models import (
     MessageAttachment,
     MessageDeltaChunk,
     MessageIncompleteDetails,
+    MessageInputContentBlock,
     MessageInputTextBlock,
     RunStep,
     RunStepDeltaChunk,
@@ -389,9 +390,10 @@ class _AIAgentsInstrumentorPreview:
                 if isinstance(message.content, str):
                     content_body = {"text": {"value": message.content}}
                 elif isinstance(message.content, List):
-                    for content in message.content:
-                        if isinstance(content, MessageInputTextBlock):
-                            content_body[content.type] = {"value": content.text}
+                    for content2 in message.content:
+                        if isinstance(content2, MessageInputTextBlock):
+                            content_body[content2.type] = {"value": content2.text}
+                            break
 
         self._add_message_event(
             span,
@@ -573,7 +575,7 @@ class _AIAgentsInstrumentorPreview:
         self,
         span,
         role: str,
-        content: Any,
+        content: Optional[Union[str, dict[str, Any], List[MessageInputContentBlock]]] = None,
         attachments: Any = None,  # Optional[List[MessageAttachment]] or dict
         thread_id: Optional[str] = None,
         agent_id: Optional[str] = None,
@@ -585,9 +587,15 @@ class _AIAgentsInstrumentorPreview:
     ) -> None:
         # TODO document new fields
 
-        event_body = {}
+        event_body = dict[str, Any]()
         if _trace_agents_content:
-            event_body["content"] = content
+            if isinstance(content, List):
+                for block in content:
+                    if isinstance(block, MessageInputTextBlock):
+                        event_body["content"] = block.text
+                        break
+            else:
+                event_body["content"] = content
             if attachments:
                 event_body["attachments"] = []
                 for attachment in attachments:
@@ -1497,7 +1505,7 @@ class _AIAgentsInstrumentorPreview:
         self,
         server_address: Optional[str] = None,
         thread_id: Optional[str] = None,
-        content: Optional[str] = None,
+        content: Optional[Union[str, List[MessageInputContentBlock]]] = None,
         role: Optional[Union[str, MessageRole]] = None,
         attachments: Optional[List[MessageAttachment]] = None,
     ) -> "Optional[AbstractSpan]":
