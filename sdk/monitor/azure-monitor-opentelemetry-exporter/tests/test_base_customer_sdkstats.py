@@ -8,6 +8,7 @@ from unittest import mock
 from datetime import datetime
 
 from azure.core.exceptions import HttpResponseError, ServiceRequestError
+from requests.exceptions import ConnectionError
 from azure.monitor.opentelemetry.exporter.export._base import (
     BaseExporter,
     ExportResult,
@@ -21,8 +22,12 @@ from azure.monitor.opentelemetry.exporter._generated.models import (
 from azure.monitor.opentelemetry.exporter.statsbeat._customer_sdkstats import (
     CustomerSdkStatsMetrics,
     DropCode,
+    RetryCode,
 )
 
+from azure.monitor.opentelemetry.exporter._constants import (
+    _exception_categories,
+)
 
 class MockResponse:
     """Mock response object for HTTP requests"""
@@ -242,6 +247,70 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
 
         track_retry_mock.assert_called_once()
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
+        
+    @mock.patch.dict(
+        os.environ,
+        {
+            "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "true",
+            "APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW": "true",
+        },
+    )
+    def test_track_retry_items_connection_error_network_exception(self):
+        """Test that ConnectionError is properly categorized as NETWORK_EXCEPTION in retry items tracking."""
+        exporter = self._create_exporter_with_customer_sdkstats_enabled()
+        
+        exporter._customer_sdkstats_metrics.count_retry_items = mock.Mock()
+
+
+        envelopes = [TelemetryItem(name="Test", time=datetime.now())]
+
+        connection_errors = [
+            ConnectionError("Connection refused"),
+            ConnectionError("Network is unreachable"),
+            ConnectionError("Host is down"),
+            ConnectionError(""),
+        ]
+
+        for error in connection_errors:
+            with self.subTest(error=str(error)):
+                exporter._customer_sdkstats_metrics.count_retry_items.reset_mock()
+
+                from azure.monitor.opentelemetry.exporter.statsbeat._utils import _track_retry_items
+                _track_retry_items(exporter._customer_sdkstats_metrics, envelopes, error)
+
+                exporter._customer_sdkstats_metrics.count_retry_items.assert_called_once_with(
+                    1,
+                    'UNKNOWN',
+                    RetryCode.CLIENT_EXCEPTION,
+                    _exception_categories.NETWORK_EXCEPTION.value
+                )
+    @mock.patch.dict(
+        os.environ,
+        {
+            "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "true",
+            "APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW": "true",
+        },
+    )
+    def test_track_retry_items_service_request_error_no_timeout(self):
+        """Test that _track_retry_items properly handles ServiceRequestError without timeout in message."""
+        exporter = self._create_exporter_with_customer_sdkstats_enabled()
+        
+        exporter._customer_sdkstats_metrics.count_retry_items = mock.Mock()
+        
+        envelopes = [TelemetryItem(name="Test", time=datetime.now())]
+        
+        error = TimeoutError("Connection failed")
+        
+        from azure.monitor.opentelemetry.exporter.statsbeat._utils import _track_retry_items
+        
+        _track_retry_items(exporter._customer_sdkstats_metrics, envelopes, error)
+        
+        exporter._customer_sdkstats_metrics.count_retry_items.assert_called_once_with(
+            1,
+            'UNKNOWN',
+            RetryCode.CLIENT_TIMEOUT,
+            _exception_categories.TIMEOUT_EXCEPTION.value
+        )
 
     @mock.patch.dict(
         os.environ,
@@ -253,14 +322,14 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
     def test_transmit_general_exception_customer_sdkstats_track_dropped_items(self, track_dropped_mock):
         """Test that _track_dropped_items is called on general exceptions"""
         exporter = self._create_exporter_with_customer_sdkstats_enabled()
-        with mock.patch.object(AzureMonitorClient, "track", side_effect=Exception("General error")):
+        with mock.patch.object(AzureMonitorClient, "track", side_effect=Exception(_exception_categories.CLIENT_EXCEPTION.value)):
             result = exporter._transmit(self._envelopes_to_export)
 
         track_dropped_mock.assert_called_once()
         # Verify called with CLIENT_EXCEPTION drop code and error message
         args, kwargs = track_dropped_mock.call_args
         self.assertEqual(args[2], DropCode.CLIENT_EXCEPTION)
-        self.assertEqual(args[3], "General error")
+        self.assertEqual(args[3], _exception_categories.CLIENT_EXCEPTION.value)
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
 
     @mock.patch.dict(
@@ -295,10 +364,20 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
             "APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW": "true",
         },
     )
+    @mock.patch('azure.monitor.opentelemetry.exporter.statsbeat._utils._track_dropped_items')
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base._track_dropped_items_from_storage")
-    def test_transmit_from_storage_customer_sdkstats_track_dropped_items_from_storage(self, track_dropped_storage_mock):
+    def test_transmit_from_storage_customer_sdkstats_track_dropped_items_from_storage(self, track_dropped_storage_mock, track_dropped_items_mock):
         """Test that _track_dropped_items_from_storage is called during storage operations"""
         exporter = self._create_exporter_with_customer_sdkstats_enabled(disable_offline_storage=False)
+        
+        # Set up side_effect for _track_dropped_items_from_storage
+        def track_dropped_storage_side_effect(customer_sdkstats, result_from_storage_put, envelopes):
+            # Import here to avoid import error
+            from azure.monitor.opentelemetry.exporter.statsbeat._utils import _track_dropped_items_from_storage
+            # Call the real function which will use our mocked _track_dropped_items
+            _track_dropped_items_from_storage(customer_sdkstats, result_from_storage_put, envelopes)
+            
+        track_dropped_storage_mock.side_effect = track_dropped_storage_side_effect
         
         # Simulate a scenario where storage operations would happen
         with mock.patch.object(AzureMonitorClient, "track") as track_mock:
@@ -310,12 +389,18 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
                 ],
             )
             
-            # Mock the storage to simulate storage operations
-            with mock.patch.object(exporter.storage, "put") as put_mock, \
+            # Mock the storage to simulate storage operations - simulate storage error
+            with mock.patch.object(exporter.storage, "put", return_value="storage_error") as put_mock, \
                  mock.patch.object(exporter.storage, "gets", return_value=["stored_envelope"]) as gets_mock:
                 result = exporter._transmit(self._envelopes_to_export)
 
         track_dropped_storage_mock.assert_called_once()
+        
+        track_dropped_items_mock.assert_called_once()
+        dropped_args = track_dropped_items_mock.call_args[0]
+        self.assertEqual(dropped_args[2], DropCode.CLIENT_EXCEPTION)
+        self.assertEqual(dropped_args[3], _exception_categories.STORAGE_EXCEPTION.value)
+
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)  # Storage makes it NOT_RETRYABLE
 
     def test_should_collect_customer_sdkstats_with_metrics(self):
