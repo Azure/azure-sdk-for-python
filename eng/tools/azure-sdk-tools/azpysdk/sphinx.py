@@ -6,6 +6,7 @@ import shutil
 import glob
 import zipfile
 import tarfile
+import importlib
 
 from typing import Optional, List
 from subprocess import CalledProcessError, check_call
@@ -24,7 +25,12 @@ from ci_tools.variables import in_analyze_weekly
 
 from ci_tools.logging import logger
 
+# dependencies
 SPHINX_VERSION = "8.2.0"
+SPHINX_RTD_THEME_VERSION = "3.0.2"
+MYST_PARSER_VERSION = "4.0.1"
+SPHINX_CONTRIB_JQUERY_VERSION = "4.1"
+
 RST_EXTENSION_FOR_INDEX = """
 
 ## Indices and tables
@@ -48,37 +54,44 @@ ci_doc_dir = os.path.join(REPO_ROOT, '_docs')
 sphinx_conf_dir = os.path.join(REPO_ROOT, 'doc/sphinx')
 generate_mgmt_script = os.path.join(REPO_ROOT, "doc/sphinx/generate_doc.py")
 
+# TODO???
+PYTHON_VERSION = "3.11"
+
 # env prep helper functions TODO is this sdist unzipping logic still needed?
 
-def unzip_sdist_to_directory(containing_folder: str) -> str:
-    zips = glob.glob(os.path.join(containing_folder, "*.zip"))
 
-    if zips:
-        return unzip_file_to_directory(zips[0], containing_folder)
-    else:
-        tars = glob.glob(os.path.join(containing_folder, "*.tar.gz"))
-        return unzip_file_to_directory(tars[0], containing_folder)
+# def unzip_sdist_to_directory(containing_folder: str) -> str:
+#     zips = glob.glob(os.path.join(containing_folder, "*.zip"))
+#     if zips:
+#         return unzip_file_to_directory(zips[0], containing_folder)
+#     else:
+#         tars = glob.glob(os.path.join(containing_folder, "*.tar.gz"))
+#         return unzip_file_to_directory(tars[0], containing_folder)
 
-def unzip_file_to_directory(path_to_zip_file: str, extract_location: str) -> str:
-    if path_to_zip_file.endswith(".zip"):
-        with zipfile.ZipFile(path_to_zip_file, "r") as zip_ref:
-            zip_ref.extractall(extract_location)
-            extracted_dir = os.path.basename(os.path.splitext(path_to_zip_file)[0])
-            return os.path.join(extract_location, extracted_dir)
-    else:
-        with tarfile.open(path_to_zip_file) as tar_ref:
-            tar_ref.extractall(extract_location)
-            extracted_dir = os.path.basename(path_to_zip_file).replace(".tar.gz", "")
-            return os.path.join(extract_location, extracted_dir)
+# def unzip_file_to_directory(path_to_zip_file: str, extract_location: str) -> str:
+#     logger.debug("?")
+#     logger.debug(path_to_zip_file)
+#     if path_to_zip_file.endswith(".zip"):
+#         logger.debug("hey")
+#         with zipfile.ZipFile(path_to_zip_file, "r") as zip_ref:
+#             zip_ref.extractall(extract_location)
+#             extracted_dir = os.path.basename(os.path.splitext(path_to_zip_file)[0])
+#             return os.path.join(extract_location, extracted_dir)
+#     else:
+#         logger.debug("hey2")
+#         with tarfile.open(path_to_zip_file) as tar_ref:
+#             tar_ref.extractall(extract_location)
+#             extracted_dir = os.path.basename(path_to_zip_file).replace(".tar.gz", "")
+#             return os.path.join(extract_location, extracted_dir)
 
-def move_and_rename(source_location):
-    new_location = os.path.join(os.path.dirname(source_location), "unzipped")
+# def move_and_rename(source_location):
+#     new_location = os.path.join(os.path.dirname(source_location), "unzipped")
 
-    if os.path.exists(new_location):
-        shutil.rmtree(new_location)
+#     if os.path.exists(new_location):
+#         shutil.rmtree(new_location)
 
-    os.rename(source_location, new_location)
-    return new_location
+#     os.rename(source_location, new_location)
+#     return new_location
 
 def create_index_file(readme_location, package_rst):
     readme_ext = os.path.splitext(readme_location)[1]
@@ -166,25 +179,25 @@ def mgmt_apidoc(working_dir: str, target_folder: str, executable: str) -> int:
     return 0
 
 def sphinx_apidoc(working_dir: str, namespace: str) -> int:
-    working_doc_folder = os.path.join(working_dir, "unzipped", "doc")
+    working_doc_folder = os.path.join(working_dir, "doc")
     command_array = [
             "sphinx-apidoc",
             "--no-toc",
             "--module-first",
             "-o",
-            os.path.join(working_dir, "unzipped/docgen"),   # This is the output folder
-            os.path.join(working_dir, "unzipped/"),         # This is the input folder
-            os.path.join(working_dir, "unzipped/test*"),    # Starting here this, is excluded
-            os.path.join(working_dir, "unzipped/example*"),
-            os.path.join(working_dir, "unzipped/sample*"),
-            os.path.join(working_dir, "unzipped/setup.py"),
+            os.path.join(working_dir, "docgen"),   # This is the output folder
+            os.path.join(working_dir, ""),         # This is the input folder
+            os.path.join(working_dir, "test*"),    # Starting here this, is excluded
+            os.path.join(working_dir, "example*"),
+            os.path.join(working_dir, "sample*"),
+            os.path.join(working_dir, "setup.py"),
         ]
 
     try:
         # if a `doc` folder exists, just leverage the sphinx sources found therein.
         if os.path.exists(working_doc_folder):
             logger.info("Copying files into sphinx source folder.")
-            copy_existing_docs(working_doc_folder, os.path.join(working_dir, "unzipped/docgen"))
+            copy_existing_docs(working_doc_folder, os.path.join(working_dir, "docgen"))
 
         # otherwise, we will run sphinx-apidoc to generate the sources
         else:
@@ -194,7 +207,7 @@ def sphinx_apidoc(working_dir: str, namespace: str) -> int:
             )
             # We need to clean "azure.rst", and other RST before the main namespaces, as they are never
             # used and will log as a warning later by sphinx-build, which is blocking strict_sphinx
-            base_path = Path(os.path.join(working_dir, "unzipped/docgen/"))
+            base_path = Path(os.path.join(working_dir, "docgen/"))
             namespace = namespace.rpartition('.')[0]
             while namespace:
                 rst_file_to_delete = base_path / f"{namespace}.rst"
@@ -274,38 +287,39 @@ class sphinx(Check):
             required=False
         )
 
-        p.add_argument(
-            "-d",
-            "--dist_dir",
-            dest="dist_dir",
-            help="The dist location on disk. Usually /dist.", # TODO? is this still needed?
-            required=True,
-        )
+        # TODO
+        # p.add_argument(
+        #     "-d",
+        #     "--dist_dir",
+        #     dest="dist_dir",
+        #     help="The dist location on disk. Usually /dist.", # TODO? is this still needed?
+        #     required=False,
+        # )
 
-        p.add_argument(
-            "-w",
-            "--workingdir",
-            dest="working_directory",
-            help="The unzipped package directory on disk. Usually {distdir}/unzipped/",
-            required=True,
-        )
+        # p.add_argument(
+        #     "-w",
+        #     "--workingdir",
+        #     dest="working_directory",
+        #     help="The unzipped package directory on disk. Usually {distdir}/unzipped/",
+        #     required=False,
+        # )
 
-        p.add_argument(
-            "-o",
-            "--outputdir",
-            dest="output_directory",
-            help="The output location for the generated site. Usually {distdir}/site",
-            required=True,
-        )
+        # p.add_argument(
+        #     "-o",
+        #     "--outputdir",
+        #     dest="output_directory",
+        #     help="The output location for the generated site. Usually {distdir}/site",
+        #     required=False,
+        # )
 
         # TODO is this necessary? is this the same as target?
-        p.add_argument(
-            "-r",
-            "--root",
-            dest="package_root",
-            help="",
-            required=True,
-        )
+        # p.add_argument(
+        #     "-r",
+        #     "--root",
+        #     dest="package_root",
+        #     help="",
+        #     required=False,
+        # )
 
         p.add_argument(
             "--inci",
@@ -313,21 +327,6 @@ class sphinx(Check):
             action="store_true",
             default=False
         )
-
-    def run_sphinx_apidoc(self, args: argparse.Namespace, parsed: ParsedSetup, executable: str) -> int:
-        working_dir = args.working_directory 
-        output_dir = os.path.join(working_dir, "unzipped/docgen")
-
-        result: int = 0
-
-        if should_build_docs(parsed.name):
-            if is_mgmt_package(parsed.name):
-                result = mgmt_apidoc(output_dir, parsed.folder, executable)
-            else:
-                result = sphinx_apidoc(working_dir, parsed.namespace)            
-        else:
-            logger.info("Skipping sphinx source generation for {}".format(parsed.name))
-        return result
 
     def run(self, args: argparse.Namespace) -> int:
         """Run the sphinx check command."""
@@ -345,46 +344,54 @@ class sphinx(Check):
 
             executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, package_dir)
             logger.info(f"Processing {package_name} for sphinx check")
-
-            # install sphinx
+  
+            # install sphinx TODO python version issue
             try:
                 if (args.next):
-                    pip_install(["sphinx"], True, executable, package_dir)
+                    pip_install(["sphinx", "sphinx_rtd_theme", "myst_parser", "sphinxcontrib-jquery"], True, executable, package_dir)
                 else:
-                    pip_install([f"sphinx=={SPHINX_VERSION}"], True, executable, package_dir)
+                    pip_install([f"sphinx=={SPHINX_VERSION}", f"sphinx_rtd_theme=={SPHINX_RTD_THEME_VERSION}", f"myst_parser=={MYST_PARSER_VERSION}", f"sphinxcontrib-jquery=={SPHINX_CONTRIB_JQUERY_VERSION}"], True, executable, package_dir)
             except CalledProcessError as e:
                 logger.error("Failed to install sphinx:", e)
                 return e.returncode
-            
+
             logger.info(f"Running sphinx against {package_name}")
 
-            output_dir = os.path.abspath(args.output_directory)
-            target_dir = os.path.abspath(args.working_directory)
-
             # prep env for sphinx
-            # TODO directly use current directory rather than 
+            source_location = os.path.abspath(staging_directory)
+            doc_folder = os.path.join(source_location, "docgen")
+            site_folder = os.path.join(source_location, "site")
+
             if should_build_docs(package_name):
-                source_location = move_and_rename(unzip_sdist_to_directory(args.dist_dir))
-                doc_folder = os.path.join(source_location, "docgen")
-
                 create_index(doc_folder, source_location, parsed.namespace)
-
-                site_folder = os.path.join(args.dist_dir, "site")
+                
                 write_version(site_folder, parsed.version)
             else:
                 logger.info("Skipping sphinx prep for {}".format(package_name))      
 
             # run apidoc
-            results.append(self.run_sphinx_apidoc(args, parsed, executable))
-            
+            working_dir = os.path.abspath(parsed.folder)
+            output_dir = os.path.join(working_dir, "docgen") # TODO
+
+            if should_build_docs(parsed.name):
+                if is_mgmt_package(parsed.name):
+                    results.append(mgmt_apidoc(output_dir, parsed.folder, executable))
+                else:
+                    results.append(sphinx_apidoc(working_dir, parsed.namespace))
+            else:
+                logger.info("Skipping sphinx source generation for {}".format(parsed.name))
+
             # build
+            # output directory is /site 
+            # target directory is working directory , staging???
+            # package directory gives parsed.folder
             if should_build_docs(package_name):
                 # Only data-plane libraries run strict sphinx at the moment
                 fail_on_warning = not is_mgmt_package(package_name)
                 results.append(sphinx_build(
                     package_dir,
-                    target_dir,
-                    output_dir,
+                    staging_directory, # TODO
+                    site_folder, # TODO
                     fail_on_warning=fail_on_warning,
                 ))
 
