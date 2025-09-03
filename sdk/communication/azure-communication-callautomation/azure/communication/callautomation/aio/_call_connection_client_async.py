@@ -250,7 +250,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             else None
         )
         request = TransferToParticipantRequest(
-            target_participant=serialize_identifier(target_participant),  # type: ignore[arg-type]
+            target_participant=serialize_identifier(target_participant),
             operation_context=operation_context,
             operation_callback_uri=operation_callback_url,
             custom_calling_context=user_custom_context,
@@ -258,7 +258,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         )
         process_repeatability_first_sent(kwargs)
         if transferee:
-            request.transferee = serialize_identifier(transferee)  # type: ignore[assignment]
+            request.transferee = serialize_identifier(transferee)
         result = await self._call_connection_client.transfer_to_participant(self._call_connection_id, request, **kwargs)
         return TransferCallResult._from_generated(result)  # pylint:disable=protected-access
 
@@ -314,7 +314,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         if sip_headers or voip_headers:
             user_custom_context = CustomCallingContext(voip_headers=voip_headers, sip_headers=sip_headers)
         add_participant_request = AddParticipantRequest(
-            participant_to_add=serialize_identifier(target_participant),  # type: ignore[arg-type]
+            participant_to_add=serialize_identifier(target_participant),
             source_caller_id_number=serialize_phone_identifier(source_caller_id_number),
             source_display_name=source_display_name,
             invitation_timeout_in_seconds=invitation_timeout,
@@ -353,7 +353,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         remove_participant_request = RemoveParticipantRequest(
-            participant_to_remove=serialize_identifier(target_participant),  # type: ignore[arg-type]
+            participant_to_remove=serialize_identifier(target_participant),
             operation_context=operation_context,
             operation_callback_uri=operation_callback_url,
         )
@@ -676,7 +676,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         options = RecognizeOptions(
             interrupt_prompt=interrupt_prompt,
             initial_silence_timeout_in_seconds=initial_silence_timeout,
-            target_participant=serialize_identifier(target_participant),  # type: ignore[arg-type]
+            target_participant=serialize_identifier(target_participant),
             speech_language=speech_language,
             speech_recognition_model_endpoint_id=speech_recognition_model_endpoint_id,
         )
@@ -758,7 +758,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         continuous_dtmf_recognition_request = ContinuousDtmfRecognitionRequest(
-            target_participant=serialize_identifier(target_participant),  # type: ignore[arg-type]
+            target_participant=serialize_identifier(target_participant),
             operation_context=operation_context
         )
         await self._call_media_client.start_continuous_dtmf_recognition(
@@ -790,7 +790,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         continuous_dtmf_recognition_request = ContinuousDtmfRecognitionRequest(
-            target_participant=serialize_identifier(target_participant),  # type: ignore[arg-type]
+            target_participant=serialize_identifier(target_participant),
             operation_context=operation_context,
             operation_callback_uri=operation_callback_url,
         )
@@ -827,7 +827,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         """
         send_dtmf_tones_request = SendDtmfTonesRequest(
             tones=tones,
-            target_participant=serialize_identifier(target_participant),  # type: ignore[arg-type]
+            target_participant=serialize_identifier(target_participant),
             operation_context=operation_context,
             operation_callback_uri=operation_callback_url,
         )
@@ -854,7 +854,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         mute_participants_request = MuteParticipantsRequest(
-            target_participants=[serialize_identifier(target_participant)],  # type: ignore[list-item]
+            target_participants=[serialize_identifier(target_participant)],
             operation_context=operation_context
         )
         process_repeatability_first_sent(kwargs)
@@ -1035,7 +1035,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             play_source_single = play_source
 
         hold_request = HoldRequest(
-            target_participant=serialize_identifier(target_participant),  # type: ignore[arg-type]
+            target_participant=serialize_identifier(target_participant),
             play_source_info=(
                 play_source_single._to_generated() if play_source_single else None  # pylint:disable=protected-access
             ),
@@ -1072,7 +1072,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         """
 
         unhold_request = UnholdRequest(
-            target_participant=serialize_identifier(target_participant),  # type: ignore[arg-type]
+            target_participant=serialize_identifier(target_participant),
             operation_context=operation_context,
             operation_callback_uri=operation_callback_url,
             kwargs=kwargs,

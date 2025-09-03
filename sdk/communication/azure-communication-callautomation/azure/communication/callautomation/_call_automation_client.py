@@ -359,9 +359,9 @@ class CallAutomationClient:
         )
 
         try:
-            targets = [serialize_identifier(p) for p in target_participant]  # type: ignore[union-attr]
+            targets = [serialize_identifier(p) for p in target_participant]
         except TypeError:
-            targets = [serialize_identifier(target_participant)]  # type: ignore[arg-type]
+            targets = [serialize_identifier(target_participant)]
 
         media_config = media_streaming._to_generated() if media_streaming else None # pylint:disable=protected-access
         transcription_config = transcription._to_generated() if transcription else None # pylint:disable=protected-access
@@ -513,7 +513,7 @@ class CallAutomationClient:
 
         redirect_call_request = RedirectCallRequest(
             incoming_call_context=incoming_call_context,
-            target=serialize_identifier(cast("CommunicationIdentifier", target_participant))  # type: ignore[arg-type]
+            target=serialize_identifier(target_participant)
         )
         process_repeatability_first_sent(kwargs)
         self._client.redirect_call(redirect_call_request=redirect_call_request, **kwargs)
