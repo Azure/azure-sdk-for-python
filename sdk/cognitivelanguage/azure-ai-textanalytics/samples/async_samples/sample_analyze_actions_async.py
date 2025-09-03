@@ -94,10 +94,10 @@ async def sample_analyze_actions_async():
             # --- Entities ---
             if isinstance(action_result, EntityRecognitionOperationResult):
                 print("=== Entity Recognition Results ===")
-                for doc in action_result.results.documents:
-                    print(f'Result for document with Id = "{doc.id}":')
-                    print(f"  Recognized {len(doc.entities)} entities:")
-                    for entity in doc.entities:
+                for ent_doc in action_result.results.documents:
+                    print(f'Result for document with Id = "{ent_doc.id}":')
+                    print(f"  Recognized {len(ent_doc.entities)} entities:")
+                    for entity in ent_doc.entities:
                         print(f"    Text: {entity.text}")
                         print(f"    Offset: {entity.offset}")
                         print(f"    Length: {entity.length}")
@@ -121,9 +121,9 @@ async def sample_analyze_actions_async():
             # --- Key Phrases ---
             elif isinstance(action_result, KeyPhraseExtractionOperationResult):
                 print("=== Key Phrase Extraction Results ===")
-                for doc in action_result.results.documents:
-                    print(f'Result for document with Id = "{doc.id}":')
-                    for kp in doc.key_phrases:
+                for kp_doc in action_result.results.documents:
+                    print(f'Result for document with Id = "{kp_doc.id}":')
+                    for kp in kp_doc.key_phrases:
                         print(f"    {kp}")
                     print()
                 for err in action_result.results.errors:

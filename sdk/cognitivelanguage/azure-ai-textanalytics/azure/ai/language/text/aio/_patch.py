@@ -51,9 +51,6 @@ def _parse_operation_id(op_loc: Optional[str]) -> Optional[str]:
     return path.rsplit("/", 1)[-1]
 
 
-PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
-
-
 class AnalyzeTextAsyncLROPoller(AsyncLROPoller[PollingReturnType_co], Generic[PollingReturnType_co]):
     """Custom **async** poller that returns ``PollingReturnType_co`` and exposes operation metadata."""
 

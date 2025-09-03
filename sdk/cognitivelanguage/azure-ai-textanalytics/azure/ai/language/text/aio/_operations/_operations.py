@@ -367,7 +367,7 @@ class _TextAnalysisClientOperationsMixin(
         return deserialized  # type: ignore
 
     @overload
-    async def begin_analyze_text_job(
+    async def _begin_analyze_text_job(
         self,
         *,
         text_input: _models.MultiLanguageTextInput,
@@ -402,7 +402,7 @@ class _TextAnalysisClientOperationsMixin(
         """
 
     @overload
-    async def begin_analyze_text_job(
+    async def _begin_analyze_text_job(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Submit a collection of text documents for analysis. Specify one or more unique tasks to be
@@ -419,7 +419,7 @@ class _TextAnalysisClientOperationsMixin(
         """
 
     @overload
-    async def begin_analyze_text_job(
+    async def _begin_analyze_text_job(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Submit a collection of text documents for analysis. Specify one or more unique tasks to be
@@ -436,7 +436,7 @@ class _TextAnalysisClientOperationsMixin(
         """
 
     @distributed_trace_async
-    async def begin_analyze_text_job(
+    async def _begin_analyze_text_job(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
