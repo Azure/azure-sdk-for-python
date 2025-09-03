@@ -108,8 +108,9 @@ jobs:
 
     steps:
       - checkout: self
+        fetchTags: false
         sparseCheckoutPatterns: |
-          /**
+          **
 
       - ${{ parameters.PreSteps }}
 

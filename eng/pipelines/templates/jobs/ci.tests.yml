@@ -83,8 +83,9 @@ jobs:
 
     steps:
     - checkout: self
+      fetchTags: false
       sparseCheckoutPatterns: |
-        /**
+        **
 
     - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
 
