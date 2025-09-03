@@ -266,19 +266,18 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
 
     @overload
     def create_database(  # pylint:disable=docstring-missing-param
-            self,
-            id: str,
-            populate_query_metrics: Optional[bool] = None,
-            offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
-            *,
-            initial_headers: Optional[Dict[str, str]] = None,
-            response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
-            throughput_bucket: Optional[int] = None,
-            return_properties: Literal[False] = False,
-            **kwargs: Any
+        self,
+        id: str,
+        populate_query_metrics: Optional[bool] = None,
+        offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
+        *,
+        initial_headers: Optional[Dict[str, str]] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
+        throughput_bucket: Optional[int] = None,
+        return_properties: Literal[False] = False,
+        **kwargs: Any
     ) -> DatabaseProxy:
-        """
-        Create a new database with the given ID (name).
+        """Create a new database with the given ID (name).
 
         :param str id: ID (name) of the database to create.
         :param offer_throughput: The provisioned throughput for this offer.
@@ -306,19 +305,18 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
 
     @overload
     def create_database(  # pylint:disable=docstring-missing-param
-            self,
-            id: str,
-            populate_query_metrics: Optional[bool] = None,
-            offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
-            *,
-            initial_headers: Optional[Dict[str, str]] = None,
-            response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
-            throughput_bucket: Optional[int] = None,
-            return_properties: Literal[True],
-            **kwargs: Any
+        self,
+        id: str,
+        populate_query_metrics: Optional[bool] = None,
+        offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
+        *,
+        initial_headers: Optional[Dict[str, str]] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
+        throughput_bucket: Optional[int] = None,
+        return_properties: Literal[True],
+        **kwargs: Any
     ) -> tuple[DatabaseProxy, CosmosDict]:
-        """
-        Create a new database with the given ID (name).
+        """Create a new database with the given ID (name).
 
         :param str id: ID (name) of the database to create.
         :param offer_throughput: The provisioned throughput for this offer.
@@ -350,8 +348,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         *args: Any,
         **kwargs: Any
     ) -> Union[DatabaseProxy, tuple[DatabaseProxy, CosmosDict]]:
-        """
-        Create a new database with the given ID (name).
+        """Create a new database with the given ID (name).
+
         :param Any args: args
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.

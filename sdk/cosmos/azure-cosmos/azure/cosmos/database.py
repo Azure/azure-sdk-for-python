@@ -305,7 +305,7 @@ class DatabaseProxy(object):
         ...
 
     @distributed_trace
-    def create_container(  # pylint:disable=docstring-missing-param, pylint:disable=too-many-statements
+    def create_container(  # pylint:disable=docstring-missing-param, too-many-statements
         self,
         *args: Any,
         **kwargs: Any
