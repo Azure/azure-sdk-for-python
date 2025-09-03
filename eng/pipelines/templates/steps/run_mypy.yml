@@ -2,7 +2,6 @@ parameters:
   BuildTargetingString: 'azure-*'
   ServiceDirectory: ''
   TestMarkArgument: ''
-  EnvVars: {}
   AdditionalTestArgs: ''
 
 # Please use `$(TargetingString)` to refer to the python packages glob string. This variable is set from resolve-package-targeting.yml.
@@ -28,5 +27,6 @@ steps:
         --checks="mypy"
         --disablecov
         ${{ parameters.AdditionalTestArgs }}
-    env: ${{ parameters.EnvVars }}
+    env:
+      TOX_PIP_IMPL: "uv"
     condition: and(succeededOrFailed(), ne(variables['Skip.MyPy'],'true'))
