@@ -1,6 +1,6 @@
 # Release History
 
-## 11.7.0b1 (Unreleased)
+## 11.7.0b1 (2025-09-05)
 
 ### Features Added
 
@@ -34,10 +34,6 @@
 - Removed `azure.search.documents.agent.models.KnowledgeAgentSearchActivityRecordQuery`.
 - Removed `azure.search.documents.agent.models.KnowledgeAgentSemanticRankerActivityRecord`.
 - Added KnowledgeSource operations in `SearchIndexClient`.
-
-### Breaking Changes
-
-### Bugs Fixed
 
 ### Other Changes
 
