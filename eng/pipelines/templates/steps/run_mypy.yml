@@ -6,20 +6,8 @@ parameters:
 
 # Please use `$(TargetingString)` to refer to the python packages glob string. This variable is set from resolve-package-targeting.yml.
 steps:
-  - task: UsePythonVersion@0
-    displayName: 'Use Python 3.9'
-    inputs:
-      versionSpec: '3.9'
-    condition: and(succeededOrFailed(), ne(variables['Skip.MyPy'],'true'))
-
-  - script: |
-      $(PIP_EXE) install -r eng/ci_tools.txt
-    displayName: 'Prep Environment'
-    env:
-      VIRTUAL_ENV: ""
-      PYTHONHOME: ""
-    condition: and(succeededOrFailed(), ne(variables['Skip.MyPy'],'true'))
-
+  # this step should run on python 3.9.
+  # a previous step should have installed eng/ci_tools.txt to active venv
   - task: PythonScript@0
     displayName: 'Run MyPy'
     inputs:
