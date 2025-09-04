@@ -11,8 +11,10 @@ import sys
 from azure.appconfiguration.provider import WatchKey
 from devtools_testutils.aio import recorded_by_proxy_async
 from async_preparers import app_config_decorator_async
-from asynctestcase import AppConfigTestCase, has_feature_flag
+from testcase import has_feature_flag
+from asynctestcase import AppConfigTestCase
 from test_constants import FEATURE_MANAGEMENT_KEY
+from unittest.mock import Mock
 
 try:
     # Python 3.7 does not support AsyncMock
@@ -55,7 +57,7 @@ try:
                 await client.refresh()
                 assert client["refresh_message"] == "updated value"
                 assert has_feature_flag(client, "Alpha", True)
-                assert mock_callback.call_count == 1
+                assert mock_callback.call_count == 2
 
                 setting.value = "original value"
                 feature_flag.enabled = False
@@ -68,7 +70,7 @@ try:
                 await client.refresh()
                 assert client["refresh_message"] == "original value"
                 assert has_feature_flag(client, "Alpha", False)
-                assert mock_callback.call_count == 2
+                assert mock_callback.call_count == 4
 
                 setting.value = "updated value 2"
                 feature_flag.enabled = True
@@ -79,14 +81,14 @@ try:
                 await client.refresh()
                 assert client["refresh_message"] == "original value"
                 assert has_feature_flag(client, "Alpha", False)
-                assert mock_callback.call_count == 2
+                assert mock_callback.call_count == 4
 
                 setting.value = "original value"
                 await appconfig_client.set_configuration_setting(setting)
 
                 await client.refresh()
                 assert client["refresh_message"] == "original value"
-                assert mock_callback.call_count == 2
+                assert mock_callback.call_count == 4
 
         # method: refresh
         @app_config_decorator_async
