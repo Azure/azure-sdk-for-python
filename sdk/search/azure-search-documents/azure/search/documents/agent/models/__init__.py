@@ -45,13 +45,9 @@ from .._generated.models import (
     KnowledgeAgentSearchIndexActivityRecord,
     KnowledgeAgentSearchIndexReference,
     KnowledgeAgentSemanticRerankerActivityRecord,
-    KnowledgeAgentWebActivityArguments,
-    KnowledgeAgentWebActivityRecord,
-    KnowledgeAgentWebReference,
     KnowledgeSourceParams,
     RequestOptions,
     SearchIndexKnowledgeSourceParams,
-    WebKnowledgeSourceParams,
 )
 
 
@@ -82,5 +78,4 @@ __all__ = (
     "KnowledgeSourceParams",
     "RequestOptions",
     "SearchIndexKnowledgeSourceParams",
-    "WebKnowledgeSourceParams",
 )

@@ -10,7 +10,6 @@
 - Added `azure.search.documents.models.IndexerResyncBody`.
 - Added `azure.search.documents.indexes.models.KnowledgeAgentOutputConfiguration`.
 - Added `azure.search.documents.indexes.models.KnowledgeAgentOutputConfigurationModality`.
-- Added `azure.search.documents.indexes.models.KnowledgeAgentOutputOptimization`.
 - Added `azure.search.documents.indexes.models.KnowledgeSource`.
 - Added `azure.search.documents.indexes.models.KnowledgeSourceKind`.
 - Added `azure.search.documents.indexes.models.KnowledgeSourceReference`.
