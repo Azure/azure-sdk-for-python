@@ -141,6 +141,14 @@ class ExportedModelOperations(ExportedModelOperationsGenerated):
     async def get_exported_model(  # type: ignore[override]
         self, exported_model_name: str, **kwargs: Any
     ) -> ExportedTrainedModel:
+        """Gets the details of an exported model.
+
+        :param exported_model_name: The exported model name. Required.
+        :type exported_model_name: str
+        :return: ExportedTrainedModel. The ExportedTrainedModel is compatible with MutableMapping
+        :rtype: ~azure.ai.language.conversations.authoring.models.ExportedTrainedModel
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
         return await super().get_exported_model(
             project_name=self._project_name,
             exported_model_name=exported_model_name,
@@ -151,6 +159,16 @@ class ExportedModelOperations(ExportedModelOperationsGenerated):
     async def _get_exported_model_job_status(  # type: ignore[override]
         self, exported_model_name: str, job_id: str, **kwargs: Any
     ) -> ExportedModelState:
+        """Gets the status for an existing job to create or update an exported model.
+
+        :param exported_model_name: The exported model name. Required.
+        :type exported_model_name: str
+        :param job_id: The job ID. Required.
+        :type job_id: str
+        :return: ExportedModelState. The ExportedModelState is compatible with MutableMapping
+        :rtype: ~azure.ai.language.conversations.authoring.models._models.ExportedModelState
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
         return await super()._get_exported_model_job_status(
             project_name=self._project_name,
             exported_model_name=exported_model_name,
