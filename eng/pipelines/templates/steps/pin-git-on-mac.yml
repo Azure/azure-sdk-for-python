@@ -2,6 +2,9 @@ steps:
   - script: |
       set -euxo pipefail
 
+      echo "Initial git version:"
+      git --version
+
       # Pin Git to 2.50.1 because 2.51.0 breaks azure-sdk-for-python checkouts
       COMMIT=6b39030bc0d0a0a8df99afe37e5ae4d61ba07c88
       FORMULA_URL="https://raw.githubusercontent.com/Homebrew/homebrew-core/$COMMIT/Formula/g/git.rb"
