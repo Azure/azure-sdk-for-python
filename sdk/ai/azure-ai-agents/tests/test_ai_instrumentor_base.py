@@ -22,12 +22,17 @@ from test_agents_client_base import TestAgentClientBase
 
 CONTENT_TRACING_ENV_VARIABLE = "OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT"
 
+
 # We test different ways to create a thread & message, to cover all tracing code paths
 class MessageCreationMode(IntEnum):
-    MESSAGE_CREATE_STR = 1 # Test calls `client.messages.create(content="...", ...)` to create the messages in a dedicated call
-    MESSAGE_CREATE_INPUT_TEXT_BLOCK = 2 # Test calls `client.messages.create(content=[MessageInputTextBlock(...)], ...)` to create the message in a dedicated call
-    THREAD_CREATE_STR = 3 # Test calls `client.threads.create(messages=[ThreadMessageOptions(...)])`.
-    THREAD_CREATE_INPUT_TEXT_BLOCK = 4 # Test calls `client.threads.create(messages=[ThreadMessageOptions(content=[MessageInputTextBlock(...)])])`.
+    MESSAGE_CREATE_STR = (
+        1  # Test calls `client.messages.create(content="...", ...)` to create the messages in a dedicated call
+    )
+    MESSAGE_CREATE_INPUT_TEXT_BLOCK = 2  # Test calls `client.messages.create(content=[MessageInputTextBlock(...)], ...)` to create the message in a dedicated call
+    THREAD_CREATE_STR = 3  # Test calls `client.threads.create(messages=[ThreadMessageOptions(...)])`.
+    THREAD_CREATE_INPUT_TEXT_BLOCK = (
+        4  # Test calls `client.threads.create(messages=[ThreadMessageOptions(content=[MessageInputTextBlock(...)])])`.
+    )
 
 
 class TestAiAgentsInstrumentorBase(TestAgentClientBase):
@@ -72,18 +77,18 @@ class TestAiAgentsInstrumentorBase(TestAgentClientBase):
         )
 
     def _check_spans(
-            self,
-            model: str,
-            recording_enabled: bool,
-            instructions: str,
-            message: str,
-            have_submit_tools: bool,
-            use_stream: bool,
-            tool_message_attribute_content: str,
-            event_contents: List[str],
-            run_step_events: Optional[List[List[Dict[str, Any]]]] = None,
-            has_annotations: bool = False,
-        ):
+        self,
+        model: str,
+        recording_enabled: bool,
+        instructions: str,
+        message: str,
+        have_submit_tools: bool,
+        use_stream: bool,
+        tool_message_attribute_content: str,
+        event_contents: List[str],
+        run_step_events: Optional[List[List[Dict[str, Any]]]] = None,
+        has_annotations: bool = False,
+    ):
         """Check the spans for correctness."""
         spans = self.exporter.get_spans_by_name("create_agent my-agent")
         assert len(spans) == 1
@@ -98,7 +103,7 @@ class TestAiAgentsInstrumentorBase(TestAgentClientBase):
         ]
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
         assert attributes_match == True
-        
+
         content = f'{{"content": "{instructions}"}}' if recording_enabled else "{}"
         expected_events = [
             {
@@ -111,7 +116,7 @@ class TestAiAgentsInstrumentorBase(TestAgentClientBase):
         ]
         events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
         assert events_match == True
-        
+
         spans = self.exporter.get_spans_by_name("create_thread")
         assert len(spans) == 1
         span = spans[0]
@@ -163,11 +168,8 @@ class TestAiAgentsInstrumentorBase(TestAgentClientBase):
                 ("gen_ai.thread.run.id", ""),
             ]
             if not use_stream:
-                expected_attributes.extend([
-                    ('gen_ai.thread.run.status', ''),
-                    ('gen_ai.response.model', model)
-                ])
-                
+                expected_attributes.extend([("gen_ai.thread.run.status", ""), ("gen_ai.response.model", model)])
+
             attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
             assert attributes_match == True
         else:
@@ -192,7 +194,7 @@ class TestAiAgentsInstrumentorBase(TestAgentClientBase):
             ]
             attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
             assert attributes_match == True
-    
+
             tool_attr = tool_message_attribute_content if recording_enabled else ""
             expected_events = [
                 {
@@ -231,7 +233,7 @@ class TestAiAgentsInstrumentorBase(TestAgentClientBase):
             ]
             events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
             assert events_match == True
-        
+
         spans = self.exporter.get_spans_by_name("list_messages")
         assert len(spans) >= 2
         span = spans[0]
@@ -243,7 +245,7 @@ class TestAiAgentsInstrumentorBase(TestAgentClientBase):
         ]
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
         assert attributes_match == True
-        
+
         if recording_enabled:
             if has_annotations:
                 content = '{"content": {"text": {"value": "*", "annotations": "*"}}, "role": "assistant"}'
@@ -271,8 +273,12 @@ class TestAiAgentsInstrumentorBase(TestAgentClientBase):
         span = spans[-1]
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
         assert attributes_match == True
-        
-        content = f'{{"content": {{"text": {{"value": "{message}"}}}}, "role": "user"}}'  if recording_enabled else '{"role": "user"}'
+
+        content = (
+            f'{{"content": {{"text": {{"value": "{message}"}}}}, "role": "user"}}'
+            if recording_enabled
+            else '{"role": "user"}'
+        )
         expected_events = [
             {
                 "name": "gen_ai.user.message",
@@ -280,13 +286,13 @@ class TestAiAgentsInstrumentorBase(TestAgentClientBase):
                     "gen_ai.system": "az.ai.agents",
                     "gen_ai.thread.id": "*",
                     "gen_ai.message.id": "*",
-                    "gen_ai.event.content": content
+                    "gen_ai.event.content": content,
                 },
             },
         ]
         events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
         assert events_match == True
-        
+
         spans = self.exporter.get_spans_by_name("list_run_steps")
         if run_step_events:
             expected_attributes = [
@@ -332,24 +338,30 @@ class TestAiAgentsInstrumentorBase(TestAgentClientBase):
                 },
             ]
         ]
-        expected_event_content = '{"tool_calls": [{"id": "*", "type": "function", "function": {"name": "fetch_weather", "arguments": {"location": "New York"}}}]}' if recording_enabled else '{"tool_calls": [{"id": "*", "type": "function"}]}'
-        expected_spans.append([
-            {
-                "name": "gen_ai.run_step.tool_calls",
-                "attributes": {
-                    "gen_ai.system": "az.ai.agents",
-                    "gen_ai.thread.id": "*",
-                    "gen_ai.agent.id": "*",
-                    "gen_ai.thread.run.id": "*",
-                    "gen_ai.run_step.status": "completed",
-                    "gen_ai.run_step.start.timestamp": "*",
-                    "gen_ai.run_step.end.timestamp": "*",
-                    "gen_ai.usage.input_tokens": "+",
-                    "gen_ai.usage.output_tokens": "+",
-                    "gen_ai.event.content": expected_event_content
+        expected_event_content = (
+            '{"tool_calls": [{"id": "*", "type": "function", "function": {"name": "fetch_weather", "arguments": {"location": "New York"}}}]}'
+            if recording_enabled
+            else '{"tool_calls": [{"id": "*", "type": "function"}]}'
+        )
+        expected_spans.append(
+            [
+                {
+                    "name": "gen_ai.run_step.tool_calls",
+                    "attributes": {
+                        "gen_ai.system": "az.ai.agents",
+                        "gen_ai.thread.id": "*",
+                        "gen_ai.agent.id": "*",
+                        "gen_ai.thread.run.id": "*",
+                        "gen_ai.run_step.status": "completed",
+                        "gen_ai.run_step.start.timestamp": "*",
+                        "gen_ai.run_step.end.timestamp": "*",
+                        "gen_ai.usage.input_tokens": "+",
+                        "gen_ai.usage.output_tokens": "+",
+                        "gen_ai.event.content": expected_event_content,
+                    },
                 },
-            },
-        ])
+            ]
+        )
         return expected_spans
 
     def get_expected_openapi_spans(self):
@@ -372,42 +384,44 @@ class TestAiAgentsInstrumentorBase(TestAgentClientBase):
                 },
             ]
         ]
-        expected_spans.append([
-            {
-                "name": "gen_ai.run_step.tool_calls",
-                "attributes": {
-                    "gen_ai.system": "az.ai.agents",
-                    "gen_ai.thread.id": "*",
-                    "gen_ai.agent.id": "*",
-                    "gen_ai.thread.run.id": "*",
-                    "gen_ai.run_step.status": "completed",
-                    "gen_ai.run_step.start.timestamp": "*",
-                    "gen_ai.run_step.end.timestamp": "*",
-                    "gen_ai.usage.input_tokens": "+",
-                    "gen_ai.usage.output_tokens": "+",
-                    "gen_ai.event.content": '{"tool_calls": [{"id": "*", "type": "openapi", "function": {"name": "get_weather_GetCurrentWeather", "arguments": "*", "output": "*"}}]}'
+        expected_spans.append(
+            [
+                {
+                    "name": "gen_ai.run_step.tool_calls",
+                    "attributes": {
+                        "gen_ai.system": "az.ai.agents",
+                        "gen_ai.thread.id": "*",
+                        "gen_ai.agent.id": "*",
+                        "gen_ai.thread.run.id": "*",
+                        "gen_ai.run_step.status": "completed",
+                        "gen_ai.run_step.start.timestamp": "*",
+                        "gen_ai.run_step.end.timestamp": "*",
+                        "gen_ai.usage.input_tokens": "+",
+                        "gen_ai.usage.output_tokens": "+",
+                        "gen_ai.event.content": '{"tool_calls": [{"id": "*", "type": "openapi", "function": {"name": "get_weather_GetCurrentWeather", "arguments": "*", "output": "*"}}]}',
+                    },
                 },
-            },
-        ])
+            ]
+        )
         return expected_spans
 
     def get_expected_mcp_spans(self):
         """Get spans for the MCP tool call."""
         expected_event_content = json.dumps(
-            {'tool_calls': 
-                [
+            {
+                "tool_calls": [
                     {
                         "id": "*",
                         "type": "mcp",
-                        "arguments": json.dumps({"query": "Readme","page": 1}),
+                        "arguments": json.dumps({"query": "Readme", "page": 1}),
                         "name": "search_azure_rest_api_code",
                         "output": "*",
-                        "server_label": "github"
+                        "server_label": "github",
                     }
                 ]
             }
         )
-        
+
         expected_spans = [
             [
                 {
@@ -427,42 +441,41 @@ class TestAiAgentsInstrumentorBase(TestAgentClientBase):
                 },
             ]
         ]
-        expected_spans.append([
-            {
-                "name": "gen_ai.run_step.tool_calls",
-                "attributes": {
-                    "gen_ai.system": "az.ai.agents",
-                    "gen_ai.thread.id": "*",
-                    "gen_ai.agent.id": "*",
-                    "gen_ai.thread.run.id": "*",
-                    "gen_ai.run_step.status": "completed",
-                    "gen_ai.run_step.start.timestamp": "*",
-                    "gen_ai.run_step.end.timestamp": "*",
-                    "gen_ai.usage.input_tokens": "+",
-                    "gen_ai.usage.output_tokens": "+",
-                    "gen_ai.event.content": expected_event_content
+        expected_spans.append(
+            [
+                {
+                    "name": "gen_ai.run_step.tool_calls",
+                    "attributes": {
+                        "gen_ai.system": "az.ai.agents",
+                        "gen_ai.thread.id": "*",
+                        "gen_ai.agent.id": "*",
+                        "gen_ai.thread.run.id": "*",
+                        "gen_ai.run_step.status": "completed",
+                        "gen_ai.run_step.start.timestamp": "*",
+                        "gen_ai.run_step.end.timestamp": "*",
+                        "gen_ai.usage.input_tokens": "+",
+                        "gen_ai.usage.output_tokens": "+",
+                        "gen_ai.event.content": expected_event_content,
+                    },
                 },
-            },
-        ])
+            ]
+        )
         expected_spans.append([])
         return expected_spans
 
     def get_expected_deep_research_spans(self):
         expected_event_content = json.dumps(
-            {'tool_calls': 
-                [
+            {
+                "tool_calls": [
                     {
                         "id": "*",
                         "type": "deep_research",
-                        "deep_research": {
-                            "input": "*",
-                            "output": "*"
-                        },
+                        "deep_research": {"input": "*", "output": "*"},
                     }
                 ]
             }
         )
-        
+
         expected_spans = [
             [
                 {
@@ -482,21 +495,23 @@ class TestAiAgentsInstrumentorBase(TestAgentClientBase):
                 },
             ]
         ] * 4
-        expected_spans.append([
-            {
-                "name": "gen_ai.run_step.tool_calls",
-                "attributes": {
-                    "gen_ai.system": "az.ai.agents",
-                    "gen_ai.thread.id": "*",
-                    "gen_ai.agent.id": "*",
-                    "gen_ai.thread.run.id": "*",
-                    "gen_ai.run_step.status": "completed",
-                    "gen_ai.run_step.start.timestamp": "*",
-                    "gen_ai.run_step.end.timestamp": "*",
-                    "gen_ai.usage.input_tokens": "+",
-                    "gen_ai.usage.output_tokens": "+",
-                    "gen_ai.event.content": expected_event_content
+        expected_spans.append(
+            [
+                {
+                    "name": "gen_ai.run_step.tool_calls",
+                    "attributes": {
+                        "gen_ai.system": "az.ai.agents",
+                        "gen_ai.thread.id": "*",
+                        "gen_ai.agent.id": "*",
+                        "gen_ai.thread.run.id": "*",
+                        "gen_ai.run_step.status": "completed",
+                        "gen_ai.run_step.start.timestamp": "*",
+                        "gen_ai.run_step.end.timestamp": "*",
+                        "gen_ai.usage.input_tokens": "+",
+                        "gen_ai.usage.output_tokens": "+",
+                        "gen_ai.event.content": expected_event_content,
+                    },
                 },
-            },
-        ])
+            ]
+        )
         return expected_spans
