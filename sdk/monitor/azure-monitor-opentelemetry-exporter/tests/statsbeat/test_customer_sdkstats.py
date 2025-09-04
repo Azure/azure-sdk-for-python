@@ -402,38 +402,23 @@ class TestCustomerSdkStats(unittest.TestCase):
         http_status_totals = {}
         client_exception_totals = {}
         
-        print("\n*** DEBUG: Examining telemetry_success field processing ***")
-        print(f"Total item drop count structure: {metrics._counters.total_item_drop_count}")
-        
         for telemetry_type, drop_code_data in metrics._counters.total_item_drop_count.items():
-            print(f"\nTelemetry type: {telemetry_type}")
             for drop_code, reason_map in drop_code_data.items():
-                print(f"  Drop code: {drop_code}")
-                print(f"  Reason map type: {type(reason_map)}")
-                
                 if isinstance(reason_map, dict):
                     for reason, success_map in reason_map.items():
-                        print(f"    Reason: {reason}")
-                        print(f"    Success map type: {type(success_map)}")
-                        print(f"    Success map value: {success_map}")
-                        
                         # Check if success_map is a dictionary (as expected)
                         if isinstance(success_map, dict):
                             for success_tracker, count in success_map.items():
-                                print(f"      Success tracker: {success_tracker}, Count: {count}")
                                 actual_dropped_count += count
                                 category_totals[reason] = category_totals.get(reason, 0) + count
                                 
                                 # Track counts by telemetry_success
                                 if success_tracker is True:
                                     actual_success_true_count += count
-                                    print(f"      Adding {count} to success_true_count, now {actual_success_true_count}")
                                 elif success_tracker is False:
                                     actual_success_false_count += count
-                                    print(f"      Adding {count} to success_false_count, now {actual_success_false_count}")
                                 else:  # None
                                     actual_non_req_dep_count += count
-                                    print(f"      Adding {count} to non_req_dep_count, now {actual_non_req_dep_count}")
                                 
                                 # Separate HTTP status codes from client exceptions
                                 if isinstance(drop_code, int):
@@ -441,7 +426,6 @@ class TestCustomerSdkStats(unittest.TestCase):
                                 elif isinstance(drop_code, DropCode):
                                     client_exception_totals[reason] = client_exception_totals.get(reason, 0) + count
                         else:
-                            print(f"    WARNING: success_map is not a dict but a {type(success_map)}: {success_map}")
                             count = success_map
                             actual_dropped_count += count
                             category_totals[reason] = category_totals.get(reason, 0) + count
@@ -466,37 +450,6 @@ class TestCustomerSdkStats(unittest.TestCase):
         # Verify aggregation occurred
         self.assertGreater(len(http_status_totals) + len(client_exception_totals), 0, 
                           "At least one type of drop should have occurred")
-        
-        # Write detailed debug output to a file
-        with open("telemetry_debug.log", "w") as f:
-            f.write("*** TELEMETRY SUCCESS DEBUG ***\n")
-            f.write(f"actual_success_true_count: {actual_success_true_count}\n")
-            f.write(f"actual_success_false_count: {actual_success_false_count}\n")
-            f.write(f"actual_non_req_dep_count: {actual_non_req_dep_count}\n")
-            f.write(f"category_totals: {category_totals}\n")
-            f.write(f"http_status_totals: {http_status_totals}\n")
-            f.write(f"client_exception_totals: {client_exception_totals}\n\n")
-            
-            f.write("--- Full total_item_drop_count structure ---\n")
-            for telemetry_type, drop_code_data in metrics._counters.total_item_drop_count.items():
-                f.write(f"\nTelemetry type: {telemetry_type}\n")
-                for drop_code, reason_map in drop_code_data.items():
-                    f.write(f"  Drop code: {drop_code}\n")
-                    f.write(f"  Reason map type: {type(reason_map)}\n")
-                    
-                    if isinstance(reason_map, dict):
-                        for reason, success_map in reason_map.items():
-                            f.write(f"    Reason: {reason}\n")
-                            f.write(f"    Success map type: {type(success_map)}\n")
-                            f.write(f"    Success map value: {success_map}\n")
-                            
-                            if isinstance(success_map, dict):
-                                for success_tracker, count in success_map.items():
-                                    f.write(f"      Success tracker: {success_tracker}, Count: {count}\n")
-                            else:
-                                f.write(f"    WARNING: success_map is not a dict but a {type(success_map)}: {success_map}\n")
-                    else:
-                        f.write(f"  WARNING: reason_map is not a dict but a {type(reason_map)}: {reason_map}\n")
         
         # Verify that both integer and enum drop codes are being stored properly
         drop_code_types = set()

@@ -415,6 +415,85 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
         exporter = BaseExporter(connection_string="InstrumentationKey=12345678-1234-5678-abcd-12345678abcd")
         exporter._customer_sdkstats_metrics = None
         self.assertFalse(exporter._should_collect_customer_sdkstats())
+    
+    def test_track_dropped_items_client_exception_failed_request(self):
+        """Test that CLIENT_EXCEPTION is properly tracked with telemetry_success=False in dropped items."""
+        exporter = self._create_exporter_with_customer_sdkstats_enabled()
+        
+        exporter._customer_sdkstats_metrics.count_dropped_items = mock.Mock()
+
+        # Create a properly configured RequestData envelope with success=False
+        from azure.monitor.opentelemetry.exporter._generated.models import RequestData, MonitorBase
+        request_envelope = TelemetryItem(
+            name="Test Request", 
+            time=datetime.now(),
+            data=MonitorBase(
+                base_type="RequestData",
+                base_data=RequestData(
+                    name="TestRequest",
+                    url="http://test.com",
+                    id="test-id",
+                    duration="PT1S",
+                    response_code="500",  # Error response code
+                    success=False  # Set success to False to test telemetry_success=False
+                )
+            )
+        )
+        
+        envelopes = [request_envelope]
+
+        exporter._customer_sdkstats_metrics.count_dropped_items.reset_mock()
+
+        from azure.monitor.opentelemetry.exporter.statsbeat._utils import _track_dropped_items
+        _track_dropped_items(exporter._customer_sdkstats_metrics, envelopes, DropCode.CLIENT_EXCEPTION,_exception_categories.CLIENT_EXCEPTION.value)
+
+        exporter._customer_sdkstats_metrics.count_dropped_items.assert_called_once_with(
+            1,
+            'REQUEST',
+            DropCode.CLIENT_EXCEPTION,
+            False,  # This should match success=False in the RequestData
+            _exception_categories.CLIENT_EXCEPTION.value
+        )
+        
+    def test_track_dropped_items_client_exception_successful_dependency(self):
+        """Test that CLIENT_EXCEPTION is properly tracked with telemetry_success=True for RemoteDependencyData."""
+        exporter = self._create_exporter_with_customer_sdkstats_enabled()
+        
+        exporter._customer_sdkstats_metrics.count_dropped_items = mock.Mock()
+
+        # Create a properly configured RemoteDependencyData envelope with success=True
+        from azure.monitor.opentelemetry.exporter._generated.models import RemoteDependencyData, MonitorBase
+        dependency_envelope = TelemetryItem(
+            name="Test Dependency", 
+            time=datetime.now(),
+            data=MonitorBase(
+                base_type="RemoteDependencyData",
+                base_data=RemoteDependencyData(
+                    name="TestDependency",
+                    id="test-dep-id",
+                    duration="PT1S",
+                    result_code="200",  # Success result code
+                    success=True,  # Set success to True to test telemetry_success=True
+                    data="Test Dependency Data",
+                    type="HTTP"
+                )
+            )
+        )
+        
+        envelopes = [dependency_envelope]
+
+        exporter._customer_sdkstats_metrics.count_dropped_items.reset_mock()
+
+        from azure.monitor.opentelemetry.exporter.statsbeat._utils import _track_dropped_items
+        _track_dropped_items(exporter._customer_sdkstats_metrics, envelopes, DropCode.CLIENT_EXCEPTION, _exception_categories.CLIENT_EXCEPTION.value)
+
+        exporter._customer_sdkstats_metrics.count_dropped_items.assert_called_once_with(
+            1,
+            'DEPENDENCY',  # Correct type from the envelope's base_type mapped to telemetry type
+            DropCode.CLIENT_EXCEPTION,
+            True,  # This should match success=True in the RemoteDependencyData
+            _exception_categories.CLIENT_EXCEPTION.value
+        )
 
 
 if __name__ == "__main__":

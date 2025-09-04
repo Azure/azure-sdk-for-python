@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 import os
-from typing import Optional, List, Tuple
+from typing import Optional, List, Tuple, Union
 
 from requests import ReadTimeout, Timeout
 from azure.core.exceptions import ServiceRequestTimeoutError
@@ -162,7 +162,7 @@ def _track_dropped_items(
                     1,
                     telemetry_type,
                     drop_code,
-                    telemetry_success=_get_telemetry_success_flag(envelope) if telemetry_type in (_REQUEST, _DEPENDENCY) else None
+                    _get_telemetry_success_flag(envelope) if telemetry_type in (_REQUEST, _DEPENDENCY) else None
                 )
         else:
             for envelope in envelopes:
@@ -171,8 +171,8 @@ def _track_dropped_items(
                     1,
                     telemetry_type,
                     drop_code,
-                    telemetry_success=_get_telemetry_success_flag(envelope) if telemetry_type in (_REQUEST, _DEPENDENCY) else None,
-                    exception_message=error_message
+                    _get_telemetry_success_flag(envelope) if telemetry_type in (_REQUEST, _DEPENDENCY) else None,
+                    error_message
                 )
 
 def _track_retry_items(customer_sdkstats_metrics, envelopes: List[TelemetryItem], error) -> None:
@@ -236,12 +236,21 @@ def _get_customer_sdkstats_export_interval() -> int:
             return _DEFAULT_STATS_SHORT_EXPORT_INTERVAL
     return _DEFAULT_STATS_SHORT_EXPORT_INTERVAL
 
-def _get_telemetry_success_flag(envelope: List[TelemetryItem]) -> bool:
-    if not hasattr(envelope, "data") or not hasattr(envelope.data, "base_data"):
+def _get_telemetry_success_flag(envelope: TelemetryItem) -> Union[bool, None]:
+
+    if not hasattr(envelope, "data") or envelope.data is None:
         return None
-    base_type = envelope.data.base_type if hasattr(envelope.data, "base_type") else None
-    if base_type == "RequestData":
+        
+    if not hasattr(envelope.data, "base_type") or envelope.data.base_type is None:
+        return None
+        
+    if not hasattr(envelope.data, "base_data") or envelope.data.base_data is None:
+        return None
+        
+    base_type = envelope.data.base_type
+    
+    if base_type == "RequestData" and hasattr(envelope.data.base_data, "success"):
         return envelope.data.base_data.success
-    elif base_type == "RemoteDependencyData":
+    if base_type == "RemoteDependencyData" and hasattr(envelope.data.base_data, "success"):
         return envelope.data.base_data.success
     return None
