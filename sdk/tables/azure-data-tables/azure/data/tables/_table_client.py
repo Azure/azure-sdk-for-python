@@ -146,7 +146,7 @@ class TableClient(TablesBaseClient):
         cls,
         table_url: str,
         *,
-        credential: Optional[Union[AzureNamedKeyCredential, AzureSasCredential]] = None,
+        credential: Optional[Union[AzureNamedKeyCredential, AzureSasCredential, TokenCredential]] = None,
         **kwargs: Any,
     ) -> "TableClient":
         """A client to interact with a specific Table.
