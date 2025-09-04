@@ -1,0 +1,26 @@
+steps:
+  - script: |
+      set -euxo pipefail
+
+      # Pin Git to 2.50.1 because 2.51.0 breaks azure-sdk-for-python checkouts
+      COMMIT=6b39030bc0d0a0a8df99afe37e5ae4d61ba07c88
+      FORMULA_URL="https://raw.githubusercontent.com/Homebrew/homebrew-core/$COMMIT/Formula/g/git.rb"
+      FORMULA_PATH="$(brew --repository)/Library/Taps/homebrew/homebrew-core/Formula/g/git.rb"
+
+      echo "Downloading pinned git formula..."
+      mkdir -p "$(dirname $FORMULA_PATH)"
+      curl -fsSL "$FORMULA_URL" -o "$FORMULA_PATH"
+
+      echo "Uninstalling existing git..."
+      brew uninstall --ignore-dependencies git || true
+
+      echo "Installing pinned git version..."
+      HOMEBREW_NO_AUTO_UPDATE=1 HOMEBREW_NO_INSTALL_FROM_API=1 brew install git
+
+      echo "Forcing Homebrew's git to be first on PATH..."
+      echo "##vso[task.setvariable variable=PATH]$(brew --prefix)/bin:$(PATH)"
+
+      echo "Final git version:"
+      git --version
+    displayName: "Pin Git to 2.50.1"
+    condition: and(succeededOrFailed(), eq(variables['Agent.OS'], 'Darwin'))

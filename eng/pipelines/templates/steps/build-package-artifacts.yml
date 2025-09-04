@@ -25,10 +25,10 @@ parameters:
     default: []
 
 steps:
-  - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
-    parameters:
-      Paths:
-        - '**'
+  - template: /eng/pipelines/templates/steps/pin-git-on-mac.yml
+
+  - checkout: self
+    fetchTags: false
 
   - task: UsePythonVersion@0
     displayName: 'Use Python $(PythonVersion)'

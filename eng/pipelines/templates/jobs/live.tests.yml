@@ -107,10 +107,10 @@ jobs:
       container: $[ variables['Container'] ]
 
     steps:
-      - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
-        parameters:
-          Paths:
-            - '**'
+      - template: /eng/pipelines/templates/steps/pin-git-on-mac.yml
+
+      - checkout: self
+        fetchTags: false
 
       - ${{ parameters.PreSteps }}
 
