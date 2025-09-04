@@ -98,27 +98,32 @@ steps:
      scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
      arguments: '"$(TargetingString)" --service=${{parameters.ServiceDirectory}} --toxenv=verifywhl ${{ parameters.AdditionalTestArgs }}'
 
+  # 3.9
   - template: run_mypy.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
       TestMarkArgument: ${{ parameters.TestMarkArgument }}
       AdditionalTestArgs: ${{ parameters.AdditionalTestArgs }}
 
+  # 3.9
   - template: run_pyright.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
       TestMarkArgument: ${{ parameters.TestMarkArgument }}
       AdditionalTestArgs: ${{ parameters.AdditionalTestArgs }}
 
+  # 3.9
   - template: run_pylint.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
       AdditionalTestArgs: ${{ parameters.AdditionalTestArgs }}
 
+  # 3.9
   - template: run_black.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
 
+  # still on 3.9
   - task: PythonScript@0
     displayName: 'Run Keyword Validation Check'
     inputs:
@@ -126,38 +131,45 @@ steps:
       arguments: '"$(TargetingString)" --service=${{parameters.ServiceDirectory}} --toxenv=verify_keywords ${{ parameters.AdditionalTestArgs }}'
     condition: and(succeededOrFailed(), ne(variables['Skip.KeywordCheck'],'true'))
 
+  # still on 3.9
   - template: ../steps/run_bandit.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
       TestMarkArgument: ${{ parameters.TestMarkArgument }}
       AdditionalTestArgs: ${{ parameters.AdditionalTestArgs }}
 
+  # swap to 3.9
   - template: /eng/pipelines/templates/steps/update_snippet.yml
     parameters:
       PackageInfoFolder: $(Build.ArtifactStagingDirectory)/PackageInfo
 
+  # still on 3.9
   - template: ../steps/run_breaking_changes.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
       TestMarkArgument: ${{ parameters.TestMarkArgument }}
       AdditionalTestArgs: ${{ parameters.AdditionalTestArgs }}
 
+  # doesn't care
   - template: /eng/common/pipelines/templates/steps/create-apireview.yml
     parameters:
       Artifacts: ${{ parameters.Artifacts }}
       GenerateApiReviewForManualOnly: ${{ parameters.GenerateApiReviewForManualOnly }}
       ArtifactName: "packages_extended"
 
+  # doesn't care
   - template: /eng/common/pipelines/templates/steps/detect-api-changes.yml
     parameters:
       Artifacts: ${{ parameters.Artifacts }}
       ArtifactName: "packages_extended"
 
+  # doesn't care
   - template: /eng/common/pipelines/templates/steps/validate-all-packages.yml
     parameters:
       Artifacts: ${{ parameters.Artifacts }}
       ArtifactName: "packages_extended"
 
+  # doesn't care
   - template: /eng/common/pipelines/templates/steps/eng-common-workflow-enforcer.yml
 
   # the pip authenticate task sets PIP_INDEX_URL value to the internal feed URL
