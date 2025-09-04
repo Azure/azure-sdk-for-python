@@ -39,7 +39,6 @@ from azure.ai.agents.telemetry._ai_agents_instrumentor import _AIAgentsInstrumen
 from azure.ai.agents.telemetry import AIAgentsInstrumentor, _utils
 from azure.core.settings import settings
 from gen_ai_trace_verifier import GenAiTraceVerifier
-from opentelemetry import trace
 from azure.ai.agents import AgentsClient
 
 from devtools_testutils import (
@@ -49,7 +48,6 @@ from devtools_testutils import (
 from test_agents_client_base import agentClientPreparer
 from test_ai_instrumentor_base import TestAiAgentsInstrumentorBase, MessageCreationMode, CONTENT_TRACING_ENV_VARIABLE
 
-#CONTENT_TRACING_ENV_VARIABLE = "OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT"
 settings.tracing_implementation = "OpenTelemetry"
 _utils._span_impl_type = settings.tracing_implementation()
 
