@@ -159,7 +159,8 @@ class TableClient(AsyncTablesBaseClient):
             AzureSasCredential (azure-core), or a AsyncTokenCredential implementation from azure-identity.
         :paramtype credential:
             ~azure.core.credentials.AzureNamedKeyCredential or
-            ~azure.core.credentials.AzureSasCredential or None
+            ~azure.core.credentials.AzureSasCredential or
+            ~azure.core.credentials_async.AsyncTokenCredential or None
         :returns: A table client.
         :rtype: ~azure.data.tables.TableClient
         """
