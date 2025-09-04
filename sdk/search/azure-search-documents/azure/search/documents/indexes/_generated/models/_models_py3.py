@@ -8031,7 +8031,7 @@ class PatternAnalyzer(LexicalAnalyzer):
         *,
         name: str,
         lower_case_terms: bool = True,
-        pattern: str = "\W+",
+        pattern: str = r"\W+",
         flags: Optional[Union[str, "_models.RegexFlags"]] = None,
         stopwords: Optional[List[str]] = None,
         **kwargs: Any
@@ -8256,7 +8256,7 @@ class PatternTokenizer(LexicalTokenizer):
         self,
         *,
         name: str,
-        pattern: str = "\W+",
+        pattern: str = r"\W+",
         flags: Optional[Union[str, "_models.RegexFlags"]] = None,
         group: int = -1,
         **kwargs: Any
