@@ -249,8 +249,6 @@ def _get_telemetry_success_flag(envelope: TelemetryItem) -> Union[bool, None]:
         
     base_type = envelope.data.base_type
     
-    if base_type == "RequestData" and hasattr(envelope.data.base_data, "success"):
-        return envelope.data.base_data.success
-    if base_type == "RemoteDependencyData" and hasattr(envelope.data.base_data, "success"):
+    if base_type in ("RequestData", "RemoteDependencyData") and hasattr(envelope.data.base_data, "success"):
         return envelope.data.base_data.success
     return None
