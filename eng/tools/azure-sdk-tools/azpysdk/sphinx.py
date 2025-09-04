@@ -54,44 +54,6 @@ ci_doc_dir = os.path.join(REPO_ROOT, '_docs')
 sphinx_conf_dir = os.path.join(REPO_ROOT, 'doc/sphinx')
 generate_mgmt_script = os.path.join(REPO_ROOT, "doc/sphinx/generate_doc.py")
 
-# TODO???
-PYTHON_VERSION = "3.11"
-
-# env prep helper functions TODO is this sdist unzipping logic still needed?
-
-
-# def unzip_sdist_to_directory(containing_folder: str) -> str:
-#     zips = glob.glob(os.path.join(containing_folder, "*.zip"))
-#     if zips:
-#         return unzip_file_to_directory(zips[0], containing_folder)
-#     else:
-#         tars = glob.glob(os.path.join(containing_folder, "*.tar.gz"))
-#         return unzip_file_to_directory(tars[0], containing_folder)
-
-# def unzip_file_to_directory(path_to_zip_file: str, extract_location: str) -> str:
-#     logger.debug("?")
-#     logger.debug(path_to_zip_file)
-#     if path_to_zip_file.endswith(".zip"):
-#         logger.debug("hey")
-#         with zipfile.ZipFile(path_to_zip_file, "r") as zip_ref:
-#             zip_ref.extractall(extract_location)
-#             extracted_dir = os.path.basename(os.path.splitext(path_to_zip_file)[0])
-#             return os.path.join(extract_location, extracted_dir)
-#     else:
-#         logger.debug("hey2")
-#         with tarfile.open(path_to_zip_file) as tar_ref:
-#             tar_ref.extractall(extract_location)
-#             extracted_dir = os.path.basename(path_to_zip_file).replace(".tar.gz", "")
-#             return os.path.join(extract_location, extracted_dir)
-
-# def move_and_rename(source_location):
-#     new_location = os.path.join(os.path.dirname(source_location), "unzipped")
-
-#     if os.path.exists(new_location):
-#         shutil.rmtree(new_location)
-
-#     os.rename(source_location, new_location)
-#     return new_location
 
 def create_index_file(readme_location, package_rst):
     readme_ext = os.path.splitext(readme_location)[1]
@@ -152,14 +114,14 @@ def copy_existing_docs(source: str, target: str) -> None:
         logger.info("Copying {}".format(file))
         shutil.copy(os.path.join(source, file), target)
 
-def mgmt_apidoc(working_dir: str, target_folder: str, executable: str) -> int:
+def mgmt_apidoc(output_dir: str, target_folder: str, executable: str) -> int:
     command_array = [
         executable,
         generate_mgmt_script,
         "-p",
         target_folder,
         "-o",
-        working_dir,
+        output_dir,
         "--verbose",
         ]
 
@@ -172,32 +134,32 @@ def mgmt_apidoc(working_dir: str, target_folder: str, executable: str) -> int:
     except CalledProcessError as e:
         logger.error(
             "script failed for path {} exited with error {}".format(
-                working_dir, e.returncode
+                output_dir, e.returncode
             )
         )
         return 1
     return 0
 
-def sphinx_apidoc(working_dir: str, namespace: str) -> int:
-    working_doc_folder = os.path.join(working_dir, "doc")
+def sphinx_apidoc(output_dir: str, target_dir: str, namespace: str) -> int:
+    working_doc_folder = os.path.join(output_dir, "doc")
     command_array = [
             "sphinx-apidoc",
             "--no-toc",
             "--module-first",
             "-o",
-            os.path.join(working_dir, "docgen"),   # This is the output folder
-            os.path.join(working_dir, ""),         # This is the input folder
-            os.path.join(working_dir, "test*"),    # Starting here this, is excluded
-            os.path.join(working_dir, "example*"),
-            os.path.join(working_dir, "sample*"),
-            os.path.join(working_dir, "setup.py"),
+            os.path.join(output_dir, "docgen"),   # This is the output folder
+            os.path.join(target_dir, ""),         # This is the input folder
+            os.path.join(target_dir, "test*"),    # Starting here this, is excluded
+            os.path.join(target_dir, "example*"),
+            os.path.join(target_dir, "sample*"),
+            os.path.join(target_dir, "setup.py"),
         ]
 
     try:
         # if a `doc` folder exists, just leverage the sphinx sources found therein.
         if os.path.exists(working_doc_folder):
             logger.info("Copying files into sphinx source folder.")
-            copy_existing_docs(working_doc_folder, os.path.join(working_dir, "docgen"))
+            copy_existing_docs(working_doc_folder, os.path.join(output_dir, "docgen"))
 
         # otherwise, we will run sphinx-apidoc to generate the sources
         else:
@@ -207,7 +169,7 @@ def sphinx_apidoc(working_dir: str, namespace: str) -> int:
             )
             # We need to clean "azure.rst", and other RST before the main namespaces, as they are never
             # used and will log as a warning later by sphinx-build, which is blocking strict_sphinx
-            base_path = Path(os.path.join(working_dir, "docgen/"))
+            base_path = Path(os.path.join(output_dir, "docgen/"))
             namespace = namespace.rpartition('.')[0]
             while namespace:
                 rst_file_to_delete = base_path / f"{namespace}.rst"
@@ -217,7 +179,7 @@ def sphinx_apidoc(working_dir: str, namespace: str) -> int:
     except CalledProcessError as e:
         logger.error(
             "sphinx-apidoc failed for path {} exited with error {}".format(
-                working_dir, e.returncode
+                output_dir, e.returncode
             )
         )
         return 1
@@ -229,8 +191,7 @@ def move_output_and_compress(target_dir: str, package_dir: str, package_name: st
     if not os.path.exists(ci_doc_dir):
         os.mkdir(ci_doc_dir)
 
-    # TODO....? i think this is a bug in the original script to have package_name twice?
-    individual_zip_location = os.path.join(ci_doc_dir, package_name, package_name)
+    individual_zip_location = os.path.join(ci_doc_dir, package_dir, package_name)
     shutil.make_archive(individual_zip_location, 'gztar', target_dir)
 
 def should_build_docs(package_name: str) -> bool:
@@ -287,40 +248,6 @@ class sphinx(Check):
             required=False
         )
 
-        # TODO
-        # p.add_argument(
-        #     "-d",
-        #     "--dist_dir",
-        #     dest="dist_dir",
-        #     help="The dist location on disk. Usually /dist.", # TODO? is this still needed?
-        #     required=False,
-        # )
-
-        # p.add_argument(
-        #     "-w",
-        #     "--workingdir",
-        #     dest="working_directory",
-        #     help="The unzipped package directory on disk. Usually {distdir}/unzipped/",
-        #     required=False,
-        # )
-
-        # p.add_argument(
-        #     "-o",
-        #     "--outputdir",
-        #     dest="output_directory",
-        #     help="The output location for the generated site. Usually {distdir}/site",
-        #     required=False,
-        # )
-
-        # TODO is this necessary? is this the same as target?
-        # p.add_argument(
-        #     "-r",
-        #     "--root",
-        #     dest="package_root",
-        #     help="",
-        #     required=False,
-        # )
-
         p.add_argument(
             "--inci",
             dest="in_ci",
@@ -345,7 +272,7 @@ class sphinx(Check):
             executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, package_dir)
             logger.info(f"Processing {package_name} for sphinx check")
   
-            # install sphinx TODO python version issue
+            # install sphinx TODO python version error handling
             try:
                 if (args.next):
                     pip_install(["sphinx", "sphinx_rtd_theme", "myst_parser", "sphinxcontrib-jquery"], True, executable, package_dir)
@@ -358,45 +285,39 @@ class sphinx(Check):
             logger.info(f"Running sphinx against {package_name}")
 
             # prep env for sphinx
-            source_location = os.path.abspath(staging_directory)
-            doc_folder = os.path.join(source_location, "docgen")
-            site_folder = os.path.join(source_location, "site")
+            doc_folder = os.path.join(staging_directory, "docgen")
+            site_folder = os.path.join(staging_directory, "site")
 
             if should_build_docs(package_name):
-                create_index(doc_folder, source_location, parsed.namespace)
+                create_index(doc_folder, staging_directory, parsed.namespace) # TODO...
                 
                 write_version(site_folder, parsed.version)
             else:
                 logger.info("Skipping sphinx prep for {}".format(package_name))      
 
             # run apidoc
-            working_dir = os.path.abspath(parsed.folder)
-            output_dir = os.path.join(working_dir, "docgen") # TODO??
 
             if should_build_docs(parsed.name):
                 if is_mgmt_package(parsed.name):
-                    results.append(mgmt_apidoc(output_dir, parsed.folder, executable))
+                    results.append(mgmt_apidoc(doc_folder, package_dir, executable)) # TODO idk directory
                 else:
-                    results.append(sphinx_apidoc(working_dir, parsed.namespace))
+                    results.append(sphinx_apidoc(staging_directory, package_dir, parsed.namespace)) # TODO sphinx gets to build with parsed.folder as working_dir; but it should be source_location? but then it's missing azure.ai.rst
             else:
                 logger.info("Skipping sphinx source generation for {}".format(parsed.name))
 
             # build
-            # output directory is /site 
-            # target directory is working directory , staging???
-            # package directory gives parsed.folder
             if should_build_docs(package_name):
                 # Only data-plane libraries run strict sphinx at the moment
                 fail_on_warning = not is_mgmt_package(package_name)
                 results.append(sphinx_build(
-                    package_dir, # package
+                    package_dir, 
                     doc_folder, # target / 'source'
                     site_folder, # output
                     fail_on_warning=fail_on_warning,
                 ))
 
                 if in_ci() or args.in_ci:
-                    move_output_and_compress(output_dir, package_dir, package_name)
+                    move_output_and_compress(site_folder, package_dir, package_name)
                     if in_analyze_weekly():
                         from gh_tools.vnext_issue_creator import close_vnext_issue
                         close_vnext_issue(package_name, "sphinx")
