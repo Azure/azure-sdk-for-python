@@ -441,7 +441,7 @@ class RunsOperations(RunsOperationsGenerated):
         response_format: Optional["_types.AgentsResponseFormatOption"] = None,
         parallel_tool_calls: Optional[bool] = None,
         metadata: Optional[Dict[str, str]] = None,
-        event_handler: Optional[_models.CreateAndProcessEventHandlerT] = None,
+        required_action_handler: Optional[_models.CreateAndProcessRequiredActionHandler] = None,
         polling_interval: int = 1,
         **kwargs: Any,
     ) -> _models.ThreadRun:
@@ -553,10 +553,10 @@ class RunsOperations(RunsOperationsGenerated):
         )
 
         # Monitor and process the run status
-        if not event_handler:
-            event_handler = _models.CreateAndProcessEventHandler()
+        if not required_action_handler:
+            required_action_handler = _models.CreateAndProcessRequiredActionHandler(self)
             
-        return run
+        return required_action_handler._start(self, run, polling_interval)
 
     @overload
     def stream(
