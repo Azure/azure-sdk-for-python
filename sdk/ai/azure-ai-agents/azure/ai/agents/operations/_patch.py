@@ -1200,7 +1200,7 @@ class RunsOperations(RunsOperationsGenerated):
         :rtype: ~azure.ai.agents.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        self.submit_tool_outputs_and_process(thread_id=thread_id, run_id=run_id, body=body, tool_outputs=tool_outputs, tool_approvals=tool_approvals, polling_interval=polling_interval, **kwargs)
+        self.submit_tool_outputs(thread_id=thread_id, run_id=run_id, body=body, tool_outputs=tool_outputs, tool_approvals=tool_approvals, polling_interval=polling_interval, **kwargs)
         return self._process(thread_id=thread_id, run_id=run_id, polling_interval=polling_interval)
 
     # pylint: disable=arguments-differ
