@@ -130,7 +130,7 @@ class CriticAgentSmartEvaluator:
         thread_ids: Optional[List[str]] = None,
         azure_ai_project: Optional[Dict[str, str]] = None,
         evaluators: Optional[Union[str, List[str]]] = None,
-        max_threads: Optional[int] = None,
+        max_threads: Optional[int] = 10,
         parallelism: Optional[int] = None,
         **kwargs,
     ) -> Dict[str, Any]:
@@ -173,10 +173,28 @@ class CriticAgentSmartEvaluator:
         max_threads = max_threads if max_threads is not None else self.max_threads
         parallelism = parallelism if parallelism is not None else self.parallelism
 
-        # Resolve thread ids
-        resolved_thread_ids: List[str]
+        # Resolve thread ids and optionally pre-fetch conversations
+        resolved_conversations: List[Dict[str, Any]]
+        
         if thread_ids:
             resolved_thread_ids = thread_ids
+            # Need to fetch conversations for explicit thread_ids
+            if not azure_ai_project:
+                raise EvaluationException(
+                    message="azure_ai_project config required when thread_ids are used.",
+                    internal_message="Missing azure_ai_project while fetching thread conversations.",
+                    blame=ErrorBlame.USER_ERROR,
+                    category=ErrorCategory.MISSING_FIELD,
+                    target=ErrorTarget.CRITIC_AGENT,
+                )
+            project_client = AIProjectClient(
+                endpoint=azure_ai_project.get("azure_endpoint"),
+                credential=DefaultAzureCredential(),
+            )
+            resolved_conversations = self._fetch_converted_conversations(
+                project_client=project_client,
+                thread_ids=thread_ids
+            )
         else:
             if not azure_ai_project:
                 raise EvaluationException(
@@ -190,7 +208,13 @@ class CriticAgentSmartEvaluator:
                 endpoint=azure_ai_project.get("azure_endpoint"),
                 credential=DefaultAzureCredential(),
             )
-            resolved_thread_ids = self._fetch_agent_threads(project_client, agent_id, max_threads=max_threads)
+            # Fetch conversations once and extract thread_ids
+            resolved_conversations = self._fetch_converted_conversations(
+                project_client=project_client,
+                agent_id=agent_id,
+                max_threads=max_threads
+            )
+            logger.info("Fetched %d threads for agent %s", len(resolved_conversations), agent_id)
 
         # Ensure evaluator instances if explicit list provided
         if evaluators:
@@ -203,23 +227,24 @@ class CriticAgentSmartEvaluator:
         evaluations: List[Dict[str, Any]] = []
         thread_errors: Dict[str, str] = {}
 
-        def _evaluate_single(tid: str):
+        def _evaluate_single(conv_data: Dict[str, Any]):
             try:
                 return self._evaluate_conversation(
-                    thread_id=tid,
+                    thread_id=conv_data["thread_id"],
+                    conversation=conv_data["conversation"],
                     azure_ai_project=azure_ai_project,
                     evaluators_to_run=evaluators,
                     agent_id=agent_id,
                     **kwargs,
                 )
             except Exception as ex:  # capture and continue
-                thread_errors[tid] = str(ex)
-                logger.error("Failed evaluating thread %s: %s", tid, ex)
+                thread_errors[conv_data["thread_id"]] = str(ex)
+                logger.error("Failed evaluating thread %s: %s", conv_data["thread_id"], ex)
                 return None
 
         # Parallel evaluation of threads
         with ThreadPoolExecutor(max_workers=parallelism) as executor:
-            future_map = {executor.submit(_evaluate_single, tid): tid for tid in resolved_thread_ids}
+            future_map = {executor.submit(_evaluate_single, conv_data): conv_data["thread_id"] for conv_data in resolved_conversations}
             for fut in as_completed(future_map):
                 res = fut.result()
                 if res:
@@ -227,32 +252,106 @@ class CriticAgentSmartEvaluator:
 
         return {
             "agent_id": agent_id,
-            "thread_ids": resolved_thread_ids,
+            "thread_ids": [conv_data["thread_id"] for conv_data in resolved_conversations],
             "evaluation_count": len(evaluations),
             "evaluations": evaluations,
             "thread_errors": thread_errors,
         }
 
-    # Lightweight thread fetch
-    def _fetch_agent_threads(self, project_client: Any, agent_id: str, max_threads: int) -> List[str]:  # pragma: no cover - network
-        try:
-            threads = project_client.agents.threads.list()
-            ids: List[str] = []
-            for th in threads:
-                if len(ids) >= max_threads:
-                    break
-                ids.append(th.id)
-            logger.info("Fetched %d threads for agent %s", len(ids), agent_id)
-            return ids
-        except Exception as e:
-            logger.error("Error fetching threads for agent %s: %s", agent_id, e)
-            raise EvaluationException(
-                message=f"Failed to fetch threads for agent {agent_id}: {e}",
-                internal_message="Agent thread fetch failed in CriticAgentSmartEvaluator.",
-                blame=ErrorBlame.SYSTEM_ERROR,
-                category=ErrorCategory.FAILED_EXECUTION,
-                target=ErrorTarget.CRITIC_AGENT,
-            )
+    def _fetch_converted_conversations(self, project_client: Any, thread_ids: Optional[List[str]] = None, agent_id: Optional[str] = None, max_threads: Optional[int] = 10) -> List[Dict[str, Any]]:
+        """Fetch and convert conversations for given thread_ids or agent_id.
+        
+        Parameters
+        ----------
+        project_client: Any
+            The AI Project client instance.
+        thread_ids: List[str], optional
+            Specific thread IDs to fetch conversations for.
+        agent_id: str, optional
+            Agent ID to fetch threads for (when thread_ids not provided).
+        max_threads: int, optional
+            Maximum number of threads to fetch when using agent_id.
+            
+        Returns
+        -------
+        List[Dict[str, Any]]
+            List of converted conversations with thread metadata.
+        """
+        converter = AIAgentConverter(project_client)
+        
+        if thread_ids:
+            # When specific thread_ids are provided, fetch conversations for all of them
+            try:
+                conversations = converter.prepare_evaluation_data(thread_ids=thread_ids)
+                result = []
+                for i, conversation in enumerate(conversations):
+                    if i < len(thread_ids):
+                        result.append({
+                            "thread_id": thread_ids[i],
+                            "conversation": conversation
+                        })
+                    else:
+                        # Fallback if thread_ids and conversations don't align
+                        result.append({
+                            "thread_id": f"thread_{i}",
+                            "conversation": conversation
+                        })
+                return result
+            except Exception as e:
+                logger.error("Failed to fetch conversations for thread_ids %s: %s", thread_ids, e)
+                raise EvaluationException(
+                    message=f"Failed to fetch conversations for thread_ids: {e}",
+                    internal_message="Thread conversation fetch failed in CriticAgentSmartEvaluator.",
+                    blame=ErrorBlame.SYSTEM_ERROR,
+                    category=ErrorCategory.FAILED_EXECUTION,
+                    target=ErrorTarget.CRITIC_AGENT,
+                )
+        else:
+            # When agent_id is provided, fetch threads first then conversations and filter by agent
+            fetch_max = 100
+            try:
+                threads = project_client.agents.threads.list()
+                filtered_conversations: List[Dict[str, Any]] = []
+                
+                for th in threads:
+                    fetch_max -= 1
+                    if max_threads and len(filtered_conversations) >= max_threads or fetch_max <= 0:
+                        break
+                    
+                    try:
+                        # Fetch conversation for this thread
+                        conversations = converter.prepare_evaluation_data(thread_ids=[th.id])
+                        if conversations:
+                            conversation = conversations[0]
+                            
+                            # Check if this conversation belongs to the specified agent
+                            response_data = conversation.get("response", [])
+                            if response_data and isinstance(response_data, list) and len(response_data) > 0:
+                                assistant_id = response_data[0].get("assistant_id")
+                                if assistant_id == agent_id:
+                                    filtered_conversations.append({
+                                        "thread_id": th.id,
+                                        "conversation": conversation
+                                    })
+                    except Exception as conv_error:
+                        logger.warning("Failed to fetch conversation for thread %s: %s", th.id, conv_error)
+                        continue
+                
+                if not filtered_conversations:
+                    logger.info("No threads found for agent %s", agent_id)
+                    return []
+                
+                return filtered_conversations
+                
+            except Exception as e:
+                logger.error("Error fetching threads for agent %s: %s", agent_id, e)
+                raise EvaluationException(
+                    message=f"Failed to fetch threads for agent {agent_id}: {e}",
+                    internal_message="Agent thread fetch failed in CriticAgentSmartEvaluator.",
+                    blame=ErrorBlame.SYSTEM_ERROR,
+                    category=ErrorCategory.FAILED_EXECUTION,
+                    target=ErrorTarget.CRITIC_AGENT,
+                )
 
     def _initialize_evaluators(self, evaluator_names: List[str]) -> Dict[str, Any]:
         evaluators: Dict[str, Any] = {}
@@ -277,6 +376,7 @@ class CriticAgentSmartEvaluator:
         self,
         *,
         thread_id: str,
+        conversation: Dict[str, Any],
         azure_ai_project: Optional[Dict[str, str]],
         evaluators_to_run: Optional[Union[str, List[str]]],
         agent_id: Optional[str] = None,
@@ -290,24 +390,10 @@ class CriticAgentSmartEvaluator:
                 category=ErrorCategory.MISSING_FIELD,
                 target=ErrorTarget.CRITIC_AGENT,
             )
-        project_client = AIProjectClient(
-            endpoint=azure_ai_project.get("azure_endpoint") if azure_ai_project else None,
-            credential=DefaultAzureCredential(),
-        )
-        converter = AIAgentConverter(project_client)
-        try:
-            conversation = converter.prepare_evaluation_data(thread_ids=thread_id)[-1]
-        except Exception as e:  # pragma: no cover - network variability
-            logger.error("Failed fetching conversation for thread %s: %s", thread_id, e)
+        
+        if not conversation:
+            logger.error("No conversation data provided for thread %s", thread_id)
             return None
-
-        # Filter by agent if provided
-        try:
-            if agent_id and conversation.get("response", [{}])[0].get("assistant_id") != agent_id:
-                logger.info("Skipping thread %s not matching agent %s", thread_id, agent_id)
-                return None
-        except Exception:  # pragma: no cover
-            pass
 
         result: Dict[str, Any] = {"thread_id": thread_id, "conversation": conversation}
 
@@ -318,12 +404,24 @@ class CriticAgentSmartEvaluator:
                 "response": conversation.get("response", []),
                 "tool_definitions": conversation.get("tool_definitions", []),
             }
-            if not asyncio.get_event_loop().is_running():
-                selection = asyncio.run(self._selector._do_eval(selection_input))  # pylint: disable=protected-access
-            else:
-                selection = asyncio.get_event_loop().run_until_complete(
-                    self._selector._do_eval(selection_input)  # pylint: disable=protected-access
-                )
+            try:
+                # Try to get current running loop
+                try:
+                    loop = asyncio.get_running_loop()
+                    # If we're in a thread without a loop, this will raise RuntimeError
+                    if loop.is_running():
+                        selection = loop.run_until_complete(
+                            self._selector._do_eval(selection_input)  # pylint: disable=protected-access
+                        )
+                    else:
+                        selection = asyncio.run(self._selector._do_eval(selection_input))  # pylint: disable=protected-access
+                except RuntimeError:
+                    # No current event loop (likely in thread pool), create new one
+                    selection = asyncio.run(self._selector._do_eval(selection_input))  # pylint: disable=protected-access
+            except Exception as e:
+                logger.warning("Failed to run evaluator selection, using default evaluators: %s", e)
+                selection = {"evaluators": self._DEFAULT_AGENT_EVALUATORS, "justification": "", "distinct_assessments": {}}
+            
             available = self._DEFAULT_AGENT_EVALUATORS
             chosen = [e for e in selection.get("evaluators", []) if e in available] or self._DEFAULT_AGENT_EVALUATORS
             evaluators_to_run = chosen
