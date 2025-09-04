@@ -29,6 +29,7 @@ steps:
     parameters:
       Paths:
         - '**'
+      SkipCheckoutNone: true
 
   - task: UsePythonVersion@0
     displayName: 'Use Python $(PythonVersion)'
