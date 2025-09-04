@@ -59,6 +59,7 @@ class ConversationAuthoringProjectClient(AuthoringProjectClientGenerated): # pyl
         endpoint: str,
         credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
         *,
+        api_version: Optional[str] = None,
         project_name: str,
         **kwargs: Any,
     ) -> None:
@@ -69,10 +70,17 @@ class ConversationAuthoringProjectClient(AuthoringProjectClientGenerated): # pyl
         :param credential: Credential used to authenticate requests to the service.
         :type credential: ~azure.core.credentials.AzureKeyCredential or
             ~azure.core.credentials_async.AsyncTokenCredential
+        :keyword str api_version: The API version to use for this operation.
+            Default value is ``2025-05-15-preview``.
+            Note that overriding this default value may result in unsupported behavior.
         :keyword str project_name: The name of the project to scope operations. Required.
         """
         self._project_name = project_name
         _endpoint = "{Endpoint}/language"
+
+        if api_version is not None:
+            kwargs["api_version"] = api_version
+            
         self._config = ConversationAuthoringProjectClientConfiguration(
             endpoint=endpoint, credential=credential, project_name=project_name, **kwargs
         )
