@@ -700,7 +700,6 @@ class ProjectOperations(ProjectOperationsGenerated):
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         allow_overwrite: Optional[bool] = _Unset,
-        content_type: str = "application/json",
         project_kind: Union[str, Any] = _Unset,
         storage_input_container_name: Optional[str] = _Unset,
         **kwargs: Any
@@ -726,7 +725,6 @@ class ProjectOperations(ProjectOperationsGenerated):
             project_name=self._project_name,
             body=body,
             allow_overwrite=allow_overwrite,
-            content_type=content_type,
             project_kind=project_kind,
             storage_input_container_name=storage_input_container_name,
             **kwargs,

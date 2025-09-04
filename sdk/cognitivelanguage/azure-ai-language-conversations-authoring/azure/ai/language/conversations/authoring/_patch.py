@@ -77,7 +77,7 @@ class ConversationAuthoringProjectClient(AuthoringProjectClientGenerated):
 
         if api_version is not None:
             kwargs["api_version"] = api_version
-            
+
         # Build configuration
         self._config = ConversationAuthoringProjectClientConfiguration(
             endpoint=endpoint, credential=credential, project_name=project_name, **kwargs
