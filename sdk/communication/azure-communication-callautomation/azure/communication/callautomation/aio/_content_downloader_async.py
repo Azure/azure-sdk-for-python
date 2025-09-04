@@ -6,7 +6,7 @@
 
 from typing import Any, Optional
 
-from urllib.parse import ParseResult, urlparse
+from urllib.parse import urlparse
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -27,12 +27,12 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-class ContentDownloader(object):
+class ContentDownloader:
     def __init__(self, call_recording_client: CallRecordingOperations) -> None:
 
         self._call_recording_client = call_recording_client
 
-    async def download_streaming(  # pylint: disable=inconsistent-return-statements
+    async def download_streaming(
         self, source_location: str, offset: Optional[int], length: Optional[int], **kwargs: Any
     ) -> HttpResponse:
         """Download a stream of the call recording.
@@ -46,10 +46,9 @@ class ContentDownloader(object):
         :return: HttpResponse (octet-stream)
         :rtype: HttpResponse (octet-stream)
         """
-
-        if length is not None and offset is None:
-            raise ValueError("Offset value must not be None if length is set.")
-        if length is not None and offset is not None:
+        if length is not None:
+            if offset is None:
+                raise ValueError("Offset value must not be None if length is set.")
             length = offset + length - 1  # Service actually uses an end-range inclusive index
 
         error_map = {
@@ -60,11 +59,10 @@ class ContentDownloader(object):
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        parsedEndpoint: ParseResult = urlparse(
+        parsed_hostname = urlparse(
             self._call_recording_client._config.endpoint  # pylint: disable=protected-access
-        )
-
-        if not parsedEndpoint and parsedEndpoint.hostname is None:
+        ).hostname
+        if not parsed_hostname:
             raise ValueError("Recording client endpoint must not be None.")
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -75,7 +73,7 @@ class ContentDownloader(object):
             params=_params,
             start=offset,
             end=length,
-            host=parsedEndpoint.hostname,  # type: ignore[arg-type]
+            host=parsed_hostname,
         )
 
         pipeline_response: PipelineResponse = (
@@ -94,9 +92,7 @@ class ContentDownloader(object):
         )
         raise HttpResponseError(response=response, model=error)
 
-    async def delete_recording(  # pylint: disable=inconsistent-return-statements
-        self, recording_location: str, **kwargs: Any
-    ) -> None:
+    async def delete_recording(self, recording_location: str, **kwargs: Any) -> None:
         """Delete a call recording.
 
         :param recording_location: The recording location. Required.
@@ -111,14 +107,16 @@ class ContentDownloader(object):
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        parsed_endpoint: ParseResult = urlparse(
+        parsed_hostname = urlparse(
             self._call_recording_client._config.endpoint  # pylint: disable=protected-access
-        )
+        ).hostname
+        if not parsed_hostname:
+            raise ValueError("Recording client endpoint must not be None.")
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
         request = _build_call_recording_delete_recording_request(
-            recording_location=recording_location, headers=_headers, params=_params, host=parsed_endpoint.hostname or ""
+            recording_location=recording_location, headers=_headers, params=_params, host=parsed_hostname
         )
 
         pipeline_response: PipelineResponse = (
@@ -152,13 +150,12 @@ def _build_call_recording_download_recording_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    if start:
-        rangeHeader = "bytes=" + str(start)
-    if end:
-        rangeHeader += "-" + str(end)
-
     # Construct headers
-    _headers["Range"] = _SERIALIZER.header("range", rangeHeader, "str")
+    if start:
+        range_header = f"bytes={start}-"
+        if end:
+            range_header += str(end)
+        _headers["Range"] = _SERIALIZER.header("range", range_header, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", "application/json", "str")
     _headers["x-ms-host"] = _SERIALIZER.header("x-ms-host", host, "str")
     return HttpRequest(method="GET", url=source_location, params=_params, headers=_headers, **kwargs)

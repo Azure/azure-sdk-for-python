@@ -1,10 +1,9 @@
-# pylint: disable=line-too-long
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import List, Optional, Union, TYPE_CHECKING, cast
+from typing import List, Optional, Union, TYPE_CHECKING
 from typing_extensions import Literal
 from ._generated.models import (
     CallLocator,
@@ -17,11 +16,10 @@ from ._generated.models import (
     Choice as ChoiceInternal,
     ChannelAffinity as ChannelAffinityInternal,
     MediaStreamingSubscription as MediaStreamingSubscriptionInternal,
-    TranscriptionSubscription as TranscriptionSubscriptionInternal
+    TranscriptionSubscription as TranscriptionSubscriptionInternal,
 )
 from ._shared.models import (
     CommunicationIdentifier,
-    CommunicationUserIdentifier,
     PhoneNumberIdentifier,
 )
 from ._generated.models._enums import PlaySourceType
@@ -34,7 +32,7 @@ from ._utils import (
 )
 
 if TYPE_CHECKING:
-    from ._generated.models._enums  import (
+    from ._generated.models._enums import (
         MediaStreamingSubscriptionState,
         StreamingTransportType,
         MediaStreamingContentType,
@@ -46,7 +44,7 @@ if TYPE_CHECKING:
         RecordingKind,
         VoiceKind,
         DtmfTone,
-        AudioFormat
+        AudioFormat,
     )
     from ._generated.models import (
         CallParticipant as CallParticipantRest,
@@ -95,6 +93,7 @@ class CallInvite:
         self.source_caller_id_number = source_caller_id_number
         self.source_display_name = source_display_name
 
+
 class RoomCallLocator:
     """The locator to locate ongoing call, using room id.
     **DEPRECATED**: This model has been deprecated and will be removed from future releases.
@@ -102,21 +101,19 @@ class RoomCallLocator:
     :param room_id: The room id of ongoing call.
     :type room_id: str
     """
+
     room_id: str
     """The acs room id of ongoing call."""
     kind: str = "roomCallLocator"
     """This is for locating the call with acs room id."""
 
-    def __init__(  # pylint: disable=unused-argument
-        self,
-        room_id: str,
-        **kwargs
-    ):
+    def __init__(self, room_id: str, **kwargs):  # pylint: disable=unused-argument
         self.room_id = room_id
         self.kind = "roomCallLocator"
 
     def _to_generated(self):
         return CallLocator(kind=self.kind, room_id=self.room_id)
+
 
 class ServerCallLocator:
     """The locator to locate ongoing call, using server call id.
@@ -163,13 +160,16 @@ class GroupCallLocator:
     def _to_generated(self):
         return CallLocator(kind=self.kind, group_call_id=self.group_call_id)
 
+
 class RecordingStorage:
     """Recording Storage for the recording.
     :param kind: Defines the kind of external storage.
     :type kind: str
     """
+
     kind: str
     """The recording storage kind"""
+
 
 class AzureCommunicationsRecordingStorage(RecordingStorage):
     """
@@ -177,10 +177,13 @@ class AzureCommunicationsRecordingStorage(RecordingStorage):
     :param kind: Defines the kind of external storage.
     :type kind: ~azure.communication.callautomation.RecordingStorageKind or str
     """
-    kind: Literal[RecordingStorageKind
-                      .AZURE_COMMUNICATION_SERVICES
-                      ] = RecordingStorageKind.AZURE_COMMUNICATION_SERVICES
+
+    # This is intended to be read-only
+    kind: Literal[  # type: ignore[reportIncompatibleVariableOverride]
+        RecordingStorageKind.AZURE_COMMUNICATION_SERVICES
+    ] = RecordingStorageKind.AZURE_COMMUNICATION_SERVICES
     """The kind of recording storage is set to AZURE_COMMUNICATION_SERVICES"""
+
 
 class AzureBlobContainerRecordingStorage(RecordingStorage):
     """Recording Storage for the recording.
@@ -189,10 +192,15 @@ class AzureBlobContainerRecordingStorage(RecordingStorage):
     :param container_url: Defines the kind of external storage. Required.
     :type container_url: str
     """
-    kind: Literal[RecordingStorageKind.AZURE_BLOB_STORAGE] = RecordingStorageKind.AZURE_BLOB_STORAGE
+
+    # This is intended to be read-only
+    kind: Literal[RecordingStorageKind.AZURE_BLOB_STORAGE] = (  # type: ignore[reportIncompatibleVariableOverride]
+        RecordingStorageKind.AZURE_BLOB_STORAGE
+    )
     """The kind of recording storage is set to AZURE_BLOB_STORAGE"""
     container_url: str
     """The container url for the AZURE_BLOB_STORAGE type"""
+
     def __init__(self, container_url: str):
         self.container_url = container_url
 
@@ -215,9 +223,7 @@ class ChannelAffinity:
     channel: int
     """ Channel number to which bitstream from a particular participant will be written."""
 
-    def __init__(  # pylint: disable=unused-argument
-        self, target_participant: CommunicationIdentifier, channel: int, **kwargs
-    ):
+    def __init__(self, target_participant: CommunicationIdentifier, channel: int):
         self.target_participant = target_participant
         self.channel = channel
 
@@ -239,9 +245,7 @@ class FileSource:
     play_source_cache_id: Optional[str]
     """Cached source id of the play media, if it exists."""
 
-    def __init__(  # pylint: disable=unused-argument
-        self, url: str, *, play_source_cache_id: Optional[str] = None, **kwargs
-    ):
+    def __init__(self, url: str, *, play_source_cache_id: Optional[str] = None):
         self.url = url
         self.play_source_cache_id = play_source_cache_id
 
@@ -354,6 +358,7 @@ class SsmlSource:
             play_source_cache_id=self.play_source_cache_id,
         )
 
+
 class MediaStreamingOptions:
     """Configuration of Media streaming.
 
@@ -387,7 +392,7 @@ class MediaStreamingOptions:
      after call is answered or not"""
     enable_bidirectional: Optional[bool] = None
     """A value indicating whether bidirectional streaming is enabled"""
-    audio_format: Optional[Union[str, 'AudioFormat']] = None
+    audio_format: Optional[Union[str, "AudioFormat"]] = None
     """Specifies the audio format used for encoding."""
     enable_dtmf_tones: Optional[bool] = None
     """A value that indicates whether to stream the DTMF tones."""
@@ -396,12 +401,12 @@ class MediaStreamingOptions:
         self,
         *,
         transport_url: str,
-        transport_type: Union[str, 'StreamingTransportType'],
-        content_type: Union[str, 'MediaStreamingContentType'],
-        audio_channel_type: Union[str, 'MediaStreamingAudioChannelType'],
+        transport_type: Union[str, "StreamingTransportType"],
+        content_type: Union[str, "MediaStreamingContentType"],
+        audio_channel_type: Union[str, "MediaStreamingAudioChannelType"],
         start_media_streaming: Optional[bool] = None,
         enable_bidirectional: Optional[bool] = None,
-        audio_format: Optional[Union[str, 'AudioFormat']] = None,
+        audio_format: Optional[Union[str, "AudioFormat"]] = None,
         enable_dtmf_tones: Optional[bool] = None,
     ):
         self.transport_url = transport_url
@@ -420,10 +425,11 @@ class MediaStreamingOptions:
             content_type=self.content_type,
             audio_channel_type=self.audio_channel_type,
             start_media_streaming=self.start_media_streaming,
-            enable_bidirectional = self.enable_bidirectional,
+            enable_bidirectional=self.enable_bidirectional,
             audio_format=self.audio_format,
             enable_dtmf_tones=self.enable_dtmf_tones,
         )
+
 
 class TranscriptionOptions:
     """Configuration of live transcription.
@@ -481,8 +487,9 @@ class TranscriptionOptions:
             locale=self.locale,
             start_transcription=self.start_transcription,
             speech_recognition_model_endpoint_id=self.speech_recognition_model_endpoint_id,
-            enable_intermediate_results=self.enable_intermediate_results
+            enable_intermediate_results=self.enable_intermediate_results,
         )
+
 
 class MediaStreamingSubscription:
     """Media streaming Subscription Object.
@@ -500,9 +507,9 @@ class MediaStreamingSubscription:
 
     id: Optional[str]
     """subscription id."""
-    state: Optional[Union[str, 'MediaStreamingSubscriptionState']]
+    state: Optional[Union[str, "MediaStreamingSubscriptionState"]]
     """media streaming subscription state."""
-    subscribed_content_types: Optional[List[Union[str, 'MediaStreamingContentType']]]
+    subscribed_content_types: Optional[List[Union[str, "MediaStreamingContentType"]]]
     """subscribed media streaming content types."""
 
     def __init__(
@@ -510,7 +517,7 @@ class MediaStreamingSubscription:
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         state: Optional[Union[str, "MediaStreamingSubscriptionState"]] = None,
-        subscribed_content_types: Optional[List[Union[str, "MediaStreamingContentType"]]] = None
+        subscribed_content_types: Optional[List[Union[str, "MediaStreamingContentType"]]] = None,
     ) -> None:
         """
         :keyword id: Subscription Id.
@@ -531,9 +538,10 @@ class MediaStreamingSubscription:
     def _to_generated(self):
         return MediaStreamingSubscriptionInternal(
             id=self.id,
-            state=self.state ,
+            state=self.state,
             subscribed_content_types=self.subscribed_content_types,
         )
+
 
 class TranscriptionSubscription:
     """Transcription Subscription Object.
@@ -551,9 +559,9 @@ class TranscriptionSubscription:
 
     id: Optional[str]
     """subscription id."""
-    state: Optional[Union[str, 'TranscriptionSubscriptionState']]
+    state: Optional[Union[str, "TranscriptionSubscriptionState"]]
     """transcription subscription state."""
-    subscribed_result_types: Optional[List[Union[str, 'TranscriptionResultType']]]
+    subscribed_result_types: Optional[List[Union[str, "TranscriptionResultType"]]]
     """subscribed transcription result types."""
     locale: Optional[str]
     """Specifies the locale used for transcription, e.g., en-CA or en-AU."""
@@ -573,10 +581,7 @@ class TranscriptionSubscription:
 
     def _to_generated(self):
         return TranscriptionSubscriptionInternal(
-            id=self.id,
-            state=self.state ,
-            subscribed_result_types=self.subscribed_result_types,
-            locale=self.locale
+            id=self.id, state=self.state, subscribed_result_types=self.subscribed_result_types, locale=self.locale
         )
 
 
@@ -639,28 +644,28 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
     """Media streaming subscription."""
     transcription_subscription: Optional[TranscriptionSubscription]
     """Transcription subscription."""
-    answered_by: Optional[CommunicationUserIdentifier]
+    answered_by: Optional[CommunicationIdentifier]
     """The identifier that answered the call"""
     answered_for: Optional[PhoneNumberIdentifier]
     """The phone identifier that answered the call"""
 
     def __init__(
-            self,
-            *,
-            call_connection_id: Optional[str] = None,
-            server_call_id: Optional[str] = None,
-            targets: Optional[List[CommunicationIdentifier]] = None,
-            call_connection_state: Optional[Union[str, "CallConnectionState"]] = None,
-            callback_url: Optional[str] = None,
-            source_caller_id_number: Optional[PhoneNumberIdentifier] = None,
-            source_display_name: Optional[str] = None,
-            source: Optional[CommunicationIdentifier] = None,
-            correlation_id: Optional[str] = None,
-            answered_by: Optional[CommunicationUserIdentifier] = None,
-            media_streaming_subscription: Optional[MediaStreamingSubscription] = None,
-            transcription_subscription: Optional[TranscriptionSubscription] = None,
-            answered_for: Optional[PhoneNumberIdentifier] = None,
-        ):
+        self,
+        *,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        targets: Optional[List[CommunicationIdentifier]] = None,
+        call_connection_state: Optional[Union[str, "CallConnectionState"]] = None,
+        callback_url: Optional[str] = None,
+        source_caller_id_number: Optional[PhoneNumberIdentifier] = None,
+        source_display_name: Optional[str] = None,
+        source: Optional[CommunicationIdentifier] = None,
+        correlation_id: Optional[str] = None,
+        answered_by: Optional[CommunicationIdentifier] = None,
+        media_streaming_subscription: Optional[MediaStreamingSubscription] = None,
+        transcription_subscription: Optional[TranscriptionSubscription] = None,
+        answered_for: Optional[PhoneNumberIdentifier] = None,
+    ):
         self.call_connection_id = call_connection_id
         self.server_call_id = server_call_id
         self.targets = targets
@@ -682,16 +687,32 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
             for target in call_connection_properties_generated.targets:
                 target_models.append(deserialize_identifier(target))
 
+        media_streaming: Optional[MediaStreamingSubscription] = None
+        if call_connection_properties_generated.media_streaming_subscription:
+            media_streaming = MediaStreamingSubscription(
+                id=call_connection_properties_generated.media_streaming_subscription.id,
+                state=call_connection_properties_generated.media_streaming_subscription.state,
+                subscribed_content_types=call_connection_properties_generated.media_streaming_subscription.subscribed_content_types,  # pylint:disable=line-too-long
+            )
+        transcription: Optional[TranscriptionSubscription] = None
+        if call_connection_properties_generated.transcription_subscription:
+            transcription = TranscriptionSubscription(
+                id=call_connection_properties_generated.transcription_subscription.id,
+                state=call_connection_properties_generated.transcription_subscription.state,
+                subscribed_result_types=call_connection_properties_generated.transcription_subscription.subscribed_result_types,  # pylint:disable=line-too-long
+                locale=call_connection_properties_generated.transcription_subscription.locale,
+            )
         return cls(
             call_connection_id=call_connection_properties_generated.call_connection_id,
             server_call_id=call_connection_properties_generated.server_call_id,
             targets=target_models,
             call_connection_state=call_connection_properties_generated.call_connection_state,
             callback_url=call_connection_properties_generated.callback_uri,
-            source_caller_id_number=deserialize_phone_identifier(
-            call_connection_properties_generated.source_caller_id_number)
-            if call_connection_properties_generated.source_caller_id_number
-            else None,
+            source_caller_id_number=(
+                deserialize_phone_identifier(call_connection_properties_generated.source_caller_id_number)
+                if call_connection_properties_generated.source_caller_id_number
+                else None
+            ),
             source_display_name=call_connection_properties_generated.source_display_name,
             source=(
                 deserialize_identifier(call_connection_properties_generated.source)
@@ -699,25 +720,18 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
                 else None
             ),
             correlation_id=call_connection_properties_generated.correlation_id,
-            answered_by=deserialize_comm_user_identifier(
-                call_connection_properties_generated.answered_by)
-            if call_connection_properties_generated.answered_by
-            else None,
-            media_streaming_subscription=MediaStreamingSubscription(
-                id=call_connection_properties_generated.media_streaming_subscription.id if call_connection_properties_generated.media_streaming_subscription else None,
-                state=call_connection_properties_generated.media_streaming_subscription.state if call_connection_properties_generated.media_streaming_subscription else None,
-                subscribed_content_types=call_connection_properties_generated.media_streaming_subscription.subscribed_content_types if call_connection_properties_generated.media_streaming_subscription else None
-            ) if call_connection_properties_generated.media_streaming_subscription else None,
-            transcription_subscription=TranscriptionSubscription(
-                id=call_connection_properties_generated.transcription_subscription.id if call_connection_properties_generated.transcription_subscription else None,
-                state=call_connection_properties_generated.transcription_subscription.state if call_connection_properties_generated.transcription_subscription else None,
-                subscribed_result_types=call_connection_properties_generated.transcription_subscription.subscribed_result_types if call_connection_properties_generated.transcription_subscription else None,
-                locale=call_connection_properties_generated.transcription_subscription.locale if call_connection_properties_generated.transcription_subscription else None
-            ) if call_connection_properties_generated.transcription_subscription else None,
-            answered_for=deserialize_phone_identifier(
-            call_connection_properties_generated.answered_for)
-            if call_connection_properties_generated.answered_for
-            else None,
+            answered_by=(
+                deserialize_comm_user_identifier(call_connection_properties_generated.answered_by)
+                if call_connection_properties_generated.answered_by
+                else None
+            ),
+            media_streaming_subscription=media_streaming,
+            transcription_subscription=transcription,
+            answered_for=(
+                deserialize_phone_identifier(call_connection_properties_generated.answered_for)
+                if call_connection_properties_generated.answered_for
+                else None
+            ),
         )
 
 
@@ -736,21 +750,22 @@ class RecordingProperties:
     """Id of this recording operation."""
     recording_state: Optional[Union[str, "RecordingState"]]
     """state of ongoing recording."""
-    recording_kind: Optional[Union[str, 'RecordingKind']]
+    recording_kind: Optional[Union[str, "RecordingKind"]]
     """kind of the recording."""
+
     def __init__(
         self,
         *,
         recording_id: Optional[str] = None,
-        recording_state: Optional[Union[str,'RecordingState']] = None,
-        recording_kind: Optional[Union[str, 'RecordingKind']] = None,
+        recording_state: Optional[Union[str, "RecordingState"]] = None,
+        recording_kind: Optional[Union[str, "RecordingKind"]] = None,
     ):
         self.recording_id = recording_id
         self.recording_state = recording_state
         self.recording_kind = recording_kind
 
     @classmethod
-    def _from_generated(cls, recording_state_result: 'RecordingStateResultRest'):
+    def _from_generated(cls, recording_state_result: "RecordingStateResultRest"):
         return cls(
             recording_id=recording_state_result.recording_id,
             recording_state=recording_state_result.recording_state,
@@ -790,7 +805,11 @@ class CallParticipant:
     @classmethod
     def _from_generated(cls, call_participant_generated: "CallParticipantRest"):
         return cls(
-            identifier=deserialize_identifier(call_participant_generated.identifier) if call_participant_generated.identifier else None,
+            identifier=(
+                deserialize_identifier(call_participant_generated.identifier)
+                if call_participant_generated.identifier
+                else None
+            ),
             is_muted=call_participant_generated.is_muted,
             is_on_hold=call_participant_generated.is_on_hold,
         )
@@ -803,10 +822,12 @@ class AddParticipantResult:
     :paramtype participant: ~azure.communication.callautomation.CallParticipant
     :keyword operation_context: The operation context provided by client.
     :paramtype operation_context: str
+    :keyword invitation_id: Invitation ID used to add a participant.
+    :paramtype invitation_id: str
     """
 
     invitation_id: Optional[str]
-    """invitation ID used to add participant."""
+    """Invitation ID used to add participant."""
     participant: Optional[CallParticipant]
     """Participant that was added with this request."""
     operation_context: Optional[str]
@@ -827,9 +848,13 @@ class AddParticipantResult:
     def _from_generated(cls, add_participant_result_generated: "AddParticipantResultRest"):
         return cls(
             invitation_id=add_participant_result_generated.invitation_id,
-            participant=CallParticipant._from_generated(  # pylint:disable=protected-access
-                add_participant_result_generated.participant
-            ) if add_participant_result_generated.participant else None,
+            participant=(
+                CallParticipant._from_generated(  # pylint:disable=protected-access
+                    add_participant_result_generated.participant
+                )
+                if add_participant_result_generated.participant
+                else None
+            ),
             operation_context=add_participant_result_generated.operation_context,
         )
 
@@ -943,18 +968,18 @@ class CancelAddParticipantOperationResult:
     :paramtype operation_context: str
     """
 
-    invitation_id: str
+    invitation_id: Optional[str]
     """Invitation ID that was used to add the participant to the call."""
     operation_context: Optional[str]
     """The operation context provided by client."""
 
-    def __init__(self, *, invitation_id: str, operation_context: Optional[str] = None):
+    def __init__(self, *, invitation_id: Optional[str] = None, operation_context: Optional[str] = None):
         self.invitation_id = invitation_id
         self.operation_context = operation_context
 
     @classmethod
     def _from_generated(cls, cancel_add_participant_operation_result_generated: "CancelAddParticipantResultRest"):
         return cls(
-            invitation_id=cancel_add_participant_operation_result_generated.invitation_id or "",
+            invitation_id=cancel_add_participant_operation_result_generated.invitation_id,
             operation_context=cancel_add_participant_operation_result_generated.operation_context,
         )

@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -13,7 +12,7 @@ from azure.core import CaseInsensitiveEnumMeta
 
 class DeprecatedEnumMeta(CaseInsensitiveEnumMeta):
 
-    def __getattribute__(self, item):
+    def __getattribute__(cls, item):
         if item.upper() == "MICROSOFT_BOT":
             warnings.warn(
                 "MICROSOFT_BOT is deprecated and has been replaced by \
@@ -98,7 +97,7 @@ class CommunicationUserProperties(TypedDict):
     """ID of the Communication user as returned from Azure Communication Identity."""
 
 
-class CommunicationUserIdentifier(CommunicationIdentifier):
+class CommunicationUserIdentifier:
     """Represents a user in Azure Communication Service."""
 
     kind: Literal[CommunicationIdentifierKind.COMMUNICATION_USER] = CommunicationIdentifierKind.COMMUNICATION_USER
@@ -137,7 +136,7 @@ class PhoneNumberProperties(TypedDict):
     """True if the phone number is anonymous, e.g. when used to represent a hidden caller Id."""
 
 
-class PhoneNumberIdentifier(CommunicationIdentifier):
+class PhoneNumberIdentifier:
     """Represents a phone number."""
 
     kind: Literal[CommunicationIdentifierKind.PHONE_NUMBER] = CommunicationIdentifierKind.PHONE_NUMBER
@@ -158,14 +157,16 @@ class PhoneNumberIdentifier(CommunicationIdentifier):
         is_anonymous: bool
 
         if raw_id is not None:
-            phone_number = raw_id[len(PHONE_NUMBER_PREFIX):]
+            phone_number = raw_id[len(PHONE_NUMBER_PREFIX) :]
             is_anonymous = phone_number == PHONE_NUMBER_ANONYMOUS_SUFFIX
             asserted_id_index = -1 if is_anonymous else phone_number.rfind("_") + 1
             has_asserted_id = 0 < asserted_id_index < len(phone_number)
-            props = {"value": value, "is_anonymous": is_anonymous}
             if has_asserted_id:
-                props["asserted_id"] = phone_number[asserted_id_index:]
-            self.properties = PhoneNumberProperties(**props)
+                self.properties = PhoneNumberProperties(
+                    value=value, is_anonymous=is_anonymous, asserted_id=phone_number[asserted_id_index:]
+                )
+            else:
+                self.properties = PhoneNumberProperties(value=value, is_anonymous=is_anonymous)
         else:
             self.properties = PhoneNumberProperties(value=value)
         self.raw_id = raw_id if raw_id is not None else self._format_raw_id(self.properties)
@@ -184,7 +185,8 @@ class PhoneNumberIdentifier(CommunicationIdentifier):
         value = properties["value"]
         return f"{PHONE_NUMBER_PREFIX}{value}"
 
-class UnknownIdentifier(CommunicationIdentifier):
+
+class UnknownIdentifier:
     """Represents an identifier of an unknown type.
 
     It will be encountered in communications with endpoints that are not
@@ -228,7 +230,7 @@ class MicrosoftTeamsUserProperties(TypedDict):
     """Cloud environment that this identifier belongs to."""
 
 
-class MicrosoftTeamsUserIdentifier(CommunicationIdentifier):
+class MicrosoftTeamsUserIdentifier:
     """Represents an identifier for a Microsoft Teams user."""
 
     kind: Literal[CommunicationIdentifierKind.MICROSOFT_TEAMS_USER] = CommunicationIdentifierKind.MICROSOFT_TEAMS_USER
@@ -300,7 +302,7 @@ class _botbackcompatdict(dict):
             raise
 
 
-class MicrosoftTeamsAppIdentifier(CommunicationIdentifier):
+class MicrosoftTeamsAppIdentifier:
     """Represents an identifier for a Microsoft Teams application."""
 
     kind: Literal[CommunicationIdentifierKind.MICROSOFT_TEAMS_APP] = CommunicationIdentifierKind.MICROSOFT_TEAMS_APP
@@ -380,7 +382,7 @@ class TeamsExtensionUserProperties(TypedDict):
     """Cloud environment that this identifier belongs to."""
 
 
-class TeamsExtensionUserIdentifier(CommunicationIdentifier):
+class TeamsExtensionUserIdentifier:
     """Represents an identifier for a Teams Extension user."""
 
     kind: Literal[CommunicationIdentifierKind.TEAMS_EXTENSION_USER] = CommunicationIdentifierKind.TEAMS_EXTENSION_USER
@@ -390,14 +392,7 @@ class TeamsExtensionUserIdentifier(CommunicationIdentifier):
     raw_id: str
     """The raw ID of the identifier."""
 
-    def __init__(
-        self,
-        *,
-        user_id: str,
-        tenant_id: str,
-        resource_id: str,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, *, user_id: str, tenant_id: str, resource_id: str, **kwargs: Any) -> None:
         """
         :param str user_id: Teams extension user id.
         :param str tenant_id: Tenant id associated with the user.
@@ -435,6 +430,7 @@ class TeamsExtensionUserIdentifier(CommunicationIdentifier):
             prefix = ACS_USER_PREFIX
         return f"{prefix}{properties['resource_id']}_{properties['tenant_id']}_{properties['user_id']}"
 
+
 def try_create_teams_extension_user(prefix: str, suffix: str) -> Optional[TeamsExtensionUserIdentifier]:
     segments = suffix.split("_")
     if len(segments) != 3:
@@ -449,6 +445,7 @@ def try_create_teams_extension_user(prefix: str, suffix: str) -> Optional[TeamsE
     else:
         raise ValueError("Invalid MRI")
     return TeamsExtensionUserIdentifier(user_id=user_id, tenant_id=tenant_id, resource_id=resource_id, cloud=cloud)
+
 
 def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:  # pylint: disable=too-many-return-statements
     """

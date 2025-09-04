@@ -1,10 +1,9 @@
-# pylint: disable=line-too-long
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING, Dict, Any, List, Optional, Sequence, Union, cast
+from typing import TYPE_CHECKING, Dict, Any, Optional, Sequence, Union, cast
 from datetime import datetime
 
 from ._shared.models import (
@@ -20,7 +19,9 @@ from ._shared.models import (
 from ._generated.models import (
     CommunicationIdentifierModel,
     CommunicationUserIdentifierModel,
+    MicrosoftTeamsUserIdentifierModel,
     PhoneNumberIdentifierModel,
+    TeamsExtensionUserIdentifierModel,
     CallLocator,
     ExternalStorage,
     RecordingStorageKind,
@@ -29,16 +30,18 @@ from ._generated.models import (
 
 if TYPE_CHECKING:
     from ._models import (
-    ServerCallLocator,
-    GroupCallLocator,
-    RoomCallLocator,
-    AzureBlobContainerRecordingStorage,
-    AzureCommunicationsRecordingStorage
-)
+        ServerCallLocator,
+        GroupCallLocator,
+        RoomCallLocator,
+        AzureBlobContainerRecordingStorage,
+        AzureCommunicationsRecordingStorage,
+    )
+
 
 def build_external_storage(
-    recording_storage: Optional[Union['AzureCommunicationsRecordingStorage',
-                                      'AzureBlobContainerRecordingStorage']] = None
+    recording_storage: Optional[
+        Union["AzureCommunicationsRecordingStorage", "AzureBlobContainerRecordingStorage"]
+    ] = None
 ) -> Optional[ExternalStorage]:
     request: Optional[ExternalStorage] = None
     if recording_storage:
@@ -47,19 +50,20 @@ def build_external_storage(
                 raise ValueError(
                     "Please provide container_url"
                     "when you set the recording_storage as AzureBlobContainerRecordingStorage"
-                    )
+                )
             request = ExternalStorage(
                 recording_storage_kind=recording_storage.kind,
-                recording_destination_container_url=recording_storage.container_url
-                )
+                recording_destination_container_url=recording_storage.container_url,
+            )
     return request
 
+
 def build_call_locator(
-    call_locator: Optional[Union['ServerCallLocator', 'GroupCallLocator','RoomCallLocator']],
+    call_locator: Optional[Union["ServerCallLocator", "GroupCallLocator", "RoomCallLocator"]],
     server_call_id: Optional[str],
     group_call_id: Optional[str],
     room_id: Optional[str],
-    args: Optional[Sequence[Union['ServerCallLocator', 'GroupCallLocator','RoomCallLocator']]] = None,
+    args: Optional[Sequence[Union["ServerCallLocator", "GroupCallLocator", "RoomCallLocator"]]] = None,
 ) -> Optional[CallLocator]:
     """Build the generated callLocator object from args in kwargs with support for legacy models.
 
@@ -112,6 +116,7 @@ def build_call_locator(
         request = CallLocator(room_id=room_id, kind="roomCallLocator")
     return request
 
+
 def process_repeatability_first_sent(keywords: Dict[str, Any]) -> None:
     if "headers" in keywords:
         if "Repeatability-First-Sent" not in keywords["headers"]:
@@ -133,10 +138,18 @@ def serialize_identifier(identifier: CommunicationIdentifier) -> CommunicationId
     :rtype: CommunicationIdentifierModel
     """
     try:
-        request_model= {"raw_id": identifier.raw_id}
-        if identifier.kind and identifier.kind != CommunicationIdentifierKind.UNKNOWN:
-            request_model[identifier.kind] = dict(identifier.properties)
-        return CommunicationIdentifierModel(**request_model)
+        request_model = CommunicationIdentifierModel(raw_id=identifier.raw_id)
+        if identifier.kind == CommunicationIdentifierKind.PHONE_NUMBER:
+            request_model.phone_number = PhoneNumberIdentifierModel(**identifier.properties)
+        elif identifier.kind == CommunicationIdentifierKind.COMMUNICATION_USER:
+            request_model.communication_user = CommunicationUserIdentifierModel(**identifier.properties)
+        elif identifier.kind == CommunicationIdentifierKind.MICROSOFT_TEAMS_USER:
+            request_model.microsoft_teams_user = MicrosoftTeamsUserIdentifierModel(**identifier.properties)
+        elif identifier.kind == CommunicationIdentifierKind.MICROSOFT_TEAMS_APP:
+            request_model.microsoft_teams_app = MicrosoftTeamsAppIdentifierModel(**identifier.properties)
+        elif identifier.kind == CommunicationIdentifierKind.TEAMS_EXTENSION_USER:
+            request_model.teams_extension_user = TeamsExtensionUserIdentifierModel(**identifier.properties)
+        return request_model
     except AttributeError:
         raise TypeError(f"Unsupported identifier type: {identifier.__class__.__name__}") from None
 
@@ -211,7 +224,8 @@ def deserialize_identifier(identifier_model: CommunicationIdentifierModel) -> Co
     :return: CommunicationIdentifier
     :rtype: ~azure.communication.callautomation.CommunicationIdentifier
     """
-    raw_id = identifier_model.raw_id
+    # "raw_id" is required in responses, so we can safely assume this will not be None.
+    raw_id: str = cast(str, identifier_model.raw_id)
 
     if identifier_model.communication_user:
         return CommunicationUserIdentifier(raw_id, raw_id=raw_id)

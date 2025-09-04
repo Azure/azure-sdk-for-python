@@ -55,14 +55,13 @@ from ._generated.models._enums import (
     CallConnectionState,
     RecordingState,
     VoiceKind,
-    AudioFormat
+    AudioFormat,
 )
 
 __all__ = [
     # clients
     "CallAutomationClient",
     "CallConnectionClient",
-
     # models for input
     "FileSource",
     "TextSource",
@@ -73,7 +72,6 @@ __all__ = [
     "TranscriptionOptions",
     "AzureBlobContainerRecordingStorage",
     "AzureCommunicationsRecordingStorage",
-
     # models for output
     "CallConnectionProperties",
     "CallParticipant",
@@ -95,7 +93,6 @@ __all__ = [
     "UnknownIdentifier",
     "TeamsExtensionUserProperties",
     "TeamsExtensionUserIdentifier",
-
     # enums
     "CallRejectReason",
     "RecordingContent",
@@ -111,7 +108,7 @@ __all__ = [
     "CallConnectionState",
     "RecordingState",
     "VoiceKind",
-    "AudioFormat"
+    "AudioFormat",
 ]
 __version__ = VERSION
 
