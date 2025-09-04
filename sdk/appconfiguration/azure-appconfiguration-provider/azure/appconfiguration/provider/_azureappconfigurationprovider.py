@@ -108,6 +108,9 @@ def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     :keyword load_balancing_enabled: Optional flag to enable or disable the load balancing of replica endpoints. Default
      is False.
     :paramtype load_balancing_enabled: bool
+    :keyword configuration_mapper: Optional function to map configuration settings. Enables transformation of
+    configurations before they are added to the provider.
+    :paramtype configuration_mapper: Optional[Callable[[ConfigurationSetting], None]]
     """
 
 
@@ -171,6 +174,9 @@ def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     :keyword load_balancing_enabled: Optional flag to enable or disable the load balancing of replica endpoints. Default
      is False.
     :paramtype load_balancing_enabled: bool
+    :keyword configuration_mapper: Optional function to map configuration settings. Enables transformation of
+    configurations before they are added to the provider.
+    :paramtype configuration_mapper: Optional[Callable[[ConfigurationSetting], None]]
     """
 
 
@@ -323,6 +329,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         self._secret_clients: Dict[str, SecretClient] = {}
         self._on_refresh_success: Optional[Callable] = kwargs.pop("on_refresh_success", None)
         self._on_refresh_error: Optional[Callable[[Exception], None]] = kwargs.pop("on_refresh_error", None)
+        self._configuration_mapper: Optional[Callable] = kwargs.pop("configuration_mapper", None)
 
     def refresh(self, **kwargs) -> None:  # pylint: disable=too-many-statements
         if not self._refresh_on and not self._feature_flag_refresh_enabled:
@@ -483,7 +490,11 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
 
         configuration_settings_processed = {}
         for config in configuration_settings:
-            if isinstance(config, FeatureFlagConfigurationSetting):
+            if self._configuration_mapper:
+                # If a map function is provided, use it to process the configuration setting
+                self._configuration_mapper(config)
+            # pylint:disable=protected-access
+            if FeatureFlagConfigurationSetting._feature_flag_content_type == config.content_type:
                 # Feature flags are not processed like other settings
                 continue
             key = self._process_key_name(config)
@@ -494,9 +505,13 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         return configuration_settings_processed
 
     def _process_key_value(self, config):
-        if isinstance(config, SecretReferenceConfigurationSetting):
+        # pylint:disable=protected-access
+        if SecretReferenceConfigurationSetting._secret_reference_content_type == config.content_type:
             return _resolve_keyvault_reference(config, self)
-        if is_json_content_type(config.content_type) and not isinstance(config, FeatureFlagConfigurationSetting):
+        if (
+            is_json_content_type(config.content_type)
+            and not FeatureFlagConfigurationSetting._feature_flag_content_type == config.content_type
+        ):
             # Feature flags are of type json, but don't treat them as such
             try:
                 if APP_CONFIG_AI_MIME_PROFILE in config.content_type:
