@@ -188,8 +188,13 @@ def create_report_from_func(function_attr):
 def resolve_package_directory(package_name):
     packages = [
         os.path.dirname(p)
-        for p in (glob.glob("{}/pyproject.toml".format(package_name)) + glob.glob("sdk/*/{}/pyproject.toml".format(package_name)))
+        for p in (glob.glob("{}/setup.py".format(package_name)) + glob.glob("sdk/*/{}/setup.py".format(package_name)))
     ]
+    if not package:
+        packages = [
+            os.path.dirname(p)
+            for p in (glob.glob("{}/pyproject.toml".format(package_name)) + glob.glob("sdk/*/{}/pyproject.toml".format(package_name)))
+        ]
 
     if len(packages) > 1:
         print(
