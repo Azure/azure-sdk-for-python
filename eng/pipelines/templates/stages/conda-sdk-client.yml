@@ -163,6 +163,14 @@ parameters:
     displayName: 'azure-ai-agents'
     type: boolean
     default: true
+  - name: release_azure_ai_projects
+    displayName: 'azure-ai-projects'
+    type: boolean
+    default: true
+  - name: release_azure_monitor_querymetrics
+    displayName: 'azure-monitor-querymetrics'
+    type: boolean
+    default: true
   - name: release_azure_mgmt
     displayName: 'azure-mgmt'
     type: boolean
