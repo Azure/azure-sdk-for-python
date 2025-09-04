@@ -117,6 +117,10 @@ jobs:
       os: macOS
 
     steps:
+    - checkout: self
+      clean: true
+      fetchDepth: 1
+      fetchTags: false
     - template: /eng/pipelines/templates/steps/build-package-artifacts.yml
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
