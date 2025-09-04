@@ -40,10 +40,7 @@ ClsType = Optional[
     Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]
 ]
 
-class ConversationAuthoringProjectClient(AuthoringProjectClientGenerated): # pylint: disable=client-accepts-api-version-keyword
-    """Custom ConversationAuthoringProjectClient that bypasses generated __init__
-    and ensures project_name is mandatory.
-    """
+class ConversationAuthoringProjectClient(AuthoringProjectClientGenerated):
 
     #: Deployment operations group
     deployment: DeploymentOperations

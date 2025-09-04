@@ -40,10 +40,7 @@ ClsType = Optional[
 ]
 
 
-class ConversationAuthoringProjectClient(AuthoringProjectClientGenerated): # pylint:disable=client-accepts-api-version-keyword
-    """Custom ConversationAuthoringProjectClient that bypasses generated __init__
-    and ensures project_name is mandatory.
-    """
+class ConversationAuthoringProjectClient(AuthoringProjectClientGenerated):
 
     #: Deployment operations group
     deployment: DeploymentOperations
@@ -54,7 +51,7 @@ class ConversationAuthoringProjectClient(AuthoringProjectClientGenerated): # pyl
     #: Trained model operations group
     trained_model: TrainedModelOperations
 
-    def __init__( # pylint: disable=super-init-not-called, client-accepts-api-version-keyword
+    def __init__( # pylint: disable=super-init-not-called
         self,
         endpoint: str,
         credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
