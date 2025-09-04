@@ -57,7 +57,7 @@ generate_mgmt_script = os.path.join(REPO_ROOT, "doc/sphinx/generate_doc.py")
 # env prep helper functions
 
 
-def create_index_file(readme_location, package_rst):
+def create_index_file(readme_location: str, package_rst: str) -> str:
     readme_ext = os.path.splitext(readme_location)[1]
 
     output = ""
@@ -75,7 +75,7 @@ def create_index_file(readme_location, package_rst):
 
     return output
 
-def create_index(doc_folder, source_location, namespace):
+def create_index(doc_folder: str, source_location: str, namespace: str) -> None:
     index_content = ""
 
     package_rst = "{}.rst".format(namespace)
@@ -98,7 +98,7 @@ def create_index(doc_folder, source_location, namespace):
     with open(content_destination, "w+", encoding='utf-8') as f:
         f.write(index_content)
 
-def write_version(site_folder, version):
+def write_version(site_folder: str, version: str) -> None:
 
     if not os.path.isdir(site_folder):
         os.mkdir(site_folder)
