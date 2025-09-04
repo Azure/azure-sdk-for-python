@@ -47,7 +47,7 @@ uvx azpysdk <tool_name>
 
 ### With venv
 
-```
+```bash
 # You can call the command directly if you activated the venv
 azpysdk <tool_name>
 ```
@@ -56,7 +56,7 @@ azpysdk <tool_name>
 
 ### Using different Python version
 
-If you want to locally test different Python versions to check compatibility with all the required Python versions, do that.
+You can locally test different Python versions to check compatibility with all the required Python versions.
 
 Note that this is optional, and you can rely onn CI to test python versions.
 
