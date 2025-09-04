@@ -4,7 +4,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING, Mapping, Optional, List, Sequence, Union, overload
+from typing import TYPE_CHECKING, Mapping, Optional, List, Sequence, Union, cast, overload
 from urllib.parse import urlparse
 import warnings
 
@@ -210,12 +210,15 @@ class CallConnectionClient:  # pylint:disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         # Overwritting return type using cls.
-        return self._call_connection_client.get_participants(  # type: ignore[return-value]
-            self._call_connection_id,
-            cls=lambda participants: [
-                CallParticipant._from_generated(p) for p in participants  # pylint:disable=protected-access
-            ],
-            **kwargs,
+        return cast(
+            ItemPaged[CallParticipant],
+            self._call_connection_client.get_participants(
+                self._call_connection_id,
+                cls=lambda participants: [
+                    CallParticipant._from_generated(p) for p in participants  # pylint:disable=protected-access
+                ],
+                **kwargs,
+            ),
         )
 
     @distributed_trace

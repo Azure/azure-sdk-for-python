@@ -497,20 +497,20 @@ class MediaStreamingSubscription:
     :keyword id: Subscription Id.
     :paramtype id: str
     :keyword state: Media streaming subscription state. Known values are: "disabled", "inactive", and
-    "active".
+     "active".
     :paramtype state: str or
-    ~azure.communication.callautomation.MediaStreamingSubscriptionState
+     ~azure.communication.callautomation.MediaStreamingSubscriptionState
     :keyword subscribed_content_types: Subscribed media streaming content types.
     :paramtype subscribed_content_types: list[str or
      ~azure.communication.callautomation.MediaStreamingContentType]
     """
 
     id: Optional[str]
-    """subscription id."""
+    """Subscription Id."""
     state: Optional[Union[str, "MediaStreamingSubscriptionState"]]
-    """media streaming subscription state."""
+    """Media streaming subscription state."""
     subscribed_content_types: Optional[List[Union[str, "MediaStreamingContentType"]]]
-    """subscribed media streaming content types."""
+    """Subscribed media streaming content types."""
 
     def __init__(
         self,
@@ -558,11 +558,11 @@ class TranscriptionSubscription:
     """
 
     id: Optional[str]
-    """subscription id."""
+    """Subscription Id."""
     state: Optional[Union[str, "TranscriptionSubscriptionState"]]
-    """transcription subscription state."""
+    """Transcription subscription state."""
     subscribed_result_types: Optional[List[Union[str, "TranscriptionResultType"]]]
-    """subscribed transcription result types."""
+    """Subscribed transcription result types."""
     locale: Optional[str]
     """Specifies the locale used for transcription, e.g., en-CA or en-AU."""
 
