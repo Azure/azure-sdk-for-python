@@ -32,22 +32,22 @@ def main():
 
     response = client.neon_databases.begin_create_or_update(
         resource_group_name="rgneon",
-        organization_name="test-org",
-        project_name="entity-name",
-        branch_name="entity-name",
-        neon_database_name="entity-name",
+        organization_name="myOrganization",
+        project_name="myProject",
+        branch_name="feature",
+        neon_database_name="postgres_main_db",
         resource={
             "properties": {
-                "attributes": [{"name": "trhvzyvaqy", "value": "evpkgsskyavybxwwssm"}],
-                "branchId": "orfdwdmzvfvlnrgussvcvoek",
-                "entityName": "entity-name",
-                "ownerName": "odmbeg",
+                "attributes": [{"name": "on", "value": "qzp"}],
+                "branchId": "sllrohrmwkgzre",
+                "entityName": "MainDatabase",
+                "ownerName": "rjpysakvuicrlwvzcbmp",
             }
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-03-01/NeonDatabases_CreateOrUpdate_MaximumSet_Gen.json
+# x-ms-original-file: 2025-06-23-preview/NeonDatabases_CreateOrUpdate_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

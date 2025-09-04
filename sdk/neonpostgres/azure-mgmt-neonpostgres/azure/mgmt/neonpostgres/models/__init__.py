@@ -15,6 +15,7 @@ if TYPE_CHECKING:
 
 from ._models import (  # type: ignore
     Attributes,
+    AutoscalingSize,
     Branch,
     BranchProperties,
     CompanyDetails,
@@ -40,6 +41,8 @@ from ._models import (  # type: ignore
     PartnerOrganizationProperties,
     PgVersion,
     PgVersionsResult,
+    PreflightCheckParameters,
+    PreflightCheckResult,
     Project,
     ProjectProperties,
     ProxyResource,
@@ -53,7 +56,9 @@ from ._models import (  # type: ignore
 from ._enums import (  # type: ignore
     ActionType,
     CreatedByType,
+    EndpointStatus,
     EndpointType,
+    EntityType,
     MarketplaceSubscriptionStatus,
     Origin,
     ResourceProvisioningState,
@@ -65,6 +70,7 @@ from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "Attributes",
+    "AutoscalingSize",
     "Branch",
     "BranchProperties",
     "CompanyDetails",
@@ -90,6 +96,8 @@ __all__ = [
     "PartnerOrganizationProperties",
     "PgVersion",
     "PgVersionsResult",
+    "PreflightCheckParameters",
+    "PreflightCheckResult",
     "Project",
     "ProjectProperties",
     "ProxyResource",
@@ -100,7 +108,9 @@ __all__ = [
     "UserDetails",
     "ActionType",
     "CreatedByType",
+    "EndpointStatus",
     "EndpointType",
+    "EntityType",
     "MarketplaceSubscriptionStatus",
     "Origin",
     "ResourceProvisioningState",

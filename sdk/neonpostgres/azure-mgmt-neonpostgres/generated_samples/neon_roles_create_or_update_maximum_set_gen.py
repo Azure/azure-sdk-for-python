@@ -32,23 +32,23 @@ def main():
 
     response = client.neon_roles.begin_create_or_update(
         resource_group_name="rgneon",
-        organization_name="test-org",
-        project_name="entity-name",
-        branch_name="entity-name",
-        neon_role_name="entity-name",
+        organization_name="myOrganization",
+        project_name="myProject",
+        branch_name="feature",
+        neon_role_name="read_only_role",
         resource={
             "properties": {
-                "attributes": [{"name": "trhvzyvaqy", "value": "evpkgsskyavybxwwssm"}],
-                "branchId": "wxbojkmdgaggkfiwqfakdkbyztm",
-                "entityName": "entity-name",
+                "attributes": [{"name": "on", "value": "qzp"}],
+                "branchId": "tnmwjbftrvfpepgeytoeqsyhyz",
+                "entityName": "PostgresReadOnlyRole",
                 "isSuperUser": True,
-                "permissions": ["myucqecpjriewzohxvadgkhiudnyx"],
+                "permissions": ["cgubrzxkomlxoqdua"],
             }
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-03-01/NeonRoles_CreateOrUpdate_MaximumSet_Gen.json
+# x-ms-original-file: 2025-06-23-preview/NeonRoles_CreateOrUpdate_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

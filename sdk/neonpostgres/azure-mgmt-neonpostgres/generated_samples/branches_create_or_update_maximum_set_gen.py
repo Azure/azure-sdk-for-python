@@ -32,41 +32,42 @@ def main():
 
     response = client.branches.begin_create_or_update(
         resource_group_name="rgneon",
-        organization_name="test-org",
-        project_name="test-entity",
-        branch_name="test-entity",
+        organization_name="myOrganization",
+        project_name="myProject",
+        branch_name="feature",
         resource={
             "properties": {
-                "attributes": [{"name": "trhvzyvaqy", "value": "evpkgsskyavybxwwssm"}],
-                "databaseName": "duhxebzhd",
+                "attributes": [{"name": "on", "value": "qzp"}],
+                "databaseName": "zxqetv",
                 "databases": [
                     {
-                        "attributes": [{"name": "trhvzyvaqy", "value": "evpkgsskyavybxwwssm"}],
-                        "branchId": "orfdwdmzvfvlnrgussvcvoek",
-                        "entityName": "entity-name",
-                        "ownerName": "odmbeg",
+                        "attributes": [{"name": "on", "value": "qzp"}],
+                        "branchId": "sllrohrmwkgzre",
+                        "entityName": "MainDatabase",
+                        "ownerName": "rjpysakvuicrlwvzcbmp",
                     }
                 ],
                 "endpoints": [
                     {
-                        "attributes": [{"name": "trhvzyvaqy", "value": "evpkgsskyavybxwwssm"}],
-                        "branchId": "rzsyrhpfbydxtfkpaa",
+                        "attributes": [{"name": "on", "value": "qzp"}],
+                        "branchId": "blclbeuzvywzagbuvdo",
                         "endpointType": "read_only",
-                        "entityName": "entity-name",
-                        "projectId": "rtvdeeflqzlrpfzhjqhcsfbldw",
+                        "entityName": "PrimaryEndpoint",
+                        "projectId": "vwwhykqyr",
+                        "size": {"autoscalingLimitMaxCu": 14, "autoscalingLimitMinCu": 3},
                     }
                 ],
-                "entityName": "entity-name",
-                "parentId": "entity-id",
-                "projectId": "oik",
-                "roleName": "qrrairsupyosxnqotdwhbpc",
+                "entityName": "FeatureBranch",
+                "parentId": "parent-123abc",
+                "projectId": "cxhihpayn",
+                "roleName": "lwlafskrxvggwnfu",
                 "roles": [
                     {
-                        "attributes": [{"name": "trhvzyvaqy", "value": "evpkgsskyavybxwwssm"}],
-                        "branchId": "wxbojkmdgaggkfiwqfakdkbyztm",
-                        "entityName": "entity-name",
+                        "attributes": [{"name": "on", "value": "qzp"}],
+                        "branchId": "tnmwjbftrvfpepgeytoeqsyhyz",
+                        "entityName": "AdminRole",
                         "isSuperUser": True,
-                        "permissions": ["myucqecpjriewzohxvadgkhiudnyx"],
+                        "permissions": ["cgubrzxkomlxoqdua"],
                     }
                 ],
             }
@@ -75,6 +76,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-03-01/Branches_CreateOrUpdate_MaximumSet_Gen.json
+# x-ms-original-file: 2025-06-23-preview/Branches_CreateOrUpdate_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

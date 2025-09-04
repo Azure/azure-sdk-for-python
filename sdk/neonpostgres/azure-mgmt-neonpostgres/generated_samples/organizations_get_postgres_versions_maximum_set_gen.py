@@ -36,6 +36,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-03-01/Organizations_GetPostgresVersions_MaximumSet_Gen.json
+# x-ms-original-file: 2025-06-23-preview/Organizations_GetPostgresVersions_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

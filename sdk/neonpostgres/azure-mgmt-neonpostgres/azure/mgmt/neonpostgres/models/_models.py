@@ -9,16 +9,15 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, Dict, List, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Mapping, Optional, TYPE_CHECKING, Union, overload
 
-from .. import _model_base
-from .._model_base import rest_field
+from .._utils.model_base import Model as _Model, rest_field
 
 if TYPE_CHECKING:
     from .. import models as _models
 
 
-class Attributes(_model_base.Model):
+class Attributes(_Model):
     """Additional attributes specific to Neon Resources.
 
     :ivar name: Name of the attribute. Required.
@@ -51,8 +50,45 @@ class Attributes(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Resource(_model_base.Model):
-    """Common fields that are returned in the response for all Azure Resource Manager resources.
+class AutoscalingSize(_Model):
+    """Represents the compute units size range for autoscaling.
+
+    :ivar autoscaling_limit_min_cu: The minimum compute units for autoscaling. Required.
+    :vartype autoscaling_limit_min_cu: float
+    :ivar autoscaling_limit_max_cu: The maximum compute units for autoscaling. Required.
+    :vartype autoscaling_limit_max_cu: float
+    """
+
+    autoscaling_limit_min_cu: float = rest_field(
+        name="autoscalingLimitMinCu", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The minimum compute units for autoscaling. Required."""
+    autoscaling_limit_max_cu: float = rest_field(
+        name="autoscalingLimitMaxCu", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The maximum compute units for autoscaling. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        autoscaling_limit_min_cu: float,
+        autoscaling_limit_max_cu: float,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class Resource(_Model):
+    """Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -80,8 +116,7 @@ class Resource(_model_base.Model):
 
 
 class ProxyResource(Resource):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
-    tags and a location.
+    """Proxy Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -138,7 +173,7 @@ class Branch(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class BranchProperties(_model_base.Model):
+class BranchProperties(_Model):
     """Properties specific to Branch.
 
     :ivar entity_id: Unique identifier for the entity.
@@ -166,6 +201,20 @@ class BranchProperties(_model_base.Model):
     :vartype databases: list[~azure.mgmt.neonpostgres.models.NeonDatabaseProperties]
     :ivar endpoints: Endpoints associated with the branch.
     :vartype endpoints: list[~azure.mgmt.neonpostgres.models.EndpointProperties]
+    :ivar branch_id: Unique identifier for the branch.
+    :vartype branch_id: str
+    :ivar branch: Name of the branch.
+    :vartype branch: str
+    :ivar data_size: Total data size in MB for the branch.
+    :vartype data_size: str
+    :ivar last_active: Last active compute for the branch.
+    :vartype last_active: str
+    :ivar compute_hours: Compute hours for the branch.
+    :vartype compute_hours: str
+    :ivar protected: Branch protected status.
+    :vartype protected: bool
+    :ivar is_default: Branch default status.
+    :vartype is_default: bool
     """
 
     entity_id: Optional[str] = rest_field(name="entityId", visibility=["read"])
@@ -181,7 +230,7 @@ class BranchProperties(_model_base.Model):
     )
     """Provisioning state of the resource. Known values are: \"Succeeded\", \"Failed\", and
      \"Canceled\"."""
-    attributes: Optional[List["_models.Attributes"]] = rest_field(
+    attributes: Optional[list["_models.Attributes"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Additional attributes for the entity."""
@@ -195,32 +244,48 @@ class BranchProperties(_model_base.Model):
         name="databaseName", visibility=["read", "create", "update", "delete", "query"]
     )
     """Database name associated with the branch."""
-    roles: Optional[List["_models.NeonRoleProperties"]] = rest_field(
+    roles: Optional[list["_models.NeonRoleProperties"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Roles associated with the branch."""
-    databases: Optional[List["_models.NeonDatabaseProperties"]] = rest_field(
+    databases: Optional[list["_models.NeonDatabaseProperties"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Neon Databases associated with the branch."""
-    endpoints: Optional[List["_models.EndpointProperties"]] = rest_field(
+    endpoints: Optional[list["_models.EndpointProperties"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Endpoints associated with the branch."""
+    branch_id: Optional[str] = rest_field(name="branchId", visibility=["read", "create", "update", "delete", "query"])
+    """Unique identifier for the branch."""
+    branch: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name of the branch."""
+    data_size: Optional[str] = rest_field(name="dataSize", visibility=["read"])
+    """Total data size in MB for the branch."""
+    last_active: Optional[str] = rest_field(name="lastActive", visibility=["read"])
+    """Last active compute for the branch."""
+    compute_hours: Optional[str] = rest_field(name="computeHours", visibility=["read"])
+    """Compute hours for the branch."""
+    protected: Optional[bool] = rest_field(visibility=["read"])
+    """Branch protected status."""
+    is_default: Optional[bool] = rest_field(name="isDefault", visibility=["read"])
+    """Branch default status."""
 
     @overload
     def __init__(
         self,
         *,
         entity_name: Optional[str] = None,
-        attributes: Optional[List["_models.Attributes"]] = None,
+        attributes: Optional[list["_models.Attributes"]] = None,
         project_id: Optional[str] = None,
         parent_id: Optional[str] = None,
         role_name: Optional[str] = None,
         database_name: Optional[str] = None,
-        roles: Optional[List["_models.NeonRoleProperties"]] = None,
-        databases: Optional[List["_models.NeonDatabaseProperties"]] = None,
-        endpoints: Optional[List["_models.EndpointProperties"]] = None,
+        roles: Optional[list["_models.NeonRoleProperties"]] = None,
+        databases: Optional[list["_models.NeonDatabaseProperties"]] = None,
+        endpoints: Optional[list["_models.EndpointProperties"]] = None,
+        branch_id: Optional[str] = None,
+        branch: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -234,7 +299,7 @@ class BranchProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class CompanyDetails(_model_base.Model):
+class CompanyDetails(_Model):
     """Company details for an organization.
 
     :ivar company_name: Company name.
@@ -336,7 +401,7 @@ class Compute(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class ComputeProperties(_model_base.Model):
+class ComputeProperties(_Model):
     """Properties specific to Compute.
 
     :ivar entity_id: Unique identifier for the entity.
@@ -373,7 +438,7 @@ class ComputeProperties(_model_base.Model):
     )
     """Provisioning state of the resource. Known values are: \"Succeeded\", \"Failed\", and
      \"Canceled\"."""
-    attributes: Optional[List["_models.Attributes"]] = rest_field(
+    attributes: Optional[list["_models.Attributes"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Additional attributes for the entity."""
@@ -391,7 +456,7 @@ class ComputeProperties(_model_base.Model):
         self,
         *,
         entity_name: Optional[str] = None,
-        attributes: Optional[List["_models.Attributes"]] = None,
+        attributes: Optional[list["_models.Attributes"]] = None,
         region: Optional[str] = None,
         cpu_cores: Optional[int] = None,
         memory: Optional[int] = None,
@@ -409,7 +474,7 @@ class ComputeProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ConnectionUriProperties(_model_base.Model):
+class ConnectionUriProperties(_Model):
     """Connection uri parameters for the associated database.
 
     :ivar project_id: Project Id associated with this connection.
@@ -470,7 +535,7 @@ class ConnectionUriProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DefaultEndpointSettings(_model_base.Model):
+class DefaultEndpointSettings(_Model):
     """Default Endpoint Settings for the project.
 
     :ivar autoscaling_limit_min_cu: Minimum compute units for autoscaling. Required.
@@ -548,7 +613,7 @@ class Endpoint(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class EndpointProperties(_model_base.Model):
+class EndpointProperties(_Model):
     """Properties specific to Endpoints.
 
     :ivar entity_id: Unique identifier for the entity.
@@ -568,6 +633,17 @@ class EndpointProperties(_model_base.Model):
     :vartype branch_id: str
     :ivar endpoint_type: The type of the endpoint. Known values are: "read_only" and "read_write".
     :vartype endpoint_type: str or ~azure.mgmt.neonpostgres.models.EndpointType
+    :ivar endpoint_id: Unique identifier for the compute endpoint.
+    :vartype endpoint_id: str
+    :ivar compute_name: Name of the compute endpoint.
+    :vartype compute_name: str
+    :ivar status: The current status of the compute endpoint. Known values are: "init", "active",
+     and "idle".
+    :vartype status: str or ~azure.mgmt.neonpostgres.models.EndpointStatus
+    :ivar last_active: The timestamp when the compute endpoint was last active.
+    :vartype last_active: str
+    :ivar size: The compute units size range for autoscaling (MinCU-MaxCU).
+    :vartype size: ~azure.mgmt.neonpostgres.models.AutoscalingSize
     """
 
     entity_id: Optional[str] = rest_field(name="entityId", visibility=["read"])
@@ -583,7 +659,7 @@ class EndpointProperties(_model_base.Model):
     )
     """Provisioning state of the resource. Known values are: \"Succeeded\", \"Failed\", and
      \"Canceled\"."""
-    attributes: Optional[List["_models.Attributes"]] = rest_field(
+    attributes: Optional[list["_models.Attributes"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Additional attributes for the entity."""
@@ -595,16 +671,34 @@ class EndpointProperties(_model_base.Model):
         name="endpointType", visibility=["read", "create", "update", "delete", "query"]
     )
     """The type of the endpoint. Known values are: \"read_only\" and \"read_write\"."""
+    endpoint_id: Optional[str] = rest_field(
+        name="endpointId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Unique identifier for the compute endpoint."""
+    compute_name: Optional[str] = rest_field(
+        name="computeName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Name of the compute endpoint."""
+    status: Optional[Union[str, "_models.EndpointStatus"]] = rest_field(visibility=["read"])
+    """The current status of the compute endpoint. Known values are: \"init\", \"active\", and
+     \"idle\"."""
+    last_active: Optional[str] = rest_field(name="lastActive", visibility=["read"])
+    """The timestamp when the compute endpoint was last active."""
+    size: Optional["_models.AutoscalingSize"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The compute units size range for autoscaling (MinCU-MaxCU)."""
 
     @overload
     def __init__(
         self,
         *,
         entity_name: Optional[str] = None,
-        attributes: Optional[List["_models.Attributes"]] = None,
+        attributes: Optional[list["_models.Attributes"]] = None,
         project_id: Optional[str] = None,
         branch_id: Optional[str] = None,
         endpoint_type: Optional[Union[str, "_models.EndpointType"]] = None,
+        endpoint_id: Optional[str] = None,
+        compute_name: Optional[str] = None,
+        size: Optional["_models.AutoscalingSize"] = None,
     ) -> None: ...
 
     @overload
@@ -618,7 +712,7 @@ class EndpointProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ErrorAdditionalInfo(_model_base.Model):
+class ErrorAdditionalInfo(_Model):
     """The resource management error additional info.
 
     :ivar type: The additional info type.
@@ -633,7 +727,7 @@ class ErrorAdditionalInfo(_model_base.Model):
     """The additional info."""
 
 
-class ErrorDetail(_model_base.Model):
+class ErrorDetail(_Model):
     """The error detail.
 
     :ivar code: The error code.
@@ -654,17 +748,16 @@ class ErrorDetail(_model_base.Model):
     """The error message."""
     target: Optional[str] = rest_field(visibility=["read"])
     """The error target."""
-    details: Optional[List["_models.ErrorDetail"]] = rest_field(visibility=["read"])
+    details: Optional[list["_models.ErrorDetail"]] = rest_field(visibility=["read"])
     """The error details."""
-    additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = rest_field(
+    additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = rest_field(
         name="additionalInfo", visibility=["read"]
     )
     """The error additional info."""
 
 
-class ErrorResponse(_model_base.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed
-    operations.
+class ErrorResponse(_Model):
+    """Error response.
 
     :ivar error: The error object.
     :vartype error: ~azure.mgmt.neonpostgres.models.ErrorDetail
@@ -691,7 +784,7 @@ class ErrorResponse(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class MarketplaceDetails(_model_base.Model):
+class MarketplaceDetails(_Model):
     """Marketplace details for an organization.
 
     :ivar subscription_id: SaaS subscription id for the the marketplace offer.
@@ -779,7 +872,7 @@ class NeonDatabase(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class NeonDatabaseProperties(_model_base.Model):
+class NeonDatabaseProperties(_Model):
     """Properties specific to Databases.
 
     :ivar entity_id: Unique identifier for the entity.
@@ -797,6 +890,10 @@ class NeonDatabaseProperties(_model_base.Model):
     :vartype branch_id: str
     :ivar owner_name: The name of the role that owns the database.
     :vartype owner_name: str
+    :ivar database_name: Name of the database.
+    :vartype database_name: str
+    :ivar last_updated: Timestamp indicating when the database was last updated.
+    :vartype last_updated: str
     """
 
     entity_id: Optional[str] = rest_field(name="entityId", visibility=["read"])
@@ -812,7 +909,7 @@ class NeonDatabaseProperties(_model_base.Model):
     )
     """Provisioning state of the resource. Known values are: \"Succeeded\", \"Failed\", and
      \"Canceled\"."""
-    attributes: Optional[List["_models.Attributes"]] = rest_field(
+    attributes: Optional[list["_models.Attributes"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Additional attributes for the entity."""
@@ -820,15 +917,22 @@ class NeonDatabaseProperties(_model_base.Model):
     """The ID of the branch this database belongs to."""
     owner_name: Optional[str] = rest_field(name="ownerName", visibility=["read", "create", "update", "delete", "query"])
     """The name of the role that owns the database."""
+    database_name: Optional[str] = rest_field(
+        name="databaseName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Name of the database."""
+    last_updated: Optional[str] = rest_field(name="lastUpdated", visibility=["read"])
+    """Timestamp indicating when the database was last updated."""
 
     @overload
     def __init__(
         self,
         *,
         entity_name: Optional[str] = None,
-        attributes: Optional[List["_models.Attributes"]] = None,
+        attributes: Optional[list["_models.Attributes"]] = None,
         branch_id: Optional[str] = None,
         owner_name: Optional[str] = None,
+        database_name: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -883,7 +987,7 @@ class NeonRole(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class NeonRoleProperties(_model_base.Model):
+class NeonRoleProperties(_Model):
     """Properties specific to Roles.
 
     :ivar entity_id: Unique identifier for the entity.
@@ -903,6 +1007,12 @@ class NeonRoleProperties(_model_base.Model):
     :vartype permissions: list[str]
     :ivar is_super_user: Indicates whether the role has superuser privileges.
     :vartype is_super_user: bool
+    :ivar role_name: Name of the role.
+    :vartype role_name: str
+    :ivar last_updated: Timestamp indicating when the role was last updated.
+    :vartype last_updated: str
+    :ivar owns: Databases name associated with the role.
+    :vartype owns: str
     """
 
     entity_id: Optional[str] = rest_field(name="entityId", visibility=["read"])
@@ -918,28 +1028,35 @@ class NeonRoleProperties(_model_base.Model):
     )
     """Provisioning state of the resource. Known values are: \"Succeeded\", \"Failed\", and
      \"Canceled\"."""
-    attributes: Optional[List["_models.Attributes"]] = rest_field(
+    attributes: Optional[list["_models.Attributes"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Additional attributes for the entity."""
     branch_id: Optional[str] = rest_field(name="branchId", visibility=["read", "create", "update", "delete", "query"])
     """The ID of the branch this role belongs to."""
-    permissions: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    permissions: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Permissions assigned to the role."""
     is_super_user: Optional[bool] = rest_field(
         name="isSuperUser", visibility=["read", "create", "update", "delete", "query"]
     )
     """Indicates whether the role has superuser privileges."""
+    role_name: Optional[str] = rest_field(name="roleName", visibility=["read", "create", "update", "delete", "query"])
+    """Name of the role."""
+    last_updated: Optional[str] = rest_field(name="lastUpdated", visibility=["read"])
+    """Timestamp indicating when the role was last updated."""
+    owns: Optional[str] = rest_field(visibility=["read"])
+    """Databases name associated with the role."""
 
     @overload
     def __init__(
         self,
         *,
         entity_name: Optional[str] = None,
-        attributes: Optional[List["_models.Attributes"]] = None,
+        attributes: Optional[list["_models.Attributes"]] = None,
         branch_id: Optional[str] = None,
-        permissions: Optional[List[str]] = None,
+        permissions: Optional[list[str]] = None,
         is_super_user: Optional[bool] = None,
+        role_name: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -953,7 +1070,7 @@ class NeonRoleProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class OfferDetails(_model_base.Model):
+class OfferDetails(_Model):
     """Offer details for the marketplace that is selected by the user.
 
     :ivar publisher_id: Publisher Id for the marketplace offer. Required.
@@ -1006,8 +1123,8 @@ class OfferDetails(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_model_base.Model):
-    """Details of a REST API operation, returned from the Resource Provider Operations API.
+class Operation(_Model):
+    """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
      "Microsoft.Compute/virtualMachines/write", "Microsoft.Compute/virtualMachines/capture/action".
@@ -1063,7 +1180,7 @@ class Operation(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationDisplay(_model_base.Model):
+class OperationDisplay(_Model):
     """Localized display information for and operation.
 
     :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
@@ -1094,7 +1211,7 @@ class OperationDisplay(_model_base.Model):
      views."""
 
 
-class OrganizationProperties(_model_base.Model):
+class OrganizationProperties(_Model):
     """Properties specific to Neon Organization resource.
 
     :ivar marketplace_details: Marketplace details of the resource. Required.
@@ -1114,7 +1231,7 @@ class OrganizationProperties(_model_base.Model):
     """
 
     marketplace_details: "_models.MarketplaceDetails" = rest_field(
-        name="marketplaceDetails", visibility=["read", "create"]
+        name="marketplaceDetails", visibility=["read", "create", "update"]
     )
     """Marketplace details of the resource. Required."""
     user_details: "_models.UserDetails" = rest_field(
@@ -1162,8 +1279,7 @@ class OrganizationProperties(_model_base.Model):
 
 
 class TrackedResource(Resource):
-    """The resource model definition for an Azure Resource Manager tracked top level resource which
-    has 'tags' and a 'location'.
+    """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -1182,7 +1298,7 @@ class TrackedResource(Resource):
     :vartype location: str
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     location: str = rest_field(visibility=["read", "create"])
     """The geo-location where the resource lives. Required."""
@@ -1192,7 +1308,7 @@ class TrackedResource(Resource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -1238,7 +1354,7 @@ class OrganizationResource(TrackedResource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.OrganizationProperties"] = None,
     ) -> None: ...
 
@@ -1253,7 +1369,7 @@ class OrganizationResource(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class PartnerOrganizationProperties(_model_base.Model):
+class PartnerOrganizationProperties(_Model):
     """Properties specific to Partner's organization.
 
     :ivar organization_id: Organization Id in partner's system.
@@ -1297,7 +1413,7 @@ class PartnerOrganizationProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class PgVersion(_model_base.Model):
+class PgVersion(_Model):
     """PostgreSQL Version model.
 
     :ivar version: The major PostgreSQL version number.
@@ -1325,21 +1441,135 @@ class PgVersion(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class PgVersionsResult(_model_base.Model):
+class PgVersionsResult(_Model):
     """Response model for PostgreSQL versions.
 
     :ivar versions: List of PostgreSQL versions. Required.
     :vartype versions: list[~azure.mgmt.neonpostgres.models.PgVersion]
     """
 
-    versions: List["_models.PgVersion"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    versions: list["_models.PgVersion"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of PostgreSQL versions. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        versions: List["_models.PgVersion"],
+        versions: list["_models.PgVersion"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PreflightCheckParameters(_Model):
+    """Preflight check parameters for branch and child resources.
+
+    IMPORTANT: Only one of the property types (branchProperties, roleProperties,
+    databaseProperties,
+    or endpointProperties) should be provided at a time, based on the entityType value:
+
+    * When entityType is "branch", provide only branchProperties
+    * When entityType is "role", provide only roleProperties
+    * When entityType is "database", provide only databaseProperties
+    * When entityType is "endpoint", provide only endpointProperties.
+
+    :ivar project_id: Project Id associated with this connection. Required.
+    :vartype project_id: str
+    :ivar branch_id: Branch Id associated with this connection. Required.
+    :vartype branch_id: str
+    :ivar entity_type: Entity type to be validated for deletion. Required. Known values are:
+     "branch", "neonRole", "neonDatabase", and "endpoint".
+    :vartype entity_type: str or ~azure.mgmt.neonpostgres.models.EntityType
+    :ivar branch_properties: The branch properties - ONLY provided when entityType is 'branch'.
+    :vartype branch_properties: ~azure.mgmt.neonpostgres.models.BranchProperties
+    :ivar role_properties: The role properties - ONLY provided when entityType is 'role'.
+    :vartype role_properties: ~azure.mgmt.neonpostgres.models.NeonRoleProperties
+    :ivar database_properties: The database properties - ONLY provided when entityType is
+     'database'.
+    :vartype database_properties: ~azure.mgmt.neonpostgres.models.NeonDatabaseProperties
+    :ivar endpoint_properties: The endpoint properties - ONLY provided when entityType is
+     'endpoint'.
+    :vartype endpoint_properties: ~azure.mgmt.neonpostgres.models.EndpointProperties
+    """
+
+    project_id: str = rest_field(name="projectId", visibility=["read", "create", "update", "delete", "query"])
+    """Project Id associated with this connection. Required."""
+    branch_id: str = rest_field(name="branchId", visibility=["read", "create", "update", "delete", "query"])
+    """Branch Id associated with this connection. Required."""
+    entity_type: Union[str, "_models.EntityType"] = rest_field(
+        name="entityType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Entity type to be validated for deletion. Required. Known values are: \"branch\", \"neonRole\",
+     \"neonDatabase\", and \"endpoint\"."""
+    branch_properties: Optional["_models.BranchProperties"] = rest_field(
+        name="branchProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The branch properties - ONLY provided when entityType is 'branch'."""
+    role_properties: Optional["_models.NeonRoleProperties"] = rest_field(
+        name="roleProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The role properties - ONLY provided when entityType is 'role'."""
+    database_properties: Optional["_models.NeonDatabaseProperties"] = rest_field(
+        name="databaseProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The database properties - ONLY provided when entityType is 'database'."""
+    endpoint_properties: Optional["_models.EndpointProperties"] = rest_field(
+        name="endpointProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The endpoint properties - ONLY provided when entityType is 'endpoint'."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        project_id: str,
+        branch_id: str,
+        entity_type: Union[str, "_models.EntityType"],
+        branch_properties: Optional["_models.BranchProperties"] = None,
+        role_properties: Optional["_models.NeonRoleProperties"] = None,
+        database_properties: Optional["_models.NeonDatabaseProperties"] = None,
+        endpoint_properties: Optional["_models.EndpointProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PreflightCheckResult(_Model):
+    """Result of the pre-deletion validation operation.
+
+    :ivar is_valid: Indicates whether action is allowed. Required.
+    :vartype is_valid: bool
+    :ivar reason: Optional message in case action is not allowed.
+    :vartype reason: str
+    """
+
+    is_valid: bool = rest_field(name="isValid", visibility=["read", "create", "update", "delete", "query"])
+    """Indicates whether action is allowed. Required."""
+    reason: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional message in case action is not allowed."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        is_valid: bool,
+        reason: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -1394,7 +1624,7 @@ class Project(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class ProjectProperties(_model_base.Model):
+class ProjectProperties(_Model):
     """Properties specific to Project.
 
     :ivar entity_id: Unique identifier for the entity.
@@ -1441,7 +1671,7 @@ class ProjectProperties(_model_base.Model):
     )
     """Provisioning state of the resource. Known values are: \"Succeeded\", \"Failed\", and
      \"Canceled\"."""
-    attributes: Optional[List["_models.Attributes"]] = rest_field(
+    attributes: Optional[list["_models.Attributes"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Additional attributes for the entity."""
@@ -1463,15 +1693,15 @@ class ProjectProperties(_model_base.Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The Branch properties of the project. This is optional."""
-    roles: Optional[List["_models.NeonRoleProperties"]] = rest_field(
+    roles: Optional[list["_models.NeonRoleProperties"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Roles associated with the project."""
-    databases: Optional[List["_models.NeonDatabaseProperties"]] = rest_field(
+    databases: Optional[list["_models.NeonDatabaseProperties"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Neon Databases associated with the project."""
-    endpoints: Optional[List["_models.EndpointProperties"]] = rest_field(
+    endpoints: Optional[list["_models.EndpointProperties"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Endpoints associated with the project."""
@@ -1481,16 +1711,16 @@ class ProjectProperties(_model_base.Model):
         self,
         *,
         entity_name: Optional[str] = None,
-        attributes: Optional[List["_models.Attributes"]] = None,
+        attributes: Optional[list["_models.Attributes"]] = None,
         region_id: Optional[str] = None,
         storage: Optional[int] = None,
         pg_version: Optional[int] = None,
         history_retention: Optional[int] = None,
         default_endpoint_settings: Optional["_models.DefaultEndpointSettings"] = None,
         branch: Optional["_models.BranchProperties"] = None,
-        roles: Optional[List["_models.NeonRoleProperties"]] = None,
-        databases: Optional[List["_models.NeonDatabaseProperties"]] = None,
-        endpoints: Optional[List["_models.EndpointProperties"]] = None,
+        roles: Optional[list["_models.NeonRoleProperties"]] = None,
+        databases: Optional[list["_models.NeonDatabaseProperties"]] = None,
+        endpoints: Optional[list["_models.EndpointProperties"]] = None,
     ) -> None: ...
 
     @overload
@@ -1504,7 +1734,7 @@ class ProjectProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SingleSignOnProperties(_model_base.Model):
+class SingleSignOnProperties(_Model):
     """Properties specific to Single Sign On Resource.
 
     :ivar single_sign_on_state: State of the Single Sign On for the organization. Known values are:
@@ -1532,7 +1762,7 @@ class SingleSignOnProperties(_model_base.Model):
         name="singleSignOnUrl", visibility=["read", "create", "update", "delete", "query"]
     )
     """URL for SSO to be used by the partner to redirect the user to their system."""
-    aad_domains: Optional[List[str]] = rest_field(
+    aad_domains: Optional[list[str]] = rest_field(
         name="aadDomains", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of AAD domains fetched from Microsoft Graph for user."""
@@ -1544,7 +1774,7 @@ class SingleSignOnProperties(_model_base.Model):
         single_sign_on_state: Optional[Union[str, "_models.SingleSignOnStates"]] = None,
         enterprise_app_id: Optional[str] = None,
         single_sign_on_url: Optional[str] = None,
-        aad_domains: Optional[List[str]] = None,
+        aad_domains: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -1558,7 +1788,7 @@ class SingleSignOnProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_model_base.Model):
+class SystemData(_Model):
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -1625,7 +1855,7 @@ class SystemData(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class UserDetails(_model_base.Model):
+class UserDetails(_Model):
     """User details for an organization.
 
     :ivar first_name: First name of the user.
