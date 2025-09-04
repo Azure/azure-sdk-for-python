@@ -3,7 +3,7 @@
 # Pre-requisite
 
 - You need to have Python installed
-- We recommend at least 3.11 to have access to more tools by default
+- We recommend at least version 3.11 to have access to more tools by default
 - You may optionally use the ["uv"](https://docs.astral.sh/uv/) tool, which is fast and handles Python version and venv creation automatically.
 
 # Initial setup
@@ -20,10 +20,13 @@
 
 `python -m venv .venv`
 
-`source .venv/bin/activate # for WSL`
+```
+# for WSL
+source .venv/bin/activate 
 
-`.venv\Scripts\activate # for Windows`
-
+# for Windows
+.venv\Scripts\activate 
+```
 
 `- pip install -r dev_requirements.txt`
 
