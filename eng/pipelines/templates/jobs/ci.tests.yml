@@ -79,6 +79,11 @@ jobs:
       value: ${{ parameters.InjectedPackages }}
 
     steps:
+    - ${{ if eq(parameters.OSName, 'macOS') }}:
+      - checkout: self
+        clean: true
+        fetchDepth: 1
+        fetchTags: false
     - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
 
     - template: /eng/pipelines/templates/steps/resolve-package-targeting.yml
