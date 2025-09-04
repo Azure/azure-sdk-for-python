@@ -477,7 +477,7 @@ class DataLakeFileClient(PathClient):
             A callback to track the progress of a long-running upload. The signature is
             function(current: int, total: int) where current is the number of bytes transferred
             so far, and total is the total size of the download.
-        :paramtype progress_hook: ~typing.Callable[[int, Optional[int]], Awaitable[None]]
+        :paramtype progress_hook: Optional[~typing.Callable[[int, Optional[int]], Awaitable[None]]]
         :returns: A dictionary of response headers.
         :rtype: Dict[str, Any]
         """

@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, Callable, Dict, List, Literal, Optional, TypeVar, Union
+from typing import Any, Callable, Literal, Optional, TypeVar, Union
 
 from azure.core import PipelineClient
 from azure.core.exceptions import (
@@ -28,7 +28,7 @@ from .._configuration import AzureFileStorageConfiguration
 from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -38,7 +38,7 @@ def build_create_request(
     url: str,
     *,
     timeout: Optional[int] = None,
-    metadata: Optional[Dict[str, str]] = None,
+    metadata: Optional[dict[str, str]] = None,
     file_permission: str = "inherit",
     file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
     file_permission_key: Optional[str] = None,
@@ -271,7 +271,7 @@ def build_set_metadata_request(
     url: str,
     *,
     timeout: Optional[int] = None,
-    metadata: Optional[Dict[str, str]] = None,
+    metadata: Optional[dict[str, str]] = None,
     allow_trailing_dot: Optional[bool] = None,
     file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
@@ -319,7 +319,7 @@ def build_list_files_and_directories_segment_request(  # pylint: disable=name-to
     marker: Optional[str] = None,
     maxresults: Optional[int] = None,
     timeout: Optional[int] = None,
-    include: Optional[List[Union[str, _models.ListFilesIncludeType]]] = None,
+    include: Optional[list[Union[str, _models.ListFilesIncludeType]]] = None,
     include_extended_info: Optional[bool] = None,
     allow_trailing_dot: Optional[bool] = None,
     file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
@@ -487,7 +487,7 @@ def build_rename_request(
     file_permission: str = "inherit",
     file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
     file_permission_key: Optional[str] = None,
-    metadata: Optional[Dict[str, str]] = None,
+    metadata: Optional[dict[str, str]] = None,
     allow_trailing_dot: Optional[bool] = None,
     allow_source_trailing_dot: Optional[bool] = None,
     file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
@@ -582,7 +582,7 @@ class DirectoryOperations:
     def create(  # pylint: disable=inconsistent-return-statements
         self,
         timeout: Optional[int] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         file_permission: str = "inherit",
         file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
         file_permission_key: Optional[str] = None,
@@ -1043,7 +1043,7 @@ class DirectoryOperations:
 
     @distributed_trace
     def set_metadata(  # pylint: disable=inconsistent-return-statements
-        self, timeout: Optional[int] = None, metadata: Optional[Dict[str, str]] = None, **kwargs: Any
+        self, timeout: Optional[int] = None, metadata: Optional[dict[str, str]] = None, **kwargs: Any
     ) -> None:
         """Updates user defined metadata for the specified directory.
 
@@ -1120,7 +1120,7 @@ class DirectoryOperations:
         marker: Optional[str] = None,
         maxresults: Optional[int] = None,
         timeout: Optional[int] = None,
-        include: Optional[List[Union[str, _models.ListFilesIncludeType]]] = None,
+        include: Optional[list[Union[str, _models.ListFilesIncludeType]]] = None,
         include_extended_info: Optional[bool] = None,
         **kwargs: Any
     ) -> _models.ListFilesAndDirectoriesSegmentResponse:
@@ -1408,7 +1408,7 @@ class DirectoryOperations:
         file_permission: str = "inherit",
         file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
         file_permission_key: Optional[str] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         source_lease_access_conditions: Optional[_models.SourceLeaseAccessConditions] = None,
         destination_lease_access_conditions: Optional[_models.DestinationLeaseAccessConditions] = None,
         copy_file_smb_info: Optional[_models.CopyFileSmbInfo] = None,

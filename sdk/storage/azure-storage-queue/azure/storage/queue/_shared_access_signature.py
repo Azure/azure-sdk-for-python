@@ -256,13 +256,13 @@ def generate_queue_sas(
     account_name: str,
     queue_name: str,
     account_key: Optional[str] = None,
-    user_delegation_key: Optional[UserDelegationKey] = None,
     permission: Optional[Union["QueueSasPermissions", str]] = None,
     expiry: Optional[Union["datetime", str]] = None,
     start: Optional[Union["datetime", str]] = None,
     policy_id: Optional[str] = None,
     ip: Optional[str] = None,
     *,
+    user_delegation_key: Optional[UserDelegationKey] = None,
     user_delegation_oid: Optional[str] = None,
     sts_hook: Optional[Callable[[str], None]] = None,
     **kwargs: Any
@@ -277,11 +277,6 @@ def generate_queue_sas(
         The name of the queue.
     :param Optional[str] account_key:
         The account key, also called shared key or access key, to generate the shared access signature.
-    :param Optional[~azure.storage.queue.UserDelegationKey] user_delegation_key:
-        Instead of an account shared key, the user could pass in a user delegation key.
-        A user delegation key can be obtained from the service by authenticating with an AAD identity;
-        this can be accomplished by calling :func:`~azure.storage.queue.QueueServiceClient.get_user_delegation_key`.
-        When present, the SAS is signed with the user delegation key instead.
     :param permission:
         The permissions associated with the shared access signature. The
         user is restricted to operations allowed by the permissions.
@@ -315,6 +310,11 @@ def generate_queue_sas(
         restricts the request to those IP addresses.
     :keyword str protocol:
         Specifies the protocol permitted for a request made. The default value is https.
+    :keyword Optional[~azure.storage.queue.UserDelegationKey] user_delegation_key:
+        Instead of an account shared key, the user could pass in a user delegation key.
+        A user delegation key can be obtained from the service by authenticating with an AAD identity;
+        this can be accomplished by calling :func:`~azure.storage.queue.QueueServiceClient.get_user_delegation_key`.
+        When present, the SAS is signed with the user delegation key instead.
     :keyword str user_delegation_oid:
         Specifies the Entra ID of the user that is authorized to use the resulting SAS URL.
         The resulting SAS URL must be used in conjunction with an Entra ID token that has been
