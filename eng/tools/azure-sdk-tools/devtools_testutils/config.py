@@ -12,7 +12,7 @@ load_dotenv(find_dotenv())
 
 
 ENV_LIVE_TEST = "AZURE_TEST_RUN_LIVE"
-PROXY_URL = os.getenv("PROXY_URL", "https://localhost:5001").rstrip("/")
+PROXY_URL = os.getenv("PROXY_URL", "http://localhost:5000").rstrip("/")
 TEST_SETTING_FILENAME = "testsettings_local.cfg"
 
 

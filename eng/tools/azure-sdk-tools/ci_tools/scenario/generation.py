@@ -35,12 +35,12 @@ def create_package_and_install(
     distribution_directory: str,
     target_setup: str,
     skip_install: bool,
-    cache_dir: str,
+    cache_dir: Optional[str],
     work_dir: str,
     force_create: bool,
     package_type: str,
     pre_download_disabled: bool,
-    python_executable: str = None,
+    python_executable: Optional[str] = None,
 ) -> None:
     """
     Workhorse for singular package installation given a package and a possible prebuilt wheel directory. Handles installation of both package AND dependencies, handling compatibility
@@ -112,7 +112,10 @@ def create_package_and_install(
                     )
 
                     pip_cmd = get_pip_command(python_exe)
-                    download_command = pip_cmd + [
+                    download_command = [
+                        sys.executable,
+                        "-m",
+                        "pip", # uv pip doesn't have a download command, so we use the system pip
                         "download",
                         "-d",
                         tmp_dl_folder,
@@ -313,7 +316,7 @@ def build_whl_for_req(req: str, package_path: str, wheel_dir: Optional[str]) -> 
     """Builds a whl from the dev_requirements file.
 
     :param str req: a requirement from the dev_requirements.txt
-    :param str package_path: the absolute path to the package's root
+    :param str package_path: the absolute path to the package's root (used as relative path root)
     :param Optional[str] wheel_dir: the absolute path to the prebuilt wheel directory
     :return: The absolute path to the whl built or the requirement if a third-party package
     """

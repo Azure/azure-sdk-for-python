@@ -10,7 +10,7 @@ steps:
   - task: UsePythonVersion@0
     displayName: 'Use Python 3.9'
     inputs:
-     versionSpec: '3.9'
+      versionSpec: '3.9'
     condition: and(succeededOrFailed(), ne(variables['Skip.MyPy'],'true'))
 
   - script: |
