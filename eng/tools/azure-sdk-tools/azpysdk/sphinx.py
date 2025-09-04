@@ -56,7 +56,6 @@ generate_mgmt_script = os.path.join(REPO_ROOT, "doc/sphinx/generate_doc.py")
 
 # env prep helper functions
 
-
 def create_index_file(readme_location: str, package_rst: str) -> str:
     readme_ext = os.path.splitext(readme_location)[1]
 
@@ -155,6 +154,7 @@ def sphinx_apidoc(output_dir: str, target_dir: str, namespace: str) -> int:
             os.path.join(target_dir, "example*"),
             os.path.join(target_dir, "sample*"),
             os.path.join(target_dir, "setup.py"),
+            os.path.join(target_dir, "conftest.py"),
         ]
 
     try:
@@ -280,8 +280,8 @@ class sphinx(Check):
                 skip_install=False,
                 cache_dir=None,
                 work_dir=staging_directory,
-                force_create=False,
-                package_type="wheel",
+                force_create=False, 
+                package_type="sdist",
                 pre_download_disabled=False,
                 python_executable=executable
             )
@@ -300,7 +300,7 @@ class sphinx(Check):
 
             # prep env for sphinx
             doc_folder = os.path.join(staging_directory, "docgen")
-            site_folder = os.path.join(staging_directory, "site")
+            site_folder = os.path.join(package_dir, "website")
 
             if should_build_docs(package_name):
                 create_index(doc_folder, package_dir, parsed.namespace) 
@@ -315,9 +315,16 @@ class sphinx(Check):
                 if is_mgmt_package(parsed.name):
                     results.append(mgmt_apidoc(doc_folder, package_dir, executable)) # TODO idk directory
                 else:
-                    results.append(sphinx_apidoc(staging_directory, package_dir, parsed.namespace)) # TODO sphinx gets to build with parsed.folder as working_dir; but it should be source_location? but then it's missing azure.ai.rst
+                    results.append(sphinx_apidoc(staging_directory, package_dir, parsed.namespace)) 
             else:
                 logger.info("Skipping sphinx source generation for {}".format(parsed.name))
+
+            # copy samples 
+            shutil.copytree(
+                os.path.join(package_dir, "samples"),
+                os.path.join(staging_directory, "samples"),
+                dirs_exist_ok=True
+            )
 
             # build
             if should_build_docs(package_name):
