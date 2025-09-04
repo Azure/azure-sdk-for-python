@@ -28,22 +28,48 @@ USAGE:
       Otherwise defaults to 'browser'.
 """
 
-import os
+import os, time, base64
+from typing import List
+from azure.ai.agents.models._models import SubmitToolApprovalAction
 from azure.ai.projects import AIProjectClient
 from azure.ai.agents.models import (
     MessageRole,
     RunStepToolCallDetails,
     RunStepComputerUseToolCall,
     ComputerUseTool,
+    MessageInputContentBlock,
+    MessageImageUrlParam,
+    MessageInputTextBlock,
+    MessageInputImageUrlBlock,
 )
 from azure.identity import DefaultAzureCredential
 
-project_client = AIProjectClient(endpoint=os.environ["PROJECT_ENDPOINT"], credential=DefaultAzureCredential())
+def image_to_base64(image_path: str) -> str:
+    """
+    Convert an image file to a Base64-encoded string.
 
-# [START create_agent_with_computer_use]
+    :param image_path: The path to the image file (e.g. 'image_file.png')
+    :return: A Base64-encoded string representing the image.
+    :raises FileNotFoundError: If the provided file path does not exist.
+    :raises OSError: If there's an error reading the file.
+    """
+    if not os.path.isfile(image_path):
+        raise FileNotFoundError(f"File not found at: {image_path}")
+
+    try:
+        with open(image_path, "rb") as image_file:
+            file_data = image_file.read()
+        return base64.b64encode(file_data).decode("utf-8")
+    except Exception as exc:
+        raise OSError(f"Error reading file '{image_path}'") from exc
+
+asset_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "./cua_screenshot.jpg"))
+endpoint = ""
+project_client = AIProjectClient(endpoint=endpoint, credential=DefaultAzureCredential())
+
 # Initialize Computer Use tool with a browser-sized viewport
-environment = os.environ.get("COMPUTER_USE_ENVIRONMENT", "browser")
-computer_use = ComputerUseTool(display_width=1280, display_height=800, environment=environment)
+environment = os.environ.get("COMPUTER_USE_ENVIRONMENT", "windows")
+computer_use = ComputerUseTool(display_width=1026, display_height=768, environment=environment)
 
 with project_client:
 
@@ -51,16 +77,16 @@ with project_client:
 
     # Create a new Agent that has the Computer Use tool attached.
     agent = agents_client.create_agent(
-        model=os.environ["MODEL_DEPLOYMENT_NAME"],
+        #model=os.environ["MODEL_DEPLOYMENT_NAME"],
+        model="computer-use-preview",
         name="my-agent-computer-use",
-        instructions=(
-            "You are an Agent helping with computer use tasks. "
-            "You can perform actions and browse as needed using the Computer Use tool available to you."
-        ),
+        instructions="""
+            You are an computer automation assistant. 
+            Use the computer_use_preview tool to interact with the screen when needed.
+            """,
         tools=computer_use.definitions,
     )
 
-    # [END create_agent_with_computer_use]
 
     print(f"Created agent, ID: {agent.id}")
 
@@ -68,28 +94,50 @@ with project_client:
     thread = agents_client.threads.create()
     print(f"Created thread, ID: {thread.id}")
 
+    input_message = ("I can see a web browser with bing.com open and the cursor in the search box."
+                     "Type 'movies near me' without pressing Enter or any other key. Only type 'movies near me'.")
+    image_base64 = image_to_base64(asset_file_path)
+    img_url = f"data:image/jpeg;base64,{image_base64}"
+    url_param = MessageImageUrlParam(url=img_url, detail="high")
+    content_blocks: List[MessageInputContentBlock] = [
+        MessageInputTextBlock(text=input_message),
+        MessageInputImageUrlBlock(image_url=url_param),
+    ]
     # Create message to thread
     message = agents_client.messages.create(
         thread_id=thread.id,
         role=MessageRole.USER,
-        content=(
-            "Open the Microsoft homepage and take a screenshot of the landing page."
-        ),
+        content=content_blocks
     )
     print(f"Created message, ID: {message.id}")
 
-    # Create and process agent run in thread with tools
-    print("Waiting for Agent run to complete. Please wait...")
-    run = agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id)
-    print(f"Run finished with status: {run.status}")
+    run = agents_client.runs.create(thread_id=thread.id, agent_id=agent.id)
+    print(f"Created run, ID: {run.id}")
 
+    while run.status in ["queued", "in_progress", "requires_action"]:
+        time.sleep(1)
+        run = agents_client.runs.get(thread_id=thread.id, run_id=run.id)
+
+        if run.status == "requires_action":# and isinstance(run.required_action, SubmitToolApprovalAction):
+            print("Run requires action:")
+            print(run)
+
+        print(f"Current run status: {run.status}")
+
+    print(f"Run completed with status: {run.status}")
     if run.status == "failed":
         print(f"Run failed: {run.last_error}")
+    # Create and process agent run in thread with tools
+    #print("Waiting for Agent run to complete. Please wait...")
+    #run = agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id)
+    #print(f"Run finished with status: {run.status}")
+
 
     # Fetch run steps to get the details of the agent run
     run_steps = agents_client.run_steps.list(thread_id=thread.id, run_id=run.id)
     for step in run_steps:
         print(f"Step {step.id} status: {step.status}")
+        print(step)
 
         if isinstance(step.step_details, RunStepToolCallDetails):
             print("  Tool calls:")
