@@ -113,8 +113,8 @@ class TestConversationsImportCase(TestConversations):
         try:
             poller.result()
         except HttpResponseError as e:
-            msg = getattr(getattr(e, "error", None), "message", str(e))
-            print(f"Operation failed: {msg}")
+            print(f"Operation failed: {e.message}")
+            print(e.error)
             raise
 
         print(f"Import completed. done={poller.done()} status={poller.status()}")

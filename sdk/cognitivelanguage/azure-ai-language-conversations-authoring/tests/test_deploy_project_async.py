@@ -46,8 +46,8 @@ class TestConversationsDeployProjectAsync(TestConversationsAsync):
             try:
                 await poller.result()
             except HttpResponseError as e:
-                msg = getattr(getattr(e, "error", None), "message", str(e))
-                print(f"Operation failed: {msg}")
+                print(f"Operation failed: {e.message}")
+                print(e.error)
                 raise
 
             # If we get here, the deploy succeeded

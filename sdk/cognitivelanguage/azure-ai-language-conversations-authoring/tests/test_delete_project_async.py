@@ -37,8 +37,8 @@ class TestConversationsDeleteProjectAsync(TestConversationsAsync):
             try:
                 await poller.result()  # completes with None; raises on failure
             except HttpResponseError as e:
-                msg = getattr(getattr(e, "error", None), "message", str(e))
-                print(f"Operation failed: {msg}")
+                print(f"Operation failed: {e.message}")
+                print(e.error)
                 raise
 
             # Success -> poller completed
