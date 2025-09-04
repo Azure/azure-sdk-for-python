@@ -6,7 +6,6 @@
 
 from typing import Any, MutableMapping, TypeVar, cast, Optional
 
-from azure.cosmos import _constants as Constants
 from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
 from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.transport import HttpRequest as LegacyHttpRequest
@@ -15,6 +14,7 @@ from azure.core.credentials import AccessToken
 from azure.core.exceptions import HttpResponseError
 
 from ..http_constants import HttpHeaders
+from .._constants import _Constants as Constants
 
 HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
 
@@ -23,7 +23,7 @@ HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
 # Composition was considered, but still required accessing protected members, so inheritance is retained
 # for seamless Azure SDK pipeline integration.
 class AsyncCosmosBearerTokenCredentialPolicy(AsyncBearerTokenCredentialPolicy):
-    AadDefaultScope = Constants._Constants.AAD_DEFAULT_SCOPE
+    AadDefaultScope = Constants.AAD_DEFAULT_SCOPE
 
     def __init__(self, credential, account_scope: str, override_scope: Optional[str] = None):
         self._account_scope = account_scope
