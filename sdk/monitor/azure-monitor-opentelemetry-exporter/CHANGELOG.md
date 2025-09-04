@@ -13,6 +13,8 @@
   ([#42551](https://github.com/Azure/azure-sdk-for-python/pull/42551))
 - Rename Customer Statsbeat to Customer SDKStats as per [Spec] - https://github.com/aep-health-and-standards/Telemetry-Collection-Spec/pull/581
   ([#42573](https://github.com/Azure/azure-sdk-for-python/pull/42573))
+- Customer Facing SDKStats: Exception categorization as per [Spec] - https://github.com/aep-health-and-standards/Telemetry-Collection-Spec/blob/main/ApplicationInsights/sdkstats/customer_facing_sdk_stats.md
+  ([#42695](https://github.com/Azure/azure-sdk-for-python/pull/42695))
 
 ### Breaking Changes
 
@@ -24,6 +26,8 @@
   ([#42360] https://github.com/Azure/azure-sdk-for-python/pull/42360)
 - Configuration manager/worker fetch via OneSettings part 2 - Concurrency and refactoring of _ConfigurationManager
   ([#42508] https://github.com/Azure/azure-sdk-for-python/pull/42508)
+- Refactoring of statsbeat to use `StatsbeatManager`
+  ([#42716] https://github.com/Azure/azure-sdk-for-python/pull/42716)
 
 ## 1.0.0b41 (2025-07-31)
 

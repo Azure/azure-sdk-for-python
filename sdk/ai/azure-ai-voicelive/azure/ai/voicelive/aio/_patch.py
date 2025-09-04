@@ -11,6 +11,7 @@ import json
 import logging
 from contextlib import AbstractAsyncContextManager
 from urllib.parse import urlparse, urlunparse, urlencode, parse_qs
+
 # pylint: disable=ungrouped-imports
 try:  # Python 3.11+
     from typing import NotRequired  # type: ignore[attr-defined]
@@ -76,6 +77,7 @@ def _json_default(o: Any) -> Any:
         # Strip private attributes
         return {k: v for k, v in vars(o).items() if not k.startswith("_")}
     raise TypeError(f"{type(o).__name__} is not JSON serializable")
+
 
 class SessionResource:
     """Resource for session management."""
@@ -493,9 +495,7 @@ class VoiceLiveConnection:
                 payload = json.dumps(event, default=_json_default)
 
             # Ensure we pass a str to send_str
-            data: str = (
-                payload if isinstance(payload, str) else json.dumps(payload, default=_json_default)
-            )
+            data: str = payload if isinstance(payload, str) else json.dumps(payload, default=_json_default)
 
             await self._connection.send_str(data)
         except (TypeError, ValueError, aiohttp.ClientError, RuntimeError) as e:
@@ -645,9 +645,7 @@ class _VoiceLiveConnectionManager(AbstractAsyncContextManager["VoiceLiveConnecti
 
             session = aiohttp.ClientSession()
             try:
-                connection_obj = await session.ws_connect(
-                    str(url), headers=headers, **self.__connection_options
-                )
+                connection_obj = await session.ws_connect(str(url), headers=headers, **self.__connection_options)
                 self.__connection = VoiceLiveConnection(session, connection_obj)
                 return self.__connection
             except aiohttp.ClientError as e:
@@ -746,7 +744,7 @@ def connect(
     :paramtype type connection_options: ~azure.ai.voicelive.aio.WebsocketConnectionOptions
     :return: An async context manager yielding a connected :class:`~azure.ai.voicelive.aio.VoiceLiveConnection`.
     :rtype: collections.abc.AsyncContextManager[~azure.ai.voicelive.aio.VoiceLiveConnection]
-    
+
     .. note::
         Additional keyword arguments can be passed and will be forwarded to the underlying connection.
     """

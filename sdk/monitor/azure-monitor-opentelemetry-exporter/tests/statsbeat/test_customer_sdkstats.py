@@ -16,17 +16,14 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW,
     _REQUEST,
     _DEPENDENCY,
-    _REQ_RETRY_NAME,
     _CUSTOMER_SDKSTATS_LANGUAGE,
     _APPLICATIONINSIGHTS_SDKSTATS_EXPORT_INTERVAL,
     _DEFAULT_STATS_SHORT_EXPORT_INTERVAL,
     _UNKNOWN,
     _TYPE_MAP,
     DropCode,
-    DropCodeType,
     RetryCode,
-    RetryCodeType,
-    _TRACE,
+    _exception_categories,
 )
 
 from opentelemetry import trace
@@ -115,7 +112,7 @@ class TestCustomerSdkStats(unittest.TestCase):
 
             # Verify the metrics methods don't do anything when disabled
             metrics.count_successful_items(5, _REQUEST)
-            metrics.count_dropped_items(3, _REQUEST, DropCode.CLIENT_EXCEPTION, "Test exception")
+            metrics.count_dropped_items(3, _REQUEST, DropCode.CLIENT_EXCEPTION, _exception_categories.NETWORK_EXCEPTION.value)
 
             # Verify callbacks return empty lists when disabled
             self.assertEqual(metrics._item_success_callback(mock.Mock()), [])
@@ -124,12 +121,12 @@ class TestCustomerSdkStats(unittest.TestCase):
     def test_custom_export_interval_from_env_var(self):
         """Test that a custom export interval is picked up from the environment variable."""
         # Use a non-default value to test
-        custom_interval = 300
+        custom_interval_s = 300
         
         # Mock the environment variable with our custom interval
         with mock.patch.dict(os.environ, {
             _APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW: "true",
-            _APPLICATIONINSIGHTS_SDKSTATS_EXPORT_INTERVAL: str(custom_interval)
+            _APPLICATIONINSIGHTS_SDKSTATS_EXPORT_INTERVAL: str(custom_interval_s)
         }):
             # Get the export interval
             actual_interval = _get_customer_sdkstats_export_interval()
@@ -137,8 +134,8 @@ class TestCustomerSdkStats(unittest.TestCase):
             # Verify it matches our custom value
             self.assertEqual(
                 actual_interval,
-                custom_interval,
-                f"Expected export interval to be {custom_interval}, got {actual_interval}"
+                custom_interval_s,
+                f"Expected export interval to be {custom_interval_s}, got {actual_interval}"
             )
             
             # Verify the CustomerSdkStatsMetrics instance picks up the custom interval
@@ -146,8 +143,8 @@ class TestCustomerSdkStats(unittest.TestCase):
             metrics = CustomerSdkStatsMetrics(self.mock_options.connection_string)
             self.assertEqual(
                 metrics._customer_sdkstats_metric_reader._export_interval_millis,
-                custom_interval,
-                f"CustomerSdkStatsMetrics should use export interval {custom_interval}, got {metrics._customer_sdkstats_metric_reader._export_interval_millis}"
+                custom_interval_s * 1000,
+                f"CustomerSdkStatsMetrics should use export interval {custom_interval_s}, got {metrics._customer_sdkstats_metric_reader._export_interval_millis}"
             )
             
     def test_default_export_interval_when_env_var_empty(self):
@@ -172,7 +169,7 @@ class TestCustomerSdkStats(unittest.TestCase):
             metrics = CustomerSdkStatsMetrics(self.mock_options.connection_string)
             self.assertEqual(
                 metrics._customer_sdkstats_metric_reader._export_interval_millis,
-                _DEFAULT_STATS_SHORT_EXPORT_INTERVAL,
+                _DEFAULT_STATS_SHORT_EXPORT_INTERVAL * 1000,
                 f"CustomerSdkStatsMetrics should use default export interval {_DEFAULT_STATS_SHORT_EXPORT_INTERVAL}, got {metrics._customer_sdkstats_metric_reader._export_interval_millis}"
             )
 
@@ -270,7 +267,7 @@ class TestCustomerSdkStats(unittest.TestCase):
                 if should_fail:
                     nonlocal dropped_items
                     
-                    failure_type = random.choice(["http_status", "client_exception"])
+                    failure_type = random.choice(["http_status", "exception"])
                     
                     if failure_type == "http_status":
                         status_codes = [401, 401, 403, 500, 500, 503, 402] 
@@ -282,38 +279,12 @@ class TestCustomerSdkStats(unittest.TestCase):
                         metrics.count_dropped_items(failure_count, telemetry_type, status_code, None)
                     else:
                         exception_scenarios = [
-                            "timeout_exception"
-                            "Connection timed out after 30 seconds",
-                            "Request timed out after 60 seconds",
-                            "Operation timed out",
-
-                            "network_exception",
-                            "Network connection failed: Connection refused",
-                            "Network error: Host unreachable",
-
-                            "authentication_exception",
-                            "Authentication failed: Invalid credentials",
-                            "Auth error: Token expired",
-                            
-                            "Failed to parse response: Invalid JSON format",
-                            "Parse error: Malformed XML",
-                            "parse_exception",
-                            
-                            "Out of memory: Cannot allocate buffer",
-                            "Memory allocation failed",
-                            "memory_exception",
-                            
-                            "HTTP 401 Unauthorized",
-                            "HTTP 401 Invalid token",
-                            "HTTP 500 Internal Server Error",
-                            "HTTP 500 Database error",
-                            
-                            "Unknown transmission error",
-                            "Unexpected error occurred"
-
-                            "storage_exception",
-                            "other_exception"
+                            _exception_categories.CLIENT_EXCEPTION.value,
+                            _exception_categories.NETWORK_EXCEPTION.value,
+                            _exception_categories.STORAGE_EXCEPTION.value,
+                            _exception_categories.TIMEOUT_EXCEPTION.value
                         ]
+
                         
                         exception_message = random.choice(exception_scenarios)
                         
@@ -448,7 +419,7 @@ class TestCustomerSdkStats(unittest.TestCase):
                 if should_retry:
                     nonlocal retried_items
                     
-                    retry_type = random.choice(["http_status", "client_timeout", "unknown"])
+                    retry_type = random.choice(["http_status", "Client timeout", "Unknown"])
                     
                     if retry_type == "http_status":
                         # HTTP status codes that would trigger retries
@@ -459,7 +430,7 @@ class TestCustomerSdkStats(unittest.TestCase):
                         retried_items += failure_count
                         
                         metrics.count_retry_items(failure_count, telemetry_type, status_code, None)
-                    elif retry_type == "client_timeout":
+                    elif retry_type == "Client timeout":
                         timeout_messages = [
                             "Connection timed out after 30 seconds",
                             "Request timed out after 60 seconds",
@@ -477,10 +448,10 @@ class TestCustomerSdkStats(unittest.TestCase):
                     else:
                         # Unknown retry reasons
                         unknown_messages = [
-                            "Unknown network error",
-                            "Unexpected retry condition",
-                            "Network instability detected",
-                            "Connection reset by peer"
+                            _exception_categories.CLIENT_EXCEPTION.value,
+                            _exception_categories.NETWORK_EXCEPTION.value,
+                            _exception_categories.STORAGE_EXCEPTION.value,
+                            _exception_categories.TIMEOUT_EXCEPTION.value
                         ]
                         
                         exception_message = random.choice(unknown_messages)

@@ -63,6 +63,7 @@ from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.identity import DefaultAzureCredential, InteractiveBrowserCredential
 
 from azure.ai.voicelive.aio import connect
+
 if TYPE_CHECKING:
     # Only needed for type checking; avoids runtime import issues
     from azure.ai.voicelive.aio import VoiceLiveConnection
@@ -633,12 +634,14 @@ if __name__ == "__main__":
         p = pyaudio.PyAudio()
         # Check for input devices
         input_devices = [
-            i for i in range(p.get_device_count())
+            i
+            for i in range(p.get_device_count())
             if cast(Union[int, float], p.get_device_info_by_index(i).get("maxInputChannels", 0) or 0) > 0
         ]
         # Check for output devices
         output_devices = [
-            i for i in range(p.get_device_count())
+            i
+            for i in range(p.get_device_count())
             if cast(Union[int, float], p.get_device_info_by_index(i).get("maxOutputChannels", 0) or 0) > 0
         ]
         p.terminate()

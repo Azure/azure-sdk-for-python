@@ -63,8 +63,8 @@ class ContentPartType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AUDIO = "audio"
 
 
-class ItemStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of ItemStatus."""
+class ItemParamStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of ItemParamStatus."""
 
     IN_PROGRESS = "in_progress"
     COMPLETED = "completed"
@@ -97,7 +97,7 @@ class Modality(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class OAIVoice(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Voice identifier for OpenAI-provided voices."""
+    """Supported OpenAI voice names (string enum)."""
 
     ALLOY = "alloy"
     ASH = "ash"
@@ -113,6 +113,24 @@ class Phi4mmVoice(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Voice identifier for Phi4mm voices."""
 
     COSYVOICE = "cosyvoice"
+
+
+class ResponseItemStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of ResponseItemStatus."""
+
+    IN_PROGRESS = "in_progress"
+    COMPLETED = "completed"
+    INCOMPLETE = "incomplete"
+
+
+class ResponseStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Terminal status of a response."""
+
+    COMPLETED = "completed"
+    CANCELLED = "cancelled"
+    FAILED = "failed"
+    INCOMPLETE = "incomplete"
+    IN_PROGRESS = "in_progress"
 
 
 class ServerEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
