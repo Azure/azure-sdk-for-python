@@ -29,6 +29,8 @@ steps:
 
   - checkout: self
     fetchTags: false
+    sparseCheckoutPatterns: |
+      **
 
   - task: UsePythonVersion@0
     displayName: 'Use Python $(PythonVersion)'
