@@ -5,7 +5,6 @@
 # -------------------------------------------------------------------------
 from typing import TypeVar, Any, MutableMapping, cast, Optional
 
-from azure.cosmos import _constants as Constants
 from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 from azure.core.pipeline.transport import HttpRequest as LegacyHttpRequest
