@@ -79,7 +79,7 @@ class TestCallMediaClient(unittest.TestCase):
             expected_play_request.play_sources[0].play_source_cache_id,
             actual_play_request.play_sources[0].play_source_cache_id,
         )
-        self.assertEqual(expected_play_request.play_to[0]["raw_id"], actual_play_request.play_to[0]["raw_id"])
+        self.assertEqual(expected_play_request.play_to[0].raw_id, actual_play_request.play_to[0].raw_id)
         self.assertEqual(expected_play_request.play_options.loop, actual_play_request.play_options.loop)
 
     def test_play_multiple_play_sources(self):
@@ -102,7 +102,7 @@ class TestCallMediaClient(unittest.TestCase):
             expected_play_request.play_sources[0].play_source_cache_id,
             actual_play_request.play_sources[0].play_source_cache_id,
         )
-        self.assertEqual(expected_play_request.play_to[0]["raw_id"], actual_play_request.play_to[0]["raw_id"])
+        self.assertEqual(expected_play_request.play_to[0].raw_id, actual_play_request.play_to[0].raw_id)
         self.assertEqual(expected_play_request.play_options.loop, actual_play_request.play_options.loop)
 
     def test_play_file_to_all_back_compat(self):

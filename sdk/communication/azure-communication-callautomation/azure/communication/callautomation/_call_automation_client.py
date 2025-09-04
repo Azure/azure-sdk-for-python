@@ -871,7 +871,7 @@ class CallAutomationClient:
         stream = self._downloader.download_streaming(
             source_location=recording_url, offset=offset, length=length, **kwargs
         )
-        # This is a bug that needs to be fixed
+        # This is a bug that needs to be fixed: issue #42835
         return stream  # type: ignore[return-value]
 
     @distributed_trace
