@@ -35,7 +35,7 @@ def main():
         resource_group_name="securityalert-4799",
         managed_instance_name="securityalert-6440",
         database_name="testdb",
-        security_alert_policy_name="default",
+        security_alert_policy_name="Default",
         parameters={
             "properties": {
                 "disabledAlerts": ["Sql_Injection", "Usage_Anomaly"],
@@ -51,6 +51,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2024-11-01-preview/examples/ManagedDatabaseSecurityAlertCreateMax.json
+# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2020-11-01-preview/examples/ManagedDatabaseSecurityAlertCreateMax.json
 if __name__ == "__main__":
     main()
