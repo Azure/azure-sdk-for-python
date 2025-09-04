@@ -117,6 +117,9 @@ jobs:
       os: macOS
 
     steps:
+    - script: |
+        find . -name "*.lock" -path "*/.git/refs/*" -delete 2>/dev/null || true
+      displayName: 'Clean Git lock files'
     - checkout: self
       clean: true
       fetchDepth: 1
