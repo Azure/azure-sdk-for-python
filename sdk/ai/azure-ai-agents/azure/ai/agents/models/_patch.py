@@ -8,12 +8,15 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import asyncio  # pylint: disable = do-not-import-asyncio
+from concurrent.futures import thread
 import inspect
 import itertools
 import json
+from json import tool
 import logging
 import re
 from abc import ABC, abstractmethod
+import time
 from typing import (
     Any,
     AsyncIterator,
@@ -35,6 +38,9 @@ from typing import (
     get_origin,
     overload,
 )
+
+from azure.ai.agents.models import RunStatus
+from azure.ai.agents.operations import RunsOperations
 
 from ._enums import AgentStreamEvent, AzureAISearchQueryType
 from ._models import (
@@ -80,6 +86,7 @@ from ._models import (
     BingCustomSearchToolParameters,
     SharepointToolDefinition,
     SharepointGroundingToolParameters,
+    ToolApproval,
     ToolConnection,
     MicrosoftFabricToolDefinition,
     FabricDataAgentToolParameters,
@@ -89,13 +96,15 @@ from ._models import (
     ToolResources,
     MessageDeltaTextContent,
     VectorStoreDataSource,
+    SubmitToolApprovalAction,
+    RequiredMcpToolCall,
 )
 
 from ._models import MessageDeltaChunk as MessageDeltaChunkGenerated
 from ._models import ThreadMessage as ThreadMessageGenerated
 from ._models import MessageAttachment as MessageAttachmentGenerated
 
-from .. import types as _types
+from .. import AgentsClient, types as _types
 
 
 logger = logging.getLogger(__name__)
@@ -1689,23 +1698,39 @@ class ToolSet(BaseToolSet):
         :return: The output of the tool operations.
         :rtype: Any
         """
+        return self._execute_tool_calls(tool_calls)
+
+    def _execute_tool_calls(self, tool_calls: List[Any], run: Optional[ThreadRun] = None, event_handler: Optional['CreateAndProcessEventHandler'] = None) -> Any:
+        """
+        Execute a tool of the specified type with the provided tool calls.
+
+        :param List[Any] tool_calls: A list of tool calls to execute.
+        :return: The output of the tool operations.
+        :rtype: Any
+        """
         tool_outputs = []
 
         for tool_call in tool_calls:
-            try:
-                if tool_call.type == "function":
-                    tool = self.get_tool(FunctionTool)
-                    output = tool.execute(tool_call)
+            if tool_call.type == "function":
+                output: Optional[Any] = None
+
+                if event_handler and run:
+                    arguments = tool_call.function.arguments
+                    output = event_handler.submit_function_call_output(run, arguments)
+                try:
+                    if not output:
+                        tool = self.get_tool(FunctionTool)
+                        output = tool.execute(tool_call)
                     tool_output = {
                         "tool_call_id": tool_call.id,
                         "output": str(output),
                     }
                     tool_outputs.append(tool_output)
-            except Exception as e:  # pylint: disable=broad-exception-caught
-                tool_output = {"tool_call_id": tool_call.id, "output": str(e)}
-                tool_outputs.append(tool_output)
+                except Exception as e:  # pylint: disable=broad-exception-caught
+                    tool_output = {"tool_call_id": tool_call.id, "output": str(e)}
+                    tool_outputs.append(tool_output)
 
-        return tool_outputs
+        return tool_outputs    
 
 
 class AsyncToolSet(BaseToolSet):
@@ -1755,7 +1780,7 @@ EventFunctionReturnT = TypeVar("EventFunctionReturnT")
 T = TypeVar("T")
 BaseAsyncAgentEventHandlerT = TypeVar("BaseAsyncAgentEventHandlerT", bound="BaseAsyncAgentEventHandler")
 BaseAgentEventHandlerT = TypeVar("BaseAgentEventHandlerT", bound="BaseAgentEventHandler")
-
+CreateAndProcessEventHandlerT = TypeVar("CreateAndProcessEventHandlerT", bound="CreateAndProcessEventHandler")
 
 async def async_chain(*iterators: AsyncIterator[T]) -> AsyncIterator[T]:
     for iterator in iterators:
@@ -1827,6 +1852,85 @@ class BaseAsyncAgentEventHandler(AsyncIterator[T]):
                 pass
         except StopAsyncIteration:
             pass
+
+
+class CreateAndProcessEventHandler:
+
+    def __init__(self, runs_operations: RunsOperations, polling_interval: int) -> None:
+        self.runs_operations = runs_operations
+        self.polling_interval = polling_interval
+
+    def _process(self, run: ThreadRun) -> ThreadRun:
+        # Monitor and process the run status
+        current_retry = 0
+        while run.status in [
+            RunStatus.QUEUED,
+            RunStatus.IN_PROGRESS,
+            RunStatus.REQUIRES_ACTION,
+        ]:
+            time.sleep(self.polling_interval)
+            run = self.runs_operations.get(thread_id=run.thread_id, run_id=run.id)
+
+            if run.status == RunStatus.REQUIRES_ACTION and isinstance(
+                run.required_action, SubmitToolOutputsAction
+            ):
+                tool_calls = run.required_action.submit_tool_outputs.tool_calls
+                if not tool_calls:
+                    logger.warning("No tool calls provided - cancelling run")
+                    self.runs_operations.cancel(thread_id=run.thread_id, run_id=run.id)
+                    break
+                # We need tool set only if we are executing local function. In case if
+                # the tool is azure_function we just need to wait when it will be finished.
+                if any(tool_call.type == "function" for tool_call in tool_calls):
+                    toolset = ToolSet()
+                    toolset.add(self.runs_operations._function_tool)
+                    tool_outputs = toolset._execute_tool_calls(tool_calls, run=run, event_handler=self)
+
+                    if _has_errors_in_toolcalls_output(tool_outputs):
+                        if current_retry >= self.runs_operations._function_tool_max_retry:  # pylint:disable=no-else-return
+                            logger.warning(
+                                "Tool outputs contain errors - reaching max retry %s", self.runs_operations._function_tool_max_retry
+                            )
+                            run = self.runs_operations.cancel(thread_id=run.thread_id, run_id=run.id)
+                        else:
+                            logger.warning("Tool outputs contain errors - retrying")
+                            current_retry += 1
+
+                    logger.debug("Tool outputs: %s", tool_outputs)
+                    if tool_outputs:
+                        run2 = self.runs_operations.submit_tool_outputs(thread_id=run.thread_id, run_id=run.id, tool_outputs=tool_outputs)
+                        logger.debug("Tool outputs submitted to run: %s", run2.id)
+            elif isinstance(run.required_action, SubmitToolApprovalAction):
+                tool_calls = run.required_action.submit_tool_approval.tool_calls
+                if not tool_calls:
+                    logger.warning("No tool calls provided - cancelling run")
+                    self.runs_operations.cancel(thread_id=run.thread_id, run_id=run.id)
+                    break
+
+                tool_approvals = []
+                for tool_call in tool_calls:
+                    if isinstance(tool_call, RequiredMcpToolCall):
+                        logger.info(f"Approving tool call: {tool_call}")
+                        tool_approval = self.submit_tool_approval(run)
+                        if not tool_approval:
+                            logger.debug("submit_tool_approval in event handler returned None.  Please override this function and return a valid ToolApproval.")
+                            run = self.runs_operations.cancel(thread_id=run.thread_id, run_id=run.id)
+
+                        tool_approvals.append(tool_approval)
+
+                if tool_approvals:
+                    run = self.runs_operations.submit_tool_outputs(
+                        thread_id=run.thread_id, run_id=run.id, tool_approvals=tool_approvals
+                    )
+
+        return run
+
+    def submit_function_call_output(self, run: ThreadRun, args: Dict[str, Any]) -> Optional[str]:
+        return None
+
+    def submit_tool_approval(self, run: ThreadRun) -> Optional[ToolApproval]:
+        return None
+
 
 
 class BaseAgentEventHandler(Iterator[T]):
@@ -2248,6 +2352,7 @@ __all__: List[str] = [
     "MessageTextFileCitationAnnotation",
     "MessageDeltaChunk",
     "MessageAttachment",
+    "CreateAndProcessEventHandlerT",
 ]  # Add all objects you want publicly available to users at this package level
 
 

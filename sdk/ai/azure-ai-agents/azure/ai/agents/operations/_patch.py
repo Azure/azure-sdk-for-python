@@ -441,6 +441,7 @@ class RunsOperations(RunsOperationsGenerated):
         response_format: Optional["_types.AgentsResponseFormatOption"] = None,
         parallel_tool_calls: Optional[bool] = None,
         metadata: Optional[Dict[str, str]] = None,
+        event_handler: Optional[_models.CreateAndProcessEventHandlerT] = None,
         polling_interval: int = 1,
         **kwargs: Any,
     ) -> _models.ThreadRun:
@@ -552,50 +553,9 @@ class RunsOperations(RunsOperationsGenerated):
         )
 
         # Monitor and process the run status
-        current_retry = 0
-        while run.status in [
-            RunStatus.QUEUED,
-            RunStatus.IN_PROGRESS,
-            RunStatus.REQUIRES_ACTION,
-        ]:
-            time.sleep(polling_interval)
-            run = self.get(thread_id=thread_id, run_id=run.id)
-
-            if run.status == RunStatus.REQUIRES_ACTION and isinstance(
-                run.required_action, _models.SubmitToolOutputsAction
-            ):
-                tool_calls = run.required_action.submit_tool_outputs.tool_calls
-                if not tool_calls:
-                    logger.warning("No tool calls provided - cancelling run")
-                    self.cancel(thread_id=thread_id, run_id=run.id)
-                    break
-                # We need tool set only if we are executing local function. In case if
-                # the tool is azure_function we just need to wait when it will be finished.
-                if any(tool_call.type == "function" for tool_call in tool_calls):
-                    toolset = _models.ToolSet()
-                    toolset.add(self._function_tool)
-                    tool_outputs = toolset.execute_tool_calls(tool_calls)
-
-                    if _has_errors_in_toolcalls_output(tool_outputs):
-                        if current_retry >= self._function_tool_max_retry:  # pylint:disable=no-else-return
-                            logger.warning(
-                                "Tool outputs contain errors - reaching max retry %s", self._function_tool_max_retry
-                            )
-                            return self.cancel(thread_id=thread_id, run_id=run.id)
-                        else:
-                            logger.warning("Tool outputs contain errors - retrying")
-                            current_retry += 1
-
-                    logger.debug("Tool outputs: %s", tool_outputs)
-                    if tool_outputs:
-                        run2 = self.submit_tool_outputs(thread_id=thread_id, run_id=run.id, tool_outputs=tool_outputs)
-                        logger.debug("Tool outputs submitted to run: %s", run2.id)
-            elif isinstance(run.required_action, _models.SubmitToolApprovalAction):
-                logger.warning("Automatic MCP tool approval is not supported.")
-                self.cancel(thread_id=thread_id, run_id=run.id)
-
-            logger.debug("Current run ID: %s with status: %s", run.id, run.status)
-
+        if not event_handler:
+            event_handler = _models.CreateAndProcessEventHandler()
+            
         return run
 
     @overload
