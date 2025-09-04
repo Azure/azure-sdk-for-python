@@ -2,10 +2,11 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Optional, Any
+from typing import Optional, Any, List
 
 from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions
 from azure.core.exceptions import ClientAuthenticationError
+
 from .._internal.aad_client import AadClient
 from .._internal.get_token_mixin import GetTokenMixin
 
@@ -41,12 +42,27 @@ class AuthorizationCodeCredential(GetTokenMixin):
     """
 
     def __init__(
-        self, tenant_id: str, client_id: str, authorization_code: str, redirect_uri: str, **kwargs: Any
+        self,
+        tenant_id: str,
+        client_id: str,
+        authorization_code: str,
+        redirect_uri: str,
+        *,
+        authority: Optional[str] = None,
+        client_secret: Optional[str] = None,
+        additionally_allowed_tenants: Optional[List[str]] = None,
+        **kwargs: Any
     ) -> None:
         self._authorization_code: Optional[str] = authorization_code
         self._client_id = client_id
-        self._client_secret = kwargs.pop("client_secret", None)
-        self._client = kwargs.pop("client", None) or AadClient(tenant_id, client_id, **kwargs)
+        self._client_secret = client_secret
+        self._client = kwargs.pop("client", None) or AadClient(
+            tenant_id,
+            client_id,
+            authority=authority,
+            additionally_allowed_tenants=additionally_allowed_tenants,
+            **kwargs
+        )
         self._redirect_uri = redirect_uri
         super(AuthorizationCodeCredential, self).__init__()
 
