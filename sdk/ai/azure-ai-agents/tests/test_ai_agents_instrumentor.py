@@ -38,11 +38,8 @@ from azure.ai.agents.models import (
 from azure.ai.agents.telemetry._ai_agents_instrumentor import _AIAgentsInstrumentorPreview
 from azure.ai.agents.telemetry import AIAgentsInstrumentor, _utils
 from azure.core.settings import settings
-from memory_trace_exporter import MemoryTraceExporter
 from gen_ai_trace_verifier import GenAiTraceVerifier
 from opentelemetry import trace
-from opentelemetry.sdk.trace import TracerProvider
-from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 from azure.ai.agents import AgentsClient
 
 from devtools_testutils import (
@@ -74,19 +71,6 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
         self.setup_telemetry()
         yield
         self.cleanup()
-
-    # def setup_telemetry(self):
-    #     trace._TRACER_PROVIDER = TracerProvider()
-    #     self.exporter = MemoryTraceExporter()
-    #     span_processor = SimpleSpanProcessor(self.exporter)
-    #     trace.get_tracer_provider().add_span_processor(span_processor)
-    #     AIAgentsInstrumentor().instrument()
-
-    # def cleanup(self):
-    #     self.exporter.shutdown()
-    #     AIAgentsInstrumentor().uninstrument()
-    #     trace._TRACER_PROVIDER = None
-    #     os.environ.pop(CONTENT_TRACING_ENV_VARIABLE, None)
 
     # helper function: create client and using environment variables
     def create_client(self, **kwargs):
