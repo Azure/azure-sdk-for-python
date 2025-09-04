@@ -74,11 +74,11 @@
   - Added model `UsageMetric`
   - Added model `UsageMetricProperties`
   - Added model `WorkspaceUpdate`
-  - Operation group `WorkspacesOperations` added method `begin_delete`
   - Added operation group `UsageMetricsOperations`
 
 ### Breaking Changes
 
+  - This version introduces new hybrid models which have dual dictionary and model nature. And please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - Model `BinaryHardeningFeatures` deleted or renamed its instance variable `nx`
   - Model `BinaryHardeningFeatures` deleted or renamed its instance variable `pie`
   - Model `BinaryHardeningFeatures` deleted or renamed its instance variable `relro`
@@ -129,7 +129,7 @@
   - Method `WorkspacesOperations.create` renamed its instance variable `workspace` to `resource`
   - Method `WorkspacesOperations.generate_upload_url` renamed its instance variable `generate_upload_url` to `body`
   - Method `WorkspacesOperations.update` renamed its instance variable `workspace` to `properties`
-  - Deleted or renamed method `WorkspacesOperations.delete`
+  - Operation group `WorkspacesOperations` renamed its method `delete` to `begin_delete`
 
 ## 2.0.0b1 (2025-05-08)
 
