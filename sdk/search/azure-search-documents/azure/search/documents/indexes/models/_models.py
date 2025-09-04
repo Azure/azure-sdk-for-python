@@ -9,7 +9,7 @@ from typing import Any, List, Optional, MutableMapping, Dict, Callable
 from enum import Enum
 from typing_extensions import Self
 from azure.core import CaseInsensitiveEnumMeta
-from .._generated import _serialization
+from .._generated._utils import serialization as _serialization
 from .._generated.models import (
     LexicalAnalyzer,
     LexicalTokenizer,
