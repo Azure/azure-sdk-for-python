@@ -4,7 +4,6 @@
 # license information.
 # -------------------------------------------------------------------------
 from logging import getLogger
-import json
 import time
 import random
 from dataclasses import dataclass
@@ -147,7 +146,7 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
                 if isinstance(config, FeatureFlagConfigurationSetting):
                     # Feature flags are ignored when loaded by Selects, as they are selected from
                     # `feature_flag_selectors`
-                    pass
+                    continue
                 configuration_settings.append(config)
                 # Every time we run load_all, we should update the etag of our refresh sentinels
                 # so they stay up-to-date.
@@ -158,21 +157,11 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
 
     @distributed_trace
     def load_feature_flags(
-        self,
-        feature_flag_selectors: List[SettingSelector],
-        feature_flag_refresh_enabled: bool,
-        provided_endpoint: str,
-        **kwargs
-    ) -> Tuple[
-        List[FeatureFlagConfigurationSetting],
-        Dict[Tuple[str, str], str],
-        Dict[str, bool],
-    ]:
-        feature_flag_sentinel_keys = {}
+        self, feature_flag_selectors: List[SettingSelector], **kwargs
+    ) -> List[FeatureFlagConfigurationSetting]:
         loaded_feature_flags = []
         # Needs to be removed unknown keyword argument for list_configuration_settings
         kwargs.pop("sentinel_keys", None)
-        filters_used: Dict[str, bool] = {}
         for select in feature_flag_selectors:
             feature_flags = self._client.list_configuration_settings(
                 key_filter=FEATURE_FLAG_PREFIX + select.key_filter,
@@ -185,17 +174,9 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
                     # If the feature flag is not a FeatureFlagConfigurationSetting, it means it was selected by
                     # mistake, so we should ignore it.
                     continue
+                loaded_feature_flags.append(feature_flag)
 
-                feature_flag_value = json.loads(feature_flag.value)
-
-                self._feature_flag_telemetry(provided_endpoint, feature_flag, feature_flag_value)
-                self._feature_flag_appconfig_telemetry(feature_flag, filters_used)
-
-                loaded_feature_flags.append(feature_flag_value)
-
-                if feature_flag_refresh_enabled:
-                    feature_flag_sentinel_keys[(feature_flag.key, feature_flag.label)] = feature_flag.etag
-        return loaded_feature_flags, feature_flag_sentinel_keys, filters_used
+        return loaded_feature_flags
 
     @distributed_trace
     def refresh_configuration_settings(
@@ -238,30 +219,26 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         refresh_on: Mapping[Tuple[str, str], Optional[str]],
         feature_flag_selectors: List[SettingSelector],
         headers: Dict[str, str],
-        provided_endpoint: str,
         **kwargs
-    ) -> Tuple[bool, Optional[Mapping[Tuple[str, str], Optional[str]]], Optional[List[Any]], Dict[str, bool]]:
+    ) -> Tuple[bool, List[FeatureFlagConfigurationSetting]]:
         """
         Gets the refreshed feature flags if they have changed.
 
         :param Mapping[Tuple[str, str], Optional[str]] refresh_on: The feature flags to check for changes
         :param List[SettingSelector] feature_flag_selectors: The selectors to use to load feature flags
         :param Mapping[str, str] headers: The headers to use for the request
-        :param str provided_endpoint: The endpoint provided by the user
 
         :return: A tuple with the first item being true/false if a change is detected. The second item is the updated
         value of the feature flag sentinel keys. The third item is the updated feature flags.
-        :rtype: Tuple[bool, Union[Dict[Tuple[str, str], str], None], Union[List[Dict[str, str]], None, Dict[str, bool]]
+        :rtype: Tuple[bool, List[FeatureFlagConfigurationSetting]]
         """
         feature_flag_sentinel_keys: Mapping[Tuple[str, str], Optional[str]] = dict(refresh_on)
         for (key, label), etag in feature_flag_sentinel_keys.items():
             changed = self._check_configuration_setting(key=key, label=label, etag=etag, headers=headers, **kwargs)
             if changed:
-                feature_flags, feature_flag_sentinel_keys, filters_used = self.load_feature_flags(
-                    feature_flag_selectors, True, provided_endpoint, headers=headers, **kwargs
-                )
-                return True, feature_flag_sentinel_keys, feature_flags, filters_used
-        return False, None, None, {}
+                feature_flags = self.load_feature_flags(feature_flag_selectors, headers=headers, **kwargs)
+                return True, feature_flags
+        return False, []
 
     @distributed_trace
     def get_configuration_setting(self, key: str, label: str, **kwargs) -> Optional[ConfigurationSetting]:

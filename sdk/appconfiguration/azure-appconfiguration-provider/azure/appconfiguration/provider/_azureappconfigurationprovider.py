@@ -361,30 +361,22 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 )
 
                 try:
+                    configuration_settings: List[ConfigurationSetting] = []
+                    need_ff_refresh = False
                     if self._refresh_on:
                         need_refresh, self._refresh_on, configuration_settings = client.refresh_configuration_settings(
                             self._selects, self._refresh_on, headers=headers, **kwargs
                         )
-                        configuration_settings_processed = self._process_configurations(configuration_settings)
-                        if need_refresh:
-                            self._dict = configuration_settings_processed
                     if self._feature_flag_refresh_enabled:
-                        need_ff_refresh, refresh_on_feature_flags, feature_flags, filters_used = (
-                            client.refresh_feature_flags(
-                                self._refresh_on_feature_flags,
-                                self._feature_flag_selectors,
-                                headers,
-                                self._origin_endpoint,
-                                **kwargs,
-                            )
+                        need_ff_refresh, feature_flags = client.refresh_feature_flags(
+                            self._refresh_on_feature_flags,
+                            self._feature_flag_selectors,
+                            headers,
+                            **kwargs,
                         )
-                        if refresh_on_feature_flags:
-                            self._refresh_on_feature_flags = refresh_on_feature_flags
-                        self._feature_filter_usage = filters_used
-
-                        if need_refresh or need_ff_refresh:
-                            self._dict[FEATURE_MANAGEMENT_KEY] = {}
-                            self._dict[FEATURE_MANAGEMENT_KEY][FEATURE_FLAG_KEY] = feature_flags
+                        configuration_settings.extend(feature_flags)
+                    if need_refresh or need_ff_refresh:
+                        self._dict = self._process_configurations(configuration_settings, need_ff_refresh)
                     # Even if we don't need to refresh, we should reset the timer
                     self._refresh_timer.reset()
                     success = True
@@ -433,19 +425,14 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 configuration_settings, sentinel_keys = client.load_configuration_settings(
                     self._selects, self._refresh_on, headers=headers, **kwargs
                 )
-                configuration_settings_processed = self._process_configurations(configuration_settings)
                 if self._feature_flag_enabled:
-                    feature_flags, feature_flag_sentinel_keys, used_filters = client.load_feature_flags(
+                    feature_flags = client.load_feature_flags(
                         self._feature_flag_selectors,
-                        self._feature_flag_refresh_enabled,
-                        self._origin_endpoint,
                         headers=headers,
                         **kwargs,
                     )
-                    self._feature_filter_usage = used_filters
-                    configuration_settings_processed[FEATURE_MANAGEMENT_KEY] = {}
-                    configuration_settings_processed[FEATURE_MANAGEMENT_KEY][FEATURE_FLAG_KEY] = feature_flags
-                    self._refresh_on_feature_flags = feature_flag_sentinel_keys
+                    configuration_settings.extend(feature_flags)
+                configuration_settings_processed = self._process_configurations(configuration_settings, True)
                 for (key, label), etag in self._refresh_on.items():
                     if not etag:
                         try:
@@ -476,21 +463,37 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 is_failover_request = True
         raise exception
 
-    def _process_configurations(self, configuration_settings: List[ConfigurationSetting]) -> Dict[str, Any]:
+    def _process_configurations(
+        self, configuration_settings: List[ConfigurationSetting], refreshed_feature_flags: bool
+    ) -> Dict[str, Any]:
         # Reset feature flag usage
         self._uses_ai_configuration = False
         self._uses_aicc_configuration = False
 
         configuration_settings_processed = {}
+        existing_feature_flags = (
+            self._dict.get(FEATURE_MANAGEMENT_KEY, {}).get(FEATURE_FLAG_KEY, []) if self._feature_flag_enabled else []
+        )
+        feature_flags_processed = []
         for config in configuration_settings:
             if isinstance(config, FeatureFlagConfigurationSetting):
                 # Feature flags are not processed like other settings
-                continue
-            key = self._process_key_name(config)
-            value = self._process_key_value(config)
-            configuration_settings_processed[key] = value
-        if self._feature_flag_enabled and FEATURE_MANAGEMENT_KEY in self._dict:
-            configuration_settings_processed[FEATURE_MANAGEMENT_KEY] = self._dict[FEATURE_MANAGEMENT_KEY]
+                feature_flag_value = json.loads(config.value)
+                self._feature_flag_telemetry(self._origin_endpoint, config, feature_flag_value)
+                self._feature_flag_appconfig_telemetry(config)
+                feature_flags_processed.append(feature_flag_value)
+
+                if self._feature_flag_refresh_enabled:
+                    self._refresh_on_feature_flags[(config.key, config.label)] = config.etag
+            else:
+                key = self._process_key_name(config)
+                value = self._process_key_value(config)
+                configuration_settings_processed[key] = value
+        if self._feature_flag_enabled:
+            if not refreshed_feature_flags:
+                feature_flags_processed = existing_feature_flags
+            configuration_settings_processed[FEATURE_MANAGEMENT_KEY] = {}
+            configuration_settings_processed[FEATURE_MANAGEMENT_KEY][FEATURE_FLAG_KEY] = feature_flags_processed
         return configuration_settings_processed
 
     def _process_key_value(self, config):
