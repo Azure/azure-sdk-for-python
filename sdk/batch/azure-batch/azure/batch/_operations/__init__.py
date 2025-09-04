@@ -12,14 +12,17 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from ._patch import *  # pylint: disable=unused-wildcard-import
 
-from ._operations import BatchClientOperationsMixin  # type: ignore
+from ._operations import _BatchClientOperationsMixin  # type: ignore # pylint: disable=unused-import
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
+# TODO: Check if we need to add this to the __all__ for async and sync LATER
+# maybe it can be removed (like what the generator wanted)
+# too many BatchClientOperationMixins everywhere ...  maybe rename this one to internal?
 __all__ = [
-    "BatchClientOperationsMixin",
+    "_BatchClientOperationsMixin",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()
