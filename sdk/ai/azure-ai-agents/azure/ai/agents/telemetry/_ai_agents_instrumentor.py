@@ -25,7 +25,6 @@ from azure.ai.agents.models._enums import (
 from azure.ai.agents.models import (
     MessageAttachment,
     MessageDeltaChunk,
-    MessageContent,
     MessageIncompleteDetails,
     MessageInputContentBlock,
     MessageInputTextBlock,
