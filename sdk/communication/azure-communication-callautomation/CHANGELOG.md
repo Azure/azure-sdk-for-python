@@ -9,7 +9,14 @@
 - Recording with the call connection ID is now supported. OPS calls can be recorded using the call connection ID.
 - Adds support for SIP headers prefixed with 'X-' and 'X-MS-Custom-' within the CustomCallingContext.
 
-### Bug fixes
+### Breaking Changes
+
+- The properties `media_streaming_subscription` and `transcription_subscription` of `CallConnectionProperties` are no longer subclasses of the internal `Model` baseclass, and no longer have the inherited methods.
+- The following attributes have now been typed as `Optional` to reflect the actual behaviour: `CallParticipant.is_muted`, `CallParticipant.is_on_hold`, `AddParticipantResult.invitation_id`, `CancelAddParticipantOperationResult.invitation_id`.
+- The models `FileSource` and `ChannelAffinity` will no longer accept arbitrary keyword args in the constructor.
+
+### Bugs fixed
+
 - Fixed range specification for download_recording.
 - Fixed serialization of participant ordering for start_recording.
 

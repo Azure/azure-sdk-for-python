@@ -499,10 +499,10 @@ class MediaStreamingSubscription:
     :keyword state: Media streaming subscription state. Known values are: "disabled", "inactive", and
     "active".
     :paramtype state: str or
-    ~azure.communication.callautomation.models.MediaStreamingSubscriptionState
+    ~azure.communication.callautomation.MediaStreamingSubscriptionState
     :keyword subscribed_content_types: Subscribed media streaming content types.
     :paramtype subscribed_content_types: list[str or
-     ~azure.communication.callautomation.models.MediaStreamingContentType]
+     ~azure.communication.callautomation.MediaStreamingContentType]
     """
 
     id: Optional[str]
@@ -525,10 +525,10 @@ class MediaStreamingSubscription:
         :keyword state: Media streaming subscription state. Known values are: "disabled", "inactive",
          and "active".
         :paramtype state: str or
-         ~azure.communication.callautomation.models.MediaStreamingSubscriptionState
+         ~azure.communication.callautomation.MediaStreamingSubscriptionState
         :keyword subscribed_content_types: Subscribed media streaming content types.
         :paramtype subscribed_content_types: list[str or
-         ~azure.communication.callautomation.models.MediaStreamingContentType]
+         ~azure.communication.callautomation.MediaStreamingContentType]
         """
 
         self.id = id
@@ -551,10 +551,10 @@ class TranscriptionSubscription:
     :keyword state: Transcription subscription state. Known values are: "disabled", "inactive", and
      "active".
     :paramtype state: str or
-     ~azure.communication.callautomation.models.TranscriptionSubscriptionState
+     ~azure.communication.callautomation.TranscriptionSubscriptionState
     :keyword subscribed_result_types: Subscribed transcription result types.
     :paramtype subscribed_result_types: list[str or
-     ~azure.communication.callautomation.models.TranscriptionResultType]
+     ~azure.communication.callautomation.TranscriptionResultType]
     """
 
     id: Optional[str]
@@ -795,8 +795,8 @@ class CallParticipant:
         self,
         *,
         identifier: Optional[CommunicationIdentifier] = None,
-        is_muted: Optional[bool] = None,
-        is_on_hold: Optional[bool] = None,
+        is_muted: Optional[bool] = False,
+        is_on_hold: Optional[bool] = False,
     ):
         self.identifier = identifier
         self.is_muted = is_muted

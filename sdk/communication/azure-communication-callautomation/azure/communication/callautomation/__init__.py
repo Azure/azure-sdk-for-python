@@ -27,6 +27,8 @@ from ._models import (
     CancelAddParticipantOperationResult,
     AzureBlobContainerRecordingStorage,
     AzureCommunicationsRecordingStorage,
+    MediaStreamingSubscription,
+    TranscriptionSubscription,
 )
 from ._shared.models import (
     CommunicationIdentifier,
@@ -50,6 +52,9 @@ from ._generated.models._enums import (
     RecognizeInputType,
     MediaStreamingAudioChannelType,
     MediaStreamingContentType,
+    MediaStreamingSubscriptionState,
+    TranscriptionResultType,
+    TranscriptionSubscriptionState,
     StreamingTransportType,
     DtmfTone,
     CallConnectionState,
@@ -74,6 +79,8 @@ __all__ = [
     "AzureCommunicationsRecordingStorage",
     # models for output
     "CallConnectionProperties",
+    "MediaStreamingSubscription",
+    "TranscriptionSubscription",
     "CallParticipant",
     "RecordingProperties",
     "AddParticipantResult",
@@ -103,6 +110,9 @@ __all__ = [
     "RecognizeInputType",
     "MediaStreamingAudioChannelType",
     "MediaStreamingContentType",
+    "MediaStreamingSubscriptionState",
+    "TranscriptionResultType",
+    "TranscriptionSubscriptionState",
     "StreamingTransportType",
     "DtmfTone",
     "CallConnectionState",

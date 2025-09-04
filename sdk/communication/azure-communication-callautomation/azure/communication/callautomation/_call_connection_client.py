@@ -708,7 +708,7 @@ class CallConnectionClient:  # pylint:disable=too-many-public-methods
         play_prompts: Optional[List[PlaySource]] = None
         if isinstance(play_prompt, (FileSource, TextSource, SsmlSource)):
             play_prompt_single = play_prompt._to_generated()  # pylint:disable=protected-access
-        elif play_prompt is not None:
+        elif play_prompt:
             play_prompts = [source._to_generated() for source in play_prompt]  # pylint:disable=protected-access
 
         if input_type == RecognizeInputType.DTMF:
