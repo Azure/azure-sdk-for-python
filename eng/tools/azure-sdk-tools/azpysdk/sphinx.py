@@ -54,6 +54,8 @@ ci_doc_dir = os.path.join(REPO_ROOT, '_docs')
 sphinx_conf_dir = os.path.join(REPO_ROOT, 'doc/sphinx')
 generate_mgmt_script = os.path.join(REPO_ROOT, "doc/sphinx/generate_doc.py")
 
+# env prep helper functions
+
 
 def create_index_file(readme_location, package_rst):
     readme_ext = os.path.splitext(readme_location)[1]
@@ -271,6 +273,18 @@ class sphinx(Check):
 
             executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, package_dir)
             logger.info(f"Processing {package_name} for sphinx check")
+
+            create_package_and_install(
+                distribution_directory=staging_directory,
+                target_setup=package_dir,
+                skip_install=False,
+                cache_dir=None,
+                work_dir=staging_directory,
+                force_create=False,
+                package_type="wheel",
+                pre_download_disabled=False,
+                python_executable=executable
+            )
   
             # install sphinx TODO python version error handling
             try:
@@ -289,7 +303,7 @@ class sphinx(Check):
             site_folder = os.path.join(staging_directory, "site")
 
             if should_build_docs(package_name):
-                create_index(doc_folder, staging_directory, parsed.namespace) # TODO...
+                create_index(doc_folder, package_dir, parsed.namespace) 
                 
                 write_version(site_folder, parsed.version)
             else:
