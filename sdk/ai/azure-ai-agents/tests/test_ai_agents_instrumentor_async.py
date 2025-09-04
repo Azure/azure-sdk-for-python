@@ -18,6 +18,7 @@ from azure.ai.agents.models import (
     McpTool,
     MessageDeltaChunk,
     MessageDeltaTextContent,
+    MessageInputTextBlock,
     OpenApiAnonymousAuthDetails,
     OpenApiTool,
     RequiredMcpToolCall,
@@ -28,13 +29,14 @@ from azure.ai.agents.models import (
     RunStepToolCallDetails,
     SubmitToolApprovalAction,
     ThreadMessage,
+    ThreadMessageOptions,
     ThreadRun,
     ToolApproval,
     AsyncToolSet,
     Tool,
 )
 from azure.ai.agents.telemetry._ai_agents_instrumentor import _AIAgentsInstrumentorPreview
-from azure.ai.agents.telemetry import _utils
+from azure.ai.agents.telemetry import AIAgentsInstrumentor, _utils
 from azure.core.settings import settings
 from gen_ai_trace_verifier import GenAiTraceVerifier
 from azure.ai.agents.aio import AgentsClient
@@ -42,7 +44,7 @@ from azure.ai.agents.aio import AgentsClient
 from devtools_testutils.aio import recorded_by_proxy_async
 
 from test_agents_client_base import agentClientPreparer
-from test_ai_instrumentor_base import TestAiAgentsInstrumentorBase
+from test_ai_instrumentor_base import TestAiAgentsInstrumentorBase, MessageCreationMode, CONTENT_TRACING_ENV_VARIABLE
 
 settings.tracing_implementation = "OpenTelemetry"
 _utils._span_impl_type = settings.tracing_implementation()
@@ -89,10 +91,38 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
     @agentClientPreparer()
     @recorded_by_proxy_async
     async def test_agent_chat_with_tracing_content_recording_enabled(self, **kwargs):
+        # Note: The proper way to invoke the same test over and over again with different parameter values is to use @pytest.mark.parametrize. However,
+        # this does not work together with @recorded_by_proxy. So we call the helper function 4 times instead in a single recorded test.
+        await self._agent_chat_with_tracing_content_recording_enabled(message_creation_mode=MessageCreationMode.MESSAGE_CREATE_STR, **kwargs)
+        await self._agent_chat_with_tracing_content_recording_enabled(message_creation_mode=MessageCreationMode.MESSAGE_CREATE_INPUT_TEXT_BLOCK, **kwargs)
+        await self._agent_chat_with_tracing_content_recording_enabled(message_creation_mode=MessageCreationMode.THREAD_CREATE_STR, **kwargs)
+        await self._agent_chat_with_tracing_content_recording_enabled(message_creation_mode=MessageCreationMode.THREAD_CREATE_INPUT_TEXT_BLOCK, **kwargs)
+
+    async def _agent_chat_with_tracing_content_recording_enabled(self, message_creation_mode: MessageCreationMode, **kwargs):
+        self.cleanup()
+        os.environ.update({CONTENT_TRACING_ENV_VARIABLE: "True"})
+        self.setup_telemetry()
+        assert True == AIAgentsInstrumentor().is_content_recording_enabled()
+        assert True == AIAgentsInstrumentor().is_instrumented()
+
         client = self.create_client(**kwargs)
         agent = await client.create_agent(model="gpt-4o-mini", name="my-agent", instructions="You are helpful agent")
-        thread = await client.threads.create()
-        await client.messages.create(thread_id=thread.id, role="user", content="Hello, tell me a joke")
+        user_content = "Hello, tell me a joke"
+
+        # Test 4 different patterns of thread & message creation
+        if message_creation_mode == MessageCreationMode.MESSAGE_CREATE_STR:
+            thread = await client.threads.create()
+            await client.messages.create(thread_id=thread.id, role="user", content=user_content)
+        elif message_creation_mode == MessageCreationMode.MESSAGE_CREATE_INPUT_TEXT_BLOCK:
+            thread = await client.threads.create()
+            await client.messages.create(thread_id=thread.id, role="user", content=[MessageInputTextBlock(text=user_content)])
+        elif message_creation_mode == MessageCreationMode.THREAD_CREATE_STR:
+            thread = await client.threads.create(messages=[ThreadMessageOptions(role="user", content=user_content)])
+        elif message_creation_mode == MessageCreationMode.THREAD_CREATE_INPUT_TEXT_BLOCK:
+            thread = await client.threads.create(messages=[ThreadMessageOptions(role="user", content=[MessageInputTextBlock(text=user_content)])])
+        else:
+            assert False, f"Unknown message creation mode: {message_creation_mode}"
+
         run = await client.runs.create(thread_id=thread.id, agent_id=agent.id)
 
         while run.status in ["queued", "in_progress", "requires_action"]:
@@ -109,6 +139,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
         assert len(messages) > 1
         await client.close()
 
+        # ------------------------- Validate "create_agent" span ---------------------------------
         self.exporter.force_flush()
         spans = self.exporter.get_spans_by_name("create_agent my-agent")
         assert len(spans) == 1
@@ -136,6 +167,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
         events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
         assert events_match == True
 
+        # ------------------------- Validate "create_thread" span ---------------------------------
         spans = self.exporter.get_spans_by_name("create_thread")
         assert len(spans) == 1
         span = spans[0]
@@ -148,32 +180,48 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
         assert attributes_match == True
 
-        spans = self.exporter.get_spans_by_name("create_message")
-        assert len(spans) == 1
-        span = spans[0]
-        expected_attributes = [
-            ("gen_ai.system", "az.ai.agents"),
-            ("gen_ai.operation.name", "create_message"),
-            ("server.address", ""),
-            ("gen_ai.thread.id", ""),
-            ("gen_ai.message.id", ""),
-        ]
-        attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
-        assert attributes_match == True
+        if message_creation_mode in (MessageCreationMode.THREAD_CREATE_STR, MessageCreationMode.THREAD_CREATE_INPUT_TEXT_BLOCK):
+            expected_events = [
+                {
+                    "name": "gen_ai.user.message",
+                    "attributes": {
+                        "gen_ai.system": "az.ai.agents",
+                        "gen_ai.event.content": '{"content": "Hello, tell me a joke", "role": "user"}',
+                    },
+                }
+            ]
+            events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
+            assert events_match == True
 
-        expected_events = [
-            {
-                "name": "gen_ai.user.message",
-                "attributes": {
-                    "gen_ai.system": "az.ai.agents",
-                    "gen_ai.thread.id": "*",
-                    "gen_ai.event.content": '{"content": "Hello, tell me a joke", "role": "user"}',
-                },
-            }
-        ]
-        events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
-        assert events_match == True
+        # ------------------------- Validate "create_message" span ---------------------------------
+        if message_creation_mode in (MessageCreationMode.MESSAGE_CREATE_STR, MessageCreationMode.MESSAGE_CREATE_INPUT_TEXT_BLOCK):        
+            spans = self.exporter.get_spans_by_name("create_message")
+            assert len(spans) == 1
+            span = spans[0]
+            expected_attributes = [
+                ("gen_ai.system", "az.ai.agents"),
+                ("gen_ai.operation.name", "create_message"),
+                ("server.address", ""),
+                ("gen_ai.thread.id", ""),
+                ("gen_ai.message.id", ""),
+            ]
+            attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
+            assert attributes_match == True
 
+            expected_events = [
+                {
+                    "name": "gen_ai.user.message",
+                    "attributes": {
+                        "gen_ai.system": "az.ai.agents",
+                        "gen_ai.thread.id": "*",
+                        "gen_ai.event.content": '{"content": "Hello, tell me a joke", "role": "user"}',
+                    },
+                }
+            ]
+            events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
+            assert events_match == True
+
+        # ------------------------- Validate "start_thread_run" span ---------------------------------
         spans = self.exporter.get_spans_by_name("start_thread_run")
         assert len(spans) == 1
         span = spans[0]
@@ -191,6 +239,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
         assert attributes_match == True
 
+        # ------------------------- Validate "get_thread_run" span ---------------------------------
         spans = self.exporter.get_spans_by_name("get_thread_run")
         assert len(spans) >= 1
         span = spans[-1]
@@ -209,6 +258,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
         assert attributes_match == True
 
+        # ------------------------- Validate "list_messages" span ---------------------------------
         spans = self.exporter.get_spans_by_name("list_messages")
         assert len(spans) == 2
         span = spans[0]

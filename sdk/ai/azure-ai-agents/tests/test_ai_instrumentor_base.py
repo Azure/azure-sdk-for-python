@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from enum import IntEnum
 from typing import Any, Dict, List, Optional
 import json
 import os
@@ -20,6 +21,14 @@ from memory_trace_exporter import MemoryTraceExporter
 from test_agents_client_base import TestAgentClientBase
 
 CONTENT_TRACING_ENV_VARIABLE = "OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT"
+
+# We test different ways to create a thread & message, to cover all tracing code paths
+class MessageCreationMode(IntEnum):
+    MESSAGE_CREATE_STR = 1 # Test calls `client.messages.create(content="...", ...)` to create the messages in a dedicated call
+    MESSAGE_CREATE_INPUT_TEXT_BLOCK = 2 # Test calls `client.messages.create(content=[MessageInputTextBlock(...)], ...)` to create the message in a dedicated call
+    THREAD_CREATE_STR = 3 # Test calls `client.threads.create(messages=[ThreadMessageOptions(...)])`.
+    THREAD_CREATE_INPUT_TEXT_BLOCK = 4 # Test calls `client.threads.create(messages=[ThreadMessageOptions(content=[MessageInputTextBlock(...)])])`.
+
 
 class TestAiAgentsInstrumentorBase(TestAgentClientBase):
     """The utility methods, used by AI Instrumentor test."""
