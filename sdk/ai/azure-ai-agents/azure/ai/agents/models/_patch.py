@@ -463,9 +463,9 @@ class Tool(ABC, Generic[ToolDefinitionT]):
             raise ValueError("Invalid resources for ToolResources.") from e
         
     @staticmethod
-    def merge_resources(tools: List['Tool']) -> ToolResources:
+    def get_tool_resources(tools: List['Tool']) -> ToolResources:
         """
-        Get the resources for all tools.
+        Get the tool resources from tools.
 
         :param tools: The list of tool objects whose resources should be merged.
         :type tools: List[Tool]
@@ -489,7 +489,21 @@ class Tool(ABC, Generic[ToolDefinitionT]):
                     tool_resources[key] = value
         return Tool._create_tool_resources_from_dict(tool_resources)
     
-    
+    @staticmethod
+    def get_tool_definitions(tools: List['Tool']) -> List[ToolDefinition]:
+        """
+        Get the tool definitions from tools.
+
+        :param tools: Tools from which to collect definitions.
+        :type tools: List[Tool]
+        :return: List of collected tool definitions.
+        :rtype: List[ToolDefinition]
+        """
+        tool_definitions: List[ToolDefinition] = []
+        for tool in tools:
+            tool_definitions.extend(tool.definitions)
+        return tool_definitions
+
 class BaseFunctionTool(Tool[FunctionToolDefinition]):
     """
     A tool that executes user-defined functions.
@@ -1796,7 +1810,7 @@ class BaseToolSet(ABC):
 
         :rtype: ToolResources
         """
-        return Tool.merge_resources(self._tools)
+        return Tool.get_tool_resources(self._tools)
 
     def get_definitions_and_resources(self) -> Dict[str, Any]:
         """
