@@ -27,9 +27,9 @@ from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.agents.models import ListSortOrder
 
-# Pass in 'logging_enable=True' to your client constructor for un-redacted logs
 project_client = AIProjectClient(
-    endpoint=os.environ["PROJECT_ENDPOINT"], credential=DefaultAzureCredential(), logging_enable=True
+    endpoint=os.environ["PROJECT_ENDPOINT"],
+    credential=DefaultAzureCredential(),
 )
 
 with project_client:
