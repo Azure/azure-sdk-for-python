@@ -3,8 +3,7 @@
 # Pre-requisite
 
 - You need to have Python installed
-- We recommend at least 3.11 to have access to more tool by default (more can be added later)
-
+- We recommend at least 3.11 to have access to more tools by default
 - You may optionally use the ["uv"](https://docs.astral.sh/uv/) tool, which is fast and handles Python version and venv creation automatically.
 
 # Initial setup
@@ -59,9 +58,16 @@ If you want to locally test different Python versions to check compatibility wit
 Note that this is optional, and you can rely onn CI to test python versions.
 
 ## With uv
+You can specify a Python version upon venv creation:
 
-`uvx --python=3.9 azpysdk mypy`
+`uvx --python=3.11 azpysdk mypy`
 
-## With python
+## With Python
 
-You need to install pyenv (explain that)
+You need to install [pyenv](https://github.com/pyenv/pyenv?tab=readme-ov-file#installation), which lets you easily switch between multiple versions of Python.
+
+To switch Python versions:
+```
+pyenv install 3.10
+pyenv global 3.10
+```
