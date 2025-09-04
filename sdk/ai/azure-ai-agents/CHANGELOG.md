@@ -8,7 +8,7 @@
 
 ### Features Added
 
-- Added static `merge_resources method` to `McpTool` with accompanying sample.
+- Added static `merge_resources` method to `McpTool` with accompanying sample.
 
 ### Bugs Fixed
 

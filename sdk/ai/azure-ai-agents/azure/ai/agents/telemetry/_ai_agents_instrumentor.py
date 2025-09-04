@@ -589,7 +589,7 @@ class _AIAgentsInstrumentorPreview:
     ) -> None:
         # TODO document new fields
 
-        event_body = dict[str, Any]()
+        event_body: dict[str, Any]= {}
         if _trace_agents_content:
             if isinstance(content, List):
                 for block in content:
