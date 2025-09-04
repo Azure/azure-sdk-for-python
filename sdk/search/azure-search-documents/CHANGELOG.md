@@ -5,9 +5,9 @@
 ### Features Added
 
 - Added `azure.search.documents.models.DebugInfo`.
-- Added `azure.search.documents.models.AzureBlobKnowledgeSource`.
-- Added `azure.search.documents.models.AzureBlobKnowledgeSourceParameters`.
-- Added `azure.search.documents.models.IndexerResyncBody`.
+- Added `azure.search.documents.indexes.models.AzureBlobKnowledgeSource`.
+- Added `azure.search.documents.indexes.models.AzureBlobKnowledgeSourceParameters`.
+- Added `azure.search.documents.indexes.models.IndexerResyncBody`.
 - Added `azure.search.documents.indexes.models.KnowledgeAgentOutputConfiguration`.
 - Added `azure.search.documents.indexes.models.KnowledgeAgentOutputConfigurationModality`.
 - Added `azure.search.documents.indexes.models.KnowledgeSource`.
