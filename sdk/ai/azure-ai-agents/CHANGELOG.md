@@ -8,12 +8,13 @@
 
 ### Features Added
 
-- Added static merge_resources method to `McpTool` with accompanying sample.
+- Added static `merge_resources` method to `McpTool` with accompanying sample.
 
 ### Bugs Fixed
 
-* Fix the issue with logging Agent message, when the message has "in progress" status (related to [issue](https://github.com/Azure/azure-sdk-for-python/issues/42645)).
-* Fix the issue with `RunStepOpenAPIToolCall` logging [issue](https://github.com/Azure/azure-sdk-for-python/issues/42645).
+- Fix issue with tracing an Agent message, when the message has "in progress" status (related to [GitHub Issue 42645](https://github.com/Azure/azure-sdk-for-python/issues/42645)).
+- Fix issue with tracing `RunStepOpenAPIToolCall` ([GitHub issue 42645](https://github.com/Azure/azure-sdk-for-python/issues/42645)).
+- Fix issue when `.threads.create(messages=[ThreadMessageOptions(...])` is called on the `AgentsClient`, when tracing is enabled ([GitHub issue 42805](https://github.com/Azure/azure-sdk-for-python/issues/42805))
 
 ### Sample updates
 
