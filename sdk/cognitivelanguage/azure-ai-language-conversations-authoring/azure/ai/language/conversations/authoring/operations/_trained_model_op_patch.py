@@ -117,6 +117,20 @@ class TrainedModelOperations(TrainedModelOperationsGenerated):
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[EvaluationJobResult]:
+        """Triggers evaluation operation on a trained model.
+
+        :param trained_model_label: The trained model label. Required.
+        :type trained_model_label: str
+        :param body: The training input parameters. Is one of the following types: EvaluationDetails,
+         JSON, IO[bytes] Required.
+        :type body: ~azure.ai.language.conversations.authoring.models.EvaluationDetails or JSON or
+         IO[bytes]
+        :return: An instance of LROPoller that returns EvaluationJobResult. The EvaluationJobResult is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.ai.language.conversations.authoring.models._models.EvaluationJobResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
         return super()._begin_evaluate_model(
             project_name=self._project_name,
             trained_model_label=trained_model_label,
@@ -143,6 +157,14 @@ class TrainedModelOperations(TrainedModelOperationsGenerated):
 
     @distributed_trace
     def delete_trained_model(self, trained_model_label: str, **kwargs: Any) -> None:  # type: ignore[override]
+        """Deletes an existing trained model.
+
+        :param trained_model_label: The trained model label. Required.
+        :type trained_model_label: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
         return super().delete_trained_model(
             project_name=self._project_name,
             trained_model_label=trained_model_label,
@@ -153,6 +175,16 @@ class TrainedModelOperations(TrainedModelOperationsGenerated):
     def _get_evaluation_status(  # type: ignore[override]
         self, trained_model_label: str, job_id: str, **kwargs: Any
     ) -> EvaluationState:
+        """Gets the status for an evaluation job.
+
+        :param trained_model_label: The trained model label. Required.
+        :type trained_model_label: str
+        :param job_id: The job ID. Required.
+        :type job_id: str
+        :return: EvaluationState. The EvaluationState is compatible with MutableMapping
+        :rtype: ~azure.ai.language.conversations.authoring.models._models.EvaluationState
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
         return super()._get_evaluation_status(
             project_name=self._project_name,
             trained_model_label=trained_model_label,
@@ -164,6 +196,16 @@ class TrainedModelOperations(TrainedModelOperationsGenerated):
     def _get_load_snapshot_status(  # type: ignore[override]
         self, trained_model_label: str, job_id: str, **kwargs: Any
     ) -> LoadSnapshotState:
+        """Gets the status for loading a snapshot.
+
+        :param trained_model_label: The trained model label. Required.
+        :type trained_model_label: str
+        :param job_id: The job ID. Required.
+        :type job_id: str
+        :return: LoadSnapshotState. The LoadSnapshotState is compatible with MutableMapping
+        :rtype: ~azure.ai.language.conversations.authoring.models._models.LoadSnapshotState
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
         return super()._get_load_snapshot_status(
             project_name=self._project_name,
             trained_model_label=trained_model_label,
@@ -181,6 +223,26 @@ class TrainedModelOperations(TrainedModelOperationsGenerated):
         top: Optional[int] = None,
         **kwargs: Any
     ) -> ItemPaged[UtteranceEvaluationResult]:
+        """Gets the detailed results of the evaluation for a trained model. This includes the raw
+        inference results for the data included in the evaluation process.
+
+        :param trained_model_label: The trained model label. Required.
+        :type trained_model_label: str
+        :keyword string_index_type: Specifies the method used to interpret string offsets. For
+         additional information see `https://aka.ms/text-analytics-offsets
+         <https://aka.ms/text-analytics-offsets>`_. Known values are: "Utf16CodeUnit", "Utf8CodeUnit",
+         and "Utf32CodeUnit". Required.
+        :paramtype string_index_type: str or
+         ~azure.ai.language.conversations.authoring.models.StringIndexType
+        :keyword top: The number of result items to return. Default value is None.
+        :paramtype top: int
+        :keyword skip: The number of result items to skip. Default value is None.
+        :paramtype skip: int
+        :return: An iterator like instance of UtteranceEvaluationResult
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.ai.language.conversations.authoring.models.UtteranceEvaluationResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
         return super().get_model_evaluation_results(
             project_name=self._project_name,
             trained_model_label=trained_model_label,
@@ -194,6 +256,15 @@ class TrainedModelOperations(TrainedModelOperationsGenerated):
     def get_model_evaluation_summary(  # type: ignore[override]
         self, trained_model_label: str, **kwargs: Any
     ) -> EvalSummary:
+        """Gets the evaluation summary of a trained model. The summary includes high level performance
+        measurements of the model e.g., F1, Precision, Recall, etc.
+
+        :param trained_model_label: The trained model label. Required.
+        :type trained_model_label: str
+        :return: EvalSummary. The EvalSummary is compatible with MutableMapping
+        :rtype: ~azure.ai.language.conversations.authoring.models.EvalSummary
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
         return super().get_model_evaluation_summary(
             project_name=self._project_name,
             trained_model_label=trained_model_label,
@@ -204,6 +275,14 @@ class TrainedModelOperations(TrainedModelOperationsGenerated):
     def get_trained_model(  # type: ignore[override]
         self, trained_model_label: str, **kwargs: Any
     ) -> ProjectTrainedModel:
+        """Gets the details of a trained model.
+
+        :param trained_model_label: The trained model label. Required.
+        :type trained_model_label: str
+        :return: ProjectTrainedModel. The ProjectTrainedModel is compatible with MutableMapping
+        :rtype: ~azure.ai.language.conversations.authoring.models.ProjectTrainedModel
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
         return super().get_trained_model(
             project_name=self._project_name,
             trained_model_label=trained_model_label,

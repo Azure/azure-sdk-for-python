@@ -705,6 +705,23 @@ class ProjectOperations(ProjectOperationsGenerated):
         storage_input_container_name: Optional[str] = _Unset,
         **kwargs: Any
     ) -> CopyProjectDetails:
+        """Generates a copy project operation authorization to the current target Azure resource.
+
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword project_kind: Represents the project kind. Known values are: "Conversation",
+         "Orchestration", and "CustomConversationSummarization". Required.
+        :paramtype project_kind: str or ~azure.ai.language.conversations.authoring.models.ProjectKind
+        :keyword storage_input_container_name: The name of the storage container. Default value is
+         None.
+        :paramtype storage_input_container_name: str
+        :keyword allow_overwrite: Whether to allow an existing project to be overwritten using the
+         resulting copy authorization. Default value is None.
+        :paramtype allow_overwrite: bool
+        :return: CopyProjectDetails. The CopyProjectDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.language.conversations.authoring.models._models.CopyProjectDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
         return super()._copy_project_authorization(
             project_name=self._project_name,
             body=body,
@@ -719,36 +736,100 @@ class ProjectOperations(ProjectOperationsGenerated):
     def _get_assign_deployment_resources_status(  # type: ignore[override]
         self, job_id: str, **kwargs: Any
     ) -> DeploymentResourcesState:
+        """Gets the status of an existing assign deployment resources job.
+
+        :param job_id: The job ID. Required.
+        :type job_id: str
+        :return: DeploymentResourcesState. The DeploymentResourcesState is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.language.conversations.authoring.models._models.DeploymentResourcesState
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
         return super()._get_assign_deployment_resources_status(project_name=self._project_name, job_id=job_id, **kwargs)
 
     @distributed_trace
     def _get_copy_project_status(self, job_id: str, **kwargs: Any) -> CopyProjectState:  # type: ignore[override]
+        """Gets the status of an existing copy project job.
+
+        :param job_id: The job ID. Required.
+        :type job_id: str
+        :return: CopyProjectState. The CopyProjectState is compatible with MutableMapping
+        :rtype: ~azure.ai.language.conversations.authoring.models._models.CopyProjectState
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
         return super()._get_copy_project_status(project_name=self._project_name, job_id=job_id, **kwargs)
 
     @distributed_trace
     def _get_export_status(self, job_id: str, **kwargs: Any) -> ExportProjectState:  # type: ignore[override]
+        """Gets the status of an export job. Once job completes, returns the project metadata, and assets.
+
+        :param job_id: The job ID. Required.
+        :type job_id: str
+        :return: ExportProjectState. The ExportProjectState is compatible with MutableMapping
+        :rtype: ~azure.ai.language.conversations.authoring.models._models.ExportProjectState
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
         return super()._get_export_status(project_name=self._project_name, job_id=job_id, **kwargs)
 
     @distributed_trace
     def get_project(self, **kwargs: Any) -> ProjectDetails:  # type: ignore[override]
+        """Gets the details of a project.
+
+        :return: ProjectDetails. The ProjectDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.language.conversations.authoring.models.ProjectDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
         return super()._get_project(project_name=self._project_name, **kwargs)
 
     @distributed_trace
     def _get_project_deletion_status(self, job_id: str, **kwargs: Any) -> ProjectDeletionState:  # type: ignore[override]
+        """Gets the status for a project deletion job.
+
+        :param job_id: The job ID. Required.
+        :type job_id: str
+        :return: ProjectDeletionState. The ProjectDeletionState is compatible with MutableMapping
+        :rtype: ~azure.ai.language.conversations.authoring.models._models.ProjectDeletionState
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
         return super()._get_project_deletion_status(project_name=self._project_name, job_id=job_id, **kwargs)
 
     @distributed_trace
     def _get_swap_deployments_status(self, job_id: str, **kwargs: Any) -> SwapDeploymentsState:  # type: ignore[override]
+        """Gets the status of an existing swap deployment job.
+
+        :param job_id: The job ID. Required.
+        :type job_id: str
+        :return: SwapDeploymentsState. The SwapDeploymentsState is compatible with MutableMapping
+        :rtype: ~azure.ai.language.conversations.authoring.models._models.SwapDeploymentsState
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
         return super()._get_swap_deployments_status(project_name=self._project_name, job_id=job_id, **kwargs)
 
     @distributed_trace
     def _get_training_status(self, job_id: str, **kwargs: Any) -> TrainingState:  # type: ignore[override]
+        """Gets the status for a training job.
+
+        :param job_id: The job ID. Required.
+        :type job_id: str
+        :return: TrainingState. The TrainingState is compatible with MutableMapping
+        :rtype: ~azure.ai.language.conversations.authoring.models.TrainingState
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
         return super()._get_training_status(project_name=self._project_name, job_id=job_id, **kwargs)
 
     @distributed_trace
     def _get_unassign_deployment_resources_status(  # type: ignore[override]
         self, job_id: str, **kwargs: Any
     ) -> DeploymentResourcesState:
+        """Gets the status of an existing unassign deployment resources job.
+
+        :param job_id: The job ID. Required.
+        :type job_id: str
+        :return: DeploymentResourcesState. The DeploymentResourcesState is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.language.conversations.authoring.models._models.DeploymentResourcesState
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
         return super()._get_unassign_deployment_resources_status(
             project_name=self._project_name, job_id=job_id, **kwargs
         )
@@ -757,28 +838,83 @@ class ProjectOperations(ProjectOperationsGenerated):
     def list_deployment_resources(  # type: ignore[override]
         self, *, skip: Optional[int] = _Unset, top: Optional[int] = _Unset, **kwargs: Any
     ) -> ItemPaged[AssignedDeploymentResource]:
+        """Lists the deployments resources assigned to the project.
+
+        :keyword top: The number of result items to return. Default value is None.
+        :paramtype top: int
+        :keyword skip: The number of result items to skip. Default value is None.
+        :paramtype skip: int
+        :return: An iterator like instance of AssignedDeploymentResource
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.ai.language.conversations.authoring.models.AssignedDeploymentResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
         return super().list_deployment_resources(project_name=self._project_name, skip=skip, top=top, **kwargs)
 
     @distributed_trace
     def list_deployments(  # type: ignore[override]
         self, *, skip: Optional[int] = _Unset, top: Optional[int] = _Unset, **kwargs: Any
     ) -> ItemPaged[ProjectDeployment]:
+        """Lists the deployments belonging to a project.
+
+        :keyword top: The number of result items to return. Default value is None.
+        :paramtype top: int
+        :keyword skip: The number of result items to skip. Default value is None.
+        :paramtype skip: int
+        :return: An iterator like instance of ProjectDeployment
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.ai.language.conversations.authoring.models.ProjectDeployment]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
         return super().list_deployments(project_name=self._project_name, skip=skip, top=top, **kwargs)
 
     @distributed_trace
     def list_exported_models(  # type: ignore[override]
         self, *, skip: Optional[int] = _Unset, top: Optional[int] = _Unset, **kwargs: Any
     ) -> ItemPaged[ExportedTrainedModel]:
+        """Lists the exported models belonging to a project.
+
+        :keyword top: The number of result items to return. Default value is None.
+        :paramtype top: int
+        :keyword skip: The number of result items to skip. Default value is None.
+        :paramtype skip: int
+        :return: An iterator like instance of ExportedTrainedModel
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.ai.language.conversations.authoring.models.ExportedTrainedModel]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
         return super().list_exported_models(project_name=self._project_name, skip=skip, top=top, **kwargs)
 
     @distributed_trace
     def list_trained_models(  # type: ignore[override]
         self, *, skip: Optional[int] = _Unset, top: Optional[int] = _Unset, **kwargs: Any
     ) -> ItemPaged[ProjectTrainedModel]:
+        """Lists the trained models belonging to a project.
+
+        :keyword top: The number of result items to return. Default value is None.
+        :paramtype top: int
+        :keyword skip: The number of result items to skip. Default value is None.
+        :paramtype skip: int
+        :return: An iterator like instance of ProjectTrainedModel
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.ai.language.conversations.authoring.models.ProjectTrainedModel]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
         return super().list_trained_models(project_name=self._project_name, skip=skip, top=top, **kwargs)
 
     @distributed_trace
     def list_training_jobs(  # type: ignore[override]
         self, *, skip: Optional[int] = _Unset, top: Optional[int] = _Unset, **kwargs: Any
     ) -> ItemPaged[TrainingState]:
+        """Lists the non-expired training jobs created for a project.
+
+        :keyword top: The number of result items to return. Default value is None.
+        :paramtype top: int
+        :keyword skip: The number of result items to skip. Default value is None.
+        :paramtype skip: int
+        :return: An iterator like instance of TrainingState
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.ai.language.conversations.authoring.models.TrainingState]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
         return super().list_training_jobs(project_name=self._project_name, skip=skip, top=top, **kwargs)
