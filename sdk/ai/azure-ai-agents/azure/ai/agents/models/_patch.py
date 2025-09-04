@@ -444,8 +444,52 @@ class Tool(ABC, Generic[ToolDefinitionT]):
         :param Any tool_call: The tool call to execute.
         :return: The output of the tool operations.
         """
+        
+    @staticmethod
+    def _create_tool_resources_from_dict(resources: Dict[str, Any]) -> ToolResources:
+        """
+        Safely converts a dictionary into a ToolResources instance.
 
+        :param resources: A dictionary of tool resources. Should be a mapping
+            accepted by ~azure.ai.agents.models.AzureAISearchToolResource
+        :type resources: Dict[str, Any]
+        :return: A ToolResources instance.
+        :rtype: ToolResources
+        """
+        try:
+            return ToolResources(**resources)
+        except TypeError as e:
+            logger.error("Error creating ToolResources: %s", e)  # pylint: disable=do-not-log-exceptions-if-not-debug
+            raise ValueError("Invalid resources for ToolResources.") from e
+        
+    @staticmethod
+    def merge_resources(tools: List['Tool']) -> ToolResources:
+        """
+        Get the resources for all tools.
 
+        :param tools: The list of tool objects whose resources should be merged.
+        :type tools: List[Tool]
+        :return: A new ``ToolResources`` instance representing the merged view.
+        :rtype: ToolResources
+        """
+        tool_resources: Dict[str, Any] = {}
+        for tool in tools:
+            resources = tool.resources
+            for key, value in resources.items():
+                if key in tool_resources:
+                    # Special handling for MCP resources - they need to be merged into a single list
+                    if isinstance(tool_resources[key], list) and isinstance(value, list):
+                        tool_resources[key].extend(value)
+                    elif isinstance(tool_resources[key], dict) and isinstance(value, dict):
+                        tool_resources[key].update(value)
+                    else:
+                        # For other types, the new value overwrites the old one
+                        tool_resources[key] = value
+                else:
+                    tool_resources[key] = value
+        return Tool._create_tool_resources_from_dict(tool_resources)
+    
+    
 class BaseFunctionTool(Tool[FunctionToolDefinition]):
     """
     A tool that executes user-defined functions.
@@ -972,37 +1016,6 @@ class McpTool(Tool[MCPToolDefinition]):
         :param Any tool_call: The tool call to execute.
         :type tool_call: Any
         """
-
-    @staticmethod
-    def merge_resources(mcp_tools: List["McpTool"]) -> ToolResources:
-        """
-        Merge the tool resources from multiple MCP tool instances into a single ToolResources object.
-
-        This is useful when creating a run that should have access to multiple MCP servers at once.
-
-        :param mcp_tools: A list of McpTool instances whose resources will be merged.
-        :type mcp_tools: List[McpTool]
-        :return: A ToolResources object containing all MCP tool resources from the provided tools.
-        :rtype: ToolResources
-        :raises ValueError: If the provided list is empty.
-        :raises TypeError: If any item in the list is not an instance of McpTool.
-        """
-        if not mcp_tools:
-            raise ValueError("mcp_tools must be a non-empty list of McpTool instances.")
-
-        flat_resources: List[MCPToolResource] = []
-        for tool in mcp_tools:
-            if not isinstance(tool, McpTool):
-                raise TypeError("All items in mcp_tools must be instances of McpTool.")
-            # Combine all MCP resources; duplicates are harmless and can be filtered by the service if needed
-            res = tool.resources.get("mcp")  # May be a list or a single MCPToolResource depending on model behavior
-            if isinstance(res, list):
-                flat_resources.extend(cast(List[MCPToolResource], res))
-            elif res is not None:
-                flat_resources.append(cast(MCPToolResource, res))
-
-        return ToolResources(mcp=flat_resources)
-
 
 class AzureFunctionTool(Tool[AzureFunctionToolDefinition]):
     """
@@ -1593,16 +1606,24 @@ class CodeInterpreterTool(Tool[CodeInterpreterToolDefinition]):
         pass
 
 
-class BaseToolSet:
-    """
-    Abstract class for a collection of tools that can be used by an agent.
+class BaseToolSet(ABC):
+    """Abstract base class for a collection of tools that can be used by an agent.
+
+    Subclasses must implement ``validate_tool_type`` to enforce any constraints on
+    what tool types are allowed in the set.
     """
 
-    def __init__(self) -> None:
+    def __init__(self) -> None:  # pragma: no cover - simple container init
         self._tools: List[Tool] = []
 
+    @abstractmethod
     def validate_tool_type(self, tool: Tool) -> None:
-        pass
+        """Validate that the provided tool is of an acceptable type for this tool set.
+
+        Implementations should raise ``ValueError`` (or a more specific exception) if
+        the tool type is not permitted.
+        """
+        raise NotImplementedError
 
     def add(self, tool: Tool):
         """
@@ -1775,38 +1796,7 @@ class BaseToolSet:
 
         :rtype: ToolResources
         """
-        tool_resources: Dict[str, Any] = {}
-        for tool in self._tools:
-            resources = tool.resources
-            for key, value in resources.items():
-                if key in tool_resources:
-                    # Special handling for MCP resources - they need to be merged into a single list
-                    if key == "mcp" and isinstance(tool_resources[key], list) and isinstance(value, list):
-                        tool_resources[key].extend(value)
-                    elif isinstance(tool_resources[key], dict) and isinstance(value, dict):
-                        tool_resources[key].update(value)
-                    else:
-                        # For other types, the new value overwrites the old one
-                        tool_resources[key] = value
-                else:
-                    tool_resources[key] = value
-        return self._create_tool_resources_from_dict(tool_resources)
-
-    def _create_tool_resources_from_dict(self, resources: Dict[str, Any]) -> ToolResources:
-        """
-        Safely converts a dictionary into a ToolResources instance.
-
-        :param resources: A dictionary of tool resources. Should be a mapping
-            accepted by ~azure.ai.agents.models.AzureAISearchToolResource
-        :type resources: Dict[str, Any]
-        :return: A ToolResources instance.
-        :rtype: ToolResources
-        """
-        try:
-            return ToolResources(**resources)
-        except TypeError as e:
-            logger.error("Error creating ToolResources: %s", e)  # pylint: disable=do-not-log-exceptions-if-not-debug
-            raise ValueError("Invalid resources for ToolResources.") from e
+        return Tool.merge_resources(self._tools)
 
     def get_definitions_and_resources(self) -> Dict[str, Any]:
         """
