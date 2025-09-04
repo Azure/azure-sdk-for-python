@@ -87,7 +87,7 @@ with project_client:
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-mcp-agent",
         instructions="You are a helpful agent that can use MCP tools to assist users. Use the available MCP tools to answer questions and perform tasks.",
-        tools=[tool.definitions[0] for tool in tools],
+        tools=Tool.get_tool_definitions(tools),
     )
 
     print(f"Created agent, ID: {agent.id}")
@@ -109,7 +109,7 @@ with project_client:
     # Create and process agent run in thread with MCP tools
     mcp_tool1.update_headers("SuperSecret", "123456")
     mcp_tool2.set_approval_mode("never")  # Disable approval for MS Learn MCP tool
-    tool_resources = Tool.merge_resources(tools)
+    tool_resources = Tool.get_tool_resources(tools)
     print(tool_resources)
     run = agents_client.runs.create(thread_id=thread.id, agent_id=agent.id, tool_resources=tool_resources)
     print(f"Created run, ID: {run.id}")
