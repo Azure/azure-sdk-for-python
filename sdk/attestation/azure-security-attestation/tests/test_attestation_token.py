@@ -29,26 +29,18 @@ from azure.security.attestation import (
 class TestAzureAttestationToken(object):
     def test_create_signing_key(self):
         key = self._create_rsa_key()
-        cert = self._create_x509_certificate(key, u"test certificate")
+        cert = self._create_x509_certificate(key, "test certificate")
 
-        certificate = load_pem_x509_certificate(
-            cert.encode("ascii"), backend=default_backend()
-        )
-        assert certificate.subject == x509.Name(
-            [x509.NameAttribute(NameOID.COMMON_NAME, u"test certificate")]
-        )
+        certificate = load_pem_x509_certificate(cert.encode("ascii"), backend=default_backend())
+        assert certificate.subject == x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, "test certificate")])
 
     def test_create_signer_ecds(self):
         """Generate an ECDS key and a certificate wrapping the key, then verify we can create a signing key over it."""
         eckey = self._create_ecds_key()
-        certificate = self._create_x509_certificate(eckey, u"attestation.test")
+        certificate = self._create_x509_certificate(eckey, "attestation.test")
 
-        certificate = load_pem_x509_certificate(
-            certificate.encode("ascii"), backend=default_backend()
-        )
-        assert certificate.subject == x509.Name(
-            [x509.NameAttribute(NameOID.COMMON_NAME, u"attestation.test")]
-        )
+        certificate = load_pem_x509_certificate(certificate.encode("ascii"), backend=default_backend())
+        assert certificate.subject == x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, "attestation.test")])
 
     def test_create_unsecured_token(self):
         token = AttestationToken(body={"val1": [1, 2, 3]})
@@ -61,17 +53,15 @@ class TestAzureAttestationToken(object):
 
     def test_create_secured_token(self):
         key = self._create_rsa_key()
-        cert = self._create_x509_certificate(key, u"test certificate")
+        cert = self._create_x509_certificate(key, "test certificate")
 
-        token = AttestationToken(
-            body={"val1": [1, 2, 3]}, signing_key=key, signing_certificate=cert
-        )
+        token = AttestationToken(body={"val1": [1, 2, 3]}, signing_key=key, signing_certificate=cert)
         assert token._get_body() == {"val1": [1, 2, 3]}
         token._validate_token()
 
     def test_create_secured_empty_token(self):
         key = self._create_rsa_key()
-        cert = self._create_x509_certificate(key, u"test certificate")
+        cert = self._create_x509_certificate(key, "test certificate")
 
         token = AttestationToken(body=None, signing_key=key, signing_certificate=cert)
         assert token._get_body() is None
@@ -79,11 +69,9 @@ class TestAzureAttestationToken(object):
 
     def test_token_callback(self):
         key = self._create_rsa_key()
-        cert = self._create_x509_certificate(key, u"test certificate")
+        cert = self._create_x509_certificate(key, "test certificate")
 
-        token = AttestationToken(
-            body={"val1": [1, 2, 3]}, signing_key=key, signing_certificate=cert
-        )
+        token = AttestationToken(body={"val1": [1, 2, 3]}, signing_key=key, signing_certificate=cert)
         assert token._get_body() == {"val1": [1, 2, 3]}
 
         global callback_invoked
@@ -99,11 +87,9 @@ class TestAzureAttestationToken(object):
 
     def test_token_callback_rejected(self):
         key = self._create_rsa_key()
-        cert = self._create_x509_certificate(key, u"test certificate")
+        cert = self._create_x509_certificate(key, "test certificate")
 
-        token = AttestationToken(
-            body={"val1": [1, 2, 3]}, signing_key=key, signing_certificate=cert
-        )
+        token = AttestationToken(body={"val1": [1, 2, 3]}, signing_key=key, signing_certificate=cert)
         assert token._get_body() == {"val1": [1, 2, 3]}
 
         global callback_invoked
@@ -206,12 +192,8 @@ class TestAzureAttestationToken(object):
         builder = builder.not_valid_after(datetime.datetime.today() + (one_day * 30))
         builder = builder.serial_number(x509.random_serial_number())
         builder = builder.public_key(signing_key.public_key())
-        builder = builder.add_extension(
-            SubjectAlternativeName([x509.DNSName(subject_name)]), critical=False
-        )
-        builder = builder.add_extension(
-            BasicConstraints(ca=False, path_length=None), critical=True
-        )
+        builder = builder.add_extension(SubjectAlternativeName([x509.DNSName(subject_name)]), critical=False)
+        builder = builder.add_extension(BasicConstraints(ca=False, path_length=None), critical=True)
         return (
             builder.sign(
                 private_key=signing_key,
