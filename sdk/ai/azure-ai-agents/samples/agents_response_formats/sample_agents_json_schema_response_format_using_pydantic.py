@@ -25,11 +25,12 @@ USAGE:
 import os
 
 from enum import Enum
-from pydantic import BaseModel
+from pydantic import BaseModel, TypeAdapter
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.agents.models import (
     ListSortOrder,
+    MessageRole,
     ResponseFormatJsonSchema,
     ResponseFormatJsonSchemaType,
     RunStatus,
@@ -38,13 +39,13 @@ from azure.ai.agents.models import (
 
 # Create the pydantic model to represent the planet names and there masses.
 class PlanetName(str, Enum):
-    Mercury = ("Mercury",)
-    Venus = ("Venus",)
-    Earth = ("Earth",)
-    Mars = ("Mars",)
-    Jupiter = ("Jupiter",)
-    Saturn = ("Saturn",)
-    Uranus = ("Uranus",)
+    Mercury = "Mercury"
+    Venus = "Venus"
+    Earth = "Earth"
+    Mars = "Mars"
+    Jupiter = "Jupiter"
+    Saturn = "Saturn"
+    Uranus = "Uranus"
     Neptune = "Neptune"
 
 
@@ -97,13 +98,13 @@ with project_client:
     agents_client.delete_agent(agent.id)
     print("Deleted agent")
 
-    messages = agents_client.messages.list(
-        thread_id=thread.id,
-        order=ListSortOrder.ASCENDING,
-    )
-
     messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
     for msg in messages:
         if msg.text_messages:
             last_text = msg.text_messages[-1]
             print(f"{msg.role}: {last_text.text.value}")
+            # Deserialize the Agent's JSON response to the `Planets` class defined above
+            if msg.role == MessageRole.AGENT:
+                planets = TypeAdapter(Planets).validate_json(last_text.text.value)
+                for planet in planets.planets:
+                    print(f"The mass of {planet.name.value} is {planet.mass} kg.")

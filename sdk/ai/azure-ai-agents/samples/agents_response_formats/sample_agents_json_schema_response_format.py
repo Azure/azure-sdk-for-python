@@ -112,11 +112,6 @@ with project_client:
     agents_client.delete_agent(agent.id)
     print("Deleted agent")
 
-    messages = agents_client.messages.list(
-        thread_id=thread.id,
-        order=ListSortOrder.ASCENDING,
-    )
-
     messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
     for msg in messages:
         if msg.text_messages:
