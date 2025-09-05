@@ -1863,15 +1863,14 @@ class BaseToolSet(ABC):
             mcp_tools = [tool for tool in self._tools if isinstance(tool, McpTool)]
             if len(mcp_tools) == 0:
                 raise ValueError(f"Tool of type {tool_type.__name__} not found in the ToolSet.")
-            elif len(mcp_tools) > 1:
+            if len(mcp_tools) > 1:
                 server_labels = [tool.server_label for tool in mcp_tools]
                 raise ValueError(
                     f"Multiple McpTool instances found with server labels: {server_labels}. "
                     f"Please specify 'server_label' parameter to identify which MCP tool to retrieve."
                 )
-            else:
-                # Only one MCP tool found, return it
-                return cast(ToolT, mcp_tools[0])
+            # Only one MCP tool found, return it
+            return cast(ToolT, mcp_tools[0])
 
         # Standard tool retrieval - return first tool of specified type
         for tool in self._tools:
