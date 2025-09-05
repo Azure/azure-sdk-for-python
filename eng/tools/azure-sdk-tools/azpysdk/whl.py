@@ -1,5 +1,4 @@
 import argparse
-import logging
 import tempfile
 import os
 from typing import Optional, List, Any
@@ -12,7 +11,7 @@ from ci_tools.functions import is_error_code_5_allowed, pip_install
 from ci_tools.variables import set_envvar_defaults
 from ci_tools.parsing import ParsedSetup
 from ci_tools.scenario.generation import create_package_and_install
-
+from ci_tools.logging import logger
 
 class whl(Check):
     def __init__(self) -> None:
@@ -29,7 +28,7 @@ class whl(Check):
 
     def run(self, args: argparse.Namespace) -> int:
         """Run the whl check command."""
-        print("Running whl check...")
+        logger.info("Running whl check...")
 
         set_envvar_defaults()
 
@@ -64,7 +63,7 @@ class whl(Check):
 
             # TODO: split sys.argv[1:] on -- and pass in everything after the -- as additional arguments
             # TODO: handle mark_args
-            logging.info(f"Invoke pytest for {pkg}")
+            logger.info(f"Invoke pytest for {pkg}")
             exit_code = run(
                 [executable, "-m", "pytest", "."] + [
                     "-rsfE",
@@ -83,9 +82,9 @@ class whl(Check):
 
             if exit_code != 0:
                 if exit_code == 5 and is_error_code_5_allowed(parsed.folder, parsed.name):
-                    logging.info("Exit code 5 is allowed, continuing execution.")
+                    logger.info("Exit code 5 is allowed, continuing execution.")
                 else:
-                    logging.info(f"pytest failed with exit code {exit_code}.")
+                    logger.info(f"pytest failed with exit code {exit_code}.")
                     results.append(exit_code)
 
         # final result is the worst case of all the results

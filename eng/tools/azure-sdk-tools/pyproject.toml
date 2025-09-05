@@ -60,7 +60,7 @@ include-package-data = true
 
 [tool.setuptools.packages.find]
 where = ["."]
-exclude = ["tests*"]
+exclude = ["tests*", "build*"]
 
 [tool.black]
 line-length=120

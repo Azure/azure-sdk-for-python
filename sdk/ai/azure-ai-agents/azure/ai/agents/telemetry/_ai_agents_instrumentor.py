@@ -26,6 +26,8 @@ from azure.ai.agents.models import (
     MessageAttachment,
     MessageDeltaChunk,
     MessageIncompleteDetails,
+    MessageInputContentBlock,
+    MessageInputTextBlock,
     RunStep,
     RunStepDeltaChunk,
     RunStepError,
@@ -36,6 +38,7 @@ from azure.ai.agents.models import (
     RunStepCodeInterpreterToolCall,
     RunStepBingGroundingToolCall,
     ThreadMessage,
+    ThreadMessageOptions,
     ThreadRun,
     ToolDefinition,
     ToolOutput,
@@ -369,31 +372,42 @@ class _AIAgentsInstrumentorPreview:
     def add_thread_message_event(
         self,
         span,
-        message: ThreadMessage,
+        message: Union[ThreadMessage, ThreadMessageOptions],
         usage: Optional[_models.RunStepCompletionUsage] = None,
     ) -> None:
-        content_body = {}
+
+        content_body: Optional[Union[str, Dict[str, Any]]] = None
         if _trace_agents_content:
-            for content in message.content:
-                typed_content = content.get(content.type, None)
-                if typed_content:
-                    content_details = {"value": self._get_field(typed_content, "value")}
-                    annotations = self._get_field(typed_content, "annotations")
-                    if annotations:
-                        content_details["annotations"] = [a.as_dict() for a in annotations]
-                    content_body[content.type] = content_details
+            if isinstance(message, ThreadMessage):
+                for content in message.content:
+                    typed_content = content.get(content.type, None)
+                    if typed_content:
+                        content_details = {"value": self._get_field(typed_content, "value")}
+                        annotations = self._get_field(typed_content, "annotations")
+                        if annotations:
+                            content_details["annotations"] = [a.as_dict() for a in annotations]
+                        content_body = {}
+                        content_body[content.type] = content_details
+            elif isinstance(message, ThreadMessageOptions):
+                if isinstance(message.content, str):
+                    content_body = message.content
+                elif isinstance(message.content, List):
+                    for block in message.content:
+                        if isinstance(block, MessageInputTextBlock):
+                            content_body = block.text
+                            break
 
         self._add_message_event(
             span,
             self._get_role(message.role),
             content_body,
-            attachments=message.attachments,
-            thread_id=message.thread_id,
-            agent_id=message.agent_id,
-            message_id=message.id,
-            thread_run_id=message.run_id,
-            message_status=message.status,
-            incomplete_details=message.incomplete_details,
+            attachments=getattr(message, "attachments", None),
+            thread_id=getattr(message, "thread_id", None),
+            agent_id=getattr(message, "agent_id", None),
+            message_id=getattr(message, "id", None),
+            thread_run_id=getattr(message, "run_id", None),
+            message_status=getattr(message, "status", None),
+            incomplete_details=getattr(message, "incomplete_details", None),
             usage=usage,
         )
 
@@ -444,11 +458,7 @@ class _AIAgentsInstrumentorPreview:
                     t.type: t.bing_grounding,
                 }
             elif isinstance(t, RunStepOpenAPIToolCall):
-                tool_call = {
-                    "id": t.id,
-                    "type": t.type,
-                    'function': t.as_dict().get('function', {})
-                }
+                tool_call = {"id": t.id, "type": t.type, "function": t.as_dict().get("function", {})}
             elif isinstance(t, RunStepMcpToolCall):
                 tool_call = {
                     "id": t.id,
@@ -456,7 +466,7 @@ class _AIAgentsInstrumentorPreview:
                     "arguments": t.arguments,
                     "name": t.name,
                     "output": t.output,
-                    "server_label": t.server_label or ""
+                    "server_label": t.server_label or "",
                 }
             else:
                 # Works for Deep research
@@ -563,7 +573,7 @@ class _AIAgentsInstrumentorPreview:
         self,
         span,
         role: str,
-        content: Any,
+        content: Optional[Union[str, dict[str, Any], List[MessageInputContentBlock]]] = None,
         attachments: Any = None,  # Optional[List[MessageAttachment]] or dict
         thread_id: Optional[str] = None,
         agent_id: Optional[str] = None,
@@ -575,9 +585,15 @@ class _AIAgentsInstrumentorPreview:
     ) -> None:
         # TODO document new fields
 
-        event_body = {}
+        event_body: dict[str, Any] = {}
         if _trace_agents_content:
-            event_body["content"] = content
+            if isinstance(content, List):
+                for block in content:
+                    if isinstance(block, MessageInputTextBlock):
+                        event_body["content"] = block.text
+                        break
+            else:
+                event_body["content"] = content
             if attachments:
                 event_body["attachments"] = []
                 for attachment in attachments:
@@ -809,7 +825,7 @@ class _AIAgentsInstrumentorPreview:
     def start_create_thread_span(
         self,
         server_address: Optional[str] = None,
-        messages: Optional[List[ThreadMessage]] = None,
+        messages: Optional[Union[List[ThreadMessage], List[ThreadMessageOptions]]] = None,
         _tool_resources: Optional[ToolResources] = None,
     ) -> "Optional[AbstractSpan]":
         span = start_span(OperationName.CREATE_THREAD, server_address=server_address)
@@ -1487,7 +1503,7 @@ class _AIAgentsInstrumentorPreview:
         self,
         server_address: Optional[str] = None,
         thread_id: Optional[str] = None,
-        content: Optional[str] = None,
+        content: Optional[Union[str, List[MessageInputContentBlock]]] = None,
         role: Optional[Union[str, MessageRole]] = None,
         attachments: Optional[List[MessageAttachment]] = None,
     ) -> "Optional[AbstractSpan]":
@@ -2081,7 +2097,9 @@ class _AgentEventHandlerTraceWrapper(AgentEventHandler):
         # See work item 4636616 and 4636299 for details.
         # When the work item is resolved, change this code back to:
         # if message.status in {MessageStatus.COMPLETED, MessageStatus.INCOMPLETE}
-        if message.status in {MessageStatus.COMPLETED, MessageStatus.INCOMPLETE} or (message.status == MessageStatus.IN_PROGRESS and message.content):
+        if message.status in {MessageStatus.COMPLETED, MessageStatus.INCOMPLETE} or (
+            message.status == MessageStatus.IN_PROGRESS and message.content
+        ):
             self.last_message = message
 
         return retval  # type: ignore
@@ -2222,7 +2240,9 @@ class _AsyncAgentEventHandlerTraceWrapper(AsyncAgentEventHandler):
         # See work item 4636616 and 4636299 for details.
         # When the work item is resolved, change this code back to:
         # if message.status in {MessageStatus.COMPLETED, MessageStatus.INCOMPLETE}
-        if message.status in {MessageStatus.COMPLETED, MessageStatus.INCOMPLETE} or (message.status == MessageStatus.IN_PROGRESS and message.content):
+        if message.status in {MessageStatus.COMPLETED, MessageStatus.INCOMPLETE} or (
+            message.status == MessageStatus.IN_PROGRESS and message.content
+        ):
             self.last_message = message
 
         return retval  # type: ignore

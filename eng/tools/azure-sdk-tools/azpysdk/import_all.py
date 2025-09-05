@@ -1,7 +1,6 @@
 import argparse
 import os
 import sys
-import logging
 import tempfile
 
 from typing import Optional,List
@@ -11,6 +10,7 @@ from .Check import Check
 from ci_tools.parsing import ParsedSetup
 from ci_tools.functions import discover_targeted_packages
 from ci_tools.scenario.generation import create_package_and_install
+from ci_tools.logging import logger
 
 # keyvault has dependency issue when loading private module _BearerTokenCredentialPolicyBase from azure.core.pipeline.policies
 # azure.core.tracing.opencensus and azure.eventhub.checkpointstoreblob.aio are skipped due to a known issue in loading azure.core.tracing.opencensus
@@ -42,7 +42,7 @@ class import_all(Check):
     # todo: figure out venv abstraction mechanism via override
     def run(self, args: argparse.Namespace) -> int:
         """Run the import_all check command."""
-        print("Running import_all check in isolated venv...")
+        logger.info("Running import_all check in isolated venv...")
 
         targeted = self.get_targeted_directories(args)
 
@@ -69,7 +69,7 @@ class import_all(Check):
 
             if should_run_import_all(parsed.name):
                 # import all modules from current package
-                logging.info(
+                logger.info(
                     "Importing all modules from namespace [{0}] to verify dependency".format(
                         parsed.namespace
                     )
@@ -82,8 +82,8 @@ class import_all(Check):
                 ]
 
                 outcomes.append(check_call(commands))
-                logging.info("Verified module dependency, no issues found")
+                logger.info("Verified module dependency, no issues found")
             else:
-                logging.info("Package {} is excluded from dependency check".format(parsed.name))
+                logger.info("Package {} is excluded from dependency check".format(parsed.name))
 
         return max(outcomes) if outcomes else 0
