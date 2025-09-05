@@ -13,6 +13,7 @@ from ci_tools.functions import discover_targeted_packages
 from ci_tools.variables import in_ci
 from ci_tools.scenario.generation import build_whl_for_req
 from ci_tools.logging import configure_logging, logger
+from ci_tools.environment_exclusions import is_check_enabled
 
 root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 
@@ -125,6 +126,9 @@ async def run_all_checks(packages, checks, max_parallel):
     combos = [(p, c) for p in packages for c in checks]
     total = len(combos)
     for idx, (package, check) in enumerate(combos, start=1):
+        if not is_check_enabled(package, check):
+            logging.warning(f"Skipping disabled check {check} for package {package}")
+            continue
         tasks.append(asyncio.create_task(run_check(semaphore, package, check, base_args, idx, total)))
 
     # Handle Ctrl+C gracefully
