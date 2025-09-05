@@ -1693,8 +1693,8 @@ class BaseToolSet(ABC):
 
         :param tool_type: The tool class to target. Must be OpenApiTool.
         :type tool_type: Type[OpenApiTool]
-        :param name: The name of the OpenAPI definition to remove from the tool.
-        :type name: str
+        :keyword name: The name of the OpenAPI definition to remove from the tool.
+        :paramtype name: str
         :raises ValueError: If the OpenApiTool isn't found or the named definition doesn't exist.
         """
         ...
@@ -1719,8 +1719,8 @@ class BaseToolSet(ABC):
 
         :param tool_type: The tool class to target. Must be McpTool.
         :type tool_type: Type[McpTool]
-        :param server_label: The unique server label identifying the MCP tool to remove.
-        :type server_label: str
+        :keyword server_label: The unique server label identifying the MCP tool to remove.
+        :paramtype server_label: str
         :raises ValueError: If no McpTool with the given server label is found.
         """
         ...
@@ -1751,10 +1751,9 @@ class BaseToolSet(ABC):
 
         :param tool_type: The type of tool to remove.
         :type tool_type: Type[Tool]
-        :keyword name: (Optional) For OpenApiTool - the name of the specific API definition to remove.
-        :paramtype name: str
-        :keyword server_label: (Optional) For McpTool - the server label of the specific MCP tool to remove.
-        :paramtype server_label: str
+        :param kwargs: Additional keyword arguments. May include 'name' for OpenApiTool
+            or 'server_label' for McpTool.
+        :type kwargs: Any
         :return: None
         :rtype: None
         :raises ValueError: If a tool of the specified type is not found.
@@ -1842,11 +1841,43 @@ class BaseToolSet(ABC):
         }
 
     @overload
-    def get_tool(self, tool_type: Type[McpTool]) -> McpTool: ...
+    def get_tool(self, tool_type: Type[McpTool]) -> McpTool:
+        """
+        Get an MCP tool from the tool set.
+
+        :param tool_type: The MCP tool type to get.
+        :type tool_type: Type[McpTool]
+        :return: The MCP tool.
+        :rtype: McpTool
+        """
+        ...
+
     @overload
-    def get_tool(self, tool_type: Type[McpTool], *, server_label: str) -> McpTool: ...
+    def get_tool(self, tool_type: Type[McpTool], *, server_label: str) -> McpTool:
+        """
+        Get an MCP tool with a specific server label from the tool set.
+
+        :param tool_type: The MCP tool type to get.
+        :type tool_type: Type[McpTool]
+        :keyword server_label: The server label of the specific MCP tool to get.
+        :paramtype server_label: str
+        :return: The MCP tool with the specified server label.
+        :rtype: McpTool
+        """
+        ...
+
     @overload
-    def get_tool(self, tool_type: Type[ToolT]) -> ToolT: ...
+    def get_tool(self, tool_type: Type[ToolT]) -> ToolT:
+        """
+        Get a tool of the specified type from the tool set.
+
+        :param tool_type: The type of tool to get.
+        :type tool_type: Type[Tool]
+        :return: The tool of the specified type.
+        :rtype: Tool
+        """
+        ...
+
     def get_tool(self, tool_type: Type[ToolT], **kwargs) -> ToolT:
         """
         Get a tool of the specified type from the tool set.
@@ -1856,8 +1887,8 @@ class BaseToolSet(ABC):
 
         :param tool_type: The type of tool to get.
         :type tool_type: Type[Tool]
-        :keyword server_label: (Optional) For McpTool - the server label of the specific MCP tool to get.
-        :paramtype server_label: str
+        :param kwargs: Additional keyword arguments. May include 'server_label' for McpTool.
+        :type kwargs: Any
         :return: The tool of the specified type.
         :rtype: Tool
         :raises ValueError: If a tool of the specified type is not found, if no McpTool with the specified server_label is found, or if there are multiple MCP tools but no server_label is provided.
