@@ -1554,15 +1554,15 @@ class _AIAgentsInstrumentorPreview:
             if class_function_name.startswith("MessagesOperations.create"):
                 kwargs.setdefault("merge_span", True)
                 return self.trace_create_message(function, *args, **kwargs)
+            if class_function_name.startswith("RunsOperations.create_and_process"):
+                kwargs.setdefault("merge_span", True)
+                return self.trace_create_run(OperationName.PROCESS_THREAD_RUN, function, *args, **kwargs)            
             if class_function_name.startswith("RunsOperations.create"):
                 kwargs.setdefault("merge_span", True)
                 return self.trace_create_run(OperationName.START_THREAD_RUN, function, *args, **kwargs)
             if class_function_name.startswith("RunsOperations.get"):
                 kwargs.setdefault("merge_span", True)
                 return self.trace_get_run(OperationName.GET_THREAD_RUN, function, *args, **kwargs)
-            if class_function_name.startswith("RunsOperations.create_and_process"):
-                kwargs.setdefault("merge_span", True)
-                return self.trace_create_run(OperationName.PROCESS_THREAD_RUN, function, *args, **kwargs)
             if class_function_name.startswith("AgentsClient.create_thread_and_run"):
                 kwargs.setdefault("merge_span", True)
                 return self.trace_create_run(OperationName.PROCESS_THREAD_RUN, function, *args, **kwargs)
@@ -1630,15 +1630,15 @@ class _AIAgentsInstrumentorPreview:
             if class_function_name.startswith("MessagesOperations.create"):
                 kwargs.setdefault("merge_span", True)
                 return await self.trace_create_message_async(function, *args, **kwargs)
+            if class_function_name.startswith("RunsOperations.create_and_process"):
+                kwargs.setdefault("merge_span", True)
+                return await self.trace_create_run_async(OperationName.PROCESS_THREAD_RUN, function, *args, **kwargs)
             if class_function_name.startswith("RunsOperations.create"):
                 kwargs.setdefault("merge_span", True)
                 return await self.trace_create_run_async(OperationName.START_THREAD_RUN, function, *args, **kwargs)
             if class_function_name.startswith("RunsOperations.get"):
                 kwargs.setdefault("merge_span", True)
                 return await self.trace_get_run_async(OperationName.GET_THREAD_RUN, function, *args, **kwargs)
-            if class_function_name.startswith("RunsOperations.create_and_process"):
-                kwargs.setdefault("merge_span", True)
-                return await self.trace_create_run_async(OperationName.PROCESS_THREAD_RUN, function, *args, **kwargs)
             if class_function_name.startswith("AgentsClient.create_thread_and_run"):
                 kwargs.setdefault("merge_span", True)
                 return await self.trace_create_run_async(OperationName.PROCESS_THREAD_RUN, function, *args, **kwargs)
