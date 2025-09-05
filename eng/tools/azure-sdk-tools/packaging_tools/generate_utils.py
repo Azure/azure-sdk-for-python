@@ -175,7 +175,7 @@ def generate_packaging_files(package_name, folder_name):
             if pyproject_content.get("project"):
                 for idx in range(len(pyproject_content["project"].get("dependencies", []))):
                     if pyproject_content["project"]["dependencies"][idx].startswith("azure-core"):
-                        pyproject_content["project"]["dependencies"][idx] = "azure-mgmt-core>=1.5.0"
+                        pyproject_content["project"]["dependencies"][idx] = "azure-mgmt-core>=1.6.0"
 
             with open(pyproject_toml, "wb") as f:
                 tomlw.dump(pyproject_content, f)
