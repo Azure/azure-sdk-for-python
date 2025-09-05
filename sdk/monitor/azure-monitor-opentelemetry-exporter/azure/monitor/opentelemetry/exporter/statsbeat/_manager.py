@@ -254,9 +254,9 @@ class StatsbeatManager(metaclass=Singleton):
             self._cleanup()
             return False
 
-    def _cleanup(self) -> None:
-        # Clean up resources.
-        if self._meter_provider:
+    def _cleanup(self, shutdown_meter_provider: bool = True) -> None:
+        # Clean up resources with optional meter provider shutdown
+        if shutdown_meter_provider and self._meter_provider:
             try:
                 self._meter_provider.shutdown()
             except Exception:  # pylint: disable=broad-except
@@ -280,7 +280,7 @@ class StatsbeatManager(metaclass=Singleton):
             except Exception:  # pylint: disable=broad-except
                 pass
             finally:
-                self._cleanup()
+                self._cleanup(shutdown_meter_provider=False)
 
             if shutdown_success:
                 set_statsbeat_shutdown(True)  # Use the proper setter function
