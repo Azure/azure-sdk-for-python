@@ -6,7 +6,7 @@
 
 """
 DESCRIPTION:
-    This sample demonstrates how to use agent operations with the
+    This sample demonstrates how to use Agent operations with the
     Model Context Protocol (MCP) tool in stream with iteration from the Azure Agents service using a synchronous client.
     To learn more about Model Context Protocol, visit https://modelcontextprotocol.io/
 
