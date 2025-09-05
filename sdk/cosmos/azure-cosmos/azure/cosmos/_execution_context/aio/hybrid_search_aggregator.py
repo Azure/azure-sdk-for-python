@@ -53,9 +53,15 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
         self._client = client
         self._resource_link = resource_link
         self._partitioned_query_ex_info = partitioned_query_execution_info
+        self._parameters = None
         # If the query uses parameters, we must save them to add them back to the component queries
         query_execution_info = getattr(self._partitioned_query_ex_info, "_query_execution_info", None)
-        self._parameters = getattr(query_execution_info, "parameters", None) if query_execution_info else None
+        if query_execution_info:
+            self._parameters = (
+                query_execution_info.get("parameters")
+                if isinstance(query_execution_info, dict)
+                else getattr(query_execution_info, "parameters", None)
+            )
         self._hybrid_search_query_info = hybrid_search_query_info
         self._final_results = []
         self._aggregated_global_statistics = None
