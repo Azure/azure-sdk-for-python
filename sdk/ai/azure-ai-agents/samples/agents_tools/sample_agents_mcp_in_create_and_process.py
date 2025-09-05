@@ -65,13 +65,17 @@ search_api_code = "search_azure_rest_api_code"
 mcp_tool.allow_tool(search_api_code)
 print(f"Allowed tools: {mcp_tool.allowed_tools}")
 
+
 class MyRunHandler(RunHandler):
-    def submit_mcp_tool_approval(self, run: ThreadRun, tool_call: RequiredMcpToolCall, **kwargs) -> Optional[ToolApproval]:
+    def submit_mcp_tool_approval(
+        self, run: ThreadRun, tool_call: RequiredMcpToolCall, **kwargs
+    ) -> Optional[ToolApproval]:
         return ToolApproval(
             tool_call_id=tool_call.id,
             approve=True,
             headers=mcp_tool.headers,
         )
+
 
 # Create agent with MCP tool and process agent run
 with project_client:
@@ -83,7 +87,7 @@ with project_client:
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-mcp-agent",
         instructions="You are a helpful agent that can use MCP tools to assist users. Use the available MCP tools to answer questions and perform tasks.",
-        toolset=toolset
+        toolset=toolset,
     )
     # [END create_agent_with_mcp_tool]
 
@@ -105,7 +109,7 @@ with project_client:
     # [START handle_tool_approvals]
     # Create and process agent run in thread with MCP tools
     mcp_tool.update_headers("SuperSecret", "123456")
-    
+
     run_handler = MyRunHandler()
     # mcp_tool.set_approval_mode("never")  # Uncomment to disable approval requirement
     run = agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id, run_handler=run_handler)

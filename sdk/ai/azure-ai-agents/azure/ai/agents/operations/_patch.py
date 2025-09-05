@@ -555,7 +555,7 @@ class RunsOperations(RunsOperationsGenerated):
         # Monitor and process the run status
         if not run_handler:
             run_handler = _models.RunHandler()
-            
+
         return run_handler._start(self, run, polling_interval)
 
     @overload

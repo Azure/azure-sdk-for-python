@@ -49,10 +49,14 @@ project_client = AIProjectClient(
 # Initialize function tool with user functions
 functions = FunctionTool(functions=user_functions)
 
+
 class MyRunHandler(RunHandler):
-    def submit_function_call_output(self, run: ThreadRun, tool_call: RequiredFunctionToolCall, tool_call_details: RequiredFunctionToolCallDetails) -> Optional[Any]:
+    def submit_function_call_output(
+        self, run: ThreadRun, tool_call: RequiredFunctionToolCall, tool_call_details: RequiredFunctionToolCallDetails
+    ) -> Optional[Any]:
         print(f"Call function: {tool_call_details.name}")
         return functions.execute(tool_call)
+
 
 with project_client:
     agents_client = project_client.agents

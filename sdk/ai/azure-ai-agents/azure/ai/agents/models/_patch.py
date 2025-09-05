@@ -40,8 +40,10 @@ from typing import (
 )
 
 from azure.ai.agents.models import RunStatus
+
 # NOTE: Avoid importing RunsOperations here to prevent circular import with operations package.
 from typing import TYPE_CHECKING
+
 if TYPE_CHECKING:  # pragma: no cover - type checking only
     from ..operations import RunsOperations  # noqa: F401
 
@@ -1704,7 +1706,9 @@ class ToolSet(BaseToolSet):
         """
         return self._execute_tool_calls(tool_calls)
 
-    def _execute_tool_calls(self, tool_calls: List[Any], run: Optional[ThreadRun] = None, run_handler: Optional['RunHandler'] = None) -> Any:
+    def _execute_tool_calls(
+        self, tool_calls: List[Any], run: Optional[ThreadRun] = None, run_handler: Optional["RunHandler"] = None
+    ) -> Any:
         tool_outputs = []
 
         for tool_call in tool_calls:
@@ -1726,7 +1730,7 @@ class ToolSet(BaseToolSet):
                     tool_output = {"tool_call_id": tool_call.id, "output": str(e)}
                     tool_outputs.append(tool_output)
 
-        return tool_outputs    
+        return tool_outputs
 
 
 class AsyncToolSet(BaseToolSet):
@@ -1776,6 +1780,7 @@ EventFunctionReturnT = TypeVar("EventFunctionReturnT")
 T = TypeVar("T")
 BaseAsyncAgentEventHandlerT = TypeVar("BaseAsyncAgentEventHandlerT", bound="BaseAsyncAgentEventHandler")
 # BaseAgentEventHandlerT is defined after BaseAgentEventHandler class to avoid forward reference during parsing.
+
 
 async def async_chain(*iterators: AsyncIterator[T]) -> AsyncIterator[T]:
     for iterator in iterators:
@@ -1878,9 +1883,7 @@ class RunHandler:
             time.sleep(polling_interval)
             run = runs_operations.get(thread_id=run.thread_id, run_id=run.id)
 
-            if run.status == RunStatus.REQUIRES_ACTION and isinstance(
-                run.required_action, SubmitToolOutputsAction
-            ):
+            if run.status == RunStatus.REQUIRES_ACTION and isinstance(run.required_action, SubmitToolOutputsAction):
                 tool_calls = run.required_action.submit_tool_outputs.tool_calls
                 if not tool_calls:
                     logger.warning("No tool calls provided - cancelling run")
@@ -1896,7 +1899,8 @@ class RunHandler:
                     if _has_errors_in_toolcalls_output(tool_outputs):
                         if current_retry >= runs_operations._function_tool_max_retry:  # pylint:disable=no-else-return
                             logger.warning(
-                                "Tool outputs contain errors - reaching max retry %s", runs_operations._function_tool_max_retry
+                                "Tool outputs contain errors - reaching max retry %s",
+                                runs_operations._function_tool_max_retry,
                             )
                             run = runs_operations.cancel(thread_id=run.thread_id, run_id=run.id)
                         else:
@@ -1966,22 +1970,21 @@ class RunHandler:
         tool_call: RequiredMcpToolCall,
         **kwargs,
     ) -> Optional[ToolApproval]:
-            # NOTE: Implementation intentionally returns None; override in subclasses for real approval logic.
-            """Return a ``ToolApproval`` for an MCP tool call or ``None`` to indicate rejection/cancellation.
+        # NOTE: Implementation intentionally returns None; override in subclasses for real approval logic.
+        """Return a ``ToolApproval`` for an MCP tool call or ``None`` to indicate rejection/cancellation.
 
-            Override this to implement approval policies (interactive prompt, RBAC, heuristic checks, etc.).
-            Returning ``None`` triggers cancellation logic in ``_start``.
+        Override this to implement approval policies (interactive prompt, RBAC, heuristic checks, etc.).
+        Returning ``None`` triggers cancellation logic in ``_start``.
 
-            :param run: Current run containing the MCP approval request.
-            :type run: ThreadRun
-            :param tool_call: The MCP tool call requiring approval.
-            :type tool_call: RequiredMcpToolCall
-            :keyword kwargs: Additional keyword arguments for extensibility.
-            :return: A populated ``ToolApproval`` instance on approval, or ``None`` to decline.
-            :rtype: Optional[ToolApproval]
-            """
-            return None
-
+        :param run: Current run containing the MCP approval request.
+        :type run: ThreadRun
+        :param tool_call: The MCP tool call requiring approval.
+        :type tool_call: RequiredMcpToolCall
+        :keyword kwargs: Additional keyword arguments for extensibility.
+        :return: A populated ``ToolApproval`` instance on approval, or ``None`` to decline.
+        :rtype: Optional[ToolApproval]
+        """
+        return None
 
 
 class BaseAgentEventHandler(Iterator[T]):
@@ -2043,6 +2046,7 @@ class BaseAgentEventHandler(Iterator[T]):
                 pass
         except StopIteration:
             pass
+
 
 # Now that BaseAgentEventHandler is defined, we can bind the TypeVar.
 BaseAgentEventHandlerT = TypeVar("BaseAgentEventHandlerT", bound="BaseAgentEventHandler")
