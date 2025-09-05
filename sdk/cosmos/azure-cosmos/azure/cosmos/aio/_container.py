@@ -108,7 +108,7 @@ class ContainerProxy:
             kwargs['excluded_locations'] = options['excludedLocations']
         return await self._get_properties(**kwargs)
 
-    async def _get_properties(self, **kwargs: Any) -> Dict[str, Any]:
+    async def _get_properties(self, **kwargs: Any) -> dict[str, Any]:
         if self.container_link not in self.client_connection._container_properties_cache:
             async with self.container_cache_lock:
                 if self.container_link not in self.client_connection._container_properties_cache:
@@ -172,7 +172,7 @@ class ContainerProxy:
         priority: Optional[Literal["High", "Low"]] = None,
         initial_headers: Optional[Dict[str, str]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> CosmosDict:
         """Read the container properties.
 
         :keyword bool populate_partition_key_range_statistics: Enable returning partition key
