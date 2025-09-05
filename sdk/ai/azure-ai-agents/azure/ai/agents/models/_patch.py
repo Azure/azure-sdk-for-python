@@ -1738,7 +1738,12 @@ class BaseToolSet(ABC):
 
     @overload
     def remove(self, tool_type: Type[Tool]) -> None:
-        """Remove any tool from the toolset."""
+        """Remove any tool from the toolset.
+
+        :param tool_type: The tool class to target.
+        :type tool_type: Type[Tool]
+
+        """
         ...
 
     def remove(self, tool_type: Type[Tool], **kwargs) -> None:
@@ -1751,9 +1756,6 @@ class BaseToolSet(ABC):
 
         :param tool_type: The type of tool to remove.
         :type tool_type: Type[Tool]
-        :param kwargs: Additional keyword arguments. May include 'name' for OpenApiTool
-            or 'server_label' for McpTool.
-        :type kwargs: Any
         :return: None
         :rtype: None
         :raises ValueError: If a tool of the specified type is not found.
@@ -1887,8 +1889,6 @@ class BaseToolSet(ABC):
 
         :param tool_type: The type of tool to get.
         :type tool_type: Type[Tool]
-        :param kwargs: Additional keyword arguments. May include 'server_label' for McpTool.
-        :type kwargs: Any
         :return: The tool of the specified type.
         :rtype: Tool
         :raises ValueError: If a tool of the specified type is not found, if no McpTool with the specified server_label is found, or if there are multiple MCP tools but no server_label is provided.
