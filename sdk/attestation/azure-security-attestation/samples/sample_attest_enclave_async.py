@@ -194,7 +194,7 @@ issuancerules {
                 print("Unexpectedly passed attestation.")
         except HttpResponseError as err:
             print("Caught expected exception: ", err.message)
-            print("Error is:", err.error.code)
+            print("Error is:", err.error.code) # type: ignore
             pass
 
     async def attest_open_enclave_shared_with_options(self):
@@ -258,7 +258,7 @@ issuancerules {
             self.shared_url, credential
         ) as attest_client:
             response, token = await attest_client.attest_open_enclave(
-                oe_report, runtime_data=runtime_data, validation_callback=validate_token
+                oe_report, runtime_data=runtime_data, validation_callback=validate_token # type: ignore
             )
 
             print("Issuer of token is: ", response.issuer)
