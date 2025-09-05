@@ -1,12 +1,10 @@
 import argparse
 import asyncio
 import os
-import logging
 import sys
 import time
 import signal
 from dataclasses import dataclass
-from subprocess import check_call
 from typing import List
 
 from ci_tools.functions import discover_targeted_packages
@@ -127,7 +125,7 @@ async def run_all_checks(packages, checks, max_parallel):
     total = len(combos)
     for idx, (package, check) in enumerate(combos, start=1):
         if not is_check_enabled(package, check):
-            logging.warning(f"Skipping disabled check {check} for package {package}")
+            logger.warning(f"Skipping disabled check {check} for package {package}")
             continue
         tasks.append(asyncio.create_task(run_check(semaphore, package, check, base_args, idx, total)))
 
@@ -177,7 +175,7 @@ def configure_interrupt_handling():
         :type frame: object
         :raises KeyboardInterrupt: Always raised to signal shutdown.
         """
-        logging.warning(f"Received signal {signum}. Attempting graceful shutdown...")
+        logger.warning(f"Received signal {signum}. Attempting graceful shutdown...")
         # Let asyncio loop raise KeyboardInterrupt
         raise KeyboardInterrupt
 
