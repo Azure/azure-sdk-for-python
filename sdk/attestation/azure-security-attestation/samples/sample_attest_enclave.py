@@ -187,7 +187,7 @@ issuancerules {
                 print("Unexpectedly passed attestation.")
             except HttpResponseError as err:
                 print("Caught expected exception: ", err.message)
-                print("Error is:", err.error.code)
+                print("Error is:", err.error.code) # type: ignore
                 pass
 
     def attest_open_enclave_shared_with_options(self):
@@ -251,7 +251,7 @@ issuancerules {
         # on the attest_open_enclave call.
         with AttestationClient(self.shared_url, DefaultAzureCredential()) as attest_client:
             response, token = attest_client.attest_open_enclave(
-                oe_report, runtime_data=runtime_data, validation_callback=validate_token
+                oe_report, runtime_data=runtime_data, validation_callback=validate_token # type: ignore
             )
 
             print("Issuer of token is: ", response.issuer)
