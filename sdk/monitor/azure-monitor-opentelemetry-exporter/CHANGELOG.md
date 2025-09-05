@@ -15,6 +15,8 @@
   ([#42573](https://github.com/Azure/azure-sdk-for-python/pull/42573))
 - Customer Facing SDKStats: Exception categorization as per [Spec] - https://github.com/aep-health-and-standards/Telemetry-Collection-Spec/blob/main/ApplicationInsights/sdkstats/customer_facing_sdk_stats.md
   ([#42695](https://github.com/Azure/azure-sdk-for-python/pull/42695))
+- Customer Facing SDKStats: Added telemetry_success field to dropped items as per [Spec] - https://github.com/aep-health-and-standards/Telemetry-Collection-Spec/pull/606
+  ([#42846](https://github.com/Azure/azure-sdk-for-python/pull/42846))
 
 ### Breaking Changes
 

@@ -1,16 +1,18 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 import os
-from typing import Optional, List, Tuple
+from typing import Optional, List, Tuple, Union
 
 from requests import ReadTimeout, Timeout
 from azure.core.exceptions import ServiceRequestTimeoutError
 from azure.monitor.opentelemetry.exporter._constants import (
+    _REQUEST,
     RetryCode,
     RetryCodeType,
     DropCodeType,
     DropCode,
     _UNKNOWN,
+    _DEPENDENCY,
 )
 from azure.monitor.opentelemetry.exporter._utils import _get_telemetry_type
 from azure.monitor.opentelemetry.exporter._generated.models import TelemetryItem
@@ -159,7 +161,8 @@ def _track_dropped_items(
                 customer_sdkstats_metrics.count_dropped_items(
                     1,
                     telemetry_type,
-                    drop_code
+                    drop_code,
+                    _get_telemetry_success_flag(envelope) if telemetry_type in (_REQUEST, _DEPENDENCY) else None
                 )
         else:
             for envelope in envelopes:
@@ -168,6 +171,7 @@ def _track_dropped_items(
                     1,
                     telemetry_type,
                     drop_code,
+                    _get_telemetry_success_flag(envelope) if telemetry_type in (_REQUEST, _DEPENDENCY) else None,
                     error_message
                 )
 
@@ -231,3 +235,20 @@ def _get_customer_sdkstats_export_interval() -> int:
         except ValueError:
             return _DEFAULT_STATS_SHORT_EXPORT_INTERVAL
     return _DEFAULT_STATS_SHORT_EXPORT_INTERVAL
+
+def _get_telemetry_success_flag(envelope: TelemetryItem) -> Union[bool, None]:
+
+    if not hasattr(envelope, "data") or envelope.data is None:
+        return None
+        
+    if not hasattr(envelope.data, "base_type") or envelope.data.base_type is None:
+        return None
+        
+    if not hasattr(envelope.data, "base_data") or envelope.data.base_data is None:
+        return None
+        
+    base_type = envelope.data.base_type
+    
+    if base_type in ("RequestData", "RemoteDependencyData") and hasattr(envelope.data.base_data, "success"):
+        return envelope.data.base_data.success
+    return None
