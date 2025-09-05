@@ -42,10 +42,7 @@ async def sample_export_import_project_async():
 
         # export
         export_format = "json"
-        export_poller = await client.begin_export(
-            project_name=project_name,
-            file_format=export_format
-        )
+        export_poller = await client.begin_export(project_name=project_name, file_format=export_format)
         export_result = await export_poller.result()
         export_url = export_result["resultUrl"]
         request = HttpRequest("GET", export_url)
@@ -64,8 +61,7 @@ async def sample_export_import_project_async():
 
         # import project
         import_poller = await client.begin_import_assets(
-            project_name=f"{project_name}-imported",
-            options=exported_project
+            project_name=f"{project_name}-imported", options=exported_project
         )
         await import_poller.result()
 
@@ -80,5 +76,6 @@ async def sample_export_import_project_async():
 
     # [END export_import_project]
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(sample_export_import_project_async())

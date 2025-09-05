@@ -217,9 +217,7 @@ class QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientOperationsMi
     # pylint: disable=docstring-keyword-should-match-keyword-only,docstring-missing-param,docstring-should-be-keyword
     @distributed_trace
     def get_answers(  # pyright: ignore[reportIncompatibleMethodOverride]
-        self,
-        *args: AnswersOptions,
-        **kwargs: Any
+        self, *args: AnswersOptions, **kwargs: Any
     ) -> AnswersResult:
         """Answers the specified question using your knowledge base.
 
@@ -307,9 +305,7 @@ class QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientOperationsMi
 
     @distributed_trace
     def get_answers_from_text(  # pyright: ignore[reportIncompatibleMethodOverride]
-        self,
-        *args: AnswersFromTextOptions,
-        **kwargs: Any
+        self, *args: AnswersFromTextOptions, **kwargs: Any
     ) -> AnswersFromTextResult:
         """Answers the specified question using the provided text in the body.
 

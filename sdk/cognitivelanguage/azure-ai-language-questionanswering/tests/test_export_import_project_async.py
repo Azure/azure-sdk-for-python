@@ -24,9 +24,7 @@ class TestExportAndImportAsync(QuestionAnsweringTestCase):
 
         # export project
         export_poller = await client.begin_export(
-            project_name=project_name,
-            file_format="json",
-            **self.kwargs_for_polling
+            project_name=project_name, file_format="json", **self.kwargs_for_polling
         )
         result = await export_poller.result()
         assert result["status"] == "succeeded"
@@ -39,11 +37,7 @@ class TestExportAndImportAsync(QuestionAnsweringTestCase):
         # create project
         project_name = "IssacNewton"
         export_url = await QnaAuthoringAsyncHelper.create_test_project(
-            client,
-            project_name=project_name,
-            get_export_url=True,
-            delete_old_project=True,
-            **self.kwargs_for_polling
+            client, project_name=project_name, get_export_url=True, delete_old_project=True, **self.kwargs_for_polling
         )
 
         # import project
@@ -53,15 +47,11 @@ class TestExportAndImportAsync(QuestionAnsweringTestCase):
                 "Description": "biography of Sir Issac Newton",
                 "Language": "en",
                 "MultilingualResource": False,
-                "Settings": {
-                    "DefaultAnswer": "no answer"
-                }
+                "Settings": {"DefaultAnswer": "no answer"},
             }
         }
         import_poller = await client.begin_import_assets(
-            project_name=project_name,
-            options=project,
-            **self.kwargs_for_polling
+            project_name=project_name, options=project, **self.kwargs_for_polling
         )
         job_state = await import_poller.result()
         assert job_state["jobId"]

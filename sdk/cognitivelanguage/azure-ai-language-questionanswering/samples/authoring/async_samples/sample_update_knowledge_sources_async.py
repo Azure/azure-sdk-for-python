@@ -20,6 +20,7 @@ USAGE:
 
 import asyncio
 
+
 async def sample_update_knowledge_sources_async():
     # [START update_knowledge_sources]
     import os
@@ -42,27 +43,28 @@ async def sample_update_knowledge_sources_async():
                 "description": "test project for some Microsoft QnAs",
                 "language": "en",
                 "multilingualResource": True,
-                "settings": {
-                    "defaultAnswer": "no answer"
-                }
-            })
+                "settings": {"defaultAnswer": "no answer"},
+            },
+        )
 
         # sources
         sources_poller = await client.begin_update_sources(
             project_name=project_name,
-            sources=[{
-                "op": "add",
-                "value": {
-                    "displayName": "MicrosoftFAQ",
-                    "source": "https://www.microsoft.com/en-in/software-download/faq",
-                    "sourceUri": "https://www.microsoft.com/en-in/software-download/faq",
-                    "sourceKind": "url",
-                    "contentStructureKind": "unstructured",
-                    "refresh": False
+            sources=[
+                {
+                    "op": "add",
+                    "value": {
+                        "displayName": "MicrosoftFAQ",
+                        "source": "https://www.microsoft.com/en-in/software-download/faq",
+                        "sourceUri": "https://www.microsoft.com/en-in/software-download/faq",
+                        "sourceKind": "url",
+                        "contentStructureKind": "unstructured",
+                        "refresh": False,
+                    },
                 }
-            }]
+            ],
         )
-        sources = await sources_poller.result() # wait until done
+        sources = await sources_poller.result()  # wait until done
         async for item in sources:
             print("source name: {}".format(item.get("displayName", "N/A")))
             print("\tsource: {}".format(item["source"]))
@@ -72,15 +74,15 @@ async def sample_update_knowledge_sources_async():
         # qnas
         qna_poller = await client.begin_update_qnas(
             project_name=project_name,
-            qnas=[{
-                "op": "add",
-                "value": {
-                    "questions": [
-                        "What is the easiest way to use azure services in my .NET project?"
-                    ],
-                    "answer": "Using Microsoft's Azure SDKs"
+            qnas=[
+                {
+                    "op": "add",
+                    "value": {
+                        "questions": ["What is the easiest way to use azure services in my .NET project?"],
+                        "answer": "Using Microsoft's Azure SDKs",
+                    },
                 }
-            }]
+            ],
         )
         qnas = await qna_poller.result()
         async for item in qnas:
@@ -94,34 +96,20 @@ async def sample_update_knowledge_sources_async():
         await client.update_synonyms(
             project_name=project_name,
             synonyms={
-                "value": [
-                    {
-                        "alterations": [
-                            "qnamaker",
-                            "qna maker"
-                        ]
-                    },
-                    {
-                        "alterations": [
-                            "qna",
-                            "question and answer"
-                        ]
-                    }
-                ]
-            }
+                "value": [{"alterations": ["qnamaker", "qna maker"]}, {"alterations": ["qna", "question and answer"]}]
+            },
         )
-        synonyms = client.list_synonyms(
-            project_name=project_name
-        )
+        synonyms = client.list_synonyms(project_name=project_name)
         async for item in synonyms:
             print("synonyms:")
             print("\talterations:")
             for alt in item["alterations"]:
                 print("\t\t{}".format(alt))
-            print('')
+            print("")
 
     # [END update_knowledge_sources]
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     loop = asyncio.get_event_loop()
     loop.run_until_complete(sample_update_knowledge_sources_async())

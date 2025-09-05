@@ -40,10 +40,7 @@ def sample_export_import_project():
 
         # export
         export_format = "json"
-        export_poller = client.begin_export(
-            project_name=project_name,
-            file_format=export_format
-        )
+        export_poller = client.begin_export(project_name=project_name, file_format=export_format)
         export_result = export_poller.result()
         export_url = export_result["resultUrl"]
         request = HttpRequest("GET", export_url)
@@ -79,5 +76,5 @@ def sample_export_import_project():
     # [END export_import_project]
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sample_export_import_project()

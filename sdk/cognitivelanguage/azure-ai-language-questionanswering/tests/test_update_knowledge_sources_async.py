@@ -27,27 +27,27 @@ class TestSourcesQnasSynonymsAsync(QuestionAnsweringTestCase):
         source_display_name = "MicrosoftFAQ"
         sources_poller = await client.begin_update_sources(
             project_name=project_name,
-            sources=[{
-                "op": "add",
-                "value": {
-                    "displayName": source_display_name,
-                    "source": "https://www.microsoft.com/en-in/software-download/faq",
-                    "sourceUri": "https://www.microsoft.com/en-in/software-download/faq",
-                    "sourceKind": "url",
-                    "contentStructureKind": "unstructured",
-                    "refresh": False
+            sources=[
+                {
+                    "op": "add",
+                    "value": {
+                        "displayName": source_display_name,
+                        "source": "https://www.microsoft.com/en-in/software-download/faq",
+                        "sourceUri": "https://www.microsoft.com/en-in/software-download/faq",
+                        "sourceKind": "url",
+                        "contentStructureKind": "unstructured",
+                        "refresh": False,
+                    },
                 }
-            }],
+            ],
             **self.kwargs_for_polling
         )
-        sources = await sources_poller.result() # wait until done
+        sources = await sources_poller.result()  # wait until done
         async for source in sources:
             assert source["sourceKind"]
 
         # assert
-        sources = client.list_sources(
-            project_name=project_name
-        )
+        sources = client.list_sources(project_name=project_name)
         source_added = False
         async for s in sources:
             if ("displayName" in s) and s["displayName"] == source_display_name:
@@ -67,15 +67,7 @@ class TestSourcesQnasSynonymsAsync(QuestionAnsweringTestCase):
         answer = "Using Microsoft's Azure SDKs"
         qna_poller = await client.begin_update_qnas(
             project_name=project_name,
-            qnas=[{
-                "op": "add",
-                "value": {
-                    "questions": [
-                        question
-                    ],
-                    "answer": answer
-                }
-            }],
+            qnas=[{"op": "add", "value": {"questions": [question], "answer": answer}}],
             **self.kwargs_for_polling
         )
         qnas = await qna_poller.result()
@@ -84,9 +76,7 @@ class TestSourcesQnasSynonymsAsync(QuestionAnsweringTestCase):
             assert qna["answer"]
 
         # assert
-        qnas = client.list_qnas(
-            project_name=project_name
-        )
+        qnas = client.list_qnas(project_name=project_name)
         qna_added = False
         async for qna in qnas:
             if ("answer" in qna and "questions" in qna) and (qna["answer"] == answer and question in qna["questions"]):
@@ -103,24 +93,12 @@ class TestSourcesQnasSynonymsAsync(QuestionAnsweringTestCase):
 
         # add synonyms
         await client.update_synonyms(
-            project_name=project_name,
-            synonyms={
-                "value": [
-                    {
-                        "alterations": [
-                            "qnamaker",
-                            "qna maker"
-                        ]
-                    }
-                ]
-            }
+            project_name=project_name, synonyms={"value": [{"alterations": ["qnamaker", "qna maker"]}]}
         )
 
         # assert
         synonym_added = False
-        synonyms = client.list_synonyms(
-            project_name=project_name
-        )
+        synonyms = client.list_synonyms(project_name=project_name)
         async for s in synonyms:
             if ("alterations" in s) and ("qnamaker" in s["alterations"] and "qna maker" in s["alterations"]):
                 synonym_added = True

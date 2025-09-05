@@ -33,18 +33,15 @@ def sample_query_knowledgebase():
 
     client = QuestionAnsweringClient(endpoint, AzureKeyCredential(key))
     with client:
-        question="How long should my Surface battery last?"
+        question = "How long should my Surface battery last?"
         output = client.get_answers(
             question=question,
             top=3,
             confidence_threshold=0.2,
             include_unstructured_sources=True,
-            short_answer_options=qna.ShortAnswerOptions(
-                confidence_threshold=0.2,
-                top=1
-            ),
+            short_answer_options=qna.ShortAnswerOptions(confidence_threshold=0.2, top=1),
             project_name=knowledge_base_project,
-            deployment_name="test"
+            deployment_name="test",
         )
         if output.answers:
             best_candidate = [a for a in output.answers if a.confidence and a.confidence > 0.7][0]
@@ -56,5 +53,5 @@ def sample_query_knowledgebase():
     # [END query_knowledgebase]
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sample_query_knowledgebase()

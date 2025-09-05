@@ -18,6 +18,7 @@ USAGE:
     2) AZURE_QUESTIONANSWERING_KEY - your QuestionAnswering API key.
 """
 
+
 def sample_update_knowledge_sources():
     # [START update_knowledge_sources]
     import os
@@ -40,27 +41,28 @@ def sample_update_knowledge_sources():
                 "description": "test project for some Microsoft QnAs",
                 "language": "en",
                 "multilingualResource": True,
-                "settings": {
-                    "defaultAnswer": "no answer"
-                }
-            })
+                "settings": {"defaultAnswer": "no answer"},
+            },
+        )
 
         # sources
         sources_poller = client.begin_update_sources(
             project_name=project_name,
-            sources=[{
-                "op": "add",
-                "value": {
-                    "displayName": "MicrosoftFAQ",
-                    "source": "https://www.microsoft.com/en-in/software-download/faq",
-                    "sourceUri": "https://www.microsoft.com/en-in/software-download/faq",
-                    "sourceKind": "url",
-                    "contentStructureKind": "unstructured",
-                    "refresh": False
+            sources=[
+                {
+                    "op": "add",
+                    "value": {
+                        "displayName": "MicrosoftFAQ",
+                        "source": "https://www.microsoft.com/en-in/software-download/faq",
+                        "sourceUri": "https://www.microsoft.com/en-in/software-download/faq",
+                        "sourceKind": "url",
+                        "contentStructureKind": "unstructured",
+                        "refresh": False,
+                    },
                 }
-            }]
+            ],
         )
-        sources = sources_poller.result() # wait until done
+        sources = sources_poller.result()  # wait until done
         for item in sources:
             print("source name: {}".format(item.get("displayName", "N/A")))
             print("\tsource: {}".format(item["source"]))
@@ -70,15 +72,15 @@ def sample_update_knowledge_sources():
         # qnas
         qna_poller = client.begin_update_qnas(
             project_name=project_name,
-            qnas=[{
-                "op": "add",
-                "value": {
-                    "questions": [
-                        "What is the easiest way to use azure services in my .NET project?"
-                    ],
-                    "answer": "Using Microsoft's Azure SDKs"
+            qnas=[
+                {
+                    "op": "add",
+                    "value": {
+                        "questions": ["What is the easiest way to use azure services in my .NET project?"],
+                        "answer": "Using Microsoft's Azure SDKs",
+                    },
                 }
-            }]
+            ],
         )
         qnas = qna_poller.result()
         for item in qnas:
@@ -92,34 +94,19 @@ def sample_update_knowledge_sources():
         client.update_synonyms(
             project_name=project_name,
             synonyms={
-                "value": [
-                    {
-                        "alterations": [
-                            "qnamaker",
-                            "qna maker"
-                        ]
-                    },
-                    {
-                        "alterations": [
-                            "qna",
-                            "question and answer"
-                        ]
-                    }
-                ]
-            }
+                "value": [{"alterations": ["qnamaker", "qna maker"]}, {"alterations": ["qna", "question and answer"]}]
+            },
         )
-        synonyms = client.list_synonyms(
-            project_name=project_name
-        )
+        synonyms = client.list_synonyms(project_name=project_name)
         for item in synonyms:
             print("synonyms:")
             print("\talterations:")
             for alt in item["alterations"]:
                 print("\t\t{}".format(alt))
-            print('')
+            print("")
 
     # [END update_knowledge_sources]
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sample_update_knowledge_sources()

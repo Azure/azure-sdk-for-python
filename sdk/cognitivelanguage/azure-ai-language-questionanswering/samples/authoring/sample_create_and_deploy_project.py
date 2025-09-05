@@ -18,6 +18,7 @@ USAGE:
     2) AZURE_QUESTIONANSWERING_KEY - your QuestionAnswering API key.
 """
 
+
 def sample_create_and_deploy_project():
     # [START create_and_deploy_project]
     import os
@@ -40,10 +41,9 @@ def sample_create_and_deploy_project():
                 "description": "biography of Sir Issac Newton",
                 "language": "en",
                 "multilingualResource": True,
-                "settings": {
-                    "defaultAnswer": "no answer"
-                }
-            })
+                "settings": {"defaultAnswer": "no answer"},
+            },
+        )
 
         print("view created project info:")
         print("\tname: {}".format(project["projectName"]))
@@ -68,10 +68,10 @@ def sample_create_and_deploy_project():
                     "value": {
                         "displayName": "Issac Newton Bio",
                         "sourceUri": "https://wikipedia.org/wiki/Isaac_Newton",
-                        "sourceKind": "url"
-                    }
+                        "sourceKind": "url",
+                    },
                 }
-            ]
+            ],
         )
         sources = update_sources_poller.result()
 
@@ -84,17 +84,12 @@ def sample_create_and_deploy_project():
             print("\tsource kind: {}".format(source["sourceKind"]))
 
         # deploy project
-        deployment_poller = client.begin_deploy_project(
-            project_name=project_name,
-            deployment_name="production"
-        )
+        deployment_poller = client.begin_deploy_project(project_name=project_name, deployment_name="production")
         deployment = deployment_poller.result()
         print(f"Deployment successfully created under {deployment['deploymentName']}.")
 
         # list all deployments
-        deployments = client.list_deployments(
-            project_name=project_name
-        )
+        deployments = client.list_deployments(project_name=project_name)
 
         print("view project deployments")
         for d in deployments:
@@ -103,5 +98,5 @@ def sample_create_and_deploy_project():
     # [END create_and_deploy_project]
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sample_create_and_deploy_project()
