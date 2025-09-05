@@ -53,7 +53,7 @@ project_client = AIProjectClient(
     credential=DefaultAzureCredential(),
 )
 
-# Initialize agent MCP tool
+# Initialize Agent MCP tool
 mcp_tool = McpTool(
     server_label=mcp_server_label,
     server_url=mcp_server_url,
@@ -140,20 +140,20 @@ class MyEventHandler(AgentEventHandler):
         print()  # add an extra newline between steps                
 
 
-# Create agent with MCP tool and process agent run
+# Create Agent with MCP tool and process Agent run
 with project_client:
     agents_client = project_client.agents
 
-    # Create a new agent.
-    # NOTE: To reuse existing agent, fetch it with get_agent(agent_id)
+    # Create a new Agent.
+    # NOTE: To reuse existing Agent, fetch it with get_agent(agent_id)
     agent = agents_client.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-mcp-agent",
-        instructions="You are a helpful agent that can use MCP tools to assist users. Use the available MCP tools to answer questions and perform tasks.",
+        instructions="You are a helpful Agent that can use MCP tools to assist users. Use the available MCP tools to answer questions and perform tasks.",
         toolset=toolset,
     )
 
-    print(f"Created agent, ID: {agent.id}")
+    print(f"Created Agent, ID: {agent.id}")
     print(f"MCP Server: {mcp_tool.server_label} at {mcp_tool.server_url}")
 
     # Create thread for communication
@@ -168,7 +168,7 @@ with project_client:
     )
     print(f"Created message, ID: {message.id}")
 
-    # Create and process agent run in thread with MCP tools
+    # Create and process Agent run in thread with MCP tools
     mcp_tool.update_headers("SuperSecret", "123456")
     # mcp_tool.set_approval_mode("never")  # Uncomment to disable approval requirement
     event_handler = MyEventHandler(agents_client=agents_client)
@@ -196,7 +196,7 @@ with project_client:
     except ValueError as e:
         print(f"Error removing tool: {e}")
 
-    # Clean-up and delete the agent once the run is finished.
-    # NOTE: Comment out this line if you plan to reuse the agent later.
+    # Clean-up and delete the Agent once the run is finished.
+    # NOTE: Comment out this line if you plan to reuse the Agent later.
     agents_client.delete_agent(agent.id)
-    print("Deleted agent")
+    print("Deleted Agent")
