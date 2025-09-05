@@ -15,7 +15,10 @@ from typing import Dict, List, Optional, Union
 from colorama import Fore
 from typing_extensions import Literal
 
-from azure.ai.ml._artifacts._constants import FILE_SIZE_WARNING, UPLOAD_CONFIRMATION
+from azure.ai.ml._artifacts._constants import (
+    FILE_SIZE_WARNING,
+    UPLOAD_CONFIRMATION,
+)
 from azure.ai.ml._azure_environments import _get_cloud_details
 from azure.ai.ml._utils._asset_utils import (
     AssetNotChangedError,
@@ -27,7 +30,12 @@ from azure.ai.ml._utils._asset_utils import (
     upload_file,
 )
 from azure.ai.ml.constants._common import STORAGE_AUTH_MISMATCH_ERROR
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MlException, ValidationException
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    MlException,
+    ValidationException,
+)
 from azure.core.exceptions import ResourceExistsError
 from azure.storage.filedatalake import DataLakeServiceClient
 
@@ -40,14 +48,22 @@ class Gen2StorageClient:
         self.file_system = file_system
 
         try:
-            service_client = DataLakeServiceClient(account_url=account_url, credential=credential)
-            self.file_system_client = service_client.get_file_system_client(file_system=file_system)
+            service_client = DataLakeServiceClient(
+                account_url=account_url, credential=credential
+            )
+            self.file_system_client = service_client.get_file_system_client(
+                file_system=file_system
+            )
         except ValueError as e:
             api_version = e.args[0].split("\n")[-1]
             service_client = DataLakeServiceClient(
-                account_url=account_url, credential=credential, api_version=api_version
+                account_url=account_url,
+                credential=credential,
+                api_version=api_version,
             )
-            self.file_system_client = service_client.get_file_system_client(file_system=file_system)
+            self.file_system_client = service_client.get_file_system_client(
+                file_system=file_system
+            )
 
         try:
             self.file_system_client.create_file_system()
@@ -71,7 +87,9 @@ class Gen2StorageClient:
         ignore_file: IgnoreFile = IgnoreFile(None),
         asset_hash: Optional[str] = None,
         show_progress: bool = True,
-    ) -> Dict[Literal["remote path", "name", "version", "indicator file"], str]:
+    ) -> Dict[
+        Literal["remote path", "name", "version", "indicator file"], str
+    ]:
         """Upload a file or directory to a path inside the filesystem.
 
         :param source: The path to either a file or directory to upload
@@ -90,7 +108,9 @@ class Gen2StorageClient:
         :rtype: Dict[Literal["remote path", "name", "version", "indicator file"], str]
         """
         if name and version is None:
-            version = str(uuid.uuid4())  # placeholder for auto-increment artifacts
+            version = str(
+                uuid.uuid4()
+            )  # placeholder for auto-increment artifacts
 
         asset_id = generate_asset_id(asset_hash, include_directory=True)
         source_name = Path(source).name
@@ -111,13 +131,21 @@ class Gen2StorageClient:
             file_size_in_mb = file_size / 10**6
 
             cloud = _get_cloud_details()
-            cloud_endpoint = cloud["storage_endpoint"]  # make sure proper cloud endpoint is used
+            cloud_endpoint = cloud[
+                "storage_endpoint"
+            ]  # make sure proper cloud endpoint is used
             full_storage_url = f"https://{self.account_name}.dfs.{cloud_endpoint}/{self.file_system}/{dest}"
             if file_size_in_mb > 100:
-                module_logger.warning(FILE_SIZE_WARNING.format(source=source, destination=full_storage_url))
+                module_logger.warning(
+                    FILE_SIZE_WARNING.format(
+                        source=source, destination=full_storage_url
+                    )
+                )
 
             # start upload
-            self.directory_client = self.file_system_client.get_directory_client(asset_id)
+            self.directory_client = (
+                self.file_system_client.get_directory_client(asset_id)
+            )
             self.check_blob_exists()
 
             if os.path.isdir(source):
@@ -165,18 +193,27 @@ class Gen2StorageClient:
         overwritten with a complete upload.
         """
         try:
-            if self.directory_client is not None and self.directory_client.exists():
-                metadata = self.directory_client.get_directory_properties().metadata
+            if (
+                self.directory_client is not None
+                and self.directory_client.exists()
+            ):
+                metadata = (
+                    self.directory_client.get_directory_properties().metadata
+                )
 
                 if (
-                    metadata and UPLOAD_CONFIRMATION.items() <= metadata.items()
+                    metadata
+                    and UPLOAD_CONFIRMATION.items() <= metadata.items()
                 ):  # checks if metadata dictionary includes confirmation key and value
                     self.name = metadata.get("name")
                     self.version = metadata.get("version")
                     raise AssetNotChangedError
         except Exception as e:
             # pylint: disable=no-member
-            if hasattr(e, "error_code") and e.error_code == STORAGE_AUTH_MISMATCH_ERROR:
+            if (
+                hasattr(e, "error_code")
+                and e.error_code == STORAGE_AUTH_MISMATCH_ERROR
+            ):
                 msg = (
                     "You don't have permission to alter this storage account. "
                     "Ensure that you have been assigned both "
@@ -192,9 +229,15 @@ class Gen2StorageClient:
 
     def _set_confirmation_metadata(self, name: str, version: str) -> None:
         if self.directory_client is not None:
-            self.directory_client.set_metadata(_build_metadata_dict(name, version))
+            self.directory_client.set_metadata(
+                _build_metadata_dict(name, version)
+            )
 
-    def download(self, starts_with: str, destination: Union[str, os.PathLike] = Path.home()) -> None:
+    def download(
+        self,
+        starts_with: str,
+        destination: Union[str, os.PathLike] = Path.home(),
+    ) -> None:
         """Downloads all items inside a specified filesystem directory with the prefix `starts_with` to the destination
         folder.
 
@@ -207,22 +250,35 @@ class Gen2StorageClient:
             mylist = self.file_system_client.get_paths(path=starts_with)
             download_size_in_mb = 0
             for item in mylist:
-                file_name = item.name[len(starts_with) :].lstrip("/") or Path(starts_with).name
+                file_name = (
+                    item.name[len(starts_with) :].lstrip("/")
+                    or Path(starts_with).name
+                )
                 target_path = Path(destination, file_name)
 
                 if item.is_directory:
                     target_path.mkdir(parents=True, exist_ok=True)
                     continue
 
-                file_client = self.file_system_client.get_file_client(item.name)
+                file_client = self.file_system_client.get_file_client(
+                    item.name
+                )
 
                 # check if total size of download has exceeded 100 MB
                 cloud = _get_cloud_details()
-                cloud_endpoint = cloud["storage_endpoint"]  # make sure proper cloud endpoint is used
+                cloud_endpoint = cloud[
+                    "storage_endpoint"
+                ]  # make sure proper cloud endpoint is used
                 full_storage_url = f"https://{self.account_name}.dfs.{cloud_endpoint}/{self.file_system}/{starts_with}"
-                download_size_in_mb += file_client.get_file_properties().size / 10**6
+                download_size_in_mb += (
+                    file_client.get_file_properties().size / 10**6
+                )
                 if download_size_in_mb > 100:
-                    module_logger.warning(FILE_SIZE_WARNING.format(source=full_storage_url, destination=destination))
+                    module_logger.warning(
+                        FILE_SIZE_WARNING.format(
+                            source=full_storage_url, destination=destination
+                        )
+                    )
 
                 file_content = file_client.download_file().readall()
                 try:
@@ -237,7 +293,9 @@ class Gen2StorageClient:
             msg = "Saving output with prefix {} was unsuccessful. exception={}"
             raise MlException(
                 message=msg.format(starts_with, e),
-                no_personal_data_message=msg.format("[starts_with]", "[exception]"),
+                no_personal_data_message=msg.format(
+                    "[starts_with]", "[exception]"
+                ),
                 target=ErrorTarget.ARTIFACT,
                 error_category=ErrorCategory.USER_ERROR,
                 error=e,
@@ -252,7 +310,10 @@ class Gen2StorageClient:
         :return: The list of filenames that start with the prefix
         :rtype: List[str]
         """
-        return [f.get("name") for f in self.file_system_client.get_paths(path=starts_with)]
+        return [
+            f.get("name")
+            for f in self.file_system_client.get_paths(path=starts_with)
+        ]
 
     def exists(self, path: str) -> bool:
         """Returns whether there exists a file named `path`

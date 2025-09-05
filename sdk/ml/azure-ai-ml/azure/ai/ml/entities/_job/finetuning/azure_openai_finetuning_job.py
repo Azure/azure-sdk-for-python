@@ -119,9 +119,9 @@ class AzureOpenAIFineTuningJob(FineTuningVertical):
         schema_dict: dict = {}
         # TODO: Combeback to this later for FineTuningJob in Pipelines
         # if inside_pipeline:
-        #    schema_dict = AutoMLClassificationNodeSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        #    schema_dict = AutoMLClassificationNodeSchema().dump(self, context={BASE_PATH_CONTEXT_KEY: "./"})
         # else:
-        schema_dict = AzureOpenAIFineTuningSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        schema_dict = AzureOpenAIFineTuningSchema().dump(self, context={BASE_PATH_CONTEXT_KEY: "./"})
 
         return schema_dict
 

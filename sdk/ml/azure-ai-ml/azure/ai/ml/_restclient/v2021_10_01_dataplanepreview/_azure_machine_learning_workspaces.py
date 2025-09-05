@@ -102,36 +102,54 @@ class AzureMachineLearningWorkspaces(object):
         self._config = AzureMachineLearningWorkspacesConfiguration(
             credential=credential, subscription_id=subscription_id, **kwargs
         )
-        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client = ARMPipelineClient(
+            base_url=base_url, config=self._config, **kwargs
+        )
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {
+            k: v for k, v in models.__dict__.items() if isinstance(v, type)
+        }
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.code_containers = CodeContainersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.code_versions = CodeVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.code_containers = CodeContainersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.code_versions = CodeVersionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.component_containers = ComponentContainersOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.component_versions = ComponentVersionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.data_containers = DataContainersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.data_versions = DataVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.data_references = DataReferencesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.data_containers = DataContainersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.data_versions = DataVersionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.data_references = DataReferencesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.environment_containers = EnvironmentContainersOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.environment_versions = EnvironmentVersionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.resource_management_asset_reference = ResourceManagementAssetReferenceOperations(
-            self._client, self._config, self._serialize, self._deserialize
+        self.resource_management_asset_reference = (
+            ResourceManagementAssetReferenceOperations(
+                self._client, self._config, self._serialize, self._deserialize
+            )
         )
         self.model_containers = ModelContainersOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.model_versions = ModelVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.model_versions = ModelVersionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.temporary_data_references = TemporaryDataReferencesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )

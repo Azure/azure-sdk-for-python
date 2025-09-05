@@ -668,9 +668,9 @@ class ForecastingJob(AutoMLTabular):
 
         schema_dict: dict = {}
         if inside_pipeline:
-            schema_dict = AutoMLForecastingNodeSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+            schema_dict = AutoMLForecastingNodeSchema().dump(self, context={BASE_PATH_CONTEXT_KEY: "./"})
         else:
-            schema_dict = AutoMLForecastingSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+            schema_dict = AutoMLForecastingSchema().dump(self, context={BASE_PATH_CONTEXT_KEY: "./"})
         return schema_dict
 
     def __eq__(self, other: object) -> bool:

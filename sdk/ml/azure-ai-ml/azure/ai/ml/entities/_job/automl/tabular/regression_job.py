@@ -220,9 +220,9 @@ class RegressionJob(AutoMLTabular):
 
         schema_dict: dict = {}
         if inside_pipeline:
-            schema_dict = AutoMLRegressionNodeSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+            schema_dict = AutoMLRegressionNodeSchema().dump(self, context={BASE_PATH_CONTEXT_KEY: "./"})
         else:
-            schema_dict = AutoMLRegressionSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+            schema_dict = AutoMLRegressionSchema().dump(self, context={BASE_PATH_CONTEXT_KEY: "./"})
 
         return schema_dict
 

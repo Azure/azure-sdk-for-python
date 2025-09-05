@@ -271,7 +271,7 @@ class DistillationJob(Job, JobIOMixin):
         from azure.ai.ml._schema._distillation.distillation_job import DistillationJobSchema
 
         schema_dict: dict = {}
-        schema_dict = DistillationJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        schema_dict = DistillationJobSchema().dump(self, context={BASE_PATH_CONTEXT_KEY: "./"})
 
         return schema_dict
 

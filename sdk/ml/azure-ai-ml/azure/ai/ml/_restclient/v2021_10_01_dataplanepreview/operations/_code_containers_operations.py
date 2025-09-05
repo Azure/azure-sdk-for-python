@@ -29,10 +29,23 @@ from .._vendor import _convert_request, _format_url_section
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar
+    from typing import (
+        Any,
+        Callable,
+        Dict,
+        Generic,
+        Iterable,
+        Optional,
+        TypeVar,
+    )
 
     T = TypeVar("T")
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+    ClsType = Optional[
+        Callable[
+            [PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]],
+            Any,
+        ]
+    ]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -197,6 +210,7 @@ def build_create_or_update_request(
         **kwargs
     )
 
+
 # fmt: on
 class CodeContainersOperations(object):
     """CodeContainersOperations operations.
@@ -249,10 +263,18 @@ class CodeContainersOperations(object):
          ~azure.core.paging.ItemPaged[~azure.mgmt.machinelearningservices.models.CodeContainerResourceArmPaginatedResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop("api_version", "2021-10-01-dataplanepreview")  # type: str
+        api_version = kwargs.pop(
+            "api_version", "2021-10-01-dataplanepreview"
+        )  # type: str
 
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.CodeContainerResourceArmPaginatedResult"]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop(
+            "cls", None
+        )  # type: ClsType["_models.CodeContainerResourceArmPaginatedResult"]
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
 
         def prepare_request(next_link=None):
@@ -285,7 +307,9 @@ class CodeContainersOperations(object):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("CodeContainerResourceArmPaginatedResult", pipeline_response)
+            deserialized = self._deserialize(
+                "CodeContainerResourceArmPaginatedResult", pipeline_response
+            )
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -294,13 +318,23 @@ class CodeContainersOperations(object):
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = self._client._pipeline.run(
+                request, stream=False, **kwargs
+            )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse, pipeline_response
+                )
+                raise HttpResponseError(
+                    response=response, model=error, error_format=ARMErrorFormat
+                )
 
             return pipeline_response
 
@@ -336,10 +370,16 @@ class CodeContainersOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
 
-        api_version = kwargs.pop("api_version", "2021-10-01-dataplanepreview")  # type: str
+        api_version = kwargs.pop(
+            "api_version", "2021-10-01-dataplanepreview"
+        )  # type: str
 
         request = build_delete_request(
             name=name,
@@ -352,13 +392,23 @@ class CodeContainersOperations(object):
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+            map_error(
+                status_code=response.status_code,
+                response=response,
+                error_map=error_map,
+            )
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse, pipeline_response
+            )
+            raise HttpResponseError(
+                response=response, model=error, error_format=ARMErrorFormat
+            )
 
         if cls:
             return cls(pipeline_response, None, {})
@@ -392,11 +442,19 @@ class CodeContainersOperations(object):
         :rtype: ~azure.mgmt.machinelearningservices.models.CodeContainerData
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.CodeContainerData"]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop(
+            "cls", None
+        )  # type: ClsType["_models.CodeContainerData"]
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
 
-        api_version = kwargs.pop("api_version", "2021-10-01-dataplanepreview")  # type: str
+        api_version = kwargs.pop(
+            "api_version", "2021-10-01-dataplanepreview"
+        )  # type: str
 
         request = build_get_request(
             name=name,
@@ -409,15 +467,27 @@ class CodeContainersOperations(object):
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+            map_error(
+                status_code=response.status_code,
+                response=response,
+                error_map=error_map,
+            )
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse, pipeline_response
+            )
+            raise HttpResponseError(
+                response=response, model=error, error_format=ARMErrorFormat
+            )
 
-        deserialized = self._deserialize("CodeContainerData", pipeline_response)
+        deserialized = self._deserialize(
+            "CodeContainerData", pipeline_response
+        )
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -456,12 +526,22 @@ class CodeContainersOperations(object):
         :rtype: ~azure.mgmt.machinelearningservices.models.CodeContainerData
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.CodeContainerData"]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop(
+            "cls", None
+        )  # type: ClsType["_models.CodeContainerData"]
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
 
-        api_version = kwargs.pop("api_version", "2021-10-01-dataplanepreview")  # type: str
-        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
+        api_version = kwargs.pop(
+            "api_version", "2021-10-01-dataplanepreview"
+        )  # type: str
+        content_type = kwargs.pop(
+            "content_type", "application/json"
+        )  # type: Optional[str]
 
         _json = self._serialize.body(body, "CodeContainerData")
 
@@ -478,15 +558,27 @@ class CodeContainersOperations(object):
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+            map_error(
+                status_code=response.status_code,
+                response=response,
+                error_map=error_map,
+            )
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse, pipeline_response
+            )
+            raise HttpResponseError(
+                response=response, model=error, error_format=ARMErrorFormat
+            )
 
-        deserialized = self._deserialize("CodeContainerData", pipeline_response)
+        deserialized = self._deserialize(
+            "CodeContainerData", pipeline_response
+        )
 
         if cls:
             return cls(pipeline_response, deserialized, {})

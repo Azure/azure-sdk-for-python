@@ -9,7 +9,13 @@ import functools
 from typing import TYPE_CHECKING
 import warnings
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
@@ -23,9 +29,24 @@ from .._vendor import _convert_request, _format_url_section
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, List, Optional, TypeVar
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+    from typing import (
+        Any,
+        Callable,
+        Dict,
+        Generic,
+        Iterable,
+        List,
+        Optional,
+        TypeVar,
+    )
+
+    T = TypeVar("T")
+    ClsType = Optional[
+        Callable[
+            [PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]],
+            Any,
+        ]
+    ]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -468,6 +489,7 @@ def build_unregister_dataset_request(
         **kwargs
     )
 
+
 # fmt: on
 class DatasetControllerV2Operations(object):
     """DatasetControllerV2Operations operations.
@@ -519,41 +541,55 @@ class DatasetControllerV2Operations(object):
         :rtype: ~azure.mgmt.machinelearningservices.models.DatasetDefinition
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DatasetDefinition"]
+        cls = kwargs.pop(
+            "cls", None
+        )  # type: ClsType["_models.DatasetDefinition"]
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_get_dataset_definition_request(
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             dataset_id=dataset_id,
             version=version,
-            template_url=self.get_dataset_definition.metadata['url'],
+            template_url=self.get_dataset_definition.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+            map_error(
+                status_code=response.status_code,
+                response=response,
+                error_map=error_map,
+            )
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse, pipeline_response
+            )
+            raise HttpResponseError(
+                response=response, model=error, error_format=ARMErrorFormat
+            )
 
-        deserialized = self._deserialize('DatasetDefinition', pipeline_response)
+        deserialized = self._deserialize(
+            "DatasetDefinition", pipeline_response
+        )
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_dataset_definition.metadata = {'url': '/dataset/v1.2/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/datasets/{datasetId}/definitions/{version}'}  # type: ignore
-
+    get_dataset_definition.metadata = {"url": "/dataset/v1.2/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/datasets/{datasetId}/definitions/{version}"}  # type: ignore
 
     @distributed_trace
     def get_all_dataset_definitions(
@@ -588,14 +624,19 @@ class DatasetControllerV2Operations(object):
          ~azure.core.paging.ItemPaged[~azure.mgmt.machinelearningservices.models.PaginatedDatasetDefinitionList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PaginatedDatasetDefinitionList"]
+        cls = kwargs.pop(
+            "cls", None
+        )  # type: ClsType["_models.PaginatedDatasetDefinitionList"]
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop("error_map", {}))
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_get_all_dataset_definitions_request(
                     subscription_id=subscription_id,
                     resource_group_name=resource_group_name,
@@ -603,13 +644,15 @@ class DatasetControllerV2Operations(object):
                     dataset_id=dataset_id,
                     continuation_token_parameter=continuation_token_parameter,
                     page_size=page_size,
-                    template_url=self.get_all_dataset_definitions.metadata['url'],
+                    template_url=self.get_all_dataset_definitions.metadata[
+                        "url"
+                    ],
                 )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
 
             else:
-                
+
                 request = build_get_all_dataset_definitions_request(
                     subscription_id=subscription_id,
                     resource_group_name=resource_group_name,
@@ -625,7 +668,9 @@ class DatasetControllerV2Operations(object):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("PaginatedDatasetDefinitionList", pipeline_response)
+            deserialized = self._deserialize(
+                "PaginatedDatasetDefinitionList", pipeline_response
+            )
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -634,21 +679,29 @@ class DatasetControllerV2Operations(object):
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = self._client._pipeline.run(
+                request, stream=False, **kwargs
+            )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse, pipeline_response
+                )
+                raise HttpResponseError(
+                    response=response, model=error, error_format=ARMErrorFormat
+                )
 
             return pipeline_response
 
+        return ItemPaged(get_next, extract_data)
 
-        return ItemPaged(
-            get_next, extract_data
-        )
-    get_all_dataset_definitions.metadata = {'url': '/dataset/v1.2/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/datasets/{datasetId}/definitions'}  # type: ignore
+    get_all_dataset_definitions.metadata = {"url": "/dataset/v1.2/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/datasets/{datasetId}/definitions"}  # type: ignore
 
     @distributed_trace
     def update_definition(
@@ -690,16 +743,20 @@ class DatasetControllerV2Operations(object):
         :rtype: ~azure.mgmt.machinelearningservices.models.Dataset
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Dataset"]
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.Dataset"]
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop(
+            "content_type", "application/json"
+        )  # type: Optional[str]
 
         if body is not None:
-            _json = self._serialize.body(body, 'DatasetDefinition')
+            _json = self._serialize.body(body, "DatasetDefinition")
         else:
             _json = None
 
@@ -714,28 +771,37 @@ class DatasetControllerV2Operations(object):
             force_update=force_update,
             dataset_type=dataset_type,
             user_version_id=user_version_id,
-            template_url=self.update_definition.metadata['url'],
+            template_url=self.update_definition.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+            map_error(
+                status_code=response.status_code,
+                response=response,
+                error_map=error_map,
+            )
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse, pipeline_response
+            )
+            raise HttpResponseError(
+                response=response, model=error, error_format=ARMErrorFormat
+            )
 
-        deserialized = self._deserialize('Dataset', pipeline_response)
+        deserialized = self._deserialize("Dataset", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    update_definition.metadata = {'url': '/dataset/v1.2/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/datasets/{datasetId}/definitions'}  # type: ignore
-
+    update_definition.metadata = {"url": "/dataset/v1.2/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/datasets/{datasetId}/definitions"}  # type: ignore
 
     @distributed_trace
     def get_all_dataset_versions(
@@ -769,14 +835,19 @@ class DatasetControllerV2Operations(object):
          ~azure.core.paging.ItemPaged[~azure.mgmt.machinelearningservices.models.PaginatedStringList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PaginatedStringList"]
+        cls = kwargs.pop(
+            "cls", None
+        )  # type: ClsType["_models.PaginatedStringList"]
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop("error_map", {}))
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_get_all_dataset_versions_request(
                     subscription_id=subscription_id,
                     resource_group_name=resource_group_name,
@@ -784,13 +855,13 @@ class DatasetControllerV2Operations(object):
                     dataset_id=dataset_id,
                     continuation_token_parameter=continuation_token_parameter,
                     page_size=page_size,
-                    template_url=self.get_all_dataset_versions.metadata['url'],
+                    template_url=self.get_all_dataset_versions.metadata["url"],
                 )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
 
             else:
-                
+
                 request = build_get_all_dataset_versions_request(
                     subscription_id=subscription_id,
                     resource_group_name=resource_group_name,
@@ -806,7 +877,9 @@ class DatasetControllerV2Operations(object):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("PaginatedStringList", pipeline_response)
+            deserialized = self._deserialize(
+                "PaginatedStringList", pipeline_response
+            )
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -815,21 +888,29 @@ class DatasetControllerV2Operations(object):
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = self._client._pipeline.run(
+                request, stream=False, **kwargs
+            )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse, pipeline_response
+                )
+                raise HttpResponseError(
+                    response=response, model=error, error_format=ARMErrorFormat
+                )
 
             return pipeline_response
 
+        return ItemPaged(get_next, extract_data)
 
-        return ItemPaged(
-            get_next, extract_data
-        )
-    get_all_dataset_versions.metadata = {'url': '/dataset/v1.2/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/datasets/{datasetId}/versions'}  # type: ignore
+    get_all_dataset_versions.metadata = {"url": "/dataset/v1.2/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/datasets/{datasetId}/versions"}  # type: ignore
 
     @distributed_trace
     def get_dataset_by_name(
@@ -862,13 +943,14 @@ class DatasetControllerV2Operations(object):
         :rtype: ~azure.mgmt.machinelearningservices.models.Dataset
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Dataset"]
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.Dataset"]
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_get_dataset_by_name_request(
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
@@ -876,28 +958,37 @@ class DatasetControllerV2Operations(object):
             dataset_name=dataset_name,
             version_id=version_id,
             include_latest_definition=include_latest_definition,
-            template_url=self.get_dataset_by_name.metadata['url'],
+            template_url=self.get_dataset_by_name.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+            map_error(
+                status_code=response.status_code,
+                response=response,
+                error_map=error_map,
+            )
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse, pipeline_response
+            )
+            raise HttpResponseError(
+                response=response, model=error, error_format=ARMErrorFormat
+            )
 
-        deserialized = self._deserialize('Dataset', pipeline_response)
+        deserialized = self._deserialize("Dataset", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_dataset_by_name.metadata = {'url': '/dataset/v1.2/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/datasets/query/name={datasetName}'}  # type: ignore
-
+    get_dataset_by_name.metadata = {"url": "/dataset/v1.2/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/datasets/query/name={datasetName}"}  # type: ignore
 
     @distributed_trace
     def list(
@@ -953,14 +1044,19 @@ class DatasetControllerV2Operations(object):
          ~azure.core.paging.ItemPaged[~azure.mgmt.machinelearningservices.models.PaginatedDatasetList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PaginatedDatasetList"]
+        cls = kwargs.pop(
+            "cls", None
+        )  # type: ClsType["_models.PaginatedDatasetList"]
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop("error_map", {}))
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_request(
                     subscription_id=subscription_id,
                     resource_group_name=resource_group_name,
@@ -975,13 +1071,13 @@ class DatasetControllerV2Operations(object):
                     order_by=order_by,
                     order_by_asc=order_by_asc,
                     dataset_types=dataset_types,
-                    template_url=self.list.metadata['url'],
+                    template_url=self.list.metadata["url"],
                 )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
 
             else:
-                
+
                 request = build_list_request(
                     subscription_id=subscription_id,
                     resource_group_name=resource_group_name,
@@ -1004,7 +1100,9 @@ class DatasetControllerV2Operations(object):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("PaginatedDatasetList", pipeline_response)
+            deserialized = self._deserialize(
+                "PaginatedDatasetList", pipeline_response
+            )
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -1013,21 +1111,29 @@ class DatasetControllerV2Operations(object):
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = self._client._pipeline.run(
+                request, stream=False, **kwargs
+            )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse, pipeline_response
+                )
+                raise HttpResponseError(
+                    response=response, model=error, error_format=ARMErrorFormat
+                )
 
             return pipeline_response
 
+        return ItemPaged(get_next, extract_data)
 
-        return ItemPaged(
-            get_next, extract_data
-        )
-    list.metadata = {'url': '/dataset/v1.2/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/datasets'}  # type: ignore
+    list.metadata = {"url": "/dataset/v1.2/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/datasets"}  # type: ignore
 
     @distributed_trace
     def register(
@@ -1069,16 +1175,20 @@ class DatasetControllerV2Operations(object):
         :rtype: ~azure.mgmt.machinelearningservices.models.Dataset
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Dataset"]
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.Dataset"]
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop(
+            "content_type", "application/json"
+        )  # type: Optional[str]
 
         if body is not None:
-            _json = self._serialize.body(body, 'Dataset')
+            _json = self._serialize.body(body, "Dataset")
         else:
             _json = None
 
@@ -1093,28 +1203,37 @@ class DatasetControllerV2Operations(object):
             update_definition_if_exists=update_definition_if_exists,
             with_data_hash=with_data_hash,
             user_version_id=user_version_id,
-            template_url=self.register.metadata['url'],
+            template_url=self.register.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+            map_error(
+                status_code=response.status_code,
+                response=response,
+                error_map=error_map,
+            )
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse, pipeline_response
+            )
+            raise HttpResponseError(
+                response=response, model=error, error_format=ARMErrorFormat
+            )
 
-        deserialized = self._deserialize('Dataset', pipeline_response)
+        deserialized = self._deserialize("Dataset", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    register.metadata = {'url': '/dataset/v1.2/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/datasets'}  # type: ignore
-
+    register.metadata = {"url": "/dataset/v1.2/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/datasets"}  # type: ignore
 
     @distributed_trace
     def delete_all_datasets(
@@ -1138,35 +1257,45 @@ class DatasetControllerV2Operations(object):
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_delete_all_datasets_request(
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
-            template_url=self.delete_all_datasets.metadata['url'],
+            template_url=self.delete_all_datasets.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in []:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+            map_error(
+                status_code=response.status_code,
+                response=response,
+                error_map=error_map,
+            )
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse, pipeline_response
+            )
+            raise HttpResponseError(
+                response=response, model=error, error_format=ARMErrorFormat
+            )
 
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete_all_datasets.metadata = {'url': '/dataset/v1.2/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/datasets'}  # type: ignore
-
+    delete_all_datasets.metadata = {"url": "/dataset/v1.2/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/datasets"}  # type: ignore
 
     @distributed_trace
     def update_dataset(
@@ -1199,16 +1328,20 @@ class DatasetControllerV2Operations(object):
         :rtype: ~azure.mgmt.machinelearningservices.models.Dataset
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Dataset"]
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.Dataset"]
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop(
+            "content_type", "application/json"
+        )  # type: Optional[str]
 
         if body is not None:
-            _json = self._serialize.body(body, 'Dataset')
+            _json = self._serialize.body(body, "Dataset")
         else:
             _json = None
 
@@ -1220,28 +1353,37 @@ class DatasetControllerV2Operations(object):
             content_type=content_type,
             json=_json,
             force_update=force_update,
-            template_url=self.update_dataset.metadata['url'],
+            template_url=self.update_dataset.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+            map_error(
+                status_code=response.status_code,
+                response=response,
+                error_map=error_map,
+            )
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse, pipeline_response
+            )
+            raise HttpResponseError(
+                response=response, model=error, error_format=ARMErrorFormat
+            )
 
-        deserialized = self._deserialize('Dataset', pipeline_response)
+        deserialized = self._deserialize("Dataset", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    update_dataset.metadata = {'url': '/dataset/v1.2/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/datasets/{datasetId}'}  # type: ignore
-
+    update_dataset.metadata = {"url": "/dataset/v1.2/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/datasets/{datasetId}"}  # type: ignore
 
     @distributed_trace
     def unregister_dataset(
@@ -1268,33 +1410,43 @@ class DatasetControllerV2Operations(object):
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_unregister_dataset_request(
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             name=name,
-            template_url=self.unregister_dataset.metadata['url'],
+            template_url=self.unregister_dataset.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(
+            request, stream=False, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in []:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+            map_error(
+                status_code=response.status_code,
+                response=response,
+                error_map=error_map,
+            )
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse, pipeline_response
+            )
+            raise HttpResponseError(
+                response=response, model=error, error_format=ARMErrorFormat
+            )
 
         if cls:
             return cls(pipeline_response, None, {})
 
-    unregister_dataset.metadata = {'url': '/dataset/v1.2/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/datasets/{name}'}  # type: ignore
-
+    unregister_dataset.metadata = {"url": "/dataset/v1.2/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/datasets/{name}"}  # type: ignore
