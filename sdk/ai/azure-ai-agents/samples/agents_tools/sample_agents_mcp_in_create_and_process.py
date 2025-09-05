@@ -26,7 +26,7 @@ USAGE:
     4) MCP_SERVER_LABEL - A label for your MCP server.
 """
 
-import os, time
+import os
 from typing import Optional
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
@@ -35,9 +35,8 @@ from azure.ai.agents.models import (
     McpTool,
     RequiredMcpToolCall,
     RunStepActivityDetails,
-    SubmitToolApprovalAction,
     ToolApproval,
-    CreateAndProcessRequiredActionHandler,
+    RunHandler,
     ThreadRun,
     ToolSet,
 )
@@ -66,14 +65,13 @@ search_api_code = "search_azure_rest_api_code"
 mcp_tool.allow_tool(search_api_code)
 print(f"Allowed tools: {mcp_tool.allowed_tools}")
 
-class MyCreateAndProcessRequiredActionHandler(CreateAndProcessRequiredActionHandler):
-    def submit_tool_approval(self, run: ThreadRun, tool_call: RequiredMcpToolCall) -> Optional[ToolApproval]:
+class MyRunHandler(RunHandler):
+    def submit_mcp_tool_approval(self, run: ThreadRun, tool_call: RequiredMcpToolCall, **kwargs) -> Optional[ToolApproval]:
         return ToolApproval(
             tool_call_id=tool_call.id,
             approve=True,
             headers=mcp_tool.headers,
         )
-
 
 # Create agent with MCP tool and process agent run
 with project_client:
@@ -108,9 +106,9 @@ with project_client:
     # Create and process agent run in thread with MCP tools
     mcp_tool.update_headers("SuperSecret", "123456")
     
-    required_action_handler = MyCreateAndProcessRequiredActionHandler()
+    run_handler = MyRunHandler()
     # mcp_tool.set_approval_mode("never")  # Uncomment to disable approval requirement
-    run = agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id, required_action_handler=required_action_handler)
+    run = agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id, run_handler=run_handler)
     print(f"Created run, ID: {run.id}")
 
     print(f"Run completed with status: {run.status}")

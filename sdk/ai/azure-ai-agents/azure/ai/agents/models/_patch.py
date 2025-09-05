@@ -1704,22 +1704,15 @@ class ToolSet(BaseToolSet):
         """
         return self._execute_tool_calls(tool_calls)
 
-    def _execute_tool_calls(self, tool_calls: List[Any], run: Optional[ThreadRun] = None, required_action_handler: Optional['CreateAndProcessRequiredActionHandler'] = None) -> Any:
-        """
-        Execute a tool of the specified type with the provided tool calls.
-
-        :param List[Any] tool_calls: A list of tool calls to execute.
-        :return: The output of the tool operations.
-        :rtype: Any
-        """
+    def _execute_tool_calls(self, tool_calls: List[Any], run: Optional[ThreadRun] = None, run_handler: Optional['RunHandler'] = None) -> Any:
         tool_outputs = []
 
         for tool_call in tool_calls:
             if tool_call.type == "function":
                 output: Optional[Any] = None
 
-                if required_action_handler and run:
-                    output = required_action_handler.submit_function_call_output(run, tool_call, tool_call.function)
+                if run_handler and run:
+                    output = run_handler.submit_function_call_output(run, tool_call, tool_call.function)
                 try:
                     if not output:
                         tool = self.get_tool(FunctionTool)
@@ -1782,7 +1775,7 @@ class AsyncToolSet(BaseToolSet):
 EventFunctionReturnT = TypeVar("EventFunctionReturnT")
 T = TypeVar("T")
 BaseAsyncAgentEventHandlerT = TypeVar("BaseAsyncAgentEventHandlerT", bound="BaseAsyncAgentEventHandler")
-BaseAgentEventHandlerT = TypeVar("BaseAgentEventHandlerT", bound="BaseAgentEventHandler")
+# BaseAgentEventHandlerT is defined after BaseAgentEventHandler class to avoid forward reference during parsing.
 
 async def async_chain(*iterators: AsyncIterator[T]) -> AsyncIterator[T]:
     for iterator in iterators:
@@ -1856,10 +1849,26 @@ class BaseAsyncAgentEventHandler(AsyncIterator[T]):
             pass
 
 
-class CreateAndProcessRequiredActionHandler:
+class RunHandler:
+    """Helper that drives a run to completion for the "create and process" pattern.
 
-    def _start(self,  runs_operations: "RunsOperations", run: ThreadRun, polling_interval: int) -> ThreadRun:
-        # Monitor and process the run status
+    Extension Points:
+        * ``submit_function_call_output`` -- override to customize how function tool results are produced.
+        * ``submit_mcp_tool_approval`` -- override to implement an approval workflow (UI prompt, policy, etc.).
+    """
+
+    def _start(self, runs_operations: "RunsOperations", run: ThreadRun, polling_interval: int) -> ThreadRun:
+        """Poll and process a run until it reaches a terminal state or is cancelled.
+
+        :param runs_operations: Operations client used to retrieve, cancel, and submit tool outputs/approvals.
+        :type runs_operations: RunsOperations
+        :param run: The initial run returned from create/process call.
+        :type run: ThreadRun
+        :param polling_interval: Delay (in seconds) between polling attempts.
+        :type polling_interval: int
+        :return: The final terminal ``ThreadRun`` object (completed, failed, cancelled, or expired).
+        :rtype: ThreadRun
+        """
         current_retry = 0
         while run.status in [
             RunStatus.QUEUED,
@@ -1882,7 +1891,7 @@ class CreateAndProcessRequiredActionHandler:
                 if any(tool_call.type == "function" for tool_call in tool_calls):
                     toolset = ToolSet()
                     toolset.add(runs_operations._function_tool)
-                    tool_outputs = toolset._execute_tool_calls(tool_calls, run=run, required_action_handler=self)
+                    tool_outputs = toolset._execute_tool_calls(tool_calls, run=run, run_handler=self)
 
                     if _has_errors_in_toolcalls_output(tool_outputs):
                         if current_retry >= runs_operations._function_tool_max_retry:  # pylint:disable=no-else-return
@@ -1896,7 +1905,9 @@ class CreateAndProcessRequiredActionHandler:
 
                     logger.debug("Tool outputs: %s", tool_outputs)
                     if tool_outputs:
-                        run2 = runs_operations.submit_tool_outputs(thread_id=run.thread_id, run_id=run.id, tool_outputs=tool_outputs)
+                        run2 = runs_operations.submit_tool_outputs(
+                            thread_id=run.thread_id, run_id=run.id, tool_outputs=tool_outputs
+                        )
                         logger.debug("Tool outputs submitted to run: %s", run2.id)
             elif isinstance(run.required_action, SubmitToolApprovalAction):
                 tool_calls = run.required_action.submit_tool_approval.tool_calls
@@ -1909,9 +1920,11 @@ class CreateAndProcessRequiredActionHandler:
                 for tool_call in tool_calls:
                     if isinstance(tool_call, RequiredMcpToolCall):
                         logger.info(f"Approving tool call: {tool_call}")
-                        tool_approval = self.submit_tool_approval(run, tool_call)
+                        tool_approval = self.submit_mcp_tool_approval(run, tool_call)
                         if not tool_approval:
-                            logger.debug("submit_tool_approval in event handler returned None.  Please override this function and return a valid ToolApproval.")
+                            logger.debug(
+                                "submit_tool_approval in event handler returned None.  Please override this function and return a valid ToolApproval."
+                            )
                             run = runs_operations.cancel(thread_id=run.thread_id, run_id=run.id)
 
                         tool_approvals.append(tool_approval)
@@ -1923,11 +1936,51 @@ class CreateAndProcessRequiredActionHandler:
 
         return run
 
-    def submit_function_call_output(self, run: ThreadRun, tool_call: RequiredFunctionToolCall, tool_call_details: RequiredFunctionToolCallDetails) -> Optional[str]:
+    def submit_function_call_output(
+        self,
+        run: ThreadRun,
+        tool_call: RequiredFunctionToolCall,
+        tool_call_details: RequiredFunctionToolCallDetails,
+        **kwargs,
+    ) -> Optional[Any]:
+        """Produce (or override) the output for a required function tool call.
+
+        Override this to inject custom execution logic, caching, validation, or transformation.
+        Return ``None`` to fall back to the default execution path handled in ``_start``.
+
+        :param run: Current run requiring the function output.
+        :type run: ThreadRun
+        :param tool_call: The tool call metadata referencing the function tool.
+        :type tool_call: RequiredFunctionToolCall
+        :param tool_call_details: Function arguments/details object.
+        :type tool_call_details: RequiredFunctionToolCallDetails
+        :keyword kwargs: Additional keyword arguments for extensibility.
+        :return: Stringified result to send back to the service, or ``None`` to delegate to auto function calling.
+        :rtype: Optional[Any]
+        """
         return None
 
-    def submit_tool_approval(self, run: ThreadRun, tool_call: RequiredMcpToolCall) -> Optional[ToolApproval]:
-        return None
+    def submit_mcp_tool_approval(
+        self,
+        run: ThreadRun,
+        tool_call: RequiredMcpToolCall,
+        **kwargs,
+    ) -> Optional[ToolApproval]:
+            # NOTE: Implementation intentionally returns None; override in subclasses for real approval logic.
+            """Return a ``ToolApproval`` for an MCP tool call or ``None`` to indicate rejection/cancellation.
+
+            Override this to implement approval policies (interactive prompt, RBAC, heuristic checks, etc.).
+            Returning ``None`` triggers cancellation logic in ``_start``.
+
+            :param run: Current run containing the MCP approval request.
+            :type run: ThreadRun
+            :param tool_call: The MCP tool call requiring approval.
+            :type tool_call: RequiredMcpToolCall
+            :keyword kwargs: Additional keyword arguments for extensibility.
+            :return: A populated ``ToolApproval`` instance on approval, or ``None`` to decline.
+            :rtype: Optional[ToolApproval]
+            """
+            return None
 
 
 
@@ -1990,6 +2043,9 @@ class BaseAgentEventHandler(Iterator[T]):
                 pass
         except StopIteration:
             pass
+
+# Now that BaseAgentEventHandler is defined, we can bind the TypeVar.
+BaseAgentEventHandlerT = TypeVar("BaseAgentEventHandlerT", bound="BaseAgentEventHandler")
 
 
 class AsyncAgentEventHandler(BaseAsyncAgentEventHandler[Tuple[str, StreamEventData, Optional[EventFunctionReturnT]]]):
@@ -2350,7 +2406,7 @@ __all__: List[str] = [
     "MessageTextFileCitationAnnotation",
     "MessageDeltaChunk",
     "MessageAttachment",
-    "CreateAndProcessRequiredActionHandler",
+    "RunHandler",
 ]  # Add all objects you want publicly available to users at this package level
 
 

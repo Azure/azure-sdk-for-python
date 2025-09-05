@@ -22,16 +22,14 @@ USAGE:
        the "Models + endpoints" tab in your Azure AI Foundry project.
 """
 import os, time, sys
-from typing import Optional
+from typing import Any, Optional
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.agents.models import (
     FunctionTool,
     ListSortOrder,
     RequiredFunctionToolCall,
-    SubmitToolOutputsAction,
-    ToolOutput,
-    CreateAndProcessRequiredActionHandler,
+    RunHandler,
     ThreadRun,
     RequiredFunctionToolCall,
     RequiredFunctionToolCallDetails,
@@ -51,8 +49,9 @@ project_client = AIProjectClient(
 # Initialize function tool with user functions
 functions = FunctionTool(functions=user_functions)
 
-class MyCreateAndProcessRequiredActionHandler(CreateAndProcessRequiredActionHandler):
-    def submit_function_call_output(self, run: ThreadRun, tool_call: RequiredFunctionToolCall, tool_call_details: RequiredFunctionToolCallDetails) -> Optional[str]:
+class MyRunHandler(RunHandler):
+    def submit_function_call_output(self, run: ThreadRun, tool_call: RequiredFunctionToolCall, tool_call_details: RequiredFunctionToolCallDetails) -> Optional[Any]:
+        print(f"Call function: {tool_call_details.name}")
         return functions.execute(tool_call)
 
 with project_client:
@@ -77,8 +76,8 @@ with project_client:
     )
     print(f"Created message, ID: {message.id}")
 
-    required_action_handler = MyCreateAndProcessRequiredActionHandler()
-    run = agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id, required_action_handler=required_action_handler)
+    run_handler = MyRunHandler()
+    run = agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id, run_handler=run_handler)
 
     print(f"Run completed with status: {run.status}")
 
