@@ -113,4 +113,4 @@ def run_logged(cmd: list[str], cwd: str, check: bool, should_stream_to_console: 
             logger.error(f"\n{e.stdout.strip()}")
         raise
 
-__all__ = ["initialize_logger", "run_logged_to_file"]
+__all__ = ["initialize_logger", "run_logged_to_file", "run_logged"]
