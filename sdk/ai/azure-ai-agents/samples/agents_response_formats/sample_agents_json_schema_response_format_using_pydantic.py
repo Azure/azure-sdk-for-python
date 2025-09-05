@@ -6,9 +6,10 @@
 """
 DESCRIPTION:
     This sample demonstrates how to use agents with JSON schema output format.
+    It uses the Pydantic package to define the output JSON schema from Python classes.
 
 USAGE:
-    python sample_agents_json_schema.py
+    python sample_agents_json_schema_response_format_using_pydantic.py
 
     Before running the sample:
 
@@ -28,32 +29,39 @@ from pydantic import BaseModel, TypeAdapter
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.agents.models import (
-    MessageTextContent,
+    ListSortOrder,
     MessageRole,
     ResponseFormatJsonSchema,
     ResponseFormatJsonSchemaType,
     RunStatus,
 )
 
-# [START create_agents_client]
+
+# Create the pydantic model to represent the planet names and there masses.
+class PlanetName(str, Enum):
+    Mercury = "Mercury"
+    Venus = "Venus"
+    Earth = "Earth"
+    Mars = "Mars"
+    Jupiter = "Jupiter"
+    Saturn = "Saturn"
+    Uranus = "Uranus"
+    Neptune = "Neptune"
+
+
+class Planet(BaseModel):
+    name: PlanetName
+    mass: float
+
+
+class Planets(BaseModel):
+    planets: list[Planet]
+
+
 project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),
 )
-# [END create_agents_client]
-
-
-# Create the pydantic model to represent the planet names and there masses.
-class Planets(str, Enum):
-    Earth = "Earth"
-    Mars = "Mars"
-    Jupyter = "Jupyter"
-
-
-class Planet(BaseModel):
-    planet: Planets
-    mass: float
-
 
 with project_client:
     agents_client = project_client.agents
@@ -61,12 +69,12 @@ with project_client:
     agent = agents_client.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-agent",
-        instructions="Extract the information about planets.",
+        instructions="You are helpful agent. Your response is JSON formatted.",
         response_format=ResponseFormatJsonSchemaType(
             json_schema=ResponseFormatJsonSchema(
                 name="planet_mass",
-                description="Extract planet mass.",
-                schema=Planet.model_json_schema(),
+                description="Masses of Solar System planets.",
+                schema=Planets.model_json_schema(),
             )
         ),
     )
@@ -78,7 +86,7 @@ with project_client:
     message = agents_client.messages.create(
         thread_id=thread.id,
         role="user",
-        content=("The mass of the Mars is 6.4171E23 kg; the mass of the Earth is 5.972168E24 kg;"),
+        content="Hello, give me a list of planets in our solar system, and their mass in kilograms.",
     )
     print(f"Created message, message ID: {message.id}")
 
@@ -90,13 +98,13 @@ with project_client:
     agents_client.delete_agent(agent.id)
     print("Deleted agent")
 
-    messages = agents_client.messages.list(thread_id=thread.id)
-
-    # The messages are following in the reverse order,
-    # we will iterate them and output only text contents.
+    messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
     for msg in messages:
-        if msg.role == MessageRole.AGENT:
-            last_part = msg.content[-1]
-            if isinstance(last_part, MessageTextContent):
-                planet = TypeAdapter(Planet).validate_json(last_part.text.value)
-                print(f"The mass of {planet.planet} is {planet.mass} kg.")
+        if msg.text_messages:
+            last_text = msg.text_messages[-1]
+            print(f"{msg.role}: {last_text.text.value}")
+            # Deserialize the Agent's JSON response to the `Planets` class defined above
+            if msg.role == MessageRole.AGENT:
+                planets = TypeAdapter(Planets).validate_json(last_text.text.value)
+                for planet in planets.planets:
+                    print(f"The mass of {planet.name.value} is {planet.mass} kg.")
