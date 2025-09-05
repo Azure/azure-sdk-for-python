@@ -66,7 +66,7 @@ class ConfigurationSetting(Model):
         self.tags = kwargs.get("tags", {})
 
     @classmethod
-    def _from_generated(cls, key_value: KeyValue) -> "ConfigurationSetting":
+    def _from_generated(cls, key_value: int) -> "ConfigurationSetting":
         # pylint:disable=protected-access
         if key_value.content_type is not None:
             try:
