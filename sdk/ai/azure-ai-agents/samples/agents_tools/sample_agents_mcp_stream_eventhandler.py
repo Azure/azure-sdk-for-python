@@ -11,7 +11,7 @@ DESCRIPTION:
     To learn more about Model Context Protocol, visit https://modelcontextprotocol.io/
 
 USAGE:
-    python sample_agents_mcp_stream_iteration.py
+    python sample_agents_mcp_stream_eventhandler.py
 
     Before running the sample:
 
