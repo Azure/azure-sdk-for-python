@@ -231,23 +231,13 @@ test:
     - azure.mgmt.containerinstance.operations
     - azure.mgmt.containerregistry
     - azure.mgmt.containerregistry.aio
-    - azure.mgmt.containerregistry.v2023_07_01
-    - azure.mgmt.containerregistry.v2023_07_01.aio
-    - azure.mgmt.containerregistry.v2023_07_01.aio.operations
-    - azure.mgmt.containerregistry.v2023_07_01.models
-    - azure.mgmt.containerregistry.v2023_07_01.operations
-    - azure.mgmt.containerregistry.v2023_08_01_preview
-    - azure.mgmt.containerregistry.v2023_08_01_preview.aio
-    - azure.mgmt.containerregistry.v2023_08_01_preview.aio.operations
-    - azure.mgmt.containerregistry.v2023_08_01_preview.models
-    - azure.mgmt.containerregistry.v2023_08_01_preview.operations
+    - azure.mgmt.containerregistry.aio.operations
+    - azure.mgmt.containerregistry.models
     - azure.mgmt.containerservice
     - azure.mgmt.containerservice.aio
-    - azure.mgmt.containerservice.v2023_08_01
-    - azure.mgmt.containerservice.v2023_08_01.aio
-    - azure.mgmt.containerservice.v2023_08_01.aio.operations
-    - azure.mgmt.containerservice.v2023_08_01.models
-    - azure.mgmt.containerservice.v2023_08_01.operations
+    - azure.mgmt.containerservice.aio.operations
+    - azure.mgmt.containerservice.models
+    - azure.mgmt.containerservice.operations
     - azure.mgmt.containerservicefleet
     - azure.mgmt.containerservicefleet.aio
     - azure.mgmt.cosmosdb
@@ -279,11 +269,10 @@ test:
     - azure.mgmt.datab.operations
     - azure.mgmt.databoxedge
     - azure.mgmt.databoxedge.aio
-    - azure.mgmt.databoxedge.v2020_09_01
-    - azure.mgmt.databoxedge.v2020_09_01.aio
-    - azure.mgmt.databoxedge.v2020_09_01.aio.operations
-    - azure.mgmt.databoxedge.v2020_09_01.models
-    - azure.mgmt.databoxedge.v2020_09_01.operations
+    - azure.mgmt.databoxedge.aio
+    - azure.mgmt.databoxedge.aio.operations
+    - azure.mgmt.databoxedge.models
+    - azure.mgmt.databoxedge.operations
     - azure.mgmt.databoxedge.v2021_02_01_preview
     - azure.mgmt.databoxedge.v2021_02_01_preview.aio
     - azure.mgmt.databoxedge.v2021_02_01_preview.aio.operations
@@ -358,16 +347,9 @@ test:
     - azure.mgmt.digitaltwins.aio
     - azure.mgmt.dns
     - azure.mgmt.dns.aio
-    - azure.mgmt.dns.v2018_05_01
-    - azure.mgmt.dns.v2018_05_01.aio
-    - azure.mgmt.dns.v2018_05_01.aio.operations
-    - azure.mgmt.dns.v2018_05_01.models
-    - azure.mgmt.dns.v2018_05_01.operations
-    - azure.mgmt.dns.v2023_07_01_preview
-    - azure.mgmt.dns.v2023_07_01_preview.aio
-    - azure.mgmt.dns.v2023_07_01_preview.aio.operations
-    - azure.mgmt.dns.v2023_07_01_preview.models
-    - azure.mgmt.dns.v2023_07_01_preview.operations
+    - azure.mgmt.dns.aio.operations
+    - azure.mgmt.dns.models
+    - azure.mgmt.dns.operations
     - azure.mgmt.dnsresolver
     - azure.mgmt.dnsresolver.aio
     - azure.mgmt.dnsresolver.aio.operations
@@ -513,11 +495,6 @@ test:
     - azure.mgmt.iotoperations.operations
     - azure.mgmt.keyvault
     - azure.mgmt.keyvault.aio
-    - azure.mgmt.keyvault.v2023_07_01
-    - azure.mgmt.keyvault.v2023_07_01.aio
-    - azure.mgmt.keyvault.v2023_07_01.aio.operations
-    - azure.mgmt.keyvault.v2023_07_01.models
-    - azure.mgmt.keyvault.v2023_07_01.operations
     - azure.mgmt.kubernetesconfiguration
     - azure.mgmt.kubernetesconfiguration.aio
     - azure.mgmt.kubernetesconfiguration.v2023_05_01
@@ -637,23 +614,14 @@ test:
     - azure.mgmt.mongodbatlas.operations
     - azure.mgmt.monitor
     - azure.mgmt.monitor.aio
-    - azure.mgmt.monitor.v2023_01_01
-    - azure.mgmt.monitor.v2023_01_01.aio
-    - azure.mgmt.monitor.v2023_01_01.aio.operations
-    - azure.mgmt.monitor.v2023_01_01.models
-    - azure.mgmt.monitor.v2023_01_01.operations
-    - azure.mgmt.monitor.v2023_03_01_preview
-    - azure.mgmt.monitor.v2023_03_01_preview.aio
-    - azure.mgmt.monitor.v2023_03_01_preview.aio.operations
-    - azure.mgmt.monitor.v2023_03_01_preview.models
-    - azure.mgmt.monitor.v2023_03_01_preview.operations
+    - azure.mgmt.monitor.aio.operations
+    - azure.mgmt.monitor.models
+    - azure.mgmt.monitor.operations
     - azure.mgmt.msi
     - azure.mgmt.msi.aio
-    - azure.mgmt.msi.v2023_01_31
-    - azure.mgmt.msi.v2023_01_31.aio
-    - azure.mgmt.msi.v2023_01_31.aio.operations
-    - azure.mgmt.msi.v2023_01_31.models
-    - azure.mgmt.msi.v2023_01_31.operations
+    - azure.mgmt.msi.aio.operations
+    - azure.mgmt.msi.models
+    - azure.mgmt.msi.operations
     - azure.mgmt.neonpostgres
     - azure.mgmt.neonpostgres.aio
     - azure.mgmt.neonpostgres.aio.operations
@@ -988,11 +956,9 @@ test:
     - azure.mgmt.standbypool.operations
     - azure.mgmt.storage
     - azure.mgmt.storage.aio
-    - azure.mgmt.storage.v2023_01_01
-    - azure.mgmt.storage.v2023_01_01.aio
-    - azure.mgmt.storage.v2023_01_01.aio.operations
-    - azure.mgmt.storage.v2023_01_01.models
-    - azure.mgmt.storage.v2023_01_01.operations
+    - azure.mgmt.storage.aio.operations
+    - azure.mgmt.storage.models
+    - azure.mgmt.storage.operations
     - azure-mgmt-storageactions
     - azure.mgmt.storageactions.aio
     - azure.mgmt.storageactions.aio.operations
@@ -1055,11 +1021,9 @@ test:
     - azure.mgmt.voiceservices.operations
     - azure.mgmt.web
     - azure.mgmt.web.aio
-    - azure.mgmt.web.v2022_09_01
-    - azure.mgmt.web.v2022_09_01.aio
-    - azure.mgmt.web.v2022_09_01.aio.operations
-    - azure.mgmt.web.v2022_09_01.models
-    - azure.mgmt.web.v2022_09_01.operations
+    - azure.mgmt.web.aio.operations
+    - azure.mgmt.web.models
+    - azure.mgmt.web.operations
     - azure.mgmt.webpubsub
     - azure.mgmt.webpubsub.aio
     - azure.mgmt.webpubsub.aio.operations
