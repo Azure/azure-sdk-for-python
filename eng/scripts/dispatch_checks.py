@@ -28,13 +28,21 @@ class CheckResult:
 
 async def run_check(semaphore: asyncio.Semaphore, package: str, check: str, base_args: List[str], idx: int, total: int) -> CheckResult:
     """Run a single check (subprocess) within a concurrency semaphore, capturing output and timing.
-    Args:
-        semaphore: Concurrency limiter.
-        package: Absolute path to package directory.
-        check: The check (subcommand) name for azpysdk CLI.
-        base_args: Common argument list prefix (python -m azpysdk.main ...).
-        idx: Sequence number for logging.
-        total: Total number of tasks.
+
+    :param semaphore: Concurrency limiter used to bound concurrent checks.
+    :type semaphore: asyncio.Semaphore
+    :param package: Absolute path to the package directory used as the subprocess cwd.
+    :type package: str
+    :param check: The check (subcommand) name for the azpysdk CLI to invoke.
+    :type check: str
+    :param base_args: Common argument list prefix (e.g. ``[sys.executable, "-m", "azpysdk.main"]``).
+    :type base_args: List[str]
+    :param idx: Sequence number for logging (1-based index of this task).
+    :type idx: int
+    :param total: Total number of tasks (used for logging progress).
+    :type total: int
+    :returns: A :class:`CheckResult` describing exit code, duration and captured output.
+    :rtype: CheckResult
     """
     async with semaphore:
         start = time.time()
@@ -73,6 +81,16 @@ async def run_check(semaphore: asyncio.Semaphore, package: str, check: str, base
 
 
 def summarize(results: List[CheckResult]) -> int:
+    """Print a compact summary table and return the worst exit code.
+
+    The function prints a human-readable table to stdout showing package, check, status and
+    duration. It returns the highest (worst) exit code from the provided results.
+
+    :param results: List of :class:`CheckResult` objects to summarize.
+    :type results: List[CheckResult]
+    :returns: The maximum exit code found in ``results`` (0 if all passed).
+    :rtype: int
+    """
     # Compute column widths
     pkg_w = max((len(r.package) for r in results), default=7)
     chk_w = max((len(r.check) for r in results), default=5)
@@ -90,6 +108,17 @@ def summarize(results: List[CheckResult]) -> int:
 
 
 async def run_all_checks(packages, checks, max_parallel):
+    """Run all checks for all packages concurrently and return the worst exit code.
+
+    :param packages: Iterable of package paths to run checks against.
+    :type packages: Iterable[str]
+    :param checks: List of check names to execute for each package.
+    :type checks: List[str]
+    :param max_parallel: Maximum number of concurrent checks to run.
+    :type max_parallel: int
+    :returns: The worst exit code from all checks (0 if all passed).
+    :rtype: int
+    """
     base_args = [sys.executable, "-m", "azpysdk.main"]
     tasks = []
     semaphore = asyncio.Semaphore(max_parallel)
@@ -120,11 +149,29 @@ async def run_all_checks(packages, checks, max_parallel):
 
 
 def configure_interrupt_handling():
+    """Install a SIGINT handler that triggers graceful shutdown.
+
+    Registers a handler for SIGINT which raises :class:`KeyboardInterrupt` to allow
+    the asyncio event loop to cancel tasks and subprocesses cleanly. On platforms or
+    contexts where ``signal.signal`` is not supported (for example non-main threads),
+    registration is skipped silently.
+
+    :returns: None
+    :rtype: None
+    """
+
     # Ensure that a SIGINT propagates to asyncio tasks & subprocesses
-    def handler(signum, frame):  # noqa: D401
-        """
-        Signal handler for SIGINT that logs the signal and raises KeyboardInterrupt
-        to trigger graceful shutdown of asyncio tasks and subprocesses.
+    def handler(signum, frame):
+        """Signal handler for SIGINT.
+
+        Logs receipt of the signal and raises :class:`KeyboardInterrupt` to trigger
+        graceful shutdown of asyncio tasks and subprocesses.
+
+        :param signum: The numeric signal received (e.g. ``signal.SIGINT``).
+        :type signum: int
+        :param frame: Current stack frame when the signal was received (may be ``None``).
+        :type frame: object
+        :raises KeyboardInterrupt: Always raised to signal shutdown.
         """
         logging.warning(f"Received signal {signum}. Attempting graceful shutdown...")
         # Let asyncio loop raise KeyboardInterrupt
