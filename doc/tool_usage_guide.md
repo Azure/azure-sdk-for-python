@@ -63,8 +63,7 @@ Note that this is optional, and you can rely onn CI to test python versions.
 #### With uv
 
 You can specify a Python version upon venv creation:
-
-`uvx --python=3.11 azpysdk mypy`
+`uv venv --python 3.11`
 
 #### With Python
 
