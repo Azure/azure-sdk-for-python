@@ -18,6 +18,7 @@ from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 
 from .._utils.model_base import _deserialize
+from ..models._patch import _JobsPollingMethod
 from ..models import (
     AssignedDeploymentResource,
     AssignDeploymentResourcesDetails,
@@ -28,7 +29,6 @@ from ..models import (
     ExportedProject,
     ExportedProjectFormat,
     ExportedTrainedModel,
-    _JobsPollingMethod,
     ProjectDeletionState,
     ProjectDeployment,
     ProjectDetails,
