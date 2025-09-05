@@ -1,25 +1,17 @@
 import argparse
 import os
 import sys
-import tempfile
 import shutil
 import glob
-import zipfile
-import tarfile
-import importlib
 
 from typing import Optional, List
 from subprocess import CalledProcessError, check_call
 from pathlib import Path
 
 from .Check import Check
-from ci_tools.parsing import ParsedSetup
 from ci_tools.functions import pip_install
 from ci_tools.scenario.generation import create_package_and_install
 from ci_tools.variables import in_ci, set_envvar_defaults
-from ci_tools.environment_exclusions import (
-    is_check_enabled, is_typing_ignored
-)
 from ci_tools.variables import discover_repo_root
 from ci_tools.variables import in_analyze_weekly
 
@@ -218,7 +210,8 @@ def sphinx_build(package_dir: str, target_dir: str, output_dir: str, fail_on_war
     try:
         logger.info("Sphinx build command: {}".format(command_array))
         check_call(
-            command_array
+            command_array,
+            cwd=package_dir
         )
     except CalledProcessError as e:
         logger.error(
@@ -310,7 +303,6 @@ class sphinx(Check):
                 logger.info("Skipping sphinx prep for {}".format(package_name))      
 
             # run apidoc
-
             if should_build_docs(parsed.name):
                 if is_mgmt_package(parsed.name):
                     results.append(mgmt_apidoc(doc_folder, package_dir, executable)) # TODO idk directory
@@ -318,13 +310,6 @@ class sphinx(Check):
                     results.append(sphinx_apidoc(staging_directory, package_dir, parsed.namespace)) 
             else:
                 logger.info("Skipping sphinx source generation for {}".format(parsed.name))
-
-            # copy samples 
-            shutil.copytree(
-                os.path.join(package_dir, "samples"),
-                os.path.join(staging_directory, "samples"),
-                dirs_exist_ok=True
-            )
 
             # build
             if should_build_docs(package_name):
