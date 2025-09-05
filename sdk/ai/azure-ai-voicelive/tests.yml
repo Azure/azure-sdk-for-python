@@ -1,0 +1,12 @@
+trigger: none
+
+extends:
+    template: ../../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
+    parameters:
+      ServiceDirectory: ai/azure-ai-voicelive
+      Location: eastus2
+      BuildTargetingString: azure-ai-voicelive*
+      EnvVars:
+        AZURE_TEST_RUN_LIVE: 'true'
+        AZURE_OPENAI_ENDPOINT: $(OPENAI_ENDPOINT)
+        AZURE_OPENAI_KEY: $(API_KEY)
