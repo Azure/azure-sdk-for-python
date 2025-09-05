@@ -20,11 +20,11 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from ._operations import (
-    DocumentIntelligenceClientOperationsMixin as GeneratedDIClientOps,
-    DocumentIntelligenceAdministrationClientOperationsMixin as GeneratedDIAdminClientOps,
+    _DocumentIntelligenceClientOperationsMixin as GeneratedDIClientOps,
+    _DocumentIntelligenceAdministrationClientOperationsMixin as GeneratedDIAdminClientOps,
 )
 from .. import models as _models
-from .._model_base import _deserialize
+from .._utils.model_base import _deserialize
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -365,7 +365,13 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(
 
         if polling is True:
             polling_method: PollingMethod = cast(
-                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, lro_options={"final-state-via": "operation-location"}, **kwargs)
+                PollingMethod,
+                LROBasePolling(
+                    lro_delay,
+                    path_format_arguments=path_format_arguments,
+                    lro_options={"final-state-via": "operation-location"},
+                    **kwargs,
+                ),
             )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
