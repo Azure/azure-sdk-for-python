@@ -273,7 +273,7 @@ extends:
                       in_batch: ${{ parameters.release_azure_ai_evaluation }}
                       checkout:
                         - package: azure-ai-evaluation
-                          version: 1.2.0
+                          version: 1.11.0
                     - name: azure-ai-formrecognizer
                       common_root: azure
                       service: formrecognizer
@@ -389,7 +389,7 @@ extends:
                       in_batch: ${{ parameters.release_azure_digitaltwins_core }}
                       checkout:
                         - package: azure-digitaltwins-core
-                          version: 1.2.0
+                          version: 1.3.0
                     - name: azure-eventgrid
                       service: eventgrid
                       in_batch: ${{ parameters.release_azure_eventgrid }}
@@ -443,13 +443,13 @@ extends:
                       in_batch: ${{ parameters.release_azure_monitor_ingestion }}
                       checkout:
                         - package: azure-monitor-ingestion
-                          version: 1.0.4
+                          version: 1.1.0
                     - name: azure-monitor-query
                       service: monitor
                       in_batch: ${{ parameters.release_azure_monitor_query }}
                       checkout:
                         - package: azure-monitor-query
-                          version: 1.4.1
+                          version: 2.0.0
                     - name: azure-schemaregistry
                       service: schemaregistry
                       common_root: azure/schemaregistry
@@ -464,7 +464,7 @@ extends:
                       in_batch: ${{ parameters.release_azure_search_documents }}
                       checkout:
                         - package: azure-search-documents
-                          version: 11.5.2
+                          version: 11.5.3
                     - name: azure-security-attestation
                       service: attestation
                       in_batch: ${{ parameters.release_azure_security_attestation }}
@@ -476,7 +476,7 @@ extends:
                       in_batch: ${{ parameters.release_azure_servicebus }}
                       checkout:
                         - package: azure-servicebus
-                          version: 7.14.0
+                          version: 7.14.2
                     - name: azure-ai-documentintelligence
                       common_root: azure
                       service: documentintelligence
@@ -497,6 +497,20 @@ extends:
                       in_batch: ${{ parameters.release_azure_ai_agents }}
                       checkout:
                         - package: azure-ai-agents
+                          version: 1.0.0
+                    - name: azure-ai-projects
+                      common_root: azure
+                      service: projects
+                      in_batch: ${{ parameters.release_azure_ai_projects }}
+                      checkout:
+                        - package: azure-ai-projects
+                          version: 1.0.0
+                    - name: azure-monitor-querymetrics
+                      common_root: azure
+                      service: querymetrics
+                      in_batch: ${{ parameters.release_azure_monitor_querymetrics }}
+                      checkout:
+                        - package: azure-monitor-querymetrics
                           version: 1.0.0
                     - name: azure-mgmt
                       service: mgmt
@@ -520,7 +534,9 @@ extends:
                         - package: azure-mgmt-applicationinsights
                           version: 4.1.0
                         - package: azure-mgmt-appplatform
-                          version: 10.0.0
+                          version: 10.0.1
+                        - package: azure-mgmt-arizeaiobservabilityeval
+                          version: 1.0.0
                         - package: azure-mgmt-attestation
                           version: 1.0.0
                         - package: azure-mgmt-authorization
@@ -530,7 +546,7 @@ extends:
                         - package: azure-mgmt-automation
                           version: 1.0.0
                         - package: azure-mgmt-avs
-                          version: 9.0.0
+                          version: 9.1.0
                         - package: azure-mgmt-azurearcdata
                           version: 1.0.0
                         - package: azure-mgmt-azurestack
@@ -547,14 +563,16 @@ extends:
                           version: 7.0.0
                         - package: azure-mgmt-botservice
                           version: 2.0.0
+                        - package: azure-mgmt-carbonoptimization
+                          version: 1.0.0
                         - package: azure-mgmt-cdn
                           version: 13.1.1
                         - package: azure-mgmt-changeanalysis
                           version: 1.0.0
                         - package: azure-mgmt-chaos
-                          version: 1.1.0
+                          version: 2.0.0
                         - package: azure-mgmt-cognitiveservices
-                          version: 13.5.0
+                          version: 13.7.0
                         - package: azure-mgmt-commerce
                           version: 6.0.0
                         - package: azure-mgmt-communication
@@ -564,7 +582,7 @@ extends:
                         - package: azure-mgmt-computefleet
                           version: 1.0.0
                         - package: azure-mgmt-computeschedule
-                          version: 1.0.0
+                          version: 1.1.0
                         - package: azure-mgmt-confidentialledger
                           version: 1.0.0
                         - package: azure-mgmt-confluent
@@ -578,11 +596,11 @@ extends:
                         - package: azure-mgmt-containerregistry
                           version: 14.0.0
                         - package: azure-mgmt-containerservice
-                          version: 36.0.0
+                          version: 39.1.0
                         - package: azure-mgmt-containerservicefleet
                           version: 3.1.0
                         - package: azure-mgmt-cosmosdb
-                          version: 9.7.0
+                          version: 9.8.0
                         - package: azure-mgmt-costmanagement
                           version: 4.0.1
                         - package: azure-mgmt-customproviders
@@ -622,9 +640,9 @@ extends:
                         - package: azure-mgmt-digitaltwins
                           version: 7.0.0
                         - package: azure-mgmt-dns
-                          version: 8.2.0
+                          version: 9.0.0
                         - package: azure-mgmt-dnsresolver
-                          version: 1.0.0
+                          version: 1.1.0
                         - package: azure-mgmt-dynatrace
                           version: 2.0.0
                         - package: azure-mgmt-edgeorder
@@ -648,6 +666,8 @@ extends:
                         - package: azure-mgmt-graphservices
                           version: 1.0.0
                         - package: azure-mgmt-hanaonazure
+                          version: 1.0.0
+                        - package: azure-mgmt-hardwaresecuritymodules
                           version: 1.0.0
                         - package: azure-mgmt-hdinsight
                           version: 9.0.0
@@ -678,13 +698,15 @@ extends:
                         - package: azure-mgmt-iotoperations
                           version: 1.0.0
                         - package: azure-mgmt-keyvault
-                          version: 11.0.0
+                          version: 12.0.0
                         - package: azure-mgmt-kubernetesconfiguration
                           version: 3.1.0
                         - package: azure-mgmt-kusto
                           version: 3.4.0
                         - package: azure-mgmt-labservices
                           version: 2.0.0
+                        - package: azure-mgmt-lambdatesthyperexecute
+                          version: 1.0.0
                         - package: azure-mgmt-loadtesting
                           version: 1.0.0
                         - package: azure-mgmt-loganalytics
@@ -710,27 +732,29 @@ extends:
                         - package: azure-mgmt-marketplaceordering
                           version: 1.1.0
                         - package: azure-mgmt-media
-                          version: 10.2.0
+                          version: 10.2.1
                         - package: azure-mgmt-mixedreality
                           version: 1.0.0
                         - package: azure-mgmt-mobilenetwork
                           version: 3.3.0
                         - package: azure-mgmt-mongocluster
                           version: 1.0.0
+                        - package: azure-mgmt-mongodbatlas
+                          version: 1.0.0
                         - package: azure-mgmt-monitor
                           version: 6.0.2
                         - package: azure-mgmt-msi
-                          version: 7.0.0
+                          version: 7.1.0
                         - package: azure-mgmt-neonpostgres
                           version: 1.0.0
                         - package: azure-mgmt-netapp
-                          version: 13.3.0
+                          version: 13.7.0
                         - package: azure-mgmt-network
-                          version: 28.0.0
+                          version: 29.0.0
                         - package: azure-mgmt-networkanalytics
                           version: 1.0.0
                         - package: azure-mgmt-networkcloud
-                          version: 1.0.0
+                          version: 2.1.0
                         - package: azure-mgmt-newrelicobservability
                           version: 1.1.0
                         - package: azure-mgmt-nginx
@@ -740,7 +764,7 @@ extends:
                         - package: azure-mgmt-operationsmanagement
                           version: 1.0.0
                         - package: azure-mgmt-oracledatabase
-                          version: 1.0.0
+                          version: 2.0.0
                         - package: azure-mgmt-orbital
                           version: 2.0.0
                         - package: azure-mgmt-paloaltonetworksngfw
@@ -759,6 +783,8 @@ extends:
                           version: 1.0.0
                         - package: azure-mgmt-privatedns
                           version: 1.2.0
+                        - package: azure-mgmt-purestorageblock
+                          version: 1.0.0
                         - package: azure-mgmt-purview
                           version: 1.0.0
                         - package: azure-mgmt-qumulo
@@ -771,8 +797,10 @@ extends:
                           version: 3.0.0
                         - package: azure-mgmt-recoveryservicesbackup
                           version: 9.2.0
+                        - package: azure-mgmt-recoveryservicesdatareplication
+                          version: 1.0.0
                         - package: azure-mgmt-recoveryservicessiterecovery
-                          version: 1.2.0
+                          version: 1.3.0
                         - package: azure-mgmt-redhatopenshift
                           version: 2.0.0
                         - package: azure-mgmt-redis
@@ -784,7 +812,7 @@ extends:
                         - package: azure-mgmt-reservations
                           version: 2.3.0
                         - package: azure-mgmt-resource
-                          version: 23.4.0
+                          version: 24.0.0
                         - package: azure-mgmt-resourceconnector
                           version: 1.0.0
                         - package: azure-mgmt-resourcemover
@@ -792,7 +820,7 @@ extends:
                         - package: azure-mgmt-scvmm
                           version: 1.0.0
                         - package: azure-mgmt-search
-                          version: 9.1.0
+                          version: 9.2.0
                         - package: azure-mgmt-security
                           version: 7.0.0
                         - package: azure-mgmt-securityinsight
@@ -822,7 +850,9 @@ extends:
                         - package: azure-mgmt-standbypool
                           version: 2.0.0
                         - package: azure-mgmt-storage
-                          version: 23.0.0
+                          version: 23.0.1
+                        - package: azure-mgmt-storageactions
+                          version: 1.0.0
                         - package: azure-mgmt-storagecache
                           version: 2.0.0
                         - package: azure-mgmt-storagemover
