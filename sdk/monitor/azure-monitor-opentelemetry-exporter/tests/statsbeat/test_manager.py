@@ -152,8 +152,8 @@ class TestStatsbeatConfig(unittest.TestCase):
             self.assertEqual(new_config.region, base_config.region)
             self.assertEqual(new_config.instrumentation_key, base_config.instrumentation_key)
             self.assertTrue(new_config.disable_offline_storage)
-            self.assertTrue(new_config.credential, "test_credential")
-            self.assertTrue(new_config.distro_version, "1.0.0")
+            self.assertEqual(new_config.credential, "test_credential")
+            self.assertEqual(new_config.distro_version, "1.0.0")
             self.assertEqual(new_config.connection_string, "InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/")
 
     @patch('azure.monitor.opentelemetry.exporter.statsbeat._manager._get_connection_string_for_region_from_config')

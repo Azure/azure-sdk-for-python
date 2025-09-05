@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 import os
 import logging
+import json
 from typing import Optional, List, Tuple, Dict
 from azure.core.exceptions import ServiceRequestError
 from azure.monitor.opentelemetry.exporter._constants import (
@@ -263,7 +264,6 @@ def _get_connection_string_for_region_from_config(target_region: str, settings: 
         
         # Parse if it's a JSON string
         if isinstance(supported_boundaries, str):
-            import json
             supported_boundaries = json.loads(supported_boundaries)
         
         # Check each supported boundary to find the region
@@ -277,7 +277,6 @@ def _get_connection_string_for_region_from_config(target_region: str, settings: 
             if boundary_regions:
                 # Parse if it's a JSON string
                 if isinstance(boundary_regions, str):
-                    import json
                     boundary_regions = json.loads(boundary_regions)
                 
                 # Check if the region is in this boundary's regions

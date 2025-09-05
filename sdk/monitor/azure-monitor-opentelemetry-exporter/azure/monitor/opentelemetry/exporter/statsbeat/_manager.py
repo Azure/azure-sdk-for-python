@@ -228,7 +228,6 @@ class StatsbeatManager(metaclass=Singleton):
             long_interval_threshold = long_interval // short_interval
 
             # Create statsbeat metrics
-                
             self._metrics = _StatsbeatMetrics(
                 self._meter_provider,
                 config.instrumentation_key,
