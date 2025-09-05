@@ -375,7 +375,7 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
             "WHERE FullTextContains(c.title, 'John') OR FullTextContains(c.text, 'John') "
             "ORDER BY RANK FullTextScore(c.title, 'John')"
         )
-        literal_results = self.test_container.query_items(literal_query, enable_cross_partition_query=True)
+        literal_results = self.test_container.query_items(literal_query)
         literal_indices = [res["index"] async for res in literal_results]
 
         # Parameterized hybrid query (same as above, but using @term)
@@ -386,7 +386,7 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
         )
         params = [{"name": "@term", "value": "John"}]
         param_results = self.test_container.query_items(
-            param_query, parameters=params, enable_cross_partition_query=True
+            param_query, parameters=params
         )
         param_indices = [res["index"] async for res in param_results]
 
@@ -400,7 +400,7 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
             "SELECT TOP 10 c.index, c.title FROM c "
             "ORDER BY RANK RRF(FullTextScore(c.title, 'John'), FullTextScore(c.text, 'United States'), [1, 0.5])"
         )
-        literal_results = self.test_container.query_items(literal_query, enable_cross_partition_query=True)
+        literal_results = self.test_container.query_items(literal_query)
         literal_indices = [res["index"] async for res in literal_results]
 
         # Parameterized weighted RRF hybrid query (+ response hook)
@@ -415,7 +415,7 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
             {"name": "@weights", "value": [1, 0.5]},
         ]
         param_results = self.test_container.query_items(
-            param_query, parameters=params, enable_cross_partition_query=True, response_hook=response_hook
+            param_query, parameters=params, response_hook=response_hook
         )
         param_indices = [res["index"] async for res in param_results]
 
@@ -432,7 +432,7 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
             "ORDER BY RANK RRF(FullTextScore(c.text, 'United States'), VectorDistance(c.vector, {})) "
             "OFFSET 0 LIMIT 10"
         ).format(item_vector)
-        literal_hybrid_results = self.test_container.query_items(literal_hybrid, enable_cross_partition_query=True)
+        literal_hybrid_results = self.test_container.query_items(literal_hybrid)
         literal_hybrid_indices = [res["index"] async for res in literal_hybrid_results]
 
         param_hybrid = (
@@ -445,7 +445,7 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
             {"name": "@vec", "value": item_vector},
         ]
         param_hybrid_results = self.test_container.query_items(
-            param_hybrid, parameters=params_hybrid, enable_cross_partition_query=True
+            param_hybrid, parameters=params_hybrid
         )
         param_hybrid_indices = [res["index"] async for res in param_hybrid_results]
 
@@ -455,13 +455,13 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
 
         # Non-hybrid parameterized query equivalence on same container
         literal_simple = "SELECT TOP 5 c.index FROM c WHERE c.pk = '1' ORDER BY c.index"
-        literal_simple_results = self.test_container.query_items(literal_simple, enable_cross_partition_query=True)
+        literal_simple_results = self.test_container.query_items(literal_simple)
         literal_simple_indices = [res["index"] async for res in literal_simple_results]
 
         param_simple = "SELECT TOP 5 c.index FROM c WHERE c.pk = @pk ORDER BY c.index"
         params_simple = [{"name": "@pk", "value": "1"}]
         param_simple_results = self.test_container.query_items(
-            param_simple, parameters=params_simple, enable_cross_partition_query=True
+            param_simple, parameters=params_simple
         )
         param_simple_indices = [res["index"] async for res in param_simple_results]
 
