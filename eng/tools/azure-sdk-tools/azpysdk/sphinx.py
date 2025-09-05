@@ -47,7 +47,6 @@ sphinx_conf_dir = os.path.join(REPO_ROOT, 'doc/sphinx')
 generate_mgmt_script = os.path.join(REPO_ROOT, "doc/sphinx/generate_doc.py")
 
 # env prep helper functions
-
 def create_index_file(readme_location: str, package_rst: str) -> str:
     readme_ext = os.path.splitext(readme_location)[1]
 
@@ -90,7 +89,6 @@ def create_index(doc_folder: str, source_location: str, namespace: str) -> None:
         f.write(index_content)
 
 def write_version(site_folder: str, version: str) -> None:
-
     if not os.path.isdir(site_folder):
         os.mkdir(site_folder)
 
@@ -98,7 +96,6 @@ def write_version(site_folder: str, version: str) -> None:
         f.write(version)
 
 # apidoc helper functions
-
 def is_mgmt_package(pkg_name: str) -> bool:
     return pkg_name != "azure-mgmt-core" and ("mgmt" in pkg_name or "cognitiveservices" in pkg_name)
 
@@ -180,7 +177,6 @@ def sphinx_apidoc(output_dir: str, target_dir: str, namespace: str) -> int:
     return 0
 
 # build helper functions
-
 def move_output_and_compress(target_dir: str, package_dir: str, package_name: str) -> None:
     if not os.path.exists(ci_doc_dir):
         os.mkdir(ci_doc_dir)
@@ -279,11 +275,15 @@ class sphinx(Check):
                 python_executable=executable
             )
   
-            # install sphinx TODO python version error handling
+            # install sphinx 
             try:
                 if (args.next):
                     pip_install(["sphinx", "sphinx_rtd_theme", "myst_parser", "sphinxcontrib-jquery"], True, executable, package_dir)
                 else:
+                    # check Python version
+                    if sys.version_info < (3, 11):
+                        logger.error("This tool requires Python 3.11 or newer. Please upgrade your Python interpreter.")
+                        return 1
                     pip_install([f"sphinx=={SPHINX_VERSION}", f"sphinx_rtd_theme=={SPHINX_RTD_THEME_VERSION}", f"myst_parser=={MYST_PARSER_VERSION}", f"sphinxcontrib-jquery=={SPHINX_CONTRIB_JQUERY_VERSION}"], True, executable, package_dir)
             except CalledProcessError as e:
                 logger.error("Failed to install sphinx:", e)
@@ -305,7 +305,7 @@ class sphinx(Check):
             # run apidoc
             if should_build_docs(parsed.name):
                 if is_mgmt_package(parsed.name):
-                    results.append(mgmt_apidoc(doc_folder, package_dir, executable)) # TODO idk directory
+                    results.append(mgmt_apidoc(doc_folder, package_dir, executable))
                 else:
                     results.append(sphinx_apidoc(staging_directory, package_dir, parsed.namespace)) 
             else:
@@ -317,7 +317,7 @@ class sphinx(Check):
                 fail_on_warning = not is_mgmt_package(package_name)
                 results.append(sphinx_build(
                     package_dir, 
-                    doc_folder, # target / 'source'
+                    doc_folder, # source
                     site_folder, # output
                     fail_on_warning=fail_on_warning,
                 ))
