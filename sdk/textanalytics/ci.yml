@@ -31,5 +31,3 @@ extends:
     ServiceDirectory: textanalytics
     TestProxy: true
     Artifacts:
-    - name: azure-ai-textanalytics
-      safeName: azureaitextanalytics
