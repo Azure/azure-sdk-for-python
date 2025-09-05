@@ -48,7 +48,9 @@ with project_client:
     threads = agents_client.threads.list()
 
     message = agents_client.messages.create(
-        thread_id=thread.id, role="user", content="Hello, give me a list of planets in our solar system, and their mass in kilograms."
+        thread_id=thread.id,
+        role="user",
+        content="Hello, give me a list of planets in our solar system, and their mass in kilograms.",
     )
     print(f"Created message, message ID: {message.id}")
 

@@ -40,7 +40,7 @@ json_schema: Dict[str, Any] = {
         "PlanetName": {
             "type": "string",
             "description": "The name of the planet",
-            "enum": ["Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune"]
+            "enum": ["Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune"],
         }
     },
     "type": "object",
@@ -52,9 +52,7 @@ json_schema: Dict[str, Any] = {
                 "type": "object",
                 "description": "Information about a planet in the Solar System",
                 "properties": {
-                    "name": { 
-                        "$ref": "#/$defs/PlanetName" 
-                    },
+                    "name": {"$ref": "#/$defs/PlanetName"},
                     "mass": {
                         "type": "number",
                         "description": "Mass of the planet in kilograms",

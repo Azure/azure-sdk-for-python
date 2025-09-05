@@ -27,7 +27,7 @@ import os
 from enum import Enum
 from pydantic import BaseModel
 from azure.ai.projects.aio import AIProjectClient
-from azure.identity.aio  import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential
 from azure.ai.agents.models import (
     ListSortOrder,
     ResponseFormatJsonSchema,
@@ -38,21 +38,24 @@ from azure.ai.agents.models import (
 
 # Create the pydantic model to represent the planet names and there masses.
 class PlanetName(str, Enum):
-    Mercury = "Mercury",
-    Venus= "Venus",
-    Earth = "Earth",
-    Mars = "Mars",
-    Jupiter = "Jupiter",
-    Saturn = "Saturn",
-    Uranus = "Uranus",
+    Mercury = ("Mercury",)
+    Venus = ("Venus",)
+    Earth = ("Earth",)
+    Mars = ("Mars",)
+    Jupiter = ("Jupiter",)
+    Saturn = ("Saturn",)
+    Uranus = ("Uranus",)
     Neptune = "Neptune"
+
 
 class Planet(BaseModel):
     name: PlanetName
     mass: float
 
+
 class Planets(BaseModel):
     planets: list[Planet]
+
 
 async def main():
     project_client = AIProjectClient(
@@ -105,6 +108,7 @@ async def main():
             if msg.text_messages:
                 last_text = msg.text_messages[-1]
                 print(f"{msg.role}: {last_text.text.value}")
+
 
 if __name__ == "__main__":
     asyncio.run(main())

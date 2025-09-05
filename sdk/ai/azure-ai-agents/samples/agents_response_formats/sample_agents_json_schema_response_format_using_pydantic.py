@@ -38,18 +38,20 @@ from azure.ai.agents.models import (
 
 # Create the pydantic model to represent the planet names and there masses.
 class PlanetName(str, Enum):
-    Mercury = "Mercury",
-    Venus= "Venus",
-    Earth = "Earth",
-    Mars = "Mars",
-    Jupiter = "Jupiter",
-    Saturn = "Saturn",
-    Uranus = "Uranus",
+    Mercury = ("Mercury",)
+    Venus = ("Venus",)
+    Earth = ("Earth",)
+    Mars = ("Mars",)
+    Jupiter = ("Jupiter",)
+    Saturn = ("Saturn",)
+    Uranus = ("Uranus",)
     Neptune = "Neptune"
+
 
 class Planet(BaseModel):
     name: PlanetName
     mass: float
+
 
 class Planets(BaseModel):
     planets: list[Planet]
