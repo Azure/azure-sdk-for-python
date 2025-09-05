@@ -5,8 +5,9 @@
 
 """
 DESCRIPTION:
-    This sample demonstrates how to use agents with JSON schema output format.
-    It uses the Pydantic package to define the output JSON schema from Python classes.
+    This sample demonstrates how to use agents with JSON schema output format, using
+    an asynchronous client. It uses the Pydantic package to define the output JSON
+    schema from Python classes.
 
 USAGE:
     python sample_agents_json_schema_response_format_using_pydantic_async.py
