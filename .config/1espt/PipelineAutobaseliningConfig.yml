@@ -18,3 +18,12 @@ pipelines:
           lastModifiedDate: 2025-09-03
         spotbugs:
           lastModifiedDate: 2025-09-03
+  459:
+    usedNonDefaultBranch: true
+    retail:
+      source:
+        armory:
+          lastModifiedDate: 2025-09-05
+      binary:
+        binskim:
+          lastModifiedDate: 2025-09-05
