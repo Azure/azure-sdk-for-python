@@ -4,6 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import pytest
+import os
 
 from azure.ai.language.questionanswering.authoring.aio import AuthoringClient
 from azure.core.credentials import AzureKeyCredential
@@ -19,10 +20,16 @@ class TestCreateAndDeployAsync(QuestionAnsweringTestCase):
         client = AuthoringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
         assert client._config.polling_interval == 5
         # test override
-        client = AuthoringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]), polling_interval=1)
+        client = AuthoringClient(
+            qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]), polling_interval=1
+        )
         assert client._config.polling_interval == 1
 
     @pytest.mark.asyncio
+    @pytest.mark.skipif(
+        not all(os.getenv(v) for v in ["AZURE_TENANT_ID", "AZURE_CLIENT_ID", "AZURE_CLIENT_SECRET"]),
+        reason="Missing AAD env vars for DefaultAzureCredential",
+    )
     async def test_create_project_aad(self, recorded_test, qna_creds):
         token = self.get_credential(AuthoringClient, is_async=True)
         client = AuthoringClient(qna_creds["qna_endpoint"], token)
@@ -35,10 +42,9 @@ class TestCreateAndDeployAsync(QuestionAnsweringTestCase):
                 "description": "biography of Sir Issac Newton",
                 "language": "en",
                 "multilingualResource": True,
-                "settings": {
-                    "defaultAnswer": "no answer"
-                }
-            })
+                "settings": {"defaultAnswer": "no answer"},
+            },
+        )
 
         # list projects
         qna_projects = client.list_projects()
@@ -60,10 +66,9 @@ class TestCreateAndDeployAsync(QuestionAnsweringTestCase):
                 "description": "biography of Sir Issac Newton",
                 "language": "en",
                 "multilingualResource": True,
-                "settings": {
-                    "defaultAnswer": "no answer"
-                }
-            })
+                "settings": {"defaultAnswer": "no answer"},
+            },
+        )
 
         # list projects
         qna_projects = client.list_projects()
@@ -80,27 +85,20 @@ class TestCreateAndDeployAsync(QuestionAnsweringTestCase):
         # create deployable project
         project_name = "IssacNewton"
         await QnaAuthoringAsyncHelper.create_test_project(
-            client,
-            project_name=project_name,
-            is_deployable=True,
-            **self.kwargs_for_polling
+            client, project_name=project_name, is_deployable=True, **self.kwargs_for_polling
         )
 
         # test deploy
         deployment_name = "production"
         deployment_poller = await client.begin_deploy_project(
-            project_name=project_name,
-            deployment_name=deployment_name,
-            **self.kwargs_for_polling
+            project_name=project_name, deployment_name=deployment_name, **self.kwargs_for_polling
         )
         project = await deployment_poller.result()
         assert project["lastDeployedDateTime"]
         assert project["deploymentName"] == "production"
 
         # assert
-        deployments = client.list_deployments(
-            project_name=project_name
-        )
+        deployments = client.list_deployments(project_name=project_name)
         deployment_found = False
         async for d in deployments:
             if ("deploymentName" in d) and d["deploymentName"] == deployment_name:

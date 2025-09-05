@@ -35,18 +35,15 @@ async def sample_chit_chat():
 
     client = QuestionAnsweringClient(endpoint, AzureKeyCredential(key))
     async with client:
-        first_question="How long should my Surface battery last?"
+        first_question = "How long should my Surface battery last?"
         output = await client.get_answers(
             question=first_question,
             top=3,
             confidence_threshold=0.2,
             include_unstructured_sources=True,
-            short_answer_options=qna.ShortAnswerOptions(
-                confidence_threshold=0.2,
-                top=1
-            ),
+            short_answer_options=qna.ShortAnswerOptions(confidence_threshold=0.2, top=1),
             project_name=knowledge_base_project,
-            deployment_name="test"
+            deployment_name="test",
         )
         if output.answers:
             best_candidate = [a for a in output.answers if a.confidence and a.confidence > 0.7][0]
@@ -64,25 +61,21 @@ async def sample_chit_chat():
                 top=3,
                 confidence_threshold=0.2,
                 answer_context=qna.KnowledgeBaseAnswerContext(
-                    previous_question=first_question,
-                    previous_qna_id=best_candidate.qna_id
+                    previous_question=first_question, previous_qna_id=best_candidate.qna_id
                 ),
-                short_answer_options=qna.ShortAnswerOptions(
-                    confidence_threshold=0.2,
-                    top=1
-                ),
+                short_answer_options=qna.ShortAnswerOptions(confidence_threshold=0.2, top=1),
                 include_unstructured_sources=True,
                 project_name=knowledge_base_project,
-                deployment_name="test"
+                deployment_name="test",
             )
             if output.answers:
-                print(u"Q: {}".format(followup_question))
-                print(u"A: {}".format(output.answers[0].answer))
+                print("Q: {}".format(followup_question))
+                print("A: {}".format(output.answers[0].answer))
             else:
                 print(f"No answers returned from question '{followup_question}'")
 
     # [END chit_chat_async]
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(sample_chit_chat())

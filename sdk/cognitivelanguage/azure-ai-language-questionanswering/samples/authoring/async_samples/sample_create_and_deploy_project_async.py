@@ -20,6 +20,7 @@ USAGE:
 
 import asyncio
 
+
 async def sample_create_and_deploy_project_async():
     # [START create_and_deploy_project]
     import os
@@ -42,10 +43,9 @@ async def sample_create_and_deploy_project_async():
                 "description": "biography of Sir Issac Newton",
                 "language": "en",
                 "multilingualResource": True,
-                "settings": {
-                    "defaultAnswer": "no answer"
-                }
-            })
+                "settings": {"defaultAnswer": "no answer"},
+            },
+        )
 
         print("view created project info:")
         print("\tname: {}".format(project["projectName"]))
@@ -70,10 +70,10 @@ async def sample_create_and_deploy_project_async():
                     "value": {
                         "displayName": "Issac Newton Bio",
                         "sourceUri": "https://wikipedia.org/wiki/Isaac_Newton",
-                        "sourceKind": "url"
-                    }
+                        "sourceKind": "url",
+                    },
                 }
-            ]
+            ],
         )
         sources = await update_sources_poller.result()
 
@@ -86,17 +86,12 @@ async def sample_create_and_deploy_project_async():
             print("\tsource kind: {}".format(source["sourceKind"]))
 
         # deploy project
-        deployment_poller = await client.begin_deploy_project(
-            project_name=project_name,
-            deployment_name="production"
-        )
+        deployment_poller = await client.begin_deploy_project(project_name=project_name, deployment_name="production")
         deployment = await deployment_poller.result()
         print(f"Deployment successfully created under {deployment['deploymentName']}.")
 
         # list all deployments
-        deployments = client.list_deployments(
-            project_name=project_name
-        )
+        deployments = client.list_deployments(project_name=project_name)
 
         print("view project deployments")
         async for d in deployments:
@@ -104,6 +99,7 @@ async def sample_create_and_deploy_project_async():
 
     # [END create_and_deploy_project]
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     loop = asyncio.get_event_loop()
     loop.run_until_complete(sample_create_and_deploy_project_async())

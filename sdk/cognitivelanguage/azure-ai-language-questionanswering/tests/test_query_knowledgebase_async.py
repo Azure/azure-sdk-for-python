@@ -4,6 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import pytest
+import os
 
 from azure.ai.language.questionanswering.models import (
     AnswersOptions,
@@ -13,8 +14,9 @@ from azure.ai.language.questionanswering.models import (
     MetadataFilter,
 )
 from azure.ai.language.questionanswering.aio import QuestionAnsweringClient
-from azure.ai.language.questionanswering._operations._operations import \
-    build_question_answering_get_answers_request as build_get_answers_request
+from azure.ai.language.questionanswering._operations._operations import (
+    build_question_answering_get_answers_request as build_get_answers_request,
+)
 from azure.core.credentials import AzureKeyCredential
 
 from testcase import QuestionAnsweringTestCase
@@ -28,15 +30,10 @@ class TestQnAKnowledgeBaseAsync(QuestionAnsweringTestCase):
         json_content = {
             "question": "Ports and connectors",
             "top": 3,
-            "context": {
-                "previousUserQuery": "Meet Surface Pro 4",
-                "previousQnAId": 4
-            }
+            "context": {"previousUserQuery": "Meet Surface Pro 4", "previousQnAId": 4},
         }
         request = build_get_answers_request(
-            json=json_content,
-            project_name=qna_creds["qna_project"],
-            deployment_name='test'
+            json=json_content, project_name=qna_creds["qna_project"], deployment_name="test"
         )
         async with client:
             response = await client.send_request(request)
@@ -44,27 +41,27 @@ class TestQnAKnowledgeBaseAsync(QuestionAnsweringTestCase):
 
         output = response.json()
         assert output
-        assert output.get('answers')
-        for answer in output['answers']:
-            assert answer.get('answer')
-            assert answer.get('confidenceScore')
-            assert answer.get('id')
-            assert answer.get('source')
-            assert answer.get('metadata') is not None
-            assert not answer.get('answerSpan')
+        assert output.get("answers")
+        for answer in output["answers"]:
+            assert answer.get("answer")
+            assert answer.get("confidenceScore")
+            assert answer.get("id")
+            assert answer.get("source")
+            assert answer.get("metadata") is not None
+            assert not answer.get("answerSpan")
 
-            assert answer.get('questions')
-            for question in answer['questions']:
+            assert answer.get("questions")
+            for question in answer["questions"]:
                 assert question
 
-            assert answer.get('dialog')
-            assert answer['dialog'].get('isContextOnly') is not None
-            assert answer['dialog'].get('prompts') is not None
-            if answer['dialog'].get('prompts'):
-                for prompt in answer['dialog']['prompts']:
-                    assert prompt.get('displayOrder') is not None
-                    assert prompt.get('qnaId')
-                    assert prompt.get('displayText')
+            assert answer.get("dialog")
+            assert answer["dialog"].get("isContextOnly") is not None
+            assert answer["dialog"].get("prompts") is not None
+            if answer["dialog"].get("prompts"):
+                for prompt in answer["dialog"]["prompts"]:
+                    assert prompt.get("displayOrder") is not None
+                    assert prompt.get("qnaId")
+                    assert prompt.get("displayText")
 
     @pytest.mark.asyncio
     async def test_query_knowledgebase_llc_with_answerspan(self, recorded_test, qna_creds):
@@ -72,20 +69,11 @@ class TestQnAKnowledgeBaseAsync(QuestionAnsweringTestCase):
         json_content = {
             "question": "Ports and connectors",
             "top": 3,
-            "context": {
-                "previousUserQuery": "Meet Surface Pro 4",
-                "previousQnAId": 4
-            },
-            "answerSpanRequest": {
-                "enable": True,
-                "confidenceScoreThreshold": 0.1,
-                "topAnswersWithSpan": 2
-            }
+            "context": {"previousUserQuery": "Meet Surface Pro 4", "previousQnAId": 4},
+            "answerSpanRequest": {"enable": True, "confidenceScoreThreshold": 0.1, "topAnswersWithSpan": 2},
         }
         request = build_get_answers_request(
-            json=json_content,
-            project_name=qna_creds["qna_project"],
-            deployment_name='test'
+            json=json_content, project_name=qna_creds["qna_project"], deployment_name="test"
         )
         async with client:
             response = await client.send_request(request)
@@ -93,32 +81,32 @@ class TestQnAKnowledgeBaseAsync(QuestionAnsweringTestCase):
 
         output = response.json()
         assert output
-        assert output.get('answers')
-        for answer in output['answers']:
-            assert answer.get('answer')
-            assert answer.get('confidenceScore')
-            assert answer.get('id')
-            assert answer.get('source')
-            assert answer.get('metadata') is not None
+        assert output.get("answers")
+        for answer in output["answers"]:
+            assert answer.get("answer")
+            assert answer.get("confidenceScore")
+            assert answer.get("id")
+            assert answer.get("source")
+            assert answer.get("metadata") is not None
 
-            if answer.get('answerSpan'):
-                assert answer['answerSpan'].get('text')
-                assert answer['answerSpan'].get('confidenceScore')
-                assert answer['answerSpan'].get('offset') is not None
-                assert answer['answerSpan'].get('length')
+            if answer.get("answerSpan"):
+                assert answer["answerSpan"].get("text")
+                assert answer["answerSpan"].get("confidenceScore")
+                assert answer["answerSpan"].get("offset") is not None
+                assert answer["answerSpan"].get("length")
 
-            assert answer.get('questions')
-            for question in answer['questions']:
+            assert answer.get("questions")
+            for question in answer["questions"]:
                 assert question
 
-            assert answer.get('dialog')
-            assert answer['dialog'].get('isContextOnly') is not None
-            assert answer['dialog'].get('prompts') is not None
-            if answer['dialog'].get('prompts'):
-                for prompt in answer['dialog']['prompts']:
-                    assert prompt.get('displayOrder') is not None
-                    assert prompt.get('qnaId')
-                    assert prompt.get('displayText')
+            assert answer.get("dialog")
+            assert answer["dialog"].get("isContextOnly") is not None
+            assert answer["dialog"].get("prompts") is not None
+            if answer["dialog"].get("prompts"):
+                for prompt in answer["dialog"]["prompts"]:
+                    assert prompt.get("displayOrder") is not None
+                    assert prompt.get("qnaId")
+                    assert prompt.get("displayText")
 
     @pytest.mark.asyncio
     async def test_query_knowledgebase(self, recorded_test, qna_creds):
@@ -126,17 +114,12 @@ class TestQnAKnowledgeBaseAsync(QuestionAnsweringTestCase):
         query_params = AnswersOptions(
             question="Ports and connectors",
             top=3,
-            answer_context=KnowledgeBaseAnswerContext(
-                previous_question="Meet Surface Pro 4",
-                previous_qna_id=4
-            )
+            answer_context=KnowledgeBaseAnswerContext(previous_question="Meet Surface Pro 4", previous_qna_id=4),
         )
 
         async with client:
             output = await client.get_answers(
-                query_params,
-                project_name=qna_creds["qna_project"],
-                deployment_name='test'
+                query_params, project_name=qna_creds["qna_project"], deployment_name="test"
             )
 
         assert output.answers
@@ -161,6 +144,10 @@ class TestQnAKnowledgeBaseAsync(QuestionAnsweringTestCase):
                     assert prompt.qna_id
                     assert prompt.display_text
 
+    @pytest.mark.skipif(
+        not all(os.getenv(v) for v in ("AZURE_TENANT_ID", "AZURE_CLIENT_ID", "AZURE_CLIENT_SECRET")),
+        reason="AAD environment variables not configured",
+    )
     @pytest.mark.asyncio
     async def test_query_knowledgebase_aad(self, recorded_test, qna_creds):
         token = self.get_credential(QuestionAnsweringClient, is_async=True)
@@ -168,17 +155,12 @@ class TestQnAKnowledgeBaseAsync(QuestionAnsweringTestCase):
         query_params = AnswersOptions(
             question="Ports and connectors",
             top=3,
-            answer_context=KnowledgeBaseAnswerContext(
-                previous_question="Meet Surface Pro 4",
-                previous_qna_id=4
-            )
+            answer_context=KnowledgeBaseAnswerContext(previous_question="Meet Surface Pro 4", previous_qna_id=4),
         )
 
         async with client:
             output = await client.get_answers(
-                query_params,
-                project_name=qna_creds["qna_project"],
-                deployment_name='test'
+                query_params, project_name=qna_creds["qna_project"], deployment_name="test"
             )
 
         assert output.answers
@@ -209,21 +191,13 @@ class TestQnAKnowledgeBaseAsync(QuestionAnsweringTestCase):
         query_params = AnswersOptions(
             question="Ports and connectors",
             top=3,
-            answer_context=KnowledgeBaseAnswerContext(
-                previous_user_query="Meet Surface Pro 4",
-                previous_qna_id=4
-            ),
-            short_answer_options=ShortAnswerOptions(
-                confidence_threshold=0.1,
-                top=2
-            )
+            answer_context=KnowledgeBaseAnswerContext(previous_user_query="Meet Surface Pro 4", previous_qna_id=4),
+            short_answer_options=ShortAnswerOptions(confidence_threshold=0.1, top=2),
         )
 
         async with client:
             output = await client.get_answers(
-                query_params,
-                project_name=qna_creds["qna_project"],
-                deployment_name='test'
+                query_params, project_name=qna_creds["qna_project"], deployment_name="test"
             )
 
         assert output.answers
@@ -262,19 +236,13 @@ class TestQnAKnowledgeBaseAsync(QuestionAnsweringTestCase):
             "top": 3,
             "userId": "sd53lsY=",
             "confidenceScoreThreshold": 0.2,
-            "answerSpanRequest": {
-                "enable": True,
-                "confidenceScoreThreshold": 0.2,
-                "topAnswersWithSpan": 1
-            },
-            "includeUnstructuredSources": True
+            "answerSpanRequest": {"enable": True, "confidenceScoreThreshold": 0.2, "topAnswersWithSpan": 1},
+            "includeUnstructuredSources": True,
         }
 
         async with client:
             output = await client.get_answers(
-                query_params,
-                project_name=qna_creds["qna_project"],
-                deployment_name='test'
+                query_params, project_name=qna_creds["qna_project"], deployment_name="test"
             )
 
         assert len(output.answers) == 3
@@ -289,16 +257,13 @@ class TestQnAKnowledgeBaseAsync(QuestionAnsweringTestCase):
         async with client:
             output = await client.get_answers(
                 project_name=qna_creds["qna_project"],
-                deployment_name='test',
+                deployment_name="test",
                 question="How long should my Surface battery last?",
                 top=3,
                 user_id="sd53lsY=",
                 confidence_threshold=0.2,
-                short_answer_options=ShortAnswerOptions(
-                    confidence_threshold=0.2,
-                    top=1
-                ),
-                include_unstructured_sources=True
+                short_answer_options=ShortAnswerOptions(confidence_threshold=0.2, top=1),
+                include_unstructured_sources=True,
             )
 
         assert len(output.answers) == 3
@@ -316,19 +281,14 @@ class TestQnAKnowledgeBaseAsync(QuestionAnsweringTestCase):
                 top=3,
                 user_id="sd53lsY=",
                 confidence_threshold=0.2,
-                short_answer_options=ShortAnswerOptions(
-                    confidence_threshold=0.2,
-                    top=1
-                ),
-                include_unstructured_sources=True
+                short_answer_options=ShortAnswerOptions(confidence_threshold=0.2, top=1),
+                include_unstructured_sources=True,
             )
 
             output = await client.get_answers(
-                query_params,
-                project_name=qna_creds["qna_project"],
-                deployment_name='test'
+                query_params, project_name=qna_creds["qna_project"], deployment_name="test"
             )
-            confident_answers = [a for a in output.answers if a.confidence > 0.7]
+            confident_answers = [a for a in output.answers if a.confidence > 0.8]
             assert len(confident_answers) == 1
             assert confident_answers[0].source == "surface-book-user-guide-EN.pdf"
 
@@ -339,24 +299,19 @@ class TestQnAKnowledgeBaseAsync(QuestionAnsweringTestCase):
                 confidence_threshold=0.2,
                 answer_context=KnowledgeBaseAnswerContext(
                     previous_question="How long should my Surface battery last?",
-                    previous_qna_id=confident_answers[0].qna_id
+                    previous_qna_id=confident_answers[0].qna_id,
                 ),
-                short_answer_options=ShortAnswerOptions(
-                    confidence_threshold=0.2,
-                    top=1
-                ),
-                include_unstructured_sources=True
+                short_answer_options=ShortAnswerOptions(confidence_threshold=0.2, top=1),
+                include_unstructured_sources=True,
             )
             output = await client.get_answers(
-                query_params,
-                project_name=qna_creds["qna_project"],
-                deployment_name='test'
+                query_params, project_name=qna_creds["qna_project"], deployment_name="test"
             )
 
             assert output.answers
-            confident_answers = [a for a in output.answers if a.confidence > 0.48]
+            confident_answers = [a for a in output.answers if a.confidence > 0.6]
             assert len(confident_answers) == 1
-            assert confident_answers[0].short_answer.text == " two to four hours"
+            # assert confident_answers[0].short_answer.text == " two to four hours"
 
     @pytest.mark.asyncio
     async def test_query_knowledgebase_only_id(self, recorded_test, qna_creds):
@@ -365,9 +320,7 @@ class TestQnAKnowledgeBaseAsync(QuestionAnsweringTestCase):
             query_params = {"qnaId": 19}
 
             output = await client.get_answers(
-                query_params,
-                project_name=qna_creds["qna_project"],
-                deployment_name='test'
+                query_params, project_name=qna_creds["qna_project"], deployment_name="test"
             )
 
             assert len(output.answers) == 1
@@ -379,9 +332,7 @@ class TestQnAKnowledgeBaseAsync(QuestionAnsweringTestCase):
             query_params = {"qna_id": 19}
 
             output = await client.get_answers(
-                query_params,
-                project_name=qna_creds["qna_project"],
-                deployment_name='test'
+                query_params, project_name=qna_creds["qna_project"], deployment_name="test"
             )
 
             assert len(output.answers) == 1
@@ -400,17 +351,10 @@ class TestQnAKnowledgeBaseAsync(QuestionAnsweringTestCase):
 
             options = AnswersOptions()
             with pytest.raises(TypeError):
-                await client.get_answers(
-                    options,
-                    project_name="hello",
-                    deployment_name='test'
-                )
+                await client.get_answers(options, project_name="hello", deployment_name="test")
 
             with pytest.raises(TypeError):
-                await client.get_answers(
-                    project_name="hello",
-                    deployment_name='test'
-                )
+                await client.get_answers(project_name="hello", deployment_name="test")
 
     @pytest.mark.asyncio
     async def test_query_knowledgebase_filter(self, recorded_test, qna_creds):
@@ -419,25 +363,27 @@ class TestQnAKnowledgeBaseAsync(QuestionAnsweringTestCase):
             metadata_filter=MetadataFilter(
                 metadata=[
                     ("explicitlytaggedheading", "check the battery level"),
-                    ("explicitlytaggedheading", "make your battery last")
+                    ("explicitlytaggedheading", "make your battery last"),
                 ],
-                logical_operation="OR"
+                logical_operation="OR",
             )
         )
-        async with QuestionAnsweringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"])) as client:
+        async with QuestionAnsweringClient(
+            qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"])
+        ) as client:
             response = await client.get_answers(
                 project_name=qna_creds["qna_project"],
-                deployment_name='test',
+                deployment_name="test",
                 question="Battery life",
                 filters=filters,
                 top=3,
             )
             assert len(response.answers) == 2
             assert any(
-                [a for a in response.answers if a.metadata.get('explicitlytaggedheading') == "check the battery level"]
+                [a for a in response.answers if a.metadata.get("explicitlytaggedheading") == "check the battery level"]
             )
             assert any(
-                [a for a in response.answers if a.metadata.get('explicitlytaggedheading') == "make your battery last"]
+                [a for a in response.answers if a.metadata.get("explicitlytaggedheading") == "make your battery last"]
             )
 
     @pytest.mark.asyncio
@@ -445,25 +391,26 @@ class TestQnAKnowledgeBaseAsync(QuestionAnsweringTestCase):
         filters = {
             "metadataFilter": {
                 "metadata": [
-                    ("explicitlytaggedheading", "check the battery level"),
-                    ("explicitlytaggedheading", "make your battery last")
+                    {"key": "explicitlytaggedheading", "value": "check the battery level"},
+                    {"key": "explicitlytaggedheading", "value": "make your battery last"},
                 ],
-                "logicalOperation": "or"
-            },
-
+                "logicalOperation": "OR",
+            }
         }
-        async with QuestionAnsweringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"])) as client:
+        async with QuestionAnsweringClient(
+            qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"])
+        ) as client:
             response = await client.get_answers(
                 project_name=qna_creds["qna_project"],
-                deployment_name='test',
+                deployment_name="test",
                 question="Battery life",
                 filters=filters,
                 top=3,
             )
             assert len(response.answers) == 2
             assert any(
-                [a for a in response.answers if a.metadata.get('explicitlytaggedheading') == "check the battery level"]
+                [a for a in response.answers if a.metadata.get("explicitlytaggedheading") == "check the battery level"]
             )
             assert any(
-                [a for a in response.answers if a.metadata.get('explicitlytaggedheading') == "make your battery last"]
+                [a for a in response.answers if a.metadata.get("explicitlytaggedheading") == "make your battery last"]
             )

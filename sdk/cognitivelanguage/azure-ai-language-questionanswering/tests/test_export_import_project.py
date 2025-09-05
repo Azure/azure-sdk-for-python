@@ -20,11 +20,7 @@ class TestExportAndImport(QuestionAnsweringTestCase):
         QnaAuthoringHelper.create_test_project(client, project_name=project_name, **self.kwargs_for_polling)
 
         # export project
-        export_poller = client.begin_export(
-            project_name=project_name,
-            file_format="json",
-            **self.kwargs_for_polling
-        )
+        export_poller = client.begin_export(project_name=project_name, file_format="json", **self.kwargs_for_polling)
         result = export_poller.result()
         assert result["status"] == "succeeded"
         assert result["resultUrl"] is not None
@@ -35,11 +31,7 @@ class TestExportAndImport(QuestionAnsweringTestCase):
         # create project
         project_name = "IssacNewton"
         export_url = QnaAuthoringHelper.create_test_project(
-            client,
-            project_name=project_name,
-            get_export_url=True,
-            delete_old_project=True,
-            **self.kwargs_for_polling
+            client, project_name=project_name, get_export_url=True, delete_old_project=True, **self.kwargs_for_polling
         )
 
         # import project
@@ -49,15 +41,11 @@ class TestExportAndImport(QuestionAnsweringTestCase):
                 "Description": "biography of Sir Issac Newton",
                 "Language": "en",
                 "MultilingualResource": False,
-                "Settings": {
-                    "DefaultAnswer": "no answer"
-                }
+                "Settings": {"DefaultAnswer": "no answer"},
             }
         }
         import_poller = client.begin_import_assets(
-            project_name=project_name,
-            options=project,
-            **self.kwargs_for_polling
+            project_name=project_name, options=project, **self.kwargs_for_polling
         )
         job_state = import_poller.result()
         assert job_state["jobId"]

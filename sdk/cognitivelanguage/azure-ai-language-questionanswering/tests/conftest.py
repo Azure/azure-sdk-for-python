@@ -9,7 +9,7 @@ import pytest
 from devtools_testutils.sanitizers import (
     add_header_regex_sanitizer,
     add_oauth_response_sanitizer,
-    remove_batch_sanitizers
+    remove_batch_sanitizers,
 )
 
 
@@ -38,7 +38,7 @@ def add_sanitizers(test_proxy, environment_variables):
         ENV_SUBSCRIPTION_ID: TEST_ID,
         ENV_TENANT_ID: TEST_ID,
         ENV_CLIENT_ID: TEST_ID,
-        ENV_CLIENT_SECRET: TEST_ID
+        ENV_CLIENT_SECRET: TEST_ID,
     }
     environment_variables.sanitize_batch(sanitization_mapping)
     add_oauth_response_sanitizer()
@@ -54,5 +54,5 @@ def qna_creds(environment_variables):
     yield {
         "qna_endpoint": environment_variables.get(ENV_ENDPOINT),
         "qna_key": environment_variables.get(ENV_KEY),
-        "qna_project": environment_variables.get(ENV_PROJECT)
+        "qna_project": environment_variables.get(ENV_PROJECT),
     }
