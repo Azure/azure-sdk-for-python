@@ -45,7 +45,6 @@ from .exceptions import CosmosHttpResponseError
 from .http_constants import HttpHeaders, StatusCodes, SubStatusCodes, ResourceType
 from ._cosmos_http_logging_policy import _log_diagnostics_error
 
-
 # pylint: disable=protected-access, disable=too-many-lines, disable=too-many-statements, disable=too-many-branches
 
 # args [0] is the request object
@@ -66,8 +65,16 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
     :rtype: tuple of (dict, dict)
     """
     # Capture the client timeout and start time at the beginning
-    client_timeout = kwargs.get('timeout')
-    operation_start_time = time.time()
+    timeout = kwargs.get('timeout')
+    operation_start_time = kwargs.get("operation_start_time")
+    print(f"_retry_utility: operation_start_time from kwargs is {operation_start_time}")
+    if args:
+        request = args[0]
+        resource_type = request.headers.get('x-ms-thinclient-proxy-resource-type')
+        operation_type = request.headers.get('x-ms-thinclient-proxy-operation-type')
+        print(f"_retry_utility_: in the top Execute method: resource_type is {resource_type}, operation_type is {operation_type}")
+
+    # operation_start_time = time.time()
 
     pk_range_wrapper = None
     if args and global_endpoint_manager.is_circuit_breaker_applicable(args[0]):
@@ -117,23 +124,25 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
     while True:
         start_time = time.time()
         # Check timeout before executing function
-        if client_timeout:
+        if timeout:
             elapsed = time.time() - operation_start_time
-            if elapsed >= client_timeout:
+            if elapsed >= timeout:
+                print(f"_retry_utility throwing exception elapsed time is {elapsed} and timeout is {timeout}")
                 raise exceptions.CosmosClientTimeoutError()
             # Update timeout for this attempt
-            kwargs['timeout'] = client_timeout - elapsed
+            kwargs['timeout'] = timeout - elapsed
 
         try:
             if args:
                 result = ExecuteFunction(function, global_endpoint_manager, *args, **kwargs)
                 global_endpoint_manager.record_success(args[0])
             else:
-                result = ExecuteFunction(function, *args, **kwargs)
+                result = ExecuteFunction(function )
             # Check timeout after successful execution
-            if client_timeout:
+            if timeout:
                 elapsed = time.time() - operation_start_time
-                if elapsed >= client_timeout:
+                if elapsed >= timeout:
+                    print(f"_retry_utility throwing exception elapsed time is {elapsed} and timeout is {timeout}")
                     raise exceptions.CosmosClientTimeoutError()
 
             if not client.last_response_headers:
@@ -176,11 +185,12 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
 
             return result
         except (exceptions.CosmosHttpResponseError, ServiceRequestError, ServiceResponseError) as e:
-            if client_timeout:
+            if timeout:
                 elapsed = time.time() - operation_start_time
-                if elapsed >= client_timeout:
+                if elapsed >= timeout:
+                    print(f"_retry_utility throwing exception elapsed time is {elapsed} and timeout is {timeout}")
                     raise exceptions.CosmosClientTimeoutError()
-                kwargs['timeout'] = client_timeout - elapsed
+                kwargs['timeout'] = timeout - elapsed
             if isinstance(e, exceptions.CosmosHttpResponseError):
                 if request:
                     # update session token for relevant operations
@@ -356,6 +366,7 @@ class ConnectionRetryPolicy(RetryPolicy):
         :raises ~azure.cosmos.exceptions.CosmosClientTimeoutError: Specified timeout exceeded.
         :raises ~azure.core.exceptions.ClientAuthenticationError: Authentication failed.
         """
+
         absolute_timeout = request.context.options.pop('timeout', None)
         per_request_timeout = request.context.options.pop('connection_timeout', 0)
         request_params = request.context.options.pop('request_params', None)

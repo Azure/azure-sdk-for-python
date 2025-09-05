@@ -112,6 +112,8 @@ def build_options(kwargs: Dict[str, Any]) -> Dict[str, Any]:
             options[value] = kwargs.pop(key)
     if 'read_timeout' in kwargs:
         options['read_timeout'] = kwargs['read_timeout']
+
+    options['operation_start_time'] = time.time()
     if_match, if_none_match = _get_match_headers(kwargs)
     if if_match:
         options['accessCondition'] = {'type': 'IfMatch', 'condition': if_match}

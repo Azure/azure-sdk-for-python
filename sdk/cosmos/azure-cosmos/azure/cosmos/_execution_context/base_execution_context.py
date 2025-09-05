@@ -132,7 +132,7 @@ class _QueryExecutionContextBase(object):
         def callback():
             return self._fetch_items_helper_no_retries(fetch_function)
 
-        return _retry_utility.Execute(self._client, self._client._global_endpoint_manager, callback)
+        return _retry_utility.Execute(self._client, self._client._global_endpoint_manager, callback, **self._options)
 
     next = __next__  # Python 2 compatibility.
 

@@ -81,7 +81,7 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
 
     """
     # pylint: disable=protected-access
-
+    kwargs.pop('operation_start_time', None)
     connection_timeout = connection_policy.RequestTimeout
     connection_timeout = kwargs.pop("connection_timeout", connection_timeout)
     read_timeout = connection_policy.ReadTimeout

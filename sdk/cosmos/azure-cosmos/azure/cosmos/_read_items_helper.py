@@ -74,7 +74,6 @@ class ReadItemsHelperSync:
         if self.timeout:
             # Add to options for query iterator to use
             self.options['timeout'] = self.timeout
-            self.options['operation_start_time'] = time.time()
 
         if not self.items:
             return CosmosList([], response_headers=CaseInsensitiveDict())

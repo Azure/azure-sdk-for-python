@@ -1335,7 +1335,7 @@ class TestCRUDOperations(unittest.TestCase):
         ).get_container_client(created_container.id)
 
         start_time = time.time()
-
+        print(f"\n\n********************GOING TO BEGIN THE  TEST*****************************************")
         with self.assertRaises(exceptions.CosmosClientTimeoutError):
             # This should timeout because multiple partition requests * 2s delay > 5s timeout
             list(container_with_delay.read_items(
@@ -1348,6 +1348,9 @@ class TestCRUDOperations(unittest.TestCase):
         # Should fail close to 5 seconds (not wait for all requests)
         self.assertLess(elapsed_time, 7)  # Allow some overhead
         self.assertGreater(elapsed_time, 5)  # Should wait at least close to timeout
+
+
+
 
     def test_timeout_applies_per_page_request(self):
         """Test that timeout applies to each individual page request, not cumulatively"""

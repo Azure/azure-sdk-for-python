@@ -22,6 +22,7 @@
 """Create, read, update and delete items in the Azure Cosmos DB SQL API service.
 """
 import threading
+import time
 import warnings
 from concurrent.futures.thread import ThreadPoolExecutor
 from datetime import datetime
@@ -111,6 +112,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         kwargs = {}
         if options and "excludedLocations" in options:
             kwargs['excluded_locations'] = options['excludedLocations']
+        if options and "operation_start_time" in options:
+            kwargs['operation_start_time'] = options['operation_start_time']
         return self._get_properties(**kwargs)
 
     def _get_properties(self, **kwargs: Any) -> Dict[str, Any]:

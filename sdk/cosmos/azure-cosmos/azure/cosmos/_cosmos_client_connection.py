@@ -3151,6 +3151,11 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             # we need to set read_timeout in kwargs as thats where it is looked at while sending the request
             kwargs.setdefault("read_timeout", read_timeout)
 
+        operation_start_time = options.get("operation_start_time")
+        if operation_start_time is not None:
+            # we need to set operation_state in kwargs as thats where it is looked at while sending the request
+            kwargs.setdefault("operation_start_time", operation_start_time)
+
         if query:
             __GetBodiesFromQueryResult = result_fn
         else:
@@ -3330,8 +3335,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             "contentType": runtime_constants.MediaTypes.Json,
             "isQueryPlanRequest": True,
             "supportedQueryFeatures": supported_query_features,
-            "queryVersion": http_constants.Versions.QueryVersion,
-            "read_timeout" : kwargs.pop("read_timeout", None)
+            "queryVersion": http_constants.Versions.QueryVersion
         }
         if excluded_locations is not None:
             options["excludedLocations"] = excluded_locations

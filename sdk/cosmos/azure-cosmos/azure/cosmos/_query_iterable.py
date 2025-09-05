@@ -74,10 +74,10 @@ class QueryIterable(PageIterator):
         if continuation_token:
             options['continuation'] = continuation_token
         # Capture timeout and start time
-        self._client_timeout = options.get('timeout')
+        self.timeout = options.get('timeout')
         # Use passed start time if available, otherwise use current time
         self.operation_start_time = options.get('operation_start_time') or (
-            time.time() if self._client_timeout else None)
+            time.time() if self.timeout else None)
         self._fetch_function = fetch_function
         self._collection_link = collection_link
         self._database_link = database_link
@@ -106,25 +106,24 @@ class QueryIterable(PageIterator):
         :return: List of results.
         :rtype: list
         """
+        # print(f"_query_iterable operation_start_time  is {self.operation_start_time}")
         # Check timeout before fetching next block
-        if self._client_timeout:
+        if self.timeout:
             elapsed = time.time() - self.operation_start_time
-            if elapsed >= self._client_timeout:
+            if elapsed >= self.timeout:
+                print(f"_query_iterable throwing exception elapsed time is {elapsed} and timeout is {self.timeout}")
                 raise exceptions.CosmosClientTimeoutError()
 
             # Update remaining timeout for this request
-            remaining_timeout = self._client_timeout - elapsed
+            remaining_timeout = self.timeout - elapsed
             if remaining_timeout <= 0:
                 raise exceptions.CosmosClientTimeoutError()
 
             # Update options with remaining timeout
             self._options['timeout'] = remaining_timeout
         block = self._ex_context.fetch_next_block()
-        # Check timeout after fetching block
-        if self._client_timeout:
-            elapsed = time.time() - self.operation_start_time
-            if elapsed >= self._client_timeout:
-                raise exceptions.CosmosClientTimeoutError()
+        print(f"_query_iterable fetched block of size {len(block)}")
+
         if not block:
             raise StopIteration
         return block
