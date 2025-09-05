@@ -522,6 +522,9 @@ class RunsOperations(RunsOperationsGenerated):
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
+        :keyword run_handler: Optional handler to customize run processing and tool execution.
+            Default value is None.
+        :paramtype run_handler: ~azure.ai.agents.models.RunHandler
         :keyword polling_interval: The time in seconds to wait between polling the service for run status.
             Default value is 1.
         :paramtype polling_interval: int

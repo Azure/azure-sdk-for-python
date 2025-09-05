@@ -1958,7 +1958,7 @@ class RunHandler:
         :type tool_call: RequiredFunctionToolCall
         :param tool_call_details: Function arguments/details object.
         :type tool_call_details: RequiredFunctionToolCallDetails
-        :keyword kwargs: Additional keyword arguments for extensibility.
+        :paramtype kwargs: Additional keyword arguments for extensibility.
         :return: Stringified result to send back to the service, or ``None`` to delegate to auto function calling.
         :rtype: Optional[Any]
         """
@@ -1980,7 +1980,7 @@ class RunHandler:
         :type run: ThreadRun
         :param tool_call: The MCP tool call requiring approval.
         :type tool_call: RequiredMcpToolCall
-        :keyword kwargs: Additional keyword arguments for extensibility.
+        :paramtype kwargs: Additional keyword arguments for extensibility.
         :return: A populated ``ToolApproval`` instance on approval, or ``None`` to decline.
         :rtype: Optional[ToolApproval]
         """
