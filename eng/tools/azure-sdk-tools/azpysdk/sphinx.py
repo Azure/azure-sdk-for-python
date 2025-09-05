@@ -139,7 +139,7 @@ def sphinx_apidoc(output_dir: str, target_dir: str, namespace: str) -> int:
             "-o",
             os.path.join(output_dir, "docgen"),   # This is the output folder
             os.path.join(target_dir, ""),         # This is the input folder
-            os.path.join(target_dir, "test*"),    # Starting here this, is excluded
+            os.path.join(target_dir, "test*"),    # This argument and below are "exclude" directory arguments
             os.path.join(target_dir, "example*"),
             os.path.join(target_dir, "sample*"),
             os.path.join(target_dir, "setup.py"),
