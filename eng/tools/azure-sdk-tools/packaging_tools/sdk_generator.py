@@ -34,7 +34,6 @@ from .generate_utils import (
     dpg_relative_folder,
     gen_typespec,
     return_origin_path,
-    check_api_version_in_subfolder,
     call_build_config,
     del_outdated_generated_files,
 )
