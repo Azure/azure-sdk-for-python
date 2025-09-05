@@ -22,7 +22,7 @@ from ..._utils.model_base import _deserialize
 from ...models import (
     AssignedDeploymentResource,
     AssignDeploymentResourcesDetails,
-    AsyncJobsPollingMethod,
+    _AsyncJobsPollingMethod,
     CopyProjectDetails,
     CopyProjectState,
     DeploymentResourcesState,
@@ -428,7 +428,7 @@ class ProjectOperations(ProjectOperationsGenerated):
         if polling is True:
             polling_method: AsyncPollingMethod = cast(
                 AsyncPollingMethod,
-                AsyncJobsPollingMethod(
+                _AsyncJobsPollingMethod(
                     polling_interval=lro_delay,
                     path_format_arguments=path_format_arguments,
                 ),
