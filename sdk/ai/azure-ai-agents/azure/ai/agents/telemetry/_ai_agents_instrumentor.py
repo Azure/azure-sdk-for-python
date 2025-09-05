@@ -1556,7 +1556,7 @@ class _AIAgentsInstrumentorPreview:
                 return self.trace_create_message(function, *args, **kwargs)
             if class_function_name.startswith("RunsOperations.create_and_process"):
                 kwargs.setdefault("merge_span", True)
-                return self.trace_create_run(OperationName.PROCESS_THREAD_RUN, function, *args, **kwargs)            
+                return self.trace_create_run(OperationName.PROCESS_THREAD_RUN, function, *args, **kwargs)
             if class_function_name.startswith("RunsOperations.create"):
                 kwargs.setdefault("merge_span", True)
                 return self.trace_create_run(OperationName.START_THREAD_RUN, function, *args, **kwargs)
