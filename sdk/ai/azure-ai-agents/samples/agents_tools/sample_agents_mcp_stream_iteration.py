@@ -51,7 +51,7 @@ project_client = AIProjectClient(
     credential=DefaultAzureCredential(),
 )
 
-# Initialize agent MCP tool
+# Initialize Agent MCP tool
 mcp_tool = McpTool(
     server_label=mcp_server_label,
     server_url=mcp_server_url,
