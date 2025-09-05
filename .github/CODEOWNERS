@@ -835,6 +835,12 @@
 
 /**/*mgmt*/                                                          @ChenxiJiang333 @msyyc
 
+# PRLabel: %Contoso Widget Manager
+/sdk/contoso/azure-mgmt-contoso/                                   @danieljurek @ronniegeraghty
+
+# ServiceLabel: %Contoso Widget Manager %Mgmt
+# ServiceOwners:                                                   @danieljurek @ronniegeraghty
+
 ###########
 # Eng Sys and other
 ###########
