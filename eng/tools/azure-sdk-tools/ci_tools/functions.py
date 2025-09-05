@@ -13,6 +13,7 @@ import io
 from ci_tools.variables import discover_repo_root, DEV_BUILD_IDENTIFIER, str_to_bool
 from ci_tools.parsing import ParsedSetup, get_config_setting, get_pyproject
 from pypi_tools.pypi import PyPIClient
+from ci_tools.logging import logger
 
 import os, sys, platform, glob, re, logging
 from typing import List, Any, Optional, Tuple
@@ -976,6 +977,7 @@ def get_pip_command(python_exe: Optional[str] = None) -> List[str]:
         return ["uv", "pip"]
     else:
         return [python_exe if python_exe else sys.executable, "-m", "pip"]
+
 
 
 def is_error_code_5_allowed(target_pkg: str, pkg_name: str):
