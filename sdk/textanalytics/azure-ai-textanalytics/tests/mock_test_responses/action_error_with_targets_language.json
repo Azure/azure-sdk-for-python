@@ -1,0 +1,135 @@
+{
+  "jobId": "59678d1c-109e-4d93-a42f-05eb5e063525",
+  "lastUpdateDateTime": "2021-10-21T23:02:34Z",
+  "createdDateTime": "2021-10-21T23:02:27Z",
+  "expirationDateTime": "2021-10-22T23:02:27Z",
+  "status": "partiallySucceeded",
+  "errors": [
+    {
+      "code": "InvalidRequest",
+      "message": "Some error0",
+      "target": "#/tasks/items/0"
+    },
+    {
+      "code": "InvalidRequest",
+      "message": "Some error1",
+      "target": "#/tasks/items/1"
+    },
+    {
+      "code": "InvalidRequest",
+      "message": "Some error2",
+      "target": "#/tasks/items/2"
+    },
+    {
+      "code": "InvalidRequest",
+      "message": "Some error3",
+      "target": "#/tasks/items/3"
+    },
+    {
+      "code": "InvalidRequest",
+      "message": "Some error4",
+      "target": "#/tasks/items/4"
+    },
+    {
+      "code": "InvalidRequest",
+      "message": "Some error5",
+      "target": "#/tasks/items/5"
+    },
+    {
+      "code": "InvalidRequest",
+      "message": "Some error6",
+      "target": "#/tasks/items/6"
+    }
+  ],
+  "tasks": {
+    "completed": 1,
+    "failed": 6,
+    "inProgress": 0,
+    "total": 7,
+    "items": [
+      {
+        "kind": "EntityRecognitionLROResults",
+        "taskName": "0",
+        "lastUpdateDateTime": "2022-04-18T19:43:22.3181205Z",
+        "status": "failed"
+      },
+      {
+        "kind": "KeyPhraseExtractionLROResults",
+        "taskName": "1",
+        "lastUpdateDateTime": "2022-04-18T19:43:09.0888005Z",
+        "status": "failed"
+      },
+      {
+        "kind": "PiiEntityRecognitionLROResults",
+        "taskName": "2",
+        "lastUpdateDateTime": "2022-04-18T19:43:18.5390244Z",
+        "status": "failed"
+      },
+      {
+        "kind": "EntityLinkingLROResults",
+        "taskName": "3",
+        "lastUpdateDateTime": "2022-04-18T19:43:10.4261716Z",
+        "status": "failed"
+      },
+      {
+        "kind": "SentimentAnalysisLROResults",
+        "taskName": "4",
+        "lastUpdateDateTime": "2022-04-18T19:43:11.4597392Z",
+        "status": "failed"
+      },
+      {
+        "kind": "PiiEntityRecognitionLROResults",
+        "taskName": "5",
+        "lastUpdateDateTime": "2022-04-18T19:43:18.5390244Z",
+        "status": "failed"
+      },
+      {
+        "kind": "SentimentAnalysisLROResults",
+        "taskName": "6",
+        "lastUpdateDateTime": "2022-04-18T19:43:11.4597392Z",
+        "status": "succeeded",
+        "results": {
+          "documents": [
+            {
+              "id": "1",
+              "sentiment": "negative",
+              "confidenceScores": {
+                "positive": 0.01,
+                "neutral": 0.45,
+                "negative": 0.54
+              },
+              "sentences": [
+                {
+                  "sentiment": "negative",
+                  "confidenceScores": {
+                    "positive": 0.01,
+                    "neutral": 0.45,
+                    "negative": 0.54
+                  },
+                  "offset": 0,
+                  "length": 38,
+                  "text": "I did not like the hotel we stayed at."
+                }
+              ],
+              "warnings": []
+            }
+          ],
+          "errors": [
+            {
+              "id": "2",
+              "error": {
+                "code": "InvalidArgument",
+                "message": "Invalid document in request.",
+                "innererror": {
+                  "code": "InvalidDocument",
+                  "message": "Document text is empty."
+                }
+              }
+            }
+          ],
+          "modelVersion": "2019-10-01"
+        }
+      }
+    ]
+  }
+}
