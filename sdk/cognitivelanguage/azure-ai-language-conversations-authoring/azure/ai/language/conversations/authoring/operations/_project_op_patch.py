@@ -28,7 +28,7 @@ from ..models import (
     ExportedProject,
     ExportedProjectFormat,
     ExportedTrainedModel,
-    JobsPollingMethod,
+    _JobsPollingMethod,
     ProjectDeletionState,
     ProjectDeployment,
     ProjectDetails,
@@ -429,7 +429,7 @@ class ProjectOperations(ProjectOperationsGenerated):
         if polling is True:
             polling_method: PollingMethod = cast(
                 PollingMethod,
-                JobsPollingMethod(
+                _JobsPollingMethod(
                     polling_interval=lro_delay,
                     path_format_arguments=path_format_arguments,
                     # any extra kwargs your poller needs

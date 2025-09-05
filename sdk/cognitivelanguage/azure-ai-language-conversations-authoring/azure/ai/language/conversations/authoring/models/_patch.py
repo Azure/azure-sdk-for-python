@@ -61,7 +61,7 @@ T = TypeVar("T")
 
 
 
-class JobsStrategy(LongRunningOperation):
+class _JobsStrategy(LongRunningOperation):
     """Interprets job-status responses and tells the poller which URL to use."""
 
     def __init__(self, async_url: str):
@@ -101,7 +101,7 @@ class JobsStrategy(LongRunningOperation):
         return self._async_url
 
 
-class JobsPollingMethod(PollingMethod):
+class _JobsPollingMethod(PollingMethod):
     def __init__(self, polling_interval: float = 30.0, *, path_format_arguments: Optional[dict] = None, **kwargs: Any):
         self._polling_interval = polling_interval
         self._kwargs = kwargs
@@ -135,7 +135,7 @@ class JobsPollingMethod(PollingMethod):
             op_loc = self._client.format_url(op_loc, **self._path_format_arguments)
 
         # Strategy: always use jobs URL
-        self._operation = JobsStrategy(op_loc)
+        self._operation = _JobsStrategy(op_loc)
         if not self._operation.can_poll(initial_response):
             raise BadResponse("Cannot poll: no jobs URL")
 
@@ -216,7 +216,7 @@ class JobsPollingMethod(PollingMethod):
         return client, initial_response, deserialization_callback
 
 
-class AsyncJobsPollingMethod(AsyncPollingMethod):
+class _AsyncJobsPollingMethod(AsyncPollingMethod):
     def __init__(
         self,
         polling_interval: float = 30.0,
@@ -254,7 +254,7 @@ class AsyncJobsPollingMethod(AsyncPollingMethod):
         if self._path_format_arguments:
             op_loc = self._client.format_url(op_loc, **self._path_format_arguments)
 
-        self._operation = JobsStrategy(op_loc)
+        self._operation = _JobsStrategy(op_loc)
         if not self._operation.can_poll(initial_response):
             raise BadResponse("Cannot poll: no jobs URL")
 
@@ -356,8 +356,8 @@ def patch_sdk():
 
 
 __all__ = [
-    "JobsStrategy",
-    "JobsPollingMethod",
+    "_JobsStrategy",
+    "_JobsPollingMethod",
     "AssignDeploymentResourcesDetails",
     "UnassignDeploymentResourcesDetails",
     "SwapDeploymentsDetails",
@@ -383,7 +383,7 @@ __all__ = [
     "CopyProjectDetails",
     "EvaluationJobResult",
     "EvaluationState",
-    "AsyncJobsPollingMethod",
+    "_AsyncJobsPollingMethod",
     "ConversationExportedProjectAsset",
     "ConversationExportedIntent",
     "ConversationExportedEntity",
