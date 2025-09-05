@@ -22,12 +22,13 @@ USAGE:
 """
 
 import os
-
+import json
 from typing import Dict, Any
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.agents.models import (
     ListSortOrder,
+    MessageRole,
     ResponseFormatJsonSchema,
     ResponseFormatJsonSchemaType,
     RunStatus,
@@ -62,7 +63,7 @@ json_schema: Dict[str, Any] = {
                         "description": "Relative mass of the planet compared to Earth (for example, a value of 2.0 means the planet is twice as massive as Earth)",
                     },
                 },
-                "required": ["name", "mass", "relative_mass"],
+                "required": ["name", "mass"],
                 "additionalProperties": False,
             },
         },
@@ -117,3 +118,8 @@ with project_client:
         if msg.text_messages:
             last_text = msg.text_messages[-1]
             print(f"{msg.role}: {last_text.text.value}")
+            # Convert the Agent's JSON response message to a Dict object, extract and print planet masses
+            if msg.role == MessageRole.AGENT:
+                response_dict = json.loads(last_text.text.value)
+                for planet in response_dict["planets"]:
+                    print(f"The mass of {planet['name']} is {planet['mass']} kg.")
