@@ -10,7 +10,8 @@
 
 - Added Computer Use Preview tool for use with the computer-use-preview model
 - ToolSet now supports adding multiple McpTool instances and OpenApiTool instances.
-- Added static merge_resources method to `McpTool` with accompanying sample.
+- Added static functions `Tool.get_tool_resources` and `Tool.get_tool_definitions` to simplify extracting tool resources and definitions from collections of tools, making it easier to configure agents with multiple tool instances.
+
 ### Bugs Fixed
 
 - Fix issue with tracing an Agent message, when the message has "in progress" status (related to [GitHub Issue 42645](https://github.com/Azure/azure-sdk-for-python/issues/42645)).
