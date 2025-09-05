@@ -22,7 +22,6 @@
 """Represents a request object."""
 import asyncio
 import threading
-from concurrent.futures.thread import ThreadPoolExecutor
 from typing import Optional, Mapping, Any, Dict, List, Union
 
 from ._availability_strategy import CrossRegionHedgingStrategy
@@ -46,7 +45,6 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
         self.should_clear_session_token_on_session_read_failure: bool = False  # pylint: disable=name-too-long
         self.headers = headers
         self.availability_strategy: Optional[CrossRegionHedgingStrategy] = None
-        self.availability_strategy_executor: Optional[ThreadPoolExecutor] = None
         self.use_preferred_locations: Optional[bool] = None
         self.location_index_to_route: Optional[int] = None
         self.location_endpoint_to_route: Optional[str] = None
@@ -57,7 +55,7 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
         self.pk_val = pk_val
         self.retry_write: bool = False
         self.is_hedging_request: bool = False # Flag to track if this is a hedged request
-        self.completion_status: Optional[Union[threading.Event, asyncio.Event]] = None # Status shared between parallel requests
+        self.completion_status: Optional[Union[threading.Event, asyncio.Event]] = None
 
     def route_to_location_with_preferred_location_flag(  # pylint: disable=name-too-long
         self,
@@ -127,26 +125,6 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
         # If not in options, use client default
         elif client_strategy is not None:
             self.availability_strategy = client_strategy
-
-    def set_availability_strategy_executor(
-            self,
-            options: Mapping[str, Any],
-            client_availability_strategy_executor: Optional[ThreadPoolExecutor] = None) -> None:
-        """Sets the availability strategy executor for this request from options.
-        If not in options, uses the client's default strategy.
-
-        :param options: The request options that may contain availabilityStrategyExecutor
-        :type options: Mapping[str, Any]
-        :param client_availability_strategy_executor: The client's default availability strategy executor
-        :type client_availability_strategy_executor: ~concurrent.futures.ThreadPoolExecutor
-        :return: None
-        """
-        # First try to get from options
-        if options is not None and 'availabilityStrategyExecutor' in options and options['availabilityStrategyExecutor'] is not None:
-            self.availability_strategy_executor = options['availabilityStrategyExecutor']
-        # If not in options, use client default
-        elif client_availability_strategy_executor is not None:
-            self.availability_strategy_executor = client_availability_strategy_executor
 
     def should_cancel_request(self) -> bool:
         """Check if this request should be cancelled due to parallel request completion.

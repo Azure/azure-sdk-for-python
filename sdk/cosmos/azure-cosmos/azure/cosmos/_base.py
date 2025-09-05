@@ -70,8 +70,7 @@ _COMMON_OPTIONS = {
     'max_item_count': 'maxItemCount',
     'throughput_bucket': 'throughputBucket',
     'excluded_locations': Constants.Kwargs.EXCLUDED_LOCATIONS,
-    Constants.Kwargs.AVAILABILITY_STRATEGY: "availabilityStrategy",
-    Constants.Kwargs.AVAILABILITY_STRATEGY_EXECUTOR: "availabilityStrategyExecutor"
+    Constants.Kwargs.AVAILABILITY_STRATEGY: "availabilityStrategy"
 }
 
 # Cosmos resource ID validation regex breakdown:

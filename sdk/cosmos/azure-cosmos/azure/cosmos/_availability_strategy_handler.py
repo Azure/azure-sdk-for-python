@@ -71,24 +71,10 @@ class CrossRegionHedgingHandler(AvailabilityStrategyHandlerMixin):
         :returns: Response tuple
         :rtype: ResponseType
         """
-        # Create request parameters for this location
-        params = copy.deepcopy(request_params)
-        params.is_hedging_request = location_index > 0
-        params.completion_status = complete_status
-
-        # Setup excluded regions for hedging requests
-        params.excluded_locations = self._setup_excluded_regions_for_hedging(
-            location_index,
-            available_locations,
-            request_params.excluded_locations
-        )
-
-        req = copy.deepcopy(request)
 
         if location_index == 0:
             # No delay for initial request
             delay: int = 0
-            first_request_params_holder.request_params = params
         elif location_index == 1:
             # First hedged request after threshold
             delay = (cast(CrossRegionHedgingStrategy, request_params.availability_strategy)
@@ -102,6 +88,22 @@ class CrossRegionHedgingHandler(AvailabilityStrategyHandlerMixin):
 
         if delay > 0:
             time.sleep(delay / 1000)
+
+        # Create request parameters for this location
+        params = copy.deepcopy(request_params)
+        params.is_hedging_request = location_index > 0
+        params.completion_status = complete_status
+
+        # Setup excluded regions for hedging requests
+        params.excluded_locations = self._setup_excluded_regions_for_hedging(
+            location_index,
+            available_locations,
+            request_params.excluded_locations
+        )
+
+        req = copy.deepcopy(request)
+        if location_index == 0:
+            first_request_params_holder.request_params = params
 
         if complete_status.is_set():
             raise CancelledError("The request has been cancelled")
@@ -131,7 +133,7 @@ class CrossRegionHedgingHandler(AvailabilityStrategyHandlerMixin):
         """
         # Determine locations based on operation type
         available_locations = self._get_applicable_endpoints(request_params, global_endpoint_manager)
-        effective_executor = self._get_effective_executor(request_params)
+        effective_executor = self._shared_executor
 
         futures: List[Future] = []
         first_request_future: Optional[Future] = None
@@ -180,11 +182,6 @@ class CrossRegionHedgingHandler(AvailabilityStrategyHandlerMixin):
         exc = cast(Future, first_request_future).exception()
         assert exc is not None
         raise exc
-
-    def _get_effective_executor(self, request_param: RequestObject) -> ThreadPoolExecutor:
-        if request_param.availability_strategy_executor is not None:
-            return request_param.availability_strategy_executor
-        return self._shared_executor
 
     def _record_cancel_for_first_request(
             self,

@@ -901,8 +901,8 @@ class ContainerProxy:
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-        :keyword availability_strategy: The threshold-based availability strategy to use for this request. If not provided,
-                     the client's default strategy will be used.
+        :keyword availability_strategy: The threshold-based availability strategy to use for this request.
+            If not provided, the client's default strategy will be used.
         :paramtype availability_strategy: ~azure.cosmos.CrossRegionHedgingStrategy
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
@@ -935,8 +935,8 @@ class ContainerProxy:
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-        :keyword availability_strategy: The threshold-based availability strategy to use for this request. If not provided,
-                    the client's default strategy will be used.
+        :keyword availability_strategy: The threshold-based availability strategy to use for this request.
+            If not provided, the client's default strategy will be used.
         :paramtype availability_strategy: ~azure.cosmos.CrossRegionHedgingStrategy
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
@@ -981,8 +981,8 @@ class ContainerProxy:
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-        :keyword availability_strategy: The threshold-based availability strategy to use for this request. If not provided,
-                  the client's default strategy will be used.
+        :keyword availability_strategy: The threshold-based availability strategy to use for this request.
+            If not provided, the client's default strategy will be used.
         :paramtype availability_strategy: ~azure.cosmos.CrossRegionHedgingStrategy
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]

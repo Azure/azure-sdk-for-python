@@ -40,7 +40,7 @@ class CrossRegionHedgingStrategy:
     threshold_steps_ms: int
     """Time interval in milliseconds between subsequent region routing attempts. Default value is 100."""
 
-    
+
     def __init__(
         self,
         threshold_ms: int = 500,

@@ -23,7 +23,6 @@
 """
 
 import warnings
-from concurrent.futures.thread import ThreadPoolExecutor
 from typing import Any, Dict, Iterable, List, Mapping, Optional, Union, cast, Callable
 
 from azure.core.credentials import TokenCredential
@@ -204,9 +203,6 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         Controls whether and how requests are automatically routed across regions based on availability
         and response time thresholds. This helps optimize latency and availability for multi-region accounts.
     :paramtype availability_strategy: ~azure.cosmos.CrossRegionHedgingStrategy
-    :keyword availability_strategy_executor: Optional thread pool executor for executing availability strategy operations.
-            Allows customizing the threading behavior of the strategy. If not provided, a default executor will be used.
-    :paramtype availability_strategy_executor: Optional[concurrent.futures.ThreadPoolExecutor]
 
     .. admonition:: Example:
 
@@ -225,7 +221,6 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         consistency_level: Optional[str] = None,
         *,
         availability_strategy: Optional[CrossRegionHedgingStrategy] = None,
-        availability_strategy_executor: Optional[ThreadPoolExecutor] = None,
         **kwargs
     ) -> None:
         """Instantiate a new CosmosClient.
@@ -239,7 +234,6 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             consistency_level=consistency_level,
             connection_policy=connection_policy,
             availability_strategy=availability_strategy,
-            availability_strategy_executor=availability_strategy_executor,
             **kwargs
         )
 

@@ -21,14 +21,20 @@
 
 """Module containing base classes and mixins for availability strategy handlers."""
 
-from typing import List, Optional, Union
+from typing import List, Optional, Union, TYPE_CHECKING
 
 from . import exceptions
 from ._request_object import RequestObject
+
 from .documents import _OperationType
 
 GlobalEndpointManagerType = Union['_GlobalPartitionEndpointManagerForCircuitBreaker',
                                 '_GlobalPartitionEndpointManagerForCircuitBreakerAsync']
+
+if TYPE_CHECKING:
+    from ._global_partition_endpoint_manager_circuit_breaker import _GlobalPartitionEndpointManagerForCircuitBreaker
+    from .aio._global_partition_endpoint_manager_circuit_breaker_async import \
+        _GlobalPartitionEndpointManagerForCircuitBreakerAsync
 
 class AvailabilityStrategyHandlerMixin:
     """Mixin class providing shared functionality for availability strategy handlers."""
