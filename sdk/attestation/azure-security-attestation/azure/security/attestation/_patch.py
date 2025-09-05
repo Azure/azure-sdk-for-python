@@ -10,20 +10,21 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 import base64
 import json
-from typing import Dict, List, Any, Tuple, Union, Optional, Callable
+from typing import List, Any, Tuple, Union, Optional, Callable, cast
 
-try:
-    from typing import Self
-except ImportError:
-    from typing_extensions import Self
+
 from threading import Lock
 from cryptography.hazmat.primitives import serialization
-from cryptography.x509 import load_pem_x509_certificate
+from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKey
+from cryptography.hazmat.primitives.asymmetric.ec import EllipticCurvePrivateKey
+from cryptography.x509 import load_pem_x509_certificate, Certificate
+from typing_extensions import Self
 
 from azure.core.exceptions import raise_with_traceback  # pylint: disable=no-raise-with-traceback
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.configuration import Configuration
 from azure.core.credentials import TokenCredential
+from azure.security.attestation.models import OpenIDConfigurationResponse
 
 
 from ._client import AttestationClient as AzureAttestationRestClient
@@ -99,10 +100,10 @@ class AttestationClient:
         self._config = AttestationClientConfiguration(**kwargs)
         self._client = AzureAttestationRestClient(endpoint, credential, **kwargs)
         self._statelock = Lock()
-        self._signing_certificates = None
+        self._signing_certificates: list[AttestationSigner] = []
 
     @distributed_trace
-    def get_open_id_metadata(self, **kwargs: Any) -> Dict[str, Any]:
+    def get_open_id_metadata(self, **kwargs: Any) -> OpenIDConfigurationResponse:
         """Retrieves the OpenID metadata configuration document for this attestation instance.
 
         The metadata configuration document is defined in the `OpenID Connect
@@ -133,7 +134,7 @@ class AttestationClient:
 
         """
         signing_certificates = self._client.signing_certificates.get(**kwargs)
-        return [AttestationSigner._from_generated(key) for key in signing_certificates["keys"]]
+        return [AttestationSigner._from_generated(key) for key in signing_certificates["keys"]] # type: ignore
 
     @distributed_trace
     def attest_sgx_enclave(
@@ -275,7 +276,7 @@ class AttestationClient:
             token._validate_token(self._get_signers(**kwargs), **options)
 
         return (
-            AttestationResult._from_generated(token._get_body()),
+            AttestationResult._from_generated(token._get_body()),  # type: ignore
             token,
         )
 
@@ -428,7 +429,7 @@ class AttestationClient:
 
         if options.get("validate_token", True):
             token._validate_token(self._get_signers(**kwargs), **options)
-        return (AttestationResult._from_generated(token._get_body()), token)
+        return (AttestationResult._from_generated(token._get_body()), token)  # type: ignore
 
     @distributed_trace
     def attest_tpm(self, content: bytes, **kwargs) -> TpmAttestationResult:
@@ -439,12 +440,16 @@ class AttestationClient:
         :rtype: ~azure.security.attestation.TpmAttestationResult
         """
 
-        response = self._client.attestation.attest_tpm(content, **kwargs)
-        result = TpmAttestationResult(response.data)
+        response = self._client.attestation.attest_tpm(data=content, **kwargs)
+        result = TpmAttestationResult(cast(bytes,response.data))
         return result
 
     def _get_signers(self, **kwargs: Any) -> list[AttestationSigner]:
-        """Returns the set of signing certificates used to sign attestation tokens."""
+        """Returns the set of signing certificates used to sign attestation tokens.
+        
+        :return: A list of attestation signers used to validate tokens.
+        :rtype: list[AttestationSigner]
+        """
 
         with self._statelock:
             if not self._signing_certificates:
@@ -452,7 +457,7 @@ class AttestationClient:
                 self._signing_certificates = []
                 for key in signing_certificates["keys"]:
                     # Convert the returned certificate chain into an array of X.509 Certificates.
-                    self._signing_certificates.append(AttestationSigner._from_generated(key))
+                    self._signing_certificates.append(AttestationSigner._from_generated(key)) # type: ignore
             signers = self._signing_certificates
         return signers
 
@@ -528,7 +533,7 @@ class AttestationAdministrationClient:
         self._config = AttestationClientConfiguration(**kwargs)
         self._client = AzureAttestationRestClient(endpoint, credential, **kwargs)
         self._statelock = Lock()
-        self._signing_certificates = None
+        self._signing_certificates: list[AttestationSigner] = []
 
         self._signing_key = None
         self._signing_certificate = None
@@ -634,8 +639,8 @@ class AttestationAdministrationClient:
         validate_not_before_time: bool = True,
         validation_callback: Optional[Callable[[AttestationToken, AttestationSigner], None]] = None,
         issuer: Optional[str] = None,
-        signing_certificate: Optional[str] = None,
-        signing_key: Optional[str] = None,
+        signing_key: Optional[Union[str, RSAPrivateKey, EllipticCurvePrivateKey]] = None,
+        signing_certificate: Optional[Union[str, Certificate]] = None,
         validate_issuer: bool = True,
         validate_signature: bool = True,
         validate_token: bool = True,
@@ -749,7 +754,7 @@ class AttestationAdministrationClient:
             token._validate_token(self._get_signers(**kwargs), **options)
 
         return (
-            AttestationPolicyResult._from_generated(token._get_body()),
+            AttestationPolicyResult._from_generated(token._get_body()), #type: ignore
             token,
         )
 
@@ -833,9 +838,9 @@ class AttestationAdministrationClient:
         # If the caller provided a signing key and certificate, validate that,
         # otherwise use the default values from the service.
         if not signing_key:
-            signing_key = self._signing_key
+            signing_key = self._signing_key # type: ignore
         if not signing_certificate:
-            signing_certificate = self._signing_certificate
+            signing_certificate = self._signing_certificate # type: ignore
 
         policy_token = AttestationToken(body=None, signing_key=signing_key, signing_certificate=signing_certificate)
 
@@ -865,7 +870,7 @@ class AttestationAdministrationClient:
         if options.get("validate_token", True):
             token._validate_token(self._get_signers(**kwargs), **options)
 
-        return (AttestationPolicyResult._from_generated(token._get_body()), token)
+        return (AttestationPolicyResult._from_generated(token._get_body()), token) #type: ignore
 
     @distributed_trace
     def get_policy_management_certificates(
@@ -1023,19 +1028,19 @@ class AttestationAdministrationClient:
         """
 
         if not signing_key:
-            signing_key = self._signing_key
+            signing_key = self._signing_key # type: ignore
         if not signing_certificate:
-            signing_certificate = self._signing_certificate
+            signing_certificate = self._signing_certificate # type: ignore
 
         if not signing_key or not signing_certificate:
             raise ValueError("A signing certificate and key must be provided to add_policy_management_certificate.")
 
         # Verify that the provided certificate is a valid PEM encoded X.509 certificate
-        certificate_to_add = load_pem_x509_certificate(certificate_to_add.encode("ascii"))
+        parsed_certificate = load_pem_x509_certificate(certificate_to_add.encode("ascii"))
 
         jwk = JSONWebKey(
             kty="RSA",
-            x5_c=[base64.b64encode(certificate_to_add.public_bytes(serialization.Encoding.DER)).decode("ascii")],
+            x5_c=[base64.b64encode(parsed_certificate.public_bytes(serialization.Encoding.DER)).decode("ascii")],
         )
         add_body = AttestationCertificateManagementBody(policy_certificate=jwk)
         cert_add_token = AttestationToken(
@@ -1063,7 +1068,7 @@ class AttestationAdministrationClient:
         validation_args.update(kwargs)
         options = merge_validation_args(self._config._kwargs, validation_args)
 
-        cert_response = self._client.policy_certificates.add(cert_add_token.to_jwt_string(), **kwargs)
+        cert_response = self._client.policy_certificates.add(cert_add_token.to_jwt_string(), **kwargs) # type: ignore
         token = AttestationToken(
             token=cert_response.token,
             body_type=GeneratedPolicyCertificatesModificationResult,
@@ -1072,7 +1077,7 @@ class AttestationAdministrationClient:
         if options.get("validate_token", True):
             token._validate_token(self._get_signers(**kwargs), **options)
         return (
-            AttestationPolicyCertificateResult._from_generated(token._get_body()),
+            AttestationPolicyCertificateResult._from_generated(token._get_body()), # type: ignore
             token,
         )
 
@@ -1142,19 +1147,19 @@ class AttestationAdministrationClient:
         """
 
         if not signing_key:
-            signing_key = self._signing_key
+            signing_key = self._signing_key # type: ignore
         if not signing_certificate:
-            signing_certificate = self._signing_certificate
+            signing_certificate = self._signing_certificate # type: ignore
 
         if not signing_key or not signing_certificate:
             raise ValueError("A signing certificate and key must be provided to remove_policy_management_certificate.")
 
         # Verify that the provided certificate is a valid PEM encoded X.509 certificate
-        certificate_to_remove = load_pem_x509_certificate(certificate_to_remove.encode("ascii"))
+        parsed_certificate = load_pem_x509_certificate(certificate_to_remove.encode("ascii"))
 
         jwk = JSONWebKey(
             kty="RSA",
-            x5_c=[base64.b64encode(certificate_to_remove.public_bytes(serialization.Encoding.DER)).decode("ascii")],
+            x5_c=[base64.b64encode(parsed_certificate.public_bytes(serialization.Encoding.DER)).decode("ascii")],
         )
         add_body = AttestationCertificateManagementBody(policy_certificate=jwk)
         cert_add_token = AttestationToken(
@@ -1181,7 +1186,7 @@ class AttestationAdministrationClient:
         validation_args.update(kwargs)
         options = merge_validation_args(self._config._kwargs, validation_args)
 
-        cert_response = self._client.policy_certificates.remove(cert_add_token.to_jwt_string(), **kwargs)
+        cert_response = self._client.policy_certificates.remove(cert_add_token.to_jwt_string(), **kwargs) # type: ignore
         token = AttestationToken(
             token=cert_response.token,
             body_type=GeneratedPolicyCertificatesModificationResult,
@@ -1190,12 +1195,16 @@ class AttestationAdministrationClient:
         if options.get("validate_token", True):
             token._validate_token(self._get_signers(**kwargs), **options)
         return (
-            AttestationPolicyCertificateResult._from_generated(token._get_body()),
+            AttestationPolicyCertificateResult._from_generated(token._get_body()),  # type: ignore
             token,
         )
 
     def _get_signers(self, **kwargs: Any) -> List[AttestationSigner]:
-        """Returns the set of signing certificates used to sign attestation tokens."""
+        """Returns the set of signing certificates used to sign attestation tokens.
+        
+        :return: A list of attestation signers used to validate tokens.
+        :rtype: List[AttestationSigner]
+        """
 
         with self._statelock:
             if not self._signing_certificates:
@@ -1203,8 +1212,8 @@ class AttestationAdministrationClient:
                 self._signing_certificates = []
                 for key in signing_certificates["keys"]:
                     # Convert the returned certificate chain into an array of X.509 Certificates.
-                    self._signing_certificates.append(AttestationSigner._from_generated(key))
-            signers = self._signing_certificates
+                    self._signing_certificates.append(AttestationSigner._from_generated(key)) # type: ignore
+            signers: list[AttestationSigner] = self._signing_certificates
         return signers
 
     def close(self) -> None:

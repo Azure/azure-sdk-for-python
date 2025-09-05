@@ -10,12 +10,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import base64
 from datetime import datetime
 import json
-from typing import Optional, TypeVar, List, Any, Dict, Type, Union, Callable
-
-try:
-    from typing import Self
-except ImportError:
-    from typing_extensions import Self
+from typing import Optional, TypeVar, List, Any, Dict, Type, Union, Callable, cast
 
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives.hashes import SHA256
@@ -69,8 +64,10 @@ class AttestationSigner:
         self.key_id = key_id
 
     @classmethod
-    def _from_generated(cls, generated: JSONWebKey) -> Self:
+    def _from_generated(cls, generated: JSONWebKey) -> Optional['AttestationSigner']:
         if not generated:
+            return None
+        if generated.x5_c is None or generated.kid is None:
             return None
         return cls(generated.x5_c, generated.kid)
 
@@ -92,8 +89,13 @@ class AttestationPolicyCertificateResult:
         self.certificate_resolution = certificate_resolution
 
     @classmethod
-    def _from_generated(cls, generated: GeneratedPolicyCertificatesModificationResult) -> Self:
+    def _from_generated(
+        cls,
+        generated: GeneratedPolicyCertificatesModificationResult
+    ) -> Optional['AttestationPolicyCertificateResult']:
         if not generated:
+            return None
+        if generated.certificate_thumbprint is None or generated.certificate_resolution is None:
             return None
         return cls(generated.certificate_thumbprint, generated.certificate_resolution)
 
@@ -119,21 +121,28 @@ class AttestationPolicyResult:
     """
 
     def __init__(
-        self, policy_resolution: PolicyModification, policy_signer: AttestationSigner, policy_token_hash: str
+        self,
+        policy_resolution: Union[str, PolicyModification],
+        policy_signer: AttestationSigner,
+        policy_token_hash: str
     ) -> None:
         self.policy_resolution = policy_resolution
         self.policy_signer = policy_signer
         self.policy_token_hash = policy_token_hash
 
     @classmethod
-    def _from_generated(cls, generated: GeneratedPolicyResult) -> "AttestationPolicyResult":
+    def _from_generated(cls, generated: GeneratedPolicyResult) -> Optional["AttestationPolicyResult"]:
         # If we have a generated policy result or policy text, return that.
         if not generated:
             return None
+        signer = AttestationSigner._from_generated(cast(JSONWebKey,generated.policy_signer))  # pylint: disable=protected-access
+
+        if generated.policy_resolution is None or generated.policy_token_hash is None or signer is None:
+            return None
         return AttestationPolicyResult(
             generated.policy_resolution,
-            AttestationSigner._from_generated(generated.policy_signer),  # pylint: disable=protected-access
-            generated.policy_token_hash,
+            signer,
+            generated.policy_token_hash.decode(),
         )
 
 
@@ -182,7 +191,7 @@ class AttestationResult:  # pylint: disable=too-many-instance-attributes
         self._inittime_claims = kwargs.pop("inittime_claims", None)  # type: Union[Dict, None]
         self._policy_claims = kwargs.pop("policy_claims", None)  # type: Union[Dict, None]
         self._verifier_type = kwargs.pop("verifier_type")  # type: str
-        self._policy_signer = kwargs.pop("policy_signer", None)  # type: Union[AttestationSigner, None]
+        self._policy_signer: Optional[AttestationSigner] = kwargs.pop("policy_signer", None)
         self._policy_hash = kwargs.pop("policy_hash")  # type: str
         self._is_debuggable = kwargs.pop("is_debuggable")  # type: bool
         self._product_id = kwargs.pop("product_id")  # type: int
@@ -193,7 +202,7 @@ class AttestationResult:  # pylint: disable=too-many-instance-attributes
         self._sgx_collateral = kwargs.pop("sgx_collateral")  # type: Dict
 
     @classmethod
-    def _from_generated(cls, generated: GeneratedAttestationResult) -> "AttestationResult":
+    def _from_generated(cls, generated: GeneratedAttestationResult) -> Optional["AttestationResult"]:
         if not generated:
             return None
         return AttestationResult(
@@ -322,7 +331,7 @@ class AttestationResult:  # pylint: disable=too-many-instance-attributes
 
         :rtype: ~azure.security.attestation.AttestationSigner or None
         """
-        return AttestationSigner._from_generated(self._policy_signer)  # pylint: disable=protected-access
+        return AttestationSigner._from_generated(cast(JSONWebKey, self._policy_signer))  # pylint: disable=protected-access
 
     @property
     def policy_hash(self) -> str:
@@ -417,10 +426,12 @@ class StoredAttestationPolicy:
         return _serialize(GeneratedStoredAttestationPolicy(attestation_policy=self._policy))
 
     @classmethod
-    def _from_generated(cls, generated: GeneratedStoredAttestationPolicy) -> "StoredAttestationPolicy":
+    def _from_generated(cls, generated: GeneratedStoredAttestationPolicy) -> Optional["StoredAttestationPolicy"]:
         if not generated:
             return None
-        return StoredAttestationPolicy(generated.attestation_policy)
+        if generated.attestation_policy is None:
+            return None
+        return StoredAttestationPolicy(generated.attestation_policy.decode())
 
 
 class AttestationToken:
@@ -638,7 +649,7 @@ class AttestationToken:
 
     def _validate_token(
         self,
-        signers: Optional[List[AttestationSigner]] = None,
+        signers: List[AttestationSigner],
         *,
         validate_token: Optional[bool] = None,
         validation_callback: Optional[Callable] = None,
@@ -697,8 +708,8 @@ class AttestationToken:
 
         if not options.get("validate_token", True):
             self._validate_static_properties(**options)
-            if "validation_callback" in options:
-                options.get("validation_callback")(self, None)
+            if "validation_callback" in options and options["validation_callback"] is not None:
+                options["validation_callback"](self, None)
 
         signer = None
         if self.algorithm != "none" and options.get("validate_signature", True):
@@ -709,8 +720,8 @@ class AttestationToken:
                 raise AttestationTokenValidationException("Could not find the certificate used to sign the token.")
         self._validate_static_properties(**options)
 
-        if "validation_callback" in options:
-            options.get("validation_callback")(self, signer)
+        if "validation_callback" in options and options["validation_callback"] is not None:
+            options["validation_callback"](self, signer)
 
     def _get_body(self) -> Any:
         """Returns the body of the attestation token as an object.
@@ -764,10 +775,10 @@ class AttestationToken:
         return candidates
 
     @staticmethod
-    def _get_certificates_from_x5c(x5clist: list[str]) -> list[Certificate]:
+    def _get_certificates_from_x5c(x5clist: list[str]) -> list[bytes]:
         return [base64.b64decode(b64cert) for b64cert in x5clist]
 
-    def _validate_signature(self, candidate_certificates: list[AttestationSigner]) -> AttestationSigner:
+    def _validate_signature(self, candidate_certificates: list[AttestationSigner]) -> Optional[AttestationSigner]:
         signed_data = base64url_encode(self.header_bytes) + "." + base64url_encode(self.body_bytes)
         for signer in candidate_certificates:
             cert = load_pem_x509_certificate(signer.certificates[0].encode("ascii"), backend=default_backend())
@@ -783,7 +794,7 @@ class AttestationToken:
                         SHA256(),
                     )
                 else:
-                    signer_key.verify(self.signature_bytes, signed_data.encode("utf-8"), SHA256())
+                    signer_key.verify(self.signature_bytes, signed_data.encode("utf-8"), SHA256()) # type: ignore
                 return signer
             except InvalidSignature as ex:
                 raise AttestationTokenValidationException("Could not verify signature of attestation token.") from ex
@@ -803,7 +814,7 @@ class AttestationToken:
                     if delta.total_seconds() > kwargs.get("validation_slack", 0.5):
                         raise AttestationTokenValidationException(
                             "Token is expired. Now: {}, Not Before: {}".format(
-                                time_now.isoformat(), self.not_before.isoformat()
+                                time_now.isoformat(), self.not_before.isoformat() if self.not_before else "N/A"
                             )
                         )
             if kwargs.get("validate_not_before", True) and hasattr(self, "not_before") and self.not_before is not None:
