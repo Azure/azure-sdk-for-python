@@ -20,26 +20,13 @@ class TestSqlManagementLedgerDigestUploadsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_ledger_digest_uploads_list_by_database(self, resource_group):
-        response = self.client.ledger_digest_uploads.list_by_database(
-            resource_group_name=resource_group.name,
-            server_name="str",
-            database_name="str",
-            api_version="2024-11-01-preview",
-        )
-        result = [r for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
     def test_ledger_digest_uploads_get(self, resource_group):
         response = self.client.ledger_digest_uploads.get(
             resource_group_name=resource_group.name,
             server_name="str",
             database_name="str",
             ledger_digest_uploads="str",
-            api_version="2024-11-01-preview",
+            api_version="2021-02-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -54,9 +41,22 @@ class TestSqlManagementLedgerDigestUploadsOperations(AzureMgmtRecordedTestCase):
             database_name="str",
             ledger_digest_uploads="str",
             parameters={"digestStorageEndpoint": "str", "id": "str", "name": "str", "state": "str", "type": "str"},
-            api_version="2024-11-01-preview",
+            api_version="2021-02-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_ledger_digest_uploads_list_by_database(self, resource_group):
+        response = self.client.ledger_digest_uploads.list_by_database(
+            resource_group_name=resource_group.name,
+            server_name="str",
+            database_name="str",
+            api_version="2021-02-01-preview",
+        )
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...
 
@@ -68,7 +68,7 @@ class TestSqlManagementLedgerDigestUploadsOperations(AzureMgmtRecordedTestCase):
             server_name="str",
             database_name="str",
             ledger_digest_uploads="str",
-            api_version="2024-11-01-preview",
+            api_version="2021-02-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
