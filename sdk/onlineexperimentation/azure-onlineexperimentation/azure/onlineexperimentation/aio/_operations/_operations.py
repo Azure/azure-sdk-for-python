@@ -10,7 +10,7 @@ from collections.abc import MutableMapping
 import datetime
 from io import IOBase
 import json
-from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, overload
+from typing import Any, Callable, IO, Optional, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient, MatchConditions
@@ -46,10 +46,10 @@ from .._configuration import OnlineExperimentationClientConfiguration
 
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
 
-class OnlineExperimentationClientOperationsMixin(  # pylint: disable=name-too-long
+class _OnlineExperimentationClientOperationsMixin(
     ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], OnlineExperimentationClientConfiguration]
 ):
 
@@ -610,7 +610,7 @@ class OnlineExperimentationClientOperationsMixin(  # pylint: disable=name-too-lo
         _params = kwargs.pop("params", {}) or {}
 
         maxpagesize = kwargs.pop("maxpagesize", None)
-        cls: ClsType[List[_models.ExperimentMetric]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.ExperimentMetric]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -662,7 +662,7 @@ class OnlineExperimentationClientOperationsMixin(  # pylint: disable=name-too-lo
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ExperimentMetric], deserialized.get("value", []))
+            list_of_elem = _deserialize(list[_models.ExperimentMetric], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)

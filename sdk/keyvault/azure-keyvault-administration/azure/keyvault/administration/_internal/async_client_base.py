@@ -44,11 +44,7 @@ class AsyncKeyVaultClientBase(object):
 
             http_logging_policy = HttpLoggingPolicy(**kwargs)
             http_logging_policy.allowed_header_names.update(
-                {
-                    "x-ms-keyvault-network-info",
-                    "x-ms-keyvault-region",
-                    "x-ms-keyvault-service-version"
-                }
+                {"x-ms-keyvault-network-info", "x-ms-keyvault-region", "x-ms-keyvault-service-version"}
             )
 
             verify_challenge = kwargs.pop("verify_challenge_resource", True)
@@ -59,7 +55,7 @@ class AsyncKeyVaultClientBase(object):
                 authentication_policy=AsyncChallengeAuthPolicy(credential, verify_challenge_resource=verify_challenge),
                 sdk_moniker=SDK_MONIKER,
                 http_logging_policy=http_logging_policy,
-                **kwargs
+                **kwargs,
             )
             self._models = _models
         except ValueError as exc:

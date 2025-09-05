@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=useless-super-delegation
 
-from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
 from ._enums import CredentialType, DatasetType, DeploymentType, EvaluationTargetType, IndexType, PendingUploadType
@@ -36,7 +36,7 @@ class AgentEvaluation(_Model):
     """Status of the agent evaluation. Options: Running, Completed, Failed. Required."""
     error: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The reason of the request failure for the long running process, if applicable."""
-    result: Optional[List["_models.AgentEvaluationResult"]] = rest_field(
+    result: Optional[list["_models.AgentEvaluationResult"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The agent evaluation result."""
@@ -48,7 +48,7 @@ class AgentEvaluation(_Model):
         id: str,  # pylint: disable=redefined-builtin
         status: str,
         error: Optional[str] = None,
-        result: Optional[List["_models.AgentEvaluationResult"]] = None,
+        result: Optional[list["_models.AgentEvaluationResult"]] = None,
     ) -> None: ...
 
     @overload
@@ -118,7 +118,7 @@ class AgentEvaluationRequest(_Model):
     thread_id: Optional[str] = rest_field(name="threadId", visibility=["read", "create", "update", "delete", "query"])
     """Identifier of the agent thread. This field is mandatory currently, but it will be optional in
      the future."""
-    evaluators: Dict[str, "_models.EvaluatorConfiguration"] = rest_field(
+    evaluators: dict[str, "_models.EvaluatorConfiguration"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Evaluators to be used for the evaluation. Required."""
@@ -141,7 +141,7 @@ class AgentEvaluationRequest(_Model):
         self,
         *,
         run_id: str,
-        evaluators: Dict[str, "_models.EvaluatorConfiguration"],
+        evaluators: dict[str, "_models.EvaluatorConfiguration"],
         app_insights_connection_string: str,
         thread_id: Optional[str] = None,
         sampling_configuration: Optional["_models.AgentEvaluationSamplingConfiguration"] = None,
@@ -206,7 +206,7 @@ class AgentEvaluationResult(_Model):
     """The unique identifier of the run. Required."""
     error: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A string explaining why there was an error, if applicable."""
-    additional_details: Optional[Dict[str, str]] = rest_field(
+    additional_details: Optional[dict[str, str]] = rest_field(
         name="additionalDetails", visibility=["read", "create", "update", "delete", "query"]
     )
     """Additional properties relevant to the evaluator. These will differ between evaluators."""
@@ -224,7 +224,7 @@ class AgentEvaluationResult(_Model):
         version: Optional[str] = None,
         thread_id: Optional[str] = None,
         error: Optional[str] = None,
-        additional_details: Optional[Dict[str, str]] = None,
+        additional_details: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -292,7 +292,7 @@ class BaseCredentials(_Model):
     :vartype type: str or ~azure.ai.projects.models.CredentialType
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read"])
     """The type of credential used by the connection. Required. Known values are: \"ApiKey\", \"AAD\",
      \"SAS\", \"CustomKeys\", and \"None\"."""
@@ -342,7 +342,8 @@ class ApiKeyCredentials(BaseCredentials, discriminator="ApiKey"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=CredentialType.API_KEY, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = CredentialType.API_KEY  # type: ignore
 
 
 class Message(_Model):
@@ -357,7 +358,7 @@ class Message(_Model):
     :vartype role: str or str or str or str or str
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     role: str = rest_discriminator(name="role", visibility=["read", "create", "update", "delete", "query"])
     """The role of the message author. Known values: 'system', 'assistant', 'developer', 'user'.
      Required. Is one of the following types: Literal[\"system\"], Literal[\"assistant\"],
@@ -410,7 +411,8 @@ class AssistantMessage(Message, discriminator="assistant"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, role="assistant", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.role = "assistant"  # type: ignore
 
 
 class Index(_Model):
@@ -434,7 +436,7 @@ class Index(_Model):
     :vartype tags: dict[str, str]
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """Type of index. Required. Known values are: \"AzureSearch\", \"CosmosDBNoSqlVectorStore\", and
      \"ManagedAzureSearch\"."""
@@ -446,7 +448,7 @@ class Index(_Model):
     """The version of the resource. Required."""
     description: Optional[str] = rest_field(visibility=["create", "update"])
     """The asset description text."""
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["create", "update"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["create", "update"])
     """Tag dictionary. Tags can be added, removed, and updated."""
 
     @overload
@@ -455,7 +457,7 @@ class Index(_Model):
         *,
         type: str,
         description: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -508,7 +510,7 @@ class AzureAISearchIndex(Index, discriminator="AzureSearch"):
         connection_name: str,
         index_name: str,
         description: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         field_mapping: Optional["_models.FieldMapping"] = None,
     ) -> None: ...
 
@@ -520,7 +522,8 @@ class AzureAISearchIndex(Index, discriminator="AzureSearch"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=IndexType.AZURE_SEARCH, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = IndexType.AZURE_SEARCH  # type: ignore
 
 
 class TargetConfig(_Model):
@@ -533,7 +536,7 @@ class TargetConfig(_Model):
     :vartype type: str
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """Type of the model configuration. Required. Default value is None."""
 
@@ -590,14 +593,16 @@ class AzureOpenAIModelConfiguration(TargetConfig, discriminator="AzureOpenAIMode
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="AzureOpenAIModel", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "AzureOpenAIModel"  # type: ignore
 
 
 class BlobReference(_Model):
     """Blob reference details.
 
     :ivar blob_uri: Blob URI path for client to upload data. Example:
-     ``https://blob.windows.core.net/Container/Path``. Required.
+     `https://blob.windows.core.net/Container/Path <https://blob.windows.core.net/Container/Path>`_.
+     Required.
     :vartype blob_uri: str
     :ivar storage_account_arm_id: ARM ID of the storage account to use. Required.
     :vartype storage_account_arm_id: str
@@ -606,7 +611,8 @@ class BlobReference(_Model):
     """
 
     blob_uri: str = rest_field(name="blobUri", visibility=["read", "create", "update", "delete", "query"])
-    """Blob URI path for client to upload data. Example: ``https://blob.windows.core.net/Container/Path``. Required."""
+    """Blob URI path for client to upload data. Example: `https://blob.windows.core.net/Container/Path
+     <https://blob.windows.core.net/Container/Path>`_. Required."""
     storage_account_arm_id: str = rest_field(
         name="storageAccountArmId", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -691,7 +697,7 @@ class Connection(_Model):
     """Whether the connection is tagged as the default connection of its type. Required."""
     credentials: "_models.BaseCredentials" = rest_field(visibility=["read"])
     """The credentials used by the connection. Required."""
-    metadata: Dict[str, str] = rest_field(visibility=["read"])
+    metadata: dict[str, str] = rest_field(visibility=["read"])
     """Metadata of the connection. Required."""
 
 
@@ -747,7 +753,7 @@ class CosmosDBIndex(Index, discriminator="CosmosDBNoSqlVectorStore"):
         embedding_configuration: "_models.EmbeddingConfiguration",
         field_mapping: "_models.FieldMapping",
         description: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -758,7 +764,8 @@ class CosmosDBIndex(Index, discriminator="CosmosDBNoSqlVectorStore"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=IndexType.COSMOS_DB, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = IndexType.COSMOS_DB  # type: ignore
 
 
 class CustomCredential(BaseCredentials, discriminator="CustomKeys"):
@@ -772,7 +779,7 @@ class CustomCredential(BaseCredentials, discriminator="CustomKeys"):
 
     type: Literal[CredentialType.CUSTOM] = rest_discriminator(name="type", visibility=["read"])  # type: ignore
     """The credential type. Required. Custom credential"""
-    credential_keys: Dict[str, str] = rest_field(name="keys", visibility=["read"])
+    credential_keys: dict[str, str] = rest_field(name="keys", visibility=["read"])
     """The credential type. Required."""
 
     @overload
@@ -788,7 +795,8 @@ class CustomCredential(BaseCredentials, discriminator="CustomKeys"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=CredentialType.CUSTOM, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = CredentialType.CUSTOM  # type: ignore
 
 
 class DatasetCredential(_Model):
@@ -827,7 +835,8 @@ class DatasetVersion(_Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     FileDatasetVersion, FolderDatasetVersion
 
-    :ivar data_uri: URI of the data. Example: ``https://go.microsoft.com/fwlink/?linkid=2202330``. Required.
+    :ivar data_uri: URI of the data. Example: `https://go.microsoft.com/fwlink/?linkid=2202330
+     <https://go.microsoft.com/fwlink/?linkid=2202330>`_. Required.
     :vartype data_uri: str
     :ivar type: Dataset type. Required. Known values are: "uri_file" and "uri_folder".
     :vartype type: str or ~azure.ai.projects.models.DatasetType
@@ -850,9 +859,10 @@ class DatasetVersion(_Model):
     :vartype tags: dict[str, str]
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     data_uri: str = rest_field(name="dataUri", visibility=["read", "create"])
-    """URI of the data. Example: ``https://go.microsoft.com/fwlink/?linkid=2202330``. Required."""
+    """URI of the data. Example: `https://go.microsoft.com/fwlink/?linkid=2202330
+     <https://go.microsoft.com/fwlink/?linkid=2202330>`_. Required."""
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """Dataset type. Required. Known values are: \"uri_file\" and \"uri_folder\"."""
     is_reference: Optional[bool] = rest_field(name="isReference", visibility=["read"])
@@ -869,7 +879,7 @@ class DatasetVersion(_Model):
     """The version of the resource. Required."""
     description: Optional[str] = rest_field(visibility=["create", "update"])
     """The asset description text."""
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["create", "update"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["create", "update"])
     """Tag dictionary. Tags can be added, removed, and updated."""
 
     @overload
@@ -880,7 +890,7 @@ class DatasetVersion(_Model):
         type: str,
         connection_name: Optional[str] = None,
         description: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -906,7 +916,7 @@ class Deployment(_Model):
     :vartype name: str
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """The type of the deployment. Required. \"ModelDeployment\""""
     name: str = rest_field(visibility=["read"])
@@ -960,7 +970,8 @@ class DeveloperMessage(Message, discriminator="developer"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, role="developer", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.role = "developer"  # type: ignore
 
 
 class EmbeddingConfiguration(_Model):
@@ -1021,7 +1032,8 @@ class EntraIDCredentials(BaseCredentials, discriminator="AAD"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=CredentialType.ENTRA_ID, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = CredentialType.ENTRA_ID  # type: ignore
 
 
 class Evaluation(_Model):
@@ -1064,12 +1076,12 @@ class Evaluation(_Model):
      evaluation and is mutable."""
     status: Optional[str] = rest_field(visibility=["read"])
     """Status of the evaluation. It is set by service and is read-only."""
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Evaluation's tags. Unlike properties, tags are fully mutable."""
-    properties: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    properties: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Evaluation's properties. Unlike tags, properties are add-only. Once added, a property cannot be
      removed."""
-    evaluators: Dict[str, "_models.EvaluatorConfiguration"] = rest_field(
+    evaluators: dict[str, "_models.EvaluatorConfiguration"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Evaluators to be used for the evaluation. Required."""
@@ -1083,11 +1095,11 @@ class Evaluation(_Model):
         self,
         *,
         data: "_models.InputData",
-        evaluators: Dict[str, "_models.EvaluatorConfiguration"],
+        evaluators: dict[str, "_models.EvaluatorConfiguration"],
         display_name: Optional[str] = None,
         description: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
-        properties: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional[dict[str, str]] = None,
         target: Optional["_models.EvaluationTarget"] = None,
     ) -> None: ...
 
@@ -1113,7 +1125,7 @@ class EvaluationTarget(_Model):
     :vartype type: str or ~azure.ai.projects.models.EvaluationTargetType
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """Discriminator that defines the type of the evaluation target. Required.
      \"modelResponseGeneration\""""
@@ -1149,11 +1161,11 @@ class EvaluatorConfiguration(_Model):
 
     id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Identifier of the evaluator. Required."""
-    init_params: Optional[Dict[str, Any]] = rest_field(
+    init_params: Optional[dict[str, Any]] = rest_field(
         name="initParams", visibility=["read", "create", "update", "delete", "query"]
     )
     """Initialization parameters of the evaluator."""
-    data_mapping: Optional[Dict[str, str]] = rest_field(
+    data_mapping: Optional[dict[str, str]] = rest_field(
         name="dataMapping", visibility=["read", "create", "update", "delete", "query"]
     )
     """Data parameters of the evaluator."""
@@ -1163,8 +1175,8 @@ class EvaluatorConfiguration(_Model):
         self,
         *,
         id: str,  # pylint: disable=redefined-builtin
-        init_params: Optional[Dict[str, Any]] = None,
-        data_mapping: Optional[Dict[str, str]] = None,
+        init_params: Optional[dict[str, Any]] = None,
+        data_mapping: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -1195,7 +1207,7 @@ class FieldMapping(_Model):
     :vartype metadata_fields: list[str]
     """
 
-    content_fields: List[str] = rest_field(name="contentFields", visibility=["create"])
+    content_fields: list[str] = rest_field(name="contentFields", visibility=["create"])
     """List of fields with text content. Required."""
     filepath_field: Optional[str] = rest_field(name="filepathField", visibility=["create"])
     """Path of file to be used as a source of text content."""
@@ -1203,21 +1215,21 @@ class FieldMapping(_Model):
     """Field containing the title of the document."""
     url_field: Optional[str] = rest_field(name="urlField", visibility=["create"])
     """Field containing the url of the document."""
-    vector_fields: Optional[List[str]] = rest_field(name="vectorFields", visibility=["create"])
+    vector_fields: Optional[list[str]] = rest_field(name="vectorFields", visibility=["create"])
     """List of fields with vector content."""
-    metadata_fields: Optional[List[str]] = rest_field(name="metadataFields", visibility=["create"])
+    metadata_fields: Optional[list[str]] = rest_field(name="metadataFields", visibility=["create"])
     """List of fields with metadata content."""
 
     @overload
     def __init__(
         self,
         *,
-        content_fields: List[str],
+        content_fields: list[str],
         filepath_field: Optional[str] = None,
         title_field: Optional[str] = None,
         url_field: Optional[str] = None,
-        vector_fields: Optional[List[str]] = None,
-        metadata_fields: Optional[List[str]] = None,
+        vector_fields: Optional[list[str]] = None,
+        metadata_fields: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -1234,7 +1246,8 @@ class FieldMapping(_Model):
 class FileDatasetVersion(DatasetVersion, discriminator="uri_file"):
     """FileDatasetVersion Definition.
 
-    :ivar data_uri: URI of the data. Example: ``https://go.microsoft.com/fwlink/?linkid=2202330``. Required.
+    :ivar data_uri: URI of the data. Example: `https://go.microsoft.com/fwlink/?linkid=2202330
+     <https://go.microsoft.com/fwlink/?linkid=2202330>`_. Required.
     :vartype data_uri: str
     :ivar is_reference: Indicates if the dataset holds a reference to the storage, or the dataset
      manages storage itself. If true, the underlying data will not be deleted when the dataset
@@ -1267,7 +1280,7 @@ class FileDatasetVersion(DatasetVersion, discriminator="uri_file"):
         data_uri: str,
         connection_name: Optional[str] = None,
         description: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -1278,13 +1291,15 @@ class FileDatasetVersion(DatasetVersion, discriminator="uri_file"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=DatasetType.URI_FILE, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = DatasetType.URI_FILE  # type: ignore
 
 
 class FolderDatasetVersion(DatasetVersion, discriminator="uri_folder"):
     """FileDatasetVersion Definition.
 
-    :ivar data_uri: URI of the data. Example: ``https://go.microsoft.com/fwlink/?linkid=2202330``. Required.
+    :ivar data_uri: URI of the data. Example: `https://go.microsoft.com/fwlink/?linkid=2202330
+     <https://go.microsoft.com/fwlink/?linkid=2202330>`_. Required.
     :vartype data_uri: str
     :ivar is_reference: Indicates if the dataset holds a reference to the storage, or the dataset
      manages storage itself. If true, the underlying data will not be deleted when the dataset
@@ -1317,7 +1332,7 @@ class FolderDatasetVersion(DatasetVersion, discriminator="uri_folder"):
         data_uri: str,
         connection_name: Optional[str] = None,
         description: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -1328,7 +1343,8 @@ class FolderDatasetVersion(DatasetVersion, discriminator="uri_folder"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=DatasetType.URI_FOLDER, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = DatasetType.URI_FOLDER  # type: ignore
 
 
 class InputData(_Model):
@@ -1341,7 +1357,7 @@ class InputData(_Model):
     :vartype type: str
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """Type of the data. Required. Default value is None."""
 
@@ -1392,7 +1408,8 @@ class InputDataset(InputData, discriminator="dataset"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="dataset", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "dataset"  # type: ignore
 
 
 class ManagedAzureAISearchIndex(Index, discriminator="ManagedAzureSearch"):
@@ -1425,7 +1442,7 @@ class ManagedAzureAISearchIndex(Index, discriminator="ManagedAzureSearch"):
         *,
         vector_store_id: str,
         description: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -1436,7 +1453,8 @@ class ManagedAzureAISearchIndex(Index, discriminator="ManagedAzureSearch"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=IndexType.MANAGED_AZURE_SEARCH, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = IndexType.MANAGED_AZURE_SEARCH  # type: ignore
 
 
 class ModelDeployment(Deployment, discriminator="ModelDeployment"):
@@ -1468,7 +1486,7 @@ class ModelDeployment(Deployment, discriminator="ModelDeployment"):
     """Publisher-specific version of the deployed model. Required."""
     model_publisher: str = rest_field(name="modelPublisher", visibility=["read"])
     """Name of the deployed model's publisher. Required."""
-    capabilities: Dict[str, str] = rest_field(visibility=["read"])
+    capabilities: dict[str, str] = rest_field(visibility=["read"])
     """Capabilities of deployed model. Required."""
     sku: "_models.ModelDeploymentSku" = rest_field(visibility=["read"])
     """Sku of the model deployment. Required."""
@@ -1488,7 +1506,8 @@ class ModelDeployment(Deployment, discriminator="ModelDeployment"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=DeploymentType.MODEL_DEPLOYMENT, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = DeploymentType.MODEL_DEPLOYMENT  # type: ignore
 
 
 class ModelDeploymentSku(_Model):
@@ -1558,7 +1577,7 @@ class ModelResponseGenerationTarget(EvaluationTarget, discriminator="modelRespon
     type: Literal[EvaluationTargetType.MODEL_RESPONSE_GENERATION] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The type of evaluation target. Always 'modelResponseGeneration'. Required. Evaluation target
      that uses a model for response generation."""
-    base_messages: List["_models.Message"] = rest_field(
+    base_messages: list["_models.Message"] = rest_field(
         name="baseMessages", visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of messages comprising the conversation so far. Required."""
@@ -1567,7 +1586,7 @@ class ModelResponseGenerationTarget(EvaluationTarget, discriminator="modelRespon
     )
     """The model deployment to be evaluated. Accepts either the deployment name alone or with the
      connection name as '{connectionName}/modelDeploymentName'. Required."""
-    model_params: Dict[str, Any] = rest_field(
+    model_params: dict[str, Any] = rest_field(
         name="modelParams", visibility=["read", "create", "update", "delete", "query"]
     )
     """Optional parameters passed to the model for evaluation. Required."""
@@ -1576,9 +1595,9 @@ class ModelResponseGenerationTarget(EvaluationTarget, discriminator="modelRespon
     def __init__(
         self,
         *,
-        base_messages: List["_models.Message"],
+        base_messages: list["_models.Message"],
         model_deployment_name: str,
-        model_params: Dict[str, Any],
+        model_params: dict[str, Any],
     ) -> None: ...
 
     @overload
@@ -1589,7 +1608,8 @@ class ModelResponseGenerationTarget(EvaluationTarget, discriminator="modelRespon
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=EvaluationTargetType.MODEL_RESPONSE_GENERATION, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = EvaluationTargetType.MODEL_RESPONSE_GENERATION  # type: ignore
 
 
 class NoAuthenticationCredentials(BaseCredentials, discriminator="None"):
@@ -1615,7 +1635,74 @@ class NoAuthenticationCredentials(BaseCredentials, discriminator="None"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=CredentialType.NONE, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = CredentialType.NONE  # type: ignore
+
+
+class PagedDatasetVersion(_Model):
+    """Paged collection of DatasetVersion items.
+
+    :ivar value: The DatasetVersion items on this page. Required.
+    :vartype value: list[~azure.ai.projects.models.DatasetVersion]
+    :ivar next_link: The link to the next page of items.
+    :vartype next_link: str
+    """
+
+    value: list["_models.DatasetVersion"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The DatasetVersion items on this page. Required."""
+    next_link: Optional[str] = rest_field(name="nextLink", visibility=["read", "create", "update", "delete", "query"])
+    """The link to the next page of items."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: list["_models.DatasetVersion"],
+        next_link: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PagedIndex(_Model):
+    """Paged collection of Index items.
+
+    :ivar value: The Index items on this page. Required.
+    :vartype value: list[~azure.ai.projects.models.Index]
+    :ivar next_link: The link to the next page of items.
+    :vartype next_link: str
+    """
+
+    value: list["_models.Index"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The Index items on this page. Required."""
+    next_link: Optional[str] = rest_field(name="nextLink", visibility=["read", "create", "update", "delete", "query"])
+    """The link to the next page of items."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: list["_models.Index"],
+        next_link: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class PendingUploadRequest(_Model):
@@ -1753,7 +1840,7 @@ class RedTeam(_Model):
     """Name of the red-team run."""
     num_turns: Optional[int] = rest_field(name="numTurns", visibility=["read", "create", "update", "delete", "query"])
     """Number of simulation rounds."""
-    attack_strategies: Optional[List[Union[str, "_models.AttackStrategy"]]] = rest_field(
+    attack_strategies: Optional[list[Union[str, "_models.AttackStrategy"]]] = rest_field(
         name="attackStrategies", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of attack strategies or nested lists of attack strategies."""
@@ -1762,7 +1849,7 @@ class RedTeam(_Model):
     )
     """Simulation-only or Simulation + Evaluation. Default false, if true the scan outputs
      conversation not evaluation result."""
-    risk_categories: Optional[List[Union[str, "_models.RiskCategory"]]] = rest_field(
+    risk_categories: Optional[list[Union[str, "_models.RiskCategory"]]] = rest_field(
         name="riskCategories", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of risk categories to generate attack objectives for."""
@@ -1770,9 +1857,9 @@ class RedTeam(_Model):
         name="applicationScenario", visibility=["read", "create", "update", "delete", "query"]
     )
     """Application scenario for the red team operation, to generate scenario specific attacks."""
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Red team's tags. Unlike properties, tags are fully mutable."""
-    properties: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    properties: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Red team's properties. Unlike tags, properties are add-only. Once added, a property cannot be
      removed."""
     status: Optional[str] = rest_field(visibility=["read"])
@@ -1787,12 +1874,12 @@ class RedTeam(_Model):
         target: "_models.TargetConfig",
         display_name: Optional[str] = None,
         num_turns: Optional[int] = None,
-        attack_strategies: Optional[List[Union[str, "_models.AttackStrategy"]]] = None,
+        attack_strategies: Optional[list[Union[str, "_models.AttackStrategy"]]] = None,
         simulation_only: Optional[bool] = None,
-        risk_categories: Optional[List[Union[str, "_models.RiskCategory"]]] = None,
+        risk_categories: Optional[list[Union[str, "_models.RiskCategory"]]] = None,
         application_scenario: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
-        properties: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -1833,7 +1920,8 @@ class SASCredentials(BaseCredentials, discriminator="SAS"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=CredentialType.SAS, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = CredentialType.SAS  # type: ignore
 
 
 class SystemMessage(Message, discriminator="system"):
@@ -1866,7 +1954,8 @@ class SystemMessage(Message, discriminator="system"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, role="system", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.role = "system"  # type: ignore
 
 
 class UserMessage(Message, discriminator="user"):
@@ -1898,4 +1987,5 @@ class UserMessage(Message, discriminator="user"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, role="user", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.role = "user"  # type: ignore

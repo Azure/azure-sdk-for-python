@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=useless-super-delegation
 
-from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .._utils.model_base import Model as _Model, rest_field
 
@@ -40,7 +40,7 @@ class BatchQueryRequest(_Model):
 
     id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Unique ID corresponding to each request in the batch. Required."""
-    headers: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    headers: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Headers of the request. Can use prefer header to set server timeout and to
      query statistics and visualization information."""
     body: "_models._models.QueryBody" = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -63,7 +63,7 @@ class BatchQueryRequest(_Model):
         id: str,  # pylint: disable=redefined-builtin
         body: "_models._models.QueryBody",
         workspace: str,
-        headers: Optional[Dict[str, str]] = None,
+        headers: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -100,7 +100,7 @@ class BatchQueryResponse(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Contains the tables, columns & rows resulting from a query."""
-    headers: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    headers: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Dictionary of <string>."""
 
     @overload
@@ -110,7 +110,7 @@ class BatchQueryResponse(_Model):
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         status: Optional[int] = None,
         body: Optional["_models._models.BatchQueryResults"] = None,
-        headers: Optional[Dict[str, str]] = None,
+        headers: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -137,13 +137,13 @@ class BatchQueryResults(_Model):
     :vartype error: ~azure.monitor.query.models._models.ErrorInfo
     """
 
-    tables: Optional[List["_models._models.Table"]] = rest_field(
+    tables: Optional[list["_models._models.Table"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The results of the query in tabular format."""
-    statistics: Optional[Dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    statistics: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Statistics represented in JSON format."""
-    render: Optional[Dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    render: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Visualization data in JSON format."""
     error: Optional["_models._models.ErrorInfo"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -154,9 +154,9 @@ class BatchQueryResults(_Model):
     def __init__(
         self,
         *,
-        tables: Optional[List["_models._models.Table"]] = None,
-        statistics: Optional[Dict[str, Any]] = None,
-        render: Optional[Dict[str, Any]] = None,
+        tables: Optional[list["_models._models.Table"]] = None,
+        statistics: Optional[dict[str, Any]] = None,
+        render: Optional[dict[str, Any]] = None,
         error: Optional["_models._models.ErrorInfo"] = None,
     ) -> None: ...
 
@@ -178,7 +178,7 @@ class BatchRequest(_Model):
     :vartype requests: list[~azure.monitor.query.models._models.BatchQueryRequest]
     """
 
-    requests: List["_models._models.BatchQueryRequest"] = rest_field(
+    requests: list["_models._models.BatchQueryRequest"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """An single request in a batch. Required."""
@@ -187,7 +187,7 @@ class BatchRequest(_Model):
     def __init__(
         self,
         *,
-        requests: List["_models._models.BatchQueryRequest"],
+        requests: list["_models._models.BatchQueryRequest"],
     ) -> None: ...
 
     @overload
@@ -208,7 +208,7 @@ class BatchResponse(_Model):
     :vartype responses: list[~azure.monitor.query.models._models.BatchQueryResponse]
     """
 
-    responses: Optional[List["_models._models.BatchQueryResponse"]] = rest_field(
+    responses: Optional[list["_models._models.BatchQueryResponse"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """An array of responses corresponding to each individual request in a batch."""
@@ -217,7 +217,7 @@ class BatchResponse(_Model):
     def __init__(
         self,
         *,
-        responses: Optional[List["_models._models.BatchQueryResponse"]] = None,
+        responses: Optional[list["_models._models.BatchQueryResponse"]] = None,
     ) -> None: ...
 
     @overload
@@ -292,9 +292,9 @@ class ErrorDetail(_Model):
     """Indicates which property in the request is responsible for the error."""
     value: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Indicates which value in 'target' is responsible for the error."""
-    resources: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    resources: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Indicates resources which were responsible for the error."""
-    additional_properties: Optional[Dict[str, Any]] = rest_field(
+    additional_properties: Optional[dict[str, Any]] = rest_field(
         name="additionalProperties", visibility=["read", "create", "update", "delete", "query"]
     )
     """Additional properties that can be provided on the error details object."""
@@ -307,8 +307,8 @@ class ErrorDetail(_Model):
         message: str,
         target: Optional[str] = None,
         value: Optional[str] = None,
-        resources: Optional[List[str]] = None,
-        additional_properties: Optional[Dict[str, Any]] = None,
+        resources: Optional[list[str]] = None,
+        additional_properties: Optional[dict[str, Any]] = None,
     ) -> None: ...
 
     @overload
@@ -342,7 +342,7 @@ class ErrorInfo(_Model):
     """A machine readable error code. Required."""
     message: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A human readable error message. Required."""
-    details: Optional[List["_models._models.ErrorDetail"]] = rest_field(
+    details: Optional[list["_models._models.ErrorDetail"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """error details."""
@@ -350,7 +350,7 @@ class ErrorInfo(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Inner error details if they exist."""
-    additional_properties: Optional[Dict[str, Any]] = rest_field(
+    additional_properties: Optional[dict[str, Any]] = rest_field(
         name="additionalProperties", visibility=["read", "create", "update", "delete", "query"]
     )
     """Additional properties that can be provided on the error info object."""
@@ -361,9 +361,9 @@ class ErrorInfo(_Model):
         *,
         code: str,
         message: str,
-        details: Optional[List["_models._models.ErrorDetail"]] = None,
+        details: Optional[list["_models._models.ErrorDetail"]] = None,
         innererror: Optional["_models._models.ErrorInfo"] = None,
-        additional_properties: Optional[Dict[str, Any]] = None,
+        additional_properties: Optional[dict[str, Any]] = None,
     ) -> None: ...
 
     @overload
@@ -426,7 +426,7 @@ class QueryBody(_Model):
     """Optional. The timespan over which to query data. This is an ISO8601 time period
      value.  This timespan is applied in addition to any that are specified in the
      query expression."""
-    workspaces: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    workspaces: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A list of workspaces to query in addition to the primary workspace."""
 
     @overload
@@ -435,7 +435,7 @@ class QueryBody(_Model):
         *,
         query: str,
         timespan: Optional[str] = None,
-        workspaces: Optional[List[str]] = None,
+        workspaces: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -462,11 +462,11 @@ class QueryResults(_Model):
     :vartype error: ~azure.monitor.query.models._models.ErrorInfo
     """
 
-    tables: List["_models._models.Table"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tables: list["_models._models.Table"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The results of the query in tabular format. Required."""
-    statistics: Optional[Dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    statistics: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Statistics represented in JSON format."""
-    render: Optional[Dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    render: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Visualization data in JSON format."""
     error: Optional["_models._models.ErrorInfo"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -477,9 +477,9 @@ class QueryResults(_Model):
     def __init__(
         self,
         *,
-        tables: List["_models._models.Table"],
-        statistics: Optional[Dict[str, Any]] = None,
-        render: Optional[Dict[str, Any]] = None,
+        tables: list["_models._models.Table"],
+        statistics: Optional[dict[str, Any]] = None,
+        render: Optional[dict[str, Any]] = None,
         error: Optional["_models._models.ErrorInfo"] = None,
     ) -> None: ...
 
@@ -507,9 +507,9 @@ class Table(_Model):
 
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the table. Required."""
-    columns: List["_models._models.Column"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    columns: list["_models._models.Column"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The list of columns in this table. Required."""
-    rows: List[List[Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    rows: list[list[Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The resulting rows from this query. Required."""
 
     @overload
@@ -517,8 +517,8 @@ class Table(_Model):
         self,
         *,
         name: str,
-        columns: List["_models._models.Column"],
-        rows: List[List[Any]],
+        columns: list["_models._models.Column"],
+        rows: list[list[Any]],
     ) -> None: ...
 
     @overload

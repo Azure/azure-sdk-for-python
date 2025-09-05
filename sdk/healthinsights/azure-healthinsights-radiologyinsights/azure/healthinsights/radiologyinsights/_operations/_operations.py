@@ -8,7 +8,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, Callable, Dict, IO, Iterator, List, Optional, TypeVar, Union, cast, overload
+from typing import Any, Callable, IO, Iterator, Optional, TypeVar, Union, cast, overload
 
 from azure.core import PipelineClient
 from azure.core.exceptions import (
@@ -36,14 +36,14 @@ from .._utils.utils import ClientMixinABC
 
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
 def build_radiology_insights_infer_radiology_insights_request(  # pylint: disable=name-too-long
-    id: str, *, expand: Optional[List[str]] = None, **kwargs: Any
+    id: str, *, expand: Optional[list[str]] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -73,7 +73,7 @@ def build_radiology_insights_infer_radiology_insights_request(  # pylint: disabl
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class RadiologyInsightsClientOperationsMixin(
+class _RadiologyInsightsClientOperationsMixin(
     ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], RadiologyInsightsClientConfiguration]
 ):
 
@@ -82,7 +82,7 @@ class RadiologyInsightsClientOperationsMixin(
         id: str,
         resource: Union[_models.RadiologyInsightsJob, JSON, IO[bytes]],
         *,
-        expand: Optional[List[str]] = None,
+        expand: Optional[list[str]] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -133,7 +133,7 @@ class RadiologyInsightsClientOperationsMixin(
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.HealthInsightsErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.HealthInsightsErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -153,7 +153,7 @@ class RadiologyInsightsClientOperationsMixin(
         id: str,
         resource: _models.RadiologyInsightsJob,
         *,
-        expand: Optional[List[str]] = None,
+        expand: Optional[list[str]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.RadiologyInsightsJob]:
@@ -183,7 +183,7 @@ class RadiologyInsightsClientOperationsMixin(
         id: str,
         resource: JSON,
         *,
-        expand: Optional[List[str]] = None,
+        expand: Optional[list[str]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.RadiologyInsightsJob]:
@@ -213,7 +213,7 @@ class RadiologyInsightsClientOperationsMixin(
         id: str,
         resource: IO[bytes],
         *,
-        expand: Optional[List[str]] = None,
+        expand: Optional[list[str]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.RadiologyInsightsJob]:
@@ -243,7 +243,7 @@ class RadiologyInsightsClientOperationsMixin(
         id: str,
         resource: Union[_models.RadiologyInsightsJob, JSON, IO[bytes]],
         *,
-        expand: Optional[List[str]] = None,
+        expand: Optional[list[str]] = None,
         **kwargs: Any
     ) -> LROPoller[_models.RadiologyInsightsJob]:
         """Create Radiology Insights job.

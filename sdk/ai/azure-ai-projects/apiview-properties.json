@@ -38,6 +38,8 @@
         "azure.ai.projects.models.ModelDeploymentSku": "Azure.AI.Projects.Sku",
         "azure.ai.projects.models.ModelResponseGenerationTarget": "Azure.AI.Projects.modelResponseGenerationTarget",
         "azure.ai.projects.models.NoAuthenticationCredentials": "Azure.AI.Projects.NoAuthenticationCredentials",
+        "azure.ai.projects.models.PagedDatasetVersion": "Azure.Core.Page",
+        "azure.ai.projects.models.PagedIndex": "Azure.Core.Page",
         "azure.ai.projects.models.PendingUploadRequest": "Azure.AI.Projects.PendingUploadRequest",
         "azure.ai.projects.models.PendingUploadResponse": "Azure.AI.Projects.PendingUploadResponse",
         "azure.ai.projects.models.RedTeam": "Azure.AI.Projects.RedTeam",
