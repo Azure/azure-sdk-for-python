@@ -35,10 +35,11 @@ from azure.ai.agents.models import (
     RequiredFunctionToolCallDetails,
 )
 
-current_path = os.path.dirname(__file__)
-root_path = os.path.abspath(os.path.join(current_path, os.pardir, os.pardir))
-if root_path not in sys.path:
-    sys.path.insert(0, root_path)
+# Add package directory to sys.path to import user_functions
+current_dir = os.path.dirname(os.path.abspath(__file__))
+package_dir = os.path.abspath(os.path.join(current_dir, os.pardir, os.pardir))
+if package_dir not in sys.path:
+    sys.path.insert(0, package_dir)
 from samples.utils.user_functions import user_functions
 
 project_client = AIProjectClient(
@@ -52,7 +53,7 @@ functions = FunctionTool(functions=user_functions)
 
 class MyRunHandler(RunHandler):
     def submit_function_call_output(
-        self, run: ThreadRun, tool_call: RequiredFunctionToolCall, tool_call_details: RequiredFunctionToolCallDetails
+        self, run: ThreadRun, tool_call: RequiredFunctionToolCall, tool_call_details: RequiredFunctionToolCallDetails, **kwargs: Any
     ) -> Optional[Any]:
         print(f"Call function: {tool_call_details.name}")
         return functions.execute(tool_call)
