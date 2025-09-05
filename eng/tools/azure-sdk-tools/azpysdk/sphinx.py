@@ -165,7 +165,7 @@ def sphinx_apidoc(output_dir: str, target_dir: str, namespace: str) -> int:
             while namespace:
                 rst_file_to_delete = base_path / f"{namespace}.rst"
                 logger.info(f"Removing {rst_file_to_delete}")
-                rst_file_to_delete.unlink()
+                rst_file_to_delete.unlink(missing_ok=True)
                 namespace = namespace.rpartition('.')[0]
     except CalledProcessError as e:
         logger.error(
@@ -263,13 +263,18 @@ class sphinx(Check):
             executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, package_dir)
             logger.info(f"Processing {package_name} for sphinx check")
 
+            # check Python version
+            if sys.version_info < (3, 11):
+                logger.error("This tool requires Python 3.11 or newer. Please upgrade your Python interpreter.")
+                return 1
+
             create_package_and_install(
                 distribution_directory=staging_directory,
                 target_setup=package_dir,
                 skip_install=False,
                 cache_dir=None,
                 work_dir=staging_directory,
-                force_create=False, 
+                force_create=False,
                 package_type="sdist",
                 pre_download_disabled=False,
                 python_executable=executable
@@ -277,13 +282,9 @@ class sphinx(Check):
   
             # install sphinx 
             try:
-                if (args.next):
+                if args.next:
                     pip_install(["sphinx", "sphinx_rtd_theme", "myst_parser", "sphinxcontrib-jquery"], True, executable, package_dir)
                 else:
-                    # check Python version
-                    if sys.version_info < (3, 11):
-                        logger.error("This tool requires Python 3.11 or newer. Please upgrade your Python interpreter.")
-                        return 1
                     pip_install([f"sphinx=={SPHINX_VERSION}", f"sphinx_rtd_theme=={SPHINX_RTD_THEME_VERSION}", f"myst_parser=={MYST_PARSER_VERSION}", f"sphinxcontrib-jquery=={SPHINX_CONTRIB_JQUERY_VERSION}"], True, executable, package_dir)
             except CalledProcessError as e:
                 logger.error("Failed to install sphinx:", e)
