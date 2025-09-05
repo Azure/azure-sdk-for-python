@@ -84,7 +84,7 @@ class MyEventHandler(AgentEventHandler):
             tool_calls = run.required_action.submit_tool_approval.tool_calls
             if not tool_calls:
                 print("No tool calls provided - cancelling run")
-                agents_client.runs.cancel(thread_id=thread.id, run_id=run.id)
+                agents_client.runs.cancel(thread_id=run.thread_id, run_id=run.id)
                 return
 
             tool_approvals = []
@@ -105,7 +105,7 @@ class MyEventHandler(AgentEventHandler):
                 print(f"tool_approvals: {tool_approvals}")
             if tool_approvals:
                 self.agents_client.runs.submit_tool_outputs_stream(
-                    thread_id=thread.id, run_id=run.id, tool_approvals=tool_approvals, event_handler=self
+                    thread_id=run.thread_id, run_id=run.id, tool_approvals=tool_approvals, event_handler=self
                         )
 
 
