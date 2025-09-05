@@ -44,7 +44,7 @@ async def sample_query_text():
             ],
         )
 
-        output = await client.get_answers_from_text(input)
+        output = await client.question_answering.get_answers_from_text(input)
         if output.answers:
             best_answer = [a for a in output.answers if a.confidence and a.confidence > 0.9][0]
             print("Q: {}".format(question))

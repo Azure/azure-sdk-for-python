@@ -4,6 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import pytest
+import os
 
 from azure.ai.language.questionanswering.authoring import AuthoringClient
 from azure.core.credentials import AzureKeyCredential
@@ -24,6 +25,10 @@ class TestCreateAndDeploy(QuestionAnsweringTestCase):
         )
         assert client._config.polling_interval == 1
 
+    @pytest.mark.skipif(
+        not all(os.getenv(v) for v in ["AZURE_TENANT_ID", "AZURE_CLIENT_ID", "AZURE_CLIENT_SECRET"]),
+        reason="Missing AAD env vars for DefaultAzureCredential",
+    )
     def test_create_project_aad(self, recorded_test, qna_creds):
         token = self.get_credential(AuthoringClient)
         client = AuthoringClient(qna_creds["qna_endpoint"], token)

@@ -10,6 +10,19 @@
 
 ### Other Changes
 
+## 1.0.0b1 (2025-09-01)
+### Features Added
+- Initial release of `azure-ai-language-questionanswering` generated from TypeSpec (API version 2025-05-15-preview).
+
+### Breaking Changes
+- N/A
+
+### Bugs Fixed
+- N/A
+
+### Other Changes
+- Added README, samples, and update basic tests.
+
 ## 1.1.0 (2022-10-13)
 
 ### Breaking Changes

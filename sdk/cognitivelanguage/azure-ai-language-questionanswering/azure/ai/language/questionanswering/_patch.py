@@ -5,10 +5,24 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
 
-from typing import Union, Any
+from typing import Union, Any, Optional, Mapping
+from io import IOBase
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy, BearerTokenCredentialPolicy
 from ._client import QuestionAnsweringClient as QuestionAnsweringClientGenerated
+from ._normalization import (  # type: ignore  # noqa: F401
+    _normalize_text_options,
+    _normalize_answers_dict,
+)  # internal shared helpers
+
+
+def _apply_default_language(obj: Any, default_lang: Optional[str]) -> None:
+    """Inject default language attribute if target lacks one.
+
+    Swallows only AttributeError to avoid masking other issues.
+    """
+    if default_lang and getattr(obj, "language", None) is None:
+        setattr(obj, "language", default_lang)
 
 
 def _authentication_policy(credential, **kwargs):
@@ -56,13 +70,140 @@ class QuestionAnsweringClient(QuestionAnsweringClientGenerated):
             endpoint = endpoint.rstrip("/")
         except AttributeError as exc:
             raise ValueError("Parameter 'endpoint' must be a string.") from exc
+        # Extract default_language (generated client does not currently persist it)
+        self._default_language = kwargs.pop("default_language", None)
         super().__init__(
             endpoint=endpoint,
             credential=credential,  # type: ignore
             authentication_policy=kwargs.pop("authentication_policy", _authentication_policy(credential, **kwargs)),
             **kwargs
         )
-        self._default_language = kwargs.pop("default_language", None)
+
+    # Convenience wrappers adding input normalization (aliases, span request, filters).
+    # Kept here so regenerated code won't override user-friendly behaviors.
+    def get_answers_from_text(self, *args: Any, **kwargs: Any) -> Any:  # type: ignore[override]
+        if "options" in kwargs:
+            raise TypeError("'options' must be passed positionally, not as a keyword")
+        if len(args) > 1:
+            raise TypeError("Only a single positional 'options' argument is allowed")
+
+        options = args[0] if len(args) > 0 else None
+        question: Optional[str] = kwargs.pop("question", None)
+        text_documents: Optional[list[Any]] = kwargs.pop("text_documents", None)
+        language: Optional[str] = kwargs.pop("language", None)
+
+        if options is not None and (question is not None or text_documents is not None or language is not None):
+            raise TypeError("Pass either a positional 'options' argument or keyword params, not both")
+
+        if options is None:
+            if question is None or text_documents is None:
+                raise TypeError("'question' and 'text_documents' are required when not providing an options object")
+            from . import models as _models
+            effective_language = language if language is not None else getattr(self, "_default_language", None)
+            model = _models.AnswersFromTextOptions(
+                question=question, text_documents=text_documents, language=effective_language
+            )
+            return self.question_answering.get_answers_from_text(model, **kwargs)
+
+        if isinstance(options, Mapping):
+            # Normalize dict-style inputs (aliases, list[str] -> records, inject default language)
+            opts = _normalize_text_options(options, self._default_language)
+            return self.question_answering.get_answers_from_text(opts, **kwargs)
+
+        try:
+            # Inject default language into model instance if not already set
+            _apply_default_language(options, self._default_language)
+        except AttributeError:
+            pass
+        return self.question_answering.get_answers_from_text(options, **kwargs)
+
+    def get_answers(self, *args: Any, **kwargs: Any) -> Any:  # type: ignore[override]
+        project_name: Optional[str] = kwargs.pop("project_name", None)
+        deployment_name: Optional[str] = kwargs.pop("deployment_name", None)
+        if project_name is None or deployment_name is None:
+            raise TypeError("'project_name' and 'deployment_name' are required")
+
+        if "options" in kwargs:
+            raise TypeError("'options' must be passed positionally, not as a keyword")
+        if len(args) > 1:
+            raise TypeError("Only a single positional 'options' argument is allowed")
+
+        options = args[0] if len(args) > 0 else None
+        question: Optional[str] = kwargs.pop("question", None)
+        qna_id: Optional[int] = kwargs.pop("qna_id", None)
+        top: Optional[int] = kwargs.pop("top", None)
+        user_id: Optional[str] = kwargs.pop("user_id", None)
+        confidence_threshold: Optional[float] = kwargs.pop("confidence_threshold", None)
+        answer_context: Optional[Any] = kwargs.pop("answer_context", None)
+        ranker_kind: Optional[Union[str, Any]] = kwargs.pop("ranker_kind", None)
+        filters: Optional[Any] = kwargs.pop("filters", None)
+        short_answer_options: Optional[Any] = kwargs.pop("short_answer_options", None)
+        include_unstructured_sources: Optional[bool] = kwargs.pop("include_unstructured_sources", None)
+        query_preferences: Optional[Any] = kwargs.pop("query_preferences", None)
+
+        if options is not None and any(
+            param is not None
+            for param in (
+                question,
+                qna_id,
+                top,
+                user_id,
+                confidence_threshold,
+                answer_context,
+                ranker_kind,
+                filters,
+                short_answer_options,
+                include_unstructured_sources,
+                query_preferences,
+            )
+        ):
+            raise TypeError("Pass either 'options' positional argument or keyword params, not both")
+
+        if options is None:
+            if not question and qna_id is None:
+                raise TypeError("Either 'question' or 'qna_id' must be provided")
+            from . import models as _models
+            model = _models.AnswersOptions(
+                question=question,
+                qna_id=qna_id,
+                top=top,
+                user_id=user_id,
+                confidence_threshold=confidence_threshold,
+                answer_context=answer_context,
+                ranker_kind=ranker_kind,
+                filters=filters,
+                short_answer_options=short_answer_options,
+                include_unstructured_sources=include_unstructured_sources,
+                query_preferences=query_preferences,
+            )
+            return self.question_answering.get_answers(
+                model, project_name=project_name, deployment_name=deployment_name, **kwargs
+            )
+
+        if isinstance(options, Mapping):
+            opts = _normalize_answers_dict(options)
+            has_question = bool(opts.get("question"))
+            has_qna = (opts.get("qnaId") is not None)
+            if not has_question and not has_qna:
+                raise TypeError("Either 'question' or 'qna_id' must be provided")
+            return self.question_answering.get_answers(
+                opts, project_name=project_name, deployment_name=deployment_name, **kwargs
+            )
+
+        if not isinstance(options, (bytes, IOBase)):
+            try:
+                has_question = bool(getattr(options, "question", None))
+                has_qna = (getattr(options, "qna_id", None) is not None) or (
+                    getattr(options, "qnaId", None) is not None
+                )
+                if not has_question and not has_qna:
+                    raise TypeError("Either 'question' or 'qna_id' (or 'qnaId') must be provided")
+            except AttributeError:
+                pass  # ignore objects without expected attributes
+
+        return self.question_answering.get_answers(
+            options, project_name=project_name, deployment_name=deployment_name, **kwargs
+        )
 
 
 def patch_sdk():
@@ -70,3 +211,6 @@ def patch_sdk():
 
 
 __all__ = ["QuestionAnsweringClient"]
+
+
+# (Normalization helpers moved to _normalization.py for reuse with async variant)
