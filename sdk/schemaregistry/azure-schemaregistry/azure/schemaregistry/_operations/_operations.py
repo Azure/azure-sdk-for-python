@@ -6,7 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, Callable, Dict, Iterable, Iterator, List, Optional, TypeVar
+import json
+from typing import Any, Callable, Iterator, Optional, TypeVar
 import urllib.parse
 
 from azure.core import PipelineClient
@@ -27,12 +28,12 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .._configuration import SchemaRegistryClientConfiguration
-from .._utils.model_base import _deserialize
+from .._utils.model_base import SdkJSONEncoder, _deserialize
 from .._utils.serialization import Serializer
 from .._utils.utils import ClientMixinABC
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -148,8 +149,6 @@ def build_schema_registry_get_schema_properties_by_content_request(  # pylint: d
 
     content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-01"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/$schemaGroups/{groupName}/schemas/{schemaName}:get-id"
     path_format_arguments = {
@@ -164,7 +163,6 @@ def build_schema_registry_get_schema_properties_by_content_request(  # pylint: d
 
     # Construct headers
     _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -177,8 +175,6 @@ def build_schema_registry_register_schema_request(  # pylint: disable=name-too-l
 
     content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-01"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/$schemaGroups/{groupName}/schemas/{schemaName}"
     path_format_arguments = {
@@ -193,15 +189,16 @@ def build_schema_registry_register_schema_request(  # pylint: disable=name-too-l
 
     # Construct headers
     _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class SchemaRegistryClientOperationsMixin(ClientMixinABC[PipelineClient, SchemaRegistryClientConfiguration]):
+class _SchemaRegistryClientOperationsMixin(
+    ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], SchemaRegistryClientConfiguration]
+):
 
     @distributed_trace
-    def _list_schema_groups(self, **kwargs: Any) -> Iterable[str]:
+    def _list_schema_groups(self, **kwargs: Any) -> ItemPaged[str]:
         """Get list of schema groups.
 
         Gets the list of schema groups user is authorized to access.
@@ -213,7 +210,7 @@ class SchemaRegistryClientOperationsMixin(ClientMixinABC[PipelineClient, SchemaR
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[str]] = kwargs.pop("cls", None)
+        cls: ClsType[list[str]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -268,7 +265,7 @@ class SchemaRegistryClientOperationsMixin(ClientMixinABC[PipelineClient, SchemaR
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[str], deserialized.get("Value", []))
+            list_of_elem = _deserialize(list[str], deserialized.get("Value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("NextLink") or None, iter(list_of_elem)
@@ -291,7 +288,7 @@ class SchemaRegistryClientOperationsMixin(ClientMixinABC[PipelineClient, SchemaR
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def _list_schema_versions(self, group_name: str, schema_name: str, **kwargs: Any) -> Iterable[int]:
+    def _list_schema_versions(self, group_name: str, schema_name: str, **kwargs: Any) -> ItemPaged[int]:
         """List schema versions.
 
         Gets the list of all versions of one schema.
@@ -307,7 +304,7 @@ class SchemaRegistryClientOperationsMixin(ClientMixinABC[PipelineClient, SchemaR
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[int]] = kwargs.pop("cls", None)
+        cls: ClsType[list[int]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -364,7 +361,7 @@ class SchemaRegistryClientOperationsMixin(ClientMixinABC[PipelineClient, SchemaR
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[int], deserialized.get("Value", []))
+            list_of_elem = _deserialize(list[int], deserialized.get("Value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("NextLink") or None, iter(list_of_elem)

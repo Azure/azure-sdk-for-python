@@ -111,17 +111,10 @@ class SecretClient(AsyncKeyVaultClientBase):
             attributes = None
 
         parameters = self._models.SecretSetParameters(
-            value=value,
-            tags=tags,
-            content_type=content_type,
-            secret_attributes=attributes
+            value=value, tags=tags, content_type=content_type, secret_attributes=attributes
         )
 
-        bundle = await self._client.set_secret(
-            name,
-            parameters=parameters,
-            **kwargs
-        )
+        bundle = await self._client.set_secret(name, parameters=parameters, **kwargs)
         return KeyVaultSecret._from_secret_bundle(bundle)
 
     @distributed_trace_async
@@ -177,12 +170,7 @@ class SecretClient(AsyncKeyVaultClientBase):
             tags=tags,
         )
 
-        bundle = await self._client.update_secret(
-            name,
-            secret_version=version or "",
-            parameters=parameters,
-            **kwargs
-        )
+        bundle = await self._client.update_secret(name, secret_version=version or "", parameters=parameters, **kwargs)
         return SecretProperties._from_secret_bundle(bundle)  # pylint: disable=protected-access
 
     @distributed_trace
@@ -205,7 +193,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         return self._client.get_secrets(
             maxresults=kwargs.pop("max_page_size", None),
             cls=lambda objs: [SecretProperties._from_secret_item(x) for x in objs],
-            **kwargs
+            **kwargs,
         )
 
     @distributed_trace
@@ -231,7 +219,7 @@ class SecretClient(AsyncKeyVaultClientBase):
             name,
             maxresults=kwargs.pop("max_page_size", None),
             cls=lambda objs: [SecretProperties._from_secret_item(x) for x in objs],
-            **kwargs
+            **kwargs,
         )
 
     @distributed_trace_async
@@ -278,8 +266,7 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         bundle = await self._client.restore_secret(
-            parameters=self._models.SecretRestoreParameters(secret_bundle_backup=backup),
-            **kwargs
+            parameters=self._models.SecretRestoreParameters(secret_bundle_backup=backup), **kwargs
         )
         return SecretProperties._from_secret_bundle(bundle)
 
@@ -371,7 +358,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         return self._client.get_deleted_secrets(
             maxresults=kwargs.pop("max_page_size", None),
             cls=lambda objs: [DeletedSecret._from_deleted_secret_item(x) for x in objs],
-            **kwargs
+            **kwargs,
         )
 
     @distributed_trace_async
@@ -441,7 +428,7 @@ class SecretClient(AsyncKeyVaultClientBase):
             command=command,
             final_resource=recovered_secret,
             finished=False,
-            interval=polling_interval
+            interval=polling_interval,
         )
         await polling_method.run()
 

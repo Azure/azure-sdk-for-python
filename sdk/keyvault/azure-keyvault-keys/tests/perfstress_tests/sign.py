@@ -25,6 +25,7 @@ class SignTest(PerfStressTest):
         super().__init__(arguments)
 
         from dotenv import load_dotenv
+
         load_dotenv()
 
         # Auth configuration
