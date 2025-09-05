@@ -1638,6 +1638,12 @@ class BaseToolSet(ABC):
 
         Implementations should raise ``ValueError`` (or a more specific exception) if
         the tool type is not permitted.
+
+        :param tool: The tool to validate.
+        :type tool: Tool
+        :return: None
+        :rtype: None
+        :raises ValueError: If the tool type is not permitted for this tool set.
         """
         raise NotImplementedError
 
@@ -1743,9 +1749,14 @@ class BaseToolSet(ABC):
         For McpTool without server_label, removes ALL MCP tools from the toolset.
         Otherwise, removes the entire tool from the toolset.
 
-        :param Type[Tool] tool_type: The type of tool to remove.
-        :param str name: (Optional) For OpenApiTool - the name of the specific API definition to remove.
-        :param str server_label: (Optional) For McpTool - the server label of the specific MCP tool to remove.
+        :param tool_type: The type of tool to remove.
+        :type tool_type: Type[Tool]
+        :keyword name: (Optional) For OpenApiTool - the name of the specific API definition to remove.
+        :paramtype name: str
+        :keyword server_label: (Optional) For McpTool - the server label of the specific MCP tool to remove.
+        :paramtype server_label: str
+        :return: None
+        :rtype: None
         :raises ValueError: If a tool of the specified type is not found.
         """
         # Special handling for OpenApiTool with name parameter
@@ -1786,9 +1797,8 @@ class BaseToolSet(ABC):
 
             if removed_count == 0:
                 raise ValueError(f"No tools of type {tool_type.__name__} found in the ToolSet.")
-            else:
-                logger.info("Removed %d MCP tools from the ToolSet.", removed_count)
-                return
+            logger.info("Removed %d MCP tools from the ToolSet.", removed_count)
+            return
 
         # Standard tool removal
         for i, tool in enumerate(self._tools):
@@ -1844,8 +1854,10 @@ class BaseToolSet(ABC):
         If there are multiple MCP tools and no server_label is provided, raises an error.
         Otherwise, returns the first (or only) tool of the specified type.
 
-        :param Type[Tool] tool_type: The type of tool to get.
-        :param str server_label: (Optional) For McpTool - the server label of the specific MCP tool to get.
+        :param tool_type: The type of tool to get.
+        :type tool_type: Type[Tool]
+        :keyword server_label: (Optional) For McpTool - the server label of the specific MCP tool to get.
+        :paramtype server_label: str
         :return: The tool of the specified type.
         :rtype: Tool
         :raises ValueError: If a tool of the specified type is not found, if no McpTool with the specified server_label is found, or if there are multiple MCP tools but no server_label is provided.
