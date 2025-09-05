@@ -248,7 +248,7 @@ class sphinx(Check):
 
     def run(self, args: argparse.Namespace) -> int:
         """Run the sphinx check command."""
-        logger.info("Running sphinx check in isolated venv...")
+        logger.info("Running sphinx check...")
 
         set_envvar_defaults()
 
