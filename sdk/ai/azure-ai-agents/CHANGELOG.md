@@ -9,7 +9,7 @@
 ### Features Added
 
 - ToolSet now supports adding multiple McpTool instances and OpenApiTool instances.
-- Added static merge_resources method to `McpTool` with accompanying sample.
+- Added static functions `Tool.get_tool_resources` and `Tool.get_tool_definitions` to simplify extracting tool resources and definitions from collections of tools, making it easier to configure agents with multiple tool instances.
 
 ### Bugs Fixed
 
