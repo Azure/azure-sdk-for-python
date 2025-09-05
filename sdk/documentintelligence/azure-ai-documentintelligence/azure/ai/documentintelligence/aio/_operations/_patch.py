@@ -19,11 +19,11 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
 from ._operations import (
-    DocumentIntelligenceClientOperationsMixin as GeneratedDIClientOps,
-    DocumentIntelligenceAdministrationClientOperationsMixin as GeneratedDIAdminClientOps,
+    _DocumentIntelligenceClientOperationsMixin as GeneratedDIClientOps,
+    _DocumentIntelligenceAdministrationClientOperationsMixin as GeneratedDIAdminClientOps,
 )
 from ... import models as _models
-from ..._model_base import _deserialize
+from ..._utils.model_base import _deserialize
 from ..._operations._patch import PollingReturnType_co, _parse_operation_id
 
 if sys.version_info >= (3, 9):
@@ -345,7 +345,12 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(
         if polling is True:
             polling_method: AsyncPollingMethod = cast(
                 AsyncPollingMethod,
-                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, lro_options={"final-state-via": "operation-location"}, **kwargs),
+                AsyncLROBasePolling(
+                    lro_delay,
+                    path_format_arguments=path_format_arguments,
+                    lro_options={"final-state-via": "operation-location"},
+                    **kwargs
+                ),
             )
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())

@@ -54,7 +54,7 @@ def convert_to_and_from_dict():
     # save the dictionary as JSON content in a JSON file
     with open("data.json", "w") as output_file:
         json.dump(analyze_result_dict, output_file, indent=4)
-    
+
     # convert the dictionary back to the original model
     model = AnalyzeResult(analyze_result_dict)
 
