@@ -356,8 +356,6 @@ def patch_sdk():
 
 
 __all__ = [
-    "_JobsStrategy",
-    "_JobsPollingMethod",
     "AssignDeploymentResourcesDetails",
     "UnassignDeploymentResourcesDetails",
     "SwapDeploymentsDetails",
@@ -383,7 +381,6 @@ __all__ = [
     "CopyProjectDetails",
     "EvaluationJobResult",
     "EvaluationState",
-    "_AsyncJobsPollingMethod",
     "ConversationExportedProjectAsset",
     "ConversationExportedIntent",
     "ConversationExportedEntity",
