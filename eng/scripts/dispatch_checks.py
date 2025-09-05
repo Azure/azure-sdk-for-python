@@ -12,9 +12,9 @@ from typing import List
 from ci_tools.functions import discover_targeted_packages
 from ci_tools.variables import in_ci
 from ci_tools.scenario.generation import build_whl_for_req
+from ci_tools.logging import configure_logging, logger
 
 root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-
 
 @dataclass
 class CheckResult:
@@ -38,8 +38,8 @@ async def run_check(semaphore: asyncio.Semaphore, package: str, check: str, base
     """
     async with semaphore:
         start = time.time()
-        cmd = base_args + [check, package]
-        logging.info(f"[START {idx}/{total}] {check} :: {package}\nCMD: {' '.join(cmd)}")
+        cmd = base_args + [check, "--isolate", package]
+        logger.info(f"[START {idx}/{total}] {check} :: {package}\nCMD: {' '.join(cmd)}")
         try:
             proc = await asyncio.create_subprocess_exec(
                 *cmd,
@@ -48,7 +48,7 @@ async def run_check(semaphore: asyncio.Semaphore, package: str, check: str, base
                 stderr=asyncio.subprocess.PIPE,
             )
         except Exception as ex:  # subprocess failed to launch
-            logging.error(f"Failed to start check {check} for {package}: {ex}")
+            logger.error(f"Failed to start check {check} for {package}: {ex}")
             return CheckResult(package, check, 127, 0.0, "", str(ex))
 
         stdout_b, stderr_b = await proc.communicate()
@@ -57,7 +57,7 @@ async def run_check(semaphore: asyncio.Semaphore, package: str, check: str, base
         stderr = stderr_b.decode(errors="replace")
         exit_code = proc.returncode or 0
         status = "OK" if exit_code == 0 else f"FAIL({exit_code})"
-        logging.info(f"[END   {idx}/{total}] {check} :: {package} -> {status} in {duration:.2f}s")
+        logger.info(f"[END   {idx}/{total}] {check} :: {package} -> {status} in {duration:.2f}s")
         # Print captured output after completion to avoid interleaving
         header = f"===== OUTPUT: {check} :: {package} (exit {exit_code}) ====="
         trailer = "=" * len(header)
@@ -103,7 +103,7 @@ async def run_all_checks(packages, checks, max_parallel):
     try:
         results = await asyncio.gather(*tasks, return_exceptions=True)
     except KeyboardInterrupt:
-        logging.warning("KeyboardInterrupt received. Cancelling running checks...")
+        logger.warning("KeyboardInterrupt received. Cancelling running checks...")
         for t in pending:
             t.cancel()
         raise
@@ -223,6 +223,8 @@ In the case of an environment invoking `pytest`, results can be collected in a j
 
     args = parser.parse_args()
 
+    configure_logging(args)
+
     # We need to support both CI builds of everything and individual service
     # folders. This logic allows us to do both.
     if args.service and args.service != "auto":
@@ -231,7 +233,7 @@ In the case of an environment invoking `pytest`, results can be collected in a j
     else:
         target_dir = root_dir
 
-    logging.info(f"Beginning discovery for {args.service} and root dir {root_dir}. Resolving to {target_dir}.")
+    logger.info(f"Beginning discovery for {args.service} and root dir {root_dir}. Resolving to {target_dir}.")
 
     if args.filter_type == "None":
         args.filter_type = "Build"
@@ -244,11 +246,11 @@ In the case of an environment invoking `pytest`, results can be collected in a j
     )
 
     if len(targeted_packages) == 0:
-        logging.info(f"No packages collected for targeting string {args.glob_string} and root dir {root_dir}. Exit 0.")
+        logger.info(f"No packages collected for targeting string {args.glob_string} and root dir {root_dir}. Exit 0.")
         exit(0)
 
-    print(f"Executing checks with the executable {sys.executable}.")
-    print(f"Packages targeted: {targeted_packages}")
+    logger.info(f"Executing checks with the executable {sys.executable}.")
+    logger.info(f"Packages targeted: {targeted_packages}")
 
     if args.wheel_dir:
         os.environ["PREBUILT_WHEEL_DIR"] = args.wheel_dir
@@ -269,15 +271,15 @@ In the case of an environment invoking `pytest`, results can be collected in a j
     raw_checks = (args.checks_list or "").split(",")
     checks = [c.strip() for c in raw_checks if c and c.strip()]
     if not checks:
-        logging.error("No valid checks provided via -c/--checks.")
+        logger.error("No valid checks provided via -c/--checks.")
         sys.exit(2)
 
-    logging.info(f"Running {len(checks)} checks across {len(targeted_packages)} packages (max_parallel={args.max_parallel}).")
+    logger.info(f"Running {len(checks)} checks across {len(targeted_packages)} packages (max_parallel={args.max_parallel}).")
 
     configure_interrupt_handling()
     try:
         exit_code = asyncio.run(run_all_checks(targeted_packages, checks, args.max_parallel))
     except KeyboardInterrupt:
-        logging.error("Aborted by user.")
+        logger.error("Aborted by user.")
         exit_code = 130
     sys.exit(exit_code)
