@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -6,10 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-import sys
 from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, overload
 
-from azure.core import AsyncPipelineClient
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -19,19 +18,15 @@ from azure.core.exceptions import (
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.rest import AsyncHttpResponse, HttpRequest
+from azure.core.pipeline.transport import AsyncHttpResponse
+from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
-from ..._serialization import Deserializer, Serializer
+from ..._vendor import _convert_request
 from ...operations._workspace_git_repo_management_operations import build_get_git_hub_access_token_request
-from .._configuration import ArtifactsClientConfiguration
 
-if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
-else:
-    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -50,10 +45,10 @@ class WorkspaceGitRepoManagementOperations:
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ArtifactsClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @overload
     async def get_git_hub_access_token(
@@ -74,6 +69,7 @@ class WorkspaceGitRepoManagementOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: GitHubAccessTokenResponse or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.GitHubAccessTokenResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -82,7 +78,7 @@ class WorkspaceGitRepoManagementOperations:
     @overload
     async def get_git_hub_access_token(
         self,
-        git_hub_access_token_request: IO[bytes],
+        git_hub_access_token_request: IO,
         client_request_id: Optional[str] = None,
         *,
         content_type: str = "application/json",
@@ -91,13 +87,14 @@ class WorkspaceGitRepoManagementOperations:
         """Get the GitHub access token.
 
         :param git_hub_access_token_request: Required.
-        :type git_hub_access_token_request: IO[bytes]
+        :type git_hub_access_token_request: IO
         :param client_request_id: Can provide a guid, which is helpful for debugging and to provide
          better customer support. Default value is None.
         :type client_request_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: GitHubAccessTokenResponse or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.GitHubAccessTokenResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -106,24 +103,28 @@ class WorkspaceGitRepoManagementOperations:
     @distributed_trace_async
     async def get_git_hub_access_token(
         self,
-        git_hub_access_token_request: Union[_models.GitHubAccessTokenRequest, IO[bytes]],
+        git_hub_access_token_request: Union[_models.GitHubAccessTokenRequest, IO],
         client_request_id: Optional[str] = None,
         **kwargs: Any
     ) -> _models.GitHubAccessTokenResponse:
         """Get the GitHub access token.
 
-        :param git_hub_access_token_request: Is either a GitHubAccessTokenRequest type or a IO[bytes]
-         type. Required.
+        :param git_hub_access_token_request: Is either a GitHubAccessTokenRequest type or a IO type.
+         Required.
         :type git_hub_access_token_request: ~azure.synapse.artifacts.models.GitHubAccessTokenRequest or
-         IO[bytes]
+         IO
         :param client_request_id: Can provide a guid, which is helpful for debugging and to provide
          better customer support. Default value is None.
         :type client_request_id: str
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: GitHubAccessTokenResponse or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.GitHubAccessTokenResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping = {
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -155,6 +156,7 @@ class WorkspaceGitRepoManagementOperations:
             headers=_headers,
             params=_params,
         )
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
@@ -171,7 +173,7 @@ class WorkspaceGitRepoManagementOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize("GitHubAccessTokenResponse", pipeline_response.http_response)
+        deserialized = self._deserialize("GitHubAccessTokenResponse", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
