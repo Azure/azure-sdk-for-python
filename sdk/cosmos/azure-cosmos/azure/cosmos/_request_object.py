@@ -19,12 +19,16 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Represents a request object.
-"""
-from typing import Optional, Mapping, Any, Dict, List
+"""Represents a request object."""
+import asyncio
+import threading
+from typing import Optional, Mapping, Any, Dict, List, Union
+
+from ._availability_strategy import CrossRegionHedgingStrategy
+from ._constants import _Constants as Constants
 from .documents import _OperationType
 from .http_constants import ResourceType
-from ._constants import _Constants as Constants
+
 
 class RequestObject(object): # pylint: disable=too-many-instance-attributes
     def __init__(
@@ -40,6 +44,7 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
         self.endpoint_override = endpoint_override
         self.should_clear_session_token_on_session_read_failure: bool = False  # pylint: disable=name-too-long
         self.headers = headers
+        self.availability_strategy: Optional[CrossRegionHedgingStrategy] = None
         self.use_preferred_locations: Optional[bool] = None
         self.location_index_to_route: Optional[int] = None
         self.location_endpoint_to_route: Optional[str] = None
@@ -49,6 +54,8 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
         self.healthy_tentative_location: Optional[str] = None
         self.pk_val = pk_val
         self.retry_write: bool = False
+        self.is_hedging_request: bool = False # Flag to track if this is a hedged request
+        self.completion_status: Optional[Union[threading.Event, asyncio.Event]] = None
 
     def route_to_location_with_preferred_location_flag(  # pylint: disable=name-too-long
         self,
@@ -97,3 +104,32 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
 
     def set_excluded_locations_from_circuit_breaker(self, excluded_locations: List[str]) -> None: # pylint: disable=name-too-long
         self.excluded_locations_circuit_breaker = excluded_locations
+
+    def set_availability_strategy(
+            self,
+            options: Mapping[str, Any],
+            client_strategy: Optional[CrossRegionHedgingStrategy] = None) -> None:
+        """Sets the availability strategy config for this request from options.
+        If not in options, uses the client's default strategy.
+
+        :param options: The request options that may contain availabilityStrategy
+        :type options: Mapping[str, Any]
+        :param client_strategy: The client's default availability strategy
+        :type client_strategy: ~azure.cosmos.CrossRegionHedgingStrategy
+        :return: None
+        """
+        # setup availabilityStrategy
+        # First try to get from options
+        if 'availabilityStrategy' in options:
+            self.availability_strategy = options['availabilityStrategy']
+        # If not in options, use client default
+        elif client_strategy is not None:
+            self.availability_strategy = client_strategy
+
+    def should_cancel_request(self) -> bool:
+        """Check if this request should be cancelled due to parallel request completion.
+        
+        :return: True if request should be cancelled, False otherwise
+        :rtype: bool
+        """
+        return self.completion_status is not None and self.completion_status.is_set()

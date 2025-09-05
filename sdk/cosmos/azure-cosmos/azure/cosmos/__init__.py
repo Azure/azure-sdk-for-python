@@ -19,6 +19,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+from ._availability_strategy import CrossRegionHedgingStrategy
 from ._version import VERSION
 from ._cosmos_responses import CosmosDict, CosmosList
 from ._retry_utility import ConnectionRetryPolicy
@@ -66,6 +67,7 @@ __all__ = (
     "ConnectionRetryPolicy",
     "ThroughputProperties",
     "CosmosDict",
-    "CosmosList"
+    "CosmosList",
+    "CrossRegionHedgingStrategy"
 )
 __version__ = VERSION
