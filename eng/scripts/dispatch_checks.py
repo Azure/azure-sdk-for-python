@@ -122,6 +122,10 @@ async def run_all_checks(packages, checks, max_parallel):
 def configure_interrupt_handling():
     # Ensure that a SIGINT propagates to asyncio tasks & subprocesses
     def handler(signum, frame):  # noqa: D401
+        """
+        Signal handler for SIGINT that logs the signal and raises KeyboardInterrupt
+        to trigger graceful shutdown of asyncio tasks and subprocesses.
+        """
         logging.warning(f"Received signal {signum}. Attempting graceful shutdown...")
         # Let asyncio loop raise KeyboardInterrupt
         raise KeyboardInterrupt
@@ -255,7 +259,7 @@ In the case of an environment invoking `pytest`, results can be collected in a j
     if args.wheel_dir:
         os.environ["PREBUILT_WHEEL_DIR"] = args.wheel_dir
 
-    if (not os.path.exists(os.path.join(root_dir, ".wheels"))):
+    if not os.path.exists(os.path.join(root_dir, ".wheels")):
         os.makedirs(os.path.join(root_dir, ".wheels"))
 
     if in_ci():
