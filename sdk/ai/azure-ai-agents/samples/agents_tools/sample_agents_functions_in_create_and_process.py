@@ -53,7 +53,11 @@ functions = FunctionTool(functions=user_functions)
 
 class MyRunHandler(RunHandler):
     def submit_function_call_output(
-        self, run: ThreadRun, tool_call: RequiredFunctionToolCall, tool_call_details: RequiredFunctionToolCallDetails, **kwargs: Any
+        self,
+        run: ThreadRun,
+        tool_call: RequiredFunctionToolCall,
+        tool_call_details: RequiredFunctionToolCallDetails,
+        **kwargs: Any,
     ) -> Optional[Any]:
         print(f"Call function: {tool_call_details.name}")
         return functions.execute(tool_call)

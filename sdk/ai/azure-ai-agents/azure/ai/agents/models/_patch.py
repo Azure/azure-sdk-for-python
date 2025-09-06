@@ -1894,7 +1894,7 @@ class RunHandler:
                 if any(tool_call.type == "function" for tool_call in tool_calls):
                     toolset = ToolSet()
                     toolset.add(runs_operations._function_tool)
-                    tool_outputs = toolset._execute_tool_calls(tool_calls, run=run, run_handler=self)
+                    tool_outputs = toolset._execute_tool_calls(tool_calls, run, self)
 
                     if _has_errors_in_toolcalls_output(tool_outputs):
                         if current_retry >= runs_operations._function_tool_max_retry:  # pylint:disable=no-else-return
@@ -1902,7 +1902,7 @@ class RunHandler:
                                 "Tool outputs contain errors - reaching max retry %s",
                                 runs_operations._function_tool_max_retry,
                             )
-                            run = runs_operations.cancel(thread_id=run.thread_id, run_id=run.id)
+                            return runs_operations.cancel(thread_id=run.thread_id, run_id=run.id)
                         else:
                             logger.warning("Tool outputs contain errors - retrying")
                             current_retry += 1
@@ -1927,9 +1927,9 @@ class RunHandler:
                         tool_approval = self.submit_mcp_tool_approval(run, tool_call)
                         if not tool_approval:
                             logger.debug(
-                                "submit_tool_approval in event handler returned None.  Please override this function and return a valid ToolApproval."
+                                "submit_tool_approval in run handler returned None.  Please override this function and return a valid ToolApproval."
                             )
-                            run = runs_operations.cancel(thread_id=run.thread_id, run_id=run.id)
+                            return runs_operations.cancel(thread_id=run.thread_id, run_id=run.id)
 
                         tool_approvals.append(tool_approval)
 
@@ -1938,6 +1938,7 @@ class RunHandler:
                         thread_id=run.thread_id, run_id=run.id, tool_approvals=tool_approvals
                     )
 
+            logger.debug("Current run ID: %s with status: %s", run.id, run.status)
         return run
 
     def submit_function_call_output(

@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Any, Iterator, List, MutableMapping, Optional, Dict
+from typing import Any, Callable, Iterator, List, MutableMapping, Optional, Dict
 
 import json
 import os
@@ -24,6 +24,7 @@ from azure.ai.agents.models import (
     ToolOutput,
     AgentEventHandler,
     ThreadRun,
+    RunHandler,
 )
 
 from user_functions import user_functions
@@ -88,7 +89,7 @@ class TestAgentsMock:
         client.runs.submit_tool_outputs = MagicMock()
         return client
 
-    def get_toolset(self, file_id: Optional[str], function: Optional[str]) -> Optional[ToolSet]:
+    def get_toolset(self, file_id: Optional[str], function: Optional[Callable[..., Any]]) -> Optional[ToolSet]:
         """Get the tool set with given file id and function"""
         if file_id is None or function is None:
             return None
@@ -506,6 +507,58 @@ class TestAgentsMock:
                 self._assert_tool_call(agents_client.runs.submit_tool_outputs, "run123", toolset2)
             else:
                 self._assert_tool_call(agents_client.runs.submit_tool_outputs, "run123", toolset1)
+
+    @patch("azure.ai.agents._client.PipelineClient")
+    def test_create_and_process_with_manual_function_calls(
+        self,
+        mock_pipeline_client_gen: MagicMock,
+    ) -> None:
+        """Test that if user have set tool set in create create_and_process_run method, that tools are used."""
+        toolset1 = self.get_toolset("file_for_agent_1", function1)
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        side_effect = [self._get_agent_json("first", "123", toolset1)]
+        side_effect.append(self._get_run("run123", toolset1))  # create_run
+        side_effect.append(self._get_run("run123", toolset1))  # get_run
+        side_effect.append(
+            self._get_run("run123", toolset1, is_complete=True)
+        )  # get_run after resubmitting with tool results
+
+        class MyRunHandler(RunHandler):
+            def submit_function_call_output(
+                self,
+                run: ThreadRun,
+                tool_call: RequiredFunctionToolCall,
+                tool_call_details: RequiredFunctionToolCallDetails,
+                **kwargs: Any,
+            ) -> Optional[Any]:
+                if tool_call_details.name == function1.__name__:
+                    return function1()
+
+        mock_response.json.side_effect = side_effect
+        mock_pipeline_response = MagicMock()
+        mock_pipeline_response.http_response = mock_response
+        mock_pipeline = MagicMock()
+        mock_pipeline._pipeline.run.return_value = mock_pipeline_response
+        mock_pipeline_client_gen.return_value = mock_pipeline
+        agents_client = self.get_mock_client()
+        with agents_client:
+            # Check that pipelines are created as expected.
+            self._set_toolcalls(agents_client, toolset1, None)
+            run_handler = MyRunHandler()
+            agent1 = agents_client.create_agent(
+                model="gpt-4-1106-preview",
+                name="first",
+                instructions="You are a helpful agent",
+                toolset=toolset1,
+            )
+            self._assert_pipeline_and_reset(mock_pipeline._pipeline.run, tool_set=toolset1)
+
+            # Create run with new tool set, which also can be none.
+            agents_client.runs.create_and_process(
+                thread_id="some_thread_id", agent_id=agent1.id, polling_interval=0, run_handler=run_handler
+            )
+            self._assert_tool_call(agents_client.runs.submit_tool_outputs, "run123", toolset1)
 
     @patch("azure.ai.agents._client.PipelineClient")
     @pytest.mark.parametrize(
