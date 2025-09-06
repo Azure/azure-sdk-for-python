@@ -974,7 +974,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
                 end_time = time.time()
                 return end_time - start_time
 
-    async def test_absolute_client_timeout_on_connection_error_async(self):
+    async def test_timeout_on_connection_error_async(self):
         # Connection Refused: This is an active rejection from the target machine's operating system. It receives your
         # connection request but immediately sends back a response indicating that no process is listening on that port.
         # This is a fast failure.
@@ -996,7 +996,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
             if client:
                 await client.close()
 
-    async def test_absolute_client_timeout_on_read_operation_async(self):
+    async def test_timeout_on_read_operation_async(self):
         error_response = ServiceResponseError("Read timeout")
         # Initialize transport with passthrough enabled for client setup
         timeout_transport = TimeoutTransport(error_response, passthrough=True)
@@ -1009,7 +1009,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
                 await client.create_database_if_not_exists("test", timeout=2)
 
 
-    async def test_absolute_client_timeout_on_server_error_async(self):
+    async def test_timeout_on_server_error_async(self):
         # Server Error (500)-Retry policy doesn't retry, it fails fast by raising
         # CosmosHttpResponseError. So if we increase the timeout below to a higher value
         # it will return in CosmosHttpResponseError instead of CosmosClientTimeoutError which is correct.
@@ -1027,7 +1027,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
                 async for _ in databases:
                     pass
 
-    async def test_absolute_client_timeout_on_throttling_error_async(self):
+    async def test_timeout_on_throttling_error_async(self):
         # Throttling(429): Keeps retrying -> Eventually times out -> CosmosClientTimeoutError
         status_response = 429  # Uses Cosmos custom retry
         timeout_transport = TimeoutTransport(status_response, passthrough=True)
@@ -1043,7 +1043,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
             with self.assertRaises(exceptions.CosmosClientTimeoutError):
                 databases = [database async for database in databases]
 
-    async def test_absolute_timeout_for_read_items_async(self):
+    async def test_timeout_for_read_items_async(self):
         """Test that timeout is properly maintained across multiple partition requests for a single logical operation
         read_items is different as the results of this api are not paginated and we present the complete result set
         """
@@ -1109,7 +1109,8 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         self.assertLess(elapsed_time, 7)  # Allow some overhead
         self.assertGreater(elapsed_time, 5)  # Should wait at least close to timeout
 
-    async def test_point_operation_timeout_async(self):
+
+    async def test_timeout_for_point_operation_async(self):
         """Test that point operations respect client timeout"""
 
         # Create a container for testing
@@ -1162,7 +1163,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
             )
             self.assertEqual(result['id'], 'test_item_1')
 
-    async def test_timeout_applies_per_page_request_async(self):
+    async def test_timeout_for_paged_request_async(self):
         """Test that timeout applies to each individual page request, not cumulatively"""
 
         test_cases = [

@@ -1225,7 +1225,7 @@ class TestCRUDOperations(unittest.TestCase):
             end_time = time.time()
             return end_time - start_time
 
-    def test_absolute_client_timeout_on_connection_error(self):
+    def test_timeout_on_connection_error(self):
         # Connection Refused: This is an active rejection from the target machine's operating system. It receives your
         # connection request but immediately sends back a response indicating that no process is listening on that port.
         # This is a fast failure.
@@ -1241,7 +1241,7 @@ class TestCRUDOperations(unittest.TestCase):
                 connection_timeout=100,
                 timeout=10)
 
-    def test_absolute_client_timeout_on_read_operation(self):
+    def test_timeout_on_read_operation(self):
         error_response = ServiceResponseError("Read timeout")
         # Initialize transport with passthrough enabled for client setup
         timeout_transport = TimeoutTransport(error_response, passthrough=True)
@@ -1252,7 +1252,7 @@ class TestCRUDOperations(unittest.TestCase):
         with self.assertRaises(exceptions.CosmosClientTimeoutError):
             client.create_database_if_not_exists("test", timeout=2)
 
-    def test_absolute_client_timeout_on_server_error(self):
+    def test_timeout_on_server_error(self):
         # Server Error (500)-Retry policy doesn't retry, it fails fast by raising
         # CosmosHttpResponseError. So if we increase the timeout below to a higher value
         # it will return in CosmosHttpResponseError instead of CosmosClientTimeoutError which is correct.
@@ -1270,7 +1270,7 @@ class TestCRUDOperations(unittest.TestCase):
         with self.assertRaises(exceptions.CosmosClientTimeoutError):
               list(databases)
 
-    def test_absolute_client_timeout_on_throttling_error(self):
+    def test_timeout_on_throttling_error(self):
         # Throttling(429): Keeps retrying -> Eventually times out -> CosmosClientTimeoutError
         status_response = 429  # Uses Cosmos custom retry
         timeout_transport = TimeoutTransport(status_response, passthrough=True)
@@ -1285,7 +1285,7 @@ class TestCRUDOperations(unittest.TestCase):
         with self.assertRaises(exceptions.CosmosClientTimeoutError):
             list(databases)
 
-    def test_absolute_timeout_for_read_items(self):
+    def test_timeout_for_read_items(self):
         """Test that timeout is properly maintained across multiple partition requests for a single logical operation
         read_items is different as the results of this api are not paginated and we present the complete result set
         """
@@ -1366,7 +1366,7 @@ class TestCRUDOperations(unittest.TestCase):
         print(f"elapsed time is {elapsed_time} and all items read {len(items)} successfully")
 
 
-    def test_timeout_applies_per_page_request(self):
+    def test_timeout_for_paged_request(self):
         """Test that timeout applies to each individual page request, not cumulatively"""
 
         test_cases = [
@@ -1473,7 +1473,7 @@ class TestCRUDOperations(unittest.TestCase):
                             items_processed += 1
                             time.sleep(test_case["client_processing_delay"])
 
-    def test_point_operation_timeout(self):
+    def test_timeout_for_point_operation(self):
         """Test that point operations respect client timeout"""
 
         # Create a container for testing
