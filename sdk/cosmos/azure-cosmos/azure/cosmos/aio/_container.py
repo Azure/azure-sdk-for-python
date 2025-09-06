@@ -46,7 +46,7 @@ from .._base import (
 )
 from .._change_feed.feed_range_internal import FeedRangeInternalEpk
 from .._cosmos_responses import CosmosDict, CosmosList
-from .._constants import _Constants as Constants
+from .._constants import _Constants as Constants, _Constants
 from .._routing.routing_range import Range
 from .._session_token_helpers import get_latest_session_token
 from ..offer import ThroughputProperties
@@ -108,6 +108,10 @@ class ContainerProxy:
         kwargs = {}
         if options and "excludedLocations" in options:
             kwargs['excluded_locations'] = options['excludedLocations']
+        if options and _Constants.OperationStartTime in options:
+            kwargs[_Constants.OperationStartTime] = options[_Constants.OperationStartTime]
+        if options and "timeout" in options:
+            kwargs['timeout'] = options['timeout']
         return await self._get_properties(**kwargs)
 
     async def _get_properties(self, **kwargs: Any) -> Dict[str, Any]:
@@ -489,6 +493,7 @@ class ContainerProxy:
         query_options = _build_options(kwargs)
         await self._get_properties_with_options(query_options)
         query_options["enableCrossPartitionQuery"] = True
+        query_options['is_timeout_per_operation'] = True
 
         return await self.client_connection.read_items(
             collection_link=self.container_link,

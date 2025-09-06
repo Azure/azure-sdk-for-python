@@ -22,6 +22,8 @@
 """Iterable query results in the Azure Cosmos database service.
 """
 from azure.core.paging import PageIterator  # type: ignore
+
+from azure.cosmos._constants import _Constants
 from azure.cosmos._execution_context import execution_dispatcher
 import time
 from azure.cosmos import exceptions
@@ -75,9 +77,8 @@ class QueryIterable(PageIterator):
             options['continuation'] = continuation_token
         # Capture timeout and start time
         self.timeout = options.get('timeout')
-        # Use passed start time if available, otherwise use current time
-        self.operation_start_time = options.get('operation_start_time') or (
-            time.time() if self.timeout else None)
+        self.is_timeout_per_operation = options.get('is_timeout_per_operation')
+
         self._fetch_function = fetch_function
         self._collection_link = collection_link
         self._database_link = database_link
@@ -106,23 +107,18 @@ class QueryIterable(PageIterator):
         :return: List of results.
         :rtype: list
         """
-        # print(f"_query_iterable operation_start_time  is {self.operation_start_time}")
+        if self.timeout and not self.is_timeout_per_operation:
+            self._options[_Constants.OperationStartTime] = time.time()
+
         # Check timeout before fetching next block
         if self.timeout:
-            elapsed = time.time() - self.operation_start_time
+            elapsed = time.time() - self._options.get(_Constants.OperationStartTime)
             if elapsed >= self.timeout:
-                print(f"_query_iterable throwing exception elapsed time is {elapsed} and timeout is {self.timeout}")
                 raise exceptions.CosmosClientTimeoutError()
 
-            # Update remaining timeout for this request
-            remaining_timeout = self.timeout - elapsed
-            if remaining_timeout <= 0:
-                raise exceptions.CosmosClientTimeoutError()
-
-            # Update options with remaining timeout
-            self._options['timeout'] = remaining_timeout
         block = self._ex_context.fetch_next_block()
-        print(f"_query_iterable fetched block of size {len(block)}")
+
+
 
         if not block:
             raise StopIteration

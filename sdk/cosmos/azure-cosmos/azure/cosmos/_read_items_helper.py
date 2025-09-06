@@ -60,8 +60,6 @@ class ReadItemsHelperSync:
         self.executor = executor
         self.max_concurrency = max_concurrency
         self.max_items_per_query = 1000
-        # Extract timeout from kwargs if present
-        self.timeout = kwargs.get('timeout')
 
 
     def read_items(self) -> CosmosList:
@@ -70,11 +68,6 @@ class ReadItemsHelperSync:
         :return: A list of the retrieved items in the same order as the input.
         :rtype: ~azure.cosmos.CosmosList
         """
-        # Set operation start time for timeout tracking
-        if self.timeout:
-            # Add to options for query iterator to use
-            self.options['timeout'] = self.timeout
-
         if not self.items:
             return CosmosList([], response_headers=CaseInsensitiveDict())
 

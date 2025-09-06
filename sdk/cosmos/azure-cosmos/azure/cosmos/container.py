@@ -44,7 +44,7 @@ from ._base import (
     _build_properties_cache
 )
 from ._change_feed.feed_range_internal import FeedRangeInternalEpk
-from ._constants import _Constants as Constants
+from ._constants import _Constants as Constants, _Constants
 from ._cosmos_client_connection import CosmosClientConnection
 from ._cosmos_responses import CosmosDict, CosmosList
 from ._routing.routing_range import Range
@@ -112,8 +112,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         kwargs = {}
         if options and "excludedLocations" in options:
             kwargs['excluded_locations'] = options['excludedLocations']
-        if options and "operation_start_time" in options:
-            kwargs['operation_start_time'] = options['operation_start_time']
+        if options and _Constants.OperationStartTime in options:
+            kwargs[_Constants.OperationStartTime] = options[_Constants.OperationStartTime]
+        if options and "timeout" in options:
+            kwargs['timeout'] = options['timeout']
         return self._get_properties(**kwargs)
 
     def _get_properties(self, **kwargs: Any) -> Dict[str, Any]:
@@ -351,6 +353,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         query_options = build_options(kwargs)
         self._get_properties_with_options(query_options)
         query_options["enableCrossPartitionQuery"] = True
+        query_options['is_timeout_per_operation'] = True
 
         item_tuples = [(item_id, self._set_partition_key(pk)) for item_id, pk in items]
 

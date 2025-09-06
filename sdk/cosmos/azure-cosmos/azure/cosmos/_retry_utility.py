@@ -40,6 +40,7 @@ from . import _service_request_retry_policy, _service_response_retry_policy
 from . import _session_retry_policy
 from . import _timeout_failover_retry_policy
 from . import exceptions
+from ._constants import _Constants
 from .documents import _OperationType
 from .exceptions import CosmosHttpResponseError
 from .http_constants import HttpHeaders, StatusCodes, SubStatusCodes, ResourceType
@@ -66,15 +67,13 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
     """
     # Capture the client timeout and start time at the beginning
     timeout = kwargs.get('timeout')
-    operation_start_time = kwargs.get("operation_start_time")
-    print(f"_retry_utility: operation_start_time from kwargs is {operation_start_time}")
-    if args:
-        request = args[0]
-        resource_type = request.headers.get('x-ms-thinclient-proxy-resource-type')
-        operation_type = request.headers.get('x-ms-thinclient-proxy-operation-type')
-        print(f"_retry_utility_: in the top Execute method: resource_type is {resource_type}, operation_type is {operation_type}")
+    operation_start_time = kwargs.get(_Constants.OperationStartTime)
 
-    # operation_start_time = time.time()
+    if timeout and operation_start_time is None:
+        operation_start_time = time.time()
+        # Also inject it into kwargs to be available for subsequent retries/calls if needed.
+        kwargs[_Constants.OperationStartTime] = operation_start_time
+
 
     pk_range_wrapper = None
     if args and global_endpoint_manager.is_circuit_breaker_applicable(args[0]):
@@ -127,10 +126,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
         if timeout:
             elapsed = time.time() - operation_start_time
             if elapsed >= timeout:
-                print(f"_retry_utility throwing exception elapsed time is {elapsed} and timeout is {timeout}")
                 raise exceptions.CosmosClientTimeoutError()
-            # Update timeout for this attempt
-            kwargs['timeout'] = timeout - elapsed
 
         try:
             if args:
@@ -142,7 +138,6 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
             if timeout:
                 elapsed = time.time() - operation_start_time
                 if elapsed >= timeout:
-                    print(f"_retry_utility throwing exception elapsed time is {elapsed} and timeout is {timeout}")
                     raise exceptions.CosmosClientTimeoutError()
 
             if not client.last_response_headers:
@@ -188,9 +183,8 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
             if timeout:
                 elapsed = time.time() - operation_start_time
                 if elapsed >= timeout:
-                    print(f"_retry_utility throwing exception elapsed time is {elapsed} and timeout is {timeout}")
                     raise exceptions.CosmosClientTimeoutError()
-                kwargs['timeout'] = timeout - elapsed
+
             if isinstance(e, exceptions.CosmosHttpResponseError):
                 if request:
                     # update session token for relevant operations

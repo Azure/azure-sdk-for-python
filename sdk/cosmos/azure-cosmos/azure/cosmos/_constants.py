@@ -32,6 +32,7 @@ class _Constants:
 
     UserConsistencyPolicy: Literal["userConsistencyPolicy"] = "userConsistencyPolicy"
     DefaultConsistencyLevel: Literal["defaultConsistencyLevel"] = "defaultConsistencyLevel"
+    OperationStartTime: Literal["operationStartTime"] = "operationStartTime"
 
     # GlobalDB related constants
     WritableLocations: Literal["writableLocations"] = "writableLocations"

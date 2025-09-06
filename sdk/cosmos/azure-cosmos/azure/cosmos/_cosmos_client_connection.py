@@ -63,7 +63,7 @@ from ._base import _build_properties_cache
 from ._change_feed.change_feed_iterable import ChangeFeedIterable
 from ._change_feed.change_feed_state import ChangeFeedState
 from ._change_feed.feed_range_internal import FeedRangeInternalEpk
-from ._constants import _Constants as Constants
+from ._constants import _Constants as Constants, _Constants
 from ._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
 from ._cosmos_responses import CosmosDict, CosmosList
 from ._range_partition_resolver import RangePartitionResolver
@@ -3151,10 +3151,14 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             # we need to set read_timeout in kwargs as thats where it is looked at while sending the request
             kwargs.setdefault("read_timeout", read_timeout)
 
-        operation_start_time = options.get("operation_start_time")
+        operation_start_time = options.get(_Constants.OperationStartTime)
         if operation_start_time is not None:
             # we need to set operation_state in kwargs as thats where it is looked at while sending the request
-            kwargs.setdefault("operation_start_time", operation_start_time)
+            kwargs.setdefault(_Constants.OperationStartTime, operation_start_time)
+        timeout = options.get("timeout")
+        if timeout is not None:
+            # we need to set operation_state in kwargs as that's where it is looked at while sending the request
+            kwargs.setdefault("timeout", timeout)
 
         if query:
             __GetBodiesFromQueryResult = result_fn

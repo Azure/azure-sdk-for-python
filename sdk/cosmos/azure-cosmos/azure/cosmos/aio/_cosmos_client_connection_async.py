@@ -60,7 +60,7 @@ from .._change_feed.change_feed_state import ChangeFeedState
 from .._change_feed.feed_range_internal import FeedRangeInternalEpk
 from .._routing import routing_range
 from ..documents import ConnectionPolicy, DatabaseAccount
-from .._constants import _Constants as Constants
+from .._constants import _Constants as Constants, _Constants
 from .._cosmos_responses import CosmosDict, CosmosList
 from .. import http_constants, exceptions
 from . import _query_iterable_async as query_iterable
@@ -2957,6 +2957,15 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if read_timeout is not None:
             # we need to set read_timeout in kwargs as thats where it is looked at while sending the request
             kwargs.setdefault("read_timeout", read_timeout)
+
+        operation_start_time = options.get(_Constants.OperationStartTime)
+        if operation_start_time is not None:
+            # we need to set operation_state in kwargs as thats where it is looked at while sending the request
+            kwargs.setdefault(_Constants.OperationStartTime, operation_start_time)
+        timeout = options.get("timeout")
+        if timeout is not None:
+            # we need to set operation_state in kwargs as that's where it is looked at while sending the request
+            kwargs.setdefault("timeout", timeout)
 
         if query:
             __GetBodiesFromQueryResult = result_fn

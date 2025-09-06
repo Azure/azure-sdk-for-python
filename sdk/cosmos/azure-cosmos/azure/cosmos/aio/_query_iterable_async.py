@@ -25,6 +25,8 @@ import asyncio # pylint: disable=do-not-import-asyncio
 import time
 
 from azure.core.async_paging import AsyncPageIterator
+
+from azure.cosmos._constants import _Constants
 from azure.cosmos._execution_context.aio import execution_dispatcher
 from azure.cosmos import exceptions
 
@@ -76,10 +78,8 @@ class QueryIterable(AsyncPageIterator):
         if continuation_token:
             options['continuation'] = continuation_token
         # Capture timeout and start time
-        self._client_timeout = options.get('timeout')
-        # Use passed start time if available, otherwise use current time
-        self.operation_start_time = options.get('operation_start_time') or (
-             time.time() if self._client_timeout else None)
+        self.timeout = options.get('timeout')
+        self.is_timeout_per_operation = options.get('is_timeout_per_operation')
         self._fetch_function = fetch_function
         self._collection_link = collection_link
         self._database_link = database_link
@@ -112,25 +112,17 @@ class QueryIterable(AsyncPageIterator):
             self._options['partitionKey'] = await self._options['partitionKey']
 
         # Check timeout before fetching next block
-        if self._client_timeout:
-            elapsed = time.time() - self.operation_start_time
-            if elapsed >= self._client_timeout:
-                raise exceptions.CosmosClientTimeoutError()
 
-            # Update remaining timeout for this request
-            remaining_timeout = self._client_timeout - elapsed
-            if remaining_timeout <= 0:
-                raise exceptions.CosmosClientTimeoutError()
+        if self.timeout and not self.is_timeout_per_operation:
+            self._options[_Constants.OperationStartTime] = time.time()
 
-            # Update options with remaining timeout
-            self._options['timeout'] = remaining_timeout
+        # Check timeout before fetching next block
+        if self.timeout:
+            elapsed = time.time() - self._options.get(_Constants.OperationStartTime)
+            if elapsed >= self.timeout:
+                raise exceptions.CosmosClientTimeoutError()
 
         block = await self._ex_context.fetch_next_block()
-        # Check timeout after fetching block
-        if self._client_timeout:
-            elapsed = time.time() - self.operation_start_time
-            if elapsed >= self._client_timeout:
-                raise exceptions.CosmosClientTimeoutError()
 
         if not block:
             raise StopAsyncIteration

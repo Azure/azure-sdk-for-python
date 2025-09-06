@@ -1335,21 +1335,35 @@ class TestCRUDOperations(unittest.TestCase):
         ).get_container_client(created_container.id)
 
         start_time = time.time()
-        print(f"\n\n********************GOING TO BEGIN THE  TEST*****************************************")
         with self.assertRaises(exceptions.CosmosClientTimeoutError):
             # This should timeout because multiple partition requests * 2s delay > 5s timeout
             list(container_with_delay.read_items(
-                items=items_to_read,
-                timeout=5  # 5 second total timeout
+                items = items_to_read,
+                timeout = 5  # 5 second total timeout
             ))
 
         elapsed_time = time.time() - start_time
-        print(f"elapsed time is {elapsed_time}")
+
         # Should fail close to 5 seconds (not wait for all requests)
         self.assertLess(elapsed_time, 7)  # Allow some overhead
         self.assertGreater(elapsed_time, 5)  # Should wait at least close to timeout
 
+        # Verify operation succeeds when no timeout is passed(default is close to 7 days)
+        start_time = time.time()
+        # add few more items
+        for i in range(500):
+            doc_id = f"item_{i}_{uuid.uuid4()}"
+            pk = i % 10
+            all_item_ids.add(doc_id)
+            created_container.create_item({'id': doc_id, 'pk': pk, 'data': i})
+            items_to_read.append((doc_id, pk))
 
+        items = list(container_with_delay.read_items(
+            items=items_to_read,
+        ))
+
+        elapsed_time = time.time() - start_time
+        print(f"elapsed time is {elapsed_time} and all items read {len(items)} successfully")
 
 
     def test_timeout_applies_per_page_request(self):
