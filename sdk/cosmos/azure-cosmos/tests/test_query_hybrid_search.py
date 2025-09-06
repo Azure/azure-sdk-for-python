@@ -412,7 +412,7 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
         params = [
             {"name": "@titleTerm", "value": "John"},
             {"name": "@textTerm", "value": "United States"},
-            {"name": "@weights", "value": str([1, 0.5])},
+            {"name": "@weights", "value": [1, 0.5]},
         ]
         param_results = self.test_container.query_items(
             param_query, parameters=params, enable_cross_partition_query=True, response_hook=response_hook
@@ -427,7 +427,8 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
 
     def test_hybrid_and_non_hybrid_param_queries_equivalence(self):
         # Hybrid query with vector distance (literal vs param) and compare equality
-        item_vector = self.test_container.read_item("50", "1")["vector"]
+        item = self.test_container.read_item('50', '1')
+        item_vector = item['vector']
         literal_hybrid = "SELECT c.index, c.title FROM c " \
                 "ORDER BY RANK RRF(FullTextScore(c.text, 'United States'), VectorDistance(c.vector, {})) " \
                 "OFFSET 0 LIMIT 10".format(item_vector)
@@ -442,7 +443,7 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
         )
         params_hybrid = [
             {"name": "@country", "value": "United States"},
-            {"name": "@vec", "value": str(item_vector)},
+            {"name": "@vec", "value": item_vector},
         ]
         param_hybrid_results = self.test_container.query_items(
             param_hybrid, parameters=params_hybrid, enable_cross_partition_query=True
