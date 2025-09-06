@@ -25,6 +25,11 @@ from azure.ai.agents.models import (
     AgentEventHandler,
     ThreadRun,
     RunHandler,
+    McpTool,
+    ToolApproval,
+    RequiredMcpToolCall,
+    SubmitToolApprovalAction,
+    SubmitToolApprovalDetails,
 )
 
 from user_functions import user_functions
@@ -217,6 +222,35 @@ class TestAgentsMock:
             run_dict["required_action"] = sb.as_dict()
             run_dict["tools"] = definitions
         return run_dict
+    
+    
+    def _get_run_for_mcp(
+        self, thread_id: str, tool_set: Optional[ToolSet], mcp_tool: McpTool, is_complete: bool = False
+    ) -> Dict[str, Any]:
+        """Return JSON as if we have created the run."""
+        with open(
+            os.path.join(
+                os.path.dirname(__file__),
+                "test_data",
+                "thread_run.json",
+            ),
+            "r",
+        ) as fp:
+            run_dict: Dict[str, Any] = json.load(fp)
+        run_dict["id"] = thread_id
+        run_dict["assistant_id"] = thread_id[3:]
+        assert isinstance(run_dict, dict)
+        if is_complete:
+            run_dict["status"] = RunStatus.COMPLETED
+            
+            
+        tool_calls: list[RequiredToolCall] = [RequiredMcpToolCall(id='0', arguments='', name='', server_label=mcp_tool.server_label)]
+        definitions = []
+        sb = SubmitToolApprovalAction(submit_tool_approval=SubmitToolApprovalDetails(tool_calls=tool_calls))
+        run_dict["required_action"] = sb.as_dict()
+        run_dict["tools"] = definitions
+        return run_dict
+    
 
     def _assert_tool_call(self, submit_tool_mock: MagicMock, run_id: str, tool_set: Optional[ToolSet]) -> None:
         """Check that submit_tool_outputs_to_run was called with correct parameters or was not called"""
@@ -544,7 +578,6 @@ class TestAgentsMock:
         agents_client = self.get_mock_client()
         with agents_client:
             # Check that pipelines are created as expected.
-            self._set_toolcalls(agents_client, toolset1, None)
             run_handler = MyRunHandler()
             agent1 = agents_client.create_agent(
                 model="gpt-4-1106-preview",
@@ -559,6 +592,71 @@ class TestAgentsMock:
                 thread_id="some_thread_id", agent_id=agent1.id, polling_interval=0, run_handler=run_handler
             )
             self._assert_tool_call(agents_client.runs.submit_tool_outputs, "run123", toolset1)
+
+    @patch("azure.ai.agents._client.PipelineClient")
+    def test_create_and_process_with_mcp(
+        self,
+        mock_pipeline_client_gen: MagicMock,
+    ) -> None:
+        """Test that if user have set tool set in create create_and_process_run method, that tools are used."""
+        toolset1 = ToolSet()
+        mcp_tool = McpTool(server_label="server1", server_url="http://server1.com", allowed_tools=["tool1"])
+        toolset1.add(mcp_tool)
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        side_effect = [self._get_agent_json("first", "123", toolset1)]
+        side_effect.append(self._get_run_for_mcp("run123", toolset1, mcp_tool))  # create_run
+        side_effect.append(self._get_run_for_mcp("run123", toolset1, mcp_tool))  # get_run
+        side_effect.append(
+            self._get_run_for_mcp("run123", toolset1, mcp_tool, is_complete=True)
+        )  # get_run after resubmitting with tool results
+
+        class MyRunHandler(RunHandler):
+            def submit_mcp_tool_approval(
+                self,
+                run: ThreadRun,
+                tool_call: RequiredMcpToolCall,
+                **kwargs: Any,
+            ) -> Optional[ToolApproval]:
+                self.tool_approval = ToolApproval(
+                    tool_call_id=tool_call.id,
+                    approve=True,
+                    headers=mcp_tool.headers,
+                )
+                return self.tool_approval
+                
+
+        mock_response.json.side_effect = side_effect
+        mock_pipeline_response = MagicMock()
+        mock_pipeline_response.http_response = mock_response
+        mock_pipeline = MagicMock()
+        mock_pipeline._pipeline.run.return_value = mock_pipeline_response
+        mock_pipeline_client_gen.return_value = mock_pipeline
+        agents_client = self.get_mock_client()
+        with agents_client:
+            # Check that pipelines are created as expected.
+            run_handler = MyRunHandler()
+            agent1 = agents_client.create_agent(
+                model="gpt-4-1106-preview",
+                name="first",
+                instructions="You are a helpful agent",
+                toolset=toolset1,
+            )
+
+            
+            # Create run with new tool set, which also can be none.
+            agents_client.runs.create_and_process(
+                thread_id="some_thread_id", agent_id=agent1.id, polling_interval=0, run_handler=run_handler
+            )
+            
+            agents_client.runs.submit_tool_outputs.assert_called_once()
+            agents_client.runs.submit_tool_outputs.assert_called_with(
+                thread_id="some_thread_id",
+                run_id="run123",
+                tool_approvals=[run_handler.tool_approval],
+            )
+            agents_client.runs.submit_tool_outputs.reset_mock()
+
 
     @patch("azure.ai.agents._client.PipelineClient")
     @pytest.mark.parametrize(
