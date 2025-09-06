@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import base64
 import os
 import platform
 import logging
@@ -223,3 +224,8 @@ def is_wsl() -> bool:
     platform_name = getattr(uname, "system", uname[0]).lower()
     release = getattr(uname, "release", uname[2]).lower()
     return platform_name == "linux" and "microsoft" in release
+
+
+def encode_base64(s: str) -> str:
+    encoded = base64.b64encode(s.encode("utf-8"))
+    return encoded.decode("utf-8")

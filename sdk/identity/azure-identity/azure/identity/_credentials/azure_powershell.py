@@ -15,6 +15,7 @@ from .azure_cli import get_safe_working_dir
 from .. import CredentialUnavailableError
 from .._internal import (
     _scopes_to_resource,
+    encode_base64,
     resolve_tenant,
     within_dac,
     validate_tenant_id,
@@ -183,8 +184,8 @@ class AzurePowerShellCredential:
     ) -> AccessTokenInfo:
 
         # Check if claims challenge is provided
-        if options and options.get("claims"):
-            error_message = CLAIMS_UNSUPPORTED_ERROR.format(claims_value=options.get("claims"))
+        if options and "claims" in options and options["claims"]:
+            error_message = CLAIMS_UNSUPPORTED_ERROR.format(claims_value=encode_base64(options["claims"]))
             if options.get("tenant_id"):
                 error_message += f" -Tenant {options.get('tenant_id')}"
             raise CredentialUnavailableError(message=error_message)
