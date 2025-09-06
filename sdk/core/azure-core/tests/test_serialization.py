@@ -7,12 +7,18 @@ from datetime import date, datetime, time, timedelta, tzinfo
 from enum import Enum
 import json
 import sys
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union, Type
 from io import BytesIO
 
 from azure.core.serialization import AzureJSONEncoder, NULL, as_attribute_dict, is_generated_model, attribute_list
 import pytest
-from modeltypes._utils.model_base import Model as HybridModel, rest_field
+from modeltypes._utils.model_base import (
+    Model as HybridModel,
+    SdkJSONEncoder,
+    rest_field,
+    TYPE_HANDLER_REGISTRY,
+    _deserialize,
+)
 from modeltypes._utils.serialization import Model as MsrestModel
 from modeltypes import models
 
@@ -972,3 +978,406 @@ def test_as_attribute_dict_additional_properties():
         "birthdate": "2017-12-13T02:29:51Z",
         "complexProperty": {"color": "Red"},
     }
+
+
+class TestTypeHandlerRegistry:
+    """Test usage of the TypeHandlerRegistry with the model_base.py serialization/deserialization mechanisms."""
+
+    class FooModel:
+
+        foo: str
+        bar: int
+        baz: float
+
+        def __init__(self, foo: str, bar: int, baz: float):
+            self.foo = foo
+            self.bar = bar
+            self.baz = baz
+
+    def test_serialization_fails_no_registry(self):
+
+        model = TestTypeHandlerRegistry.FooModel(foo="foo", bar=42, baz=3.14)
+        with pytest.raises(TypeError):
+            json.dumps(model, cls=SdkJSONEncoder, exclude_readonly=True)
+
+    def test_deserialize_no_registry(self):
+
+        json_dict = {"foo": "foo", "bar": 42, "baz": 3.14}
+        deserialized = _deserialize(TestTypeHandlerRegistry.FooModel, json_dict)
+        # If no deserializer is registered, the input should be returned as-is
+        assert deserialized == json_dict
+        assert type(deserialized) is dict
+
+    def test_serialize_external_model(self):
+
+        @TYPE_HANDLER_REGISTRY.register_serializer(TestTypeHandlerRegistry.FooModel)
+        def foo_serializer(obj: TestTypeHandlerRegistry.FooModel) -> Dict[str, Any]:
+            return {"foo": obj.foo, "bar": obj.bar, "baz": obj.baz}
+
+        model = TestTypeHandlerRegistry.FooModel(foo="foo", bar=42, baz=3.14)
+        json_str = json.dumps(model, cls=SdkJSONEncoder, exclude_readonly=True)
+        assert json.loads(json_str) == {"foo": "foo", "bar": 42, "baz": 3.14}
+
+    def test_deserialize_external_model(self):
+
+        @TYPE_HANDLER_REGISTRY.register_deserializer(TestTypeHandlerRegistry.FooModel)
+        def foo_deserializer(cls, data: Dict[str, Any]) -> TestTypeHandlerRegistry.FooModel:
+            return TestTypeHandlerRegistry.FooModel(foo=data["foo"], bar=data["bar"], baz=data["baz"])
+
+        json_dict = {"foo": "foo", "bar": 42, "baz": 3.14}
+        deserialized = _deserialize(TestTypeHandlerRegistry.FooModel, json_dict)
+        assert isinstance(deserialized, TestTypeHandlerRegistry.FooModel)
+        assert deserialized.foo == "foo"
+        assert deserialized.bar == 42
+        assert deserialized.baz == 3.14
+
+    def test_serialize_external_model_in_nested_model(self):
+
+        @TYPE_HANDLER_REGISTRY.register_serializer(TestTypeHandlerRegistry.FooModel)
+        def foo_serializer(obj: TestTypeHandlerRegistry.FooModel) -> Dict[str, Any]:
+            return {"foo": obj.foo, "bar": obj.bar, "baz": obj.baz}
+
+        class GeneratedModel(HybridModel):
+            dog: models.HybridDog = rest_field(visibility=["read", "create", "update", "delete", "query"])
+            external: TestTypeHandlerRegistry.FooModel = rest_field(
+                visibility=["read", "create", "update", "delete", "query"]
+            )
+
+        model = GeneratedModel(
+            dog=models.HybridDog(name="doggy", species="dog", breed="samoyed", is_best_boy=True),
+            external=TestTypeHandlerRegistry.FooModel(foo="foo", bar=42, baz=3.14),
+        )
+
+        expected_dict = {
+            "dog": {
+                "name": "doggy",
+                "species": "dog",
+                "breed": "samoyed",
+                "isBestBoy": True,
+            },
+            "external": {
+                "foo": "foo",
+                "bar": 42,
+                "baz": 3.14,
+            },
+        }
+
+        assert model.as_dict() == expected_dict
+
+        json_str = json.dumps(model, cls=SdkJSONEncoder, exclude_readonly=True)
+        assert json.loads(json_str) == expected_dict
+
+    def test_deserialize_external_model_in_nested_model(self):
+
+        @TYPE_HANDLER_REGISTRY.register_deserializer(TestTypeHandlerRegistry.FooModel)
+        def foo_deserializer(cls, data: Dict[str, Any]) -> TestTypeHandlerRegistry.FooModel:
+            return TestTypeHandlerRegistry.FooModel(foo=data["foo"], bar=data["bar"], baz=data["baz"])
+
+        class GeneratedModel(HybridModel):
+            dog: models.HybridDog = rest_field(visibility=["read", "create", "update", "delete", "query"])
+            external: TestTypeHandlerRegistry.FooModel = rest_field(
+                visibility=["read", "create", "update", "delete", "query"]
+            )
+
+        json_dict = {
+            "dog": {
+                "name": "doggy",
+                "species": "dog",
+                "breed": "samoyed",
+                "isBestBoy": True,
+            },
+            "external": {
+                "foo": "foo",
+                "bar": 42,
+                "baz": 3.14,
+            },
+        }
+
+        deserialized = _deserialize(GeneratedModel, json_dict)
+
+        assert isinstance(deserialized, GeneratedModel)
+        assert isinstance(deserialized.dog, models.HybridDog)
+        assert isinstance(deserialized.external, TestTypeHandlerRegistry.FooModel)
+        assert deserialized.dog.name == "doggy"
+        assert deserialized.dog.species == "dog"
+        assert deserialized.dog.breed == "samoyed"
+        assert deserialized.dog.is_best_boy is True
+        assert deserialized.external.foo == "foo"
+        assert deserialized.external.bar == 42
+        assert deserialized.external.baz == 3.14
+
+    def test_serialize_deserialize_list_of_external_models(self):
+
+        @TYPE_HANDLER_REGISTRY.register_serializer(TestTypeHandlerRegistry.FooModel)
+        def foo_serializer(obj: TestTypeHandlerRegistry.FooModel) -> Dict[str, Any]:
+            return {"foo": obj.foo, "bar": obj.bar, "baz": obj.baz}
+
+        @TYPE_HANDLER_REGISTRY.register_deserializer(TestTypeHandlerRegistry.FooModel)
+        def foo_deserializer(cls, data: Dict[str, Any]) -> TestTypeHandlerRegistry.FooModel:
+            return TestTypeHandlerRegistry.FooModel(foo=data["foo"], bar=data["bar"], baz=data["baz"])
+
+        class GeneratedModel(HybridModel):
+            externals: List[TestTypeHandlerRegistry.FooModel] = rest_field(
+                visibility=["read", "create", "update", "delete", "query"]
+            )
+
+        model = GeneratedModel(
+            externals=[
+                TestTypeHandlerRegistry.FooModel(foo="foo1", bar=1, baz=1.1),
+                TestTypeHandlerRegistry.FooModel(foo="foo2", bar=2, baz=2.2),
+            ]
+        )
+
+        expected_dict = {
+            "externals": [
+                {"foo": "foo1", "bar": 1, "baz": 1.1},
+                {"foo": "foo2", "bar": 2, "baz": 2.2},
+            ]
+        }
+
+        assert model.as_dict() == expected_dict
+
+        json_str = json.dumps(model, cls=SdkJSONEncoder, exclude_readonly=True)
+        assert json.loads(json_str) == expected_dict
+
+        # Deserialization
+        deserialized = _deserialize(GeneratedModel, expected_dict)
+        assert isinstance(deserialized, GeneratedModel)
+        assert isinstance(deserialized.externals, list)
+        assert len(deserialized.externals) == 2
+        assert all(isinstance(item, TestTypeHandlerRegistry.FooModel) for item in deserialized.externals)
+        assert deserialized.externals[0].foo == "foo1"
+        assert deserialized.externals[0].bar == 1
+        assert deserialized.externals[0].baz == 1.1
+        assert deserialized.externals[1].foo == "foo2"
+        assert deserialized.externals[1].bar == 2
+        assert deserialized.externals[1].baz == 2.2
+
+    def test_serialize_deserialize_dict_of_external_models(self):
+
+        @TYPE_HANDLER_REGISTRY.register_serializer(TestTypeHandlerRegistry.FooModel)
+        def foo_serializer(obj: TestTypeHandlerRegistry.FooModel) -> Dict[str, Any]:
+            return {"foo": obj.foo, "bar": obj.bar, "baz": obj.baz}
+
+        @TYPE_HANDLER_REGISTRY.register_deserializer(TestTypeHandlerRegistry.FooModel)
+        def foo_deserializer(cls, data: Dict[str, Any]) -> TestTypeHandlerRegistry.FooModel:
+            return TestTypeHandlerRegistry.FooModel(foo=data["foo"], bar=data["bar"], baz=data["baz"])
+
+        class GeneratedModel(HybridModel):
+            externals: Dict[str, TestTypeHandlerRegistry.FooModel] = rest_field(
+                visibility=["read", "create", "update", "delete", "query"]
+            )
+
+        model = GeneratedModel(
+            externals={
+                "first": TestTypeHandlerRegistry.FooModel(foo="foo1", bar=1, baz=1.1),
+                "second": TestTypeHandlerRegistry.FooModel(foo="foo2", bar=2, baz=2.2),
+            }
+        )
+
+        expected_dict = {
+            "externals": {
+                "first": {"foo": "foo1", "bar": 1, "baz": 1.1},
+                "second": {"foo": "foo2", "bar": 2, "baz": 2.2},
+            }
+        }
+
+        assert model.as_dict() == expected_dict
+
+        json_str = json.dumps(model, cls=SdkJSONEncoder, exclude_readonly=True)
+        assert json.loads(json_str) == expected_dict
+
+        # Deserialization
+        deserialized = _deserialize(GeneratedModel, expected_dict)
+        assert isinstance(deserialized, GeneratedModel)
+        assert isinstance(deserialized.externals, dict)
+        assert len(deserialized.externals) == 2
+        assert all(isinstance(item, TestTypeHandlerRegistry.FooModel) for item in deserialized.externals.values())
+        assert deserialized.externals["first"].foo == "foo1"
+        assert deserialized.externals["first"].bar == 1
+        assert deserialized.externals["first"].baz == 1.1
+        assert deserialized.externals["second"].foo == "foo2"
+        assert deserialized.externals["second"].bar == 2
+        assert deserialized.externals["second"].baz == 2.2
+
+    def test_serialize_deserialize_optional_external_model(self):
+
+        @TYPE_HANDLER_REGISTRY.register_serializer(TestTypeHandlerRegistry.FooModel)
+        def foo_serializer(obj: TestTypeHandlerRegistry.FooModel) -> Dict[str, Any]:
+            return {"foo": obj.foo, "bar": obj.bar, "baz": obj.baz}
+
+        @TYPE_HANDLER_REGISTRY.register_deserializer(TestTypeHandlerRegistry.FooModel)
+        def foo_deserializer(cls, data: Dict[str, Any]) -> TestTypeHandlerRegistry.FooModel:
+            return TestTypeHandlerRegistry.FooModel(foo=data["foo"], bar=data["bar"], baz=data["baz"])
+
+        class GeneratedModel(HybridModel):
+            external: Optional[TestTypeHandlerRegistry.FooModel] = rest_field(
+                visibility=["read", "create", "update", "delete", "query"]
+            )
+
+        # Test with the optional model present
+        model = GeneratedModel(external=TestTypeHandlerRegistry.FooModel(foo="foo", bar=42, baz=3.14))
+
+        expected_dict = {"external": {"foo": "foo", "bar": 42, "baz": 3.14}}
+
+        assert model.as_dict() == expected_dict
+        json_str = json.dumps(model, cls=SdkJSONEncoder, exclude_readonly=True)
+        assert json.loads(json_str) == expected_dict
+
+        # Deserialization
+        deserialized = _deserialize(GeneratedModel, expected_dict)
+        assert isinstance(deserialized, GeneratedModel)
+        assert isinstance(deserialized.external, TestTypeHandlerRegistry.FooModel)
+        assert deserialized.external.foo == "foo"
+        assert deserialized.external.bar == 42
+        assert deserialized.external.baz == 3.14
+
+        # Test with the optional model as None
+        model = GeneratedModel(external=None)
+        expected_dict = {}
+        assert model.as_dict() == expected_dict
+        json_str = json.dumps(model, cls=SdkJSONEncoder, exclude_readonly=True)
+        assert json.loads(json_str) == expected_dict
+
+        # Deserialization
+        deserialized = _deserialize(GeneratedModel, expected_dict)
+        assert isinstance(deserialized, GeneratedModel)
+        assert deserialized.external is None
+
+    def test_serialize_deserialize_union_external_model(self):
+
+        @TYPE_HANDLER_REGISTRY.register_serializer(TestTypeHandlerRegistry.FooModel)
+        def foo_serializer(obj: TestTypeHandlerRegistry.FooModel) -> Dict[str, Any]:
+            return {"foo": obj.foo, "bar": obj.bar, "baz": obj.baz}
+
+        @TYPE_HANDLER_REGISTRY.register_deserializer(TestTypeHandlerRegistry.FooModel)
+        def foo_deserializer(cls, data: Dict[str, Any]) -> TestTypeHandlerRegistry.FooModel:
+            return TestTypeHandlerRegistry.FooModel(foo=data["foo"], bar=data["bar"], baz=data["baz"])
+
+        class GeneratedModel(HybridModel):
+            external: Union[str, TestTypeHandlerRegistry.FooModel] = rest_field(
+                visibility=["read", "create", "update", "delete", "query"]
+            )
+
+        # Test with the union as the external model
+        model = GeneratedModel(external=TestTypeHandlerRegistry.FooModel(foo="foo", bar=42, baz=3.14))
+
+        expected_dict = {"external": {"foo": "foo", "bar": 42, "baz": 3.14}}
+
+        assert model.as_dict() == expected_dict
+        json_str = json.dumps(model, cls=SdkJSONEncoder, exclude_readonly=True)
+        assert json.loads(json_str) == expected_dict
+
+        # Deserialization
+        deserialized = _deserialize(GeneratedModel, expected_dict)
+        assert isinstance(deserialized, GeneratedModel)
+        assert isinstance(deserialized.external, TestTypeHandlerRegistry.FooModel)
+        assert deserialized.external.foo == "foo"
+        assert deserialized.external.bar == 42
+        assert deserialized.external.baz == 3.14
+
+        # Test with the union as a string
+        model = GeneratedModel(external="just a string")
+        expected_dict = {"external": "just a string"}
+        assert model.as_dict() == expected_dict
+        json_str = json.dumps(model, cls=SdkJSONEncoder, exclude_readonly=True)
+        assert json.loads(json_str) == expected_dict
+
+        # Deserialization
+        deserialized = _deserialize(GeneratedModel, expected_dict)
+        assert isinstance(deserialized, GeneratedModel)
+        assert isinstance(deserialized.external, str)
+        assert deserialized.external == "just a string"
+
+    def test_serialize_deserialize_deep_nested_external_model_in_generated_model(self):
+
+        @TYPE_HANDLER_REGISTRY.register_serializer(TestTypeHandlerRegistry.FooModel)
+        def foo_serializer(obj: TestTypeHandlerRegistry.FooModel) -> Dict[str, Any]:
+            return {"foo": obj.foo, "bar": obj.bar, "baz": obj.baz}
+
+        @TYPE_HANDLER_REGISTRY.register_deserializer(TestTypeHandlerRegistry.FooModel)
+        def foo_deserializer(cls, data: Dict[str, Any]) -> TestTypeHandlerRegistry.FooModel:
+            return TestTypeHandlerRegistry.FooModel(foo=data["foo"], bar=data["bar"], baz=data["baz"])
+
+        class NestedModel(HybridModel):
+            foo: TestTypeHandlerRegistry.FooModel = rest_field(
+                visibility=["read", "create", "update", "delete", "query"]
+            )
+
+        class ChildModel(HybridModel):
+            nested: NestedModel = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+        class BaseModel(HybridModel):
+            child: ChildModel = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+        model = BaseModel(
+            child=ChildModel(nested=NestedModel(foo=TestTypeHandlerRegistry.FooModel(foo="foo", bar=42, baz=3.14)))
+        )
+
+        expected_dict = {"child": {"nested": {"foo": {"foo": "foo", "bar": 42, "baz": 3.14}}}}
+
+        assert model.as_dict() == expected_dict
+        json_str = json.dumps(model, cls=SdkJSONEncoder, exclude_readonly=True)
+        assert json.loads(json_str) == expected_dict
+
+        # Deserialization
+        deserialized = _deserialize(BaseModel, expected_dict)
+        assert isinstance(deserialized, BaseModel)
+        assert isinstance(deserialized.child, ChildModel)
+        assert isinstance(deserialized.child.nested, NestedModel)
+        assert deserialized.child.nested.foo.foo == "foo"
+        assert deserialized.child.nested.foo.bar == 42
+        assert deserialized.child.nested.foo.baz == 3.14
+
+    def test_serialize_deserialize_external_model_with_predicates(self):
+
+        import dataclasses
+
+        @dataclasses.dataclass
+        class SampleModel:
+            foo: str
+            bar: int
+
+        @dataclasses.dataclass
+        class SampleModel2:
+            biz: str
+            baz: int
+
+        class GeneratedModel(HybridModel):
+            foo: SampleModel = rest_field(visibility=["read", "create", "update", "delete", "query"])
+            bar: SampleModel2 = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+        @TYPE_HANDLER_REGISTRY.register_serializer(lambda obj: dataclasses.is_dataclass(obj))
+        def foo_serializer(obj) -> Dict[str, Any]:
+            return dataclasses.asdict(obj)
+
+        @TYPE_HANDLER_REGISTRY.register_deserializer(lambda t: dataclasses.is_dataclass(t))
+        def foo_deserializer(cls: Type, data: Dict[str, Any]) -> Any:
+            return cls(**data)
+
+        model = SampleModel(foo="foo", bar=42)
+        json_str = json.dumps(model, cls=SdkJSONEncoder, exclude_readonly=True)
+        assert json.loads(json_str) == {"foo": "foo", "bar": 42}
+
+        model = GeneratedModel(
+            foo=SampleModel(foo="foo", bar=42),
+            bar=SampleModel2(biz="biz", baz=3),
+        )
+
+        expected_dict = {
+            "foo": {"foo": "foo", "bar": 42},
+            "bar": {"biz": "biz", "baz": 3},
+        }
+        assert model.as_dict() == expected_dict
+        json_str = json.dumps(model, cls=SdkJSONEncoder, exclude_readonly=True)
+        assert json.loads(json_str) == expected_dict
+
+        # Deserialization
+        deserialized = _deserialize(GeneratedModel, expected_dict)
+        assert isinstance(deserialized, GeneratedModel)
+        assert isinstance(deserialized.foo, SampleModel)
+        assert isinstance(deserialized.bar, SampleModel2)
+        assert deserialized.foo.foo == "foo"
+        assert deserialized.foo.bar == 42
+        assert deserialized.bar.biz == "biz"
+        assert deserialized.bar.baz == 3
