@@ -222,8 +222,7 @@ class TestAgentsMock:
             run_dict["required_action"] = sb.as_dict()
             run_dict["tools"] = definitions
         return run_dict
-    
-    
+
     def _get_run_for_mcp(
         self, thread_id: str, tool_set: Optional[ToolSet], mcp_tool: McpTool, is_complete: bool = False
     ) -> Dict[str, Any]:
@@ -242,15 +241,15 @@ class TestAgentsMock:
         assert isinstance(run_dict, dict)
         if is_complete:
             run_dict["status"] = RunStatus.COMPLETED
-            
-            
-        tool_calls: list[RequiredToolCall] = [RequiredMcpToolCall(id='0', arguments='', name='', server_label=mcp_tool.server_label)]
+
+        tool_calls: list[RequiredToolCall] = [
+            RequiredMcpToolCall(id="0", arguments="", name="", server_label=mcp_tool.server_label)
+        ]
         definitions = []
         sb = SubmitToolApprovalAction(submit_tool_approval=SubmitToolApprovalDetails(tool_calls=tool_calls))
         run_dict["required_action"] = sb.as_dict()
         run_dict["tools"] = definitions
         return run_dict
-    
 
     def _assert_tool_call(self, submit_tool_mock: MagicMock, run_id: str, tool_set: Optional[ToolSet]) -> None:
         """Check that submit_tool_outputs_to_run was called with correct parameters or was not called"""
@@ -624,7 +623,6 @@ class TestAgentsMock:
                     headers=mcp_tool.headers,
                 )
                 return self.tool_approval
-                
 
         mock_response.json.side_effect = side_effect
         mock_pipeline_response = MagicMock()
@@ -643,12 +641,11 @@ class TestAgentsMock:
                 toolset=toolset1,
             )
 
-            
             # Create run with new tool set, which also can be none.
             agents_client.runs.create_and_process(
                 thread_id="some_thread_id", agent_id=agent1.id, polling_interval=0, run_handler=run_handler
             )
-            
+
             agents_client.runs.submit_tool_outputs.assert_called_once()
             agents_client.runs.submit_tool_outputs.assert_called_with(
                 thread_id="some_thread_id",
@@ -656,7 +653,6 @@ class TestAgentsMock:
                 tool_approvals=[run_handler.tool_approval],
             )
             agents_client.runs.submit_tool_outputs.reset_mock()
-
 
     @patch("azure.ai.agents._client.PipelineClient")
     @pytest.mark.parametrize(

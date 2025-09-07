@@ -39,15 +39,8 @@ from typing import (
     overload,
 )
 
-from azure.ai.agents.models import RunStatus
 
-# NOTE: Avoid importing RunsOperations here to prevent circular import with operations package.
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:  # pragma: no cover - type checking only
-    from ..operations import RunsOperations  # noqa: F401
-
-from ._enums import AgentStreamEvent, AzureAISearchQueryType
+from ._enums import AgentStreamEvent, AzureAISearchQueryType, RunStatus
 from ._models import (
     AISearchIndexResource,
     AzureAISearchToolResource,
@@ -111,6 +104,13 @@ from ._models import ThreadMessage as ThreadMessageGenerated
 from ._models import MessageAttachment as MessageAttachmentGenerated
 
 from .. import types as _types
+
+
+# NOTE: Avoid importing RunsOperations here to prevent circular import with operations package.
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ..operations import RunsOperations
 
 
 logger = logging.getLogger(__name__)
@@ -1883,6 +1883,7 @@ class RunHandler:
             time.sleep(polling_interval)
             run = runs_operations.get(thread_id=run.thread_id, run_id=run.id)
 
+            # pylint:disable=protected-access
             if run.status == RunStatus.REQUIRES_ACTION and isinstance(run.required_action, SubmitToolOutputsAction):
                 tool_calls = run.required_action.submit_tool_outputs.tool_calls
                 if not tool_calls:
@@ -1943,10 +1944,11 @@ class RunHandler:
 
     def submit_function_call_output(
         self,
-        run: ThreadRun,
-        tool_call: RequiredFunctionToolCall,
-        tool_call_details: RequiredFunctionToolCallDetails,
-        **kwargs: Any,
+        run: ThreadRun,  # pylint: disable=unused-argument
+        tool_call: RequiredFunctionToolCall,  # pylint: disable=unused-argument
+        tool_call_details: RequiredFunctionToolCallDetails,  # pylint: disable=unused-argument
+        *args: Any,  # pylint: disable=unused-argument
+        **kwargs: Any,  # pylint: disable=unused-argument
     ) -> Optional[Any]:
         """Produce (or override) the output for a required function tool call.
 
@@ -1967,9 +1969,10 @@ class RunHandler:
 
     def submit_mcp_tool_approval(
         self,
-        run: ThreadRun,
-        tool_call: RequiredMcpToolCall,
-        **kwargs: Any,
+        run: ThreadRun,  # pylint: disable=unused-argument
+        tool_call: RequiredMcpToolCall,  # pylint: disable=unused-argument
+        *args: Any,  # pylint: disable=unused-argument
+        **kwargs: Any,  # pylint: disable=unused-argument
     ) -> Optional[ToolApproval]:
         # NOTE: Implementation intentionally returns None; override in subclasses for real approval logic.
         """Return a ``ToolApproval`` for an MCP tool call or ``None`` to indicate rejection/cancellation.

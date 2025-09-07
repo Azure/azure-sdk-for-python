@@ -27,7 +27,7 @@ USAGE:
 """
 
 import os
-from typing import Optional
+from typing import Optional, Any
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.agents.models import (
@@ -68,7 +68,7 @@ print(f"Allowed tools: {mcp_tool.allowed_tools}")
 
 class MyRunHandler(RunHandler):
     def submit_mcp_tool_approval(
-        self, run: ThreadRun, tool_call: RequiredMcpToolCall, **kwargs
+        self, run: ThreadRun, tool_call: RequiredMcpToolCall, *args: Any, **kwargs: Any
     ) -> Optional[ToolApproval]:
         return ToolApproval(
             tool_call_id=tool_call.id,
