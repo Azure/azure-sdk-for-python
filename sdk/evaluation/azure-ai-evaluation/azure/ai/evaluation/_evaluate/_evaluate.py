@@ -319,8 +319,6 @@ def _aggregate_metrics(df: pd.DataFrame, evaluators: Dict[str, Callable]) -> Dic
     df.drop(columns=handled_columns, inplace=True)
 
     # Convert "not applicable" strings to None to allow proper numeric aggregation
-    # This ensures that columns with "not applicable" values are included in the final metrics
-    # rather than being completely dropped by numeric_only=True
     df = df.replace(EvaluatorBase._NOT_APPLICABLE_RESULT, None)
 
     # NOTE: nan/None values don't count as as booleans, so boolean columns with
