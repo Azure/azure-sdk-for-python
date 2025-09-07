@@ -167,3 +167,97 @@ class TestModels:
             code_interpreter.remove_data_source(ds.asset_identifier)
         tool_resources = code_interpreter.resources
         assert tool_resources.code_interpreter is None
+
+
+class TestBaseToolSet:
+    """Unit tests for BaseToolSet methods."""
+
+    def test_remove_existing_tool(self):
+        """Test removal of an existing tool from the toolset."""
+        
+        def test_function():
+            """Test function for FunctionTool."""
+            return "test result"
+        
+        toolset = _models.BaseToolSet()
+        function_tool = _models.FunctionTool({test_function})
+        
+        # Add the tool first
+        toolset.add(function_tool)
+        assert len(toolset._tools) == 1
+        
+        # Remove the tool
+        toolset.remove(_models.FunctionTool)
+        assert len(toolset._tools) == 0
+
+    def test_remove_existing_tool_with_kwargs(self):
+        """Test removal of an existing tool from the toolset with kwargs."""
+        
+        def test_function():
+            """Test function for FunctionTool."""
+            return "test result"
+        
+        toolset = _models.BaseToolSet()
+        function_tool = _models.FunctionTool({test_function})
+        
+        # Add the tool first
+        toolset.add(function_tool)
+        assert len(toolset._tools) == 1
+        
+        # Remove the tool with kwargs
+        toolset.remove(_models.FunctionTool, extra_param="test")
+        assert len(toolset._tools) == 0
+
+    def test_remove_nonexistent_tool_raises_error(self):
+        """Test that removing a non-existent tool raises ValueError."""
+        toolset = _models.BaseToolSet()
+        
+        with pytest.raises(ValueError) as exc_info:
+            toolset.remove(_models.FunctionTool)
+        
+        assert "FunctionTool not found in the ToolSet" in str(exc_info.value)
+
+    def test_get_tool_existing(self):
+        """Test getting an existing tool from the toolset."""
+        
+        def test_function():
+            """Test function for FunctionTool."""
+            return "test result"
+        
+        toolset = _models.BaseToolSet()
+        function_tool = _models.FunctionTool({test_function})
+        
+        # Add the tool first
+        toolset.add(function_tool)
+        
+        # Get the tool
+        retrieved_tool = toolset.get_tool(_models.FunctionTool)
+        assert isinstance(retrieved_tool, _models.FunctionTool)
+        assert retrieved_tool is function_tool
+
+    def test_get_tool_existing_with_kwargs(self):
+        """Test getting an existing tool from the toolset with kwargs."""
+        
+        def test_function():
+            """Test function for FunctionTool."""
+            return "test result"
+        
+        toolset = _models.BaseToolSet()
+        function_tool = _models.FunctionTool({test_function})
+        
+        # Add the tool first
+        toolset.add(function_tool)
+        
+        # Get the tool with kwargs
+        retrieved_tool = toolset.get_tool(_models.FunctionTool, extra_param="test")
+        assert isinstance(retrieved_tool, _models.FunctionTool)
+        assert retrieved_tool is function_tool
+
+    def test_get_tool_nonexistent_raises_error(self):
+        """Test that getting a non-existent tool raises ValueError."""
+        toolset = _models.BaseToolSet()
+        
+        with pytest.raises(ValueError) as exc_info:
+            toolset.get_tool(_models.FunctionTool)
+        
+        assert "FunctionTool not found in the ToolSet" in str(exc_info.value)
