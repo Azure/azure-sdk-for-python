@@ -81,7 +81,7 @@ def configure_azure_monitor(
     logger_name: str = _Unset,
     instrumentation_options: Mapping[str, Any] = _Unset,
     resource: Resource = _Unset,
-    span_processors: Sequence[SpanProcessor]] = _Unset,
+    span_processors: Sequence[SpanProcessor] = _Unset,
     enable_live_metrics: bool = _Unset,
     storage_directory: str = _Unset,
     views: Sequence[View] = _Unset,
