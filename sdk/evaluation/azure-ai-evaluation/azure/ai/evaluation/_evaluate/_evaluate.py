@@ -18,6 +18,7 @@ import pandas as pd
 
 from azure.ai.evaluation._common.math import list_mean_nan_safe, apply_transform_nan_safe
 from azure.ai.evaluation._common.utils import validate_azure_ai_project, is_onedp_project
+from azure.ai.evaluation._evaluators._common._base_eval import EvaluatorBase
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 
 from azure.ai.evaluation._aoai.aoai_grader import AzureOpenAIGrader
@@ -316,6 +317,11 @@ def _aggregate_metrics(df: pd.DataFrame, evaluators: Dict[str, Callable]) -> Dic
 
     # For rest of metrics, we will calculate mean
     df.drop(columns=handled_columns, inplace=True)
+
+    # Convert "not applicable" strings to None to allow proper numeric aggregation
+    # This ensures that columns with "not applicable" values are included in the final metrics
+    # rather than being completely dropped by numeric_only=True
+    df = df.replace(EvaluatorBase._NOT_APPLICABLE_RESULT, None)
 
     # NOTE: nan/None values don't count as as booleans, so boolean columns with
     # nan/None values won't have a mean produced from them.
