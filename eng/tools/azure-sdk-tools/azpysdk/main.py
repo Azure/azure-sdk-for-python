@@ -17,6 +17,7 @@ from .import_all import import_all
 from .mypy import mypy
 from .pylint import pylint
 from .sphinx import sphinx
+from.black import black
 
 from ci_tools.logging import configure_logging, logger
 
@@ -76,6 +77,7 @@ def build_parser() -> argparse.ArgumentParser:
     mypy().register(subparsers, [common])
     pylint().register(subparsers, [common])
     sphinx().register(subparsers, [common])
+    black().register(subparsers, [common])
 
     return parser
 
