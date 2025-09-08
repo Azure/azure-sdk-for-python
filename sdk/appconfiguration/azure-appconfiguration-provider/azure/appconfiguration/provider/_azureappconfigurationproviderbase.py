@@ -53,6 +53,7 @@ from ._constants import (
     FEATURE_FLAG_REFERENCE_KEY,
     ALLOCATION_ID_KEY,
 )
+
 JSON = Mapping[str, Any]
 _T = TypeVar("_T")
 logger = logging.getLogger(__name__)

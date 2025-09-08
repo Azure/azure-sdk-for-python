@@ -339,18 +339,37 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
             "on_refresh_error", None
         )
 
+    async def _configuration_refresh(self, client, headers, **kwargs) -> Tuple[bool, List[ConfigurationSetting]]:
+        configuration_settings: List[ConfigurationSetting] = []
+        need_refresh, self._refresh_on, configuration_settings = await client.refresh_configuration_settings(
+            self._selects, self._refresh_on, headers=headers, **kwargs
+        )
+        if need_refresh:
+            return True, configuration_settings
+        return False, []
+
+    async def _feature_flag_refresh(self, client, headers, **kwargs) -> Tuple[bool, List[ConfigurationSetting]]:
+        feature_flags: List[ConfigurationSetting] = []
+        need_ff_refresh = False
+        if self._feature_flag_refresh_enabled:
+            need_ff_refresh, feature_flags = await client.refresh_feature_flags(
+                self._refresh_on_feature_flags,
+                self._feature_flag_selectors,
+                headers,
+                **kwargs,
+            )
+        if need_ff_refresh:
+            return True, feature_flags
+        return False, []
+
     async def refresh(self, **kwargs) -> None:  # pylint: disable=too-many-statements
         if not self._refresh_on and not self._feature_flag_refresh_enabled:
             logger.debug("Refresh called but no refresh enabled.")
-            return
-        if not self._refresh_timer.needs_refresh():
-            logger.debug("Refresh called but refresh interval not elapsed.")
             return
         if not self._refresh_lock.acquire(blocking=False):  # pylint: disable= consider-using-with
             logger.debug("Refresh called but refresh already in progress.")
             return
         success = False
-        need_refresh = False
         error_message = """
                         Failed to refresh configuration settings from Azure App Configuration.
                         """
@@ -360,6 +379,9 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
             await self._replica_client_manager.refresh_clients()
             self._replica_client_manager.find_active_clients()
             replica_count = self._replica_client_manager.get_client_count() - 1
+
+            refreshed_configs = False
+            refreshed_feature_flags = False
 
             while client := self._replica_client_manager.get_next_active_client():
                 headers = update_correlation_context_header(
@@ -374,28 +396,33 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                     self._uses_ai_configuration,
                     self._uses_aicc_configuration,
                 )
+                configuration_settings = []
+                # Reset if failed
+                refreshed_configs = False
+                refreshed_feature_flags = False
 
+                # Timer needs to be reset even if no refresh happened if time had passed
+                tried_refreshing_configs = False
+                tried_refreshing_feature_flags = False
                 try:
-                    configuration_settings: List[ConfigurationSetting] = []
-                    need_ff_refresh = False
-                    if self._refresh_on:
-                        need_refresh, self._refresh_on, configuration_settings = (
-                            await client.refresh_configuration_settings(
-                                self._selects, self._refresh_on, headers=headers, **kwargs
-                            )
+                    if self._refresh_on and self._refresh_timer.needs_refresh():
+                        tried_refreshing_configs = True
+                        refreshed_configs, configuration_settings = await self._configuration_refresh(
+                            client, headers, **kwargs
                         )
-                    if self._feature_flag_refresh_enabled:
-                        need_ff_refresh, feature_flags = await client.refresh_feature_flags(
-                            self._refresh_on_feature_flags,
-                            self._feature_flag_selectors,
-                            headers,
-                            **kwargs,
+                    if self._feature_flag_refresh_enabled and self._feature_flag_refresh_timer.needs_refresh():
+                        tried_refreshing_feature_flags = True
+                        refreshed_feature_flags, feature_flags = await self._feature_flag_refresh(
+                            client, headers, **kwargs
                         )
-                        configuration_settings.extend(feature_flags)
-                    if need_refresh:
-                        self._dict = await self._process_configurations(configuration_settings, need_ff_refresh)
-                    # Even if we don't need to refresh, we should reset the timer
-                    self._refresh_timer.reset()
+                        if refreshed_feature_flags:
+                            configuration_settings.extend(feature_flags)
+                    if refreshed_configs or refreshed_feature_flags:
+                        self._dict = await self._process_configurations(configuration_settings, refreshed_feature_flags)
+                        if tried_refreshing_configs:
+                            self._refresh_timer.reset()
+                        if tried_refreshing_feature_flags:
+                            self._feature_flag_refresh_timer.reset()
                     success = True
                     break
                 except AzureError as e:
@@ -409,7 +436,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                     await self._on_refresh_error(exception)
                     return
                 raise exception
-            if self._on_refresh_success:
+            if (refreshed_configs or refreshed_feature_flags) and self._on_refresh_success:
                 await self._on_refresh_success()
         finally:
             self._refresh_lock.release()
@@ -483,7 +510,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         raise exception
 
     async def _process_configurations(
-        self, configuration_settings: List[ConfigurationSetting], loaded_feature_flags: bool
+        self, configuration_settings: List[ConfigurationSetting], refreshed_feature_flags: bool
     ) -> Dict[str, Any]:
         # Reset feature flag usage
         self._uses_ai_configuration = False
@@ -509,7 +536,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 value = await self._process_key_value(config)
                 configuration_settings_processed[key] = value
         if self._feature_flag_enabled:
-            if not loaded_feature_flags:
+            if not refreshed_feature_flags:
                 feature_flags_processed = existing_feature_flags
             configuration_settings_processed[FEATURE_MANAGEMENT_KEY] = {}
             configuration_settings_processed[FEATURE_MANAGEMENT_KEY][FEATURE_FLAG_KEY] = feature_flags_processed

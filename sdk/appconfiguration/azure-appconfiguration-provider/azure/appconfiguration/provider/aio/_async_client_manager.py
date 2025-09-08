@@ -176,7 +176,6 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
                     # If the feature flag is not a FeatureFlagConfigurationSetting, it means it was selected by
                     # mistake, so we should ignore it.
                     continue
-
                 loaded_feature_flags.append(feature_flag)
 
         return loaded_feature_flags
