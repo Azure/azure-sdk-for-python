@@ -57,7 +57,6 @@ class MyRunHandler(RunHandler):
         run: ThreadRun,
         tool_call: RequiredFunctionToolCall,
         tool_call_details: RequiredFunctionToolCallDetails,
-        *args: Any,
         **kwargs: Any,
     ) -> Optional[Any]:
         print(f"Call function: {tool_call_details.name}")

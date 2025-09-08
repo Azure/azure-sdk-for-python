@@ -8,11 +8,9 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import asyncio  # pylint: disable = do-not-import-asyncio
-from concurrent.futures import thread
 import inspect
 import itertools
 import json
-from json import tool
 import logging
 import re
 from abc import ABC, abstractmethod
@@ -33,12 +31,12 @@ from typing import (
     Type,
     TypeVar,
     Union,
+    TYPE_CHECKING,
     cast,
     get_args,
     get_origin,
     overload,
 )
-
 
 from ._enums import AgentStreamEvent, AzureAISearchQueryType, RunStatus
 from ._models import (
@@ -107,7 +105,7 @@ from .. import types as _types
 
 
 # NOTE: Avoid importing RunsOperations here to prevent circular import with operations package.
-from typing import TYPE_CHECKING
+
 
 if TYPE_CHECKING:
     from ..operations import RunsOperations
@@ -1924,11 +1922,12 @@ class RunHandler:
                 tool_approvals = []
                 for tool_call in tool_calls:
                     if isinstance(tool_call, RequiredMcpToolCall):
-                        logger.info(f"Approving tool call: {tool_call}")
-                        tool_approval = self.submit_mcp_tool_approval(run, tool_call)
+                        tool_approval = self.submit_mcp_tool_approval(  # pylint: disable=assignment-from-none
+                            run, tool_call
+                        )
                         if not tool_approval:
-                            logger.debug(
-                                "submit_tool_approval in run handler returned None.  Please override this function and return a valid ToolApproval."
+                            logger.warning(
+                                "run_handler not provided to create_and_run or submit_mcp_tool_approval in run handler returned None.  Please override this function and return a valid ToolApproval."
                             )
                             return runs_operations.cancel(thread_id=run.thread_id, run_id=run.id)
 
@@ -1943,11 +1942,10 @@ class RunHandler:
         return run
 
     def submit_function_call_output(
-        self,
+        self,  # pylint: disable=unused-argument
         run: ThreadRun,  # pylint: disable=unused-argument
         tool_call: RequiredFunctionToolCall,  # pylint: disable=unused-argument
         tool_call_details: RequiredFunctionToolCallDetails,  # pylint: disable=unused-argument
-        *args: Any,  # pylint: disable=unused-argument
         **kwargs: Any,  # pylint: disable=unused-argument
     ) -> Optional[Any]:
         """Produce (or override) the output for a required function tool call.
@@ -1968,10 +1966,9 @@ class RunHandler:
         return None
 
     def submit_mcp_tool_approval(
-        self,
+        self,  # pylint: disable=unused-argument
         run: ThreadRun,  # pylint: disable=unused-argument
         tool_call: RequiredMcpToolCall,  # pylint: disable=unused-argument
-        *args: Any,  # pylint: disable=unused-argument
         **kwargs: Any,  # pylint: disable=unused-argument
     ) -> Optional[ToolApproval]:
         # NOTE: Implementation intentionally returns None; override in subclasses for real approval logic.

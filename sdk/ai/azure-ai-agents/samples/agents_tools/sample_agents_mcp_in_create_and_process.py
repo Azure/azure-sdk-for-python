@@ -68,7 +68,7 @@ print(f"Allowed tools: {mcp_tool.allowed_tools}")
 
 class MyRunHandler(RunHandler):
     def submit_mcp_tool_approval(
-        self, run: ThreadRun, tool_call: RequiredMcpToolCall, *args: Any, **kwargs: Any
+        self, run: ThreadRun, tool_call: RequiredMcpToolCall, **kwargs: Any
     ) -> Optional[ToolApproval]:
         return ToolApproval(
             tool_call_id=tool_call.id,

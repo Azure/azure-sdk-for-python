@@ -31,7 +31,7 @@ from typing import (
 from azure.core.tracing.decorator import distributed_trace
 
 from .. import models as _models
-from ..models._enums import FilePurpose, RunStatus
+from ..models._enums import FilePurpose
 from ._operations import FilesOperations as FilesOperationsGenerated
 from ._operations import RunsOperations as RunsOperationsGenerated
 from ._operations import ThreadsOperations as ThreadsOperationsGenerated
@@ -559,7 +559,7 @@ class RunsOperations(RunsOperationsGenerated):
         if not run_handler:
             run_handler = _models.RunHandler()
 
-        return run_handler._start(self, run, polling_interval)
+        return run_handler._start(self, run, polling_interval)  # pylint: disable=protected-access
 
     @overload
     def stream(
