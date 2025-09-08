@@ -1,15 +1,52 @@
 # Tool Usage Guide
 
+As part of shipping SDKs that can be trusted by customers, the azure-sdk-for-python dev team maintains a suite of `checks` that can be utilized by devs to ensure predictable quality measures that should prevent or allow shipping. These `checks` are implemented in a single entrypoint within local development package `eng/tools/azure-sdk-tools`. This package provides:
+ 
+ - Templated package generation for mgmt packages
+ -  The test-framework that all packages within this monorepo use (including record/playback integration)
+ - A ton of CI related tasks and boilerplate
+ - Static analysis code
+
+A `tool` in this context is merely a single entrypoint provided by the `azpysdk` entrypoint in the `eng/tools/azure-sdk-tools` package.
+
 ## Available Tools
+
+This repo is currently migrating all checks from a slower `tox`-based framework, to a lightweight implementation that uses `asyncio` to simultaneously run checks. This tools list is the current set that has been migrated from `tox` to the `azpysdk` entrypoint.
 
 - mypy
 - pylint
 - sphinx
 
-## Pre-requisite
+## Common arguments
+
+### Globbing
+The azpysdk is intended to be used from within the azure-sdk-for-python repository. A user can invoke
+
+```
+/azure-sdk-for-python/> azpysdk import_all azure-storage* # will run import_all for all packages starting with `azure-storage`
+
+/azure-sdk-for-python/> azpysdk import_all azure-storage-blob,azure-core # invoke import_all for two packages
+
+/azure-sdk-for-python/sdk/core/azure-core/> azpysdk import_all . # invoke import_all for the local package only
+```
+
+### Automatically isolating the environment
+
+The targeted tool should be able to run in an isolated environment for a couple reasons:
+-  When attempting to diagnose an issue, sometimes a user is best served by completely wiping their `venv` and starting over from scatch. Issues may stem from having additional deps downloaded that normally wouldn't be installed with the package.
+- In `CI`, we _have_ to run in isolated virtual environments for some checks to allow processes like `multiple pytest` runs to invoke without accidentally stomping on each other's progress or hitting file contention errors.. CI passes this flag by default from `dispatch_checks.py`.
+
+To utilize this feature, add `--isolate` to any `azpysdk` invocation:
+
+```bash
+/> azpysdk import_all azure-storage-blob --isolate
+# will install and run within a venv in `sdk/storage/azure-storage-blob/.venv_import_all/
+```
+
+## Prerequisite
 
 - You need to have Python installed
-- We recommend at least version 3.11 to have access to more tools by default
+- The monorepo requires a minimum of `python 3.9`, but `>=3.11` is required for the `sphinx` check due to compatibility constraints with external processes.
 - You may optionally use the ["uv"](https://docs.astral.sh/uv/) tool, which is fast and handles Python version and venv creation automatically.
 
 ## Initial setup
@@ -19,6 +56,14 @@
 ### Setup with uv
 
 `uv venv`
+
+```bash
+# for WSL
+source .venv/bin/activate 
+
+# for Windows
+.venv\Scripts\activate 
+```
 
 `uv pip install -r dev_requirements.txt`
 
@@ -38,15 +83,6 @@ source .venv/bin/activate
 
 ## Using the CLI
 
-### With uv
-
-```bash
-# uv loads the venv for you when you prefix the command with uvx
-uvx azpysdk <tool_name>
-```
-
-### With venv
-
 ```bash
 # You can call the command directly if you activated the venv
 azpysdk <tool_name>
@@ -58,7 +94,7 @@ azpysdk <tool_name>
 
 You can locally test different Python versions to check compatibility with all the required Python versions.
 
-Note that this is optional, and you can rely onn CI to test python versions.
+Note that this is optional, and you can rely on CI to test python versions.
 
 #### With uv
 
