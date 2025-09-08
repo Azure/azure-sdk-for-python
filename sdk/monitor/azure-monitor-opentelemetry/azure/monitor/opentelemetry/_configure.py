@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 from functools import cached_property
 from logging import getLogger, Formatter
-from typing import Dict, List, Optional, cast
+from typing import Dict, List, Optional, cast, Any
 
 from opentelemetry.instrumentation.instrumentor import (  # type: ignore
     BaseInstrumentor,
@@ -24,9 +24,14 @@ from opentelemetry.util._importlib_metadata import (
     entry_points,
 )
 
+from azure.monitor.opentelemetry._browser_sdk_loader import (
+    setup_snippet_injection
+)
+from azure.monitor.opentelemetry._browser_sdk_loader._config import BrowserSDKConfig
 from azure.monitor.opentelemetry._constants import (
     _ALL_SUPPORTED_INSTRUMENTED_LIBRARIES,
     _AZURE_SDK_INSTRUMENTATION_NAME,
+    BROWSER_SDK_LOADER_CONFIG_ARG,
     DISABLE_LOGGING_ARG,
     DISABLE_METRICS_ARG,
     DISABLE_TRACING_ARG,
@@ -110,8 +115,11 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
      `<tempfile.gettempdir()>/Microsoft/AzureMonitor/opentelemetry-python-<your-instrumentation-key>`.
     :keyword list[~opentelemetry.sdk.metrics.view.View] views: List of `View` objects to configure and filter
      metric output.
-    :keyword bool enable_trace_based_sampling_for_logs: Boolean value to determine whether to enable trace based 
+    :keyword bool enable_trace_based_sampling_for_logs: Boolean value to determine whether to enable trace based
      sampling for logs. Defaults to `False`
+    :keyword dict browser_sdk_loader_config: Configuration dictionary for browser SDK loader behavior.
+     Supports keys like 'connection_string' (separate connection string for browser SDK), 'enabled' (boolean),
+     and framework-specific options. Defaults to `{}`.
     :rtype: None
     """
 
@@ -144,6 +152,9 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
     # Instrumentations need to be setup last so to use the global providers
     # instanstiated in the other setup steps
     _setup_instrumentations(configurations)
+
+    # Setup browser SDK loader for supported frameworks
+    _setup_browser_sdk_loader(configurations)
 
 
 def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
@@ -388,3 +399,43 @@ def _setup_additional_azure_sdk_instrumentations(configurations: Dict[str, Confi
                     class_name,
                     exc_info=ex,
                 )
+
+def _setup_browser_sdk_loader(configurations: Dict[str, ConfigurationValue]):
+    """Setup browser SDK loader for supported frameworks.
+
+    :param configurations: Configuration dictionary containing browser SDK loader settings.
+    :type configurations: Dict[str, ConfigurationValue]
+    """
+    try:
+        # Get browser SDK loader configuration
+        browser_sdk_loader_config_value = configurations.get(BROWSER_SDK_LOADER_CONFIG_ARG)
+        if isinstance(browser_sdk_loader_config_value, dict):
+            browser_sdk_loader_config = browser_sdk_loader_config_value
+        else:
+            # Create typed empty dict to satisfy mypy
+            browser_sdk_loader_config = cast(Dict[str, Any], {})
+
+        # Check if browser SDK loader should be enabled (default False)
+        enabled = browser_sdk_loader_config.get("enabled", False)
+        if not enabled:
+            _logger.debug("Browser SDK loader disabled via configuration")
+            return
+
+        # Get connection string (use browser SDK config first, then main config)
+        connection_string = (browser_sdk_loader_config.get("connection_string") or
+                           cast(str, configurations.get("connection_string", "")))
+        if not connection_string or not isinstance(connection_string, str):
+            _logger.debug("No valid connection string - skipping browser SDK loader setup")
+            return
+
+        # Create BrowserSDKConfig object
+        browser_config = BrowserSDKConfig(
+            enabled=enabled,
+            connection_string=connection_string
+        )
+
+        # Setup snippet injection for supported frameworks
+        setup_snippet_injection(browser_config)
+
+    except Exception as ex:  # pylint: disable=broad-except
+        _logger.debug("Failed to setup browser SDK loader: %s", ex, exc_info=True)
