@@ -7,7 +7,7 @@
 from azure.cosmos._execution_context.aio.base_execution_context import _QueryExecutionContextBase
 from azure.cosmos._execution_context.aio import document_producer
 from azure.cosmos._execution_context.hybrid_search_aggregator import _retrieve_component_scores, _rewrite_query_infos, \
-    _compute_rrf_scores, _compute_ranks, _coalesce_duplicate_rids
+    _compute_rrf_scores, _compute_ranks, _coalesce_duplicate_rids, _attach_parameters
 from azure.cosmos._routing import routing_range
 from azure.cosmos import exceptions
 
@@ -74,13 +74,8 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
         if self._hybrid_search_query_info['requiresGlobalStatistics']:
             target_partition_key_ranges = await self._get_target_partition_key_range(target_all_ranges=True)
             global_statistics_doc_producers = []
-            global_statistics_query = self._hybrid_search_query_info['globalStatisticsQuery']
-            # If query was given parameters we must add them back in
-            if self._parameters:
-                global_statistics_query = {
-                    'query': global_statistics_query,
-                    'parameters': self._parameters
-                }
+            global_statistics_query = self._attach_parameters(self._hybrid_search_query_info['globalStatisticsQuery'])
+
             partitioned_query_execution_context_list = []
             for partition_key_target_range in target_partition_key_ranges:
                 # create a document producer for each partition key range
@@ -119,7 +114,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
         component_query_infos = self._hybrid_search_query_info['componentQueryInfos']
         if self._aggregated_global_statistics:
             rewritten_query_infos = _rewrite_query_infos(self._hybrid_search_query_info,
-                                                         self._aggregated_global_statistics)
+                                                         self._aggregated_global_statistics, self._parameters)
         else:
             rewritten_query_infos = component_query_infos
 
@@ -129,10 +124,8 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
         for rewritten_query in rewritten_query_infos:
             for pk_range in target_partition_key_ranges:
                 if self._parameters:
-                    rewritten_query['rewrittenQuery'] = {
-                        'query': rewritten_query['rewrittenQuery'],
-                        'parameters': self._parameters
-                    }
+                    rewritten_query['rewrittenQuery'] = _attach_parameters(rewritten_query['rewrittenQuery'],
+                                                                           self._parameters)
                 component_query_execution_list.append(
                     document_producer._DocumentProducer(
                         pk_range,
@@ -200,6 +193,18 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
         # Finally, sort on the RRF scores to build the final result to return
         drained_results.sort(key=lambda x: x['Score'], reverse=True)
         self._format_final_results(drained_results)
+
+    def _attach_parameters(self, query):
+        """Attach original query parameters (if any) without mutating the passed query object."""
+        if not self._parameters:
+            return query
+        if isinstance(query, dict):
+            if "parameters" not in query:
+                new_query = dict(query)
+                new_query["parameters"] = self._parameters
+                return new_query
+            return query
+        return {"query": query, "parameters": self._parameters}
 
     def _format_final_results(self, results):
         skip = self._hybrid_search_query_info['skip'] or 0

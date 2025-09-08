@@ -79,7 +79,7 @@ def _drain_and_coalesce_results(document_producers_to_drain):
     return all_results, is_singleton
 
 
-def _rewrite_query_infos(hybrid_search_query_info, global_statistics):
+def _rewrite_query_infos(hybrid_search_query_info, global_statistics, parameters=None):
     rewritten_query_infos = []
     for query_info in hybrid_search_query_info['componentQueryInfos']:
         assert query_info['orderBy']
@@ -90,6 +90,8 @@ def _rewrite_query_infos(hybrid_search_query_info, global_statistics):
                 _format_component_query_workaround(order_by_expression, global_statistics,
                                                    len(hybrid_search_query_info[
                                                            'componentQueryInfos'])))
+
+        query_info['rewrittenQuery'] = _attach_parameters(query_info['rewrittenQuery'], parameters)
         rewritten_query = _format_component_query_workaround(query_info['rewrittenQuery'],
                                                              global_statistics,
                                                              len(hybrid_search_query_info[
@@ -118,6 +120,10 @@ def _format_component_query(format_string, global_statistics):
 
 def _format_component_query_workaround(format_string, global_statistics, component_count):
     # TODO: remove this method once the fix is live and switch back to one above
+    paraneters = None
+    if isinstance(format_string, dict):
+        parameters = format_string.get('parameters', None)
+        format_string = format_string['query']
     format_string = format_string.replace(_Placeholders.formattable_order_by, "true")
     query = format_string.replace(_Placeholders.total_document_count,
                                   str(global_statistics['documentCount']))
@@ -137,7 +143,20 @@ def _format_component_query_workaround(format_string, global_statistics, compone
 
         statistics_index += 1
 
-    return query
+    return _attach_parameters(query, paraneters)
+
+
+def _attach_parameters(query, parameters=None):
+        """Attach original query parameters (if any) without mutating the passed query object."""
+        if not parameters:
+            return query
+        if isinstance(query, dict):
+            if "parameters" not in query:
+                new_query = dict(query)
+                new_query["parameters"] = parameters
+                return new_query
+            return query
+        return {"query": query, "parameters": parameters}
 
 
 class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: disable=too-many-instance-attributes
@@ -180,13 +199,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
         if self._hybrid_search_query_info['requiresGlobalStatistics']:
             target_partition_key_ranges = self._get_target_partition_key_range(target_all_ranges=True)
             global_statistics_doc_producers = []
-            global_statistics_query = self._hybrid_search_query_info['globalStatisticsQuery']
-            # If query was given parameters we must add them back in
-            if self._parameters:
-                global_statistics_query = {
-                    'query': global_statistics_query,
-                    'parameters': self._parameters
-                }
+            global_statistics_query = self._attach_parameters(self._hybrid_search_query_info['globalStatisticsQuery'])
             partitioned_query_execution_context_list = []
             for partition_key_target_range in target_partition_key_ranges:
                 # create a document producer for each partition key range
@@ -224,7 +237,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
         # re-write the component queries if needed
         if self._aggregated_global_statistics:
             rewritten_query_infos = _rewrite_query_infos(self._hybrid_search_query_info,
-                                                         self._aggregated_global_statistics)
+                                                         self._aggregated_global_statistics, self._parameters)
         else:
             rewritten_query_infos = self._hybrid_search_query_info['componentQueryInfos']
 
@@ -235,10 +248,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
             for pk_range in target_partition_key_ranges:
                 # If query was given parameters we must add them back in
                 if self._parameters:
-                    rewritten_query['rewrittenQuery'] = {
-                        'query': rewritten_query['rewrittenQuery'],
-                        'parameters': self._parameters
-                    }
+                    rewritten_query['rewrittenQuery'] = self._attach_parameters(rewritten_query['rewrittenQuery'])
                 component_query_execution_list.append(
                     document_producer._DocumentProducer(
                         pk_range,
@@ -308,6 +318,18 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
         drained_results.sort(key=lambda x: x['Score'], reverse=True)
         self._format_final_results(drained_results)
 
+    def _attach_parameters(self, query):
+        """Attach original query parameters (if any) without mutating the passed query object."""
+        if not self._parameters:
+            return query
+        if isinstance(query, dict):
+            if "parameters" not in query:
+                new_query = dict(query)
+                new_query["parameters"] = self._parameters
+                return new_query
+            return query
+        return {"query": query, "parameters": self._parameters}
+
     def _format_final_results(self, results):
         skip = self._hybrid_search_query_info['skip'] or 0
         take = self._hybrid_search_query_info['take']
@@ -326,7 +348,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
                     _format_component_query_workaround(order_by_expression, self._aggregated_global_statistics,
                                                        len(self._hybrid_search_query_info[
                                                                'componentQueryInfos'])))
-
+            query_info['rewrittenQuery'] = _attach_parameters(query_info['rewrittenQuery'], self._parameters)
             rewritten_query = _format_component_query_workaround(query_info['rewrittenQuery'],
                                                                  self._aggregated_global_statistics,
                                                                  len(self._hybrid_search_query_info[
