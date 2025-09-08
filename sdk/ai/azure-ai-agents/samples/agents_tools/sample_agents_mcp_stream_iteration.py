@@ -127,7 +127,10 @@ with project_client:
                         print(f"tool_approvals: {tool_approvals}")
                     if tool_approvals:
                         run = agents_client.runs.submit_tool_outputs_stream(
-                            thread_id=thread.id, run_id=event_data.id, tool_approvals=tool_approvals, event_handler=stream
+                            thread_id=thread.id,
+                            run_id=event_data.id,
+                            tool_approvals=tool_approvals,
+                            event_handler=stream,
                         )
             elif isinstance(event_data, RunStep):
                 print(f"Step {event_data.id} status: {event_data.status}")
