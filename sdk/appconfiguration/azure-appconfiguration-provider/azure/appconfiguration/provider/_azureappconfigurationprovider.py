@@ -39,6 +39,7 @@ from ._azureappconfigurationproviderbase import (
     sdk_allowed_kwargs,
 )
 from ._client_manager import ConfigurationClientManager
+from ._client_manager_base import _ConfigurationClientWrapperBase
 from ._user_agent import USER_AGENT
 from ._json import remove_json_comments
 
@@ -293,7 +294,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
     """
 
     def __init__(self, **kwargs: Any) -> None:
-        super().__init__(**kwargs)
+        super(AzureAppConfigurationProvider, self).__init__(**kwargs)
 
         if "user_agent" in kwargs:
             user_agent = kwargs.pop("user_agent") + " " + USER_AGENT
@@ -347,80 +348,84 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
             return True, feature_flags
         return False, []
 
-    def refresh(self, **kwargs) -> None:  # pylint: disable=too-many-statements
+    def _attempt_refresh(
+        self, client: _ConfigurationClientWrapperBase, replica_count: int, is_failover_request: bool, **kwargs
+    ) -> bool:
+        refreshed_configs = False
+        refreshed_feature_flags = False
+        headers = update_correlation_context_header(
+            kwargs.pop("headers", {}),
+            "Watch",
+            replica_count,
+            self._feature_flag_enabled,
+            self._feature_filter_usage,
+            self._uses_key_vault,
+            self._uses_load_balancing,
+            is_failover_request,
+            self._uses_ai_configuration,
+            self._uses_aicc_configuration,
+        )
+        configuration_settings: List[ConfigurationSetting] = []
+
+        # Timer needs to be reset even if no refresh happened if time had passed
+        tried_refreshing_configs = False
+        tried_refreshing_feature_flags = False
+        refreshed = False
+        try:
+            if self._refresh_on and self._refresh_timer.needs_refresh():
+                tried_refreshing_configs = True
+                refreshed_configs, configuration_settings = self._configuration_refresh(client, headers, **kwargs)
+            if self._feature_flag_refresh_enabled and self._feature_flag_refresh_timer.needs_refresh():
+                tried_refreshing_feature_flags = True
+                refreshed_feature_flags, feature_flags = self._feature_flag_refresh(client, headers, **kwargs)
+                if refreshed_feature_flags:
+                    configuration_settings.extend(feature_flags)
+            if refreshed_configs or refreshed_feature_flags:
+                self._dict = self._process_configurations(configuration_settings, refreshed_feature_flags)
+                refreshed = True
+            if tried_refreshing_configs:
+                self._refresh_timer.reset()
+            if tried_refreshing_feature_flags:
+                self._feature_flag_refresh_timer.reset()
+            return refreshed
+        except AzureError as e:
+            logger.warning("Failed to refresh configurations from endpoint %s", client.endpoint)
+            self._replica_client_manager.backoff(client)
+            raise e
+
+    def refresh(self, **kwargs) -> None:
         if not self._refresh_on and not self._feature_flag_refresh_enabled:
             logger.debug("Refresh called but no refresh enabled.")
             return
         if not self._refresh_lock.acquire(blocking=False):  # pylint: disable= consider-using-with
             logger.debug("Refresh called but refresh already in progress.")
             return
-        success = False
         error_message = """
                         Failed to refresh configuration settings from Azure App Configuration.
                         """
-        exception: Exception = RuntimeError(error_message)
+        exception: Optional[Exception] = None
         is_failover_request = False
         try:
             self._replica_client_manager.refresh_clients()
             self._replica_client_manager.find_active_clients()
             replica_count = self._replica_client_manager.get_client_count() - 1
 
-            refreshed_configs = False
-            refreshed_feature_flags = False
-
             while client := self._replica_client_manager.get_next_active_client():
-                headers = update_correlation_context_header(
-                    kwargs.pop("headers", {}),
-                    "Watch",
-                    replica_count,
-                    self._feature_flag_enabled,
-                    self._feature_filter_usage,
-                    self._uses_key_vault,
-                    self._uses_load_balancing,
-                    is_failover_request,
-                    self._uses_ai_configuration,
-                    self._uses_aicc_configuration,
-                )
-                configuration_settings: List[ConfigurationSetting] = []
-                # Reset if failed
-                refreshed_configs = False
-                refreshed_feature_flags = False
-
-                # Timer needs to be reset even if no refresh happened if time had passed
-                tried_refreshing_configs = False
-                tried_refreshing_feature_flags = False
                 try:
-                    if self._refresh_on and self._refresh_timer.needs_refresh():
-                        tried_refreshing_configs = True
-                        refreshed_configs, configuration_settings = self._configuration_refresh(
-                            client, headers, **kwargs
-                        )
-                    if self._feature_flag_refresh_enabled and self._feature_flag_refresh_timer.needs_refresh():
-                        tried_refreshing_feature_flags = True
-                        refreshed_feature_flags, feature_flags = self._feature_flag_refresh(client, headers, **kwargs)
-                        if refreshed_feature_flags:
-                            configuration_settings.extend(feature_flags)
-                    if refreshed_configs or refreshed_feature_flags:
-                        self._dict = self._process_configurations(configuration_settings, refreshed_feature_flags)
-                        if tried_refreshing_configs:
-                            self._refresh_timer.reset()
-                        if tried_refreshing_feature_flags:
-                            self._feature_flag_refresh_timer.reset()
-                    success = True
-                    break
+                    refreshed = self._attempt_refresh(client, replica_count, is_failover_request, **kwargs)
+                    if refreshed and self._on_refresh_success:
+                        self._on_refresh_success()
+                    return
                 except AzureError as e:
                     exception = e
-                    logger.warning("Failed to refresh configurations from endpoint %s", client.endpoint)
-                    self._replica_client_manager.backoff(client)
                     is_failover_request = True
-            if not success:
-                self._refresh_timer.backoff()
-                if self._on_refresh_error:
-                    self._on_refresh_error(exception)
-                    return
-                raise exception
-            if (refreshed_configs or refreshed_feature_flags) and self._on_refresh_success:
-                self._on_refresh_success()
+            if not exception:
+                exception = RuntimeError(error_message)
+            self._refresh_timer.backoff()
+            if self._on_refresh_error:
+                self._on_refresh_error(exception)
+                return
+            raise exception
         finally:
             self._refresh_lock.release()
 
@@ -464,7 +469,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                     if not etag:
                         try:
                             sentinel = client.get_configuration_setting(key, label, headers=headers)  # type:ignore
-                            self._refresh_on[(key, label)] = sentinel.etag  # type:ignore
+                            sentinel_keys[(key, label)] = sentinel.etag  # type:ignore
                         except HttpResponseError as e:
                             if e.status_code == 404:
                                 # If the sentinel is not found a refresh should be triggered when it is created.
@@ -476,7 +481,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                                     key,
                                     label,
                                 )
-                                self._refresh_on[(key, label)] = None  # type: ignore
+                                sentinel_keys[(key, label)] = None  # type: ignore
                             else:
                                 raise e
                 with self._update_lock:
@@ -493,9 +498,10 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
     def _process_configurations(
         self, configuration_settings: List[ConfigurationSetting], refreshed_feature_flags: bool
     ) -> Dict[str, Any]:
-        # Reset feature flag usage
-        self._uses_ai_configuration = False
-        self._uses_aicc_configuration = False
+        if refreshed_feature_flags:
+            # Reset feature flag usage
+            self._uses_ai_configuration = False
+            self._uses_aicc_configuration = False
 
         configuration_settings_processed = {}
         existing_feature_flags = (

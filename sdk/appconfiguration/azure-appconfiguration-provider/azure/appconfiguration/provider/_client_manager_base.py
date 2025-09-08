@@ -16,6 +16,8 @@ JSON = Mapping[str, Any]
 @dataclass
 class _ConfigurationClientWrapperBase:
     endpoint: str
+    failed_attempts: int
+    backoff_end_time: float
 
 
 class ConfigurationClientManagerBase:  # pylint:disable=too-many-instance-attributes

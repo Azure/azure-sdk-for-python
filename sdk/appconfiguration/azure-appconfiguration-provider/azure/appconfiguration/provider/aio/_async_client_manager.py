@@ -34,8 +34,6 @@ if TYPE_CHECKING:
 @dataclass
 class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
     _client: AzureAppConfigurationClient
-    backoff_end_time: float = 0
-    failed_attempts: int = 0
     LOGGER = getLogger(__name__)
 
     @classmethod
@@ -62,6 +60,8 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         """
         return cls(
             endpoint,
+            0,
+            0,
             AzureAppConfigurationClient(
                 endpoint,
                 credential,
@@ -90,6 +90,8 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         """
         return cls(
             endpoint,
+            0,
+            0,
             AzureAppConfigurationClient.from_connection_string(
                 connection_string,
                 user_agent=user_agent,
@@ -424,7 +426,7 @@ class AsyncConfigurationClientManager(ConfigurationClientManagerBase):  # pylint
             self._replica_clients = [self._original_client] + discovered_clients
             random.shuffle(self._replica_clients)
 
-    def backoff(self, client: _AsyncConfigurationClientWrapper):
+    def backoff(self, client: _ConfigurationClientWrapperBase):
         client.failed_attempts += 1
         backoff_time = self._calculate_backoff(client.failed_attempts)
         client.backoff_end_time = (time.time() * 1000) + backoff_time
