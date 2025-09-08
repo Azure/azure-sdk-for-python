@@ -70,8 +70,8 @@ def sample_train_project():
         print(f"done: {poller.done()}")
         print(f"status: {poller.status()}")
     except HttpResponseError as e:
-        msg = getattr(getattr(e, "error", None), "message", str(e))
-        print(f"Operation failed: {msg}")
+        print(f"Operation failed: {e.message}")
+        print(e.error)
 
 # [END text_authoring_train_project]
 
