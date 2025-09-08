@@ -463,6 +463,7 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
         # Non-hybrid parameterized query equivalence on same container
         literal_simple = "SELECT TOP 5 c.index FROM c WHERE c.pk = '1' ORDER BY c.index"
         literal_simple_results = self.test_container.query_items(literal_simple)
+        literal_simple_results = [res async for res in literal_simple_results]
         literal_simple_indices = [res["index"] for res in literal_simple_results]
 
         param_simple = "SELECT TOP 5 c.index FROM c WHERE c.pk = @pk ORDER BY c.index"
