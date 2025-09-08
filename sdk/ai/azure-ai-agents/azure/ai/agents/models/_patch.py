@@ -109,6 +109,7 @@ from .. import types as _types
 
 if TYPE_CHECKING:
     from ..operations import RunsOperations
+    from aio.operations import RunsOperations as AsyncRunsOperations
 
 
 logger = logging.getLogger(__name__)
@@ -1749,13 +1750,20 @@ class AsyncToolSet(BaseToolSet):
                 + "Please use AsyncFunctionTool instead and provide sync and/or async function(s)."
             )
 
-    async def _execute_single_tool_call(self, tool_call: Any):
-        try:
-            tool = self.get_tool(AsyncFunctionTool)
-            output = await tool.execute(tool_call)
-            return {"tool_call_id": tool_call.id, "output": str(output)}
-        except Exception as e:  # pylint: disable=broad-exception-caught
-            return {"tool_call_id": tool_call.id, "output": str(e)}
+    async def _execute_single_tool_call(
+        self, tool_call: Any, run: Optional[ThreadRun] = None, run_handler: Optional["AsyncRunHandler"] = None
+    ):
+        output: Optional[Any] = None
+        if run and run_handler:
+            output = await run_handler.submit_function_call_output(run, tool_call, tool_call.function)
+        if not output:
+            try:
+                tool = self.get_tool(AsyncFunctionTool)
+                output = await tool.execute(tool_call)
+            except Exception as e:  # pylint: disable=broad-exception-caught
+                return {"tool_call_id": tool_call.id, "output": str(e)}
+
+        return {"tool_call_id": tool_call.id, "output": str(output)}
 
     async def execute_tool_calls(self, tool_calls: List[Any]) -> Any:
         """
@@ -1766,9 +1774,15 @@ class AsyncToolSet(BaseToolSet):
         :rtype: Any
         """
 
+        return await self._execute_tool_calls(tool_calls)
+
+    async def _execute_tool_calls(
+        self, tool_calls: List[Any], run: Optional[ThreadRun] = None, run_handler: Optional["AsyncRunHandler"] = None
+    ) -> Any:
+
         # Execute all tool calls concurrently
         tool_outputs = await asyncio.gather(
-            *[self._execute_single_tool_call(tc) for tc in tool_calls if tc.type == "function"]
+            *[self._execute_single_tool_call(tc, run, run_handler) for tc in tool_calls if tc.type == "function"]
         )
 
         return tool_outputs
@@ -1942,6 +1956,142 @@ class RunHandler:
         return run
 
     def submit_function_call_output(
+        self,  # pylint: disable=unused-argument
+        run: ThreadRun,  # pylint: disable=unused-argument
+        tool_call: RequiredFunctionToolCall,  # pylint: disable=unused-argument
+        tool_call_details: RequiredFunctionToolCallDetails,  # pylint: disable=unused-argument
+        **kwargs: Any,  # pylint: disable=unused-argument
+    ) -> Optional[Any]:
+        """Produce (or override) the output for a required function tool call.
+
+        Override this to inject custom execution logic, caching, validation, or transformation.
+        Return ``None`` to fall back to the default execution path handled in ``_start``.
+
+        :param run: Current run requiring the function output.
+        :type run: ThreadRun
+        :param tool_call: The tool call metadata referencing the function tool.
+        :type tool_call: RequiredFunctionToolCall
+        :param tool_call_details: Function arguments/details object.
+        :type tool_call_details: RequiredFunctionToolCallDetails
+        :paramtype kwargs: Additional keyword arguments for extensibility.
+        :return: Stringified result to send back to the service, or ``None`` to delegate to auto function calling.
+        :rtype: Optional[Any]
+        """
+        return None
+
+    def submit_mcp_tool_approval(
+        self,  # pylint: disable=unused-argument
+        run: ThreadRun,  # pylint: disable=unused-argument
+        tool_call: RequiredMcpToolCall,  # pylint: disable=unused-argument
+        **kwargs: Any,  # pylint: disable=unused-argument
+    ) -> Optional[ToolApproval]:
+        # NOTE: Implementation intentionally returns None; override in subclasses for real approval logic.
+        """Return a ``ToolApproval`` for an MCP tool call or ``None`` to indicate rejection/cancellation.
+
+        Override this to implement approval policies (interactive prompt, RBAC, heuristic checks, etc.).
+        Returning ``None`` triggers cancellation logic in ``_start``.
+
+        :param run: Current run containing the MCP approval request.
+        :type run: ThreadRun
+        :param tool_call: The MCP tool call requiring approval.
+        :type tool_call: RequiredMcpToolCall
+        :paramtype kwargs: Additional keyword arguments for extensibility.
+        :return: A populated ``ToolApproval`` instance on approval, or ``None`` to decline.
+        :rtype: Optional[ToolApproval]
+        """
+        return None
+
+
+class AsyncRunHandler:
+    """Helper that drives a run to completion for the "create and process" pattern.
+
+    Extension Points:
+        * ``submit_function_call_output`` -- override to customize how function tool results are produced.
+        * ``submit_mcp_tool_approval`` -- override to implement an approval workflow (UI prompt, policy, etc.).
+    """
+
+    async def _start(self, runs_operations: "AsyncRunsOperations", run: ThreadRun, polling_interval: int) -> ThreadRun:
+        """Poll and process a run until it reaches a terminal state or is cancelled.
+
+        :param runs_operations: Operations client used to retrieve, cancel, and submit tool outputs/approvals.
+        :type runs_operations: AsyncRunsOperations
+        :param run: The initial run returned from create/process call.
+        :type run: ThreadRun
+        :param polling_interval: Delay (in seconds) between polling attempts.
+        :type polling_interval: int
+        :return: The final terminal ``ThreadRun`` object (completed, failed, cancelled, or expired).
+        :rtype: ThreadRun
+        """
+        current_retry = 0
+        while run.status in [
+            RunStatus.QUEUED,
+            RunStatus.IN_PROGRESS,
+            RunStatus.REQUIRES_ACTION,
+        ]:
+            await asyncio.sleep(polling_interval)
+            run = await runs_operations.get(thread_id=run.thread_id, run_id=run.id)
+
+            # pylint:disable=protected-access
+            if run.status == RunStatus.REQUIRES_ACTION and isinstance(run.required_action, SubmitToolOutputsAction):
+                tool_calls = run.required_action.submit_tool_outputs.tool_calls
+                if not tool_calls:
+                    logger.warning("No tool calls provided - cancelling run")
+                    await runs_operations.cancel(thread_id=run.thread_id, run_id=run.id)
+                    break
+                # We need tool set only if we are executing local function. In case if
+                # the tool is azure_function we just need to wait when it will be finished.
+                if any(tool_call.type == "function" for tool_call in tool_calls):
+                    toolset = AsyncToolSet()
+                    toolset.add(runs_operations._function_tool)
+                    tool_outputs = await toolset._execute_tool_calls(tool_calls, run, self)
+
+                    if _has_errors_in_toolcalls_output(tool_outputs):
+                        if current_retry >= runs_operations._function_tool_max_retry:  # pylint:disable=no-else-return
+                            logger.warning(
+                                "Tool outputs contain errors - reaching max retry %s",
+                                runs_operations._function_tool_max_retry,
+                            )
+                            return await runs_operations.cancel(thread_id=run.thread_id, run_id=run.id)
+                        else:
+                            logger.warning("Tool outputs contain errors - retrying")
+                            current_retry += 1
+
+                    logger.debug("Tool outputs: %s", tool_outputs)
+                    if tool_outputs:
+                        run2 = await runs_operations.submit_tool_outputs(
+                            thread_id=run.thread_id, run_id=run.id, tool_outputs=tool_outputs
+                        )
+                        logger.debug("Tool outputs submitted to run: %s", run2.id)
+            elif isinstance(run.required_action, SubmitToolApprovalAction):
+                tool_calls = run.required_action.submit_tool_approval.tool_calls
+                if not tool_calls:
+                    logger.warning("No tool calls provided - cancelling run")
+                    await runs_operations.cancel(thread_id=run.thread_id, run_id=run.id)
+                    break
+
+                tool_approvals = []
+                for tool_call in tool_calls:
+                    if isinstance(tool_call, RequiredMcpToolCall):
+                        tool_approval = self.submit_mcp_tool_approval(  # pylint: disable=assignment-from-none
+                            run, tool_call
+                        )
+                        if not tool_approval:
+                            logger.warning(
+                                "run_handler not provided to create_and_run or submit_mcp_tool_approval in run handler returned None.  Please override this function and return a valid ToolApproval."
+                            )
+                            return await runs_operations.cancel(thread_id=run.thread_id, run_id=run.id)
+
+                        tool_approvals.append(tool_approval)
+
+                if tool_approvals:
+                    run = await runs_operations.submit_tool_outputs(
+                        thread_id=run.thread_id, run_id=run.id, tool_approvals=tool_approvals
+                    )
+
+            logger.debug("Current run ID: %s with status: %s", run.id, run.status)
+        return run
+
+    async def submit_function_call_output(
         self,  # pylint: disable=unused-argument
         run: ThreadRun,  # pylint: disable=unused-argument
         tool_call: RequiredFunctionToolCall,  # pylint: disable=unused-argument
@@ -2412,6 +2562,7 @@ __all__: List[str] = [
     "MessageDeltaChunk",
     "MessageAttachment",
     "RunHandler",
+    "AsyncRunHandler",
 ]  # Add all objects you want publicly available to users at this package level
 
 
