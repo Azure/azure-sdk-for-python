@@ -153,7 +153,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         self.connection_policy = connection_policy or ConnectionPolicy()
         self.partition_resolvers: Dict[str, RangePartitionResolver] = {}
-        self.__container_properties_cache: Dict[str, dict[str, Any]] = {}
+        self.__container_properties_cache: Dict[str, Dict[str, Any]] = {}
         self.default_headers: Dict[str, Any] = {
             http_constants.HttpHeaders.CacheControl: "no-cache",
             http_constants.HttpHeaders.Version: http_constants.Versions.CurrentVersion,
@@ -252,7 +252,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self._set_client_consistency_level(database_account, consistency_level)
 
     @property
-    def _container_properties_cache(self) -> Dict[str, dict[str, Any]]:
+    def _container_properties_cache(self) -> Dict[str, Dict[str, Any]]:
         """Gets the container properties cache from the client.
         :returns: the container properties cache for the client.
         :rtype: Dict[str, Dict[str, Any]]"""

@@ -240,23 +240,23 @@ class DatabaseProxy(object):
 
     @overload
     async def create_container( # pylint: disable=too-many-statements
-            self,
-            id: str,
-            partition_key: PartitionKey,
-            *,
-            indexing_policy: Optional[Dict[str, str]] = None,
-            default_ttl: Optional[int] = None,
-            offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
-            unique_key_policy: Optional[Dict[str, str]] = None,
-            conflict_resolution_policy: Optional[Dict[str, str]] = None,
-            initial_headers: Optional[Dict[str, str]] = None,
-            computed_properties: Optional[List[Dict[str, str]]] = None,
-            analytical_storage_ttl: Optional[int] = None,
-            vector_embedding_policy: Optional[Dict[str, Any]] = None,
-            change_feed_policy: Optional[Dict[str, Any]] = None,
-            full_text_policy: Optional[Dict[str, Any]] = None,
-            return_properties: Literal[True],
-            **kwargs: Any
+        self,
+        id: str,
+        partition_key: PartitionKey,
+        *,
+        indexing_policy: Optional[Dict[str, str]] = None,
+        default_ttl: Optional[int] = None,
+        offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
+        unique_key_policy: Optional[Dict[str, str]] = None,
+        conflict_resolution_policy: Optional[Dict[str, str]] = None,
+        initial_headers: Optional[Dict[str, str]] = None,
+        computed_properties: Optional[List[Dict[str, str]]] = None,
+        analytical_storage_ttl: Optional[int] = None,
+        vector_embedding_policy: Optional[Dict[str, Any]] = None,
+        change_feed_policy: Optional[Dict[str, Any]] = None,
+        full_text_policy: Optional[Dict[str, Any]] = None,
+        return_properties: Literal[True],
+        **kwargs: Any
     ) -> tuple[ContainerProxy, CosmosDict]:
         """Create a new container with the given ID (name).
 

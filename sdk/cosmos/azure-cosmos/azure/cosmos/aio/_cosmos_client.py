@@ -258,14 +258,14 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
 
     @overload
     async def create_database(
-            self,
-            id: str,
-            *,
-            offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
-            initial_headers: Optional[Dict[str, str]] = None,
-            throughput_bucket: Optional[int] = None,
-            return_properties: Literal[False] = False,
-            **kwargs: Any
+        self,
+        id: str,
+        *,
+        offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
+        initial_headers: Optional[Dict[str, str]] = None,
+        throughput_bucket: Optional[int] = None,
+        return_properties: Literal[False] = False,
+        **kwargs: Any
     ) -> DatabaseProxy:
         """
         Create a new database with the given ID (name).
@@ -297,14 +297,14 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
 
     @overload
     async def create_database(
-            self,
-            id: str,
-            *,
-            offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
-            initial_headers: Optional[Dict[str, str]] = None,
-            throughput_bucket: Optional[int] = None,
-            return_properties: Literal[True],
-            **kwargs: Any
+        self,
+        id: str,
+        *,
+        offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
+        initial_headers: Optional[Dict[str, str]] = None,
+        throughput_bucket: Optional[int] = None,
+        return_properties: Literal[True],
+        **kwargs: Any
     ) -> tuple[DatabaseProxy, CosmosDict]:
         """
         Create a new database with the given ID (name).
@@ -413,14 +413,14 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
 
     @overload
     async def create_database_if_not_exists(  # pylint: disable=redefined-builtin
-            self,
-            id: str,
-            *,
-            offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
-            initial_headers: Optional[Dict[str, str]] = None,
-            throughput_bucket: Optional[int] = None,
-            return_properties: Literal[True],
-            **kwargs: Any
+        self,
+        id: str,
+        *,
+        offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
+        initial_headers: Optional[Dict[str, str]] = None,
+        throughput_bucket: Optional[int] = None,
+        return_properties: Literal[True],
+        **kwargs: Any
     ) -> tuple[DatabaseProxy, CosmosDict]:
 
         ...

@@ -7,7 +7,7 @@ import uuid
 import pytest
 
 import test_config
-from azure.cosmos import CosmosClient, PartitionKey,ContainerProxy, DatabaseProxy
+from azure.cosmos import CosmosClient, PartitionKey, ContainerProxy, DatabaseProxy
 from azure.cosmos.http_constants import HttpHeaders
 
 
