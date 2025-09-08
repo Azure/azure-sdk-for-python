@@ -51,7 +51,7 @@ class TestStorageFileNFS(StorageRecordedTestCase):
                 pass
 
     def teardown_method(self):
-        if self.fsc:
+        if self.is_live and self.fsc:
             try:
                 self.fsc.delete_share(self.share_name)
             except:
