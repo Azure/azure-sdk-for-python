@@ -125,7 +125,7 @@ async def run_all_checks(packages, checks, max_parallel):
     total = len(combos)
     for idx, (package, check) in enumerate(combos, start=1):
         if not is_check_enabled(package, check):
-            logger.warning(f"Skipping disabled check {check} for package {package}")
+            logger.warning(f"Skipping disabled check {check} ({idx}/{total}) for package {package}")
             continue
         tasks.append(asyncio.create_task(run_check(semaphore, package, check, base_args, idx, total)))
 
@@ -200,7 +200,7 @@ In the case of an environment invoking `pytest`, results can be collected in a j
         nargs="?",
         help=(
             "A comma separated list of glob strings that will target the top level directories that contain packages."
-            'Examples: All = "azure-*", Single = "azure-keyvault", Targeted Multiple = "azure-keyvault,azure-mgmt-resource"'
+            'Examples: All = "azure-*", Single = "azure-keyvault-keys", Targeted Multiple = "azure-keyvault-keys,azure-mgmt-resource"'
         ),
     )
 
@@ -263,7 +263,7 @@ In the case of an environment invoking `pytest`, results can be collected in a j
         "-d",
         "--dest-dir",
         dest="dest_dir",
-        help="Location to generate any output files(if any). For e.g. apiview stub file",
+        help="Location to generate any output files (if any). For e.g. APIView stub file",
     )
 
     parser.add_argument(
@@ -327,7 +327,7 @@ In the case of an environment invoking `pytest`, results can be collected in a j
         logger.error("No valid checks provided via -c/--checks.")
         sys.exit(2)
 
-    logger.info(f"Running {len(checks)} checks across {len(targeted_packages)} packages (max_parallel={args.max_parallel}).")
+    logger.info(f"Running {len(checks)} check(s) across {len(targeted_packages)} packages (max_parallel={args.max_parallel}).")
 
     configure_interrupt_handling()
     try:
