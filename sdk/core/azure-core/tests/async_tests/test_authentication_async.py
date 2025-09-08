@@ -12,7 +12,7 @@ from requests import Response
 
 from azure.core.credentials import AccessToken, AccessTokenInfo
 from azure.core.credentials_async import AsyncTokenCredential, AsyncSupportsTokenInfo
-from azure.core.exceptions import ServiceRequestError
+from azure.core.exceptions import ServiceRequestError, HttpResponseError, ClientAuthenticationError
 from azure.core.pipeline import AsyncPipeline, PipelineRequest, PipelineContext, PipelineResponse
 from azure.core.pipeline.policies import (
     AsyncBearerTokenCredentialPolicy,
@@ -640,3 +640,52 @@ async def test_async_bearer_policy_on_challenge_caches_token(http_request):
 
     # Verify the Authorization header was set correctly
     assert request.http_request.headers["Authorization"] == "Bearer claims_token"
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+async def test_async_bearer_policy_on_challenge_exception_chaining(http_request):
+    """Test that exceptions during async on_challenge are chained with HttpResponseError"""
+
+    # Mock credential that raises an exception during get_token_info with claims
+    async def mock_get_token_info(*scopes, options=None):
+        if options and "claims" in options:
+            raise ClientAuthenticationError("Failed to request token info with claims")
+        return AccessTokenInfo("initial_token", int(time.time()) + 3600)
+
+    fake_credential = Mock(
+        spec_set=["get_token", "get_token_info"],
+        get_token=AsyncMock(return_value=AccessToken("fallback", int(time.time()) + 3600)),
+        get_token_info=mock_get_token_info,
+    )
+    policy = AsyncBearerTokenCredentialPolicy(fake_credential, "scope")
+
+    # Create a 401 response with insufficient_claims challenge
+    test_claims = '{"access_token":{"foo":"bar"}}'
+    encoded_claims = base64.urlsafe_b64encode(test_claims.encode()).decode().rstrip("=")
+    challenge_header = f'Bearer error="insufficient_claims", claims="{encoded_claims}"'
+
+    response_mock = Mock(status_code=401, headers={"WWW-Authenticate": challenge_header})
+
+    # Mock transport that returns the 401 response
+    async def mock_transport_send(request):
+        return response_mock
+
+    transport = Mock(send=mock_transport_send)
+    pipeline = AsyncPipeline(transport=transport, policies=[policy])
+
+    # Execute the request and verify exception chaining
+    with pytest.raises(ClientAuthenticationError) as exc_info:
+        await pipeline.run(http_request("GET", "https://example.com"))
+
+    # Verify the original exception is preserved
+    original_exception = exc_info.value
+    assert original_exception.message == "Failed to request token info with claims"
+
+    # Verify the exception is chained with HttpResponseError
+    assert original_exception.__cause__ is not None
+    assert isinstance(original_exception.__cause__, HttpResponseError)
+
+    # Verify the HttpResponseError contains the original 401 response
+    http_response_error = original_exception.__cause__
+    assert http_response_error.response is response_mock

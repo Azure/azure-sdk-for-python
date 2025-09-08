@@ -18,6 +18,7 @@ from azure.ai.agents.models import (
     McpTool,
     MessageDeltaChunk,
     MessageDeltaTextContent,
+    MessageInputTextBlock,
     OpenApiAnonymousAuthDetails,
     OpenApiTool,
     RequiredMcpToolCall,
@@ -28,6 +29,7 @@ from azure.ai.agents.models import (
     RunStepToolCallDetails,
     SubmitToolApprovalAction,
     ThreadMessage,
+    ThreadMessageOptions,
     ThreadRun,
     Tool,
     ToolApproval,
@@ -36,11 +38,7 @@ from azure.ai.agents.models import (
 from azure.ai.agents.telemetry._ai_agents_instrumentor import _AIAgentsInstrumentorPreview
 from azure.ai.agents.telemetry import AIAgentsInstrumentor, _utils
 from azure.core.settings import settings
-from memory_trace_exporter import MemoryTraceExporter
 from gen_ai_trace_verifier import GenAiTraceVerifier
-from opentelemetry import trace
-from opentelemetry.sdk.trace import TracerProvider
-from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 from azure.ai.agents import AgentsClient
 
 from devtools_testutils import (
@@ -48,9 +46,8 @@ from devtools_testutils import (
 )
 
 from test_agents_client_base import agentClientPreparer
-from test_ai_instrumentor_base import TestAiAgentsInstrumentorBase
+from test_ai_instrumentor_base import TestAiAgentsInstrumentorBase, MessageCreationMode, CONTENT_TRACING_ENV_VARIABLE
 
-CONTENT_TRACING_ENV_VARIABLE = "OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT"
 settings.tracing_implementation = "OpenTelemetry"
 _utils._span_impl_type = settings.tracing_implementation()
 
@@ -71,19 +68,6 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
         self.setup_telemetry()
         yield
         self.cleanup()
-
-    def setup_telemetry(self):
-        trace._TRACER_PROVIDER = TracerProvider()
-        self.exporter = MemoryTraceExporter()
-        span_processor = SimpleSpanProcessor(self.exporter)
-        trace.get_tracer_provider().add_span_processor(span_processor)
-        AIAgentsInstrumentor().instrument()
-
-    def cleanup(self):
-        self.exporter.shutdown()
-        AIAgentsInstrumentor().uninstrument()
-        trace._TRACER_PROVIDER = None
-        os.environ.pop(CONTENT_TRACING_ENV_VARIABLE, None)
 
     # helper function: create client and using environment variables
     def create_client(self, **kwargs):
@@ -227,13 +211,48 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
     @agentClientPreparer()
     @recorded_by_proxy
     def test_agent_chat_with_tracing_content_recording_enabled(self, **kwargs):
+        # Note: The proper way to invoke the same test over and over again with different parameter values is to use @pytest.mark.parametrize. However,
+        # this does not work together with @recorded_by_proxy. So we call the helper function 4 times instead in a single recorded test.
+        self._agent_chat_with_tracing_content_recording_enabled(
+            message_creation_mode=MessageCreationMode.MESSAGE_CREATE_STR, **kwargs
+        )
+        self._agent_chat_with_tracing_content_recording_enabled(
+            message_creation_mode=MessageCreationMode.MESSAGE_CREATE_INPUT_TEXT_BLOCK, **kwargs
+        )
+        self._agent_chat_with_tracing_content_recording_enabled(
+            message_creation_mode=MessageCreationMode.THREAD_CREATE_STR, **kwargs
+        )
+        self._agent_chat_with_tracing_content_recording_enabled(
+            message_creation_mode=MessageCreationMode.THREAD_CREATE_INPUT_TEXT_BLOCK, **kwargs
+        )
+
+    def _agent_chat_with_tracing_content_recording_enabled(self, message_creation_mode: MessageCreationMode, **kwargs):
+        self.cleanup()
+        os.environ.update({CONTENT_TRACING_ENV_VARIABLE: "True"})
+        self.setup_telemetry()
         assert True == AIAgentsInstrumentor().is_content_recording_enabled()
         assert True == AIAgentsInstrumentor().is_instrumented()
 
         client = self.create_client(**kwargs)
         agent = client.create_agent(model="gpt-4o-mini", name="my-agent", instructions="You are helpful agent")
-        thread = client.threads.create()
-        client.messages.create(thread_id=thread.id, role="user", content="Hello, tell me a joke")
+        user_content = "Hello, tell me a joke"
+
+        # Test 4 different patterns of thread & message creation
+        if message_creation_mode == MessageCreationMode.MESSAGE_CREATE_STR:
+            thread = client.threads.create()
+            client.messages.create(thread_id=thread.id, role="user", content=user_content)
+        elif message_creation_mode == MessageCreationMode.MESSAGE_CREATE_INPUT_TEXT_BLOCK:
+            thread = client.threads.create()
+            client.messages.create(thread_id=thread.id, role="user", content=[MessageInputTextBlock(text=user_content)])
+        elif message_creation_mode == MessageCreationMode.THREAD_CREATE_STR:
+            thread = client.threads.create(messages=[ThreadMessageOptions(role="user", content=user_content)])
+        elif message_creation_mode == MessageCreationMode.THREAD_CREATE_INPUT_TEXT_BLOCK:
+            thread = client.threads.create(
+                messages=[ThreadMessageOptions(role="user", content=[MessageInputTextBlock(text=user_content)])]
+            )
+        else:
+            assert False, f"Unknown message creation mode: {message_creation_mode}"
+
         run = client.runs.create(thread_id=thread.id, agent_id=agent.id)
 
         while run.status in ["queued", "in_progress", "requires_action"]:
@@ -250,6 +269,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
         assert len(messages) > 1
         client.close()
 
+        # ------------------------- Validate "create_agent" span ---------------------------------
         self.exporter.force_flush()
         spans = self.exporter.get_spans_by_name("create_agent my-agent")
         assert len(spans) == 1
@@ -277,6 +297,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
         events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
         assert events_match == True
 
+        # ------------------------- Validate "create_thread" span ---------------------------------
         spans = self.exporter.get_spans_by_name("create_thread")
         assert len(spans) == 1
         span = spans[0]
@@ -289,32 +310,54 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
         assert attributes_match == True
 
-        spans = self.exporter.get_spans_by_name("create_message")
-        assert len(spans) == 1
-        span = spans[0]
-        expected_attributes = [
-            ("gen_ai.system", "az.ai.agents"),
-            ("gen_ai.operation.name", "create_message"),
-            ("server.address", ""),
-            ("gen_ai.thread.id", ""),
-            ("gen_ai.message.id", ""),
-        ]
-        attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
-        assert attributes_match == True
+        if message_creation_mode in (
+            MessageCreationMode.THREAD_CREATE_STR,
+            MessageCreationMode.THREAD_CREATE_INPUT_TEXT_BLOCK,
+        ):
+            expected_events = [
+                {
+                    "name": "gen_ai.user.message",
+                    "attributes": {
+                        "gen_ai.system": "az.ai.agents",
+                        "gen_ai.event.content": '{"content": "Hello, tell me a joke", "role": "user"}',
+                    },
+                }
+            ]
+            events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
+            assert events_match == True
 
-        expected_events = [
-            {
-                "name": "gen_ai.user.message",
-                "attributes": {
-                    "gen_ai.system": "az.ai.agents",
-                    "gen_ai.thread.id": "*",
-                    "gen_ai.event.content": '{"content": "Hello, tell me a joke", "role": "user"}',
-                },
-            }
-        ]
-        events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
-        assert events_match == True
+        # ------------------------- Validate "create_message" span ---------------------------------
+        if message_creation_mode in (
+            MessageCreationMode.MESSAGE_CREATE_STR,
+            MessageCreationMode.MESSAGE_CREATE_INPUT_TEXT_BLOCK,
+        ):
+            spans = self.exporter.get_spans_by_name("create_message")
+            assert len(spans) == 1
+            span = spans[0]
+            expected_attributes = [
+                ("gen_ai.system", "az.ai.agents"),
+                ("gen_ai.operation.name", "create_message"),
+                ("server.address", ""),
+                ("gen_ai.thread.id", ""),
+                ("gen_ai.message.id", ""),
+            ]
+            attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
+            assert attributes_match == True
 
+            expected_events = [
+                {
+                    "name": "gen_ai.user.message",
+                    "attributes": {
+                        "gen_ai.system": "az.ai.agents",
+                        "gen_ai.thread.id": "*",
+                        "gen_ai.event.content": '{"content": "Hello, tell me a joke", "role": "user"}',
+                    },
+                }
+            ]
+            events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
+            assert events_match == True
+
+        # ------------------------- Validate "start_thread_run" span ---------------------------------
         spans = self.exporter.get_spans_by_name("start_thread_run")
         assert len(spans) == 1
         span = spans[0]
@@ -332,6 +375,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
         assert attributes_match == True
 
+        # ------------------------- Validate "get_thread_run" span ---------------------------------
         spans = self.exporter.get_spans_by_name("get_thread_run")
         assert len(spans) >= 1
         span = spans[-1]
@@ -350,6 +394,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
         assert attributes_match == True
 
+        # ------------------------- Validate "list_messages" span ---------------------------------
         spans = self.exporter.get_spans_by_name("list_messages")
         assert len(spans) == 2
         span = spans[0]
@@ -563,11 +608,11 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
             tool_message_attribute_content='{\\"weather\\": \\"Sunny\\"}',
             event_contents=[
                 '{"tool_calls": [{"id": "*", "type": "function", "function": {"name": "fetch_weather", "arguments": {"location": "New York"}}}]}',
-                '{"content": {"text": {"value": "*"}}, "role": "assistant"}'
+                '{"content": {"text": {"value": "*"}}, "role": "assistant"}',
             ],
             have_submit_tools=True,
             run_step_events=self.get_expected_fn_spans(True),
-            **kwargs
+            **kwargs,
         )
 
     @pytest.mark.usefixtures("instrument_with_content")
@@ -694,17 +739,15 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
             message="What is the weather in New York?",
             recording_enabled=False,
             tool_message_attribute_content='{\\"weather\\": \\"Sunny\\"}',
-            event_contents=[
-                '{"tool_calls": [{"id": "*", "type": "function"}]}',
-                '{"role": "assistant"}'
-            ],
+            event_contents=['{"tool_calls": [{"id": "*", "type": "function"}]}', '{"role": "assistant"}'],
             have_submit_tools=True,
             run_step_events=self.get_expected_fn_spans(False),
-            **kwargs
+            **kwargs,
         )
 
     def _get_function_toolset(self):
         """Get a function toolset."""
+
         def fetch_weather(location: str) -> str:
             """
             Fetches the weather information for the specified location.
@@ -743,48 +786,47 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
             tool_message_attribute_content='{\\"weather\\": \\"Sunny\\"}',
             event_contents=[
                 '{"tool_calls": [{"id": "*", "type": "function", "function": {"name": "fetch_weather", "arguments": {"location": "New York"}}}]}',
-                '{"content": {"text": {"value": "*"}}, "role": "assistant"}'
+                '{"content": {"text": {"value": "*"}}, "role": "assistant"}',
             ],
             have_submit_tools=True,
             run_step_events=self.get_expected_fn_spans(True),
-            **kwargs
+            **kwargs,
         )
 
     def _do_test_run_steps_with_toolset_with_tracing_content_recording(
-            self,
-            model: str,
-            use_stream: bool,
-            message: str,
-            recording_enabled: bool,
-            tool_message_attribute_content: str,
-            event_contents: List[str],
-            instructions: str = "You are helpful agent",
-            test_run_steps=True,
-            toolset: Optional[ToolSet] = None,
-            tool: Optional[Tool] = None,
-            have_submit_tools: bool = False,
-            run_step_events: List[List[Dict[str, Any]]] = None,
-            has_annotations: bool = False,
-            **kwargs
-        ) -> None:
+        self,
+        model: str,
+        use_stream: bool,
+        message: str,
+        recording_enabled: bool,
+        tool_message_attribute_content: str,
+        event_contents: List[str],
+        instructions: str = "You are helpful agent",
+        test_run_steps=True,
+        toolset: Optional[ToolSet] = None,
+        tool: Optional[Tool] = None,
+        have_submit_tools: bool = False,
+        run_step_events: List[List[Dict[str, Any]]] = None,
+        has_annotations: bool = False,
+        **kwargs,
+    ) -> None:
         """The helper method to check the recordings."""
         client = self.create_client(**kwargs)
         if toolset is None == tool is None:
             raise ValueError("Please provide at lease one of toolset or tool, but not both.")
         elif toolset is not None:
-            agent = client.create_agent(
-                model=model, name="my-agent", instructions=instructions, toolset=toolset
-            )
-    
+            agent = client.create_agent(model=model, name="my-agent", instructions=instructions, toolset=toolset)
+
             # workaround for https://github.com/Azure/azure-sdk-for-python/issues/40086
             client.enable_auto_function_calls(toolset)
         elif tool is not None:
             agent = client.create_agent(
-                model=model, name="my-agent", instructions=instructions,
+                model=model,
+                name="my-agent",
+                instructions=instructions,
                 tools=tool.definitions,
                 tool_resources=tool.resources,
             )
-            
 
         thread = client.threads.create()
         client.messages.create(thread_id=thread.id, role="user", content=message)
@@ -795,10 +837,11 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
                 stream.until_done()
             run_id = event_handler.run_id
         else:
-            run = client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id, polling_interval=self._sleep_time())
+            run = client.runs.create_and_process(
+                thread_id=thread.id, agent_id=agent.id, polling_interval=self._sleep_time()
+            )
             assert run.status != RunStatus.FAILED, run.last_error
             run_id = run.id
-            
 
         # delete agent and close client
         client.delete_agent(agent.id)
@@ -809,7 +852,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
             steps = list(client.run_steps.list(thread_id=thread.id, run_id=run_id))
             assert len(steps) >= 1
         client.close()
-        
+
         self.exporter.force_flush()
         self._check_spans(
             model=model,
@@ -838,11 +881,11 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
             tool_message_attribute_content='{\\"weather\\": \\"Sunny\\"}',
             event_contents=[
                 '{"tool_calls": [{"id": "*", "type": "function", "function": {"name": "fetch_weather", "arguments": {"location": "New York"}}}]}',
-                '{"content": {"text": {"value": "*"}}, "role": "assistant"}'
+                '{"content": {"text": {"value": "*"}}, "role": "assistant"}',
             ],
             have_submit_tools=True,
             run_step_events=self.get_expected_fn_spans(True),
-            **kwargs
+            **kwargs,
         )
 
     @pytest.mark.usefixtures("instrument_with_content")
@@ -866,10 +909,11 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
             use_stream=False,
             message="What is the weather in New York, NY?",
             recording_enabled=True,
-            tool_message_attribute_content='',
+            tool_message_attribute_content="",
             event_contents=[],
             run_step_events=self.get_expected_openapi_spans(),
-            **kwargs)
+            **kwargs,
+        )
 
     @pytest.mark.usefixtures("instrument_with_content")
     @agentClientPreparer()
@@ -900,16 +944,20 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
                     content=message,
                 )
                 mcp_tool.update_headers("SuperSecret", "123456")
-                run = agents_client.runs.create(thread_id=thread.id, agent_id=agent.id, tool_resources=mcp_tool.resources)
+                run = agents_client.runs.create(
+                    thread_id=thread.id, agent_id=agent.id, tool_resources=mcp_tool.resources
+                )
                 was_approved = False
                 while run.status in [RunStatus.QUEUED, RunStatus.IN_PROGRESS, RunStatus.REQUIRES_ACTION]:
                     time.sleep(self._sleep_time())
                     run = agents_client.runs.get(thread_id=thread.id, run_id=run.id)
-    
-                    if run.status == RunStatus.REQUIRES_ACTION and isinstance(run.required_action, SubmitToolApprovalAction):
+
+                    if run.status == RunStatus.REQUIRES_ACTION and isinstance(
+                        run.required_action, SubmitToolApprovalAction
+                    ):
                         tool_calls = run.required_action.submit_tool_approval.tool_calls
                         assert tool_calls, "No tool calls to approve."
-    
+
                         tool_approvals = []
                         for tool_call in tool_calls:
                             if isinstance(tool_call, RequiredMcpToolCall):
@@ -920,7 +968,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
                                         headers=mcp_tool.headers,
                                     )
                                 )
-    
+
                         if tool_approvals:
                             was_approved = True
                             agents_client.runs.submit_tool_outputs(
@@ -928,7 +976,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
                             )
                 assert was_approved, "The run was never approved."
                 assert run.status != RunStatus.FAILED, run.last_error
-    
+
                 is_activity_step_found = False
                 is_tool_call_step_found = False
                 for run_step in agents_client.run_steps.list(thread_id=thread.id, run_id=run.id):
@@ -946,7 +994,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
             finally:
                 agents_client.threads.delete(thread.id)
                 agents_client.delete_agent(agent.id)
-    
+
         self.exporter.force_flush()
         # Check the actual telemetry
         self._check_spans(
@@ -966,7 +1014,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
     @recorded_by_proxy
     def test_telemetry_steps_with_deep_research_tool(self, **kwargs):
         """Test running functions with streaming and tracing content recording."""
-        
+
         self._do_test_run_steps_with_toolset_with_tracing_content_recording(
             tool=self._get_deep_research_tool(**kwargs),
             model="gpt-4o",
@@ -974,13 +1022,14 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
             instructions="You are a helpful agent that assists in researching scientific topics.",
             message="Research the benefits of renewable energy sources. Keep the response brief.",
             recording_enabled=True,
-            tool_message_attribute_content='',
+            tool_message_attribute_content="",
             event_contents=[],
             have_submit_tools=False,
             run_step_events=self.get_expected_deep_research_spans(),
             has_annotations=True,
-            **kwargs
+            **kwargs,
         )
+
 
 class MyEventHandler(AgentEventHandler):
 
