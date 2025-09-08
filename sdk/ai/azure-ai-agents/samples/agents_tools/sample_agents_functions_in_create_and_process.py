@@ -7,7 +7,7 @@
 DESCRIPTION:
     This sample demonstrates how to use Agent operations with a mix of automatic and manual
     function calls from the Azure Agents service using a synchronous client.
-    
+
     Some functions (like fetch_current_datetime and fetch_weather) will be executed automatically,
     while others (like send_email) will require manual approval through the RunHandler.
 
@@ -74,7 +74,7 @@ class MyRunHandler(RunHandler):
         **kwargs: Any,
     ) -> Any:
         function_name = tool_call_details.name
-        if function_name == send_email.__name__:  
+        if function_name == send_email.__name__:
             # Parse arguments from tool call
             args_dict = json.loads(tool_call_details.arguments) if tool_call_details.arguments else {}
             # Call the function directly with the arguments
@@ -113,9 +113,9 @@ with project_client:
     )
     print(f"Created message, ID: {message.id}")
 
-    # [START pass_run_handler_to_create_and_process]
+    # [START create_and_process]
     run = agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id, run_handler=MyRunHandler)
-    # [END pass_run_handler_to_create_and_process]
+    # [END create_and_process]
 
     print(f"Run completed with status: {run.status}")
 

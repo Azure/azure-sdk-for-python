@@ -7,7 +7,7 @@
 DESCRIPTION:
     This sample demonstrates how to use Agent operations with a mix of automatic and manual
     function calls from the Azure Agents service using an asynchronous client.
-    
+
     Some functions (like fetch_current_datetime and fetch_weather) will be executed automatically,
     while others (like send_email) will require manual approval through the RunHandler.
 
@@ -72,7 +72,7 @@ async def main():
             **kwargs: Any,
         ) -> Any:
             function_name = tool_call_details.name
-            if function_name == send_email_async.__name__:  
+            if function_name == send_email_async.__name__:
                 # Parse arguments from tool call
                 args_dict = json.loads(tool_call_details.arguments) if tool_call_details.arguments else {}
                 # Call the function directly with the arguments

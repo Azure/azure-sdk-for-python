@@ -534,7 +534,7 @@ class MyRunHandler(RunHandler):
 
 To use the RunHandler with `create_and_process` for MCP tools:
 
-<!-- SNIPPET:sample_agents_mcp_in_create_and_process.pass_run_handler_to_create_and_process -->
+<!-- SNIPPET:sample_agents_mcp_in_create_and_process.create_and_process -->
 
 ```python
 run = agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id, run_handler=MyRunHandler)
@@ -1411,7 +1411,7 @@ class MyRunHandler(RunHandler):
         **kwargs: Any,
     ) -> Any:
         function_name = tool_call_details.name
-        if function_name in send_email.__name__:
+        if function_name == send_email.__name__:
             # Parse arguments from tool call
             args_dict = json.loads(tool_call_details.arguments) if tool_call_details.arguments else {}
             # Call the function directly with the arguments
@@ -1422,7 +1422,7 @@ class MyRunHandler(RunHandler):
 
 To use the RunHandler with `create_and_process`:
 
-<!-- SNIPPET:sample_agents_functions_in_create_and_process.pass_run_handler_to_create_and_process -->
+<!-- SNIPPET:sample_agents_functions_in_create_and_process.create_and_process -->
 
 ```python
 run = agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id, run_handler=MyRunHandler)
