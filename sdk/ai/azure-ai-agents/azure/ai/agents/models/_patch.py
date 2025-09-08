@@ -1590,12 +1590,15 @@ class BaseToolSet:
             raise ValueError("Tool of type {type(tool).__name__} already exists in the ToolSet.")
         self._tools.append(tool)
 
-    def remove(self, tool_type: Type[Tool]) -> None:
+    def remove(self, tool_type: Type[Tool], **kwargs: Any) -> None:
         """
         Remove a tool of the specified type from the tool set.
 
-        :param Type[Tool] tool_type: The type of tool to remove.
-        :raises ValueError: If a tool of the specified type is not found.
+        :param tool_type: The type of tool to remove from the tool set.
+        :type tool_type: Type[Tool]
+        :keyword kwargs: Additional keyword arguments for extensibility.
+        :paramtype kwargs: Any
+        :raises ValueError: If a tool of the specified type is not found in the tool set.
         """
         for i, tool in enumerate(self._tools):
             if isinstance(tool, tool_type):
@@ -1662,14 +1665,29 @@ class BaseToolSet:
             "tools": self.definitions,
         }
 
+    @overload
     def get_tool(self, tool_type: Type[ToolT]) -> ToolT:
         """
         Get a tool of the specified type from the tool set.
 
-        :param Type[Tool] tool_type: The type of tool to get.
-        :return: The tool of the specified type.
-        :rtype: Tool
-        :raises ValueError: If a tool of the specified type is not found.
+        :param tool_type: The type of tool to retrieve from the tool set.
+        :type tool_type: Type[ToolT]
+        :return: The tool instance of the specified type.
+        :rtype: ToolT
+        :raises ValueError: If a tool of the specified type is not found in the tool set.
+        """
+
+    def get_tool(self, tool_type: Type[ToolT], **kwargs: Any) -> ToolT:
+        """
+        Get a tool of the specified type from the tool set.
+
+        :param tool_type: The type of tool to retrieve from the tool set.
+        :type tool_type: Type[ToolT]
+        :keyword kwargs: Additional keyword arguments for extensibility.
+        :paramtype kwargs: Any
+        :return: The tool instance of the specified type.
+        :rtype: ToolT
+        :raises ValueError: If a tool of the specified type is not found in the tool set.
         """
         for tool in self._tools:
             if isinstance(tool, tool_type):
