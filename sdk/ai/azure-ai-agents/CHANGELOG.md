@@ -8,6 +8,7 @@
 
 ### Features Added
 
+- Added Computer Use Preview tool for use with the computer-use-preview model
 - Added static `merge_resources` method to `McpTool` with accompanying sample.
 
 ### Bugs Fixed
@@ -18,6 +19,7 @@
 
 ### Sample updates
 
+- Added Computer Use Preview tool sample demonstrating use with the computer-use-preview model
 - Added sample demonstrating multiple McpTool instance usage.
 
 ## 1.2.0b3 (2025-08-22)
