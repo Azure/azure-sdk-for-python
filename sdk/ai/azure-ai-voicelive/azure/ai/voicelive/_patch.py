@@ -31,6 +31,8 @@ from azure.ai.voicelive.models._models import (
     ClientEventResponseCancel,
     ClientEventResponseCreate,
     ClientEventSessionUpdate,
+    ConversationRequestItem,
+    ResponseCreateParams,
 )
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.exceptions import AzureError
@@ -198,21 +200,34 @@ class ResponseResource:
         """
         self._connection = connection
 
-    def create(self, *, response: Optional[Mapping[str, Any]] = None, event_id: Optional[str] = None) -> None:
-        """Create a new response.
+    def create(
+        self,
+        response: Optional[Union[ResponseCreateParams, Mapping[str, Any]]] = None,
+        event_id: Optional[str] = None,
+        additional_instructions: Optional[str] = None,
+    ) -> None:
+        """
+        Create a new response.
 
-        :keyword response: Optional mapping of response parameters to send.
-        :keyword type response: Mapping[str, Any] or None
+        :keyword response: Optional response parameters to send.
+        :keyword type response: ResponseCreateParams | Mapping[str, Any] | None
         :keyword event_id: Optional ID for the event.
-        :keyword type event_id: str or None
+        :keyword type event_id: str | None
+        :keyword additional_instructions: Extra system prompt appended to the session's default, for this response only.
+        :keyword type additional_instructions: str | None
         :return: None
         :rtype: None
         """
-        event = ClientEventResponseCreate()
-        if response:
-            event["response"] = dict(response)
-        if event_id:
-            event["event_id"] = event_id
+        # Normalize to a typed model if a dict/mapping was provided
+        if response is not None and not isinstance(response, ResponseCreateParams):
+            response = ResponseCreateParams(**dict(response))
+
+        # Use constructor kwargs (typed) instead of item-assignment
+        event = ClientEventResponseCreate(
+            event_id=event_id,
+            response=response,
+            additional_instructions=additional_instructions,
+        )
         self._connection.send(event)
 
     def cancel(self, *, response_id: Optional[str] = None, event_id: Optional[str] = None) -> None:
@@ -328,7 +343,7 @@ class ConversationItemResource:
         """Create a new conversation item.
 
         :keyword item: The item to create (message, function call, etc.).
-        :keyword type item: Mapping[str, Any]
+        :keyword ConversationRequestItem | Mapping[str, Any] item: The item to create (message/functions/etc.).
         :keyword previous_item_id: Insert after this item, if provided.
         :keyword type previous_item_id: str or None
         :keyword event_id: Optional ID for the event.
@@ -336,11 +351,14 @@ class ConversationItemResource:
         :return: None
         :rtype: None
         """
-        event = ClientEventConversationItemCreate({"item": dict(item)})
-        if previous_item_id:
-            event["previous_item_id"] = previous_item_id
-        if event_id:
-            event["event_id"] = event_id
+        if not isinstance(item, ConversationRequestItem):
+            item = ConversationRequestItem(**dict(item))
+
+        event = ClientEventConversationItemCreate(
+            event_id=event_id,
+            previous_item_id=previous_item_id,
+            item=item,
+        )
         self._connection.send(event)
 
     def delete(self, *, item_id: str, event_id: Optional[str] = None) -> None:
