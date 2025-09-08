@@ -67,12 +67,13 @@ search_api_code = "search_azure_rest_api_code"
 mcp_tool.allow_tool(search_api_code)
 print(f"Allowed tools: {mcp_tool.allowed_tools}")
 
+
 class MyEventHandler(AgentEventHandler):
 
     def __init__(self, agents_client: AgentsClient) -> None:
         super().__init__()
         self.agents_client = agents_client
-        
+
     def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
         print(f"Text delta received: {delta.text}")
 
@@ -106,8 +107,7 @@ class MyEventHandler(AgentEventHandler):
             if tool_approvals:
                 self.agents_client.runs.submit_tool_outputs_stream(
                     thread_id=run.thread_id, run_id=run.id, tool_approvals=tool_approvals, event_handler=self
-                        )
-
+                )
 
     def on_run_step(self, step: "RunStep") -> None:
         print(f"Step {step.id} status: {step.status}")
@@ -137,7 +137,7 @@ class MyEventHandler(AgentEventHandler):
                     else:
                         print("This function has no parameters")
 
-        print()  # add an extra newline between steps                
+        print()  # add an extra newline between steps
 
 
 # Create Agent with MCP tool and process Agent run
