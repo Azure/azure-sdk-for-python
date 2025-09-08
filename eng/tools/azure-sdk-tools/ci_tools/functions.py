@@ -42,6 +42,17 @@ MANAGEMENT_PACKAGES_FILTER_EXCLUSIONS = [
     "azure-mgmt-core",
 ]
 
+# In very rare situations, we need to actively transition a package from one part of the code base to another
+# in a multi-stage process. For example, migrating "azure-ai-textanalytics" from "sdk/textanalytics" to "sdk/ai".
+# Both need to simultaneously exist for a short period of time, but we need to prevent discovery of the package
+# so that downstream checks aren't broken by this.
+# We need to actively prevent ourselves from discovering the package in its old location. To do that we:
+#  - Add the path to this list, any entrypoints that use discover_targeted_packages should exclude these paths
+#  - This will also affect usage of get_package_properties.py (Save-Package-Properties stage of CI), so please be aware of this!
+PATHS_EXCLUDED_FROM_DISCOVERY = [
+    "sdk/textanalytics/azure-ai-textanalytics",
+]
+
 TEST_COMPATIBILITY_MAP = {"azure-ai-ml": ">=3.7", "azure-ai-evaluation": ">=3.9, !=3.13.*"}
 TEST_PYTHON_DISTRO_INCOMPATIBILITY_MAP = {
     "azure-storage-blob": "pypy",
@@ -76,7 +87,6 @@ omit_function_dict = {
     "Regression": omit_regression,
     "Omit_management": omit_mgmt,
 }
-
 
 def unzip_file_to_directory(path_to_zip_file: str, extract_location: str) -> str:
     if path_to_zip_file.endswith(".zip"):
@@ -181,6 +191,15 @@ def glob_packages(glob_string: str, target_root_dir: str) -> List[str]:
     collected_top_level_directories = [
         p for p in collected_top_level_directories if not any(part in ("test", "tests") for part in p.split(os.sep))
     ]
+
+    # remove any packages that might exist in the PATHS_EXCLUDED_FROM_DISCOVERY path list (relative from repo root)
+    excluded = set(PATHS_EXCLUDED_FROM_DISCOVERY)
+    filtered = []
+    for pkg_path in collected_top_level_directories:
+        rel = os.path.relpath(pkg_path, target_root_dir).replace(os.sep, '/')
+        if not any(rel == excl or rel.startswith(excl + '/') for excl in excluded):
+            filtered.append(pkg_path)
+    collected_top_level_directories = filtered
 
     # deduplicate, in case we have double coverage from the glob strings. Example: "azure-mgmt-keyvault,azure-mgmt-*"
     return list(set(collected_top_level_directories))
