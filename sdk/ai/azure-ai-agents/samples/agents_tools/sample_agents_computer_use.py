@@ -141,17 +141,15 @@ with project_client:
                         print(f"Executing computer use action: {action.type}")
                         if isinstance(action, TypeAction):
                             print(f"  Text to type: {action.text}")
-                            # add hook to input text in managed environment API here
+                            #(add hook to input text in managed environment API here)
 
-                            # add a fake screenshot showing the text typed in
                             tool_outputs.append(
                                 ComputerToolOutput(tool_call_id=tool_call.id, output=computer_screenshot)
                             )
                         if isinstance(action, ComputerScreenshot):
                             print(f"  Screenshot requested")
-                            # add hook to take screenshot in managed environment API here
+                            # (add hook to take screenshot in managed environment API here)
 
-                            # add a fake screenshot showing the text typed in
                             tool_outputs.append(
                                 ComputerToolOutput(tool_call_id=tool_call.id, output=computer_screenshot)
                             )
