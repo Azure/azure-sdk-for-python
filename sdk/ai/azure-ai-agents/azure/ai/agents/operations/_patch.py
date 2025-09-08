@@ -442,7 +442,7 @@ class RunsOperations(RunsOperationsGenerated):
         response_format: Optional["_types.AgentsResponseFormatOption"] = None,
         parallel_tool_calls: Optional[bool] = None,
         metadata: Optional[Dict[str, str]] = None,
-        run_handler: _models.RunHandler | Type[_models.RunHandler] = _models.RunHandler,
+        run_handler: Union[_models.RunHandler, Type[_models.RunHandler]] = _models.RunHandler,
         polling_interval: int = 1,
         **kwargs: Any,
     ) -> _models.ThreadRun:
