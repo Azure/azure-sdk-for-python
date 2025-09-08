@@ -120,7 +120,7 @@ def _format_component_query(format_string, global_statistics):
 
 def _format_component_query_workaround(format_string, global_statistics, component_count):
     # TODO: remove this method once the fix is live and switch back to one above
-    paraneters = None
+    parameters = None
     if isinstance(format_string, dict):
         parameters = format_string.get('parameters', None)
         format_string = format_string['query']
@@ -143,20 +143,29 @@ def _format_component_query_workaround(format_string, global_statistics, compone
 
         statistics_index += 1
 
-    return _attach_parameters(query, paraneters)
+    return _attach_parameters(query, parameters)
 
 
 def _attach_parameters(query, parameters=None):
-        """Attach original query parameters (if any) without mutating the passed query object."""
-        if not parameters:
-            return query
-        if isinstance(query, dict):
-            if "parameters" not in query:
-                new_query = dict(query)
-                new_query["parameters"] = parameters
-                return new_query
-            return query
-        return {"query": query, "parameters": parameters}
+    """Attach original query parameters (if any) without mutating the passed query object.
+
+    :param query: The original query text or a query payload dict which may already contain parameters.
+    :type query: str or dict
+    :param parameters: Optional sequence of parameter definitions to attach.
+    :type parameters: list or None
+    :returns: The original query if no parameters to attach or already present, otherwise a new dict containing the
+     query and parameters.
+    :rtype: str or dict
+    """
+    if not parameters:
+        return query
+    if isinstance(query, dict):
+        if "parameters" not in query:
+            new_query = dict(query)
+            new_query["parameters"] = parameters
+            return new_query
+        return query
+    return {"query": query, "parameters": parameters}
 
 
 class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: disable=too-many-instance-attributes
@@ -319,7 +328,14 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
         self._format_final_results(drained_results)
 
     def _attach_parameters(self, query):
-        """Attach original query parameters (if any) without mutating the passed query object."""
+        """Attach original query parameters (if any) without mutating the passed query object.
+
+        :param query: Query text or a query payload dict which may already contain parameters.
+        :type query: str or dict
+        :return: The original query if no parameters to attach or already present; otherwise a new dict containing the
+         query and parameters.
+        :rtype: str or dict
+        """
         if not self._parameters:
             return query
         if isinstance(query, dict):

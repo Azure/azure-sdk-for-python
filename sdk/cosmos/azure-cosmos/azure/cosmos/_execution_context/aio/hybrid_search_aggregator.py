@@ -195,7 +195,15 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
         self._format_final_results(drained_results)
 
     def _attach_parameters(self, query):
-        """Attach original query parameters (if any) without mutating the passed query object."""
+        """Attach original query parameters (if any) without mutating the passed query object.
+
+        :param query: The original query (string or dict) to which saved parameters should be attached.
+        :type query: str or dict
+        :return: The query with parameters attached. Returns the original object if no parameters are stored.
+                 If the input was a string and parameters exist, a new dict is returned. If the input was a
+                 dict without "parameters", a shallow copied dict with "parameters" added is returned.
+        :rtype: str or dict
+        """
         if not self._parameters:
             return query
         if isinstance(query, dict):
