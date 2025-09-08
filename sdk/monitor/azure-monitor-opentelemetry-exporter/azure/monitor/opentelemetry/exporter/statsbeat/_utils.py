@@ -171,7 +171,7 @@ def _track_dropped_items(
                 1,
                 telemetry_type,
                 drop_code,
-                _get_telemetry_success_flag(envelope) if telemetry_type in (_REQUEST, _DEPENDENCY) else None
+                _get_telemetry_success_flag(envelope) if telemetry_type in (_REQUEST, _DEPENDENCY) else True
             )
     else:
         for envelope in envelopes:
@@ -180,7 +180,7 @@ def _track_dropped_items(
                 1,
                 telemetry_type,
                 drop_code,
-                _get_telemetry_success_flag(envelope) if telemetry_type in (_REQUEST, _DEPENDENCY) else None,
+                _get_telemetry_success_flag(envelope) if telemetry_type in (_REQUEST, _DEPENDENCY) else True,
                 error_message
             )
 

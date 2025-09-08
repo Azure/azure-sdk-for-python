@@ -7,7 +7,7 @@ metrics that track the usage and performance of the Azure Monitor OpenTelemetry 
 """
 
 import threading
-from typing import List, Dict, Any, Iterable, Optional
+from typing import List, Dict, Any, Iterable, Optional, Union
 
 from opentelemetry.metrics import CallbackOptions, Observation
 from opentelemetry.sdk.metrics import MeterProvider
@@ -49,7 +49,7 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
 class _CustomerSdkStatsTelemetryCounters:
     def __init__(self):
         self.total_item_success_count: Dict[str, Any] = {}  # type: ignore
-        self.total_item_drop_count: Dict[str, Dict[DropCodeType, Dict[str, Dict[Optional[bool], int]]]] = {}  # type: ignore #pylint: disable=too-many-nested-blocks
+        self.total_item_drop_count: Dict[str, Dict[DropCodeType, Dict[str, Dict[bool, int]]]] = {}  # type: ignore #pylint: disable=too-many-nested-blocks
         self.total_item_retry_count: Dict[str, Dict[RetryCodeType, Dict[str, int]]] = {}  # type: ignore
 
 
@@ -111,7 +111,7 @@ class CustomerSdkStatsMetrics(metaclass=Singleton): # pylint: disable=too-many-i
                 self._counters.total_item_success_count[telemetry_type] = count
 
     def count_dropped_items(
-        self, count: int, telemetry_type: str, drop_code: DropCodeType, telemetry_success: Optional[bool] = None,
+        self, count: int, telemetry_type: str, drop_code: DropCodeType, telemetry_success: Union[bool, None],
         exception_message: Optional[str] = None
     ) -> None:
         if not self._is_enabled or count <= 0:
@@ -131,10 +131,8 @@ class CustomerSdkStatsMetrics(metaclass=Singleton): # pylint: disable=too-many-i
             reason_map[reason] = {}
         success_map = reason_map[reason]
 
-        if telemetry_type in (_REQUEST, _DEPENDENCY) and telemetry_success is not None:
+        if telemetry_success is not None:
             success_key = telemetry_success
-        else:
-            success_key = None
 
         current_count = success_map.get(success_key, 0)
         success_map[success_key] = current_count + count
@@ -199,7 +197,7 @@ class CustomerSdkStatsMetrics(metaclass=Singleton): # pylint: disable=too-many-i
                                 "drop.reason": reason,
                                 "telemetry_type": telemetry_type
                             }
-                            if telemetry_type in (_REQUEST, _DEPENDENCY) and success_tracker is not None:
+                            if telemetry_type in (_REQUEST, _DEPENDENCY):
                                 attributes["telemetry_success"] = success_tracker
                             observations.append(Observation(count, dict(attributes)))
 
