@@ -39,7 +39,7 @@ class mypy(Check):
 
     def run(self, args: argparse.Namespace) -> int:
         """Run the mypy check command."""
-        logger.info("Running mypy check in isolated venv...")
+        logger.info("Running mypy check...")
 
         set_envvar_defaults()
 
