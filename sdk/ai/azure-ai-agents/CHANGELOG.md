@@ -9,6 +9,7 @@
 ### Features Added
 
 - Added static `merge_resources` method to `McpTool` with accompanying sample.
+- Added `run_handler` parameter to `runs.create_and_process` allowing to make function tool calls manually or approve mcp tool calls.
 
 ### Bugs Fixed
 

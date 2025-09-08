@@ -1714,11 +1714,16 @@ class ToolSet(BaseToolSet):
             if tool_call.type == "function":
                 output: Optional[Any] = None
 
-                if run_handler and run:
-                    output = run_handler.submit_function_call_output(run, tool_call, tool_call.function)
+                tool = self.get_tool(FunctionTool)
+                function_name = tool_call.function.name
                 try:
-                    if not output:
-                        tool = self.get_tool(FunctionTool)
+                    if run_handler and run and function_name not in tool._functions:  # pylint: disable=protected-access
+                        output = run_handler.submit_function_call_output(run, tool_call, tool_call.function)
+                        if not output:
+                            error = f"Function '{function_name}' not handled in submit_function_call_output."
+                            logger.error(error)
+                            raise ValueError(error)
+                    else:
                         output = tool.execute(tool_call)
                     tool_output = {
                         "tool_call_id": tool_call.id,
@@ -1754,15 +1759,19 @@ class AsyncToolSet(BaseToolSet):
         self, tool_call: Any, run: Optional[ThreadRun] = None, run_handler: Optional["AsyncRunHandler"] = None
     ):
         output: Optional[Any] = None
-        if run and run_handler:
-            output = await run_handler.submit_function_call_output(run, tool_call, tool_call.function)
-        if not output:
-            try:
-                tool = self.get_tool(AsyncFunctionTool)
+        tool = self.get_tool(AsyncFunctionTool)
+        function_name = tool_call.function.name
+        try:
+            if run_handler and run and function_name not in tool._functions:  # pylint: disable=protected-access
+                output = await run_handler.submit_function_call_output(run, tool_call, tool_call.function)
+                if not output:
+                    error = f"Function '{function_name}' not handled in submit_function_call_output."
+                    logger.error(error)
+                    raise ValueError(error)
+            else:
                 output = await tool.execute(tool_call)
-            except Exception as e:  # pylint: disable=broad-exception-caught
-                return {"tool_call_id": tool_call.id, "output": str(e)}
-
+        except Exception as e:  # pylint: disable=broad-exception-caught
+            return {"tool_call_id": tool_call.id, "output": str(e)}
         return {"tool_call_id": tool_call.id, "output": str(output)}
 
     async def execute_tool_calls(self, tool_calls: List[Any]) -> Any:
@@ -1936,16 +1945,14 @@ class RunHandler:
                 tool_approvals = []
                 for tool_call in tool_calls:
                     if isinstance(tool_call, RequiredMcpToolCall):
-                        tool_approval = self.submit_mcp_tool_approval(  # pylint: disable=assignment-from-none
-                            run, tool_call
-                        )
-                        if not tool_approval:
-                            logger.warning(
-                                "run_handler not provided to create_and_run or submit_mcp_tool_approval in run handler returned None.  Please override this function and return a valid ToolApproval."
+                        try:
+                            tool_approval = self.submit_mcp_tool_approval(  # pylint: disable=assignment-from-none,assignment-from-no-return
+                                run, tool_call
                             )
+                            tool_approvals.append(tool_approval)
+                        except Exception:  # pylint: disable=broad-exception-caught
+                            logger.error("Error occurred while submitting MCP tool approval.")
                             return runs_operations.cancel(thread_id=run.thread_id, run_id=run.id)
-
-                        tool_approvals.append(tool_approval)
 
                 if tool_approvals:
                     run = runs_operations.submit_tool_outputs(
@@ -1961,7 +1968,7 @@ class RunHandler:
         tool_call: RequiredFunctionToolCall,  # pylint: disable=unused-argument
         tool_call_details: RequiredFunctionToolCallDetails,  # pylint: disable=unused-argument
         **kwargs: Any,  # pylint: disable=unused-argument
-    ) -> Optional[Any]:
+    ) -> Any:
         """Produce (or override) the output for a required function tool call.
 
         Override this to inject custom execution logic, caching, validation, or transformation.
@@ -1975,16 +1982,18 @@ class RunHandler:
         :type tool_call_details: RequiredFunctionToolCallDetails
         :paramtype kwargs: Additional keyword arguments for extensibility.
         :return: Stringified result to send back to the service, or ``None`` to delegate to auto function calling.
-        :rtype: Optional[Any]
+        :rtype: Any
         """
-        return None
+        error = f"run_handler isn't provided or submit_function_call_output isn't implemented to call {tool_call_details.name}."
+        logger.error(error)
+        raise NotImplementedError(error)
 
     def submit_mcp_tool_approval(
         self,  # pylint: disable=unused-argument
         run: ThreadRun,  # pylint: disable=unused-argument
         tool_call: RequiredMcpToolCall,  # pylint: disable=unused-argument
         **kwargs: Any,  # pylint: disable=unused-argument
-    ) -> Optional[ToolApproval]:
+    ) -> ToolApproval:
         # NOTE: Implementation intentionally returns None; override in subclasses for real approval logic.
         """Return a ``ToolApproval`` for an MCP tool call or ``None`` to indicate rejection/cancellation.
 
@@ -1997,9 +2006,11 @@ class RunHandler:
         :type tool_call: RequiredMcpToolCall
         :paramtype kwargs: Additional keyword arguments for extensibility.
         :return: A populated ``ToolApproval`` instance on approval, or ``None`` to decline.
-        :rtype: Optional[ToolApproval]
+        :rtype: ToolApproval
         """
-        return None
+        error = "run_handler isn't provided or submit_mcp_tool_approval isn't implemented to approve MCP tool calls."
+        logger.error(error)
+        raise NotImplementedError(error)
 
 
 class AsyncRunHandler:
@@ -2072,16 +2083,14 @@ class AsyncRunHandler:
                 tool_approvals = []
                 for tool_call in tool_calls:
                     if isinstance(tool_call, RequiredMcpToolCall):
-                        tool_approval = self.submit_mcp_tool_approval(  # pylint: disable=assignment-from-none
-                            run, tool_call
-                        )
-                        if not tool_approval:
-                            logger.warning(
-                                "run_handler not provided to create_and_run or submit_mcp_tool_approval in run handler returned None.  Please override this function and return a valid ToolApproval."
+                        try:
+                            tool_approval = self.submit_mcp_tool_approval(  # pylint: disable=assignment-from-none,assignment-from-no-return
+                                run, tool_call
                             )
+                            tool_approvals.append(tool_approval)
+                        except Exception:  # pylint: disable=broad-exception-caught
+                            logger.error("Error occurred while submitting MCP tool approval.")
                             return await runs_operations.cancel(thread_id=run.thread_id, run_id=run.id)
-
-                        tool_approvals.append(tool_approval)
 
                 if tool_approvals:
                     run = await runs_operations.submit_tool_outputs(
@@ -2097,7 +2106,7 @@ class AsyncRunHandler:
         tool_call: RequiredFunctionToolCall,  # pylint: disable=unused-argument
         tool_call_details: RequiredFunctionToolCallDetails,  # pylint: disable=unused-argument
         **kwargs: Any,  # pylint: disable=unused-argument
-    ) -> Optional[Any]:
+    ) -> Any:
         """Produce (or override) the output for a required function tool call.
 
         Override this to inject custom execution logic, caching, validation, or transformation.
@@ -2111,16 +2120,18 @@ class AsyncRunHandler:
         :type tool_call_details: RequiredFunctionToolCallDetails
         :paramtype kwargs: Additional keyword arguments for extensibility.
         :return: Stringified result to send back to the service, or ``None`` to delegate to auto function calling.
-        :rtype: Optional[Any]
+        :rtype: Any
         """
-        return None
+        error = f"run_handler isn't provided or submit_function_call_output isn't implemented to call {tool_call_details.name}."
+        logger.error(error)
+        raise NotImplementedError(error)
 
     def submit_mcp_tool_approval(
         self,  # pylint: disable=unused-argument
         run: ThreadRun,  # pylint: disable=unused-argument
         tool_call: RequiredMcpToolCall,  # pylint: disable=unused-argument
         **kwargs: Any,  # pylint: disable=unused-argument
-    ) -> Optional[ToolApproval]:
+    ) -> ToolApproval:
         # NOTE: Implementation intentionally returns None; override in subclasses for real approval logic.
         """Return a ``ToolApproval`` for an MCP tool call or ``None`` to indicate rejection/cancellation.
 
@@ -2133,9 +2144,11 @@ class AsyncRunHandler:
         :type tool_call: RequiredMcpToolCall
         :paramtype kwargs: Additional keyword arguments for extensibility.
         :return: A populated ``ToolApproval`` instance on approval, or ``None`` to decline.
-        :rtype: Optional[ToolApproval]
+        :rtype: ToolApproval
         """
-        return None
+        error = "run_handler isn't provided or submit_mcp_tool_approval isn't implemented to approve MCP tool calls."
+        logger.error(error)
+        raise NotImplementedError(error)
 
 
 class BaseAgentEventHandler(Iterator[T]):
