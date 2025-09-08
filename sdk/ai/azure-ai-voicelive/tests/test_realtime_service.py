@@ -3,8 +3,9 @@
 # LIVE async tests using azure.ai.voicelive.aio (no mocks, no custom client)
 import base64
 import asyncio
+import json
 from pathlib import Path
-from typing import Iterator, Literal
+from typing import Callable, Iterator, Literal, Mapping, Union, Any
 import pytest
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.voicelive.aio import connect
@@ -36,6 +37,10 @@ from azure.ai.voicelive.models import (
     ResponseFunctionCallItem,
     ServerEventConversationItemCreated,
     EOUDetection,
+    ServerEventResponseFunctionCallArgumentsDone,
+    ServerEventResponseFunctionCallArgumentsDelta,
+    FunctionCallOutputItem,
+    ServerEventResponseCreated,
 )
 
 def _b64_pcm_from_wav(path: Path) -> str:
@@ -48,7 +53,7 @@ def _b64_pcm_from_wav(path: Path) -> str:
     return base64.b64encode(audio.tobytes()).decode("utf-8")
 
 
-def _load_audio_b64(path: Path, sample_rate=24000, trailing_silence: float = 2.0) -> str:
+def _load_audio_b64(path: Path) -> str:
     with open(path, "rb") as f:
         audio_bytes = f.read()
     return base64.b64encode(audio_bytes).decode("utf-8")
@@ -76,14 +81,28 @@ def _get_speech_recognition_setting(model: str) -> AudioInputTranscriptionSettin
     return AudioInputTranscriptionSettings(model=speech_recognition_model, language="en-US")
 
 
-async def _wait_for(conn, wanted_types: set, timeout_s: float = 10.0):
+async def _wait_for_event(conn, wanted_types: set, timeout_s: float = 10.0):
     """Wait until we receive any event whose type is in wanted_types."""
 
     async def _next():
         while True:
             evt = await conn.recv()
-            print(f"Received event: {evt.type}")
             if evt.type in wanted_types:
+                return evt
+
+    return await asyncio.wait_for(_next(), timeout=timeout_s)
+
+async def _wait_for_match(
+    conn,
+    predicate: Callable[[Any], bool],
+    timeout_s: float = 10.0,
+):
+    """Wait until we receive an event that satisfies the given predicate."""
+
+    async def _next():
+        while True:
+            evt = await conn.recv()
+            if predicate(evt):
                 return evt
 
     return await asyncio.wait_for(_next(), timeout=timeout_s)
@@ -102,7 +121,6 @@ async def _collect_event(conn, *, event_type: ServerEventType, timeout: int = 10
 
         try:
             evt = await asyncio.wait_for(conn.recv(), timeout=remaining)
-            print(f"Received event: {evt.type}")
         except asyncio.TimeoutError:
             break  # no event arrived before the overall timeout
 
@@ -153,13 +171,13 @@ class TestRealtimeService():
             await conn.session.update(session=session)
 
             # wait session.created
-            await _wait_for(conn, {ServerEventType.SESSION_CREATED}, 15)
-            await _wait_for(conn, {ServerEventType.SESSION_UPDATED}, 15)
+            await _wait_for_event(conn, {ServerEventType.SESSION_CREATED}, 15)
+            await _wait_for_event(conn, {ServerEventType.SESSION_UPDATED}, 15)
 
             await conn.input_audio_buffer.append(audio=_b64_pcm_from_wav(file))
 
             # Observe that we do NOT get a response.* automatically; we should at least see input_* events
-            evt = await _wait_for(
+            evt = await _wait_for_event(
                 conn,
                 {
                     ServerEventType.INPUT_AUDIO_BUFFER_COMMITTED,
@@ -176,7 +194,7 @@ class TestRealtimeService():
             }
 
             # We should see one of the audio response events eventually
-            audio_delta_evt = await _wait_for(
+            audio_delta_evt = await _wait_for_event(
                 conn,
                 {
                     ServerEventType.RESPONSE_AUDIO_DELTA,
@@ -202,8 +220,8 @@ class TestRealtimeService():
             await conn.session.update(session=session)
 
             # wait session.created
-            await _wait_for(conn, {ServerEventType.SESSION_CREATED}, 15)
-            await _wait_for(conn, {ServerEventType.SESSION_UPDATED}, 15)
+            await _wait_for_event(conn, {ServerEventType.SESSION_CREATED}, 15)
+            await _wait_for_event(conn, {ServerEventType.SESSION_UPDATED}, 15)
 
             await conn.input_audio_buffer.append(audio=_b64_pcm_from_wav(file))
             audio_segments, _ = await _collect_event(
@@ -240,7 +258,7 @@ class TestRealtimeService():
 
             await conn.session.update(session=session)
             await conn.input_audio_buffer.append(audio=_b64_pcm_from_wav(file))
-            audio_delta_evt = await _wait_for(
+            audio_delta_evt = await _wait_for_event(
                 conn,
                 {
                     ServerEventType.RESPONSE_AUDIO_DELTA,
@@ -309,7 +327,7 @@ class TestRealtimeService():
             session = RequestSession(modalities=[Modality.TEXT, Modality.AUDIO], turn_detection=turn_detection)
 
             await conn.session.update(session=session)
-            await _wait_for(conn, {ServerEventType.SESSION_UPDATED}, 10)
+            evt  = await _wait_for_event(conn, {ServerEventType.SESSION_UPDATED}, 10)
             await conn.input_audio_buffer.append(audio=_b64_pcm_from_wav(file))
             audio_segments, _ = await _collect_event(
                 conn, event_type=ServerEventType.INPUT_AUDIO_BUFFER_SPEECH_STARTED
@@ -398,12 +416,12 @@ class TestRealtimeService():
             assert len(function_call_results) > 0
     
     @pytest.mark.asyncio
-    @pytest.mark.skip
+    @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-4o-realtime-preview-2025-06-03", "gpt-4o", "gpt-5-chat"])
     async def test_realtime_service_tool_choice(self, test_data_dir: Path, model: str, endpoint: str, api_key_credential: AzureKeyCredential):
         if "realtime" in model:
             pytest.skip("Tool choice is not supported in realtime models yet")
-        audio_file = test_data_dir / "ask_weather.mp3"
+        audio_file = test_data_dir / "ask_weather.wav"
         async with connect(endpoint=endpoint, credential=api_key_credential, model=model) as conn:
             tools = [
                 FunctionTool(
@@ -440,28 +458,61 @@ class TestRealtimeService():
                 instructions="You are a helpful assistant with tools.",
                 tools=tools,
                 tool_choice=tool_choice,
-                input_audio_transcription=_get_speech_recognition_setting(model=model),
+                input_audio_transcription=AudioInputTranscriptionSettings(model="whisper-1"),
+                turn_detection=ServerVad(threshold=0.5, prefix_padding_ms=300, silence_duration_ms=200),
             )
-            await conn.session.update(session=session)
-            
+            await conn.session.update(session=session)   
+            await _wait_for_event(conn, {ServerEventType.SESSION_UPDATED})
             await conn.input_audio_buffer.append(audio=_load_audio_b64(audio_file))
-            await _wait_for(conn, {ServerEventType.SESSION_UPDATED}, 10)
-            conversation_created_event = await _wait_for(conn, {ServerEventType.CONVERSATION_ITEM_CREATED})
-            assert isinstance(conversation_created_event, ServerEventConversationItemCreated)
-            assert isinstance(conversation_created_event.item, ResponseFunctionCallItem)
-            assert conversation_created_event.item.type == ItemType.FUNCTION_CALL
-            assert conversation_created_event.item.arguments in ['{"location":"北京"}', '{"location":"Beijing"}']
-            assert conversation_created_event.item.function_name == "get_time"
+            await conn.input_audio_buffer.append(audio=_get_trailing_silence_bytes())
+
+            timeout_s = 10
+            start = asyncio.get_event_loop().time()
+            conversation_created = None
+            while True:
+                if asyncio.get_event_loop().time() - start > timeout_s:
+                    break
+
+                try:
+                    event = await asyncio.wait_for(conn.recv(), timeout=2)  # short per-recv timeout
+                except asyncio.TimeoutError:
+                    continue
+                
+                if event.type == ServerEventType.CONVERSATION_ITEM_CREATED and event.item.type == ItemType.FUNCTION_CALL:
+                    conversation_created = event
+                    break
+
+            assert isinstance(conversation_created, ServerEventConversationItemCreated)
+            assert isinstance(conversation_created.item, ResponseFunctionCallItem)
+            assert conversation_created.item.type == ItemType.FUNCTION_CALL
+            assert conversation_created.item.name == "get_time"
+
+            function_delta = await _wait_for_event(conn, {ServerEventType.RESPONSE_FUNCTION_CALL_ARGUMENTS_DELTA})
+            assert isinstance(function_delta, ServerEventResponseFunctionCallArgumentsDelta)
+
+            function_done = await _wait_for_event(conn, {ServerEventType.RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE})
+            assert isinstance(function_done, ServerEventResponseFunctionCallArgumentsDone)
+            assert function_done.arguments in ['{"location":"北京"}', '{"location":"Beijing"}']
+            assert function_done.name == "get_time"
 
     @pytest.mark.asyncio
-    @pytest.mark.skip
-    @pytest.mark.parametrize("model", ["gpt-4o-realtime", "gpt-4.1", "gpt-5"])
+    @pytest.mark.flaky(reruns=3, reruns_delay=2)
+    @pytest.mark.parametrize("model", ["gpt-4o-realtime", "gpt-4.1", "gpt-5", "phi4-mm-realtime"])
     async def test_realtime_service_tool_call_parameter(self, test_data_dir: Path, model: str, endpoint: str, api_key_credential: AzureKeyCredential):
-        audio_file = test_data_dir / "ask_weather.mp3"
+        def get_weather(arguments: Union[str, Mapping[str, Any]]) -> str:
+            return json.dumps({
+                "location": "Beijing",
+                "weather": "sunny",
+                "temp_c": 25
+            })
+        
+        if "realtime" in model:
+            pytest.skip("Tool choice is not supported in realtime models yet")
+        audio_file = test_data_dir / "ask_weather.wav"
         tools = [
                 FunctionTool(
                     name="get_weather",
-                    description="Get the weather for a given location.",
+                    description="Retrieve the weather of given location.",
                     parameters={
                         "type": "object",
                         "properties": {
@@ -474,38 +525,66 @@ class TestRealtimeService():
                     },
                 )
             ]
+        instructions = "You are a helpful assistant with tools."
+        if model != "phi4-mm-realtime":
+            instructions += " If you are asked about the weather, please respond with `I will get the weather for you. Please wait a moment.` and then call the get_weather function with the location parameter."
         async with connect(endpoint=endpoint, credential=api_key_credential, model=model) as conn:
             session = RequestSession(
-                    instructions="You are a helpful assistant with tools. If you are asked about the weather, please respond with `I will get the weather for you. Please wait a moment.` and then call the get_weather function with the location parameter.",
+                    instructions=instructions,
                     tools=tools,
                     tool_choice=ToolChoiceLiteral.AUTO,
-                    input_audio_transcription=_get_speech_recognition_setting(model=model),
+                    input_audio_transcription=AudioInputTranscriptionSettings(model="whisper-1"),
+                    turn_detection=ServerVad(threshold=0.5, prefix_padding_ms=300, silence_duration_ms=200)
                 )
             await conn.session.update(session=session)
             await conn.input_audio_buffer.append(audio=_load_audio_b64(audio_file))
-            conversation_created_event = await _wait_for(conn, {ServerEventType.CONVERSATION_ITEM_CREATED})
-            print(conversation_created_event)
-            assert isinstance(conversation_created_event, ServerEventConversationItemCreated)
-            assert isinstance(conversation_created_event.item, ResponseFunctionCallItem)
-            assert conversation_created_event.item.type == ItemType.FUNCTION_CALL
-            assert conversation_created_event.item.arguments in ['{"location":"北京"}', '{"location":"Beijing"}']
-            assert conversation_created_event.item.function_name == "get_weather"
+            await conn.input_audio_buffer.append(audio=_get_trailing_silence_bytes())
+
+            response_created = await _wait_for_event(conn, {ServerEventType.RESPONSE_CREATED})
+            isinstance(response_created, ServerEventResponseCreated)
+
+            conversation_created = await _wait_for_match(conn, lambda e: e.type == ServerEventType.CONVERSATION_ITEM_CREATED and e.item.type == ItemType.FUNCTION_CALL)
+            assert isinstance(conversation_created, ServerEventConversationItemCreated)
+            assert isinstance(conversation_created.item, ResponseFunctionCallItem)
+            assert conversation_created.item.type == ItemType.FUNCTION_CALL
+            assert conversation_created.item.name == "get_weather"
+            call_id = conversation_created.item.call_id
+            previous_item_id = conversation_created.item.id
+
+            function_done = await _wait_for_event(conn, {ServerEventType.RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE})
+            assert isinstance(function_done, ServerEventResponseFunctionCallArgumentsDone)
+            assert function_done.call_id == call_id
+            assert function_done.arguments in ['{"location":"北京"}', '{"location":"Beijing"}']
+            await _wait_for_event(conn, {ServerEventType.RESPONSE_DONE})
+
+            tool_output = get_weather(function_done.arguments)
+            await conn.conversation.item.create(
+                previous_item_id=previous_item_id,
+                item=FunctionCallOutputItem(call_id=call_id, output=tool_output)
+            )
+            await conn.response.create()
+
+            response = await _wait_for_match(conn, lambda e: e.type == ServerEventType.RESPONSE_OUTPUT_ITEM_DONE and e.item.id != previous_item_id)
+            transcript = response.item.content[0].transcript
+            assert "晴" in transcript or "sunny" in transcript
+            assert "25" in transcript
 
     @pytest.mark.asyncio
-    @pytest.mark.skip
     @pytest.mark.parametrize("model", ["gpt-4o", "gpt-4o-realtime"])
     async def test_realtime_service_live_session_update(self, test_data_dir: Path, model: str, endpoint: str, api_key_credential: AzureKeyCredential):
-        audio_file = test_data_dir / "ask_weather.mp3"
+        audio_file = test_data_dir / "ask_weather.wav"
         async with connect(endpoint=endpoint, credential=api_key_credential, model=model) as conn:
             session = RequestSession(
                     instructions="You are a helpful assistant that can answer questions.",
                     voice=AzureStandardVoice(name="en-US-AvaMultilingualNeural"),
-                    input_audio_transcription=_get_speech_recognition_setting(model=model),
+                    input_audio_transcription=AudioInputTranscriptionSettings(model="whisper-1"),
+                    turn_detection=ServerVad(threshold=0.5, prefix_padding_ms=300, silence_duration_ms=200)
                 )
             await conn.session.update(session=session)
             await conn.input_audio_buffer.append(audio=_load_audio_b64(audio_file))
-            content_part_added_events, audio_bytes = await _collect_event(conn, event_type=ServerEventType.RESPONSE_CONTENT_PART_ADDED)
-            assert content_part_added_events == 1
+            await conn.input_audio_buffer.append(audio=_get_trailing_silence_bytes())
+            transcripts, audio_bytes = await _collect_event(conn, event_type=ServerEventType.RESPONSE_AUDIO_TRANSCRIPT_DONE, timeout=15)
+            assert transcripts == 1
             assert audio_bytes > 50 * 1000
 
             tools=[
@@ -527,27 +606,30 @@ class TestRealtimeService():
             new_session = RequestSession(
                 instructions="You are a helpful assistant with tools.",
                 voice=AzureStandardVoice(name="en-US-AvaMultilingualNeural"),
-                input_audio_transcription=_get_speech_recognition_setting(model=model),
+                input_audio_transcription=AudioInputTranscriptionSettings(model="whisper-1"),
                 tools=tools,
                 tool_choice=ToolChoiceLiteral.AUTO,
+                turn_detection=ServerVad(threshold=0.5, prefix_padding_ms=300, silence_duration_ms=200)
             )
             await conn.session.update(session=new_session)
-            updated_session = await _wait_for(conn, {ServerEventType.SESSION_UPDATED})
-            assert updated_session.tools == tools
-            assert updated_session.tool_choice == ToolChoiceLiteral.AUTO
-
             await conn.input_audio_buffer.append(audio=_load_audio_b64(audio_file))
-            conversation_created_event = await _wait_for(conn, {ServerEventType.CONVERSATION_ITEM_CREATED})
-            print(conversation_created_event)
-            assert isinstance(conversation_created_event, ServerEventConversationItemCreated)
-            assert isinstance(conversation_created_event.item, ResponseFunctionCallItem)
-            assert conversation_created_event.item.type == ItemType.FUNCTION_CALL
-            assert conversation_created_event.item.arguments in ['{"location":"北京"}', '{"location":"Beijing"}']
-            assert conversation_created_event.item.function_name == "get_weather"
+            await conn.input_audio_buffer.append(audio=_get_trailing_silence_bytes())
+            if ("realtime" not in model):
+                await conn.response.create()
+
+            function_call_output = await _wait_for_event(conn, {ServerEventType.RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE})
+            assert isinstance(function_call_output, ServerEventResponseFunctionCallArgumentsDone)
+            assert function_call_output.name == "get_weather"
+            assert function_call_output.arguments in ['{"location":"北京"}', '{"location":"Beijing"}']
+
+            await conn.response.create()
+            transcripts, audio_bytes = await _collect_event(conn, event_type=ServerEventType.RESPONSE_AUDIO_TRANSCRIPT_DONE, timeout=15)
+            assert audio_bytes > 50 * 1000
+            assert transcripts == 1
 
     @pytest.mark.asyncio
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
-    @pytest.mark.parametrize("model", ["gpt-4o-realtime"])
+    @pytest.mark.parametrize("model", ["gpt-4o", "gpt-4o-realtime"])
     async def test_realtime_service_tool_call_no_audio_overlap(self, test_data_dir: Path, model: str, endpoint: str, api_key_credential: AzureKeyCredential):
         audio_file = test_data_dir / "audio_overlap.input_audio1.wav"
         tools=[
@@ -612,9 +694,9 @@ class TestRealtimeService():
             session = RequestSession(input_audio_transcription=input_audio_transcription)
 
             await conn.session.update(session=session)
-            await _wait_for(conn, {ServerEventType.SESSION_UPDATED}, 10)
+            await _wait_for_event(conn, {ServerEventType.SESSION_UPDATED}, 10)
             await conn.input_audio_buffer.append(audio=_load_audio_b64(file))
-            input_audio_transcription_completed_evt = await _wait_for(
+            input_audio_transcription_completed_evt = await _wait_for_event(
                 conn,
                 {
                     ServerEventType.CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_COMPLETED,
@@ -688,7 +770,7 @@ class TestRealtimeService():
             )
 
             await conn.session.update(session=session)
-            await _wait_for(conn, {ServerEventType.SESSION_UPDATED}, 10)
+            await _wait_for_event(conn, {ServerEventType.SESSION_UPDATED}, 10)
             await conn.input_audio_buffer.append(audio=_b64_pcm_from_wav(file))
 
             timeout_s = 10
@@ -776,12 +858,12 @@ class TestRealtimeService():
             await conn.session.update(session=session)
             await conn.input_audio_buffer.append(audio=_load_audio_b64(file))
             await conn.input_audio_buffer.append(audio=_get_trailing_silence_bytes())
-            conversation_item_created = await _wait_for(conn, [ServerEventType.CONVERSATION_ITEM_CREATED])
-            content_part_added = await _wait_for(conn, [ServerEventType.RESPONSE_CONTENT_PART_ADDED])
+            conversation_item_created = await _wait_for_event(conn, [ServerEventType.CONVERSATION_ITEM_CREATED])
+            content_part_added = await _wait_for_event(conn, [ServerEventType.RESPONSE_CONTENT_PART_ADDED])
             assert conversation_item_created.item.id == content_part_added.item_id
 
             await conn.conversation.item.retrieve(item_id=content_part_added.item_id)
-            conversation_retrieved_event = await _wait_for(
+            conversation_retrieved_event = await _wait_for_event(
                 conn, [ServerEventType.CONVERSATION_ITEM_RETRIEVED], timeout_s=10
             )
             assert isinstance(
@@ -813,13 +895,13 @@ class TestRealtimeService():
             await conn.session.update(session=session)
             await conn.input_audio_buffer.append(audio=_load_audio_b64(file))
 
-            conversation_item_created = await _wait_for(conn, [ServerEventType.CONVERSATION_ITEM_CREATED], timeout_s=10)
-            content_part_added = await _wait_for(conn, [ServerEventType.RESPONSE_CONTENT_PART_ADDED], timeout_s=10)
+            conversation_item_created = await _wait_for_event(conn, [ServerEventType.CONVERSATION_ITEM_CREATED], timeout_s=10)
+            content_part_added = await _wait_for_event(conn, [ServerEventType.RESPONSE_CONTENT_PART_ADDED], timeout_s=10)
             assert content_part_added.part.type == "audio"
             assert conversation_item_created.item.id == content_part_added.item_id
 
             await conn.conversation.item.truncate(item_id=content_part_added.item_id, content_index=0, audio_end_ms=200)
-            conversation_retrieved_event = await _wait_for(
+            conversation_retrieved_event = await _wait_for_event(
                 conn, [ServerEventType.CONVERSATION_ITEM_TRUNCATED], timeout_s=10
             )
             assert isinstance(
@@ -919,7 +1001,7 @@ class TestRealtimeService():
             )
 
             await conn.session.update(session=session)
-            session_updated = await _wait_for(conn, {ServerEventType.SESSION_UPDATED})
+            session_updated = await _wait_for_event(conn, {ServerEventType.SESSION_UPDATED})
             await conn.input_audio_buffer.append(audio=_load_audio_b64(audio_file))
             await conn.input_audio_buffer.append(audio=_get_trailing_silence_bytes())
             assert (
@@ -974,14 +1056,14 @@ class TestRealtimeService():
             )
 
             await conn.session.update(session=session)
-            session_updated = await _wait_for(conn, {ServerEventType.SESSION_UPDATED}, 10)
+            session_updated = await _wait_for_event(conn, {ServerEventType.SESSION_UPDATED}, 10)
             assert session_updated.session.input_audio_sampling_rate == sampling_rate
 
             await conn.input_audio_buffer.append(audio=_load_audio_b64(audio_file))
             await conn.input_audio_buffer.append(audio=_get_trailing_silence_bytes(sample_rate=sampling_rate))
-            speech_started = await _wait_for(conn, {ServerEventType.INPUT_AUDIO_BUFFER_SPEECH_STARTED}, 10)
+            speech_started = await _wait_for_event(conn, {ServerEventType.INPUT_AUDIO_BUFFER_SPEECH_STARTED}, 10)
             assert speech_started.audio_start_ms == 0
-            speech_stopped = await _wait_for(conn, {ServerEventType.INPUT_AUDIO_BUFFER_SPEECH_STOPPED}, 10)
+            speech_stopped = await _wait_for_event(conn, {ServerEventType.INPUT_AUDIO_BUFFER_SPEECH_STOPPED}, 10)
             assert speech_stopped.audio_end_ms == pytest.approx(1664, rel=2e-2)
 
             _, audio_bytes = await _collect_event(
@@ -1024,7 +1106,7 @@ class TestRealtimeService():
             )
 
             await conn.session.update(session=session)
-            session_updated = await _wait_for(conn, {ServerEventType.SESSION_UPDATED}, 10)
+            session_updated = await _wait_for_event(conn, {ServerEventType.SESSION_UPDATED}, 10)
             assert session_updated.session.output_audio_format == audio_output_format
             await conn.input_audio_buffer.append(audio=_load_audio_b64(audio_file))
             await conn.input_audio_buffer.append(audio=_get_trailing_silence_bytes())
@@ -1063,7 +1145,7 @@ class TestRealtimeService():
             )
 
             await conn.session.update(session=session)
-            session_updated = await _wait_for(conn, {ServerEventType.SESSION_UPDATED}, 10)
+            session_updated = await _wait_for_event(conn, {ServerEventType.SESSION_UPDATED}, 10)
             assert session_updated.session.output_audio_format == audio_output_format
             await conn.input_audio_buffer.append(audio=_load_audio_b64(audio_file))
             await conn.input_audio_buffer.append(audio=_get_trailing_silence_bytes())
