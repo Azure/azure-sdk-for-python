@@ -11,6 +11,9 @@ DESCRIPTION:
     but the actual implementation would involve mapping the output action types to their corresponding
     API calls in the user's preferred managed environment framework (e.g. Playwright or Docker).
 
+    NOTE: Usage of the computer-use-preview model currently requires approval. Please see
+    https://learn.microsoft.com/azure/ai-foundry/openai/how-to/computer-use for more information.
+
 USAGE:
     python sample_agents_computer_use.py
 
