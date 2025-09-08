@@ -5,7 +5,7 @@ import logging
 import json
 from collections.abc import Iterable
 from typing import Optional, List, Tuple, Dict
-from requests import ReadTimeout, Timeout
+from requests import ReadTimeout, Timeout  # mypy: disable-error-code="import-untyped"
 from azure.core.exceptions import ServiceRequestTimeoutError
 from azure.monitor.opentelemetry.exporter._constants import (
     RetryCode,

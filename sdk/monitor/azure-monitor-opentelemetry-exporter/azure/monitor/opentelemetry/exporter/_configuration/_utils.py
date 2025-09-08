@@ -3,7 +3,7 @@
 from typing import Dict, Optional
 import json
 import logging
-import requests
+import requests  # mypy: disable-error-code="import-untyped"
 
 from azure.monitor.opentelemetry.exporter._constants import (
     _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS,
