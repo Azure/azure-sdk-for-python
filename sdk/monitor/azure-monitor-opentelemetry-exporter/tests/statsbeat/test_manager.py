@@ -249,9 +249,9 @@ class TestStatsbeatManager(unittest.TestCase):
     def setUp(self):
         """Set up test fixtures."""
         os.environ[_APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL] = "false"
-        # Reset singleton state
-        if hasattr(StatsbeatManager, '_instances'):
-            StatsbeatManager._instances.clear()
+        # Reset singleton state - only clear StatsbeatManager instances
+        if StatsbeatManager in StatsbeatManager._instances:
+            del StatsbeatManager._instances[StatsbeatManager]
         # Reset statsbeat state
         with _STATSBEAT_STATE_LOCK:
             _STATSBEAT_STATE["SHUTDOWN"] = False
