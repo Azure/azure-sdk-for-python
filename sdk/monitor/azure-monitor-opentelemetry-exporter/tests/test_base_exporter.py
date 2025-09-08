@@ -21,7 +21,13 @@ from azure.monitor.opentelemetry.exporter.export._base import (
     ExportResult,
 )
 from azure.monitor.opentelemetry.exporter._storage import StorageExportResult
-from azure.monitor.opentelemetry.exporter.statsbeat._state import _REQUESTS_MAP, _STATSBEAT_STATE, _LOCAL_STORAGE_SETUP_STATE
+from azure.monitor.opentelemetry.exporter.statsbeat._state import (
+    _REQUESTS_MAP, 
+    _STATSBEAT_STATE, 
+    _LOCAL_STORAGE_SETUP_STATE,
+    set_customer_sdkstats_metrics,
+    get_customer_sdkstats_metrics
+)
 from azure.monitor.opentelemetry.exporter.statsbeat import _customer_sdkstats
 from azure.monitor.opentelemetry.exporter.statsbeat._customer_sdkstats import _CUSTOMER_SDKSTATS_STATE, CustomerSdkStatsMetrics
 from azure.monitor.opentelemetry.exporter.export.metrics._exporter import AzureMonitorMetricExporter
@@ -117,8 +123,8 @@ class TestBaseExporter(unittest.TestCase):
         _CUSTOMER_SDKSTATS_STATE.update({
             "SHUTDOWN": False,
         })
-        # Reset customer sdkstats singleton for test isolation
-        _customer_sdkstats._STATSBEAT_METRICS = None
+        # Reset customer sdkstats global state for test isolation
+        set_customer_sdkstats_metrics(None)
         _CUSTOMER_SDKSTATS_STATE["SHUTDOWN"] = False
 
     def tearDown(self):

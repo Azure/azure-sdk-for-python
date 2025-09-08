@@ -175,3 +175,6 @@ component-detection-pip-report.json
 
 # No uv lock for now
 uv.lock
+
+# Sphinx generated documentation
+website/
