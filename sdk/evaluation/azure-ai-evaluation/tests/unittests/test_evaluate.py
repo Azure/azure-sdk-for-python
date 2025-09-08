@@ -1045,11 +1045,11 @@ class TestEvaluate:
         assert {"query", "response", "bar"}.isdisjoint(row1_kwargs), "Named parameters should not be in kwargs"
 
         assert {"ground_truth", "context"}.issubset(row2_kwargs), "Unnamed parameters should be in kwargs"
-        assert "foo" in row1_kwargs, "Making a column mapping to an unnamed parameter should appear in kwargs"
+        assert "foo" in row2_kwargs, "Making a column mapping to an unnamed parameter should appear in kwargs"
         assert {"query", "response", "bar"}.isdisjoint(row2_kwargs), "Named parameters should not be in kwargs"
 
         assert {"ground_truth", "context"}.issubset(row3_kwargs), "Unnamed parameters should be in kwargs"
-        assert "foo" in row1_kwargs, "Making a column mapping to an unnamed parameter should appear in kwargs"
+        assert "foo" in row3_kwargs, "Making a column mapping to an unnamed parameter should appear in kwargs"
         assert {"query", "response", "bar"}.isdisjoint(row3_kwargs), "Named parameters should not be in kwargs"
 
 
