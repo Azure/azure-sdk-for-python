@@ -45,14 +45,14 @@ class StatsbeatConfig:
         self.disable_offline_storage = disable_offline_storage
         self.credential = credential
         self.distro_version = distro_version
-        
+
         # Use provided connection_string or generate from endpoint
         if connection_string:
             try:
                 # Validate connection string
-                parsed_conn_str = ConnectionStringParser(connection_string)
+                ConnectionStringParser(connection_string)
                 self.connection_string = connection_string
-            except Exception:
+            except Exception:  # pylint: disable=broad-except
                 logger.error("Invalid connection string obtained from config. Reverting to default.")
                 self.connection_string = _get_stats_connection_string(endpoint)
         else:
@@ -62,13 +62,13 @@ class StatsbeatConfig:
     def from_exporter(cls, exporter: Any) -> Optional['StatsbeatConfig']:
         # Create configuration from an exporter instance
         # Validate required fields from exporter
-        if not hasattr(exporter, '_instrumentation_key') or not exporter._instrumentation_key:
+        if not hasattr(exporter, '_instrumentation_key') or not exporter._instrumentation_key:  # pylint: disable=protected-access
             logger.warning("Exporter is missing a valid instrumentation key.")
             return None
-        if not hasattr(exporter, '_endpoint') or not exporter._endpoint:
+        if not hasattr(exporter, '_endpoint') or not exporter._endpoint:  # pylint: disable=protected-access
             logger.warning("Exporter is missing a valid endpoint.")
             return None
-        if not hasattr(exporter, '_region') or not exporter._region:
+        if not hasattr(exporter, '_region') or not exporter._region:  # pylint: disable=protected-access
             logger.warning("Exporter is missing a valid region.")
             return None
 
@@ -84,7 +84,7 @@ class StatsbeatConfig:
     @classmethod
     def from_config(cls, base_config: 'StatsbeatConfig', config_dict: Dict[str, str]) -> Optional['StatsbeatConfig']:
         """Update configuration from a dictionary. Used in conjunction with OneSettings control plane.
-        
+
         Creates a new StatsbeatConfig instance with the same base configuration but updated
         `connection_string` and `disable_offline_storage` from the provided dictionary.
 
@@ -95,14 +95,6 @@ class StatsbeatConfig:
         :return: Updated StatsbeatConfig instance
         :rtype: StatsbeatConfig
         """
-        # Convert string values to appropriate types
-        disable_offline_storage = config_dict.get('disable_offline_storage')
-        if disable_offline_storage is not None:
-            if isinstance(disable_offline_storage, str):
-                disable_offline_storage = disable_offline_storage.lower() == 'true'
-        else:
-            disable_offline_storage = base_config.disable_offline_storage
-
         # Validate required fields
         if not base_config.instrumentation_key:
             logger.warning("Base configuration is missing a valid instrumentation key.")
@@ -113,17 +105,22 @@ class StatsbeatConfig:
         if not base_config.endpoint:
             logger.warning("Base configuration is missing a valid endpoint.")
             return None
+        if not base_config.disable_offline_storage:
+            logger.warning("Base configuration is missing a valid offline storage setting.")
+            return None
 
         connection_string = _get_connection_string_for_region_from_config(base_config.region, config_dict)
         if connection_string is None:
             # If something went wrong in fetching connection string, fall back to the original
             connection_string = base_config.connection_string
-        
+
+        # TODO: Add support for disable_offline_storage from config_dict once supported in control plane
+
         return cls(
             endpoint=base_config.endpoint,
             region=base_config.region,
             instrumentation_key=base_config.instrumentation_key,
-            disable_offline_storage=disable_offline_storage,
+            disable_offline_storage=base_config.disable_offline_storage, # TODO: Use config value once supported
             credential=base_config.credential,
             distro_version=base_config.distro_version,
             connection_string=connection_string
@@ -157,7 +154,7 @@ class StatsbeatManager(metaclass=Singleton):
     @staticmethod
     def _validate_config(config: 'StatsbeatConfig') -> bool:
         """Validate that a configuration has all required fields.
-        
+
         :param config: Configuration to validate
         :type config: StatsbeatConfig
         :return: True if config is valid, False otherwise
@@ -224,7 +221,7 @@ class StatsbeatManager(metaclass=Singleton):
             # should have passed before a long interval collect
             short_interval = _get_stats_short_export_interval()
             long_interval = _get_stats_long_export_interval()
-            
+
             long_interval_threshold = long_interval // short_interval
 
             # Create statsbeat metrics
@@ -295,7 +292,7 @@ class StatsbeatManager(metaclass=Singleton):
                 self._meter_provider.force_flush(timeout_millis=5000)
             except Exception as e:  # pylint: disable=broad-except
                 logger.warning("Failed to flush meter provider during reconfiguration: %s", e)
-            
+
             try:
                 self._meter_provider.shutdown(timeout_millis=5000)
             except Exception as e:  # pylint: disable=broad-except
@@ -320,7 +317,7 @@ class StatsbeatManager(metaclass=Singleton):
 
     def get_current_config(self) -> Optional[StatsbeatConfig]:
         """Get a copy of the current statsbeat configuration.
-        
+
         :return: Copy of current StatsbeatConfig instance if initialized, None otherwise
         :rtype: Optional[StatsbeatConfig]
         """

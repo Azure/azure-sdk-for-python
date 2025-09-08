@@ -388,13 +388,12 @@ class Singleton(type):
     _lock = threading.Lock()
 
     def __call__(cls, *args: Any, **kwargs: Any):
-        """Control the creation of instances."""
         if cls not in cls._instances:
             with cls._lock:
                 # Double-check pattern to avoid race conditions
                 if cls not in cls._instances:
                     instance = super().__call__(*args, **kwargs)
-                    cls._instances[cls] = instance
+                    cls._instances[cls] = instance  # type: ignore
         return cls._instances[cls]
 
 def _get_telemetry_type(item: TelemetryItem):

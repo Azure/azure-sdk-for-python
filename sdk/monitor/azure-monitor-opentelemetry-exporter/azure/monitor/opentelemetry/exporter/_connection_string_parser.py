@@ -76,7 +76,7 @@ class ConnectionStringParser:
         )
         
         # Extract region information
-        self.region = self._extract_region()
+        self.region = self._extract_region()  # type: ignore
 
     def _extract_region(self) -> typing.Optional[str]:
         """Extract region from endpoint URL.

@@ -59,15 +59,15 @@ class _ConfigurationManager(metaclass=Singleton):
         self._configuration_worker = _ConfigurationWorker(self, initial_refresh_interval)
 
     def register_callback(self, callback):
-        """Register a callback to be invoked when configuration changes."""
+        # Register a callback to be invoked when configuration changes.
         self._callbacks.append(callback)
 
     def _notify_callbacks(self, settings: Dict[str, str]):
-        """Notify all registered callbacks of configuration changes."""
+        # Notify all registered callbacks of configuration changes.
         for cb in self._callbacks:
             try:
                 cb(settings)
-            except Exception as ex:
+            except Exception as ex:  # pylint: disable=broad-except
                 logger.warning("Callback failed: %s", ex)
 
     def get_configuration_and_refresh_interval(self, query_dict: Optional[Dict[str, str]] = None) -> int:
@@ -206,18 +206,18 @@ class _ConfigurationManager(metaclass=Singleton):
         # Handle configuration updates throughout the SDK
         if notify_callbacks and state_for_callbacks is not None and state_for_callbacks.settings_cache:
             self._notify_callbacks(state_for_callbacks.settings_cache)
-        
+
         return current_refresh_interval
 
     def get_settings(self) -> Dict[str, str]:  # pylint: disable=C4741,C4742
         """Get current settings cache."""
         with self._state_lock:
-            return self._current_state.settings_cache.copy()
+            return self._current_state.settings_cache.copy()  # type: ignore
 
     def get_current_version(self) -> int:  # pylint: disable=C4741,C4742
         """Get current version."""
         with self._state_lock:
-            return self._current_state.version_cache
+            return self._current_state.version_cache  # type: ignore
 
     def shutdown(self) -> None:
         """Shutdown the configuration worker."""
@@ -225,5 +225,5 @@ class _ConfigurationManager(metaclass=Singleton):
             self._configuration_worker.shutdown()
             self._configuration_worker = None
         # Clear the singleton instance from the metaclass
-        if self.__class__ in Singleton._instances:
-            del Singleton._instances[self.__class__]
+        if self.__class__ in Singleton._instances:  # pylint: disable=protected-access
+            del Singleton._instances[self.__class__]  # pylint: disable=protected-access
