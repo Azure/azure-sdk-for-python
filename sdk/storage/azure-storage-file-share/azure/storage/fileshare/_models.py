@@ -209,13 +209,11 @@ class SmbMultichannel(GeneratedSmbMultichannel):
     :keyword bool enabled: If SMB Multichannel is enabled.
     """
 
-    enabled: Optional[bool]
+    enabled: bool
     """If SMB Multichannel is enabled."""
 
     def __init__(self, *, enabled: bool, **kwargs: Any) -> None:
         self.enabled = enabled
-        if self.enabled is None:
-            raise ValueError("The value 'enabled' must be specified.")
 
 
 class SmbEncryptionInTransit(GeneratedSmbEncryptionInTransit):
@@ -224,13 +222,11 @@ class SmbEncryptionInTransit(GeneratedSmbEncryptionInTransit):
     :keyword bool required: If encryption in transit is required.
     """
 
-    required: Optional[bool]
+    required: bool
     """If encryption in transit is enabled."""
 
     def __init__(self, *, required: bool, **kwargs: Any) -> None:
         self.required = required
-        if self.required is None:
-            raise ValueError("The value 'required' must be specified.")
 
 
 class ShareSmbSettings(GeneratedShareSmbSettings):
@@ -264,13 +260,11 @@ class NfsEncryptionInTransit(GeneratedNfsEncryptionInTransit):
     :keyword bool required: If encryption in transit is required.
     """
 
-    required: Optional[bool]
+    required: bool
     """If encryption in transit is enabled."""
 
     def __init__(self, *, required: bool, **kwargs: Any) -> None:
         self.required = required
-        if self.required is None:
-            raise ValueError("The value 'required' must be specified.")
 
 
 class ShareNfsSettings(GeneratedShareNfsSettings):
@@ -279,13 +273,11 @@ class ShareNfsSettings(GeneratedShareNfsSettings):
     :keyword NfsEncryptionInTransit encryption_in_transit: Sets the encryption in transit settings.
     """
 
-    encryption_in_transit: Optional[NfsEncryptionInTransit]
+    encryption_in_transit: NfsEncryptionInTransit
     """Sets the encryption in transit settings."""
 
     def __init__(self, *, encryption_in_transit: NfsEncryptionInTransit, **kwargs: Any) -> None:
         self.encryption_in_transit = encryption_in_transit
-        if self.encryption_in_transit is None:
-            raise ValueError("The value 'encryption_in_transit' must be specified.")
 
 
 class ShareProtocolSettings(GeneratedShareProtocolSettings):
