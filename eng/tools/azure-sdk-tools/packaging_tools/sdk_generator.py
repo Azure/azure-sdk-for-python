@@ -98,7 +98,7 @@ def del_outdated_files(readme: str):
         else:
             _LOGGER.info(f"sample folder does not exist: {sample_folder}")
     else:
-        _LOGGER.info(f"do not find valid sdk_folder in {python_readme}")
+        _LOGGER.info(f"do not find valid sdk_folder from readme.python.md: {readme}")
 
 
 # look for fines in tag like:
