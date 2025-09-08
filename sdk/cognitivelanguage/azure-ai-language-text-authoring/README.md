@@ -52,21 +52,7 @@ Alternatively, use the [Azure CLI][azure_cli] command shown below to get the API
 az cognitiveservices account keys list --resource-group <resource-group-name> --name <resource-name>
 ```
 
-
-#### Create TextAuthoringClient
-
-Once you've determined your **endpoint** and **API key**, you can instantiate a `TextAuthoringClient`:
-
-```python
-from azure.core.credentials import AzureKeyCredential
-from azure.ai.language.text.authoring import TextAuthoringClient
-
-endpoint = "https://<my-custom-subdomain>.cognitiveservices.azure.com/"
-credential = AzureKeyCredential("<api-key>")
-client = TextAuthoringClient(endpoint, credential)
-```
-
-#### Create a client with an Azure Active Directory Credential
+#### Create a TextAuthoringClient with an Azure Active Directory Credential
 
 To use an [Azure Active Directory (AAD) token credential][cognitive_authentication_aad],  
 provide an instance of the desired credential type obtained from the [azure-identity][azure_identity_credentials] library.
@@ -97,6 +83,19 @@ client = TextAuthoringClient(
     endpoint="https://<my-custom-subdomain>.cognitiveservices.azure.com/",
     credential=credential,
 )
+```
+
+#### Create a TextAuthoringClient using AzureKeyCredential
+
+Once you've determined your **endpoint** and **API key**, you can instantiate a `TextAuthoringClient`:
+
+```python
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.language.text.authoring import TextAuthoringClient
+
+endpoint = "https://<my-custom-subdomain>.cognitiveservices.azure.com/"
+credential = AzureKeyCredential("<api-key>")
+client = TextAuthoringClient(endpoint, credential)
 ```
 
 ## Key concepts
@@ -347,7 +346,7 @@ handler = logging.StreamHandler(stream=sys.stdout)
 logger.addHandler(handler)
 
 endpoint = "https://<endpoint>.cognitiveservices.azure.com/"
-credential = AzureKeyCredential("<api-key>")
+credential = DefaultAzureCredential()
 
 # This client will log detailed HTTP information
 client = TextAuthoringClient(endpoint, credential, logging_enable=True)
