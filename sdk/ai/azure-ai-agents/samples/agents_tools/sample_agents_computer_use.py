@@ -49,7 +49,6 @@ from azure.ai.agents.models import (
 )
 from azure.identity import DefaultAzureCredential
 
-
 def image_to_base64(image_path: str) -> str:
     """
     Convert an image file to a Base64-encoded string.
@@ -68,7 +67,6 @@ def image_to_base64(image_path: str) -> str:
         return base64.b64encode(file_data).decode("utf-8")
     except Exception as exc:
         raise OSError(f"Error reading file '{image_path}'") from exc
-
 
 asset_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../assets/cua_screenshot.jpg"))
 action_result_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../assets/cua_screenshot_next.jpg"))
