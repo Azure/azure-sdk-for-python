@@ -491,7 +491,7 @@ class TranscriptionOptions:
         self.start_transcription = start_transcription
         self.speech_recognition_model_endpoint_id = speech_recognition_model_endpoint_id
         self.enable_intermediate_results = enable_intermediate_results
-        self.pii_redaction_options=pii_redaction
+        self.pii_redaction=pii_redaction
         self.enable_sentiment_analysis=enable_sentiment_analysis
         self.locales=locales
         self.summarization=summarization
