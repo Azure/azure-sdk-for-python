@@ -131,7 +131,7 @@ def create_package_and_install(
                         addition_necessary = True
                         # get all installed packages
                         installed_pkgs = get_pip_list_output(python_exe)
-                        logging.debug("Installed packages: {}".format(installed_pkgs))
+                        logger.debug("Installed packages: {}".format(installed_pkgs))
 
                         # parse the specifier
                         requirement = parse_require(req)

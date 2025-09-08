@@ -81,7 +81,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # none of the args will apply to logging, but the LOGLEVEL env var will
-    # so we can just pass the args object directly to configure_logging to meet the needs of the functin
+    # so we can just pass the args object directly to configure_logging to meet the needs of the function
     configure_logging(args)
 
     create_package_and_install(
