@@ -12,7 +12,6 @@
   "**/sample_agents_code_interpreter_attachment_enterprise_search_async.py",
   "**/sample_agents_code_interpreter_attachment_enterprise_search_async.py",
   "**/sample_agents_code_interpreter_attachment_async.py"
-    
   ],
   "extraPaths": [        
     "./../../core/azure-core",
