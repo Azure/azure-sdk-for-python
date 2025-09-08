@@ -396,7 +396,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                     self._uses_ai_configuration,
                     self._uses_aicc_configuration,
                 )
-                configuration_settings = []
+                configuration_settings: List[ConfigurationSetting] = []
                 # Reset if failed
                 refreshed_configs = False
                 refreshed_feature_flags = False
