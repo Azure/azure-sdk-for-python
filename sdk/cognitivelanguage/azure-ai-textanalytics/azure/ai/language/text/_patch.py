@@ -276,11 +276,11 @@ class TextAnalysisClient(AnalysisTextClientGenerated):
                 return next_link, [actions_payload]
 
             def get_next(token: Optional[str]) -> Optional[AnalyzeTextOperationState]:
-                if token is None:
+                if token is None:  # First call → return the initial state
                     return state
-                if not token:
+                if not token:  # No nextLink → stop iteration
                     return None
-                return _fetch_state_by_next_link(token)
+                return _fetch_state_by_next_link(token)  # Fetch next page
 
             return ItemPaged(get_next, extract_data)
 
