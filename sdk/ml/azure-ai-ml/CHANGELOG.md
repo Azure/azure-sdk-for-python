@@ -1,5 +1,15 @@
 # Release History
 
+## 1.29.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 1.29.0 (2025-09-01)
 
 ### Features Added
