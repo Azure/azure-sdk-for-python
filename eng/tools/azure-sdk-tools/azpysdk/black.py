@@ -72,6 +72,7 @@ class black(Check):
                     ],
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
+                    check=True,
                 )
 
                 if run_result.stderr and "reformatted" in run_result.stderr.decode("utf-8"):
