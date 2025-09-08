@@ -5,14 +5,16 @@
 
 """
 DESCRIPTION:
-    This sample demonstrates how to use agents with JSON schema output format.
+    This sample demonstrates how to use agents with JSON schema output format, using
+    an asynchronous client. It uses the Pydantic package to define the output JSON
+    schema from Python classes.
 
 USAGE:
-    python sample_agents_json_schema_async.py
+    python sample_agents_json_schema_response_format_using_pydantic_async.py
 
     Before running the sample:
 
-    pip install azure-ai-projects azure-ai-agents azure-identity pydantic
+    pip install azure-ai-projects azure-ai-agents azure-identity aiohttp pydantic
 
     Set these environment variables with your own values:
     1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -20,7 +22,6 @@ USAGE:
     2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Azure AI Foundry project.
 """
-
 import asyncio
 import os
 
@@ -30,7 +31,6 @@ from azure.ai.projects.aio import AIProjectClient
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.agents.models import (
     ListSortOrder,
-    MessageTextContent,
     MessageRole,
     ResponseFormatJsonSchema,
     ResponseFormatJsonSchemaType,
@@ -39,15 +39,24 @@ from azure.ai.agents.models import (
 
 
 # Create the pydantic model to represent the planet names and there masses.
-class Planets(str, Enum):
+class PlanetName(str, Enum):
+    Mercury = "Mercury"
+    Venus = "Venus"
     Earth = "Earth"
     Mars = "Mars"
-    Jupyter = "Jupyter"
+    Jupiter = "Jupiter"
+    Saturn = "Saturn"
+    Uranus = "Uranus"
+    Neptune = "Neptune"
 
 
 class Planet(BaseModel):
-    planet: Planets
+    name: PlanetName
     mass: float
+
+
+class Planets(BaseModel):
+    planets: list[Planet]
 
 
 async def main():
@@ -62,12 +71,12 @@ async def main():
         agent = await agents_client.create_agent(
             model=os.environ["MODEL_DEPLOYMENT_NAME"],
             name="my-agent",
-            instructions="Extract the information about planets.",
+            instructions="You are helpful agent. Your response is JSON formatted.",
             response_format=ResponseFormatJsonSchemaType(
                 json_schema=ResponseFormatJsonSchema(
                     name="planet_mass",
-                    description="Extract planet mass.",
-                    schema=Planet.model_json_schema(),
+                    description="Masses of Solar System planets.",
+                    schema=Planets.model_json_schema(),
                 )
             ),
         )
@@ -79,7 +88,7 @@ async def main():
         message = await agents_client.messages.create(
             thread_id=thread.id,
             role="user",
-            content=("The mass of the Mars is 6.4171E23 kg; the mass of the Earth is 5.972168E24 kg;"),
+            content="Hello, give me a list of planets in our solar system, and their mass in kilograms.",
         )
         print(f"Created message, message ID: {message.id}")
 
@@ -91,17 +100,16 @@ async def main():
         await agents_client.delete_agent(agent.id)
         print("Deleted agent")
 
-        messages = agents_client.messages.list(
-            thread_id=thread.id,
-            order=ListSortOrder.ASCENDING,
-        )
-
+        messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
         async for msg in messages:
-            if msg.role == MessageRole.AGENT:
-                last_part = msg.content[-1]
-                if isinstance(last_part, MessageTextContent):
-                    planet = TypeAdapter(Planet).validate_json(last_part.text.value)
-                    print(f"The mass of {planet.planet} is {planet.mass} kg.")
+            if msg.text_messages:
+                last_text = msg.text_messages[-1]
+                print(f"{msg.role}: {last_text.text.value}")
+                # Deserialize the Agent's JSON response to the `Planets` class defined above
+                if msg.role == MessageRole.AGENT:
+                    planets = TypeAdapter(Planets).validate_json(last_text.text.value)
+                    for planet in planets.planets:
+                        print(f"The mass of {planet.name.value} is {planet.mass} kg.")
 
 
 if __name__ == "__main__":
