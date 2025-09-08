@@ -1,32 +1,30 @@
 import argparse
 import os
 import sys
-import tempfile
 import subprocess
 
 from typing import Optional, List
-from subprocess import CalledProcessError, check_call
+from subprocess import CalledProcessError
+
+from ci_tools.functions import pip_install
+from ci_tools.variables import in_ci, discover_repo_root, set_envvar_defaults
+from ci_tools.environment_exclusions import is_check_enabled
+from ci_tools.logging import logger
 
 from .Check import Check
-from ci_tools.parsing import ParsedSetup
-from ci_tools.functions import pip_install
-from ci_tools.scenario.generation import create_package_and_install
-from ci_tools.variables import in_ci, discover_repo_root, set_envvar_defaults
-from ci_tools.environment_exclusions import (
-    is_check_enabled, is_typing_ignored
-)
-from ci_tools.logging import logger
 
 BLACK_VERSION = "24.4.0"
 REPO_ROOT = discover_repo_root()
+
 
 class black(Check):
     def __init__(self) -> None:
         super().__init__()
 
-    def register(self, subparsers: "argparse._SubParsersAction", parent_parsers: Optional[List[argparse.ArgumentParser]] = None) -> None:
-        """Register the `black` check. The black check installs black and runs black against the target package.
-        """
+    def register(
+        self, subparsers: "argparse._SubParsersAction", parent_parsers: Optional[List[argparse.ArgumentParser]] = None
+    ) -> None:
+        """Register the `black` check. The black check installs black and runs black against the target package."""
         parents = parent_parsers or []
         p = subparsers.add_parser("black", parents=parents, help="Run the code formatter black check")
         p.set_defaults(func=self.run)
@@ -50,34 +48,32 @@ class black(Check):
 
             # install black
             try:
-                if (args.next):
-                    # use latest version of black
-                    pip_install(["black"], True, executable, package_dir)
-                else:
-                    pip_install([f"black=={BLACK_VERSION}"], True, executable, package_dir)
+                pip_install([f"black=={BLACK_VERSION}"], True, executable, package_dir)
             except CalledProcessError as e:
                 logger.error("Failed to install black:", e)
                 return e.returncode
 
             logger.info(f"Running black against {package_name}")
 
-            configFileLocation = os.path.join(REPO_ROOT, "eng/black-pyproject.toml")
+            config_file_location = os.path.join(REPO_ROOT, "eng/black-pyproject.toml")
 
             if in_ci():
                 if not is_check_enabled(package_dir, "black"):
-                    logger.info(
-                        f"Package {package_name} opts-out of black check."
-                    )
+                    logger.info(f"Package {package_name} opts-out of black check.")
                     continue
-            try: 
-                run_result = subprocess.run([
-                    executable,
-                    "-m",
-                    "black",
-                    f"--config={configFileLocation}",
-                    package_dir,
-                ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            
+            try:
+                run_result = subprocess.run(
+                    [
+                        executable,
+                        "-m",
+                        "black",
+                        f"--config={config_file_location}",
+                        package_dir,
+                    ],
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                )
+
                 if run_result.stderr and "reformatted" in run_result.stderr.decode("utf-8"):
                     if in_ci():
                         logger.info(f"The package {package_name} needs reformat. Run `black` locally to reformat.")
@@ -86,8 +82,6 @@ class black(Check):
                         logger.info(f"The package {package_name} was reformatted.")
 
             except subprocess.CalledProcessError as e:
-                logger.error(
-                    f"Unable to invoke black for {package_name}. Ran into exception {e}."
-                )
+                logger.error(f"Unable to invoke black for {package_name}. Ran into exception {e}.")
 
         return max(results) if results else 0
