@@ -296,7 +296,7 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
         )
         self._feature_flag_enabled = kwargs.pop("feature_flag_enabled", False)
         self._feature_flag_selectors = kwargs.pop("feature_flag_selectors", [SettingSelector(key_filter="*")])
-        self._refresh_on_feature_flags: Dict[Tuple[str, str], Optional[str]] = {}
+        self._refresh_on_feature_flags: Mapping[Tuple[str, str], Optional[str]] = {}
         self._feature_flag_refresh_timer: _RefreshTimer = _RefreshTimer(**kwargs)
         self._feature_flag_refresh_enabled = kwargs.pop("feature_flag_refresh_enabled", False)
         self._feature_filter_usage: Dict[str, bool] = {}
