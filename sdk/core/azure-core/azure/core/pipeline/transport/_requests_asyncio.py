@@ -107,7 +107,7 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
     ) -> None:
         return super(AsyncioRequestsTransport, self).__exit__(exc_type, exc_value, traceback)
 
-    async def sleep(self, duration):  # pylint:disable=invalid-overridden-method
+    async def sleep(self, duration: float) -> None:  # pylint:disable=invalid-overridden-method
         await asyncio.sleep(duration)
 
     @overload  # type: ignore
@@ -143,7 +143,7 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
         request: Union[HttpRequest, "RestHttpRequest"],
         *,
         proxies: Optional[MutableMapping[str, str]] = None,
-        **kwargs
+        **kwargs: Any,
     ) -> Union[AsyncHttpResponse, "RestAsyncHttpResponse"]:
         """Send the request using this HTTP sender.
 
@@ -174,7 +174,7 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
                     cert=kwargs.pop("connection_cert", self.connection_config.cert),
                     allow_redirects=False,
                     proxies=proxies,
-                    **kwargs
+                    **kwargs,
                 ),
             )
             response.raw.enforce_content_length = True
@@ -229,17 +229,14 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
     :param response: The response object.
     :type response: ~azure.core.pipeline.transport.AsyncHttpResponse
     :keyword bool decompress: If True which is default, will attempt to decode the body based
-            on the *content-encoding* header.
+        on the *content-encoding* header.
     """
 
-    def __init__(self, pipeline: Pipeline, response: AsyncHttpResponse, **kwargs) -> None:
+    def __init__(self, pipeline: Pipeline, response: AsyncHttpResponse, *, decompress: bool = True) -> None:
         self.pipeline = pipeline
         self.request = response.request
         self.response = response
         self.block_size = response.block_size
-        decompress = kwargs.pop("decompress", True)
-        if len(kwargs) > 0:
-            raise TypeError("Got an unexpected keyword argument: {}".format(list(kwargs.keys())[0]))
         internal_response = response.internal_response
         if decompress:
             self.iter_content_func = internal_response.iter_content(self.block_size)

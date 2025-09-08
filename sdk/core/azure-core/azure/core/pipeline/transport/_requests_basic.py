@@ -25,6 +25,7 @@
 # --------------------------------------------------------------------------
 import logging
 from typing import (
+    Any,
     Iterator,
     Optional,
     Union,
@@ -62,6 +63,8 @@ from .._tools import (
 
 if TYPE_CHECKING:
     from ...rest import HttpRequest as RestHttpRequest, HttpResponse as RestHttpResponse
+    from ...pipeline import Pipeline
+    from ...pipeline.transport import HttpResponse
 
 AzureErrorUnion = Union[
     ServiceRequestError,
@@ -108,7 +111,7 @@ class _RequestsTransportResponseBase(_HttpResponseBase):
     :param int block_size: Size in bytes.
     """
 
-    def __init__(self, request, requests_response, block_size=None):
+    def __init__(self, request: HttpRequest, requests_response: requests.Response, block_size: Optional[int] = None):
         super(_RequestsTransportResponseBase, self).__init__(request, requests_response, block_size=block_size)
         self.status_code = requests_response.status_code
         self.headers = requests_response.headers
@@ -158,14 +161,17 @@ class StreamDownloadGenerator:
         on the *content-encoding* header.
     """
 
-    def __init__(self, pipeline, response, **kwargs):
+    def __init__(
+        self,
+        pipeline: "Pipeline",
+        response: "HttpResponse",
+        *,
+        decompress: bool = True,
+    ) -> None:
         self.pipeline = pipeline
         self.request = response.request
         self.response = response
         self.block_size = response.block_size
-        decompress = kwargs.pop("decompress", True)
-        if len(kwargs) > 0:
-            raise TypeError("Got an unexpected keyword argument: {}".format(list(kwargs.keys())[0]))
         internal_response = response.internal_response
         if decompress:
             self.iter_content_func = internal_response.iter_content(self.block_size)
@@ -213,7 +219,7 @@ class StreamDownloadGenerator:
 class RequestsTransportResponse(HttpResponse, _RequestsTransportResponseBase):
     """Streaming of data from the response."""
 
-    def stream_download(self, pipeline: PipelineType, **kwargs) -> Iterator[bytes]:
+    def stream_download(self, pipeline: PipelineType, **kwargs: Any) -> Iterator[bytes]:
         """Generator for streaming request body data.
 
         :param pipeline: The pipeline object
@@ -251,13 +257,20 @@ class RequestsTransport(HttpTransport):
 
     _protocols = ["http://", "https://"]
 
-    def __init__(self, **kwargs) -> None:
-        self.session = kwargs.get("session", None)
-        self._session_owner = kwargs.get("session_owner", True)
+    def __init__(
+        self,
+        *,
+        session: Optional[requests.Session] = None,
+        session_owner: bool = True,
+        use_env_settings: bool = True,
+        **kwargs,
+    ) -> None:
+        self.session = session
+        self._session_owner = session_owner
         if not self._session_owner and not self.session:
             raise ValueError("session_owner cannot be False if no session is provided")
         self.connection_config = ConnectionConfiguration(**kwargs)
-        self._use_env_settings = kwargs.pop("use_env_settings", True)
+        self._use_env_settings = use_env_settings
         # See https://github.com/Azure/azure-sdk-for-python/issues/25640 to understand why we track this
         self._has_been_opened = False
 
@@ -336,7 +349,7 @@ class RequestsTransport(HttpTransport):
         request: Union[HttpRequest, "RestHttpRequest"],
         *,
         proxies: Optional[MutableMapping[str, str]] = None,
-        **kwargs
+        **kwargs: Any,
     ) -> Union[HttpResponse, "RestHttpResponse"]:
         """Send request object according to configuration.
 
@@ -373,7 +386,7 @@ class RequestsTransport(HttpTransport):
                 cert=kwargs.pop("connection_cert", self.connection_config.cert),
                 allow_redirects=False,
                 proxies=proxies,
-                **kwargs
+                **kwargs,
             )
             response.raw.enforce_content_length = True
 

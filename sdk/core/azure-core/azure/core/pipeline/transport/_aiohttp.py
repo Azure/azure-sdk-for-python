@@ -114,7 +114,8 @@ class AioHttpTransport(AsyncHttpTransport):
         session: Optional[aiohttp.ClientSession] = None,
         loop=None,
         session_owner: bool = True,
-        **kwargs,
+        use_env_settings: bool = True,
+        **kwargs: Any,
     ):
         if loop and sys.version_info >= (3, 10):
             raise ValueError("Starting with Python 3.10, asyncio doesn’t support loop as a parameter anymore")
@@ -124,7 +125,7 @@ class AioHttpTransport(AsyncHttpTransport):
         if not self._session_owner and not self.session:
             raise ValueError("session_owner cannot be False if no session is provided")
         self.connection_config = ConnectionConfiguration(**kwargs)
-        self._use_env_settings = kwargs.pop("use_env_settings", True)
+        self._use_env_settings = use_env_settings
         # See https://github.com/Azure/azure-sdk-for-python/issues/25640 to understand why we track this
         self._has_been_opened = False
 
@@ -560,7 +561,7 @@ class AioHttpTransportResponse(AsyncHttpResponse):
         pipeline: AsyncPipeline[HttpRequest, AsyncHttpResponse],
         *,
         decompress: bool = True,
-        **kwargs,
+        **kwargs: Any,
     ) -> AsyncIteratorType[bytes]:
         """Generator for streaming response body data.
 

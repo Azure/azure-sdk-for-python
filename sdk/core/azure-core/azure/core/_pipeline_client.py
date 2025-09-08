@@ -26,7 +26,7 @@
 from __future__ import annotations
 import logging
 from collections.abc import Iterable
-from typing import TypeVar, Generic, Optional, Any
+from typing import TypeVar, Generic, Optional, Any, Union
 from .configuration import Configuration
 from .pipeline import Pipeline
 from .pipeline.transport._base import PipelineClientBase
@@ -38,6 +38,8 @@ from .pipeline.policies import (
     RequestIdPolicy,
     RetryPolicy,
     SensitiveHeaderCleanupPolicy,
+    HTTPPolicy,
+    SansIOHTTPPolicy,
 )
 
 HTTPResponseType = TypeVar("HTTPResponseType")
@@ -77,15 +79,30 @@ class PipelineClient(PipelineClientBase, Generic[HTTPRequestType, HTTPResponseTy
         self,
         base_url: str,
         *,
-        pipeline: Optional[Pipeline[HTTPRequestType, HTTPResponseType]] = None,
         config: Optional[Configuration[HTTPRequestType, HTTPResponseType]] = None,
+        pipeline: Optional[Pipeline[HTTPRequestType, HTTPResponseType]] = None,
+        policies: Optional[list[HTTPPolicy]] = None,
+        per_call_policies: Optional[
+            Union[HTTPPolicy, SansIOHTTPPolicy, list[HTTPPolicy], list[SansIOHTTPPolicy]]
+        ] = None,
+        per_retry_policies: Optional[
+            Union[HTTPPolicy, SansIOHTTPPolicy, list[HTTPPolicy], list[SansIOHTTPPolicy]]
+        ] = None,
+        transport: Optional[HttpTransport[HTTPRequestType, HTTPResponseType]] = None,
         **kwargs: Any,
     ):
         super(PipelineClient, self).__init__(base_url)
         self._config: Configuration[HTTPRequestType, HTTPResponseType] = config or Configuration(**kwargs)
         self._base_url = base_url
 
-        self._pipeline = pipeline or self._build_pipeline(self._config, **kwargs)
+        self._pipeline = pipeline or self._build_pipeline(
+            self._config,
+            policies=policies,
+            per_call_policies=per_call_policies,
+            per_retry_policies=per_retry_policies,
+            transport=transport,
+            **kwargs,
+        )
 
     def __enter__(self) -> PipelineClient[HTTPRequestType, HTTPResponseType]:
         self._pipeline.__enter__()

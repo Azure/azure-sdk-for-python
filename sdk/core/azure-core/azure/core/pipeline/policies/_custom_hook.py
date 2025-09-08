@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import TypeVar, Any
+from typing import TypeVar, Any, Optional, Callable
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.transport import (
     HttpResponse as LegacyHttpResponse,
@@ -44,9 +44,15 @@ class CustomHookPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
     :keyword callback raw_response_hook: Callback function. Will be invoked on response.
     """
 
-    def __init__(self, **kwargs: Any):
-        self._request_callback = kwargs.get("raw_request_hook")
-        self._response_callback = kwargs.get("raw_response_hook")
+    def __init__(
+        self,
+        *,
+        raw_request_hook: Optional[Callable[[PipelineRequest[HTTPRequestType]], None]] = None,
+        raw_response_hook: Optional[Callable[[PipelineResponse[HTTPRequestType, HTTPResponseType]], None]] = None,
+        **kwargs: Any
+    ):
+        self._request_callback = raw_request_hook
+        self._response_callback = raw_response_hook
 
     def on_request(self, request: PipelineRequest[HTTPRequestType]) -> None:
         """This is executed before sending the request to the next policy.
