@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 from functools import cached_property
 from logging import getLogger, Formatter
-from typing import Dict, List, Optional, cast
+from typing import Dict, List, Optional, cast, Any, Mapping, Sequence, TYPE_CHECKING
 
 from opentelemetry.instrumentation.instrumentor import (  # type: ignore
     BaseInstrumentor,
@@ -15,7 +15,7 @@ from opentelemetry.sdk.metrics import MeterProvider
 from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
 from opentelemetry.sdk.metrics.view import View
 from opentelemetry.sdk.resources import Resource
-from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace import TracerProvider, SpanProcessor
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from opentelemetry.trace import set_tracer_provider
 from opentelemetry.util._importlib_metadata import (
@@ -70,13 +70,16 @@ from azure.monitor.opentelemetry._utils.instrumentation import (
     get_dist_dependency_conflicts,
 )
 
+if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential
+
 _logger = getLogger(__name__)
 
 
 def configure_azure_monitor(
     *,
     connection_string: str = _Unset,
-    credential: TokenCredential = _Unset,
+    credential: "TokenCredential" = _Unset,
     disable_offline_storage: bool = _Unset,
     logger_name: str = _Unset,
     instrumentation_options: Mapping[str, Any] = _Unset,
