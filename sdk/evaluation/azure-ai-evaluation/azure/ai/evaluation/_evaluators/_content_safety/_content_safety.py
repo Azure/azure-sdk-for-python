@@ -68,7 +68,7 @@ class ContentSafetyEvaluator(MultiEvaluatorBase[Union[str, float]]):
             :caption: Initialize with threshold and call a ContentSafetyEvaluator with a query and response.
     """
 
-    id = "content_safety"
+    id = "azureai://built-in/evaluators/content_safety"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
     _OPTIONAL_PARAMS = ["query"]
 

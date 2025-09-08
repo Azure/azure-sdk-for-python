@@ -25,7 +25,7 @@ class TestSqlManagementDataWarehouseUserActivitiesOperations(AzureMgmtRecordedTe
             resource_group_name=resource_group.name,
             server_name="str",
             database_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -39,7 +39,7 @@ class TestSqlManagementDataWarehouseUserActivitiesOperations(AzureMgmtRecordedTe
             server_name="str",
             database_name="str",
             data_warehouse_user_activity_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
 
         # please add some check logic here by yourself

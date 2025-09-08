@@ -74,7 +74,7 @@ class RetrievalEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     _PROMPTY_FILE = "retrieval.prompty"
     _RESULT_KEY = "retrieval"
 
-    id = "azureml://registries/azureml/models/Retrieval-Evaluator/versions/1"
+    id = "azureai://built-in/evaluators/retrieval"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override

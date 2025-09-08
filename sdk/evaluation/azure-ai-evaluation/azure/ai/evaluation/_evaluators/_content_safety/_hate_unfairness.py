@@ -80,7 +80,7 @@ class HateUnfairnessEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
             :caption: Initialize with threshold and call a HateUnfairnessEvaluator with a query and response.
     """
 
-    id = "azureml://registries/azureml/models/Hate-and-Unfairness-Evaluator/versions/4"
+    id = "azureai://built-in/evaluators/hate_unfairness"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
     _OPTIONAL_PARAMS = ["query"]
 

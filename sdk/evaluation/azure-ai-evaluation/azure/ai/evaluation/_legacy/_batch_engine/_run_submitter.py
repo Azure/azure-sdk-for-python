@@ -5,6 +5,7 @@
 import dataclasses
 import inspect
 import sys
+import traceback
 
 from concurrent.futures import Executor
 from datetime import datetime, timezone
@@ -46,11 +47,6 @@ class RunSubmitter:
         **kwargs,
     ) -> Run:
 
-        # if the column mappings are not provided, generate them based on the arguments to the
-        # flow function.
-        if column_mapping is None:
-            column_mapping = self._generate_column_mapping(dynamic_callable)
-
         # The old code always spun up two threads here using a ThreadPoolExecutor:
         # 1. One thread essentially did nothing of value (since tracing was disabled, and we
         #    don't care about checking for the latest PromptFlow version number now)
@@ -84,7 +80,7 @@ class RunSubmitter:
             # unnecessary Flow loading code was removed here. Instead do direct calls to _submit_bulk_run
             await self._submit_bulk_run(run=run, local_storage=local_storage, **kwargs)
 
-        self.stream_run(run=run, storage=local_storage, raise_on_error=True)
+        self.stream_run(run=run, storage=local_storage, raise_on_error=self._config.raise_on_error)
         return run
 
     async def _submit_bulk_run(self, run: Run, local_storage: AbstractRunStorage, **kwargs) -> None:
@@ -125,10 +121,8 @@ class RunSubmitter:
         try:
             batch_engine = BatchEngine(
                 run.dynamic_callable,
+                config=self._config,
                 storage=local_storage,
-                batch_timeout_sec=self._config.batch_timeout_seconds,
-                line_timeout_sec=self._config.run_timeout_seconds,
-                max_worker_count=self._config.max_concurrency,
                 executor=self._executor,
             )
 
@@ -160,10 +154,10 @@ class RunSubmitter:
             # system metrics
             system_metrics = {}
             if batch_result:
-                system_metrics.update(dataclasses.asdict(batch_result.tokens))  # token related
+                # system_metrics.update(dataclasses.asdict(batch_result.tokens))  # token related
                 system_metrics.update(
                     {
-                        "duration": batch_result.duration.total_seconds(),
+                        # "duration": batch_result.duration.total_seconds(),
                         # "__pf__.lines.completed": batch_result.total_lines - batch_result.failed_lines,
                         # "__pf__.lines.failed": batch_result.failed_lines,
                     }
@@ -174,30 +168,15 @@ class RunSubmitter:
             run.result = batch_result
 
     @staticmethod
-    def _generate_column_mapping(function: Callable) -> Mapping[str, Any]:
-        args = inspect.signature(function).parameters
-        default_values: Dict[str, Any] = {}
-        mapping: Dict[str, Any] = {}
-        for key, value in args.items():
-            if key in ["self", "cls"] or value.kind in [value.VAR_POSITIONAL, value.VAR_KEYWORD]:
-                continue
-
-            mapping[key] = f"${{data.{key}}}"
-            if value.default != inspect.Parameter.empty:
-                default_values[key] = value.default
-
-        return {
-            **mapping,
-            DEFAULTS_KEY: default_values,
-        }
-
-    @staticmethod
     def _validate_inputs(run: Run):
         if not run.inputs and not run.previous_run:
             raise BatchEngineValidationError("Either data, or a previous run must be specified for the evaluation run.")
 
     @staticmethod
-    def _validate_column_mapping(column_mapping: Mapping[str, str]):
+    def _validate_column_mapping(column_mapping: Optional[Mapping[str, str]]):
+        if not column_mapping:
+            return
+
         if not isinstance(column_mapping, Mapping):
             raise BatchEngineValidationError(f"Column mapping must be a dict, got {type(column_mapping)}.")
 
@@ -221,6 +200,7 @@ class RunSubmitter:
             return
 
         file_handler = sys.stdout
+        error_message: Optional[str] = None
         try:
             printed = 0
             available_logs = storage.logger.get_logs()
@@ -232,7 +212,24 @@ class RunSubmitter:
 
         if run.status == RunStatus.FAILED or run.status == RunStatus.CANCELED:
             if run.status == RunStatus.FAILED:
-                error_message = storage.load_exception().get("message", "Run fails with unknown error.")
+                # Get the first error message from the results, or use a default one
+                if run.result and run.result.error:
+                    error_message = "".join(
+                        traceback.format_exception(
+                            type(run.result.error), run.result.error, run.result.error.__traceback__
+                        )
+                    )
+                elif run.result and run.result.details:
+                    err = next((r.error for r in run.result.details if r.error), None)
+                    if err and err.exception:
+                        error_message = "".join(
+                            traceback.format_exception(type(err.exception), err.exception, err.exception.__traceback__)
+                        )
+                    elif err and err.details:
+                        error_message = err.details
+
+                if not error_message:
+                    error_message = "Run fails with unknown error."
             else:
                 error_message = "Run is canceled."
             if raise_on_error:

@@ -104,6 +104,28 @@ class IdentityProviderType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Microsoft Entra ID provider."""
 
 
+class KeyEncryptionKeyIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity for key encryption key."""
+
+    USER_ASSIGNED_IDENTITY = "UserAssignedIdentity"
+    """User assigned identity."""
+
+
+class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of managed service identity (where both SystemAssigned and UserAssigned types are
+    allowed).
+    """
+
+    NONE = "None"
+    """No managed identity."""
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    """System assigned managed identity."""
+    USER_ASSIGNED = "UserAssigned"
+    """User assigned managed identity."""
+    SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
+    """System and user assigned managed identity."""
+
+
 class MongoClusterStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The status of the Mongo cluster resource."""
 
@@ -255,5 +277,5 @@ class StorageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class UserRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Built-in database role that can be assigned to a user."""
 
-    DATABASE_OWNER = "dbOwner"
-    """Datbase owner role permissions on the target scope."""
+    ROOT = "root"
+    """Root role permissions on the target scope."""

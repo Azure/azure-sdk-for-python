@@ -37,6 +37,8 @@ from ._shared.models import (
     CommunicationIdentifierKind,
     CommunicationCloudEnvironment,
     UnknownIdentifier,
+    TeamsExtensionUserProperties,
+    TeamsExtensionUserIdentifier,
 )
 from ._generated.models._enums import (
     CallRejectReason,
@@ -91,6 +93,8 @@ __all__ = [
     "CommunicationIdentifierKind",
     "CommunicationCloudEnvironment",
     "UnknownIdentifier",
+    "TeamsExtensionUserProperties",
+    "TeamsExtensionUserIdentifier",
 
     # enums
     "CallRejectReason",

@@ -24,7 +24,7 @@ class TestSqlManagementSyncGroupsOperationsAsync(AzureMgmtRecordedTestCase):
     async def test_sync_groups_list_sync_database_ids(self, resource_group):
         response = self.client.sync_groups.list_sync_database_ids(
             location_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestSqlManagementSyncGroupsOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             server_name="str",
             database_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -51,7 +51,7 @@ class TestSqlManagementSyncGroupsOperationsAsync(AzureMgmtRecordedTestCase):
             server_name="str",
             database_name="str",
             sync_group_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -92,7 +92,7 @@ class TestSqlManagementSyncGroupsOperationsAsync(AzureMgmtRecordedTestCase):
                     "type": "str",
                     "usePrivateLinkConnection": bool,
                 },
-                api_version="2024-05-01-preview",
+                api_version="2024-11-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -108,7 +108,7 @@ class TestSqlManagementSyncGroupsOperationsAsync(AzureMgmtRecordedTestCase):
                 server_name="str",
                 database_name="str",
                 sync_group_name="str",
-                api_version="2024-05-01-preview",
+                api_version="2024-11-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -150,7 +150,7 @@ class TestSqlManagementSyncGroupsOperationsAsync(AzureMgmtRecordedTestCase):
                     "type": "str",
                     "usePrivateLinkConnection": bool,
                 },
-                api_version="2024-05-01-preview",
+                api_version="2024-11-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -165,7 +165,7 @@ class TestSqlManagementSyncGroupsOperationsAsync(AzureMgmtRecordedTestCase):
             server_name="str",
             database_name="str",
             sync_group_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -179,7 +179,7 @@ class TestSqlManagementSyncGroupsOperationsAsync(AzureMgmtRecordedTestCase):
             server_name="str",
             database_name="str",
             sync_group_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -196,7 +196,7 @@ class TestSqlManagementSyncGroupsOperationsAsync(AzureMgmtRecordedTestCase):
             start_time="str",
             end_time="str",
             type="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -211,7 +211,7 @@ class TestSqlManagementSyncGroupsOperationsAsync(AzureMgmtRecordedTestCase):
                 server_name="str",
                 database_name="str",
                 sync_group_name="str",
-                api_version="2024-05-01-preview",
+                api_version="2024-11-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -226,7 +226,7 @@ class TestSqlManagementSyncGroupsOperationsAsync(AzureMgmtRecordedTestCase):
             server_name="str",
             database_name="str",
             sync_group_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
 
         # please add some check logic here by yourself

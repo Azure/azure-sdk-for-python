@@ -62,7 +62,11 @@ if TYPE_CHECKING:
     )
 
 
-class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, StorageEncryptionMixin):  # type: ignore [misc]  # pylint: disable=too-many-public-methods
+class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public-methods
+    AsyncStorageAccountHostsMixin,
+    StorageAccountHostsMixin,
+    StorageEncryptionMixin
+):
     """A client to interact with a specific container, although that container
     may not yet exist.
 

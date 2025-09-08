@@ -7,10 +7,11 @@
 """
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to use the synchronous
-    `.evaluations` methods to create, get and list evaluations.
+    `.evaluations` methods to create, get and list evaluations. It uses additional
+    Azure OpenAI graders for evaluation.
 
 USAGE:
-    python sample_evaluations.py
+    python sample_evaluations_aoai_graders.py
 
     Before running the sample:
 
@@ -18,8 +19,16 @@ USAGE:
 
     Set these environment variables with your own values:
     1) PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
-       Azure AI Foundry project.
-    2) DATASET_NAME - Required. The name of the Dataset to create and use in this sample.
+       Azure AI Foundry project. It has the form: https://<account_name>.services.ai.azure.com/api/projects/<project_name>.
+    2) CONNECTION_NAME - Required. The name of the connection of type Azure Storage Account, to use for the dataset upload.
+    3) MODEL_ENDPOINT - Required. The Azure OpenAI endpoint associated with your Foundry project.
+       It can be found in the Foundry overview page. It has the form https://<account_name>.openai.azure.com.
+    4) MODEL_API_KEY - Required. The API key for the model endpoint. Can be found under "key" in the model details page
+       (click "Models + endpoints" and select your model to get to the model details page).
+    5) MODEL_DEPLOYMENT_NAME - Required. The name of the model deployment to use for evaluation.
+    6) DATASET_NAME - Optional. The name of the Dataset to create and use in this sample.
+    7) DATASET_VERSION - Optional. The version of the Dataset to create and use in this sample.
+    8) DATA_FOLDER - Optional. The folder path where the data files for upload are located.
 """
 
 import os
@@ -35,14 +44,11 @@ from azure.ai.projects.models import (
     DatasetVersion,
 )
 
-from dotenv import load_dotenv
-
-load_dotenv()
-
 endpoint = os.environ[
     "PROJECT_ENDPOINT"
 ]  # Sample : https://<account_name>.services.ai.azure.com/api/projects/<project_name>
-model_endpoint = os.environ["MODEL_ENDPOINT"]  # Sample : https://<account_name>.services.ai.azure.com
+connection_name = os.environ["CONNECTION_NAME"]
+model_endpoint = os.environ["MODEL_ENDPOINT"]  # Sample: https://<account_name>.openai.azure.com.
 model_api_key = os.environ["MODEL_API_KEY"]
 model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]  # Sample : gpt-4o-mini
 dataset_name = os.environ.get("DATASET_NAME", "dataset-test")
@@ -61,6 +67,7 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
             name=dataset_name,
             version=dataset_version,
             file_path=data_file,
+            connection_name=connection_name,
         )
         print(dataset)
 
@@ -149,7 +156,6 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
 
         print("Get evaluation")
         get_evaluation_response: Evaluation = project_client.evaluations.get(evaluation_response.name)
-
         print(get_evaluation_response)
 
         print("List evaluations")

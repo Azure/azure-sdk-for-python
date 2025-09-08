@@ -76,7 +76,7 @@ class ViolenceEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
             :caption: Initialize with threshold and call a ViolenceEvaluator.
     """
 
-    id = "azureml://registries/azureml/models/Violent-Content-Evaluator/versions/3"
+    id = "azureai://built-in/evaluators/violence"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
     _OPTIONAL_PARAMS = ["query"]
 

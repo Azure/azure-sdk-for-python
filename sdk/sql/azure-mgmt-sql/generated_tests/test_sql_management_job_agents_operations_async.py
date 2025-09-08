@@ -25,7 +25,7 @@ class TestSqlManagementJobAgentsOperationsAsync(AzureMgmtRecordedTestCase):
         response = self.client.job_agents.list_by_server(
             resource_group_name=resource_group.name,
             server_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestSqlManagementJobAgentsOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             server_name="str",
             job_agent_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -67,7 +67,7 @@ class TestSqlManagementJobAgentsOperationsAsync(AzureMgmtRecordedTestCase):
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-05-01-preview",
+                api_version="2024-11-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -82,7 +82,7 @@ class TestSqlManagementJobAgentsOperationsAsync(AzureMgmtRecordedTestCase):
                 resource_group_name=resource_group.name,
                 server_name="str",
                 job_agent_name="str",
-                api_version="2024-05-01-preview",
+                api_version="2024-11-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -106,7 +106,7 @@ class TestSqlManagementJobAgentsOperationsAsync(AzureMgmtRecordedTestCase):
                     "sku": {"name": "str", "capacity": 0, "family": "str", "size": "str", "tier": "str"},
                     "tags": {"str": "str"},
                 },
-                api_version="2024-05-01-preview",
+                api_version="2024-11-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 

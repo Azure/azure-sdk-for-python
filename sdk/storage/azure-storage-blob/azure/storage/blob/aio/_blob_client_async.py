@@ -10,7 +10,7 @@ from datetime import datetime
 from functools import partial
 from typing import (
     Any, AnyStr, AsyncIterable, Callable, cast, Dict, IO,
-    Iterable, List, Optional, overload, Tuple, Union,
+    Iterable, List, Optional, Tuple, Union,
     TYPE_CHECKING
 )
 from typing_extensions import Self
@@ -30,7 +30,6 @@ from ._upload_helpers import (
     upload_block_blob,
     upload_page_blob
 )
-from .._blob_client import StorageAccountHostsMixin
 from .._blob_client_helpers import (
     _abort_copy_options,
     _append_block_from_url_options,
@@ -74,6 +73,7 @@ from .._generated.aio import AzureBlobStorage
 from .._generated.models import CpkInfo
 from .._models import BlobType, BlobBlock, BlobProperties, BlobQueryError, PageRange
 from .._serialize import get_access_conditions, get_api_version, get_modify_conditions, get_version_id
+from .._shared.base_client import StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper, parse_connection_str
 from .._shared.policies_async import ExponentialRetry
 from .._shared.response_handlers import process_storage_error, return_response_headers
@@ -98,7 +98,11 @@ if TYPE_CHECKING:
     )
 
 
-class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, StorageEncryptionMixin):  # type: ignore [misc] # pylint: disable=too-many-public-methods
+class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-methods
+    AsyncStorageAccountHostsMixin,
+    StorageAccountHostsMixin,
+    StorageEncryptionMixin
+):
     """A client to interact with a specific blob, although that blob may not yet exist.
 
     :param str account_url:
@@ -165,12 +169,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             :caption: Creating the BlobClient from a SAS URL to a blob.
     """
     def __init__(
-            self, account_url: str,
-            container_name: str,
-            blob_name: str,
-            snapshot: Optional[Union[str, Dict[str, Any]]] = None,
-            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
-            **kwargs: Any
+        self, account_url: str,
+        container_name: str,
+        blob_name: str,
+        snapshot: Optional[Union[str, Dict[str, Any]]] = None,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
+        **kwargs: Any
     ) -> None:
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
         parsed_url, sas_token, path_snapshot = _parse_url(
@@ -641,26 +645,6 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         if blob_type == BlobType.PageBlob:
             return cast(Dict[str, Any], await upload_page_blob(**options))
         return cast(Dict[str, Any], await upload_append_blob(**options))
-
-    @overload
-    async def download_blob(
-        self, offset: Optional[int] = None,
-        length: Optional[int] = None,
-        *,
-        encoding: str,
-        **kwargs: Any
-    ) -> StorageStreamDownloader[str]:
-        ...
-
-    @overload
-    async def download_blob(
-        self, offset: Optional[int] = None,
-        length: Optional[int] = None,
-        *,
-        encoding: None = None,
-        **kwargs: Any
-    ) -> StorageStreamDownloader[bytes]:
-        ...
 
     @distributed_trace_async
     async def download_blob(

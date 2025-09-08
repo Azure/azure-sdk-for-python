@@ -18,8 +18,12 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 from .. import models as _models
 from .._utils.serialization import Deserializer, Serializer
 from ._configuration import AzureCommunicationCallAutomationServiceConfiguration
-from .operations import CallConnectionOperations, CallMediaOperations, CallRecordingOperations
-from .operations._operations import _AzureCommunicationCallAutomationServiceOperationsMixin
+from .operations import (
+    CallConnectionOperations,
+    CallMediaOperations,
+    CallRecordingOperations,
+    _AzureCommunicationCallAutomationServiceOperationsMixin,
+)
 
 
 class AzureCommunicationCallAutomationService(_AzureCommunicationCallAutomationServiceOperationsMixin):
@@ -37,7 +41,7 @@ class AzureCommunicationCallAutomationService(_AzureCommunicationCallAutomationS
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential
-    :keyword api_version: Api Version. Default value is "2025-05-15". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2025-06-15". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """

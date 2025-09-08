@@ -6,9 +6,11 @@ import os
 import json
 from typing import Any, Optional, Dict
 
+from azure.core.pipeline import PipelineResponse
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 from azure.core.pipeline.transport import HttpRequest
 from azure.core.credentials import AccessTokenInfo
+from azure.core.pipeline.policies import RetryPolicy
 
 from .. import CredentialUnavailableError
 from .._constants import EnvironmentVariables
@@ -29,6 +31,28 @@ PIPELINE_SETTINGS = {
     "retry_status": 5,
     "retry_total": 5,
 }
+
+
+class ImdsRetryPolicy(RetryPolicy):
+    """Custom retry policy for IMDS credential with extended retry duration for 410 responses.
+
+    This policy ensures that specifically for 410 status codes, the total exponential backoff duration
+    is at least 70 seconds to handle temporary IMDS endpoint unavailability.
+    For other status codes, it uses the standard retry behavior.
+    """
+
+    def __init__(self, **kwargs: Any) -> None:
+        # Increased backoff factor to ensure at least 70 seconds retry duration for 410 responses.
+        # Five retries, with each retry sleeping for [0.0s, 5.0s, 10.0s, 20.0s, 40.0s] between attempts (75s total)
+        self.backoff_factor_for_410 = 2.5
+        super().__init__(**kwargs)
+
+    def is_retry(self, settings: Dict[str, Any], response: PipelineResponse[Any, Any]) -> bool:
+        if response.http_response.status_code == 410:
+            settings["backoff"] = self.backoff_factor_for_410
+        else:
+            settings["backoff"] = self.backoff_factor
+        return super().is_retry(settings, response)
 
 
 def _get_request(scope: str, identity_config: Dict) -> HttpRequest:
@@ -58,7 +82,7 @@ def _check_forbidden_response(ex: HttpResponseError) -> None:
 
 class ImdsCredential(MsalManagedIdentityClient):
     def __init__(self, **kwargs: Any) -> None:
-        super(ImdsCredential, self).__init__(**kwargs)
+        super().__init__(retry_policy_class=ImdsRetryPolicy, **dict(PIPELINE_SETTINGS, **kwargs))
         self._config = kwargs
 
         if EnvironmentVariables.AZURE_POD_IDENTITY_AUTHORITY_HOST in os.environ:

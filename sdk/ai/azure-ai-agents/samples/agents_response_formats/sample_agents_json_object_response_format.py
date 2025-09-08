@@ -38,7 +38,7 @@ with project_client:
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-agent",
         instructions="You are helpful agent. You will respond with a JSON object.",
-        response_format=AgentsResponseFormat(type="json_object")
+        response_format=AgentsResponseFormat(type="json_object"),
     )
     print(f"Created agent, agent ID: {agent.id}")
 
@@ -48,7 +48,9 @@ with project_client:
     # List all threads for the agent
     threads = agents_client.threads.list()
 
-    message = agents_client.messages.create(thread_id=thread.id, role="user", content="Hello, give me a list of planets in our solar system.")
+    message = agents_client.messages.create(
+        thread_id=thread.id, role="user", content="Hello, give me a list of planets in our solar system."
+    )
     print(f"Created message, message ID: {message.id}")
 
     run = agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id)

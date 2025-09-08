@@ -76,7 +76,7 @@ class SexualEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
             :caption: Initialize with threshold and call a SexualEvaluator.
     """
 
-    id = "azureml://registries/azureml/models/Sexual-Content-Evaluator/versions/3"
+    id = "azureai://built-in/evaluators/sexual"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
     _OPTIONAL_PARAMS = ["query"]
 

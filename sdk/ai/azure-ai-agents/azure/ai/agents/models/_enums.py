@@ -401,6 +401,8 @@ class RunStepType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Represents a run step to create a message."""
     TOOL_CALLS = "tool_calls"
     """Represents a run step that calls tools."""
+    ACTIVITIES = "activities"
+    """Represents a run step with activities information."""
 
 
 class RunStreamEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):

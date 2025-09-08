@@ -37,6 +37,6 @@ def main():
     )
 
 
-# x-ms-original-file: specification/msi/resource-manager/Microsoft.ManagedIdentity/stable/2024-11-30/examples/IdentityDelete.json
+# x-ms-original-file: specification/msi/resource-manager/Microsoft.ManagedIdentity/stable/2023-01-31/examples/IdentityDelete.json
 if __name__ == "__main__":
     main()

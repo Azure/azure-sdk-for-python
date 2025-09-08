@@ -24,7 +24,7 @@ class TestSqlManagementFirewallRulesOperations(AzureMgmtRecordedTestCase):
         response = self.client.firewall_rules.list_by_server(
             resource_group_name=resource_group.name,
             server_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -39,7 +39,7 @@ class TestSqlManagementFirewallRulesOperations(AzureMgmtRecordedTestCase):
             parameters={
                 "values": [{"endIpAddress": "str", "id": "str", "name": "str", "startIpAddress": "str", "type": "str"}]
             },
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -52,7 +52,7 @@ class TestSqlManagementFirewallRulesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             server_name="str",
             firewall_rule_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -66,7 +66,7 @@ class TestSqlManagementFirewallRulesOperations(AzureMgmtRecordedTestCase):
             server_name="str",
             firewall_rule_name="str",
             parameters={"endIpAddress": "str", "id": "str", "name": "str", "startIpAddress": "str", "type": "str"},
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -79,7 +79,7 @@ class TestSqlManagementFirewallRulesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             server_name="str",
             firewall_rule_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
 
         # please add some check logic here by yourself

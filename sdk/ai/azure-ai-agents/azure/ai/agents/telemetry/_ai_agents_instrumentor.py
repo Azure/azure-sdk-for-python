@@ -18,7 +18,9 @@ from azure.ai.agents.models import AgentRunStream, AsyncAgentRunStream, RunStepM
 from azure.ai.agents.models._enums import (
     AgentsResponseFormatMode,
     MessageRole,
+    MessageStatus,
     RunStepStatus,
+    RunStepType,
 )
 from azure.ai.agents.models import (
     MessageAttachment,
@@ -28,6 +30,8 @@ from azure.ai.agents.models import (
     RunStepDeltaChunk,
     RunStepError,
     RunStepFunctionToolCall,
+    RunStepMcpToolCall,
+    RunStepOpenAPIToolCall,
     RunStepToolCallDetails,
     RunStepCodeInterpreterToolCall,
     RunStepBingGroundingToolCall,
@@ -127,13 +131,16 @@ class AIAgentsInstrumentor:
         :param enable_content_recording: Whether content recording is enabled as part
           of the traces or not. Content in this context refers to chat message content
           and function call tool related function names, function parameter names and
-          values. True will enable content recording, False will disable it. If no value
-          is provided, then the value read from environment variable
-          AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED is used. If the environment variable
-          is not found, then the value will default to False. Please note that successive calls
+          values. `True` will enable content recording, `False` will disable it. If no value
+          is provided, then the value read from environment variables
+          OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT and
+          AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED is used. The latter is supported
+          for legacy reasons. Applications are encouraged to use the former, which is defined by OTEL.
+          If the environment variable is not found, then the value will default to `False`.
+          Please note that successive calls
           to instrument will always apply the content recording value provided with the most
           recent call to instrument (including applying the environment variable if no value is
-          provided and defaulting to false if the environment variable is not found), even if
+          provided and defaulting to `False` if the environment variable is not found), even if
           instrument was already previously called without uninstrument being called in between
           the instrument calls.
         :type enable_content_recording: bool, optional
@@ -187,18 +194,47 @@ class _AIAgentsInstrumentorPreview:
         Enable trace instrumentation for AI Agents.
 
         :param enable_content_recording: Whether content recording is enabled as part
-        of the traces or not. Content in this context refers to chat message content
-        and function call tool related function names, function parameter names and
-        values. True will enable content recording, False will disable it. If no value
-        is provided, then the value read from environment variable
-        AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED is used. If the environment variable
-        is not found, then the value will default to False.
-
+          of the traces or not. Content in this context refers to chat message content
+          and function call tool related function names, function parameter names and
+          values. `True` will enable content recording, `False` will disable it. If no value
+          is provided, then the value read from environment variables
+          OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT and
+          AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED is used. The latter is supported
+          for legacy reasons. Applications are encouraged to use the former, which is defined by OTEL.
+          If the environment variable is not found, then the value will default to `False`.
+          Please note that successive calls
+          to instrument will always apply the content recording value provided with the most
+          recent call to instrument (including applying the environment variable if no value is
+          provided and defaulting to `False` if the environment variable is not found), even if
+          instrument was already previously called without uninstrument being called in between
+          the instrument calls.
         :type enable_content_recording: bool, optional
+
         """
         if enable_content_recording is None:
-            var_value = os.environ.get("AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED")
+
+            # AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED was introduced before the standard
+            # OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT was defined by OTEL. Support both
+            # of them moving forward, but only document the standard one.
+            var_value_new = os.environ.get("OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT")
+            var_value_old = os.environ.get("AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED")
+            var_value: Optional[str] = None
+
+            if var_value_new and var_value_old and var_value_new != var_value_old:
+                logger.error(
+                    "Environment variables OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT "
+                    "and AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED are both set, and "
+                    "their values differ. Message content recording in this run will be disabled "
+                    "as a result. Please set OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT only."
+                )
+                var_value = None
+            elif var_value_new:
+                var_value = var_value_new
+            elif var_value_old:
+                var_value = var_value_old
+
             enable_content_recording = self._str_to_bool(var_value)
+
         if not self.is_instrumented():
             self._instrument_agents(enable_content_recording)
         else:
@@ -407,7 +443,23 @@ class _AIAgentsInstrumentorPreview:
                     "type": t.type,
                     t.type: t.bing_grounding,
                 }
+            elif isinstance(t, RunStepOpenAPIToolCall):
+                tool_call = {
+                    "id": t.id,
+                    "type": t.type,
+                    'function': t.as_dict().get('function', {})
+                }
+            elif isinstance(t, RunStepMcpToolCall):
+                tool_call = {
+                    "id": t.id,
+                    "type": t.type,
+                    "arguments": t.arguments,
+                    "name": t.name,
+                    "output": t.output,
+                    "server_label": t.server_label or ""
+                }
             else:
+                # Works for Deep research
                 tool_details = t.as_dict()[t.type]
 
                 tool_call = {
@@ -2025,7 +2077,11 @@ class _AgentEventHandlerTraceWrapper(AgentEventHandler):
         else:
             retval = super().on_thread_message(message)  # pylint: disable=assignment-from-none # type: ignore
 
-        if message.status in {"completed", "incomplete"}:
+        # TODO: Workaround for issue where message.status may be IN_PROGRESS even after a thread.message.completed event has arrived.
+        # See work item 4636616 and 4636299 for details.
+        # When the work item is resolved, change this code back to:
+        # if message.status in {MessageStatus.COMPLETED, MessageStatus.INCOMPLETE}
+        if message.status in {MessageStatus.COMPLETED, MessageStatus.INCOMPLETE} or (message.status == MessageStatus.IN_PROGRESS and message.content):
             self.last_message = message
 
         return retval  # type: ignore
@@ -2049,14 +2105,14 @@ class _AgentEventHandlerTraceWrapper(AgentEventHandler):
             retval = super().on_run_step(step)  # pylint: disable=assignment-from-none # type: ignore
 
         if (
-            step.type == "tool_calls"
+            step.type == RunStepType.TOOL_CALLS
             and isinstance(step.step_details, RunStepToolCallDetails)
             and step.status == RunStepStatus.COMPLETED
         ):
             self.instrumentor._add_tool_assistant_message_event(  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
                 self.span, step
             )
-        elif step.type == "message_creation" and step.status == RunStepStatus.COMPLETED:
+        elif step.type == RunStepType.MESSAGE_CREATION and step.status == RunStepStatus.COMPLETED:
             self.instrumentor.add_thread_message_event(self.span, cast(ThreadMessage, self.last_message), step.usage)
             if (
                 self.span
@@ -2162,7 +2218,11 @@ class _AsyncAgentEventHandlerTraceWrapper(AsyncAgentEventHandler):
         else:
             retval = await super().on_thread_message(message)  # type: ignore
 
-        if message.status in {"completed", "incomplete"}:
+        # TODO: Workaround for issue where message.status may be IN_PROGRESS even after a thread.message.completed event has arrived.
+        # See work item 4636616 and 4636299 for details.
+        # When the work item is resolved, change this code back to:
+        # if message.status in {MessageStatus.COMPLETED, MessageStatus.INCOMPLETE}
+        if message.status in {MessageStatus.COMPLETED, MessageStatus.INCOMPLETE} or (message.status == MessageStatus.IN_PROGRESS and message.content):
             self.last_message = message
 
         return retval  # type: ignore
@@ -2186,14 +2246,14 @@ class _AsyncAgentEventHandlerTraceWrapper(AsyncAgentEventHandler):
             retval = await super().on_run_step(step)  # type: ignore
 
         if (
-            step.type == "tool_calls"
+            step.type == RunStepType.TOOL_CALLS
             and isinstance(step.step_details, RunStepToolCallDetails)
             and step.status == RunStepStatus.COMPLETED
         ):
             self.instrumentor._add_tool_assistant_message_event(  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
                 self.span, step
             )
-        elif step.type == "message_creation" and step.status == RunStepStatus.COMPLETED:
+        elif step.type == RunStepType.MESSAGE_CREATION and step.status == RunStepStatus.COMPLETED:
             self.instrumentor.add_thread_message_event(self.span, cast(ThreadMessage, self.last_message), step.usage)
             if (
                 self.span

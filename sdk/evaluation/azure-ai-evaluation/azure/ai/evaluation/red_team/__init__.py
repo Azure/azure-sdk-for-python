@@ -5,7 +5,7 @@
 try:
     from ._red_team import RedTeam
     from ._attack_strategy import AttackStrategy
-    from ._attack_objective_generator import RiskCategory
+    from ._attack_objective_generator import RiskCategory, SupportedLanguages
     from ._red_team_result import RedTeamResult
 except ImportError:
     raise ImportError(
@@ -18,4 +18,5 @@ __all__ = [
     "AttackStrategy",
     "RiskCategory",
     "RedTeamResult",
+    "SupportedLanguages",
 ]

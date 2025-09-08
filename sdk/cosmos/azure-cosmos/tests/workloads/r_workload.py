@@ -1,12 +1,9 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-import os
-import sys
 
 from azure.cosmos import documents
 from workload_utils import *
 from workload_configs import *
-sys.path.append(r"/")
 
 from azure.cosmos.aio import CosmosClient as AsyncClient
 import asyncio
@@ -14,7 +11,7 @@ import asyncio
 async def run_workload(client_id, client_logger):
     connectionPolicy = documents.ConnectionPolicy()
     connectionPolicy.UseMultipleWriteLocations = USE_MULTIPLE_WRITABLE_LOCATIONS
-    async with AsyncClient(COSMOS_URI, COSMOS_KEY, connection_policy=connectionPolicy,
+    async with AsyncClient(COSMOS_URI, COSMOS_CREDENTIAL, connection_policy=connectionPolicy,
                            preferred_locations=PREFERRED_LOCATIONS, excluded_locations=CLIENT_EXCLUDED_LOCATIONS,
                            enable_diagnostics_logging=True, logger=client_logger,
                            user_agent=get_user_agent(client_id)) as client:

@@ -258,5 +258,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
             return [item async for item in self._client._ReadPartitionKeyRanges(collection_link=self._resource_link)]
         query_ranges = self._partitioned_query_ex_info.get_query_ranges()
         return await self._routing_provider.get_overlapping_ranges(
-            self._resource_link, [routing_range.Range.ParseFromDict(range_as_dict) for range_as_dict in query_ranges]
+            self._resource_link,
+            [routing_range.Range.ParseFromDict(range_as_dict) for range_as_dict in query_ranges],
+            self._options
         )

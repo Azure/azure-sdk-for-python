@@ -23,6 +23,7 @@
 """
 from typing import TYPE_CHECKING, Optional
 
+from azure.cosmos._constants import _Constants
 from azure.cosmos.partition_key import _get_partition_key_from_partition_key_definition
 from azure.cosmos._global_partition_endpoint_manager_circuit_breaker_core import \
     _GlobalPartitionEndpointManagerForCircuitBreakerCore
@@ -62,17 +63,20 @@ class _GlobalPartitionEndpointManagerForCircuitBreakerAsync(_GlobalEndpointManag
         partition_key_definition = properties["partitionKey"]
         partition_key = _get_partition_key_from_partition_key_definition(partition_key_definition)
 
+        options = {}
+        if request.excluded_locations:
+            options[_Constants.Kwargs.EXCLUDED_LOCATIONS] = request.excluded_locations
         if HttpHeaders.PartitionKey in request.headers:
             partition_key_value = request.headers[HttpHeaders.PartitionKey]
             # get the partition key range for the given partition key
             epk_range = [partition_key._get_epk_range_for_partition_key(partition_key_value)]
             partition_ranges = await (self.client._routing_map_provider
-                                      .get_overlapping_ranges(container_link, epk_range))
+                                      .get_overlapping_ranges(container_link, epk_range, options))
             partition_range = Range.PartitionKeyRangeToRange(partition_ranges[0])
         elif HttpHeaders.PartitionKeyRangeID in request.headers:
             pk_range_id = request.headers[HttpHeaders.PartitionKeyRangeID]
             epk_range = await (self.client._routing_map_provider
-                           .get_range_by_partition_key_range_id(container_link, pk_range_id))
+                           .get_range_by_partition_key_range_id(container_link, pk_range_id, options))
             if not epk_range:
                 self.global_partition_endpoint_manager_core.log_warn_or_debug(
                     "Illegal state: partition key range cache not initialized correctly. "

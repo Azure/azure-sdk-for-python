@@ -137,9 +137,6 @@ __all__ = [
     "AzureOpenAITextSimilarityGrader",
     "AzureOpenAIScoreModelGrader",
     "AzureOpenAIPythonGrader",
-    # Include lazy imports in __all__ so they appear as available
-    "AIAgentConverter",
-    "SKAgentConverter",
 ]
 
 __all__.extend([p for p in _patch_all if p not in __all__])

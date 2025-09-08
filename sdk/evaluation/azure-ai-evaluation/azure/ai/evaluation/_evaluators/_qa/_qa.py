@@ -74,7 +74,7 @@ class QAEvaluator(MultiEvaluatorBase[Union[str, float]]):
         however, it is recommended to use the new keys moving forward as the old keys will be deprecated in the future.
     """
 
-    id = "qa"
+    id = "azureai://built-in/evaluators/qa"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     def __init__(

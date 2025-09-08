@@ -71,7 +71,7 @@ class SimilarityEvaluator(PromptyEvaluatorBase):
     _PROMPTY_FILE = "similarity.prompty"
     _RESULT_KEY = "similarity"
 
-    id = "similarity"
+    id = "azureai://built-in/evaluators/similarity"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override

@@ -29,7 +29,7 @@ class TestQuery(unittest.TestCase):
     connectionPolicy = config.connectionPolicy
     TEST_DATABASE_ID = config.TEST_DATABASE_ID
     is_emulator = config.is_emulator
-    credential = config.credential
+    credential = config.masterKey
 
     @classmethod
     def setUpClass(cls):

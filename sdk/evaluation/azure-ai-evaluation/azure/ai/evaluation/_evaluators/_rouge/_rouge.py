@@ -90,7 +90,7 @@ class RougeScoreEvaluator(EvaluatorBase):
             :caption: Initialize with a specified threshold and call a RougeScoreEvaluator with a four-gram rouge type.
     """
 
-    id = "azureml://registries/azureml/models/Rouge-Score-Evaluator/versions/3"
+    id = "azureai://built-in/evaluators/rouge_score"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override

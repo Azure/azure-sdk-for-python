@@ -1,5 +1,5 @@
--e ../../../tools/azure-sdk-tools
--e ../../core/azure-core
--e ../../identity/azure-identity
+-e ../../../eng/tools/azure-sdk-tools
+../../core/azure-core
+../../identity/azure-identity
 azure-mgmt-loganalytics
 aiohttp>=3.0

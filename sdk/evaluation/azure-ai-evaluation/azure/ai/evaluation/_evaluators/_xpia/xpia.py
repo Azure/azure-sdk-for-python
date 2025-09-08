@@ -67,7 +67,7 @@ class IndirectAttackEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
 
     """
 
-    id = "azureml://registries/azureml/models/Indirect-Attack-Evaluator/versions/3"
+    id = "azureai://built-in/evaluators/indirect_attack"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
     _OPTIONAL_PARAMS = ["query"]
 

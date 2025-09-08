@@ -46,6 +46,9 @@ from ._models import (
     AzureFunctionToolDefinition,
     AzureFunctionBinding,
     BingGroundingToolDefinition,
+    BrowserAutomationToolConnectionParameters,
+    BrowserAutomationToolDefinition,
+    BrowserAutomationToolParameters,
     CodeInterpreterToolDefinition,
     CodeInterpreterToolResource,
     ConnectedAgentToolDefinition,
@@ -1085,8 +1088,8 @@ class DeepResearchTool(Tool[DeepResearchToolDefinition]):
             )
 
         self._deep_research_details = DeepResearchDetails(
-            deep_research_model=deep_research_model,
-            deep_research_bing_grounding_connections=[
+            model=deep_research_model,
+            bing_grounding_connections=[
                 DeepResearchBingGroundingConnection(connection_id=bing_grounding_connection_id)
             ],
         )
@@ -1099,6 +1102,54 @@ class DeepResearchTool(Tool[DeepResearchToolDefinition]):
         :rtype: List[ToolDefinition]
         """
         return [DeepResearchToolDefinition(deep_research=self._deep_research_details)]
+
+    @property
+    def resources(self) -> ToolResources:
+        """
+        Get the tool resources.
+
+        :rtype: ToolResources
+        """
+        return ToolResources()
+
+    def execute(self, tool_call: Any) -> Any:
+        pass
+
+
+class BrowserAutomationTool(Tool[BrowserAutomationToolDefinition]):
+    """
+    A tool that allows your Agent to perform real-world web browser navigation tasks through natural language prompts.
+    """
+
+    def __init__(self, connection_id: str):
+        """
+        Initialize a Browser Automation tool with the ID of the connection to an Azure Playwright service.
+
+        :param connection_id: Connection ID to an Azure Playwright service, to be used by tool. Browser Automation tool allows only one connection.
+        :raises ValueError: If the connection ID is invalid.
+        """
+
+        if not _is_valid_connection_id(connection_id):
+            raise ValueError(
+                "Connection ID '"
+                + connection_id
+                + "' does not fit the format:"
+                + "'/subscriptions/<subscription_id>/resourceGroups/<resource_group_name>/"
+                + "providers/<provider_name>/accounts/<account_name>/projects/<project_name>/connections/<connection_name>'"
+            )
+
+        self._browser_automation_tool_parameters = BrowserAutomationToolParameters(
+            connection=BrowserAutomationToolConnectionParameters(id=connection_id)
+        )
+
+    @property
+    def definitions(self) -> List[BrowserAutomationToolDefinition]:
+        """
+        Get the Browser Automation tool definitions.
+
+        :rtype: List[ToolDefinition]
+        """
+        return [BrowserAutomationToolDefinition(browser_automation=self._browser_automation_tool_parameters)]
 
     @property
     def resources(self) -> ToolResources:
@@ -1380,13 +1431,26 @@ class CodeInterpreterTool(Tool[CodeInterpreterToolDefinition]):
 
     :param file_ids: A list of file IDs to interpret.
     :type file_ids: list[str]
+    :param data_sources: The list of data sources for the enterprise file search.
+    :type data_sources: list[VectorStoreDataSource]
+    :raises: ValueError if both file_ids and data_sources are provided.
     """
 
-    def __init__(self, file_ids: Optional[List[str]] = None):
-        if file_ids is None:
-            self.file_ids = set()
-        else:
+    _INVALID_CONFIGURATION = "file_ids and data_sources are mutually exclusive."
+
+    def __init__(
+        self,
+        file_ids: Optional[List[str]] = None,
+        data_sources: Optional[List[VectorStoreDataSource]] = None,
+    ):
+        if file_ids and data_sources:
+            raise ValueError(CodeInterpreterTool._INVALID_CONFIGURATION)
+        self.file_ids = set()
+        if file_ids:
             self.file_ids = set(file_ids)
+        self.data_sources: Dict[str, VectorStoreDataSource] = {}
+        if data_sources:
+            self.data_sources = {ds.asset_identifier: ds for ds in data_sources}
 
     def add_file(self, file_id: str) -> None:
         """
@@ -1394,8 +1458,23 @@ class CodeInterpreterTool(Tool[CodeInterpreterToolDefinition]):
 
         :param file_id: The ID of the file to interpret.
         :type file_id: str
+        :raises: ValueError if data_sources are provided.
         """
+        if self.data_sources:
+            raise ValueError(CodeInterpreterTool._INVALID_CONFIGURATION)
         self.file_ids.add(file_id)
+
+    def add_data_source(self, data_source: VectorStoreDataSource) -> None:
+        """
+        Add a data source to the list of data sources to interpret.
+
+        :param data_source: The new data source.
+        :type data_source: VectorStoreDataSource
+        :raises: ValueError if file_ids are provided.
+        """
+        if self.file_ids:
+            raise ValueError(CodeInterpreterTool._INVALID_CONFIGURATION)
+        self.data_sources[data_source.asset_identifier] = data_source
 
     def remove_file(self, file_id: str) -> None:
         """
@@ -1404,7 +1483,16 @@ class CodeInterpreterTool(Tool[CodeInterpreterToolDefinition]):
         :param file_id: The ID of the file to remove.
         :type file_id: str
         """
-        self.file_ids.remove(file_id)
+        self.file_ids.discard(file_id)
+
+    def remove_data_source(self, asset_identifier: str) -> None:
+        """
+        Remove The asset from data_sources.
+
+        :param asset_identifier: The asset identifier to remove.
+        :type asset_identifier: str
+        """
+        self.data_sources.pop(asset_identifier, None)
 
     @property
     def definitions(self) -> List[CodeInterpreterToolDefinition]:
@@ -1422,9 +1510,13 @@ class CodeInterpreterTool(Tool[CodeInterpreterToolDefinition]):
 
         :rtype: ToolResources
         """
-        if not self.file_ids:
+        if not self.file_ids and not self.data_sources:
             return ToolResources()
-        return ToolResources(code_interpreter=CodeInterpreterToolResource(file_ids=list(self.file_ids)))
+        if self.file_ids:
+            return ToolResources(code_interpreter=CodeInterpreterToolResource(file_ids=list(self.file_ids)))
+        return ToolResources(
+            code_interpreter=CodeInterpreterToolResource(data_sources=list(self.data_sources.values()))
+        )
 
     def execute(self, tool_call: Any) -> Any:
         pass
@@ -2103,6 +2195,7 @@ __all__: List[str] = [
     "AzureFunctionTool",
     "BaseAsyncAgentEventHandler",
     "BaseAgentEventHandler",
+    "BrowserAutomationTool",
     "CodeInterpreterTool",
     "ConnectedAgentTool",
     "DeepResearchTool",

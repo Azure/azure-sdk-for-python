@@ -21,11 +21,12 @@ USAGE:
                           page of your Azure AI Foundry portal.
     2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Azure AI Foundry project.
-    3) AZURE_BING_CONNECTION_ID - The connection id of the Bing connection, as found in the "Connected resources" tab
-       in your Azure AI Foundry project.
+    3) BING_CONNECTION_NAME - The name of a connection to the Bing search resource as it is
+       listed in Azure AI Foundry connected resources.
 """
 
 import os
+import re
 from typing import Any
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
@@ -45,7 +46,9 @@ from azure.ai.agents.models import (
 class MyEventHandler(AgentEventHandler):
 
     def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
-        print(f"Text delta received: {delta.text}")
+        # Do not print reference text as we will show actual citation instead.
+        if re.match(r"\u3010(.+)\u3011", delta.text) is None:
+            print(f"Text delta received: {delta.text}")
         if delta.delta.content and isinstance(delta.delta.content[0], MessageDeltaTextContent):
             delta_text_content = delta.delta.content[0]
             if delta_text_content.text and delta_text_content.text.annotations:
@@ -85,7 +88,7 @@ project_client = AIProjectClient(
 with project_client:
     agents_client = project_client.agents
 
-    bing_connection_id = os.environ["AZURE_BING_CONNECTION_ID"]
+    bing_connection_id = project_client.connections.get(os.environ["BING_CONNECTION_NAME"]).id
     print(f"Bing Connection ID: {bing_connection_id}")
 
     # Initialize agent bing tool and add the connection id
@@ -117,7 +120,12 @@ with project_client:
 
     response_message = agents_client.messages.get_last_message_by_role(thread_id=thread.id, role=MessageRole.AGENT)
     if response_message:
+        responses = []
         for text_message in response_message.text_messages:
-            print(f"Agent response: {text_message.text.value}")
+            responses.append(text_message.text.value)
+        message = " ".join(responses)
         for annotation in response_message.url_citation_annotations:
-            print(f"URL Citation: [{annotation.url_citation.title}]({annotation.url_citation.url})")
+            message = message.replace(
+                annotation.text, f" [{annotation.url_citation.title}]({annotation.url_citation.url})"
+            )
+        print(f"Agent response: {message}")

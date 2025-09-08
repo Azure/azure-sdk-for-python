@@ -62,7 +62,7 @@ class CoherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     _PROMPTY_FILE = "coherence.prompty"
     _RESULT_KEY = "coherence"
 
-    id = "azureml://registries/azureml/models/Coherence-Evaluator/versions/4"
+    id = "azureai://built-in/evaluators/coherence"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
