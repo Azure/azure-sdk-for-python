@@ -3,20 +3,22 @@ import os
 import argparse
 import traceback
 import sys
+import shutil
 
 from typing import Sequence, Optional, List, Any, Tuple
 from subprocess import check_call
 
+
 from ci_tools.parsing import ParsedSetup
-from ci_tools.functions import discover_targeted_packages, get_venv_call
+from ci_tools.functions import discover_targeted_packages, get_venv_call, install_into_venv, get_venv_python
 from ci_tools.variables import discover_repo_root
-from ci_tools.scenario import install_into_venv, get_venv_python
 from ci_tools.logging import logger
 
 # right now, we are assuming you HAVE to be in the azure-sdk-tools repo
 # we assume this because we don't know how a dev has installed this package, and might be
 # being called from within a site-packages folder. Due to that, we can't trust the location of __file__
 REPO_ROOT = discover_repo_root()
+
 
 class Check(abc.ABC):
     """
@@ -29,7 +31,9 @@ class Check(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def register(self, subparsers: "argparse._SubParsersAction", parent_parsers: Optional[List[argparse.ArgumentParser]] = None) -> None:
+    def register(
+        self, subparsers: "argparse._SubParsersAction", parent_parsers: Optional[List[argparse.ArgumentParser]] = None
+    ) -> None:
         """
         Register this check with the CLI subparsers.
 
@@ -48,8 +52,15 @@ class Check(abc.ABC):
 
     def create_venv(self, isolate: bool, venv_location: str) -> str:
         """Abstraction for creating a virtual environment."""
-        if (isolate):
+        if isolate:
             venv_cmd = get_venv_call(sys.executable)
+            venv_python = get_venv_python(venv_location)
+            if os.path.exists(venv_python):
+                logger.info(f"Reusing existing venv at {venv_python}")
+                return venv_python
+            else:
+                shutil.rmtree(venv_location, ignore_errors=True)
+
             check_call(venv_cmd + [venv_location])
 
             # TODO: we should reuse part of build_whl_for_req to integrate with PREBUILT_WHL_DIR so that we don't have to fresh build for each
@@ -73,7 +84,6 @@ class Check(abc.ABC):
         os.makedirs(staging_directory, exist_ok=True)
         return executable, staging_directory
 
-
     def get_targeted_directories(self, args: argparse.Namespace) -> List[ParsedSetup]:
         """
         Get the directories that are targeted for the check.
@@ -85,7 +95,9 @@ class Check(abc.ABC):
             try:
                 targeted.append(ParsedSetup.from_path(targeted_dir))
             except Exception as e:
-                logger.error("Error: Current directory does not appear to be a Python package (no setup.py or setup.cfg found). Remove '.' argument to run on child directories.")
+                logger.error(
+                    "Error: Current directory does not appear to be a Python package (no setup.py or setup.cfg found). Remove '.' argument to run on child directories."
+                )
                 logger.error(f"Exception: {e}")
                 return []
         else:
