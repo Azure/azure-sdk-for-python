@@ -190,18 +190,18 @@ class CustomerSdkStatsMetrics(metaclass=Singleton): # pylint: disable=too-many-i
                 for drop_code, reason_map in drop_code_map.items():
                     for reason, success_map in reason_map.items():
                         for success_tracker, count in success_map.items():
-                                if count > 0:
-                                    attributes = {
-                                    "language": self._customer_properties.language,
-                                    "version": self._customer_properties.version,
-                                    "compute_type": self._customer_properties.compute_type,
-                                    "drop.code": drop_code,
-                                    "drop.reason": reason,
-                                    "telemetry_type": telemetry_type
-                                }
-                                if telemetry_type in (_REQUEST, _DEPENDENCY) and success_tracker is not None:
-                                    attributes["telemetry_success"] = success_tracker
-                                observations.append(Observation(count, dict(attributes)))
+                            if count > 0:
+                                attributes = {
+                                "language": self._customer_properties.language,
+                                "version": self._customer_properties.version,
+                                "compute_type": self._customer_properties.compute_type,
+                                "drop.code": drop_code,
+                                "drop.reason": reason,
+                                "telemetry_type": telemetry_type
+                            }
+                            if telemetry_type in (_REQUEST, _DEPENDENCY) and success_tracker is not None:
+                                attributes["telemetry_success"] = success_tracker
+                            observations.append(Observation(count, dict(attributes)))
 
         return observations
 

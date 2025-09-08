@@ -250,18 +250,18 @@ def _get_customer_sdkstats_export_interval() -> int:
     return _DEFAULT_STATS_SHORT_EXPORT_INTERVAL
 
 def _get_telemetry_success_flag(envelope: TelemetryItem) -> Union[bool, None]:
-
     if not hasattr(envelope, "data") or envelope.data is None:
         return None
-        
+
     if not hasattr(envelope.data, "base_type") or envelope.data.base_type is None:
         return None
-        
+
     if not hasattr(envelope.data, "base_data") or envelope.data.base_data is None:
         return None
-        
+
     base_type = envelope.data.base_type
-    
+
     if base_type in ("RequestData", "RemoteDependencyData") and hasattr(envelope.data.base_data, "success"):
-        return envelope.data.base_data.success
+        if isinstance(envelope.data.base_data.success, bool):
+            return envelope.data.base_data.success
     return None
