@@ -447,9 +447,9 @@ class ShareFileClient(StorageAccountHostsMixin):
 
                 Restore - apply changes without further modification.
 
-        :paramtype file_property_semantics: Literal["New", "Restore"]
-        :keyword data: Initial data to upload. The limit is 4MB.
-        :paramtype data: IO[bytes] or bytes
+        :paramtype file_property_semantics: Optional[Literal["New", "Restore"]]
+        :keyword data: Optional initial data to upload, up to 4MB.
+        :paramtype data: Optional[Union[IO[bytes], bytes]]
         :keyword int length: Specifies the number of bytes being uploaded in the initial data.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
