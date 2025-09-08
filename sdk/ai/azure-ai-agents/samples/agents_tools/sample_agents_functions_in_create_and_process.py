@@ -64,6 +64,7 @@ toolset.add(all_functions_tool)
 
 
 # Declare a run handler to execute function tool call manually
+# [START run_handler]
 class MyRunHandler(RunHandler):
     def submit_function_call_output(
         self,
@@ -73,12 +74,14 @@ class MyRunHandler(RunHandler):
         **kwargs: Any,
     ) -> Any:
         function_name = tool_call_details.name
-        if function_name in send_email.__name__:
+        if function_name == send_email.__name__:  
             # Parse arguments from tool call
             args_dict = json.loads(tool_call_details.arguments) if tool_call_details.arguments else {}
             # Call the function directly with the arguments
             return send_email(**args_dict)
 
+
+# [END run_handler]
 
 with project_client:
     agents_client = project_client.agents
@@ -110,7 +113,9 @@ with project_client:
     )
     print(f"Created message, ID: {message.id}")
 
+    # [START pass_run_handler_to_create_and_process]
     run = agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id, run_handler=MyRunHandler)
+    # [END pass_run_handler_to_create_and_process]
 
     print(f"Run completed with status: {run.status}")
 

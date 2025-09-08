@@ -66,6 +66,7 @@ mcp_tool.allow_tool(search_api_code)
 print(f"Allowed tools: {mcp_tool.allowed_tools}")
 
 
+# [START run_handler]
 class MyRunHandler(RunHandler):
     def submit_mcp_tool_approval(self, run: ThreadRun, tool_call: RequiredMcpToolCall, **kwargs: Any) -> ToolApproval:
         return ToolApproval(
@@ -73,6 +74,9 @@ class MyRunHandler(RunHandler):
             approve=True,
             headers=mcp_tool.headers,
         )
+
+
+# [END run_handler]
 
 
 # Create agent with MCP tool and process agent run
@@ -109,7 +113,9 @@ with project_client:
     mcp_tool.update_headers("SuperSecret", "123456")
 
     # mcp_tool.set_approval_mode("never")  # Uncomment to disable approval requirement
+    # [START pass_run_handler_to_create_and_process]
     run = agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id, run_handler=MyRunHandler)
+    # [END pass_run_handler_to_create_and_process]
     print(f"Created run, ID: {run.id}")
 
     print(f"Run completed with status: {run.status}")

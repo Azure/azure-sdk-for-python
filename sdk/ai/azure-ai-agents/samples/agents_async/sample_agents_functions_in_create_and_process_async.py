@@ -43,13 +43,12 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 package_dir = os.path.abspath(os.path.join(current_dir, os.pardir, os.pardir))
 if package_dir not in sys.path:
     sys.path.insert(0, package_dir)
-from samples.utils.user_functions import (
-    fetch_current_datetime,
+from utils.user_async_functions import (
+    fetch_current_datetime_async,
     fetch_weather,
-    send_email,
-    calculate_sum,
+    send_email_async,
 )
-from samples.utils.user_functions import user_functions
+from utils.user_async_functions import user_async_functions
 
 
 async def main():
@@ -59,7 +58,7 @@ async def main():
     )
 
     # Create a toolset with all functions
-    all_functions_tool = AsyncFunctionTool(user_functions)
+    all_functions_tool = AsyncFunctionTool(user_async_functions)
     toolset = AsyncToolSet()
     toolset.add(all_functions_tool)
 
@@ -73,20 +72,19 @@ async def main():
             **kwargs: Any,
         ) -> Any:
             function_name = tool_call_details.name
-            if function_name in send_email.__name__:
+            if function_name == send_email_async.__name__:  
                 # Parse arguments from tool call
                 args_dict = json.loads(tool_call_details.arguments) if tool_call_details.arguments else {}
                 # Call the function directly with the arguments
-                return send_email(**args_dict)
+                return await send_email_async(**args_dict)
 
     async with project_client:
         agents_client = project_client.agents
 
         # Enable auto function calling for the subset of safe functions
         auto_functions = {
-            fetch_current_datetime,
+            fetch_current_datetime_async,
             fetch_weather,
-            calculate_sum,
         }
         agents_client.enable_auto_function_calls(auto_functions)
 

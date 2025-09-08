@@ -2005,7 +2005,7 @@ class RunHandler:
         :param tool_call: The MCP tool call requiring approval.
         :type tool_call: RequiredMcpToolCall
         :paramtype kwargs: Additional keyword arguments for extensibility.
-        :return: A populated ``ToolApproval`` instance on approval, or ``None`` to decline.
+        :return: A populated ``ToolApproval`` instance to approve or decline.
         :rtype: ToolApproval
         """
         error = "run_handler isn't provided or submit_mcp_tool_approval isn't implemented to approve MCP tool calls."
@@ -2143,7 +2143,7 @@ class AsyncRunHandler:
         :param tool_call: The MCP tool call requiring approval.
         :type tool_call: RequiredMcpToolCall
         :paramtype kwargs: Additional keyword arguments for extensibility.
-        :return: A populated ``ToolApproval`` instance on approval, or ``None`` to decline.
+        :return: A populated ``ToolApproval`` instance to approve or decline.
         :rtype: ToolApproval
         """
         error = "run_handler isn't provided or submit_mcp_tool_approval isn't implemented to approve MCP tool calls."
