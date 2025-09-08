@@ -41,7 +41,7 @@ from azure.monitor.opentelemetry._constants import (
 )
 from azure.monitor.opentelemetry._types import ConfigurationValue
 from azure.monitor.opentelemetry.exporter._quickpulse import (  # pylint: disable=import-error,no-name-in-module
-    enable_live_metrics,
+    enable_live_metrics as _enable_live_metrics,
 )
 from azure.monitor.opentelemetry.exporter._quickpulse._processor import (  # pylint: disable=import-error,no-name-in-module
     _QuickpulseLogRecordProcessor,
@@ -291,7 +291,7 @@ def _setup_metrics(configurations: Dict[str, ConfigurationValue]):
 
 
 def _setup_live_metrics(configurations):
-    enable_live_metrics(**configurations)
+    _enable_live_metrics(**configurations)
 
 
 class _EntryPointDistFinder:
