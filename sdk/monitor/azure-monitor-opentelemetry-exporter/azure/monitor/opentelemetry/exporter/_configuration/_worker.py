@@ -135,7 +135,8 @@ class _ConfigurationWorker:
         while not self._shutdown_event.is_set():
             try:
                 with self._interval_lock:
-                    self._refresh_interval = self._configuration_manager.get_configuration_and_refresh_interval(_ONE_SETTINGS_PYTHON_TARGETING)
+                    self._refresh_interval = \
+                    self._configuration_manager.get_configuration_and_refresh_interval(_ONE_SETTINGS_PYTHON_TARGETING)
             except Exception as ex:  # pylint: disable=broad-exception-caught
                 logger.warning("Configuration refresh failed: %s", ex)
 

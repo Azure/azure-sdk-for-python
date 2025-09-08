@@ -384,10 +384,10 @@ class Singleton(type):
     Supports multiple singleton classes by maintaining a separate instance
     for each class that uses this metaclass.
     """
-    _instances = {}
+    _instances = {}  # type: ignore
     _lock = threading.Lock()
 
-    def __call__(cls, *args: Any, **kwargs: Any):
+    def __call__(cls, *args: Any, **kwargs: Any) -> Any:
         if cls not in cls._instances:
             with cls._lock:
                 # Double-check pattern to avoid race conditions

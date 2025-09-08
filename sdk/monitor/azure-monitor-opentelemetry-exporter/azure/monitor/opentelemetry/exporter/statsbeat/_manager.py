@@ -45,6 +45,7 @@ class StatsbeatConfig:
         self.disable_offline_storage = disable_offline_storage
         self.credential = credential
         self.distro_version = distro_version
+        self.connection_string: str = ""
 
         # Use provided connection_string or generate from endpoint
         if connection_string:
@@ -105,9 +106,6 @@ class StatsbeatConfig:
         if not base_config.endpoint:
             logger.warning("Base configuration is missing a valid endpoint.")
             return None
-        if not base_config.disable_offline_storage:
-            logger.warning("Base configuration is missing a valid offline storage setting.")
-            return None
 
         connection_string = _get_connection_string_for_region_from_config(base_config.region, config_dict)
         if connection_string is None:
@@ -115,12 +113,17 @@ class StatsbeatConfig:
             connection_string = base_config.connection_string
 
         # TODO: Add support for disable_offline_storage from config_dict once supported in control plane
+        disable_offline_storage = config_dict.get("disable_offline_storage")
+        if isinstance(disable_offline_storage, str) and disable_offline_storage.lower() == "true":
+            disable_offline_storage = True
+        else:
+            disable_offline_storage = False
 
         return cls(
             endpoint=base_config.endpoint,
             region=base_config.region,
             instrumentation_key=base_config.instrumentation_key,
-            disable_offline_storage=base_config.disable_offline_storage, # TODO: Use config value once supported
+            disable_offline_storage=disable_offline_storage, # TODO: Use config value once supported
             credential=base_config.credential,
             distro_version=base_config.distro_version,
             connection_string=connection_string
@@ -152,7 +155,7 @@ class StatsbeatManager(metaclass=Singleton):
         self._config: Optional[StatsbeatConfig] = None  # type: ignore
 
     @staticmethod
-    def _validate_config(config: 'StatsbeatConfig') -> bool:
+    def _validate_config(config: StatsbeatConfig) -> bool:
         """Validate that a configuration has all required fields.
 
         :param config: Configuration to validate
@@ -172,7 +175,7 @@ class StatsbeatManager(metaclass=Singleton):
             return False
         return True
 
-    def initialize(self, config: 'StatsbeatConfig') -> bool:  # pyright: ignore
+    def initialize(self, config: StatsbeatConfig) -> bool:  # pyright: ignore
         # Initialize statsbeat collection with thread safety.
         if not is_statsbeat_enabled():
             return False
@@ -304,7 +307,7 @@ class StatsbeatManager(metaclass=Singleton):
         self._config = None
 
         # Initialize with new config
-        success = self._do_initialize(new_config)
+        success: bool = self._do_initialize(new_config)
 
         if not success:
             # If reinitialization failed, mark as not initialized

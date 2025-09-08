@@ -19,7 +19,7 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     get_local_storage_setup_state_exception,
     get_customer_sdkstats_metrics,
 )
-
+from collections.abc import Iterable
 
 from azure.monitor.opentelemetry.exporter._constants import (
     _APPLICATIONINSIGHTS_STATS_CONNECTION_STRING_ENV_NAME,
@@ -293,6 +293,11 @@ def _get_connection_string_for_region_from_config(target_region: str, settings: 
         if isinstance(supported_boundaries, str):
             supported_boundaries = json.loads(supported_boundaries)
 
+        # supported_boundaries should be a list
+        if not isinstance(supported_boundaries, Iterable):
+            logger.warning("Supported data boundaries is not iterable")
+            return default_connection_string
+
         # Check each supported boundary to find the region
         for boundary in supported_boundaries:
             # Skip DEFAULT
@@ -315,7 +320,7 @@ def _get_connection_string_for_region_from_config(target_region: str, settings: 
 
                     if connection_string:
                         return connection_string
-                    
+
                     logger.warning("Connection string key '%s' not found in configuration",
                                     connection_string_key)
 

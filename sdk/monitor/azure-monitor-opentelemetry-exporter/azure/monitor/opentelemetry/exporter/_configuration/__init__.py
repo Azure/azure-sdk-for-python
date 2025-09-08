@@ -70,6 +70,7 @@ class _ConfigurationManager(metaclass=Singleton):
             except Exception as ex:  # pylint: disable=broad-except
                 logger.warning("Callback failed: %s", ex)
 
+    # pylint: disable=too-many-statements
     def get_configuration_and_refresh_interval(self, query_dict: Optional[Dict[str, str]] = None) -> int:
         """Fetch configuration from OneSettings and update local cache atomically.
         

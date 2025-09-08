@@ -15,7 +15,7 @@ AAD_AUDIENCE = "aadaudience"
 uuid_regex_pattern = re.compile("^[0-9a-f]{8}-" "[0-9a-f]{4}-" + "[0-9a-f]{4}-" "[0-9a-f]{4}-" "[0-9a-f]{12}$")
 
 # Pattern to extract region from ingestion endpoint URL
-# Examples: 
+# Examples:
 # - https://westeurope-5.in.applicationinsights.azure.com/ -> westeurope
 # - https://westeurope.in.applicationinsights.azure.com/ -> westeurope
 # - https://eastus-1.in.applicationinsights.azure.com/ -> eastus
@@ -74,7 +74,7 @@ class ConnectionStringParser:
         self.aad_audience = (
             code_cs.get(AAD_AUDIENCE) or env_cs.get(AAD_AUDIENCE)  # type: ignore
         )
-        
+
         # Extract region information
         self.region = self._extract_region()  # type: ignore
 
@@ -90,7 +90,7 @@ class ConnectionStringParser:
             match = region_from_endpoint_pattern.match(endpoint)
             if match:
                 return match.group(1)
-        
+
         return None
 
     def _validate_instrumentation_key(self) -> None:

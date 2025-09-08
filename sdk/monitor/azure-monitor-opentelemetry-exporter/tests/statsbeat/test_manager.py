@@ -137,6 +137,7 @@ class TestStatsbeatConfig(unittest.TestCase):
             region="westus",
             instrumentation_key="test-key",
             credential="test_credential",
+            disable_offline_storage=False,
             distro_version="1.0.0"
         )
         
