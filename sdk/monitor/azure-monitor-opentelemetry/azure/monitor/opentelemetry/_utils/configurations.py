@@ -6,7 +6,7 @@
 
 from logging import getLogger, Formatter
 from os import environ
-from typing import Dict
+from typing import Dict, Any
 
 from opentelemetry.environment_variables import (
     OTEL_LOGS_EXPORTER,
