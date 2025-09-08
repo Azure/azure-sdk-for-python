@@ -17,7 +17,7 @@ from .import_all import import_all
 from .mypy import mypy
 from .pylint import pylint
 from .sphinx import sphinx
-from.black import black
+from .black import black
 
 from ci_tools.logging import configure_logging, logger
 
