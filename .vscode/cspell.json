@@ -643,7 +643,8 @@
     {
       "filename": "sdk/identity/azure-identity/tests/*.py",
       "words": [
-        "infile"
+        "infile",
+        "acrs"
       ]
     },
     {
