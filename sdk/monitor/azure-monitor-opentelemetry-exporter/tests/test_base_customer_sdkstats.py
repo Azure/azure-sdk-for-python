@@ -459,11 +459,16 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
     
     def test_track_dropped_items_client_exception_failed_request(self):
         """Test that CLIENT_EXCEPTION is properly tracked with telemetry_success=False in dropped items."""
+        # Import here to avoid circular import
+        from azure.monitor.opentelemetry.exporter.statsbeat._state import get_customer_sdkstats_metrics
+        
         exporter = self._create_exporter_with_customer_sdkstats_enabled()
         
-        exporter._customer_sdkstats_metrics.count_dropped_items = mock.Mock()
+        # Get customer sdkstats metrics from global state
+        customer_metrics = get_customer_sdkstats_metrics()
+        self.assertIsNotNone(customer_metrics)
+        customer_metrics.count_dropped_items = mock.Mock()
 
-        # Create a properly configured RequestData envelope with success=False
         from azure.monitor.opentelemetry.exporter._generated.models import RequestData, MonitorBase
         request_envelope = TelemetryItem(
             name="Test Request", 
@@ -475,34 +480,39 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
                     url="http://test.com",
                     id="test-id",
                     duration="PT1S",
-                    response_code="500",  # Error response code
-                    success=False  # Set success to False to test telemetry_success=False
+                    response_code="500",
+                    success=False
                 )
             )
         )
         
         envelopes = [request_envelope]
 
-        exporter._customer_sdkstats_metrics.count_dropped_items.reset_mock()
+        customer_metrics.count_dropped_items.reset_mock()
 
         from azure.monitor.opentelemetry.exporter.statsbeat._utils import _track_dropped_items
-        _track_dropped_items(exporter._customer_sdkstats_metrics, envelopes, DropCode.CLIENT_EXCEPTION,_exception_categories.CLIENT_EXCEPTION.value)
+        with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._utils.get_customer_sdkstats_metrics", return_value=customer_metrics):
+            _track_dropped_items(envelopes, DropCode.CLIENT_EXCEPTION, _exception_categories.CLIENT_EXCEPTION.value)
 
-        exporter._customer_sdkstats_metrics.count_dropped_items.assert_called_once_with(
+        customer_metrics.count_dropped_items.assert_called_once_with(
             1,
             'REQUEST',
             DropCode.CLIENT_EXCEPTION,
-            False,  # This should match success=False in the RequestData
+            False,
             _exception_categories.CLIENT_EXCEPTION.value
         )
         
     def test_track_dropped_items_client_exception_successful_dependency(self):
         """Test that CLIENT_EXCEPTION is properly tracked with telemetry_success=True for RemoteDependencyData."""
+        # Import here to avoid circular import
+        from azure.monitor.opentelemetry.exporter.statsbeat._state import get_customer_sdkstats_metrics
+        
         exporter = self._create_exporter_with_customer_sdkstats_enabled()
         
-        exporter._customer_sdkstats_metrics.count_dropped_items = mock.Mock()
+        customer_metrics = get_customer_sdkstats_metrics()
+        self.assertIsNotNone(customer_metrics)
+        customer_metrics.count_dropped_items = mock.Mock()
 
-        # Create a properly configured RemoteDependencyData envelope with success=True
         from azure.monitor.opentelemetry.exporter._generated.models import RemoteDependencyData, MonitorBase
         dependency_envelope = TelemetryItem(
             name="Test Dependency", 
@@ -523,16 +533,17 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
         
         envelopes = [dependency_envelope]
 
-        exporter._customer_sdkstats_metrics.count_dropped_items.reset_mock()
+        customer_metrics.count_dropped_items.reset_mock()
 
         from azure.monitor.opentelemetry.exporter.statsbeat._utils import _track_dropped_items
-        _track_dropped_items(exporter._customer_sdkstats_metrics, envelopes, DropCode.CLIENT_EXCEPTION, _exception_categories.CLIENT_EXCEPTION.value)
+        with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._utils.get_customer_sdkstats_metrics", return_value=customer_metrics):
+            _track_dropped_items(envelopes, DropCode.CLIENT_EXCEPTION, _exception_categories.CLIENT_EXCEPTION.value)
 
-        exporter._customer_sdkstats_metrics.count_dropped_items.assert_called_once_with(
+        customer_metrics.count_dropped_items.assert_called_once_with(
             1,
-            'DEPENDENCY',  # Correct type from the envelope's base_type mapped to telemetry type
+            'DEPENDENCY',
             DropCode.CLIENT_EXCEPTION,
-            True,  # This should match success=True in the RemoteDependencyData
+            True,
             _exception_categories.CLIENT_EXCEPTION.value
         )
 
