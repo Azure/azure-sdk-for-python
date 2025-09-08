@@ -460,7 +460,7 @@ class JSONLDataFileLoader:
         self.filename = filename
 
     def load(self) -> pd.DataFrame:
-        return pd.read_json(self.filename, lines=True, dtype=str)
+        return pd.read_json(self.filename, lines=True, dtype=object)
 
 
 class CSVDataFileLoader:
