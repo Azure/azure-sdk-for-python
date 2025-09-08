@@ -45,9 +45,10 @@ from azure.ai.agents.models import (
     MessageInputTextBlock,
     MessageInputImageUrlBlock,
     RequiredComputerUseToolCall,
-    SubmitToolOutputsAction
+    SubmitToolOutputsAction,
 )
 from azure.identity import DefaultAzureCredential
+
 
 def image_to_base64(image_path: str) -> str:
     """
@@ -67,6 +68,7 @@ def image_to_base64(image_path: str) -> str:
         return base64.b64encode(file_data).decode("utf-8")
     except Exception as exc:
         raise OSError(f"Error reading file '{image_path}'") from exc
+
 
 asset_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../assets/cua_screenshot.jpg"))
 action_result_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../assets/cua_screenshot_next.jpg"))
@@ -91,15 +93,16 @@ with project_client:
         tools=computer_use.definitions,
     )
 
-
     print(f"Created agent, ID: {agent.id}")
 
     # Create thread for communication
     thread = agents_client.threads.create()
     print(f"Created thread, ID: {thread.id}")
 
-    input_message = ("I can see a web browser with bing.com open and the cursor in the search box."
-                     "Type 'movies near me' without pressing Enter or any other key. Only type 'movies near me'.")
+    input_message = (
+        "I can see a web browser with bing.com open and the cursor in the search box."
+        "Type 'movies near me' without pressing Enter or any other key. Only type 'movies near me'."
+    )
     image_base64 = image_to_base64(asset_file_path)
     img_url = f"data:image/jpeg;base64,{image_base64}"
     url_param = MessageImageUrlParam(url=img_url, detail="high")
@@ -108,17 +111,13 @@ with project_client:
         MessageInputImageUrlBlock(image_url=url_param),
     ]
     # Create message to thread
-    message = agents_client.messages.create(
-        thread_id=thread.id,
-        role=MessageRole.USER,
-        content=content_blocks
-    )
+    message = agents_client.messages.create(thread_id=thread.id, role=MessageRole.USER, content=content_blocks)
     print(f"Created message, ID: {message.id}")
 
     run = agents_client.runs.create(thread_id=thread.id, agent_id=agent.id)
     print(f"Created run, ID: {run.id}")
 
-    #create a fake screenshot showing the text typed in
+    # create a fake screenshot showing the text typed in
     result_image_base64 = image_to_base64(action_result_file_path)
     result_img_url = f"data:image/jpeg;base64,{result_image_base64}"
     computer_screenshot = ComputerScreenshot(image_url=result_img_url)
@@ -144,25 +143,19 @@ with project_client:
                         print(f"Executing computer use action: {action.type}")
                         if isinstance(action, TypeAction):
                             print(f"  Text to type: {action.text}")
-                            #add hook to input text in managed environment API here
-                            
-                            #add a fake screenshot showing the text typed in
+                            # add hook to input text in managed environment API here
+
+                            # add a fake screenshot showing the text typed in
                             tool_outputs.append(
-                                ComputerToolOutput(
-                                    tool_call_id=tool_call.id,
-                                    output=computer_screenshot
-                                )
+                                ComputerToolOutput(tool_call_id=tool_call.id, output=computer_screenshot)
                             )
                         if isinstance(action, ComputerScreenshot):
                             print(f"  Screenshot requested")
-                            #add hook to take screenshot in managed environment API here
-                            
-                            #add a fake screenshot showing the text typed in
+                            # add hook to take screenshot in managed environment API here
+
+                            # add a fake screenshot showing the text typed in
                             tool_outputs.append(
-                                ComputerToolOutput(
-                                    tool_call_id=tool_call.id,
-                                    output=computer_screenshot
-                                )
+                                ComputerToolOutput(tool_call_id=tool_call.id, output=computer_screenshot)
                             )
                     except Exception as e:
                         print(f"Error executing tool_call {tool_call.id}: {e}")
@@ -170,7 +163,6 @@ with project_client:
             print(f"Tool outputs: {tool_outputs}")
             if tool_outputs:
                 agents_client.runs.submit_tool_outputs(thread_id=thread.id, run_id=run.id, tool_outputs=tool_outputs)
-
 
         print(f"Current run status: {run.status}")
 
