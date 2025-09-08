@@ -114,16 +114,14 @@ class StatsbeatConfig:
 
         # TODO: Add support for disable_offline_storage from config_dict once supported in control plane
         disable_offline_storage = config_dict.get("disable_offline_storage")
-        if isinstance(disable_offline_storage, str) and disable_offline_storage.lower() == "true":
-            disable_offline_storage = True
-        else:
-            disable_offline_storage = False
+        disable_offline_storage_config = isinstance(disable_offline_storage, str) \
+            and disable_offline_storage.lower() == "true"
 
         return cls(
             endpoint=base_config.endpoint,
             region=base_config.region,
             instrumentation_key=base_config.instrumentation_key,
-            disable_offline_storage=disable_offline_storage, # TODO: Use config value once supported
+            disable_offline_storage=disable_offline_storage_config, # TODO: Use config value once supported
             credential=base_config.credential,
             distro_version=base_config.distro_version,
             connection_string=connection_string

@@ -3,6 +3,7 @@
 import os
 import logging
 import json
+from collections.abc import Iterable
 from typing import Optional, List, Tuple, Dict
 from requests import ReadTimeout, Timeout
 from azure.core.exceptions import ServiceRequestTimeoutError
@@ -19,7 +20,6 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     get_local_storage_setup_state_exception,
     get_customer_sdkstats_metrics,
 )
-from collections.abc import Iterable
 
 from azure.monitor.opentelemetry.exporter._constants import (
     _APPLICATIONINSIGHTS_STATS_CONNECTION_STRING_ENV_NAME,
@@ -260,6 +260,7 @@ def _get_customer_sdkstats_export_interval() -> int:
 
 ## OneSettings Config
 
+# pylint: disable=too-many-return-statements
 def _get_connection_string_for_region_from_config(target_region: str, settings: Dict[str, str]) -> Optional[str]:
     """Get the appropriate stats connection string for the given region.
 
