@@ -30,7 +30,7 @@ USAGE:
     Set this environment variables with your own values:
     PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
                        page of your Azure AI Foundry portal.
-    OPENAPI_CONNECTION_ID - the connection ID for the OpenAPI connection, taken from Azure AI Foundry.
+    PROJECT_OPENAPI_CONNECTION_NAME - the connection name for the OpenAPI connection, taken from Azure AI Foundry.
     MODEL_DEPLOYMENT_NAME - name of the model deployment in the project to use Agents against
 """
 
@@ -48,7 +48,7 @@ project_client = AIProjectClient(
 )
 
 model_name = os.environ["MODEL_DEPLOYMENT_NAME"]
-connection_id = os.environ["OPENAPI_CONNECTION_ID"]
+connection_id = project_client.connections.get(os.environ["PROJECT_OPENAPI_CONNECTION_NAME"]).id
 
 print(connection_id)
 

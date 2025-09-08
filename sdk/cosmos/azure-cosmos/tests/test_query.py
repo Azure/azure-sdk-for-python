@@ -29,7 +29,7 @@ class TestQuery(unittest.TestCase):
     connectionPolicy = config.connectionPolicy
     TEST_DATABASE_ID = config.TEST_DATABASE_ID
     is_emulator = config.is_emulator
-    credential = config.credential
+    credential = config.masterKey
 
     @classmethod
     def setUpClass(cls):
@@ -469,6 +469,22 @@ class TestQuery(unittest.TestCase):
 
         self.assertEqual(second_page['id'], second_page_fetched_with_continuation_token['id'])
 
+    def test_cross_partition_query_with_none_partition_key(self):
+        created_collection = self.created_db.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
+        document_definition = {'pk': 'pk1', 'id': str(uuid.uuid4())}
+        created_collection.create_item(body=document_definition)
+        document_definition = {'pk': 'pk2', 'id': str(uuid.uuid4())}
+        created_collection.create_item(body=document_definition)
+
+        query = 'SELECT * from c'
+        query_iterable = created_collection.query_items(
+            query=query,
+            partition_key=None,
+            enable_cross_partition_query=True
+        )
+
+        assert len(list(query_iterable)) >= 2
+
     def _validate_distinct_on_different_types_and_field_orders(self, collection, query, expected_results,
                                                                get_mock_result):
         self.count = 0
@@ -492,6 +508,20 @@ class TestQuery(unittest.TestCase):
         ], enable_cross_partition_query=True)
 
         self.assertListEqual(list(query_results), [None])
+
+    def test_value_max_query_results(self):
+        container = self.created_db.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
+        container.upsert_item(
+            {"id": str(uuid.uuid4()), "isComplete": True, "version": 3, "lookupVersion": "console_version"})
+        container.upsert_item(
+            {"id": str(uuid.uuid4()), "isComplete": True, "version": 2, "lookupVersion": "console_version"})
+        query = "Select value max(c.version) FROM c where c.isComplete = true and c.lookupVersion = @lookupVersion"
+        query_results = container.query_items(query, parameters=[
+            {"name": "@lookupVersion", "value": "console_version"}  # cspell:disable-line
+        ], enable_cross_partition_query=True)
+        item_list = list(query_results)
+        assert len(item_list) == 1
+        assert item_list[0] == 3
 
     def test_continuation_token_size_limit_query(self):
         container = self.created_db.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)

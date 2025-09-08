@@ -18,40 +18,6 @@ if TYPE_CHECKING:
 JSON = MutableMapping[str, Any]
 
 
-class Action(_serialization.Model):
-    """Action descriptor.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    AlertingAction, LogToMetricAction
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar odata_type: Specifies the action. Supported values - AlertingAction, LogToMetricAction.
-     Required.
-    :vartype odata_type: str
-    """
-
-    _validation = {
-        "odata_type": {"required": True},
-    }
-
-    _attribute_map = {
-        "odata_type": {"key": "odata\\.type", "type": "str"},
-    }
-
-    _subtype_map = {
-        "odata_type": {
-            "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.AlertingAction": "AlertingAction",
-            "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.LogToMetricAction": "LogToMetricAction",
-        }
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.odata_type: Optional[str] = None
-
-
 class ActionDetail(_serialization.Model):
     """The action detail.
 
@@ -110,6 +76,44 @@ class ActionDetail(_serialization.Model):
         self.sub_state = sub_state
         self.send_time = send_time
         self.detail = detail
+
+
+class ActionGroup(_serialization.Model):
+    """A pointer to an Azure Action Group.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar action_group_id: The resource ID of the Action Group. This cannot be null or empty.
+     Required.
+    :vartype action_group_id: str
+    :ivar webhook_properties: the dictionary of custom properties to include with the post
+     operation. These data are appended to the webhook payload.
+    :vartype webhook_properties: dict[str, str]
+    """
+
+    _validation = {
+        "action_group_id": {"required": True},
+    }
+
+    _attribute_map = {
+        "action_group_id": {"key": "actionGroupId", "type": "str"},
+        "webhook_properties": {"key": "webhookProperties", "type": "{str}"},
+    }
+
+    def __init__(
+        self, *, action_group_id: str, webhook_properties: Optional[Dict[str, str]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword action_group_id: The resource ID of the Action Group. This cannot be null or empty.
+         Required.
+        :paramtype action_group_id: str
+        :keyword webhook_properties: the dictionary of custom properties to include with the post
+         operation. These data are appended to the webhook payload.
+        :paramtype webhook_properties: dict[str, str]
+        """
+        super().__init__(**kwargs)
+        self.action_group_id = action_group_id
+        self.webhook_properties = webhook_properties
 
 
 class ActionGroupList(_serialization.Model):
@@ -381,209 +385,80 @@ class ActionGroupResource(AzureResource):
         self.event_hub_receivers = event_hub_receivers
 
 
-class ActivityLogAlertActionGroup(_serialization.Model):
-    """A pointer to an Azure Action Group.
+class ActionList(_serialization.Model):
+    """A list of Activity Log Alert rule actions.
 
-    All required parameters must be populated in order to send to server.
-
-    :ivar action_group_id: The resourceId of the action group. This cannot be null or empty.
-     Required.
-    :vartype action_group_id: str
-    :ivar webhook_properties: the dictionary of custom properties to include with the post
-     operation. These data are appended to the webhook payload.
-    :vartype webhook_properties: dict[str, str]
-    """
-
-    _validation = {
-        "action_group_id": {"required": True},
-    }
-
-    _attribute_map = {
-        "action_group_id": {"key": "actionGroupId", "type": "str"},
-        "webhook_properties": {"key": "webhookProperties", "type": "{str}"},
-    }
-
-    def __init__(
-        self, *, action_group_id: str, webhook_properties: Optional[Dict[str, str]] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword action_group_id: The resourceId of the action group. This cannot be null or empty.
-         Required.
-        :paramtype action_group_id: str
-        :keyword webhook_properties: the dictionary of custom properties to include with the post
-         operation. These data are appended to the webhook payload.
-        :paramtype webhook_properties: dict[str, str]
-        """
-        super().__init__(**kwargs)
-        self.action_group_id = action_group_id
-        self.webhook_properties = webhook_properties
-
-
-class ActivityLogAlertActionList(_serialization.Model):
-    """A list of activity log alert actions.
-
-    :ivar action_groups: The list of activity log alerts.
-    :vartype action_groups: list[~azure.mgmt.monitor.models.ActivityLogAlertActionGroup]
+    :ivar action_groups: The list of the Action Groups.
+    :vartype action_groups: list[~azure.mgmt.monitor.models.ActionGroup]
     """
 
     _attribute_map = {
-        "action_groups": {"key": "actionGroups", "type": "[ActivityLogAlertActionGroup]"},
+        "action_groups": {"key": "actionGroups", "type": "[ActionGroup]"},
     }
 
-    def __init__(
-        self, *, action_groups: Optional[List["_models.ActivityLogAlertActionGroup"]] = None, **kwargs: Any
-    ) -> None:
+    def __init__(self, *, action_groups: Optional[List["_models.ActionGroup"]] = None, **kwargs: Any) -> None:
         """
-        :keyword action_groups: The list of activity log alerts.
-        :paramtype action_groups: list[~azure.mgmt.monitor.models.ActivityLogAlertActionGroup]
+        :keyword action_groups: The list of the Action Groups.
+        :paramtype action_groups: list[~azure.mgmt.monitor.models.ActionGroup]
         """
         super().__init__(**kwargs)
         self.action_groups = action_groups
 
 
-class ActivityLogAlertAllOfCondition(_serialization.Model):
-    """An Activity Log alert condition that is met when all its member conditions are met.
+class Actions(_serialization.Model):
+    """Actions to invoke when the alert fires.
 
-    All required parameters must be populated in order to send to server.
-
-    :ivar all_of: The list of activity log alert conditions. Required.
-    :vartype all_of: list[~azure.mgmt.monitor.models.ActivityLogAlertLeafCondition]
-    """
-
-    _validation = {
-        "all_of": {"required": True},
-    }
-
-    _attribute_map = {
-        "all_of": {"key": "allOf", "type": "[ActivityLogAlertLeafCondition]"},
-    }
-
-    def __init__(self, *, all_of: List["_models.ActivityLogAlertLeafCondition"], **kwargs: Any) -> None:
-        """
-        :keyword all_of: The list of activity log alert conditions. Required.
-        :paramtype all_of: list[~azure.mgmt.monitor.models.ActivityLogAlertLeafCondition]
-        """
-        super().__init__(**kwargs)
-        self.all_of = all_of
-
-
-class ActivityLogAlertLeafCondition(_serialization.Model):
-    """An Activity Log alert condition that is met by comparing an activity log field and value.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar field: The name of the field that this condition will examine. The possible values for
-     this field are (case-insensitive): 'resourceId', 'category', 'caller', 'level',
-     'operationName', 'resourceGroup', 'resourceProvider', 'status', 'subStatus', 'resourceType', or
-     anything beginning with 'properties.'. Required.
-    :vartype field: str
-    :ivar equals: The field value will be compared to this value (case-insensitive) to determine if
-     the condition is met. Required.
-    :vartype equals: str
-    """
-
-    _validation = {
-        "field": {"required": True},
-        "equals": {"required": True},
-    }
-
-    _attribute_map = {
-        "field": {"key": "field", "type": "str"},
-        "equals": {"key": "equals", "type": "str"},
-    }
-
-    def __init__(self, *, field: str, equals: str, **kwargs: Any) -> None:
-        """
-        :keyword field: The name of the field that this condition will examine. The possible values for
-         this field are (case-insensitive): 'resourceId', 'category', 'caller', 'level',
-         'operationName', 'resourceGroup', 'resourceProvider', 'status', 'subStatus', 'resourceType', or
-         anything beginning with 'properties.'. Required.
-        :paramtype field: str
-        :keyword equals: The field value will be compared to this value (case-insensitive) to determine
-         if the condition is met. Required.
-        :paramtype equals: str
-        """
-        super().__init__(**kwargs)
-        self.field = field
-        self.equals = equals
-
-
-class ActivityLogAlertList(_serialization.Model):
-    """A list of activity log alerts.
-
-    :ivar value: The list of activity log alerts.
-    :vartype value: list[~azure.mgmt.monitor.models.ActivityLogAlertResource]
-    :ivar next_link: Provides the link to retrieve the next set of elements.
-    :vartype next_link: str
+    :ivar action_groups: Action Group resource Ids to invoke when the alert fires.
+    :vartype action_groups: list[str]
+    :ivar custom_properties: The properties of an alert payload.
+    :vartype custom_properties: dict[str, str]
+    :ivar action_properties: The properties of an action properties.
+    :vartype action_properties: dict[str, str]
     """
 
     _attribute_map = {
-        "value": {"key": "value", "type": "[ActivityLogAlertResource]"},
-        "next_link": {"key": "nextLink", "type": "str"},
+        "action_groups": {"key": "actionGroups", "type": "[str]"},
+        "custom_properties": {"key": "customProperties", "type": "{str}"},
+        "action_properties": {"key": "actionProperties", "type": "{str}"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["_models.ActivityLogAlertResource"]] = None,
-        next_link: Optional[str] = None,
+        action_groups: Optional[List[str]] = None,
+        custom_properties: Optional[Dict[str, str]] = None,
+        action_properties: Optional[Dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword value: The list of activity log alerts.
-        :paramtype value: list[~azure.mgmt.monitor.models.ActivityLogAlertResource]
-        :keyword next_link: Provides the link to retrieve the next set of elements.
-        :paramtype next_link: str
+        :keyword action_groups: Action Group resource Ids to invoke when the alert fires.
+        :paramtype action_groups: list[str]
+        :keyword custom_properties: The properties of an alert payload.
+        :paramtype custom_properties: dict[str, str]
+        :keyword action_properties: The properties of an action properties.
+        :paramtype action_properties: dict[str, str]
         """
         super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
+        self.action_groups = action_groups
+        self.custom_properties = custom_properties
+        self.action_properties = action_properties
 
 
-class ActivityLogAlertPatchBody(_serialization.Model):
-    """An activity log alert object for the body of patch operations.
-
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar enabled: Indicates whether this activity log alert is enabled. If an activity log alert
-     is not enabled, then none of its actions will be activated.
-    :vartype enabled: bool
-    """
-
-    _attribute_map = {
-        "tags": {"key": "tags", "type": "{str}"},
-        "enabled": {"key": "properties.enabled", "type": "bool"},
-    }
-
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, enabled: bool = True, **kwargs: Any) -> None:
-        """
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
-        :keyword enabled: Indicates whether this activity log alert is enabled. If an activity log
-         alert is not enabled, then none of its actions will be activated.
-        :paramtype enabled: bool
-        """
-        super().__init__(**kwargs)
-        self.tags = tags
-        self.enabled = enabled
-
-
-class Resource(_serialization.Model):
-    """An azure resource object.
+class AzureResourceAutoGenerated(_serialization.Model):
+    """An Azure resource object.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to server.
-
-    :ivar id: Azure resource Id.
+    :ivar id: The resource Id.
     :vartype id: str
-    :ivar name: Azure resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Azure resource type.
+    :ivar type: The type of the resource.
     :vartype type: str
-    :ivar location: Resource location. Required.
+    :ivar location: The location of the resource. Azure Activity Log Alert rules are supported on
+     Global, West Europe and North Europe regions.
     :vartype location: str
-    :ivar tags: Resource tags.
+    :ivar tags: The tags of the resource.
     :vartype tags: dict[str, str]
     """
 
@@ -591,7 +466,6 @@ class Resource(_serialization.Model):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
-        "location": {"required": True},
     }
 
     _attribute_map = {
@@ -602,11 +476,12 @@ class Resource(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, location: str = "global", tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
-        :keyword location: Resource location. Required.
+        :keyword location: The location of the resource. Azure Activity Log Alert rules are supported
+         on Global, West Europe and North Europe regions.
         :paramtype location: str
-        :keyword tags: Resource tags.
+        :keyword tags: The tags of the resource.
         :paramtype tags: dict[str, str]
         """
         super().__init__(**kwargs)
@@ -617,35 +492,34 @@ class Resource(_serialization.Model):
         self.tags = tags
 
 
-class ActivityLogAlertResource(Resource):
-    """An activity log alert resource.
+class ActivityLogAlertResource(AzureResourceAutoGenerated):
+    """An Activity Log Alert rule resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to server.
-
-    :ivar id: Azure resource Id.
+    :ivar id: The resource Id.
     :vartype id: str
-    :ivar name: Azure resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Azure resource type.
+    :ivar type: The type of the resource.
     :vartype type: str
-    :ivar location: Resource location. Required.
+    :ivar location: The location of the resource. Azure Activity Log Alert rules are supported on
+     Global, West Europe and North Europe regions.
     :vartype location: str
-    :ivar tags: Resource tags.
+    :ivar tags: The tags of the resource.
     :vartype tags: dict[str, str]
-    :ivar scopes: A list of resourceIds that will be used as prefixes. The alert will only apply to
-     activityLogs with resourceIds that fall under one of these prefixes. This list must include at
-     least one item.
+    :ivar scopes: A list of resource IDs that will be used as prefixes. The alert will only apply
+     to Activity Log events with resource IDs that fall under one of these prefixes. This list must
+     include at least one item.
     :vartype scopes: list[str]
-    :ivar enabled: Indicates whether this activity log alert is enabled. If an activity log alert
-     is not enabled, then none of its actions will be activated.
-    :vartype enabled: bool
     :ivar condition: The condition that will cause this alert to activate.
-    :vartype condition: ~azure.mgmt.monitor.models.ActivityLogAlertAllOfCondition
+    :vartype condition: ~azure.mgmt.monitor.models.AlertRuleAllOfCondition
     :ivar actions: The actions that will activate when the condition is met.
-    :vartype actions: ~azure.mgmt.monitor.models.ActivityLogAlertActionList
-    :ivar description: A description of this activity log alert.
+    :vartype actions: ~azure.mgmt.monitor.models.ActionList
+    :ivar enabled: Indicates whether this Activity Log Alert rule is enabled. If an Activity Log
+     Alert rule is not enabled, then none of its actions will be activated.
+    :vartype enabled: bool
+    :ivar description: A description of this Activity Log Alert rule.
     :vartype description: str
     """
 
@@ -653,7 +527,6 @@ class ActivityLogAlertResource(Resource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
-        "location": {"required": True},
     }
 
     _attribute_map = {
@@ -663,48 +536,49 @@ class ActivityLogAlertResource(Resource):
         "location": {"key": "location", "type": "str"},
         "tags": {"key": "tags", "type": "{str}"},
         "scopes": {"key": "properties.scopes", "type": "[str]"},
+        "condition": {"key": "properties.condition", "type": "AlertRuleAllOfCondition"},
+        "actions": {"key": "properties.actions", "type": "ActionList"},
         "enabled": {"key": "properties.enabled", "type": "bool"},
-        "condition": {"key": "properties.condition", "type": "ActivityLogAlertAllOfCondition"},
-        "actions": {"key": "properties.actions", "type": "ActivityLogAlertActionList"},
         "description": {"key": "properties.description", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        location: str,
+        location: str = "global",
         tags: Optional[Dict[str, str]] = None,
         scopes: Optional[List[str]] = None,
+        condition: Optional["_models.AlertRuleAllOfCondition"] = None,
+        actions: Optional["_models.ActionList"] = None,
         enabled: bool = True,
-        condition: Optional["_models.ActivityLogAlertAllOfCondition"] = None,
-        actions: Optional["_models.ActivityLogAlertActionList"] = None,
         description: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword location: Resource location. Required.
+        :keyword location: The location of the resource. Azure Activity Log Alert rules are supported
+         on Global, West Europe and North Europe regions.
         :paramtype location: str
-        :keyword tags: Resource tags.
+        :keyword tags: The tags of the resource.
         :paramtype tags: dict[str, str]
-        :keyword scopes: A list of resourceIds that will be used as prefixes. The alert will only apply
-         to activityLogs with resourceIds that fall under one of these prefixes. This list must include
-         at least one item.
+        :keyword scopes: A list of resource IDs that will be used as prefixes. The alert will only
+         apply to Activity Log events with resource IDs that fall under one of these prefixes. This list
+         must include at least one item.
         :paramtype scopes: list[str]
-        :keyword enabled: Indicates whether this activity log alert is enabled. If an activity log
-         alert is not enabled, then none of its actions will be activated.
-        :paramtype enabled: bool
         :keyword condition: The condition that will cause this alert to activate.
-        :paramtype condition: ~azure.mgmt.monitor.models.ActivityLogAlertAllOfCondition
+        :paramtype condition: ~azure.mgmt.monitor.models.AlertRuleAllOfCondition
         :keyword actions: The actions that will activate when the condition is met.
-        :paramtype actions: ~azure.mgmt.monitor.models.ActivityLogAlertActionList
-        :keyword description: A description of this activity log alert.
+        :paramtype actions: ~azure.mgmt.monitor.models.ActionList
+        :keyword enabled: Indicates whether this Activity Log Alert rule is enabled. If an Activity Log
+         Alert rule is not enabled, then none of its actions will be activated.
+        :paramtype enabled: bool
+        :keyword description: A description of this Activity Log Alert rule.
         :paramtype description: str
         """
         super().__init__(location=location, tags=tags, **kwargs)
         self.scopes = scopes
-        self.enabled = enabled
         self.condition = condition
         self.actions = actions
+        self.enabled = enabled
         self.description = description
 
 
@@ -817,67 +691,207 @@ class AgentSettingsSpec(_serialization.Model):
         self.logs = logs
 
 
-class AlertingAction(Action):
-    """Specify action need to be taken when rule type is Alert.
+class AlertRuleAllOfCondition(_serialization.Model):
+    """An Activity Log Alert rule condition that is met when all its member conditions are met.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar odata_type: Specifies the action. Supported values - AlertingAction, LogToMetricAction.
-     Required.
-    :vartype odata_type: str
-    :ivar severity: Severity of the alert. Required. Known values are: "0", "1", "2", "3", and "4".
-    :vartype severity: str or ~azure.mgmt.monitor.models.AlertSeverity
-    :ivar azns_action: Azure action group reference.
-    :vartype azns_action: ~azure.mgmt.monitor.models.AzNsActionGroup
-    :ivar throttling_in_min: time (in minutes) for which Alerts should be throttled or suppressed.
-    :vartype throttling_in_min: int
-    :ivar trigger: The trigger condition that results in the alert rule being. Required.
-    :vartype trigger: ~azure.mgmt.monitor.models.TriggerCondition
+    :ivar all_of: The list of Activity Log Alert rule conditions. Required.
+    :vartype all_of: list[~azure.mgmt.monitor.models.AlertRuleAnyOfOrLeafCondition]
     """
 
     _validation = {
-        "odata_type": {"required": True},
-        "severity": {"required": True},
-        "trigger": {"required": True},
+        "all_of": {"required": True},
     }
 
     _attribute_map = {
-        "odata_type": {"key": "odata\\.type", "type": "str"},
-        "severity": {"key": "severity", "type": "str"},
-        "azns_action": {"key": "aznsAction", "type": "AzNsActionGroup"},
-        "throttling_in_min": {"key": "throttlingInMin", "type": "int"},
-        "trigger": {"key": "trigger", "type": "TriggerCondition"},
+        "all_of": {"key": "allOf", "type": "[AlertRuleAnyOfOrLeafCondition]"},
+    }
+
+    def __init__(self, *, all_of: List["_models.AlertRuleAnyOfOrLeafCondition"], **kwargs: Any) -> None:
+        """
+        :keyword all_of: The list of Activity Log Alert rule conditions. Required.
+        :paramtype all_of: list[~azure.mgmt.monitor.models.AlertRuleAnyOfOrLeafCondition]
+        """
+        super().__init__(**kwargs)
+        self.all_of = all_of
+
+
+class AlertRuleLeafCondition(_serialization.Model):
+    """An Activity Log Alert rule condition that is met by comparing the field and value of an
+    Activity Log event.
+    This condition must contain 'field' and either 'equals' or 'containsAny'.
+
+    :ivar field: The name of the Activity Log event's field that this condition will examine.
+     The possible values for this field are (case-insensitive): 'resourceId', 'category', 'caller',
+     'level', 'operationName', 'resourceGroup', 'resourceProvider', 'status', 'subStatus',
+     'resourceType', or anything beginning with 'properties'.
+    :vartype field: str
+    :ivar equals: The value of the event's field will be compared to this value (case-insensitive)
+     to determine if the condition is met.
+    :vartype equals: str
+    :ivar contains_any: The value of the event's field will be compared to the values in this array
+     (case-insensitive) to determine if the condition is met.
+    :vartype contains_any: list[str]
+    """
+
+    _attribute_map = {
+        "field": {"key": "field", "type": "str"},
+        "equals": {"key": "equals", "type": "str"},
+        "contains_any": {"key": "containsAny", "type": "[str]"},
     }
 
     def __init__(
         self,
         *,
-        severity: Union[str, "_models.AlertSeverity"],
-        trigger: "_models.TriggerCondition",
-        azns_action: Optional["_models.AzNsActionGroup"] = None,
-        throttling_in_min: Optional[int] = None,
+        field: Optional[str] = None,
+        equals: Optional[str] = None,
+        contains_any: Optional[List[str]] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword severity: Severity of the alert. Required. Known values are: "0", "1", "2", "3", and
-         "4".
-        :paramtype severity: str or ~azure.mgmt.monitor.models.AlertSeverity
-        :keyword azns_action: Azure action group reference.
-        :paramtype azns_action: ~azure.mgmt.monitor.models.AzNsActionGroup
-        :keyword throttling_in_min: time (in minutes) for which Alerts should be throttled or
-         suppressed.
-        :paramtype throttling_in_min: int
-        :keyword trigger: The trigger condition that results in the alert rule being. Required.
-        :paramtype trigger: ~azure.mgmt.monitor.models.TriggerCondition
+        :keyword field: The name of the Activity Log event's field that this condition will examine.
+         The possible values for this field are (case-insensitive): 'resourceId', 'category', 'caller',
+         'level', 'operationName', 'resourceGroup', 'resourceProvider', 'status', 'subStatus',
+         'resourceType', or anything beginning with 'properties'.
+        :paramtype field: str
+        :keyword equals: The value of the event's field will be compared to this value
+         (case-insensitive) to determine if the condition is met.
+        :paramtype equals: str
+        :keyword contains_any: The value of the event's field will be compared to the values in this
+         array (case-insensitive) to determine if the condition is met.
+        :paramtype contains_any: list[str]
         """
         super().__init__(**kwargs)
-        self.odata_type: str = (
-            "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.AlertingAction"
-        )
-        self.severity = severity
-        self.azns_action = azns_action
-        self.throttling_in_min = throttling_in_min
-        self.trigger = trigger
+        self.field = field
+        self.equals = equals
+        self.contains_any = contains_any
+
+
+class AlertRuleAnyOfOrLeafCondition(AlertRuleLeafCondition):
+    """An Activity Log Alert rule condition that is met when all its member conditions are met.
+    Each condition can be of one of the following types:
+    **Important**\\ : Each type has its unique subset of properties. Properties from different
+    types CANNOT exist in one condition.
+
+
+    * **Leaf Condition -** must contain 'field' and either 'equals' or 'containsAny'.
+      *Please note, 'anyOf' should **not** be set in a Leaf Condition.*
+
+      * **AnyOf Condition -** must contain **only** 'anyOf' (which is an array of Leaf Conditions).
+        *Please note, 'field', 'equals' and 'containsAny' should **not** be set in an AnyOf
+    Condition.*.
+
+    :ivar field: The name of the Activity Log event's field that this condition will examine.
+     The possible values for this field are (case-insensitive): 'resourceId', 'category', 'caller',
+     'level', 'operationName', 'resourceGroup', 'resourceProvider', 'status', 'subStatus',
+     'resourceType', or anything beginning with 'properties'.
+    :vartype field: str
+    :ivar equals: The value of the event's field will be compared to this value (case-insensitive)
+     to determine if the condition is met.
+    :vartype equals: str
+    :ivar contains_any: The value of the event's field will be compared to the values in this array
+     (case-insensitive) to determine if the condition is met.
+    :vartype contains_any: list[str]
+    :ivar any_of: An Activity Log Alert rule condition that is met when at least one of its member
+     leaf conditions are met.
+    :vartype any_of: list[~azure.mgmt.monitor.models.AlertRuleLeafCondition]
+    """
+
+    _attribute_map = {
+        "field": {"key": "field", "type": "str"},
+        "equals": {"key": "equals", "type": "str"},
+        "contains_any": {"key": "containsAny", "type": "[str]"},
+        "any_of": {"key": "anyOf", "type": "[AlertRuleLeafCondition]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        field: Optional[str] = None,
+        equals: Optional[str] = None,
+        contains_any: Optional[List[str]] = None,
+        any_of: Optional[List["_models.AlertRuleLeafCondition"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword field: The name of the Activity Log event's field that this condition will examine.
+         The possible values for this field are (case-insensitive): 'resourceId', 'category', 'caller',
+         'level', 'operationName', 'resourceGroup', 'resourceProvider', 'status', 'subStatus',
+         'resourceType', or anything beginning with 'properties'.
+        :paramtype field: str
+        :keyword equals: The value of the event's field will be compared to this value
+         (case-insensitive) to determine if the condition is met.
+        :paramtype equals: str
+        :keyword contains_any: The value of the event's field will be compared to the values in this
+         array (case-insensitive) to determine if the condition is met.
+        :paramtype contains_any: list[str]
+        :keyword any_of: An Activity Log Alert rule condition that is met when at least one of its
+         member leaf conditions are met.
+        :paramtype any_of: list[~azure.mgmt.monitor.models.AlertRuleLeafCondition]
+        """
+        super().__init__(field=field, equals=equals, contains_any=contains_any, **kwargs)
+        self.any_of = any_of
+
+
+class AlertRuleList(_serialization.Model):
+    """A list of Activity Log Alert rules.
+
+    :ivar value: The list of Activity Log Alert rules.
+    :vartype value: list[~azure.mgmt.monitor.models.ActivityLogAlertResource]
+    :ivar next_link: Provides the link to retrieve the next set of elements.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[ActivityLogAlertResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["_models.ActivityLogAlertResource"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: The list of Activity Log Alert rules.
+        :paramtype value: list[~azure.mgmt.monitor.models.ActivityLogAlertResource]
+        :keyword next_link: Provides the link to retrieve the next set of elements.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class AlertRulePatchObject(_serialization.Model):
+    """An Activity Log Alert rule object for the body of patch operations.
+
+    :ivar tags: The resource tags.
+    :vartype tags: dict[str, str]
+    :ivar enabled: Indicates whether this Activity Log Alert rule is enabled. If an Activity Log
+     Alert rule is not enabled, then none of its actions will be activated.
+    :vartype enabled: bool
+    """
+
+    _attribute_map = {
+        "tags": {"key": "tags", "type": "{str}"},
+        "enabled": {"key": "properties.enabled", "type": "bool"},
+    }
+
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, enabled: bool = True, **kwargs: Any) -> None:
+        """
+        :keyword tags: The resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword enabled: Indicates whether this Activity Log Alert rule is enabled. If an Activity Log
+         Alert rule is not enabled, then none of its actions will be activated.
+        :paramtype enabled: bool
+        """
+        super().__init__(**kwargs)
+        self.tags = tags
+        self.enabled = enabled
 
 
 class ArmRoleReceiver(_serialization.Model):
@@ -1188,7 +1202,7 @@ class AutoscaleProfile(_serialization.Model):
         self.recurrence = recurrence
 
 
-class ResourceAutoGenerated(_serialization.Model):
+class Resource(_serialization.Model):
     """The autoscale setting resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1248,7 +1262,7 @@ class ResourceAutoGenerated(_serialization.Model):
         self.system_data: Optional["_models.SystemData"] = None
 
 
-class AutoscaleSettingResource(ResourceAutoGenerated):
+class AutoscaleSettingResource(Resource):
     """The autoscale setting resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1490,47 +1504,6 @@ class AutoscaleSettingResourcePatch(_serialization.Model):
         self.name = name
         self.target_resource_uri = target_resource_uri
         self.target_resource_location = target_resource_location
-
-
-class AzNsActionGroup(_serialization.Model):
-    """Azure action group.
-
-    :ivar action_group: Azure Action Group reference.
-    :vartype action_group: list[str]
-    :ivar email_subject: Custom subject override for all email ids in Azure action group.
-    :vartype email_subject: str
-    :ivar custom_webhook_payload: Custom payload to be sent for all webhook URI in Azure action
-     group.
-    :vartype custom_webhook_payload: str
-    """
-
-    _attribute_map = {
-        "action_group": {"key": "actionGroup", "type": "[str]"},
-        "email_subject": {"key": "emailSubject", "type": "str"},
-        "custom_webhook_payload": {"key": "customWebhookPayload", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        action_group: Optional[List[str]] = None,
-        email_subject: Optional[str] = None,
-        custom_webhook_payload: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword action_group: Azure Action Group reference.
-        :paramtype action_group: list[str]
-        :keyword email_subject: Custom subject override for all email ids in Azure action group.
-        :paramtype email_subject: str
-        :keyword custom_webhook_payload: Custom payload to be sent for all webhook URI in Azure action
-         group.
-        :paramtype custom_webhook_payload: str
-        """
-        super().__init__(**kwargs)
-        self.action_group = action_group
-        self.email_subject = email_subject
-        self.custom_webhook_payload = custom_webhook_payload
 
 
 class AzureAppPushReceiver(_serialization.Model):
@@ -1811,8 +1784,8 @@ class AzureMonitorWorkspace(_serialization.Model):
     :ivar metrics: Properties related to the metrics container in the Azure Monitor Workspace.
     :vartype metrics: ~azure.mgmt.monitor.models.AzureMonitorWorkspaceMetrics
     :ivar provisioning_state: The provisioning state of the Azure Monitor Workspace. Set to
-     Succeeded if everything is healthy. Known values are: "Succeeded", "Deploying", "Canceled",
-     "Failed", "Creating", and "Deleting".
+     Succeeded if everything is healthy. Known values are: "Creating", "Succeeded", "Deleting",
+     "Failed", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.monitor.models.ProvisioningState
     :ivar default_ingestion_settings: The Data Collection Rule and Endpoint used for ingestion by
      default.
@@ -1952,7 +1925,7 @@ class AzureMonitorWorkspaceMetrics(Metrics):
     """
 
 
-class ResourceAutoGenerated5(_serialization.Model):
+class ResourceAutoGenerated8(_serialization.Model):
     """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1993,7 +1966,7 @@ class ResourceAutoGenerated5(_serialization.Model):
         self.system_data: Optional["_models.SystemData"] = None
 
 
-class TrackedResource(ResourceAutoGenerated5):
+class TrackedResource(ResourceAutoGenerated8):
     """The resource model definition for an Azure Resource Manager tracked top level resource which
     has 'tags' and a 'location'.
 
@@ -2076,8 +2049,8 @@ class AzureMonitorWorkspaceResource(TrackedResource):
     :ivar metrics: Properties related to the metrics container in the Azure Monitor Workspace.
     :vartype metrics: ~azure.mgmt.monitor.models.AzureMonitorWorkspaceMetrics
     :ivar provisioning_state: The provisioning state of the Azure Monitor Workspace. Set to
-     Succeeded if everything is healthy. Known values are: "Succeeded", "Deploying", "Canceled",
-     "Failed", "Creating", and "Deleting".
+     Succeeded if everything is healthy. Known values are: "Creating", "Succeeded", "Deleting",
+     "Failed", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.monitor.models.ProvisioningState
     :ivar default_ingestion_settings: The Data Collection Rule and Endpoint used for ingestion by
      default.
@@ -2218,8 +2191,8 @@ class AzureMonitorWorkspaceResourceProperties(AzureMonitorWorkspace):
     :ivar metrics: Properties related to the metrics container in the Azure Monitor Workspace.
     :vartype metrics: ~azure.mgmt.monitor.models.AzureMonitorWorkspaceMetrics
     :ivar provisioning_state: The provisioning state of the Azure Monitor Workspace. Set to
-     Succeeded if everything is healthy. Known values are: "Succeeded", "Deploying", "Canceled",
-     "Failed", "Creating", and "Deleting".
+     Succeeded if everything is healthy. Known values are: "Creating", "Succeeded", "Deleting",
+     "Failed", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.monitor.models.ProvisioningState
     :ivar default_ingestion_settings: The Data Collection Rule and Endpoint used for ingestion by
      default.
@@ -2301,6 +2274,138 @@ class ColumnDefinition(_serialization.Model):
         self.type = type
 
 
+class Condition(_serialization.Model):
+    """A condition of the scheduled query rule.
+
+    :ivar query: Log query alert.
+    :vartype query: str
+    :ivar time_aggregation: Aggregation type. Relevant and required only for rules of the kind
+     LogAlert. Known values are: "Count", "Average", "Minimum", "Maximum", and "Total".
+    :vartype time_aggregation: str or ~azure.mgmt.monitor.models.TimeAggregation
+    :ivar metric_measure_column: The column containing the metric measure number. Relevant only for
+     rules of the kind LogAlert.
+    :vartype metric_measure_column: str
+    :ivar resource_id_column: The column containing the resource id. The content of the column must
+     be a uri formatted as resource id. Relevant only for rules of the kind LogAlert.
+    :vartype resource_id_column: str
+    :ivar dimensions: List of Dimensions conditions.
+    :vartype dimensions: list[~azure.mgmt.monitor.models.Dimension]
+    :ivar operator: The criteria operator. Relevant and required only for rules of the kind
+     LogAlert. Known values are: "Equals", "GreaterThan", "GreaterThanOrEqual", "LessThan", and
+     "LessThanOrEqual".
+    :vartype operator: str or ~azure.mgmt.monitor.models.ConditionOperator
+    :ivar threshold: the criteria threshold value that activates the alert. Relevant and required
+     only for rules of the kind LogAlert.
+    :vartype threshold: float
+    :ivar failing_periods: The minimum number of violations required within the selected lookback
+     time window required to raise an alert. Relevant only for rules of the kind LogAlert.
+    :vartype failing_periods: ~azure.mgmt.monitor.models.ConditionFailingPeriods
+    :ivar metric_name: The name of the metric to be sent. Relevant and required only for rules of
+     the kind LogToMetric.
+    :vartype metric_name: str
+    """
+
+    _attribute_map = {
+        "query": {"key": "query", "type": "str"},
+        "time_aggregation": {"key": "timeAggregation", "type": "str"},
+        "metric_measure_column": {"key": "metricMeasureColumn", "type": "str"},
+        "resource_id_column": {"key": "resourceIdColumn", "type": "str"},
+        "dimensions": {"key": "dimensions", "type": "[Dimension]"},
+        "operator": {"key": "operator", "type": "str"},
+        "threshold": {"key": "threshold", "type": "float"},
+        "failing_periods": {"key": "failingPeriods", "type": "ConditionFailingPeriods"},
+        "metric_name": {"key": "metricName", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        query: Optional[str] = None,
+        time_aggregation: Optional[Union[str, "_models.TimeAggregation"]] = None,
+        metric_measure_column: Optional[str] = None,
+        resource_id_column: Optional[str] = None,
+        dimensions: Optional[List["_models.Dimension"]] = None,
+        operator: Optional[Union[str, "_models.ConditionOperator"]] = None,
+        threshold: Optional[float] = None,
+        failing_periods: Optional["_models.ConditionFailingPeriods"] = None,
+        metric_name: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword query: Log query alert.
+        :paramtype query: str
+        :keyword time_aggregation: Aggregation type. Relevant and required only for rules of the kind
+         LogAlert. Known values are: "Count", "Average", "Minimum", "Maximum", and "Total".
+        :paramtype time_aggregation: str or ~azure.mgmt.monitor.models.TimeAggregation
+        :keyword metric_measure_column: The column containing the metric measure number. Relevant only
+         for rules of the kind LogAlert.
+        :paramtype metric_measure_column: str
+        :keyword resource_id_column: The column containing the resource id. The content of the column
+         must be a uri formatted as resource id. Relevant only for rules of the kind LogAlert.
+        :paramtype resource_id_column: str
+        :keyword dimensions: List of Dimensions conditions.
+        :paramtype dimensions: list[~azure.mgmt.monitor.models.Dimension]
+        :keyword operator: The criteria operator. Relevant and required only for rules of the kind
+         LogAlert. Known values are: "Equals", "GreaterThan", "GreaterThanOrEqual", "LessThan", and
+         "LessThanOrEqual".
+        :paramtype operator: str or ~azure.mgmt.monitor.models.ConditionOperator
+        :keyword threshold: the criteria threshold value that activates the alert. Relevant and
+         required only for rules of the kind LogAlert.
+        :paramtype threshold: float
+        :keyword failing_periods: The minimum number of violations required within the selected
+         lookback time window required to raise an alert. Relevant only for rules of the kind LogAlert.
+        :paramtype failing_periods: ~azure.mgmt.monitor.models.ConditionFailingPeriods
+        :keyword metric_name: The name of the metric to be sent. Relevant and required only for rules
+         of the kind LogToMetric.
+        :paramtype metric_name: str
+        """
+        super().__init__(**kwargs)
+        self.query = query
+        self.time_aggregation = time_aggregation
+        self.metric_measure_column = metric_measure_column
+        self.resource_id_column = resource_id_column
+        self.dimensions = dimensions
+        self.operator = operator
+        self.threshold = threshold
+        self.failing_periods = failing_periods
+        self.metric_name = metric_name
+
+
+class ConditionFailingPeriods(_serialization.Model):
+    """The minimum number of violations required within the selected lookback time window required to
+    raise an alert. Relevant only for rules of the kind LogAlert.
+
+    :ivar number_of_evaluation_periods: The number of aggregated lookback points. The lookback time
+     window is calculated based on the aggregation granularity (windowSize) and the selected number
+     of aggregated points. Default value is 1.
+    :vartype number_of_evaluation_periods: int
+    :ivar min_failing_periods_to_alert: The number of violations to trigger an alert. Should be
+     smaller or equal to numberOfEvaluationPeriods. Default value is 1.
+    :vartype min_failing_periods_to_alert: int
+    """
+
+    _attribute_map = {
+        "number_of_evaluation_periods": {"key": "numberOfEvaluationPeriods", "type": "int"},
+        "min_failing_periods_to_alert": {"key": "minFailingPeriodsToAlert", "type": "int"},
+    }
+
+    def __init__(
+        self, *, number_of_evaluation_periods: int = 1, min_failing_periods_to_alert: int = 1, **kwargs: Any
+    ) -> None:
+        """
+        :keyword number_of_evaluation_periods: The number of aggregated lookback points. The lookback
+         time window is calculated based on the aggregation granularity (windowSize) and the selected
+         number of aggregated points. Default value is 1.
+        :paramtype number_of_evaluation_periods: int
+        :keyword min_failing_periods_to_alert: The number of violations to trigger an alert. Should be
+         smaller or equal to numberOfEvaluationPeriods. Default value is 1.
+        :paramtype min_failing_periods_to_alert: int
+        """
+        super().__init__(**kwargs)
+        self.number_of_evaluation_periods = number_of_evaluation_periods
+        self.min_failing_periods_to_alert = min_failing_periods_to_alert
+
+
 class ConfigurationAccessEndpointSpec(_serialization.Model):
     """Definition of the endpoint used for accessing configuration.
 
@@ -2350,40 +2455,6 @@ class Context(_serialization.Model):
         super().__init__(**kwargs)
         self.notification_source = notification_source
         self.context_type = context_type
-
-
-class Criteria(_serialization.Model):
-    """Specifies the criteria for converting log to metric.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar metric_name: Name of the metric. Required.
-    :vartype metric_name: str
-    :ivar dimensions: List of Dimensions for creating metric.
-    :vartype dimensions: list[~azure.mgmt.monitor.models.Dimension]
-    """
-
-    _validation = {
-        "metric_name": {"required": True},
-    }
-
-    _attribute_map = {
-        "metric_name": {"key": "metricName", "type": "str"},
-        "dimensions": {"key": "dimensions", "type": "[Dimension]"},
-    }
-
-    def __init__(
-        self, *, metric_name: str, dimensions: Optional[List["_models.Dimension"]] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword metric_name: Name of the metric. Required.
-        :paramtype metric_name: str
-        :keyword dimensions: List of Dimensions for creating metric.
-        :paramtype dimensions: list[~azure.mgmt.monitor.models.Dimension]
-        """
-        super().__init__(**kwargs)
-        self.metric_name = metric_name
-        self.dimensions = dimensions
 
 
 class DataCollectionEndpoint(_serialization.Model):
@@ -4426,7 +4497,7 @@ class DiagnosticSettingsCategoryResourceCollection(_serialization.Model):  # pyl
         self.value = value
 
 
-class ResourceAutoGenerated2(_serialization.Model):
+class ResourceAutoGenerated(_serialization.Model):
     """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4461,7 +4532,7 @@ class ResourceAutoGenerated2(_serialization.Model):
         self.type: Optional[str] = None
 
 
-class DiagnosticSettingsResource(ResourceAutoGenerated2):
+class DiagnosticSettingsResource(ResourceAutoGenerated):
     """The diagnostic setting resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4605,15 +4676,15 @@ class DiagnosticSettingsResourceCollection(_serialization.Model):
 
 
 class Dimension(_serialization.Model):
-    """Specifies the criteria for converting log to metric.
+    """Dimension splitting and filtering definition.
 
     All required parameters must be populated in order to send to server.
 
     :ivar name: Name of the dimension. Required.
     :vartype name: str
-    :ivar operator: Operator for dimension values. Required. Known values are: "Equals",
-     "GreaterThan", "GreaterThanOrEqual", "LessThan", "LessThanOrEqual", and "Include".
-    :vartype operator: str or ~azure.mgmt.monitor.models.Operator
+    :ivar operator: Operator for dimension values. Required. Known values are: "Include" and
+     "Exclude".
+    :vartype operator: str or ~azure.mgmt.monitor.models.DimensionOperator
     :ivar values: List of dimension values. Required.
     :vartype values: list[str]
     """
@@ -4631,14 +4702,14 @@ class Dimension(_serialization.Model):
     }
 
     def __init__(
-        self, *, name: str, operator: Union[str, "_models.Operator"], values: List[str], **kwargs: Any
+        self, *, name: str, operator: Union[str, "_models.DimensionOperator"], values: List[str], **kwargs: Any
     ) -> None:
         """
         :keyword name: Name of the dimension. Required.
         :paramtype name: str
-        :keyword operator: Operator for dimension values. Required. Known values are: "Equals",
-         "GreaterThan", "GreaterThanOrEqual", "LessThan", "LessThanOrEqual", and "Include".
-        :paramtype operator: str or ~azure.mgmt.monitor.models.Operator
+        :keyword operator: Operator for dimension values. Required. Known values are: "Include" and
+         "Exclude".
+        :paramtype operator: str or ~azure.mgmt.monitor.models.DimensionOperator
         :keyword values: List of dimension values. Required.
         :paramtype values: list[str]
         """
@@ -5118,20 +5189,21 @@ class ErrorAdditionalInfo(_serialization.Model):
 
 
 class ErrorContract(_serialization.Model):
-    """Describes the format of Error response.
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
 
-    :ivar error: The error details.
-    :vartype error: ~azure.mgmt.monitor.models.ErrorResponse
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.monitor.models.ErrorResponseAutoGenerated4
     """
 
     _attribute_map = {
-        "error": {"key": "error", "type": "ErrorResponse"},
+        "error": {"key": "error", "type": "ErrorResponseAutoGenerated4"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorResponse"] = None, **kwargs: Any) -> None:
+    def __init__(self, *, error: Optional["_models.ErrorResponseAutoGenerated4"] = None, **kwargs: Any) -> None:
         """
-        :keyword error: The error details.
-        :paramtype error: ~azure.mgmt.monitor.models.ErrorResponse
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.monitor.models.ErrorResponseAutoGenerated4
         """
         super().__init__(**kwargs)
         self.error = error
@@ -5326,23 +5398,31 @@ class ErrorResponse(_serialization.Model):
 
 
 class ErrorResponseAutoGenerated(_serialization.Model):
-    """Describes the format of Error response.
+    """The error response.
 
-    :ivar error:
-    :vartype error: ~azure.mgmt.monitor.models.ErrorResponseError
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message indicating why the operation failed.
+    :vartype message: str
     """
 
-    _attribute_map = {
-        "error": {"key": "error", "type": "ErrorResponseError"},
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorResponseError"] = None, **kwargs: Any) -> None:
-        """
-        :keyword error:
-        :paramtype error: ~azure.mgmt.monitor.models.ErrorResponseError
-        """
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
-        self.error = error
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
 
 
 class ErrorResponseAutoGenerated2(_serialization.Model):
@@ -5366,6 +5446,70 @@ class ErrorResponseAutoGenerated2(_serialization.Model):
 
 
 class ErrorResponseAutoGenerated3(_serialization.Model):
+    """Describes the format of Error response.
+
+    :ivar error:
+    :vartype error: ~azure.mgmt.monitor.models.ErrorResponseError
+    """
+
+    _attribute_map = {
+        "error": {"key": "error", "type": "ErrorResponseError"},
+    }
+
+    def __init__(self, *, error: Optional["_models.ErrorResponseError"] = None, **kwargs: Any) -> None:
+        """
+        :keyword error:
+        :paramtype error: ~azure.mgmt.monitor.models.ErrorResponseError
+        """
+        super().__init__(**kwargs)
+        self.error = error
+
+
+class ErrorResponseAutoGenerated4(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.monitor.models.ErrorResponseAutoGenerated4]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.monitor.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorResponseAutoGenerated4]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[List["_models.ErrorResponseAutoGenerated4"]] = None
+        self.additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = None
+
+
+class ErrorResponseAutoGenerated5(_serialization.Model):
     """Common error response for all Azure Resource Manager APIs to return error details for failed
     operations. (This also follows the OData error response format.).
 
@@ -6108,7 +6252,56 @@ class GuestDiagnosticSettingsAssociationList(_serialization.Model):
         self.next_link = next_link
 
 
-class GuestDiagnosticSettingsAssociationResource(Resource):  # pylint: disable=name-too-long
+class ResourceAutoGenerated3(_serialization.Model):
+    """An azure resource object.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Azure resource Id.
+    :vartype id: str
+    :ivar name: Azure resource name.
+    :vartype name: str
+    :ivar type: Azure resource type.
+    :vartype type: str
+    :ivar location: Resource location. Required.
+    :vartype location: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+    }
+
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword location: Resource location. Required.
+        :paramtype location: str
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(**kwargs)
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.location = location
+        self.tags = tags
+
+
+class GuestDiagnosticSettingsAssociationResource(ResourceAutoGenerated3):  # pylint: disable=name-too-long
     """Virtual machine guest diagnostic settings resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6280,7 +6473,56 @@ class GuestDiagnosticSettingsPatchResource(_serialization.Model):
         self.proxy_setting = proxy_setting
 
 
-class GuestDiagnosticSettingsResource(Resource):
+class ResourceAutoGenerated2(_serialization.Model):
+    """An azure resource object.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Azure resource Id.
+    :vartype id: str
+    :ivar name: Azure resource name.
+    :vartype name: str
+    :ivar type: Azure resource type.
+    :vartype type: str
+    :ivar location: Resource location. Required.
+    :vartype location: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+    }
+
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword location: Resource location. Required.
+        :paramtype location: str
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(**kwargs)
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.location = location
+        self.tags = tags
+
+
+class GuestDiagnosticSettingsResource(ResourceAutoGenerated2):
     """Virtual machine guest diagnostics settings resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6399,6 +6641,63 @@ class HttpRequestInfo(_serialization.Model):
         self.client_ip_address = client_ip_address
         self.method = method
         self.uri = uri
+
+
+class Identity(_serialization.Model):
+    """Identity for the resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar principal_id: The principal ID of resource identity.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant ID of resource.
+    :vartype tenant_id: str
+    :ivar type: Type of managed service identity. Required. Known values are: "SystemAssigned",
+     "UserAssigned", and "None".
+    :vartype type: str or ~azure.mgmt.monitor.models.IdentityType
+    :ivar user_assigned_identities: The list of user identities associated with the resource. The
+     user identity dictionary key references will be ARM resource ids in the form:
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+    :vartype user_assigned_identities: dict[str, ~azure.mgmt.monitor.models.UserIdentityProperties]
+    """
+
+    _validation = {
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
+        "type": {"required": True},
+    }
+
+    _attribute_map = {
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "user_assigned_identities": {"key": "userAssignedIdentities", "type": "{UserIdentityProperties}"},
+    }
+
+    def __init__(
+        self,
+        *,
+        type: Union[str, "_models.IdentityType"],
+        user_assigned_identities: Optional[Dict[str, "_models.UserIdentityProperties"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword type: Type of managed service identity. Required. Known values are: "SystemAssigned",
+         "UserAssigned", and "None".
+        :paramtype type: str or ~azure.mgmt.monitor.models.IdentityType
+        :keyword user_assigned_identities: The list of user identities associated with the resource.
+         The user identity dictionary key references will be ARM resource ids in the form:
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+        :paramtype user_assigned_identities: dict[str,
+         ~azure.mgmt.monitor.models.UserIdentityProperties]
+        """
+        super().__init__(**kwargs)
+        self.principal_id: Optional[str] = None
+        self.tenant_id: Optional[str] = None
+        self.type = type
+        self.user_assigned_identities = user_assigned_identities
 
 
 class IisLogsDataSource(_serialization.Model):
@@ -6935,58 +7234,6 @@ class LogicAppReceiver(_serialization.Model):
         self.use_common_alert_schema = use_common_alert_schema
 
 
-class LogMetricTrigger(_serialization.Model):
-    """A log metrics trigger descriptor.
-
-    :ivar threshold_operator: Evaluation operation for Metric -'GreaterThan' or 'LessThan' or
-     'Equal'. Known values are: "GreaterThanOrEqual", "LessThanOrEqual", "GreaterThan", "LessThan",
-     and "Equal".
-    :vartype threshold_operator: str or ~azure.mgmt.monitor.models.ConditionalOperator
-    :ivar threshold: The threshold of the metric trigger.
-    :vartype threshold: float
-    :ivar metric_trigger_type: Metric Trigger Type - 'Consecutive' or 'Total'. Known values are:
-     "Consecutive" and "Total".
-    :vartype metric_trigger_type: str or ~azure.mgmt.monitor.models.MetricTriggerType
-    :ivar metric_column: Evaluation of metric on a particular column.
-    :vartype metric_column: str
-    """
-
-    _attribute_map = {
-        "threshold_operator": {"key": "thresholdOperator", "type": "str"},
-        "threshold": {"key": "threshold", "type": "float"},
-        "metric_trigger_type": {"key": "metricTriggerType", "type": "str"},
-        "metric_column": {"key": "metricColumn", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        threshold_operator: Union[str, "_models.ConditionalOperator"] = "GreaterThanOrEqual",
-        threshold: Optional[float] = None,
-        metric_trigger_type: Union[str, "_models.MetricTriggerType"] = "Consecutive",
-        metric_column: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword threshold_operator: Evaluation operation for Metric -'GreaterThan' or 'LessThan' or
-         'Equal'. Known values are: "GreaterThanOrEqual", "LessThanOrEqual", "GreaterThan", "LessThan",
-         and "Equal".
-        :paramtype threshold_operator: str or ~azure.mgmt.monitor.models.ConditionalOperator
-        :keyword threshold: The threshold of the metric trigger.
-        :paramtype threshold: float
-        :keyword metric_trigger_type: Metric Trigger Type - 'Consecutive' or 'Total'. Known values are:
-         "Consecutive" and "Total".
-        :paramtype metric_trigger_type: str or ~azure.mgmt.monitor.models.MetricTriggerType
-        :keyword metric_column: Evaluation of metric on a particular column.
-        :paramtype metric_column: str
-        """
-        super().__init__(**kwargs)
-        self.threshold_operator = threshold_operator
-        self.threshold = threshold
-        self.metric_trigger_type = metric_trigger_type
-        self.metric_column = metric_column
-
-
 class LogProfileCollection(_serialization.Model):
     """Represents a collection of log profiles.
 
@@ -7013,7 +7260,56 @@ class LogProfileCollection(_serialization.Model):
         self.value = value
 
 
-class LogProfileResource(Resource):
+class ResourceAutoGenerated4(_serialization.Model):
+    """An azure resource object.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Azure resource Id.
+    :vartype id: str
+    :ivar name: Azure resource name.
+    :vartype name: str
+    :ivar type: Azure resource type.
+    :vartype type: str
+    :ivar location: Resource location. Required.
+    :vartype location: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+    }
+
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword location: Resource location. Required.
+        :paramtype location: str
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(**kwargs)
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.location = location
+        self.tags = tags
+
+
+class LogProfileResource(ResourceAutoGenerated4):
     """The log profile resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7181,267 +7477,6 @@ class LogProfileResourcePatch(_serialization.Model):
         self.retention_policy = retention_policy
 
 
-class ResourceAutoGenerated3(_serialization.Model):
-    """An azure resource object.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar id: Azure resource Id.
-    :vartype id: str
-    :ivar name: Azure resource name.
-    :vartype name: str
-    :ivar type: Azure resource type.
-    :vartype type: str
-    :ivar location: Resource location. Required.
-    :vartype location: str
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar kind: Metadata used by portal/tooling/etc to render different UX experiences for
-     resources of the same type; e.g. ApiApps are a kind of Microsoft.Web/sites type.  If supported,
-     the resource provider must validate and persist this value.
-    :vartype kind: str
-    :ivar etag: The etag field is *not* required. If it is provided in the response body, it must
-     also be provided as a header per the normal etag convention.  Entity tags are used for
-     comparing two or more entities from the same requested resource. HTTP/1.1 uses entity tags in
-     the etag (section 14.19), If-Match (section 14.24), If-None-Match (section 14.26), and If-Range
-     (section 14.27) header fields.
-    :vartype etag: str
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "location": {"required": True},
-        "kind": {"readonly": True},
-        "etag": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
-        "tags": {"key": "tags", "type": "{str}"},
-        "kind": {"key": "kind", "type": "str"},
-        "etag": {"key": "etag", "type": "str"},
-    }
-
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
-        """
-        :keyword location: Resource location. Required.
-        :paramtype location: str
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
-        """
-        super().__init__(**kwargs)
-        self.id: Optional[str] = None
-        self.name: Optional[str] = None
-        self.type: Optional[str] = None
-        self.location = location
-        self.tags = tags
-        self.kind: Optional[str] = None
-        self.etag: Optional[str] = None
-
-
-class LogSearchRuleResource(ResourceAutoGenerated3):
-    """The Log Search Rule resource.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar id: Azure resource Id.
-    :vartype id: str
-    :ivar name: Azure resource name.
-    :vartype name: str
-    :ivar type: Azure resource type.
-    :vartype type: str
-    :ivar location: Resource location. Required.
-    :vartype location: str
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar kind: Metadata used by portal/tooling/etc to render different UX experiences for
-     resources of the same type; e.g. ApiApps are a kind of Microsoft.Web/sites type.  If supported,
-     the resource provider must validate and persist this value.
-    :vartype kind: str
-    :ivar etag: The etag field is *not* required. If it is provided in the response body, it must
-     also be provided as a header per the normal etag convention.  Entity tags are used for
-     comparing two or more entities from the same requested resource. HTTP/1.1 uses entity tags in
-     the etag (section 14.19), If-Match (section 14.24), If-None-Match (section 14.26), and If-Range
-     (section 14.27) header fields.
-    :vartype etag: str
-    :ivar created_with_api_version: The api-version used when creating this alert rule.
-    :vartype created_with_api_version: str
-    :ivar is_legacy_log_analytics_rule: True if alert rule is legacy Log Analytic rule.
-    :vartype is_legacy_log_analytics_rule: bool
-    :ivar description: The description of the Log Search rule.
-    :vartype description: str
-    :ivar display_name: The display name of the alert rule.
-    :vartype display_name: str
-    :ivar auto_mitigate: The flag that indicates whether the alert should be automatically resolved
-     or not. The default is false.
-    :vartype auto_mitigate: bool
-    :ivar enabled: The flag which indicates whether the Log Search rule is enabled. Value should be
-     true or false. Known values are: "true" and "false".
-    :vartype enabled: str or ~azure.mgmt.monitor.models.Enabled
-    :ivar last_updated_time: Last time the rule was updated in IS08601 format.
-    :vartype last_updated_time: ~datetime.datetime
-    :ivar provisioning_state: Provisioning state of the scheduled query rule. Known values are:
-     "Succeeded", "Deploying", "Canceled", "Failed", "Creating", and "Deleting".
-    :vartype provisioning_state: str or ~azure.mgmt.monitor.models.ProvisioningState
-    :ivar source: Data Source against which rule will Query Data. Required.
-    :vartype source: ~azure.mgmt.monitor.models.Source
-    :ivar schedule: Schedule (Frequency, Time Window) for rule. Required for action type -
-     AlertingAction.
-    :vartype schedule: ~azure.mgmt.monitor.models.Schedule
-    :ivar action: Action needs to be taken on rule execution. Required.
-    :vartype action: ~azure.mgmt.monitor.models.Action
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "location": {"required": True},
-        "kind": {"readonly": True},
-        "etag": {"readonly": True},
-        "created_with_api_version": {"readonly": True},
-        "is_legacy_log_analytics_rule": {"readonly": True},
-        "last_updated_time": {"readonly": True},
-        "provisioning_state": {"readonly": True},
-        "source": {"required": True},
-        "action": {"required": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
-        "tags": {"key": "tags", "type": "{str}"},
-        "kind": {"key": "kind", "type": "str"},
-        "etag": {"key": "etag", "type": "str"},
-        "created_with_api_version": {"key": "properties.createdWithApiVersion", "type": "str"},
-        "is_legacy_log_analytics_rule": {"key": "properties.isLegacyLogAnalyticsRule", "type": "bool"},
-        "description": {"key": "properties.description", "type": "str"},
-        "display_name": {"key": "properties.displayName", "type": "str"},
-        "auto_mitigate": {"key": "properties.autoMitigate", "type": "bool"},
-        "enabled": {"key": "properties.enabled", "type": "str"},
-        "last_updated_time": {"key": "properties.lastUpdatedTime", "type": "iso-8601"},
-        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
-        "source": {"key": "properties.source", "type": "Source"},
-        "schedule": {"key": "properties.schedule", "type": "Schedule"},
-        "action": {"key": "properties.action", "type": "Action"},
-    }
-
-    def __init__(
-        self,
-        *,
-        location: str,
-        source: "_models.Source",
-        action: "_models.Action",
-        tags: Optional[Dict[str, str]] = None,
-        description: Optional[str] = None,
-        display_name: Optional[str] = None,
-        auto_mitigate: bool = False,
-        enabled: Optional[Union[str, "_models.Enabled"]] = None,
-        schedule: Optional["_models.Schedule"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword location: Resource location. Required.
-        :paramtype location: str
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
-        :keyword description: The description of the Log Search rule.
-        :paramtype description: str
-        :keyword display_name: The display name of the alert rule.
-        :paramtype display_name: str
-        :keyword auto_mitigate: The flag that indicates whether the alert should be automatically
-         resolved or not. The default is false.
-        :paramtype auto_mitigate: bool
-        :keyword enabled: The flag which indicates whether the Log Search rule is enabled. Value should
-         be true or false. Known values are: "true" and "false".
-        :paramtype enabled: str or ~azure.mgmt.monitor.models.Enabled
-        :keyword source: Data Source against which rule will Query Data. Required.
-        :paramtype source: ~azure.mgmt.monitor.models.Source
-        :keyword schedule: Schedule (Frequency, Time Window) for rule. Required for action type -
-         AlertingAction.
-        :paramtype schedule: ~azure.mgmt.monitor.models.Schedule
-        :keyword action: Action needs to be taken on rule execution. Required.
-        :paramtype action: ~azure.mgmt.monitor.models.Action
-        """
-        super().__init__(location=location, tags=tags, **kwargs)
-        self.created_with_api_version: Optional[str] = None
-        self.is_legacy_log_analytics_rule: Optional[bool] = None
-        self.description = description
-        self.display_name = display_name
-        self.auto_mitigate = auto_mitigate
-        self.enabled = enabled
-        self.last_updated_time: Optional[datetime.datetime] = None
-        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
-        self.source = source
-        self.schedule = schedule
-        self.action = action
-
-
-class LogSearchRuleResourceCollection(_serialization.Model):
-    """Represents a collection of Log Search rule resources.
-
-    :ivar value: The values for the Log Search Rule resources.
-    :vartype value: list[~azure.mgmt.monitor.models.LogSearchRuleResource]
-    """
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[LogSearchRuleResource]"},
-    }
-
-    def __init__(self, *, value: Optional[List["_models.LogSearchRuleResource"]] = None, **kwargs: Any) -> None:
-        """
-        :keyword value: The values for the Log Search Rule resources.
-        :paramtype value: list[~azure.mgmt.monitor.models.LogSearchRuleResource]
-        """
-        super().__init__(**kwargs)
-        self.value = value
-
-
-class LogSearchRuleResourcePatch(_serialization.Model):
-    """The log search rule resource for patch operations.
-
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar enabled: The flag which indicates whether the Log Search rule is enabled. Value should be
-     true or false. Known values are: "true" and "false".
-    :vartype enabled: str or ~azure.mgmt.monitor.models.Enabled
-    """
-
-    _attribute_map = {
-        "tags": {"key": "tags", "type": "{str}"},
-        "enabled": {"key": "properties.enabled", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        enabled: Optional[Union[str, "_models.Enabled"]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
-        :keyword enabled: The flag which indicates whether the Log Search rule is enabled. Value should
-         be true or false. Known values are: "true" and "false".
-        :paramtype enabled: str or ~azure.mgmt.monitor.models.Enabled
-        """
-        super().__init__(**kwargs)
-        self.tags = tags
-        self.enabled = enabled
-
-
 class LogSettings(_serialization.Model):
     """Part of MultiTenantDiagnosticSettings. Specifies the settings for a particular log.
 
@@ -7549,40 +7584,6 @@ class LogSettingsAutoGenerated(_serialization.Model):
         self.category = category
         self.enabled = enabled
         self.retention_policy = retention_policy
-
-
-class LogToMetricAction(Action):
-    """Specify action need to be taken when rule type is converting log to metric.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar odata_type: Specifies the action. Supported values - AlertingAction, LogToMetricAction.
-     Required.
-    :vartype odata_type: str
-    :ivar criteria: Criteria of Metric. Required.
-    :vartype criteria: list[~azure.mgmt.monitor.models.Criteria]
-    """
-
-    _validation = {
-        "odata_type": {"required": True},
-        "criteria": {"required": True},
-    }
-
-    _attribute_map = {
-        "odata_type": {"key": "odata\\.type", "type": "str"},
-        "criteria": {"key": "criteria", "type": "[Criteria]"},
-    }
-
-    def __init__(self, *, criteria: List["_models.Criteria"], **kwargs: Any) -> None:
-        """
-        :keyword criteria: Criteria of Metric. Required.
-        :paramtype criteria: list[~azure.mgmt.monitor.models.Criteria]
-        """
-        super().__init__(**kwargs)
-        self.odata_type: str = (
-            "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.LogToMetricAction"
-        )
-        self.criteria = criteria
 
 
 class MetadataValue(_serialization.Model):
@@ -7834,7 +7835,56 @@ class MetricAlertMultipleResourceMultipleMetricCriteria(MetricAlertCriteria):  #
         self.all_of = all_of
 
 
-class MetricAlertResource(Resource):
+class ResourceAutoGenerated5(_serialization.Model):
+    """An azure resource object.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Azure resource Id.
+    :vartype id: str
+    :ivar name: Azure resource name.
+    :vartype name: str
+    :ivar type: Azure resource type.
+    :vartype type: str
+    :ivar location: Resource location. Required.
+    :vartype location: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+    }
+
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword location: Resource location. Required.
+        :paramtype location: str
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(**kwargs)
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.location = location
+        self.tags = tags
+
+
+class MetricAlertResource(ResourceAutoGenerated5):
     """The metric alert resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -8303,10 +8353,10 @@ class MetricAvailability(_serialization.Model):
     """Metric availability specifies the time grain (aggregation interval or frequency) and the
     retention period for that time grain.
 
-    :ivar time_grain: the time grain specifies the aggregation interval for the metric. Expressed
-     as a duration 'PT1M', 'P1D', etc.
+    :ivar time_grain: The time grain specifies a supported aggregation interval for the metric.
+     Expressed as a duration 'PT1M', 'P1D', etc.
     :vartype time_grain: ~datetime.timedelta
-    :ivar retention: the retention period for the metric at the specified timegrain.  Expressed as
+    :ivar retention: The retention period for the metric at the specified timegrain.  Expressed as
      a duration 'PT1M', 'P1D', etc.
     :vartype retention: ~datetime.timedelta
     """
@@ -8324,10 +8374,10 @@ class MetricAvailability(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword time_grain: the time grain specifies the aggregation interval for the metric.
+        :keyword time_grain: The time grain specifies a supported aggregation interval for the metric.
          Expressed as a duration 'PT1M', 'P1D', etc.
         :paramtype time_grain: ~datetime.timedelta
-        :keyword retention: the retention period for the metric at the specified timegrain.  Expressed
+        :keyword retention: The retention period for the metric at the specified timegrain.  Expressed
          as a duration 'PT1M', 'P1D', etc.
         :paramtype retention: ~datetime.timedelta
         """
@@ -8382,7 +8432,7 @@ class MetricCriteria(MultiMetricCriteria):
      emitted, by causing the metric validation to be skipped.
     :vartype skip_metric_validation: bool
     :ivar operator: the criteria operator. Required. Known values are: "Equals", "GreaterThan",
-     "GreaterThanOrEqual", "LessThan", "LessThanOrEqual", and "Include".
+     "GreaterThanOrEqual", "LessThan", and "LessThanOrEqual".
     :vartype operator: str or ~azure.mgmt.monitor.models.Operator
     :ivar threshold: the criteria threshold value that activates the alert. Required.
     :vartype threshold: float
@@ -8443,7 +8493,7 @@ class MetricCriteria(MultiMetricCriteria):
          yet emitted, by causing the metric validation to be skipped.
         :paramtype skip_metric_validation: bool
         :keyword operator: the criteria operator. Required. Known values are: "Equals", "GreaterThan",
-         "GreaterThanOrEqual", "LessThan", "LessThanOrEqual", and "Include".
+         "GreaterThanOrEqual", "LessThan", and "LessThanOrEqual".
         :paramtype operator: str or ~azure.mgmt.monitor.models.Operator
         :keyword threshold: the criteria threshold value that activates the alert. Required.
         :paramtype threshold: float
@@ -8468,11 +8518,11 @@ class MetricDefinition(_serialization.Model):
 
     :ivar is_dimension_required: Flag to indicate whether the dimension is required.
     :vartype is_dimension_required: bool
-    :ivar resource_id: the resource identifier of the resource that emitted the metric.
+    :ivar resource_id: The resource identifier of the resource that emitted the metric.
     :vartype resource_id: str
-    :ivar namespace: the namespace the metric belongs to.
+    :ivar namespace: The namespace the metric belongs to.
     :vartype namespace: str
-    :ivar name: the name and the display name of the metric, i.e. it is a localizable string.
+    :ivar name: The name and the display name of the metric, i.e. it is a localizable string.
     :vartype name: ~azure.mgmt.monitor.models.LocalizableStringAutoGenerated
     :ivar display_description: Detailed description of this metric.
     :vartype display_description: str
@@ -8485,18 +8535,18 @@ class MetricDefinition(_serialization.Model):
      "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds", "ByteSeconds", "Unspecified",
      "Cores", "MilliCores", "NanoCores", and "BitsPerSecond".
     :vartype unit: str or ~azure.mgmt.monitor.models.MetricUnit
-    :ivar primary_aggregation_type: the primary aggregation type value defining how to use the
+    :ivar primary_aggregation_type: The primary aggregation type value defining how to use the
      values for display. Known values are: "None", "Average", "Count", "Minimum", "Maximum", and
      "Total".
     :vartype primary_aggregation_type: str or ~azure.mgmt.monitor.models.AggregationType
-    :ivar supported_aggregation_types: the collection of what aggregation types are supported.
+    :ivar supported_aggregation_types: The collection of what aggregation types are supported.
     :vartype supported_aggregation_types: list[str or ~azure.mgmt.monitor.models.AggregationType]
-    :ivar metric_availabilities: the collection of what aggregation intervals are available to be
+    :ivar metric_availabilities: The collection of what aggregation intervals are available to be
      queried.
     :vartype metric_availabilities: list[~azure.mgmt.monitor.models.MetricAvailability]
-    :ivar id: the resource identifier of the metric definition.
+    :ivar id: The resource identifier of the metric definition.
     :vartype id: str
-    :ivar dimensions: the name and the display name of the dimension, i.e. it is a localizable
+    :ivar dimensions: The name and the display name of the dimension, i.e. it is a localizable
      string.
     :vartype dimensions: list[~azure.mgmt.monitor.models.LocalizableStringAutoGenerated]
     """
@@ -8538,11 +8588,11 @@ class MetricDefinition(_serialization.Model):
         """
         :keyword is_dimension_required: Flag to indicate whether the dimension is required.
         :paramtype is_dimension_required: bool
-        :keyword resource_id: the resource identifier of the resource that emitted the metric.
+        :keyword resource_id: The resource identifier of the resource that emitted the metric.
         :paramtype resource_id: str
-        :keyword namespace: the namespace the metric belongs to.
+        :keyword namespace: The namespace the metric belongs to.
         :paramtype namespace: str
-        :keyword name: the name and the display name of the metric, i.e. it is a localizable string.
+        :keyword name: The name and the display name of the metric, i.e. it is a localizable string.
         :paramtype name: ~azure.mgmt.monitor.models.LocalizableStringAutoGenerated
         :keyword display_description: Detailed description of this metric.
         :paramtype display_description: str
@@ -8555,18 +8605,18 @@ class MetricDefinition(_serialization.Model):
          "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds", "ByteSeconds", "Unspecified",
          "Cores", "MilliCores", "NanoCores", and "BitsPerSecond".
         :paramtype unit: str or ~azure.mgmt.monitor.models.MetricUnit
-        :keyword primary_aggregation_type: the primary aggregation type value defining how to use the
+        :keyword primary_aggregation_type: The primary aggregation type value defining how to use the
          values for display. Known values are: "None", "Average", "Count", "Minimum", "Maximum", and
          "Total".
         :paramtype primary_aggregation_type: str or ~azure.mgmt.monitor.models.AggregationType
-        :keyword supported_aggregation_types: the collection of what aggregation types are supported.
+        :keyword supported_aggregation_types: The collection of what aggregation types are supported.
         :paramtype supported_aggregation_types: list[str or ~azure.mgmt.monitor.models.AggregationType]
-        :keyword metric_availabilities: the collection of what aggregation intervals are available to
+        :keyword metric_availabilities: The collection of what aggregation intervals are available to
          be queried.
         :paramtype metric_availabilities: list[~azure.mgmt.monitor.models.MetricAvailability]
-        :keyword id: the resource identifier of the metric definition.
+        :keyword id: The resource identifier of the metric definition.
         :paramtype id: str
-        :keyword dimensions: the name and the display name of the dimension, i.e. it is a localizable
+        :keyword dimensions: The name and the display name of the dimension, i.e. it is a localizable
          string.
         :paramtype dimensions: list[~azure.mgmt.monitor.models.LocalizableStringAutoGenerated]
         """
@@ -8591,7 +8641,7 @@ class MetricDefinitionCollection(_serialization.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar value: the values for the metric definitions. Required.
+    :ivar value: The values for the metric definitions. Required.
     :vartype value: list[~azure.mgmt.monitor.models.MetricDefinition]
     """
 
@@ -8605,7 +8655,7 @@ class MetricDefinitionCollection(_serialization.Model):
 
     def __init__(self, *, value: List["_models.MetricDefinition"], **kwargs: Any) -> None:
         """
-        :keyword value: the values for the metric definitions. Required.
+        :keyword value: The values for the metric definitions. Required.
         :paramtype value: list[~azure.mgmt.monitor.models.MetricDefinition]
         """
         super().__init__(**kwargs)
@@ -9990,7 +10040,7 @@ class PrivateEndpointConnection(ProxyResource):
         self.provisioning_state: Optional[str] = None
 
 
-class ResourceAutoGenerated4(_serialization.Model):
+class ResourceAutoGenerated7(_serialization.Model):
     """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -10031,7 +10081,7 @@ class ResourceAutoGenerated4(_serialization.Model):
         self.system_data: Optional["_models.SystemData"] = None
 
 
-class PrivateEndpointConnectionAutoGenerated(ResourceAutoGenerated4):
+class PrivateEndpointConnectionAutoGenerated(ResourceAutoGenerated7):
     """The private endpoint connection resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -10552,6 +10602,55 @@ class ReferencesSpecEnrichmentData(EnrichmentData):
     """
 
 
+class ResourceAutoGenerated6(_serialization.Model):
+    """An azure resource object.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Azure resource Id.
+    :vartype id: str
+    :ivar name: Azure resource name.
+    :vartype name: str
+    :ivar type: Azure resource type.
+    :vartype type: str
+    :ivar location: Resource location. Required.
+    :vartype location: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+    }
+
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword location: Resource location. Required.
+        :paramtype location: str
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(**kwargs)
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.location = location
+        self.tags = tags
+
+
 class ResourceForUpdate(_serialization.Model):
     """Definition of ARM tracked top level resource properties for update operation.
 
@@ -10630,7 +10729,7 @@ class Response(_serialization.Model):
     :vartype namespace: str
     :ivar resourceregion: The region of the resource being queried for metrics.
     :vartype resourceregion: str
-    :ivar value: the value of the collection. Required.
+    :ivar value: The value of the collection. Required.
     :vartype value: list[~azure.mgmt.monitor.models.Metric]
     """
 
@@ -10677,7 +10776,7 @@ class Response(_serialization.Model):
         :paramtype namespace: str
         :keyword resourceregion: The region of the resource being queried for metrics.
         :paramtype resourceregion: str
-        :keyword value: the value of the collection. Required.
+        :keyword value: The value of the collection. Required.
         :paramtype value: list[~azure.mgmt.monitor.models.Metric]
         """
         super().__init__(**kwargs)
@@ -10748,6 +10847,40 @@ class RetentionPolicy(_serialization.Model):
         super().__init__(**kwargs)
         self.enabled = enabled
         self.days = days
+
+
+class RuleResolveConfiguration(_serialization.Model):
+    """TBD. Relevant only for rules of the kind LogAlert.
+
+    :ivar auto_resolved: The flag that indicates whether or not to auto resolve a fired alert.
+    :vartype auto_resolved: bool
+    :ivar time_to_resolve: The duration a rule must evaluate as healthy before the fired alert is
+     automatically resolved represented in ISO 8601 duration format.
+    :vartype time_to_resolve: ~datetime.timedelta
+    """
+
+    _attribute_map = {
+        "auto_resolved": {"key": "autoResolved", "type": "bool"},
+        "time_to_resolve": {"key": "timeToResolve", "type": "duration"},
+    }
+
+    def __init__(
+        self,
+        *,
+        auto_resolved: Optional[bool] = None,
+        time_to_resolve: Optional[datetime.timedelta] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword auto_resolved: The flag that indicates whether or not to auto resolve a fired alert.
+        :paramtype auto_resolved: bool
+        :keyword time_to_resolve: The duration a rule must evaluate as healthy before the fired alert
+         is automatically resolved represented in ISO 8601 duration format.
+        :paramtype time_to_resolve: ~datetime.timedelta
+        """
+        super().__init__(**kwargs)
+        self.auto_resolved = auto_resolved
+        self.time_to_resolve = time_to_resolve
 
 
 class ScaleAction(_serialization.Model):
@@ -10944,41 +11077,510 @@ class ScaleRuleMetricDimension(_serialization.Model):
         self.values = values
 
 
-class Schedule(_serialization.Model):
-    """Defines how often to run the search and the time interval.
+class ScheduledQueryRuleCriteria(_serialization.Model):
+    """The rule criteria that defines the conditions of the scheduled query rule.
+
+    :ivar all_of: A list of conditions to evaluate against the specified scopes.
+    :vartype all_of: list[~azure.mgmt.monitor.models.Condition]
+    """
+
+    _attribute_map = {
+        "all_of": {"key": "allOf", "type": "[Condition]"},
+    }
+
+    def __init__(self, *, all_of: Optional[List["_models.Condition"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword all_of: A list of conditions to evaluate against the specified scopes.
+        :paramtype all_of: list[~azure.mgmt.monitor.models.Condition]
+        """
+        super().__init__(**kwargs)
+        self.all_of = all_of
+
+
+class ScheduledQueryRuleResource(_serialization.Model):
+    """The scheduled query rule resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar frequency_in_minutes: frequency (in minutes) at which rule condition should be evaluated.
-     Required.
-    :vartype frequency_in_minutes: int
-    :ivar time_window_in_minutes: Time window for which data needs to be fetched for query (should
-     be greater than or equal to frequencyInMinutes). Required.
-    :vartype time_window_in_minutes: int
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar identity: The identity of the resource.
+    :vartype identity: ~azure.mgmt.monitor.models.Identity
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar kind: Indicates the type of scheduled query rule. The default is LogAlert. Known values
+     are: "LogAlert" and "LogToMetric".
+    :vartype kind: str or ~azure.mgmt.monitor.models.Kind
+    :ivar etag: The etag field is *not* required. If it is provided in the response body, it must
+     also be provided as a header per the normal etag convention.  Entity tags are used for
+     comparing two or more entities from the same requested resource. HTTP/1.1 uses entity tags in
+     the etag (section 14.19), If-Match (section 14.24), If-None-Match (section 14.26), and If-Range
+     (section 14.27) header fields.
+    :vartype etag: str
+    :ivar system_data: SystemData of ScheduledQueryRule.
+    :vartype system_data: ~azure.mgmt.monitor.models.SystemData
+    :ivar created_with_api_version: The api-version used when creating this alert rule.
+    :vartype created_with_api_version: str
+    :ivar is_legacy_log_analytics_rule: True if alert rule is legacy Log Analytic rule.
+    :vartype is_legacy_log_analytics_rule: bool
+    :ivar description: The description of the scheduled query rule.
+    :vartype description: str
+    :ivar display_name: The display name of the alert rule.
+    :vartype display_name: str
+    :ivar severity: Severity of the alert. Should be an integer between [0-4]. Value of 0 is
+     severest. Relevant and required only for rules of the kind LogAlert. Known values are: 0, 1, 2,
+     3, and 4.
+    :vartype severity: int or ~azure.mgmt.monitor.models.AlertSeverity
+    :ivar enabled: The flag which indicates whether this scheduled query rule is enabled. Value
+     should be true or false.
+    :vartype enabled: bool
+    :ivar scopes: The list of resource id's that this scheduled query rule is scoped to.
+    :vartype scopes: list[str]
+    :ivar evaluation_frequency: How often the scheduled query rule is evaluated represented in ISO
+     8601 duration format. Relevant and required only for rules of the kind LogAlert.
+    :vartype evaluation_frequency: ~datetime.timedelta
+    :ivar window_size: The period of time (in ISO 8601 duration format) on which the Alert query
+     will be executed (bin size). Relevant and required only for rules of the kind LogAlert.
+    :vartype window_size: ~datetime.timedelta
+    :ivar override_query_time_range: If specified then overrides the query time range (default is
+     WindowSize*NumberOfEvaluationPeriods). Relevant only for rules of the kind LogAlert.
+    :vartype override_query_time_range: ~datetime.timedelta
+    :ivar target_resource_types: List of resource type of the target resource(s) on which the alert
+     is created/updated. For example if the scope is a resource group and targetResourceTypes is
+     Microsoft.Compute/virtualMachines, then a different alert will be fired for each virtual
+     machine in the resource group which meet the alert criteria. Relevant only for rules of the
+     kind LogAlert.
+    :vartype target_resource_types: list[str]
+    :ivar criteria: The rule criteria that defines the conditions of the scheduled query rule.
+    :vartype criteria: ~azure.mgmt.monitor.models.ScheduledQueryRuleCriteria
+    :ivar mute_actions_duration: Mute actions for the chosen period of time (in ISO 8601 duration
+     format) after the alert is fired. Relevant only for rules of the kind LogAlert.
+    :vartype mute_actions_duration: ~datetime.timedelta
+    :ivar actions: Actions to invoke when the alert fires.
+    :vartype actions: ~azure.mgmt.monitor.models.Actions
+    :ivar is_workspace_alerts_storage_configured: The flag which indicates whether this scheduled
+     query rule has been configured to be stored in the customer's storage. The default is false.
+    :vartype is_workspace_alerts_storage_configured: bool
+    :ivar check_workspace_alerts_storage_configured: The flag which indicates whether this
+     scheduled query rule should be stored in the customer's storage. The default is false. Relevant
+     only for rules of the kind LogAlert.
+    :vartype check_workspace_alerts_storage_configured: bool
+    :ivar skip_query_validation: The flag which indicates whether the provided query should be
+     validated or not. The default is false. Relevant only for rules of the kind LogAlert.
+    :vartype skip_query_validation: bool
+    :ivar auto_mitigate: The flag that indicates whether the alert should be automatically resolved
+     or not. The default is true. Relevant only for rules of the kind LogAlert.
+    :vartype auto_mitigate: bool
+    :ivar resolve_configuration: Defines the configuration for resolving fired alerts. Relevant
+     only for rules of the kind LogAlert.
+    :vartype resolve_configuration: ~azure.mgmt.monitor.models.RuleResolveConfiguration
     """
 
     _validation = {
-        "frequency_in_minutes": {"required": True},
-        "time_window_in_minutes": {"required": True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "etag": {"readonly": True},
+        "system_data": {"readonly": True},
+        "created_with_api_version": {"readonly": True},
+        "is_legacy_log_analytics_rule": {"readonly": True},
+        "is_workspace_alerts_storage_configured": {"readonly": True},
     }
 
     _attribute_map = {
-        "frequency_in_minutes": {"key": "frequencyInMinutes", "type": "int"},
-        "time_window_in_minutes": {"key": "timeWindowInMinutes", "type": "int"},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "identity": {"key": "identity", "type": "Identity"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "created_with_api_version": {"key": "properties.createdWithApiVersion", "type": "str"},
+        "is_legacy_log_analytics_rule": {"key": "properties.isLegacyLogAnalyticsRule", "type": "bool"},
+        "description": {"key": "properties.description", "type": "str"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "severity": {"key": "properties.severity", "type": "int"},
+        "enabled": {"key": "properties.enabled", "type": "bool"},
+        "scopes": {"key": "properties.scopes", "type": "[str]"},
+        "evaluation_frequency": {"key": "properties.evaluationFrequency", "type": "duration"},
+        "window_size": {"key": "properties.windowSize", "type": "duration"},
+        "override_query_time_range": {"key": "properties.overrideQueryTimeRange", "type": "duration"},
+        "target_resource_types": {"key": "properties.targetResourceTypes", "type": "[str]"},
+        "criteria": {"key": "properties.criteria", "type": "ScheduledQueryRuleCriteria"},
+        "mute_actions_duration": {"key": "properties.muteActionsDuration", "type": "duration"},
+        "actions": {"key": "properties.actions", "type": "Actions"},
+        "is_workspace_alerts_storage_configured": {
+            "key": "properties.isWorkspaceAlertsStorageConfigured",
+            "type": "bool",
+        },
+        "check_workspace_alerts_storage_configured": {
+            "key": "properties.checkWorkspaceAlertsStorageConfigured",
+            "type": "bool",
+        },
+        "skip_query_validation": {"key": "properties.skipQueryValidation", "type": "bool"},
+        "auto_mitigate": {"key": "properties.autoMitigate", "type": "bool"},
+        "resolve_configuration": {"key": "properties.resolveConfiguration", "type": "RuleResolveConfiguration"},
     }
 
-    def __init__(self, *, frequency_in_minutes: int, time_window_in_minutes: int, **kwargs: Any) -> None:
+    def __init__(  # pylint: disable=too-many-locals
+        self,
+        *,
+        location: str,
+        identity: Optional["_models.Identity"] = None,
+        tags: Optional[Dict[str, str]] = None,
+        kind: Optional[Union[str, "_models.Kind"]] = None,
+        description: Optional[str] = None,
+        display_name: Optional[str] = None,
+        severity: Optional[Union[int, "_models.AlertSeverity"]] = None,
+        enabled: Optional[bool] = None,
+        scopes: Optional[List[str]] = None,
+        evaluation_frequency: Optional[datetime.timedelta] = None,
+        window_size: Optional[datetime.timedelta] = None,
+        override_query_time_range: Optional[datetime.timedelta] = None,
+        target_resource_types: Optional[List[str]] = None,
+        criteria: Optional["_models.ScheduledQueryRuleCriteria"] = None,
+        mute_actions_duration: Optional[datetime.timedelta] = None,
+        actions: Optional["_models.Actions"] = None,
+        check_workspace_alerts_storage_configured: Optional[bool] = None,
+        skip_query_validation: Optional[bool] = None,
+        auto_mitigate: Optional[bool] = None,
+        resolve_configuration: Optional["_models.RuleResolveConfiguration"] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword frequency_in_minutes: frequency (in minutes) at which rule condition should be
-         evaluated. Required.
-        :paramtype frequency_in_minutes: int
-        :keyword time_window_in_minutes: Time window for which data needs to be fetched for query
-         (should be greater than or equal to frequencyInMinutes). Required.
-        :paramtype time_window_in_minutes: int
+        :keyword identity: The identity of the resource.
+        :paramtype identity: ~azure.mgmt.monitor.models.Identity
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        :keyword kind: Indicates the type of scheduled query rule. The default is LogAlert. Known
+         values are: "LogAlert" and "LogToMetric".
+        :paramtype kind: str or ~azure.mgmt.monitor.models.Kind
+        :keyword description: The description of the scheduled query rule.
+        :paramtype description: str
+        :keyword display_name: The display name of the alert rule.
+        :paramtype display_name: str
+        :keyword severity: Severity of the alert. Should be an integer between [0-4]. Value of 0 is
+         severest. Relevant and required only for rules of the kind LogAlert. Known values are: 0, 1, 2,
+         3, and 4.
+        :paramtype severity: int or ~azure.mgmt.monitor.models.AlertSeverity
+        :keyword enabled: The flag which indicates whether this scheduled query rule is enabled. Value
+         should be true or false.
+        :paramtype enabled: bool
+        :keyword scopes: The list of resource id's that this scheduled query rule is scoped to.
+        :paramtype scopes: list[str]
+        :keyword evaluation_frequency: How often the scheduled query rule is evaluated represented in
+         ISO 8601 duration format. Relevant and required only for rules of the kind LogAlert.
+        :paramtype evaluation_frequency: ~datetime.timedelta
+        :keyword window_size: The period of time (in ISO 8601 duration format) on which the Alert query
+         will be executed (bin size). Relevant and required only for rules of the kind LogAlert.
+        :paramtype window_size: ~datetime.timedelta
+        :keyword override_query_time_range: If specified then overrides the query time range (default
+         is WindowSize*NumberOfEvaluationPeriods). Relevant only for rules of the kind LogAlert.
+        :paramtype override_query_time_range: ~datetime.timedelta
+        :keyword target_resource_types: List of resource type of the target resource(s) on which the
+         alert is created/updated. For example if the scope is a resource group and targetResourceTypes
+         is Microsoft.Compute/virtualMachines, then a different alert will be fired for each virtual
+         machine in the resource group which meet the alert criteria. Relevant only for rules of the
+         kind LogAlert.
+        :paramtype target_resource_types: list[str]
+        :keyword criteria: The rule criteria that defines the conditions of the scheduled query rule.
+        :paramtype criteria: ~azure.mgmt.monitor.models.ScheduledQueryRuleCriteria
+        :keyword mute_actions_duration: Mute actions for the chosen period of time (in ISO 8601
+         duration format) after the alert is fired. Relevant only for rules of the kind LogAlert.
+        :paramtype mute_actions_duration: ~datetime.timedelta
+        :keyword actions: Actions to invoke when the alert fires.
+        :paramtype actions: ~azure.mgmt.monitor.models.Actions
+        :keyword check_workspace_alerts_storage_configured: The flag which indicates whether this
+         scheduled query rule should be stored in the customer's storage. The default is false. Relevant
+         only for rules of the kind LogAlert.
+        :paramtype check_workspace_alerts_storage_configured: bool
+        :keyword skip_query_validation: The flag which indicates whether the provided query should be
+         validated or not. The default is false. Relevant only for rules of the kind LogAlert.
+        :paramtype skip_query_validation: bool
+        :keyword auto_mitigate: The flag that indicates whether the alert should be automatically
+         resolved or not. The default is true. Relevant only for rules of the kind LogAlert.
+        :paramtype auto_mitigate: bool
+        :keyword resolve_configuration: Defines the configuration for resolving fired alerts. Relevant
+         only for rules of the kind LogAlert.
+        :paramtype resolve_configuration: ~azure.mgmt.monitor.models.RuleResolveConfiguration
         """
         super().__init__(**kwargs)
-        self.frequency_in_minutes = frequency_in_minutes
-        self.time_window_in_minutes = time_window_in_minutes
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.identity = identity
+        self.tags = tags
+        self.location = location
+        self.kind = kind
+        self.etag: Optional[str] = None
+        self.system_data: Optional["_models.SystemData"] = None
+        self.created_with_api_version: Optional[str] = None
+        self.is_legacy_log_analytics_rule: Optional[bool] = None
+        self.description = description
+        self.display_name = display_name
+        self.severity = severity
+        self.enabled = enabled
+        self.scopes = scopes
+        self.evaluation_frequency = evaluation_frequency
+        self.window_size = window_size
+        self.override_query_time_range = override_query_time_range
+        self.target_resource_types = target_resource_types
+        self.criteria = criteria
+        self.mute_actions_duration = mute_actions_duration
+        self.actions = actions
+        self.is_workspace_alerts_storage_configured: Optional[bool] = None
+        self.check_workspace_alerts_storage_configured = check_workspace_alerts_storage_configured
+        self.skip_query_validation = skip_query_validation
+        self.auto_mitigate = auto_mitigate
+        self.resolve_configuration = resolve_configuration
+
+
+class ScheduledQueryRuleResourceCollection(_serialization.Model):
+    """Represents a collection of scheduled query rule resources.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: The values for the scheduled query rule resources.
+    :vartype value: list[~azure.mgmt.monitor.models.ScheduledQueryRuleResource]
+    :ivar next_link: Provides the link to retrieve the next set of elements.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "next_link": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[ScheduledQueryRuleResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, *, value: Optional[List["_models.ScheduledQueryRuleResource"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword value: The values for the scheduled query rule resources.
+        :paramtype value: list[~azure.mgmt.monitor.models.ScheduledQueryRuleResource]
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link: Optional[str] = None
+
+
+class ScheduledQueryRuleResourcePatch(_serialization.Model):
+    """The scheduled query rule resource for patch operations.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar identity: The identity of the resource.
+    :vartype identity: ~azure.mgmt.monitor.models.Identity
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar created_with_api_version: The api-version used when creating this alert rule.
+    :vartype created_with_api_version: str
+    :ivar is_legacy_log_analytics_rule: True if alert rule is legacy Log Analytic rule.
+    :vartype is_legacy_log_analytics_rule: bool
+    :ivar description: The description of the scheduled query rule.
+    :vartype description: str
+    :ivar display_name: The display name of the alert rule.
+    :vartype display_name: str
+    :ivar severity: Severity of the alert. Should be an integer between [0-4]. Value of 0 is
+     severest. Relevant and required only for rules of the kind LogAlert. Known values are: 0, 1, 2,
+     3, and 4.
+    :vartype severity: int or ~azure.mgmt.monitor.models.AlertSeverity
+    :ivar enabled: The flag which indicates whether this scheduled query rule is enabled. Value
+     should be true or false.
+    :vartype enabled: bool
+    :ivar scopes: The list of resource id's that this scheduled query rule is scoped to.
+    :vartype scopes: list[str]
+    :ivar evaluation_frequency: How often the scheduled query rule is evaluated represented in ISO
+     8601 duration format. Relevant and required only for rules of the kind LogAlert.
+    :vartype evaluation_frequency: ~datetime.timedelta
+    :ivar window_size: The period of time (in ISO 8601 duration format) on which the Alert query
+     will be executed (bin size). Relevant and required only for rules of the kind LogAlert.
+    :vartype window_size: ~datetime.timedelta
+    :ivar override_query_time_range: If specified then overrides the query time range (default is
+     WindowSize*NumberOfEvaluationPeriods). Relevant only for rules of the kind LogAlert.
+    :vartype override_query_time_range: ~datetime.timedelta
+    :ivar target_resource_types: List of resource type of the target resource(s) on which the alert
+     is created/updated. For example if the scope is a resource group and targetResourceTypes is
+     Microsoft.Compute/virtualMachines, then a different alert will be fired for each virtual
+     machine in the resource group which meet the alert criteria. Relevant only for rules of the
+     kind LogAlert.
+    :vartype target_resource_types: list[str]
+    :ivar criteria: The rule criteria that defines the conditions of the scheduled query rule.
+    :vartype criteria: ~azure.mgmt.monitor.models.ScheduledQueryRuleCriteria
+    :ivar mute_actions_duration: Mute actions for the chosen period of time (in ISO 8601 duration
+     format) after the alert is fired. Relevant only for rules of the kind LogAlert.
+    :vartype mute_actions_duration: ~datetime.timedelta
+    :ivar actions: Actions to invoke when the alert fires.
+    :vartype actions: ~azure.mgmt.monitor.models.Actions
+    :ivar is_workspace_alerts_storage_configured: The flag which indicates whether this scheduled
+     query rule has been configured to be stored in the customer's storage. The default is false.
+    :vartype is_workspace_alerts_storage_configured: bool
+    :ivar check_workspace_alerts_storage_configured: The flag which indicates whether this
+     scheduled query rule should be stored in the customer's storage. The default is false. Relevant
+     only for rules of the kind LogAlert.
+    :vartype check_workspace_alerts_storage_configured: bool
+    :ivar skip_query_validation: The flag which indicates whether the provided query should be
+     validated or not. The default is false. Relevant only for rules of the kind LogAlert.
+    :vartype skip_query_validation: bool
+    :ivar auto_mitigate: The flag that indicates whether the alert should be automatically resolved
+     or not. The default is true. Relevant only for rules of the kind LogAlert.
+    :vartype auto_mitigate: bool
+    :ivar resolve_configuration: Defines the configuration for resolving fired alerts. Relevant
+     only for rules of the kind LogAlert.
+    :vartype resolve_configuration: ~azure.mgmt.monitor.models.RuleResolveConfiguration
+    """
+
+    _validation = {
+        "created_with_api_version": {"readonly": True},
+        "is_legacy_log_analytics_rule": {"readonly": True},
+        "is_workspace_alerts_storage_configured": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "identity": {"key": "identity", "type": "Identity"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "created_with_api_version": {"key": "properties.createdWithApiVersion", "type": "str"},
+        "is_legacy_log_analytics_rule": {"key": "properties.isLegacyLogAnalyticsRule", "type": "bool"},
+        "description": {"key": "properties.description", "type": "str"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "severity": {"key": "properties.severity", "type": "int"},
+        "enabled": {"key": "properties.enabled", "type": "bool"},
+        "scopes": {"key": "properties.scopes", "type": "[str]"},
+        "evaluation_frequency": {"key": "properties.evaluationFrequency", "type": "duration"},
+        "window_size": {"key": "properties.windowSize", "type": "duration"},
+        "override_query_time_range": {"key": "properties.overrideQueryTimeRange", "type": "duration"},
+        "target_resource_types": {"key": "properties.targetResourceTypes", "type": "[str]"},
+        "criteria": {"key": "properties.criteria", "type": "ScheduledQueryRuleCriteria"},
+        "mute_actions_duration": {"key": "properties.muteActionsDuration", "type": "duration"},
+        "actions": {"key": "properties.actions", "type": "Actions"},
+        "is_workspace_alerts_storage_configured": {
+            "key": "properties.isWorkspaceAlertsStorageConfigured",
+            "type": "bool",
+        },
+        "check_workspace_alerts_storage_configured": {
+            "key": "properties.checkWorkspaceAlertsStorageConfigured",
+            "type": "bool",
+        },
+        "skip_query_validation": {"key": "properties.skipQueryValidation", "type": "bool"},
+        "auto_mitigate": {"key": "properties.autoMitigate", "type": "bool"},
+        "resolve_configuration": {"key": "properties.resolveConfiguration", "type": "RuleResolveConfiguration"},
+    }
+
+    def __init__(
+        self,
+        *,
+        identity: Optional["_models.Identity"] = None,
+        tags: Optional[Dict[str, str]] = None,
+        description: Optional[str] = None,
+        display_name: Optional[str] = None,
+        severity: Optional[Union[int, "_models.AlertSeverity"]] = None,
+        enabled: Optional[bool] = None,
+        scopes: Optional[List[str]] = None,
+        evaluation_frequency: Optional[datetime.timedelta] = None,
+        window_size: Optional[datetime.timedelta] = None,
+        override_query_time_range: Optional[datetime.timedelta] = None,
+        target_resource_types: Optional[List[str]] = None,
+        criteria: Optional["_models.ScheduledQueryRuleCriteria"] = None,
+        mute_actions_duration: Optional[datetime.timedelta] = None,
+        actions: Optional["_models.Actions"] = None,
+        check_workspace_alerts_storage_configured: Optional[bool] = None,
+        skip_query_validation: Optional[bool] = None,
+        auto_mitigate: Optional[bool] = None,
+        resolve_configuration: Optional["_models.RuleResolveConfiguration"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword identity: The identity of the resource.
+        :paramtype identity: ~azure.mgmt.monitor.models.Identity
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword description: The description of the scheduled query rule.
+        :paramtype description: str
+        :keyword display_name: The display name of the alert rule.
+        :paramtype display_name: str
+        :keyword severity: Severity of the alert. Should be an integer between [0-4]. Value of 0 is
+         severest. Relevant and required only for rules of the kind LogAlert. Known values are: 0, 1, 2,
+         3, and 4.
+        :paramtype severity: int or ~azure.mgmt.monitor.models.AlertSeverity
+        :keyword enabled: The flag which indicates whether this scheduled query rule is enabled. Value
+         should be true or false.
+        :paramtype enabled: bool
+        :keyword scopes: The list of resource id's that this scheduled query rule is scoped to.
+        :paramtype scopes: list[str]
+        :keyword evaluation_frequency: How often the scheduled query rule is evaluated represented in
+         ISO 8601 duration format. Relevant and required only for rules of the kind LogAlert.
+        :paramtype evaluation_frequency: ~datetime.timedelta
+        :keyword window_size: The period of time (in ISO 8601 duration format) on which the Alert query
+         will be executed (bin size). Relevant and required only for rules of the kind LogAlert.
+        :paramtype window_size: ~datetime.timedelta
+        :keyword override_query_time_range: If specified then overrides the query time range (default
+         is WindowSize*NumberOfEvaluationPeriods). Relevant only for rules of the kind LogAlert.
+        :paramtype override_query_time_range: ~datetime.timedelta
+        :keyword target_resource_types: List of resource type of the target resource(s) on which the
+         alert is created/updated. For example if the scope is a resource group and targetResourceTypes
+         is Microsoft.Compute/virtualMachines, then a different alert will be fired for each virtual
+         machine in the resource group which meet the alert criteria. Relevant only for rules of the
+         kind LogAlert.
+        :paramtype target_resource_types: list[str]
+        :keyword criteria: The rule criteria that defines the conditions of the scheduled query rule.
+        :paramtype criteria: ~azure.mgmt.monitor.models.ScheduledQueryRuleCriteria
+        :keyword mute_actions_duration: Mute actions for the chosen period of time (in ISO 8601
+         duration format) after the alert is fired. Relevant only for rules of the kind LogAlert.
+        :paramtype mute_actions_duration: ~datetime.timedelta
+        :keyword actions: Actions to invoke when the alert fires.
+        :paramtype actions: ~azure.mgmt.monitor.models.Actions
+        :keyword check_workspace_alerts_storage_configured: The flag which indicates whether this
+         scheduled query rule should be stored in the customer's storage. The default is false. Relevant
+         only for rules of the kind LogAlert.
+        :paramtype check_workspace_alerts_storage_configured: bool
+        :keyword skip_query_validation: The flag which indicates whether the provided query should be
+         validated or not. The default is false. Relevant only for rules of the kind LogAlert.
+        :paramtype skip_query_validation: bool
+        :keyword auto_mitigate: The flag that indicates whether the alert should be automatically
+         resolved or not. The default is true. Relevant only for rules of the kind LogAlert.
+        :paramtype auto_mitigate: bool
+        :keyword resolve_configuration: Defines the configuration for resolving fired alerts. Relevant
+         only for rules of the kind LogAlert.
+        :paramtype resolve_configuration: ~azure.mgmt.monitor.models.RuleResolveConfiguration
+        """
+        super().__init__(**kwargs)
+        self.identity = identity
+        self.tags = tags
+        self.created_with_api_version: Optional[str] = None
+        self.is_legacy_log_analytics_rule: Optional[bool] = None
+        self.description = description
+        self.display_name = display_name
+        self.severity = severity
+        self.enabled = enabled
+        self.scopes = scopes
+        self.evaluation_frequency = evaluation_frequency
+        self.window_size = window_size
+        self.override_query_time_range = override_query_time_range
+        self.target_resource_types = target_resource_types
+        self.criteria = criteria
+        self.mute_actions_duration = mute_actions_duration
+        self.actions = actions
+        self.is_workspace_alerts_storage_configured: Optional[bool] = None
+        self.check_workspace_alerts_storage_configured = check_workspace_alerts_storage_configured
+        self.skip_query_validation = skip_query_validation
+        self.auto_mitigate = auto_mitigate
+        self.resolve_configuration = resolve_configuration
 
 
 class ScopedResource(ProxyResource):
@@ -11087,7 +11689,7 @@ class SenderAuthorization(_serialization.Model):
         self.scope = scope
 
 
-class ServiceDiagnosticSettingsResource(Resource):
+class ServiceDiagnosticSettingsResource(ResourceAutoGenerated6):
     """Description of a service diagnostic setting.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -11482,58 +12084,6 @@ class SmsReceiver(_serialization.Model):
         self.status: Optional[Union[str, "_models.ReceiverStatus"]] = None
 
 
-class Source(_serialization.Model):
-    """Specifies the log search query.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar query: Log search query. Required for action type - AlertingAction.
-    :vartype query: str
-    :ivar authorized_resources: List of  Resource referred into query.
-    :vartype authorized_resources: list[str]
-    :ivar data_source_id: The resource uri over which log search query is to be run. Required.
-    :vartype data_source_id: str
-    :ivar query_type: Set value to 'ResultCount' . "ResultCount"
-    :vartype query_type: str or ~azure.mgmt.monitor.models.QueryType
-    """
-
-    _validation = {
-        "data_source_id": {"required": True},
-    }
-
-    _attribute_map = {
-        "query": {"key": "query", "type": "str"},
-        "authorized_resources": {"key": "authorizedResources", "type": "[str]"},
-        "data_source_id": {"key": "dataSourceId", "type": "str"},
-        "query_type": {"key": "queryType", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        data_source_id: str,
-        query: Optional[str] = None,
-        authorized_resources: Optional[List[str]] = None,
-        query_type: Optional[Union[str, "_models.QueryType"]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword query: Log search query. Required for action type - AlertingAction.
-        :paramtype query: str
-        :keyword authorized_resources: List of  Resource referred into query.
-        :paramtype authorized_resources: list[str]
-        :keyword data_source_id: The resource uri over which log search query is to be run. Required.
-        :paramtype data_source_id: str
-        :keyword query_type: Set value to 'ResultCount' . "ResultCount"
-        :paramtype query_type: str or ~azure.mgmt.monitor.models.QueryType
-        """
-        super().__init__(**kwargs)
-        self.query = query
-        self.authorized_resources = authorized_resources
-        self.data_source_id = data_source_id
-        self.query_type = query_type
-
-
 class StorageBlob(_serialization.Model):
     """StorageBlob.
 
@@ -11879,6 +12429,309 @@ class SubscriptionLogSettings(_serialization.Model):
         self.enabled = enabled
 
 
+class SubscriptionScopeMetricDefinition(_serialization.Model):
+    """Metric definition class specifies the metadata for a metric.
+
+    :ivar is_dimension_required: Flag to indicate whether the dimension is required.
+    :vartype is_dimension_required: bool
+    :ivar resource_id: The resource identifier of the resource that emitted the metric.
+    :vartype resource_id: str
+    :ivar namespace: The namespace the metric belongs to.
+    :vartype namespace: str
+    :ivar name: The name and the display name of the metric, i.e. it is a localizable string.
+    :vartype name: ~azure.mgmt.monitor.models.LocalizableStringAutoGenerated
+    :ivar display_description: Detailed description of this metric.
+    :vartype display_description: str
+    :ivar category: Custom category name for this metric.
+    :vartype category: str
+    :ivar metric_class: The class of the metric. Known values are: "Availability", "Transactions",
+     "Errors", "Latency", and "Saturation".
+    :vartype metric_class: str or ~azure.mgmt.monitor.models.MetricClass
+    :ivar unit: The unit of the metric. Known values are: "Count", "Bytes", "Seconds",
+     "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds", "ByteSeconds", "Unspecified",
+     "Cores", "MilliCores", "NanoCores", and "BitsPerSecond".
+    :vartype unit: str or ~azure.mgmt.monitor.models.MetricUnit
+    :ivar primary_aggregation_type: The primary aggregation type value defining how to use the
+     values for display. Known values are: "None", "Average", "Count", "Minimum", "Maximum", and
+     "Total".
+    :vartype primary_aggregation_type: str or ~azure.mgmt.monitor.models.MetricAggregationType
+    :ivar supported_aggregation_types: The collection of what aggregation types are supported.
+    :vartype supported_aggregation_types: list[str or
+     ~azure.mgmt.monitor.models.MetricAggregationType]
+    :ivar metric_availabilities: The collection of what aggregation intervals are available to be
+     queried.
+    :vartype metric_availabilities: list[~azure.mgmt.monitor.models.MetricAvailability]
+    :ivar id: The resource identifier of the metric definition.
+    :vartype id: str
+    :ivar dimensions: The name and the display name of the dimension, i.e. it is a localizable
+     string.
+    :vartype dimensions: list[~azure.mgmt.monitor.models.LocalizableStringAutoGenerated]
+    """
+
+    _attribute_map = {
+        "is_dimension_required": {"key": "isDimensionRequired", "type": "bool"},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "namespace": {"key": "namespace", "type": "str"},
+        "name": {"key": "name", "type": "LocalizableStringAutoGenerated"},
+        "display_description": {"key": "displayDescription", "type": "str"},
+        "category": {"key": "category", "type": "str"},
+        "metric_class": {"key": "metricClass", "type": "str"},
+        "unit": {"key": "unit", "type": "str"},
+        "primary_aggregation_type": {"key": "primaryAggregationType", "type": "str"},
+        "supported_aggregation_types": {"key": "supportedAggregationTypes", "type": "[str]"},
+        "metric_availabilities": {"key": "metricAvailabilities", "type": "[MetricAvailability]"},
+        "id": {"key": "id", "type": "str"},
+        "dimensions": {"key": "dimensions", "type": "[LocalizableStringAutoGenerated]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        is_dimension_required: Optional[bool] = None,
+        resource_id: Optional[str] = None,
+        namespace: Optional[str] = None,
+        name: Optional["_models.LocalizableStringAutoGenerated"] = None,
+        display_description: Optional[str] = None,
+        category: Optional[str] = None,
+        metric_class: Optional[Union[str, "_models.MetricClass"]] = None,
+        unit: Optional[Union[str, "_models.MetricUnit"]] = None,
+        primary_aggregation_type: Optional[Union[str, "_models.MetricAggregationType"]] = None,
+        supported_aggregation_types: Optional[List[Union[str, "_models.MetricAggregationType"]]] = None,
+        metric_availabilities: Optional[List["_models.MetricAvailability"]] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        dimensions: Optional[List["_models.LocalizableStringAutoGenerated"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword is_dimension_required: Flag to indicate whether the dimension is required.
+        :paramtype is_dimension_required: bool
+        :keyword resource_id: The resource identifier of the resource that emitted the metric.
+        :paramtype resource_id: str
+        :keyword namespace: The namespace the metric belongs to.
+        :paramtype namespace: str
+        :keyword name: The name and the display name of the metric, i.e. it is a localizable string.
+        :paramtype name: ~azure.mgmt.monitor.models.LocalizableStringAutoGenerated
+        :keyword display_description: Detailed description of this metric.
+        :paramtype display_description: str
+        :keyword category: Custom category name for this metric.
+        :paramtype category: str
+        :keyword metric_class: The class of the metric. Known values are: "Availability",
+         "Transactions", "Errors", "Latency", and "Saturation".
+        :paramtype metric_class: str or ~azure.mgmt.monitor.models.MetricClass
+        :keyword unit: The unit of the metric. Known values are: "Count", "Bytes", "Seconds",
+         "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds", "ByteSeconds", "Unspecified",
+         "Cores", "MilliCores", "NanoCores", and "BitsPerSecond".
+        :paramtype unit: str or ~azure.mgmt.monitor.models.MetricUnit
+        :keyword primary_aggregation_type: The primary aggregation type value defining how to use the
+         values for display. Known values are: "None", "Average", "Count", "Minimum", "Maximum", and
+         "Total".
+        :paramtype primary_aggregation_type: str or ~azure.mgmt.monitor.models.MetricAggregationType
+        :keyword supported_aggregation_types: The collection of what aggregation types are supported.
+        :paramtype supported_aggregation_types: list[str or
+         ~azure.mgmt.monitor.models.MetricAggregationType]
+        :keyword metric_availabilities: The collection of what aggregation intervals are available to
+         be queried.
+        :paramtype metric_availabilities: list[~azure.mgmt.monitor.models.MetricAvailability]
+        :keyword id: The resource identifier of the metric definition.
+        :paramtype id: str
+        :keyword dimensions: The name and the display name of the dimension, i.e. it is a localizable
+         string.
+        :paramtype dimensions: list[~azure.mgmt.monitor.models.LocalizableStringAutoGenerated]
+        """
+        super().__init__(**kwargs)
+        self.is_dimension_required = is_dimension_required
+        self.resource_id = resource_id
+        self.namespace = namespace
+        self.name = name
+        self.display_description = display_description
+        self.category = category
+        self.metric_class = metric_class
+        self.unit = unit
+        self.primary_aggregation_type = primary_aggregation_type
+        self.supported_aggregation_types = supported_aggregation_types
+        self.metric_availabilities = metric_availabilities
+        self.id = id
+        self.dimensions = dimensions
+
+
+class SubscriptionScopeMetricDefinitionCollection(_serialization.Model):  # pylint: disable=name-too-long
+    """Represents collection of metric definitions.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The values for the metric definitions. Required.
+    :vartype value: list[~azure.mgmt.monitor.models.SubscriptionScopeMetricDefinition]
+    """
+
+    _validation = {
+        "value": {"required": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[SubscriptionScopeMetricDefinition]"},
+    }
+
+    def __init__(self, *, value: List["_models.SubscriptionScopeMetricDefinition"], **kwargs: Any) -> None:
+        """
+        :keyword value: The values for the metric definitions. Required.
+        :paramtype value: list[~azure.mgmt.monitor.models.SubscriptionScopeMetricDefinition]
+        """
+        super().__init__(**kwargs)
+        self.value = value
+
+
+class SubscriptionScopeMetricsRequestBodyParameters(_serialization.Model):  # pylint: disable=name-too-long
+    """Query parameters can also be specified in the body, specifying the same parameter in both the
+    body and query parameters will result in an error.
+
+    :ivar timespan: The timespan of the query. It is a string with the following format
+     'startDateTime_ISO/endDateTime_ISO'.
+    :vartype timespan: str
+    :ivar interval: The interval (i.e. timegrain) of the query in ISO 8601 duration format.
+     Defaults to PT1M. Special case for 'FULL' value that returns single datapoint for entire time
+     span requested.
+     *Examples: PT15M, PT1H, P1D, FULL*.
+    :vartype interval: str
+    :ivar metric_names: The names of the metrics (comma separated) to retrieve.
+    :vartype metric_names: str
+    :ivar aggregation: The list of aggregation types (comma separated) to retrieve.
+    :vartype aggregation: str
+    :ivar filter: The **$filter** is used to reduce the set of metric data returned.\\
+     :code:`<br>`Example:\\ :code:`<br>`Metric contains metadata A, B and C.\\ :code:`<br>`- Return
+     all time series of C where A = a1 and B = b1 or b2\\ :code:`<br>`\\ **$filter=A eq ‘a1’ and B
+     eq ‘b1’ or B eq ‘b2’ and C eq ‘*’**\\ :code:`<br>`- Invalid variant:\\ :code:`<br>`\\
+     **$filter=A eq ‘a1’ and B eq ‘b1’ and C eq ‘*’ or B = ‘b2’**\\ :code:`<br>`This is invalid
+     because the logical or operator cannot separate two different metadata names.\\ :code:`<br>`-
+     Return all time series where A = a1, B = b1 and C = c1:\\ :code:`<br>`\\ **$filter=A eq ‘a1’
+     and B eq ‘b1’ and C eq ‘c1’**\\ :code:`<br>`- Return all time series where A = a1\\
+     :code:`<br>`\\ **$filter=A eq ‘a1’ and B eq ‘\\ *’ and C eq ‘*\\ ’**.
+    :vartype filter: str
+    :ivar top: The maximum number of records to retrieve.
+     Valid only if $filter is specified.
+     Defaults to 10.
+    :vartype top: int
+    :ivar order_by: The aggregation to use for sorting results and the direction of the sort.
+     Only one order can be specified.
+     Examples: sum asc.
+    :vartype order_by: str
+    :ivar roll_up_by: Dimension name(s) to rollup results by. For example if you only want to see
+     metric values with a filter like 'City eq Seattle or City eq Tacoma' but don't want to see
+     separate values for each city, you can specify 'RollUpBy=City' to see the results for Seattle
+     and Tacoma rolled up into one timeseries.
+    :vartype roll_up_by: str
+    :ivar result_type: Reduces the set of data collected. The syntax allowed depends on the
+     operation. See the operation's description for details. Known values are: "Data" and
+     "Metadata".
+    :vartype result_type: str or ~azure.mgmt.monitor.models.MetricResultType
+    :ivar metric_namespace: Metric namespace where the metrics you want reside.
+    :vartype metric_namespace: str
+    :ivar auto_adjust_timegrain: When set to true, if the timespan passed in is not supported by
+     this metric, the API will return the result using the closest supported timespan. When set to
+     false, an error is returned for invalid timespan parameters. Defaults to false.
+    :vartype auto_adjust_timegrain: bool
+    :ivar validate_dimensions: When set to false, invalid filter parameter values will be ignored.
+     When set to true, an error is returned for invalid filter parameters. Defaults to true.
+    :vartype validate_dimensions: bool
+    """
+
+    _attribute_map = {
+        "timespan": {"key": "timespan", "type": "str"},
+        "interval": {"key": "interval", "type": "str"},
+        "metric_names": {"key": "metricNames", "type": "str"},
+        "aggregation": {"key": "aggregation", "type": "str"},
+        "filter": {"key": "filter", "type": "str"},
+        "top": {"key": "top", "type": "int"},
+        "order_by": {"key": "orderBy", "type": "str"},
+        "roll_up_by": {"key": "rollUpBy", "type": "str"},
+        "result_type": {"key": "resultType", "type": "str"},
+        "metric_namespace": {"key": "metricNamespace", "type": "str"},
+        "auto_adjust_timegrain": {"key": "autoAdjustTimegrain", "type": "bool"},
+        "validate_dimensions": {"key": "validateDimensions", "type": "bool"},
+    }
+
+    def __init__(
+        self,
+        *,
+        timespan: Optional[str] = None,
+        interval: Optional[str] = None,
+        metric_names: Optional[str] = None,
+        aggregation: Optional[str] = None,
+        filter: Optional[str] = None,  # pylint: disable=redefined-builtin
+        top: Optional[int] = None,
+        order_by: Optional[str] = None,
+        roll_up_by: Optional[str] = None,
+        result_type: Optional[Union[str, "_models.MetricResultType"]] = None,
+        metric_namespace: Optional[str] = None,
+        auto_adjust_timegrain: Optional[bool] = None,
+        validate_dimensions: Optional[bool] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword timespan: The timespan of the query. It is a string with the following format
+         'startDateTime_ISO/endDateTime_ISO'.
+        :paramtype timespan: str
+        :keyword interval: The interval (i.e. timegrain) of the query in ISO 8601 duration format.
+         Defaults to PT1M. Special case for 'FULL' value that returns single datapoint for entire time
+         span requested.
+         *Examples: PT15M, PT1H, P1D, FULL*.
+        :paramtype interval: str
+        :keyword metric_names: The names of the metrics (comma separated) to retrieve.
+        :paramtype metric_names: str
+        :keyword aggregation: The list of aggregation types (comma separated) to retrieve.
+        :paramtype aggregation: str
+        :keyword filter: The **$filter** is used to reduce the set of metric data returned.\\
+         :code:`<br>`Example:\\ :code:`<br>`Metric contains metadata A, B and C.\\ :code:`<br>`- Return
+         all time series of C where A = a1 and B = b1 or b2\\ :code:`<br>`\\ **$filter=A eq ‘a1’ and B
+         eq ‘b1’ or B eq ‘b2’ and C eq ‘*’**\\ :code:`<br>`- Invalid variant:\\ :code:`<br>`\\
+         **$filter=A eq ‘a1’ and B eq ‘b1’ and C eq ‘*’ or B = ‘b2’**\\ :code:`<br>`This is invalid
+         because the logical or operator cannot separate two different metadata names.\\ :code:`<br>`-
+         Return all time series where A = a1, B = b1 and C = c1:\\ :code:`<br>`\\ **$filter=A eq ‘a1’
+         and B eq ‘b1’ and C eq ‘c1’**\\ :code:`<br>`- Return all time series where A = a1\\
+         :code:`<br>`\\ **$filter=A eq ‘a1’ and B eq ‘\\ *’ and C eq ‘*\\ ’**.
+        :paramtype filter: str
+        :keyword top: The maximum number of records to retrieve.
+         Valid only if $filter is specified.
+         Defaults to 10.
+        :paramtype top: int
+        :keyword order_by: The aggregation to use for sorting results and the direction of the sort.
+         Only one order can be specified.
+         Examples: sum asc.
+        :paramtype order_by: str
+        :keyword roll_up_by: Dimension name(s) to rollup results by. For example if you only want to
+         see metric values with a filter like 'City eq Seattle or City eq Tacoma' but don't want to see
+         separate values for each city, you can specify 'RollUpBy=City' to see the results for Seattle
+         and Tacoma rolled up into one timeseries.
+        :paramtype roll_up_by: str
+        :keyword result_type: Reduces the set of data collected. The syntax allowed depends on the
+         operation. See the operation's description for details. Known values are: "Data" and
+         "Metadata".
+        :paramtype result_type: str or ~azure.mgmt.monitor.models.MetricResultType
+        :keyword metric_namespace: Metric namespace where the metrics you want reside.
+        :paramtype metric_namespace: str
+        :keyword auto_adjust_timegrain: When set to true, if the timespan passed in is not supported by
+         this metric, the API will return the result using the closest supported timespan. When set to
+         false, an error is returned for invalid timespan parameters. Defaults to false.
+        :paramtype auto_adjust_timegrain: bool
+        :keyword validate_dimensions: When set to false, invalid filter parameter values will be
+         ignored. When set to true, an error is returned for invalid filter parameters. Defaults to
+         true.
+        :paramtype validate_dimensions: bool
+        """
+        super().__init__(**kwargs)
+        self.timespan = timespan
+        self.interval = interval
+        self.metric_names = metric_names
+        self.aggregation = aggregation
+        self.filter = filter
+        self.top = top
+        self.order_by = order_by
+        self.roll_up_by = roll_up_by
+        self.result_type = result_type
+        self.metric_namespace = metric_namespace
+        self.auto_adjust_timegrain = auto_adjust_timegrain
+        self.validate_dimensions = validate_dimensions
+
+
 class SyslogDataSource(_serialization.Model):
     """Definition of which syslog data will be collected and how it will be collected.
     Only collected from Linux machines.
@@ -12217,55 +13070,6 @@ class TimeWindow(_serialization.Model):
         self.end = end
 
 
-class TriggerCondition(_serialization.Model):
-    """The condition that results in the Log Search rule.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar threshold_operator: Evaluation operation for rule - 'GreaterThan' or 'LessThan. Known
-     values are: "GreaterThanOrEqual", "LessThanOrEqual", "GreaterThan", "LessThan", and "Equal".
-    :vartype threshold_operator: str or ~azure.mgmt.monitor.models.ConditionalOperator
-    :ivar threshold: Result or count threshold based on which rule should be triggered. Required.
-    :vartype threshold: float
-    :ivar metric_trigger: Trigger condition for metric query rule.
-    :vartype metric_trigger: ~azure.mgmt.monitor.models.LogMetricTrigger
-    """
-
-    _validation = {
-        "threshold_operator": {"required": True},
-        "threshold": {"required": True},
-    }
-
-    _attribute_map = {
-        "threshold_operator": {"key": "thresholdOperator", "type": "str"},
-        "threshold": {"key": "threshold", "type": "float"},
-        "metric_trigger": {"key": "metricTrigger", "type": "LogMetricTrigger"},
-    }
-
-    def __init__(
-        self,
-        *,
-        threshold_operator: Union[str, "_models.ConditionalOperator"] = "GreaterThanOrEqual",
-        threshold: float,
-        metric_trigger: Optional["_models.LogMetricTrigger"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword threshold_operator: Evaluation operation for rule - 'GreaterThan' or 'LessThan. Known
-         values are: "GreaterThanOrEqual", "LessThanOrEqual", "GreaterThan", "LessThan", and "Equal".
-        :paramtype threshold_operator: str or ~azure.mgmt.monitor.models.ConditionalOperator
-        :keyword threshold: Result or count threshold based on which rule should be triggered.
-         Required.
-        :paramtype threshold: float
-        :keyword metric_trigger: Trigger condition for metric query rule.
-        :paramtype metric_trigger: ~azure.mgmt.monitor.models.LogMetricTrigger
-        """
-        super().__init__(**kwargs)
-        self.threshold_operator = threshold_operator
-        self.threshold = threshold
-        self.metric_trigger = metric_trigger
-
-
 class UserAssignedIdentity(_serialization.Model):
     """User assigned identity properties.
 
@@ -12274,6 +13078,34 @@ class UserAssignedIdentity(_serialization.Model):
     :ivar principal_id: The principal ID of the assigned identity.
     :vartype principal_id: str
     :ivar client_id: The client ID of the assigned identity.
+    :vartype client_id: str
+    """
+
+    _validation = {
+        "principal_id": {"readonly": True},
+        "client_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "principal_id": {"key": "principalId", "type": "str"},
+        "client_id": {"key": "clientId", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.principal_id: Optional[str] = None
+        self.client_id: Optional[str] = None
+
+
+class UserIdentityProperties(_serialization.Model):
+    """User assigned identity properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar principal_id: The principal id of user assigned identity.
+    :vartype principal_id: str
+    :ivar client_id: The client id of user assigned identity.
     :vartype client_id: str
     """
 

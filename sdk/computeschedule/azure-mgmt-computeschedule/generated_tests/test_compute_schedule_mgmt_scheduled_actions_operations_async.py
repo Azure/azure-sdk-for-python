@@ -292,11 +292,10 @@ class TestComputeScheduleMgmtScheduledActionsOperationsAsync(AzureMgmtRecordedTe
             resource_group_name=resource_group.name,
             scheduled_action_name="str",
             properties={
-                "location": "str",
-                "id": "str",
-                "name": "str",
                 "properties": {
                     "actionType": "str",
+                    "disabled": bool,
+                    "endTime": "2020-02-20 00:00:00",
                     "notificationSettings": [
                         {"destination": "str", "language": "str", "type": "str", "disabled": bool}
                     ],
@@ -314,20 +313,8 @@ class TestComputeScheduleMgmtScheduledActionsOperationsAsync(AzureMgmtRecordedTe
                         },
                     },
                     "startTime": "2020-02-20 00:00:00",
-                    "disabled": bool,
-                    "endTime": "2020-02-20 00:00:00",
-                    "provisioningState": "str",
-                },
-                "systemData": {
-                    "createdAt": "2020-02-20 00:00:00",
-                    "createdBy": "str",
-                    "createdByType": "str",
-                    "lastModifiedAt": "2020-02-20 00:00:00",
-                    "lastModifiedBy": "str",
-                    "lastModifiedByType": "str",
                 },
                 "tags": {"str": "str"},
-                "type": "str",
             },
         )
 

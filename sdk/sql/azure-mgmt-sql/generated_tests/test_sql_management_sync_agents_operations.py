@@ -24,7 +24,7 @@ class TestSqlManagementSyncAgentsOperations(AzureMgmtRecordedTestCase):
         response = self.client.sync_agents.list_by_server(
             resource_group_name=resource_group.name,
             server_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestSqlManagementSyncAgentsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             server_name="str",
             sync_agent_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -61,7 +61,7 @@ class TestSqlManagementSyncAgentsOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "version": "str",
             },
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -74,7 +74,7 @@ class TestSqlManagementSyncAgentsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             server_name="str",
             sync_agent_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -87,7 +87,7 @@ class TestSqlManagementSyncAgentsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             server_name="str",
             sync_agent_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -100,7 +100,7 @@ class TestSqlManagementSyncAgentsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             server_name="str",
             sync_agent_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

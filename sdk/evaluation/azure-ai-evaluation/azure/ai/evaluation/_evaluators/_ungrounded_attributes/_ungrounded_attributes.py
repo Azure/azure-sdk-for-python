@@ -58,7 +58,7 @@ class UngroundedAttributesEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
         for the ungrounded attributes will be "ungrounded_attributes_label".
     """
 
-    id = "ungrounded_attributes"
+    id = "azureai://built-in/evaluators/ungrounded_attributes"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
     _OPTIONAL_PARAMS = ["query"]
 
@@ -67,14 +67,17 @@ class UngroundedAttributesEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
         self,
         credential,
         azure_ai_project,
-        *,
-        _evaluate_query: bool = True,
+        **kwargs,
     ):
+        # Set default for evaluate_query if not provided
+        if "evaluate_query" not in kwargs:
+            kwargs["evaluate_query"] = True
+
         super().__init__(
             eval_metric=EvaluationMetrics.UNGROUNDED_ATTRIBUTES,
             azure_ai_project=azure_ai_project,
             credential=credential,
-            _evaluate_query=_evaluate_query,
+            **kwargs,
         )
 
     @overload

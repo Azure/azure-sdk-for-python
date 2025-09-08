@@ -29,8 +29,6 @@ class QueueSettings(RestTranslatableMixin, DictMixin):
     :keyword priority: The priority of the job on a compute. Accepted values are "low", "medium", and "high".
         Defaults to "medium".
     :paramtype priority: Optional[Literal]
-    :keyword kwargs: Additional properties for QueueSettings.
-    :paramtype kwargs: Optional[dict]
     """
 
     def __init__(

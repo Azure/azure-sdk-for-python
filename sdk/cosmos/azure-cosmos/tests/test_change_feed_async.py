@@ -29,6 +29,7 @@ async def setup():
             "'masterKey' and 'host' at the top of this class to run the "
             "tests.")
     test_client = CosmosClient(config.host, config.masterKey, multiple_write_locations=use_multiple_write_locations)
+    await test_client.__aenter__()
     created_db = await test_client.create_database_if_not_exists(config.TEST_DATABASE_ID)
     created_db_data = {
         "created_db": created_db,

@@ -43,6 +43,7 @@ class TestSaveEval:
             "AzureOpenAIScoreModelGrader",
             "AzureOpenAIStringCheckGrader",
             "AzureOpenAITextSimilarityGrader",
+            "AzureOpenAIPythonGrader",
         ],
     )
 

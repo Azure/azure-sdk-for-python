@@ -2,14 +2,8 @@ parameters:
   ScanPath: ''
 
 steps:
-  - task: UsePythonVersion@0
-    displayName: 'Use Python $(PythonVersion)'
-    condition: succeededOrFailed()
-    inputs:
-     versionSpec: '$(PythonVersion)'
-
   - pwsh: |
-      python -m pip install -r eng/ci_tools.txt
+      $(PIP_EXE) install -r eng/ci_tools.txt
     displayName: 'Install Python Tools'
     condition: succeededOrFailed()
 
