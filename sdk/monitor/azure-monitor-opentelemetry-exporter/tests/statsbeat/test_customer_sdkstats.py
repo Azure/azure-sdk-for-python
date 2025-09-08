@@ -10,7 +10,18 @@ import types
 import copy
 
 # Import directly from module to avoid circular imports
-from azure.monitor.opentelemetry.exporter.statsbeat._customer_sdkstats import CustomerSdkStatsMetrics
+from azure.monitor.opentelemetry.exporter.statsbeat._customer_sdkstats import (
+    CustomerSdkStatsMetrics,
+    shutdown_customer_sdkstats_metrics
+)
+
+from azure.monitor.opentelemetry.exporter.statsbeat._state import (
+    get_customer_sdkstats_metrics,
+    set_customer_sdkstats_metrics,
+    get_customer_sdkstats_shutdown,
+    _CUSTOMER_SDKSTATS_STATE,
+    _CUSTOMER_SDKSTATS_STATE_LOCK
+)
 
 from azure.monitor.opentelemetry.exporter._constants import (
     _APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW,
@@ -30,35 +41,21 @@ from opentelemetry import trace
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor
-from azure.monitor.opentelemetry.exporter.export._base import (
-    BaseExporter,
-    ExportResult,
-    )
+from azure.monitor.opentelemetry.exporter.export._base import ExportResult
 from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
 from azure.monitor.opentelemetry.exporter.statsbeat._state import _REQUESTS_MAP
-from azure.monitor.opentelemetry.exporter.statsbeat._utils import (
-    categorize_status_code,
-    _get_customer_sdkstats_export_interval
-)
-
-def convert_envelope_names_to_base_type(envelope_name):
-    if not envelope_name.endswith("Data"):
-        return envelope_name + "Data"
-    return envelope_name
-class EnvelopeTypeMapper:
-    @classmethod
-    def get_type_map(cls):
-        return {
-            convert_envelope_names_to_base_type(envelope_name): telemetry_type
-            for envelope_name, telemetry_type in _TYPE_MAP.items()
-        }
-
-_BASE_TYPE_MAP = EnvelopeTypeMapper.get_type_map()
+from azure.monitor.opentelemetry.exporter.statsbeat._utils import _get_customer_sdkstats_export_interval
 
 class TestCustomerSdkStats(unittest.TestCase):
     """Tests for CustomerSdkStatsMetrics."""
     def setUp(self):
         _REQUESTS_MAP.clear()
+        
+        # Reset global state for customer sdkstats
+        set_customer_sdkstats_metrics(None)
+        with _CUSTOMER_SDKSTATS_STATE_LOCK:
+            _CUSTOMER_SDKSTATS_STATE["SHUTDOWN"] = False
+        
         # Clear singleton instance for test isolation
         CustomerSdkStatsMetrics._instance = None
         
@@ -75,33 +72,87 @@ class TestCustomerSdkStats(unittest.TestCase):
         self.original_trace_provider = trace._TRACER_PROVIDER
         trace._TRACER_PROVIDER = None
         self.mock_options.metrics = CustomerSdkStatsMetrics(self.mock_options.connection_string)
+        
+        # Set the metrics in global state
+        set_customer_sdkstats_metrics(self.mock_options.metrics)
+        
         self.mock_options.transmit_called = [False]
 
     def tearDown(self):
         self.env_patcher.stop()
-        # Restore trace provider
-
-        trace._TRACER_PROVIDER = self.original_trace_provider
         
-        if hasattr(self.mock_options, 'metrics') and self.mock_options.metrics:
-            metrics = self.mock_options.metrics
+        # Properly shutdown and clean up global state
+        try:
+            # Get the current metrics from global state
+            current_metrics = get_customer_sdkstats_metrics()
             
-            if hasattr(metrics, '_customer_sdkstats_metric_reader'):
-                reader = metrics._customer_sdkstats_metric_reader
-                if not getattr(reader, '_shutdown', False):
-                    setattr(reader, '_shutdown', True)
+            if current_metrics:
+                # Shutdown the metrics properly
+                if hasattr(current_metrics, '_customer_sdkstats_metric_reader'):
+                    reader = current_metrics._customer_sdkstats_metric_reader
+                    if reader and not getattr(reader, '_shutdown', False):
+                        try:
+                            reader.shutdown()
+                        except Exception:
+                            pass  # Ignore shutdown errors
+                        setattr(reader, '_shutdown', True)
+                    
+                    current_metrics._customer_sdkstats_metric_reader = None
+                    
+                if hasattr(current_metrics, '_customer_sdkstats_exporter'):
+                    current_metrics._customer_sdkstats_exporter = None
+                    
+                if hasattr(current_metrics, '_customer_sdkstats_meter_provider'):
+                    provider = current_metrics._customer_sdkstats_meter_provider
+                    if provider:
+                        try:
+                            provider.shutdown()
+                        except Exception:
+                            pass  # Ignore shutdown errors
+                    current_metrics._customer_sdkstats_meter_provider = None
+            
+            # Clean up any additional metrics from mock_options
+            if hasattr(self.mock_options, 'metrics') and self.mock_options.metrics:
+                metrics = self.mock_options.metrics
                 
-                metrics._customer_sdkstats_metric_reader = None
-                
-            if hasattr(metrics, '_customer_sdkstats_exporter'):
-                metrics._customer_sdkstats_exporter = None
-                
-            if hasattr(metrics, '_customer_sdkstats_meter_provider'):
-                metrics._customer_sdkstats_meter_provider = None
+                if hasattr(metrics, '_customer_sdkstats_metric_reader'):
+                    reader = metrics._customer_sdkstats_metric_reader
+                    if reader and not getattr(reader, '_shutdown', False):
+                        try:
+                            reader.shutdown()
+                        except Exception:
+                            pass  # Ignore shutdown errors
+                        setattr(reader, '_shutdown', True)
+                    
+                    metrics._customer_sdkstats_metric_reader = None
+                    
+                if hasattr(metrics, '_customer_sdkstats_exporter'):
+                    metrics._customer_sdkstats_exporter = None
+                    
+                if hasattr(metrics, '_customer_sdkstats_meter_provider'):
+                    provider = metrics._customer_sdkstats_meter_provider
+                    if provider:
+                        try:
+                            provider.shutdown()
+                        except Exception:
+                            pass  # Ignore shutdown errors
+                    metrics._customer_sdkstats_meter_provider = None
 
-        CustomerSdkStatsMetrics._instance = None
+        finally:
+            # Always reset global state regardless of cleanup success
+            set_customer_sdkstats_metrics(None)
+            with _CUSTOMER_SDKSTATS_STATE_LOCK:
+                _CUSTOMER_SDKSTATS_STATE["SHUTDOWN"] = False
+            
+            # Clear singleton instance
+            CustomerSdkStatsMetrics._instance = None
+            
+            # Restore trace provider
+            trace._TRACER_PROVIDER = self.original_trace_provider
     
     def test_customer_sdkstats_not_initialized_when_disabled(self):
+        # Reset global state
+        set_customer_sdkstats_metrics(None)
         CustomerSdkStatsMetrics._instance = None
         
         with mock.patch.dict(os.environ, {"APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW": "false"}):
@@ -139,8 +190,10 @@ class TestCustomerSdkStats(unittest.TestCase):
             )
             
             # Verify the CustomerSdkStatsMetrics instance picks up the custom interval
+            set_customer_sdkstats_metrics(None)
             CustomerSdkStatsMetrics._instance = None
             metrics = CustomerSdkStatsMetrics(self.mock_options.connection_string)
+            set_customer_sdkstats_metrics(metrics)
             self.assertEqual(
                 metrics._customer_sdkstats_metric_reader._export_interval_millis,
                 custom_interval_s * 1000,
@@ -156,7 +209,7 @@ class TestCustomerSdkStats(unittest.TestCase):
         }):
             # Get the export interval
             actual_interval = _get_customer_sdkstats_export_interval()
-            
+
             # Verify it matches the default value
             self.assertEqual(
                 actual_interval,
@@ -165,8 +218,10 @@ class TestCustomerSdkStats(unittest.TestCase):
             )
             
             # Verify the CustomerSdkStatsMetrics instance picks up the default interval
+            set_customer_sdkstats_metrics(None)
             CustomerSdkStatsMetrics._instance = None
             metrics = CustomerSdkStatsMetrics(self.mock_options.connection_string)
+            set_customer_sdkstats_metrics(metrics)
             self.assertEqual(
                 metrics._customer_sdkstats_metric_reader._export_interval_millis,
                 _DEFAULT_STATS_SHORT_EXPORT_INTERVAL * 1000,
@@ -176,7 +231,7 @@ class TestCustomerSdkStats(unittest.TestCase):
     def test_successful_items_count(self):
         successful_dependencies = 0
 
-        metrics = self.mock_options.metrics
+        metrics = get_customer_sdkstats_metrics()
         metrics._counters.total_item_success_count.clear()
 
         exporter = AzureMonitorTraceExporter(connection_string=self.mock_options.connection_string)
@@ -192,8 +247,7 @@ class TestCustomerSdkStats(unittest.TestCase):
                     base_data = envelope.data.base_data
                     if base_data and hasattr(base_data, "success"):
                         if base_data.success:
-                            envelope_name = "Microsoft.ApplicationInsights." + envelope.data.base_type
-                            metrics.count_successful_items(1, _BASE_TYPE_MAP.get(envelope_name, _UNKNOWN))
+                            metrics.count_successful_items(1, _TYPE_MAP.get(envelope.data.base_type, _UNKNOWN))
 
             return ExportResult.SUCCESS
 
@@ -245,10 +299,13 @@ class TestCustomerSdkStats(unittest.TestCase):
             f"Expected {successful_dependencies} successful dependencies, got {actual_count}"
         )
 
+        set_customer_sdkstats_metrics(None)
+
+
     def test_dropped_items_count(self):
         dropped_items = 0
 
-        metrics = self.mock_options.metrics
+        metrics = get_customer_sdkstats_metrics()
         metrics._counters.total_item_drop_count.clear()
 
         exporter = AzureMonitorTraceExporter(connection_string=self.mock_options.connection_string)
@@ -260,8 +317,7 @@ class TestCustomerSdkStats(unittest.TestCase):
                 if not hasattr(envelope, "data") or not envelope.data:
                     continue
 
-                envelope_name = "Microsoft.ApplicationInsights." + envelope.data.base_type
-                telemetry_type = _BASE_TYPE_MAP.get(envelope_name, _UNKNOWN)
+                telemetry_type = _TYPE_MAP.get(envelope.data.base_type, _UNKNOWN)
                 
                 should_fail = random.choice([True, False])
                 if should_fail:
@@ -387,20 +443,13 @@ class TestCustomerSdkStats(unittest.TestCase):
         self.assertGreater(len(http_status_totals) + len(client_exception_totals), 0, 
                           "At least one type of drop should have occurred")
         
-        # Verify that both integer and enum drop codes are being stored properly
-        drop_code_types = set()
-        for telemetry_type, drop_code_data in metrics._counters.total_item_drop_count.items():
-            for drop_code in drop_code_data.keys():
-                drop_code_types.add(type(drop_code).__name__)
-        
-        # Additional assertion to verify aggregation works
-        multi_count_categories = [cat for cat, count in category_totals.items() if count > 1]
+        set_customer_sdkstats_metrics(None)
 
     def test_retry_items_count(self):
         """Test retry item counting with both RetryCode enums and integer status codes."""
         retried_items = 0
 
-        metrics = self.mock_options.metrics
+        metrics = get_customer_sdkstats_metrics()
         metrics._counters.total_item_retry_count.clear()
 
         exporter = AzureMonitorTraceExporter(connection_string=self.mock_options.connection_string)
@@ -412,9 +461,8 @@ class TestCustomerSdkStats(unittest.TestCase):
                 if not hasattr(envelope, "data") or not envelope.data:
                     continue
 
-                envelope_name = "Microsoft.ApplicationInsights." + envelope.data.base_type
-                telemetry_type = _BASE_TYPE_MAP.get(envelope_name, _UNKNOWN)
-                
+                telemetry_type = _TYPE_MAP.get(envelope.data.base_type, _UNKNOWN)
+
                 should_retry = random.choice([True, False])
                 if should_retry:
                     nonlocal retried_items
@@ -554,12 +602,5 @@ class TestCustomerSdkStats(unittest.TestCase):
         # Verify aggregation occurred
         self.assertGreater(len(http_status_totals) + len(client_timeout_totals) + len(unknown_retry_totals), 0, 
                           "At least one type of retry should have occurred")
-        
-        # Verify that both integer and enum retry codes are being stored properly
-        retry_code_types = set()
-        for telemetry_type, retry_code_data in metrics._counters.total_item_retry_count.items():
-            for retry_code in retry_code_data.keys():
-                retry_code_types.add(type(retry_code).__name__)
-        
-        # Additional assertion to verify aggregation works
-        multi_count_categories = [cat for cat, count in category_totals.items() if count > 1]
+
+        set_customer_sdkstats_metrics(None)
