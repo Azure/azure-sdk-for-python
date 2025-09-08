@@ -6,7 +6,7 @@ import subprocess
 from typing import Optional, List
 from subprocess import CalledProcessError
 
-from ci_tools.functions import pip_install
+from ci_tools.functions import install_into_venv
 from ci_tools.variables import in_ci, discover_repo_root, set_envvar_defaults
 from ci_tools.environment_exclusions import is_check_enabled
 from ci_tools.logging import logger
@@ -48,7 +48,7 @@ class black(Check):
 
             # install black
             try:
-                pip_install([f"black=={BLACK_VERSION}"], True, executable, package_dir)
+                install_into_venv(executable, f"black=={BLACK_VERSION}", False)
             except CalledProcessError as e:
                 logger.error("Failed to install black:", e)
                 return e.returncode
