@@ -177,9 +177,9 @@ with project_client:
 
         if isinstance(step.step_details, RunStepToolCallDetails):
             print("  Tool calls:")
-            tool_calls = step.step_details.tool_calls
+            run_step_tool_calls = step.step_details.tool_calls
 
-            for call in tool_calls:
+            for call in run_step_tool_calls:
                 print(f"    Tool call ID: {call.id}")
                 print(f"    Tool call type: {call.type}")
 
