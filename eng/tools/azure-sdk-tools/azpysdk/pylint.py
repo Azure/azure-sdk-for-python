@@ -58,6 +58,7 @@ class pylint(Check):
             try:
                 if args.next:
                     # use latest version of pylint
+                    print("IN NEXT")
                     install_into_venv(executable, ["pylint"])
                 else:
                     install_into_venv(executable, [f"pylint=={PYLINT_VERSION}"])

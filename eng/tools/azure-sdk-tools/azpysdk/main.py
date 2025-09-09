@@ -16,6 +16,7 @@ from .whl import whl
 from .import_all import import_all
 from .mypy import mypy
 from .pylint import pylint
+from .next_pylint import next_pylint
 from .sphinx import sphinx
 from .black import black
 
@@ -78,6 +79,7 @@ def build_parser() -> argparse.ArgumentParser:
     pylint().register(subparsers, [common])
     sphinx().register(subparsers, [common])
     black().register(subparsers, [common])
+    next_pylint().register(subparsers, [common])
 
     return parser
 
