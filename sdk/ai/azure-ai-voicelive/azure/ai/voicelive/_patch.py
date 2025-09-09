@@ -202,6 +202,7 @@ class ResponseResource:
 
     def create(
         self,
+        *,
         response: Optional[Union[ResponseCreateParams, Mapping[str, Any]]] = None,
         event_id: Optional[str] = None,
         additional_instructions: Optional[str] = None,
