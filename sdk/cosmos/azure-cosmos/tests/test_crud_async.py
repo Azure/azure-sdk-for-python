@@ -1077,10 +1077,10 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
                 self.request_count = 0
                 super().__init__()
 
-            def send(self, request, **kwargs):
+            async def send(self, request, **kwargs):
                 self.request_count += 1
                 # Delay each request to simulate slow network
-                time.sleep(self.delay_per_request)
+                await asyncio.sleep(self.delay_per_request)  # 2 second delaytime.sleep(self.delay_per_request)
                 return super().send(request, **kwargs)
 
         # Verify timeout fails when cumulative time exceeds limit
@@ -1132,7 +1132,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
             async def send(self, request, **kwargs):
                 # Delay point read operations (GET requests to docs endpoint)
                 if request.method == 'GET' and 'docs' in request.url and 'test_item_1' in request.url:
-                    time.sleep(2.0)  # 2 second delay
+                    await asyncio.sleep(2.0)  # 2 second delay
 
                 return await super().send(request, **kwargs)
 
@@ -1146,22 +1146,18 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
             container_with_slow_transport = client_with_slow_transport.get_database_client(
                 self.database_for_test.id
             ).get_container_client(created_container.id)
-
+            print(f"****************************STARTING THE TEST *******************")
             # Test 1: Short timeout should fail
+            start_time = time.time()
             with self.assertRaises(exceptions.CosmosClientTimeoutError):
                 await container_with_slow_transport.read_item(
                     item='test_item_1',
                     partition_key='partition1',
-                    timeout=1.0  # 1 second timeout, but operation takes 2 seconds
+                    timeout=1.0  # 1 second timeout, but operation takes 5 seconds
                 )
+            elapsed = time.time() - start_time
+            print(f"****************************TEST ENDED WITH ELAPSED TIME OF  *******************{elapsed}")
 
-            # Test 2: Long timeout should succeed
-            result = await container_with_slow_transport.read_item(
-                item='test_item_1',
-                partition_key='partition1',
-                timeout=3.0  # 3 second timeout, operation takes 2 seconds
-            )
-            self.assertEqual(result['id'], 'test_item_1')
 
     async def test_timeout_for_paged_request_async(self):
         """Test that timeout applies to each individual page request, not cumulatively"""

@@ -23,7 +23,6 @@ import logging
 from collections.abc import Sequence
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Dict, List, Tuple, Any, Optional, TYPE_CHECKING,Mapping
-import time
 from azure.core.utils import CaseInsensitiveDict
 
 from azure.cosmos import _base, exceptions

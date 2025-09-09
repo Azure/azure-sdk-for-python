@@ -39,7 +39,7 @@ from azure.core import MatchConditions
 from . import documents
 from . import http_constants
 from . import _runtime_constants
-from ._constants import _Constants as Constants, _Constants
+from ._constants import _Constants as Constants
 from .auth import _get_authorization_header
 from .offer import ThroughputProperties
 from .partition_key import _Empty, _Undefined
@@ -116,7 +116,7 @@ def build_options(kwargs: Dict[str, Any]) -> Dict[str, Any]:
         options['timeout'] = kwargs['timeout']
 
 
-    options[_Constants.OperationStartTime] = time.time()
+    options[Constants.OperationStartTime] = time.time()
     if_match, if_none_match = _get_match_headers(kwargs)
     if if_match:
         options['accessCondition'] = {'type': 'IfMatch', 'condition': if_match}

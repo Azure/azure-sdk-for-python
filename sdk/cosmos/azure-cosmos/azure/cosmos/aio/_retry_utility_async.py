@@ -69,8 +69,8 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
     :rtype: tuple of (dict, dict)
     """
     timeout = kwargs.get('timeout')
-
     operation_start_time = kwargs.get(_Constants.OperationStartTime)
+    print(f"_retry_utility_: in the top Execute method: timeout from kargs is {timeout} and operation_start_time from kargs is {operation_start_time}")
 
     if timeout and operation_start_time is None:
         operation_start_time = time.time()
@@ -125,6 +125,7 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
         # Check timeout before executing function
         if timeout:
             elapsed = time.time() - operation_start_time
+            print(f"_retry_utility_: before executing function elapsed time  is {elapsed}")
             if elapsed >= timeout:
                 raise exceptions.CosmosClientTimeoutError()
         try:
@@ -136,6 +137,7 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                 # Check timeout after successful execution
                 if timeout:
                     elapsed = time.time() - operation_start_time
+                    print(f"_retry_utility_: after executing function elapsed time  is {elapsed}")
                     if elapsed >= timeout:
                         raise exceptions.CosmosClientTimeoutError()
             if not client.last_response_headers:
@@ -180,6 +182,7 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
         except (exceptions.CosmosHttpResponseError, ServiceRequestError, ServiceResponseError) as e:
             if timeout:
                 elapsed = time.time() - operation_start_time
+                print(f"_retry_utility_: elapsed time in the except block is {elapsed}")
                 if elapsed >= timeout:
                     raise exceptions.CosmosClientTimeoutError()
 

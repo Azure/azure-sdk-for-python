@@ -44,7 +44,7 @@ from ._base import (
     _build_properties_cache
 )
 from ._change_feed.feed_range_internal import FeedRangeInternalEpk
-from ._constants import _Constants as Constants, _Constants
+from ._constants import _Constants as Constants
 from ._cosmos_client_connection import CosmosClientConnection
 from ._cosmos_responses import CosmosDict, CosmosList
 from ._routing.routing_range import Range
@@ -112,8 +112,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         kwargs = {}
         if options and "excludedLocations" in options:
             kwargs['excluded_locations'] = options['excludedLocations']
-        if options and _Constants.OperationStartTime in options:
-            kwargs[_Constants.OperationStartTime] = options[_Constants.OperationStartTime]
+        if options and Constants.OperationStartTime in options:
+            kwargs[Constants.OperationStartTime] = options[Constants.OperationStartTime]
         if options and "timeout" in options:
             kwargs['timeout'] = options['timeout']
         return self._get_properties(**kwargs)
