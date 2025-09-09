@@ -74,13 +74,14 @@ class black(Check):
                     stderr=subprocess.PIPE,
                     check=True,
                 )
-
                 if run_result.stderr and "reformatted" in run_result.stderr.decode("utf-8"):
                     if in_ci():
                         logger.info(f"The package {package_name} needs reformat. Run `black` locally to reformat.")
                         results.append(1)
                     else:
                         logger.info(f"The package {package_name} was reformatted.")
+                else:
+                    logger.info(f"The package {package_name} is properly formatted, no files changed.")
 
             except subprocess.CalledProcessError as e:
                 logger.error(f"Unable to invoke black for {package_name}. Ran into exception {e}.")
