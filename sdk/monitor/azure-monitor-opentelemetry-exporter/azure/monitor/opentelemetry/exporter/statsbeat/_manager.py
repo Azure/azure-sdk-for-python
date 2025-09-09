@@ -244,7 +244,7 @@ class StatsbeatManager(metaclass=Singleton):
             self._initialized = True
             return True
 
-        except (ValueError, ImportError, AttributeError) as e:
+        except Exception as e:  # pylint: disable=broad-except
             # Log the error for debugging
             logger.warning("Failed to initialize statsbeat: %s", e)
             # Clean up on failure
