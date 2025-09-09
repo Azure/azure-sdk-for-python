@@ -236,7 +236,7 @@ def _build_sentinel(setting: Union[str, Tuple[str, str]]) -> Tuple[str, str]:
     """
     try:
         key, label = setting  # type:ignore
-    except IndexError:
+    except (IndexError, ValueError):
         key = str(setting)  # Ensure key is a string
         label = NULL_CHAR
     if "*" in key or "*" in label:
