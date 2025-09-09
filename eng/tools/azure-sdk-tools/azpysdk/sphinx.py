@@ -9,7 +9,7 @@ from subprocess import CalledProcessError, check_call
 from pathlib import Path
 
 from .Check import Check
-from ci_tools.functions import pip_install
+from ci_tools.functions import install_into_venv
 from ci_tools.scenario.generation import create_package_and_install
 from ci_tools.variables import in_ci, set_envvar_defaults
 from ci_tools.variables import discover_repo_root
@@ -279,23 +279,18 @@ class sphinx(Check):
             # install sphinx
             try:
                 if args.next:
-                    pip_install(
-                        ["sphinx", "sphinx_rtd_theme", "myst_parser", "sphinxcontrib-jquery"],
-                        True,
-                        executable,
-                        package_dir,
+                    install_into_venv(
+                        executable, ["sphinx", "sphinx_rtd_theme", "myst_parser", "sphinxcontrib-jquery"],
                     )
                 else:
-                    pip_install(
+                    install_into_venv(
+                        executable,
                         [
                             f"sphinx=={SPHINX_VERSION}",
                             f"sphinx_rtd_theme=={SPHINX_RTD_THEME_VERSION}",
                             f"myst_parser=={MYST_PARSER_VERSION}",
                             f"sphinxcontrib-jquery=={SPHINX_CONTRIB_JQUERY_VERSION}",
                         ],
-                        True,
-                        executable,
-                        package_dir,
                     )
             except CalledProcessError as e:
                 logger.error("Failed to install sphinx:", e)

@@ -53,9 +53,9 @@ class mypy(Check):
             try:
                 if args.next:
                     # use latest version of mypy
-                    install_into_venv(executable, "mypy", False)
+                    install_into_venv(executable, ["mypy"])
                 else:
-                    install_into_venv(executable, f"mypy=={MYPY_VERSION}", False)
+                    install_into_venv(executable, [f"mypy=={MYPY_VERSION}"])
             except CalledProcessError as e:
                 logger.error("Failed to install mypy:", e)
                 return e.returncode
