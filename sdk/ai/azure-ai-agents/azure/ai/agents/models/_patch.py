@@ -105,6 +105,62 @@ logger = logging.getLogger(__name__)
 StreamEventData = Union["MessageDeltaChunk", "ThreadMessage", ThreadRun, RunStep, str]
 
 
+def get_tool_resources(tools: List["Tool"]) -> ToolResources:
+    """
+    Get the tool resources from tools.
+
+    :param tools: The list of tool objects whose resources should be merged.
+    :type tools: List[Tool]
+    :return: A new ``ToolResources`` instance representing the merged view.
+    :rtype: ToolResources
+    """
+    tool_resources: Dict[str, Any] = {}
+    for tool in tools:
+        resources = tool.resources
+        for key, value in resources.items():
+            if key in tool_resources:
+                # Special handling for MCP resources - they need to be merged into a single list
+                if isinstance(tool_resources[key], list) and isinstance(value, list):
+                    tool_resources[key].extend(value)
+                elif isinstance(tool_resources[key], dict) and isinstance(value, dict):
+                    tool_resources[key].update(value)
+                else:
+                    # For other types, the new value overwrites the old one
+                    tool_resources[key] = value
+            else:
+                tool_resources[key] = value
+    return _create_tool_resources_from_dict(tool_resources)
+
+
+def get_tool_definitions(tools: List["Tool"]) -> List[ToolDefinition]:
+    """
+    Get the tool definitions from tools.
+
+    :param tools: Tools from which to collect definitions.
+    :type tools: List[Tool]
+    :return: List of collected tool definitions.
+    :rtype: List[ToolDefinition]
+    """
+    return [definition for tool in tools for definition in tool.definitions]
+
+
+def _create_tool_resources_from_dict(resources: Dict[str, Any]) -> ToolResources:
+    """
+    Safely converts a dictionary into a ToolResources instance.
+
+    :param resources: A dictionary of tool resources. Should be a mapping
+        accepted by ~azure.ai.agents.models.AzureAISearchToolResource
+    :type resources: Dict[str, Any]
+    :return: A ToolResources instance.
+    :rtype: ToolResources
+    """
+    try:
+        return ToolResources(**resources)
+    except TypeError as e:
+        logger.error("Error creating ToolResources: %s", e)  # pylint: disable=do-not-log-exceptions-if-not-debug
+        raise ValueError("Invalid resources for ToolResources.") from e
+
+
 def _has_errors_in_toolcalls_output(tool_outputs: List[Dict]) -> bool:
     """
     Check if any tool output contains an error.
@@ -444,65 +500,6 @@ class Tool(ABC, Generic[ToolDefinitionT]):
         :param Any tool_call: The tool call to execute.
         :return: The output of the tool operations.
         """
-
-    @staticmethod
-    def _create_tool_resources_from_dict(resources: Dict[str, Any]) -> ToolResources:
-        """
-        Safely converts a dictionary into a ToolResources instance.
-
-        :param resources: A dictionary of tool resources. Should be a mapping
-            accepted by ~azure.ai.agents.models.AzureAISearchToolResource
-        :type resources: Dict[str, Any]
-        :return: A ToolResources instance.
-        :rtype: ToolResources
-        """
-        try:
-            return ToolResources(**resources)
-        except TypeError as e:
-            logger.error("Error creating ToolResources: %s", e)  # pylint: disable=do-not-log-exceptions-if-not-debug
-            raise ValueError("Invalid resources for ToolResources.") from e
-
-    @staticmethod
-    def get_tool_resources(tools: List["Tool"]) -> ToolResources:
-        """
-        Get the tool resources from tools.
-
-        :param tools: The list of tool objects whose resources should be merged.
-        :type tools: List[Tool]
-        :return: A new ``ToolResources`` instance representing the merged view.
-        :rtype: ToolResources
-        """
-        tool_resources: Dict[str, Any] = {}
-        for tool in tools:
-            resources = tool.resources
-            for key, value in resources.items():
-                if key in tool_resources:
-                    # Special handling for MCP resources - they need to be merged into a single list
-                    if isinstance(tool_resources[key], list) and isinstance(value, list):
-                        tool_resources[key].extend(value)
-                    elif isinstance(tool_resources[key], dict) and isinstance(value, dict):
-                        tool_resources[key].update(value)
-                    else:
-                        # For other types, the new value overwrites the old one
-                        tool_resources[key] = value
-                else:
-                    tool_resources[key] = value
-        return Tool._create_tool_resources_from_dict(tool_resources)
-
-    @staticmethod
-    def get_tool_definitions(tools: List["Tool"]) -> List[ToolDefinition]:
-        """
-        Get the tool definitions from tools.
-
-        :param tools: Tools from which to collect definitions.
-        :type tools: List[Tool]
-        :return: List of collected tool definitions.
-        :rtype: List[ToolDefinition]
-        """
-        tool_definitions: List[ToolDefinition] = []
-        for tool in tools:
-            tool_definitions.extend(tool.definitions)
-        return tool_definitions
 
 
 class BaseFunctionTool(Tool[FunctionToolDefinition]):
@@ -1816,10 +1813,7 @@ class BaseToolSet(ABC):
 
         :rtype: List[ToolDefinition]
         """
-        tools = []
-        for tool in self._tools:
-            tools.extend(tool.definitions)
-        return tools
+        return get_tool_definitions(self._tools)
 
     @property
     def resources(self) -> ToolResources:
@@ -1828,7 +1822,7 @@ class BaseToolSet(ABC):
 
         :rtype: ToolResources
         """
-        return Tool.get_tool_resources(self._tools)
+        return get_tool_resources(self._tools)
 
     def get_definitions_and_resources(self) -> Dict[str, Any]:
         """
@@ -1880,7 +1874,7 @@ class BaseToolSet(ABC):
         """
         ...
 
-    def get_tool(self, tool_type: Type[ToolT], **kwargs) -> ToolT:
+    def get_tool(self, tool_type: Type[ToolT], *, server_label: Optional[str] = None) -> ToolT:
         """
         Get a tool of the specified type from the tool set.
         For McpTool, if 'server_label' is provided, returns the MCP tool with that specific server label.
@@ -1889,20 +1883,20 @@ class BaseToolSet(ABC):
 
         :param tool_type: The type of tool to get.
         :type tool_type: Type[Tool]
+        :keyword server_label: The server label of the specific MCP tool to get.
+        :paramtype server_label: Optional[str]
         :return: The tool of the specified type.
         :rtype: Tool
         :raises ValueError: If a tool of the specified type is not found, if no McpTool with the specified server_label is found, or if there are multiple MCP tools but no server_label is provided.
         """
-        # Special handling for McpTool with server_label parameter
-        if tool_type == McpTool and "server_label" in kwargs:
-            server_label = kwargs["server_label"]
-            for tool in self._tools:
-                if isinstance(tool, McpTool) and tool.server_label == server_label:
-                    return cast(ToolT, tool)
-            raise ValueError(f"McpTool with server label '{server_label}' not found in the ToolSet.")
-
         # Special handling for McpTool without server_label - check if there are multiple
         if tool_type == McpTool:
+            # Special handling for McpTool with server_label parameter
+            if server_label is not None:
+                for tool in self._tools:
+                    if isinstance(tool, McpTool) and tool.server_label == server_label:
+                        return cast(ToolT, tool)
+                raise ValueError(f"McpTool with server label '{server_label}' not found in the ToolSet.")
             mcp_tools = [tool for tool in self._tools if isinstance(tool, McpTool)]
             if len(mcp_tools) == 0:
                 raise ValueError(f"Tool of type {tool_type.__name__} not found in the ToolSet.")
@@ -2508,6 +2502,8 @@ __all__: List[str] = [
     "MessageTextFileCitationAnnotation",
     "MessageDeltaChunk",
     "MessageAttachment",
+    "get_tool_resources",
+    "get_tool_definitions",
 ]  # Add all objects you want publicly available to users at this package level
 
 
