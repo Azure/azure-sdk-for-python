@@ -13,6 +13,7 @@ import io
 from ci_tools.variables import discover_repo_root, DEV_BUILD_IDENTIFIER, str_to_bool
 from ci_tools.parsing import ParsedSetup, get_config_setting, get_pyproject
 from pypi_tools.pypi import PyPIClient
+from ci_tools.logging import logger
 
 import os, sys, platform, glob, re, logging
 from typing import List, Any, Optional, Tuple
@@ -222,25 +223,25 @@ def discover_targeted_packages(
 
     # glob the starting package set
     collected_packages = glob_packages(glob_string, target_root_dir)
-    logging.info(
+    logger.debug(
         f'Results for glob_string "{glob_string}" and root directory "{target_root_dir}" are: {collected_packages}'
     )
 
     # apply the additional contains filter
     collected_packages = [pkg for pkg in collected_packages if additional_contains_filter in pkg]
-    logging.info(f'Results after additional contains filter: "{additional_contains_filter}" {collected_packages}')
+    logger.debug(f'Results after additional contains filter: "{additional_contains_filter}" {collected_packages}')
 
     # filter for compatibility, this means excluding a package that doesn't support py36 when we are running a py36 executable
     if compatibility_filter:
         collected_packages = apply_compatibility_filter(collected_packages)
-        logging.info(f"Results after compatibility filter: {collected_packages}")
+        logger.debug(f"Results after compatibility filter: {collected_packages}")
 
     if not include_inactive:
         collected_packages = apply_inactive_filter(collected_packages)
 
     # Apply filter based on filter type. for e.g. Docs, Regression, Management
     collected_packages = apply_business_filter(collected_packages, filter_type)
-    logging.info(f"Results after business filter: {collected_packages}")
+    logger.debug(f"Results after business filter: {collected_packages}")
 
     return sorted(collected_packages)
 
@@ -508,10 +509,10 @@ def get_venv_python(venv_path: str) -> str:
 
 
 def install_into_venv(
-    venv_path_or_executable: str, installation_target: str, editable: bool = True, extras: Optional[str] = None
+    venv_path_or_executable: str, requirements: List[str]
 ) -> None:
     """
-    Install the package into an existing venv (venv_path) without activating it.
+    Install the requirements into an existing venv (venv_path) without activating it.
 
     - Uses get_pip_command(get_venv_python) per request.
     - If get_pip_command returns the 'uv' wrapper, we fall back to get_venv_python -m pip
@@ -520,14 +521,8 @@ def install_into_venv(
     py = get_venv_python(venv_path_or_executable)
     pip_cmd = get_pip_command(py)
 
-    install_target = installation_target
-    if extras:
-        install_target = f"{installation_target}[{extras}]"
-
-    if editable:
-        cmd = pip_cmd + ["install", "-e", install_target]
-    else:
-        cmd = pip_cmd + ["install", install_target]
+    install_targets = [r.strip() for r in requirements]
+    cmd = pip_cmd + ["install"] + install_targets
 
     if pip_cmd[0] == "uv":
         cmd += ["--python", py]
@@ -1035,6 +1030,7 @@ def get_pip_command(python_exe: Optional[str] = None) -> List[str]:
         return ["uv", "pip"]
     else:
         return [python_exe if python_exe else sys.executable, "-m", "pip"]
+
 
 
 def is_error_code_5_allowed(target_pkg: str, pkg_name: str):
