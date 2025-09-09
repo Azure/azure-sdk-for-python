@@ -127,14 +127,14 @@ class CustomerSdkStatsMetrics(metaclass=Singleton): # pylint: disable=too-many-i
 
             reason = self._get_drop_reason(drop_code, exception_message)
 
-        if reason not in reason_map:
-            reason_map[reason] = {}
-        success_map = reason_map[reason]
+            if reason not in reason_map:
+                reason_map[reason] = {}
+            success_map = reason_map[reason]
 
-        success_key = telemetry_success
+            success_key = telemetry_success
 
-        current_count = success_map.get(success_key, 0)
-        success_map[success_key] = current_count + count
+            current_count = success_map.get(success_key, 0)
+            success_map[success_key] = current_count + count
 
     def count_retry_items(
         self, count: int, telemetry_type: str, retry_code: RetryCodeType,
