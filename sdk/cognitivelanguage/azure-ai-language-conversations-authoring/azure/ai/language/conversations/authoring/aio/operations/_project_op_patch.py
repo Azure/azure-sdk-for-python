@@ -19,10 +19,10 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ..._utils.model_base import _deserialize
+from ...models._patch import _AsyncJobsPollingMethod
 from ...models import (
     AssignedDeploymentResource,
     AssignDeploymentResourcesDetails,
-    AsyncJobsPollingMethod,
     CopyProjectDetails,
     CopyProjectState,
     DeploymentResourcesState,
@@ -428,7 +428,7 @@ class ProjectOperations(ProjectOperationsGenerated):
         if polling is True:
             polling_method: AsyncPollingMethod = cast(
                 AsyncPollingMethod,
-                AsyncJobsPollingMethod(
+                _AsyncJobsPollingMethod(
                     polling_interval=lro_delay,
                     path_format_arguments=path_format_arguments,
                 ),

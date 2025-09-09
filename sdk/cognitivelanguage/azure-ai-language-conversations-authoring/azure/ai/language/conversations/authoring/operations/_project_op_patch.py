@@ -18,6 +18,7 @@ from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 
 from .._utils.model_base import _deserialize
+from ..models._patch import _JobsPollingMethod
 from ..models import (
     AssignedDeploymentResource,
     AssignDeploymentResourcesDetails,
@@ -28,7 +29,6 @@ from ..models import (
     ExportedProject,
     ExportedProjectFormat,
     ExportedTrainedModel,
-    JobsPollingMethod,
     ProjectDeletionState,
     ProjectDeployment,
     ProjectDetails,
@@ -429,7 +429,7 @@ class ProjectOperations(ProjectOperationsGenerated):
         if polling is True:
             polling_method: PollingMethod = cast(
                 PollingMethod,
-                JobsPollingMethod(
+                _JobsPollingMethod(
                     polling_interval=lro_delay,
                     path_format_arguments=path_format_arguments,
                     # any extra kwargs your poller needs

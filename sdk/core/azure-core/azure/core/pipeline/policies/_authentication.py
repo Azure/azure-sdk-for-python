@@ -6,12 +6,14 @@
 import time
 import base64
 from typing import TYPE_CHECKING, Optional, TypeVar, MutableMapping, Any, Union, cast
+
 from azure.core.credentials import (
     TokenCredential,
     SupportsTokenInfo,
     TokenRequestOptions,
     TokenProvider,
 )
+from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.transport import (
     HttpResponse as LegacyHttpResponse,
@@ -165,7 +167,12 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy[H
         if response.http_response.status_code == 401:
             self._token = None  # any cached token is invalid
             if "WWW-Authenticate" in response.http_response.headers:
-                request_authorized = self.on_challenge(request, response)
+                try:
+                    request_authorized = self.on_challenge(request, response)
+                except Exception as ex:
+                    # Raise the exception from the token request with the original 401 response
+                    raise ex from HttpResponseError(response=response.http_response)
+
                 if request_authorized:
                     # if we receive a challenge response, we retrieve a new token
                     # which matches the new target. In this case, we don't want to remove
@@ -200,14 +207,11 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy[H
             encoded_claims = get_challenge_parameter(headers, "Bearer", "claims")
             if not encoded_claims:
                 return False
-            try:
-                padding_needed = -len(encoded_claims) % 4
-                claims = base64.urlsafe_b64decode(encoded_claims + "=" * padding_needed).decode("utf-8")
-                if claims:
-                    self.authorize_request(request, *self._scopes, claims=claims)
-                    return True
-            except Exception:  # pylint:disable=broad-except
-                return False
+            padding_needed = -len(encoded_claims) % 4
+            claims = base64.urlsafe_b64decode(encoded_claims + "=" * padding_needed).decode("utf-8")
+            if claims:
+                self.authorize_request(request, *self._scopes, claims=claims)
+                return True
         return False
 
     def on_response(
