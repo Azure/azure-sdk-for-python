@@ -20,7 +20,7 @@
 # SOFTWARE.
 
 """Represents a request object."""
-import asyncio
+import asyncio # pylint: disable=do-not-import-asyncio
 import threading
 from typing import Optional, Mapping, Any, Dict, List, Union
 
@@ -120,8 +120,8 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
         """
         # setup availabilityStrategy
         # First try to get from options
-        if 'availabilityStrategy' in options:
-            self.availability_strategy = options['availabilityStrategy']
+        if Constants.Kwargs.AVAILABILITY_STRATEGY in options:
+            self.availability_strategy = options[Constants.Kwargs.AVAILABILITY_STRATEGY]
         # If not in options, use client default
         elif client_strategy is not None:
             self.availability_strategy = client_strategy

@@ -144,7 +144,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         """
         self.client_id = str(uuid.uuid4())
         self.url_connection = url_connection
-        self.availability_strategy = availability_strategy
+        self.availability_strategy: Optional[CrossRegionHedgingStrategy] = availability_strategy
         self.master_key: Optional[str] = None
         self.resource_tokens: Optional[Mapping[str, Any]] = None
         self.aad_credentials: Optional[AsyncTokenCredential] = None

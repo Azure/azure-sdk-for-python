@@ -352,17 +352,25 @@ class TestAsyncAvailabilityStrategy:
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("operation", [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED, CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
-    @pytest.mark.parametrize("availability_strategy_level", ["client","request"])
-    async def test_availability_strategy_in_steady_state(self, operation, availability_strategy_level, setup):
+    @pytest.mark.parametrize("client_availability_strategy, request_availability_strategy", [
+        (None, CrossRegionHedgingStrategy(threshold_ms=150, threshold_steps_ms=50)),
+        (CrossRegionHedgingStrategy(threshold_ms=150, threshold_steps_ms=50), _Unset),
+        (CrossRegionHedgingStrategy(threshold_ms=150, threshold_steps_ms=50),
+         CrossRegionHedgingStrategy(threshold_ms=150, threshold_steps_ms=50))
+    ])
+    async def test_availability_strategy_in_steady_state(
+            self,
+            operation,
+            client_availability_strategy,
+            request_availability_strategy,
+            setup):
         """Test for steady state, operations go to first preferred location even with availability strategy enabled"""
         # Setup client with availability strategy
-        strategy = CrossRegionHedgingStrategy(threshold_ms=150,threshold_steps_ms=50)
-
         setup_with_transport = await self.setup_method_with_custom_transport(
             setup['write_locations'],
             setup['read_locations'],
             None,
-            availability_strategy=strategy if availability_strategy_level == "client" else None)
+            availability_strategy=client_availability_strategy)
         doc = create_doc()
         await setup_with_transport['col'].create_item(doc)
 
@@ -378,7 +386,7 @@ class TestAsyncAvailabilityStrategy:
                 doc,
                 expected_uris,
                 excluded_uris,
-                availability_strategy=strategy if availability_strategy_level == "request" else None)
+                availability_strategy=request_availability_strategy)
         else:
             await perform_write_operation(
                 operation,
@@ -386,13 +394,22 @@ class TestAsyncAvailabilityStrategy:
                 doc,
                 expected_uris,
                 excluded_uris,
-                availability_strategy=strategy if availability_strategy_level == "request" else None)
+                availability_strategy=request_availability_strategy)
         await setup_with_transport['client'].close()
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("operation",[READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED, CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
-    @pytest.mark.parametrize("availability_strategy_level", ["client", "request"])
-    async def test_client_availability_strategy_failover(self, operation, availability_strategy_level, setup):
+    @pytest.mark.parametrize("client_availability_strategy, request_availability_strategy", [
+        (None, CrossRegionHedgingStrategy(threshold_ms=150, threshold_steps_ms=50)),
+        (CrossRegionHedgingStrategy(threshold_ms=150, threshold_steps_ms=50), _Unset),
+        (CrossRegionHedgingStrategy(threshold_ms=700, threshold_steps_ms=50), CrossRegionHedgingStrategy(threshold_ms=150, threshold_steps_ms=50))
+    ])
+    async def test_client_availability_strategy_failover(
+            self,
+            operation,
+            client_availability_strategy,
+            request_availability_strategy,
+            setup):
         """Test operations failover to second preferred location on errors"""
         uri_down = _location_cache.LocationCache.GetLocationalEndpoint(self.host, setup['region_1'])
         failed_over_uri = _location_cache.LocationCache.GetLocationalEndpoint(self.host, setup['region_2'])
@@ -407,13 +424,12 @@ class TestAsyncAvailabilityStrategy:
         )
         custom_transport = self.get_custom_transport_with_fault_injection(predicate, error_lambda)
 
-        strategy = CrossRegionHedgingStrategy(threshold_ms=100, threshold_steps_ms=50)
         setup_with_transport = await self.setup_method_with_custom_transport(
             setup['write_locations'],
             setup['read_locations'],
             custom_transport,
             multiple_write_locations=True,
-            availability_strategy=strategy if availability_strategy_level == "client" else None)
+            availability_strategy=client_availability_strategy)
         setup_without_fault = await self.setup_method_with_custom_transport(
             setup['write_locations'],
             setup['read_locations'],
@@ -422,9 +438,6 @@ class TestAsyncAvailabilityStrategy:
         doc = create_doc()
         await setup_without_fault['col'].create_item(doc)
 
-        kwargs = {}
-        if availability_strategy_level == "request":
-            kwargs['availability_strategy'] = strategy
         # Test operation with fault injection
         if operation in [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED]:
             await perform_read_operation(
@@ -433,7 +446,7 @@ class TestAsyncAvailabilityStrategy:
                 doc,
                 [uri_down, failed_over_uri],
                 [],
-                **kwargs)
+                availability_strategy=request_availability_strategy)
         else:
             await perform_write_operation(
                 operation,
@@ -442,7 +455,7 @@ class TestAsyncAvailabilityStrategy:
                 [uri_down, failed_over_uri],
                 [],
                 retry_write=True,
-                **kwargs)
+                availability_strategy=request_availability_strategy)
         await setup_with_transport['client'].close()
         await setup_without_fault['client'].close()
 

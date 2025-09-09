@@ -1,5 +1,5 @@
 # The MIT License (MIT)
-# Copyright (c) 2021 Microsoft Corporation
+# Copyright (c) Microsoft Corporation
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -72,9 +72,10 @@ class CrossRegionHedgingHandler(AvailabilityStrategyHandlerMixin):
         :rtype: ResponseType
         """
 
+        delay: int
         if location_index == 0:
             # No delay for initial request
-            delay: int = 0
+            delay = 0
         elif location_index == 1:
             # First hedged request after threshold
             delay = (cast(CrossRegionHedgingStrategy, request_params.availability_strategy)
@@ -95,7 +96,7 @@ class CrossRegionHedgingHandler(AvailabilityStrategyHandlerMixin):
         params.completion_status = complete_status
 
         # Setup excluded regions for hedging requests
-        params.excluded_locations = self._setup_excluded_regions_for_hedging(
+        params.excluded_locations = self._create_excluded_regions_for_hedging(
             location_index,
             available_locations,
             request_params.excluded_locations

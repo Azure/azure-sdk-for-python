@@ -181,8 +181,9 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     :keyword int throughput_bucket: The desired throughput bucket for the client
     :keyword str user_agent_suffix: Allows user agent suffix to be specified when creating client
     :keyword availability_strategy: The strategy for routing requests across regions based on latency and availability.
-        When enabled, requests are automatically routed to other regions based on latency thresholds if the primary region
-        is unavailable or slow. This helps optimize performance and availability for multi-region accounts.
+        When enabled, requests are automatically routed to other regions
+        based on latency thresholds if the primary region is unavailable or slow.
+        This helps optimize performance and availability for multi-region accounts.
         The default value is None.
     :paramtype availability_strategy: ~azure.cosmos.CrossRegionHedgingStrategy
 
@@ -210,7 +211,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         auth = _build_auth(credential)
         connection_policy = _build_connection_policy(kwargs)
         self.client_connection = CosmosClientConnection(
-            url,
+            url_connection=url,
             auth=auth,
             consistency_level=consistency_level,
             connection_policy=connection_policy,

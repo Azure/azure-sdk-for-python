@@ -286,7 +286,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
         if availability_strategy is not _Unset:
-            kwargs[Constants.Kwargs.AVAILABILITY_STRATEGY] = availability_strategy
+            kwargs["availability_strategy"] = availability_strategy
         if response_hook is not None:
             kwargs['response_hook'] = response_hook
         request_options = build_options(kwargs)
@@ -363,7 +363,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
         if availability_strategy is not _Unset:
-            kwargs[Constants.Kwargs.AVAILABILITY_STRATEGY] = availability_strategy
+            kwargs["availability_strategy"] = availability_strategy
 
         kwargs['max_concurrency'] = max_concurrency
         query_options = build_options(kwargs)
@@ -430,7 +430,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
         if availability_strategy is not _Unset:
-            kwargs[Constants.Kwargs.AVAILABILITY_STRATEGY] = availability_strategy
+            kwargs["availability_strategy"] = availability_strategy
         if response_hook is not None:
             kwargs['response_hook'] = response_hook
         feed_options = build_options(kwargs)
@@ -1123,7 +1123,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
         if availability_strategy is not _Unset:
-            kwargs[Constants.Kwargs.AVAILABILITY_STRATEGY] = availability_strategy
+            kwargs["availability_strategy"] = availability_strategy
         if response_hook is not None:
             kwargs['response_hook'] = response_hook
         request_options = build_options(kwargs)
@@ -1221,7 +1221,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
         if availability_strategy is not _Unset:
-            kwargs[Constants.Kwargs.AVAILABILITY_STRATEGY] = availability_strategy
+            kwargs["availability_strategy"] = availability_strategy
         if response_hook is not None:
             kwargs['response_hook'] = response_hook
         if retry_write is not None:
@@ -1334,7 +1334,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
         if availability_strategy is not _Unset:
-            kwargs[Constants.Kwargs.AVAILABILITY_STRATEGY] = availability_strategy
+            kwargs["availability_strategy"] = availability_strategy
         if response_hook is not None:
             kwargs['response_hook'] = response_hook
         request_options = build_options(kwargs)
@@ -1441,7 +1441,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
         if availability_strategy is not _Unset:
-            kwargs[Constants.Kwargs.AVAILABILITY_STRATEGY] = availability_strategy
+            kwargs["availability_strategy"] = availability_strategy
         if response_hook is not None:
             kwargs['response_hook'] = response_hook
         request_options = build_options(kwargs)
@@ -1536,7 +1536,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if retry_write is not None:
             kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
         if availability_strategy is not _Unset:
-            kwargs[Constants.Kwargs.AVAILABILITY_STRATEGY] = availability_strategy
+            kwargs["availability_strategy"] = availability_strategy
         if response_hook is not None:
             kwargs['response_hook'] = response_hook
         request_options = build_options(kwargs)
@@ -1622,7 +1622,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
         if availability_strategy is not _Unset:
-            kwargs[Constants.Kwargs.AVAILABILITY_STRATEGY] = availability_strategy
+            kwargs["availability_strategy"] = availability_strategy
         if response_hook is not None:
             kwargs['response_hook'] = response_hook
         request_options = build_options(kwargs)

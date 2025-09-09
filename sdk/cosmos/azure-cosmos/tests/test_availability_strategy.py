@@ -320,27 +320,32 @@ class TestAvailabilityStrategy:
         custom_transport.add_fault(predicate, error_lambda)
         return custom_transport
 
-    @pytest.mark.parametrize("threshold_ms,threshold_steps_ms", [
-        (-1, 100),
-        (0, 100),
-        (100, -1),
-        (100,0)
+    @pytest.mark.parametrize("threshold_ms,threshold_steps_ms, error_message", [
+        (-1, 100, "threshold must be positive when enabled is True"),
+        (0, 100, "threshold must be positive when enabled is True"),
+        (100, -1, "threshold_steps must be positive when enabled is True"),
+        (100,0, "threshold_steps must be positive when enabled is True")
     ])
-    def test_invalid_thresholds_when_enabled(self, threshold_ms, threshold_steps_ms):
+    def test_invalid_thresholds_when_enabled(self, threshold_ms, threshold_steps_ms, error_message):
         """Test that creating strategy with non-positive thresholds raises ValueError when enabled"""
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match=error_message):
             CrossRegionHedgingStrategy(threshold_ms=threshold_ms, threshold_steps_ms=threshold_steps_ms)
 
     @pytest.mark.parametrize("operation", [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED, CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
-    @pytest.mark.parametrize("availability_strategy_level", ["client", "request"])
-    def test_availability_strategy_in_steady_state(self, operation, availability_strategy_level):
+    @pytest.mark.parametrize("client_availability_strategy, request_availability_strategy", [
+        (None, CrossRegionHedgingStrategy(threshold_ms=150,  threshold_steps_ms=50)),
+        (CrossRegionHedgingStrategy(threshold_ms=150,  threshold_steps_ms=50), _Unset),
+        (CrossRegionHedgingStrategy(threshold_ms=150,  threshold_steps_ms=50), CrossRegionHedgingStrategy(threshold_ms=150,  threshold_steps_ms=50))
+    ])
+    def test_availability_strategy_in_steady_state(
+            self,
+            operation,
+            client_availability_strategy,
+            request_availability_strategy):
         """Test for steady state, operations go to first preferred location even with availability strategy enabled"""
-        # Setup client with availability strategy
-        strategy = CrossRegionHedgingStrategy(threshold_ms=150,  threshold_steps_ms=50 )
-
         setup = self.setup_method_with_custom_transport(
             None,
-            availability_strategy=strategy if availability_strategy_level == "client" else None)
+            availability_strategy=client_availability_strategy)
 
         doc = create_doc()
         setup['col'].create_item(body=doc)
@@ -356,7 +361,7 @@ class TestAvailabilityStrategy:
                 doc,
                 expected_uris,
                 excluded_uris,
-                availability_strategy=strategy if availability_strategy_level == "request" else None)
+                availability_strategy=request_availability_strategy)
         else:
             perform_write_operation(
                 operation,
@@ -364,11 +369,19 @@ class TestAvailabilityStrategy:
                 doc,
                 expected_uris,
                 excluded_uris,
-                availability_strategy=strategy if availability_strategy_level == "request" else None)
+                availability_strategy=request_availability_strategy)
 
     @pytest.mark.parametrize("operation", [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED, CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
-    @pytest.mark.parametrize("availability_strategy_level", ["client", "request"])
-    def test_client_availability_strategy_failover(self, operation, availability_strategy_level):
+    @pytest.mark.parametrize("client_availability_strategy, request_availability_strategy", [
+        (None, CrossRegionHedgingStrategy(threshold_ms=150,  threshold_steps_ms=50)),
+        (CrossRegionHedgingStrategy(threshold_ms=150,  threshold_steps_ms=50), _Unset),
+        (CrossRegionHedgingStrategy(threshold_ms=700,  threshold_steps_ms=50), CrossRegionHedgingStrategy(threshold_ms=150,  threshold_steps_ms=50))
+    ])
+    def test_client_availability_strategy_failover(
+            self,
+            operation,
+            client_availability_strategy,
+            request_availability_strategy):
         """Test operations failover to second preferred location on errors"""
         uri_down = _location_cache.LocationCache.GetLocationalEndpoint(self.host, self.REGION_1)
         failed_over_uri = _location_cache.LocationCache.GetLocationalEndpoint(self.host, self.REGION_2)
@@ -383,12 +396,10 @@ class TestAvailabilityStrategy:
         )
         custom_transport = self.get_custom_transport_with_fault_injection(predicate, error_lambda)
 
-        strategy = CrossRegionHedgingStrategy(threshold_ms=100, threshold_steps_ms=50
-        )
         setup = self.setup_method_with_custom_transport(
             custom_transport,
             multiple_write_locations=True,
-            availability_strategy=strategy if availability_strategy_level == "client" else None)
+            availability_strategy=client_availability_strategy)
 
         setup_without_fault = self.setup_method_with_custom_transport(None)
         doc = create_doc()
@@ -397,10 +408,6 @@ class TestAvailabilityStrategy:
         expected_uris = [uri_down, failed_over_uri]
         # Test operation with fault injection
 
-        kwargs = {}
-        if availability_strategy_level == "request":
-            kwargs['availability_strategy'] = strategy
-
         if operation in [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED]:
             perform_read_operation(
                 operation,
@@ -408,7 +415,7 @@ class TestAvailabilityStrategy:
                 doc,
                 expected_uris,
                 [],
-                **kwargs)
+                availability_strategy=request_availability_strategy)
         else:
             perform_write_operation(
                 operation,
@@ -417,7 +424,7 @@ class TestAvailabilityStrategy:
                 expected_uris,
                 [],
                 retry_write=True,
-                **kwargs)
+                availability_strategy=request_availability_strategy)
 
     @pytest.mark.parametrize("operation", [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED, CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
     @pytest.mark.parametrize("status_code, sub_status_code", NON_TRANSIENT_STATUS_CODES)

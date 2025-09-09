@@ -219,7 +219,6 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         url: str,
         credential: Union[TokenCredential, str, Dict[str, Any]],
         consistency_level: Optional[str] = None,
-        *,
         availability_strategy: Optional[CrossRegionHedgingStrategy] = None,
         **kwargs
     ) -> None:
@@ -229,7 +228,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         auth = _build_auth(credential)
         connection_policy = _build_connection_policy(kwargs)
         self.client_connection = CosmosClientConnection(
-            url,
+            url_connection=url,
             auth=auth,
             consistency_level=consistency_level,
             connection_policy=connection_policy,
