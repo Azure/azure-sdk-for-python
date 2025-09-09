@@ -23,7 +23,9 @@ class ConfidentialLedgerCertificateClient(_ConfidentialLedgerCertificateClientOp
     """The Confidential Ledger Certificate endpoint is used to retrieve the TLS certificate
     required for connecting to a Confidential Ledger.
 
-    :keyword certificate_endpoint: Default value is
+    :keyword certificate_endpoint: The certificate endpoint (or "Identity Service Endpoint" in the
+     Azure portal), for example `https://identity.confidential-ledger.core.azure.com
+     <https://identity.confidential-ledger.core.azure.com>`_. Default value is
      "https://identity.confidential-ledger.core.azure.com".
     :paramtype certificate_endpoint: str
     :keyword api_version: The API version to use for this operation. Default value is

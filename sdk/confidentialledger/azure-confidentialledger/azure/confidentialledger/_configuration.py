@@ -19,7 +19,9 @@ class ConfidentialLedgerClientConfiguration:  # pylint: disable=too-many-instanc
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param ledger_endpoint: Required.
+    :param ledger_endpoint: The Confidential Ledger URL, for example
+     `https://contoso.confidentialledger.azure.com <https://contoso.confidentialledger.azure.com>`_.
+     Required.
     :type ledger_endpoint: str
     :keyword api_version: The API version to use for this operation. Default value is
      "2024-12-09-preview". Note that overriding this default value may result in unsupported

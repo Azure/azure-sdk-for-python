@@ -19,7 +19,9 @@ class ConfidentialLedgerCertificateClientConfiguration:  # pylint: disable=too-m
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param certificate_endpoint: Default value is
+    :param certificate_endpoint: The certificate endpoint (or "Identity Service Endpoint" in the
+     Azure portal), for example `https://identity.confidential-ledger.core.azure.com
+     <https://identity.confidential-ledger.core.azure.com>`_. Default value is
      "https://identity.confidential-ledger.core.azure.com".
     :type certificate_endpoint: str
     :keyword api_version: The API version to use for this operation. Default value is
