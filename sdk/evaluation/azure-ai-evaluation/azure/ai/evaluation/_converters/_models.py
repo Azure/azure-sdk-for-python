@@ -292,6 +292,10 @@ class ToolCall:
 class EvaluatorData(BaseModel):
     """Represents the result of a conversion.
 
+    :param thread_id: The ID of the thread associated with the conversation.
+    :type thread_id: Optional[str]
+    :param run_id: The ID of the run associated with the conversation.
+    :type run_id: Optional[str]
     :param query: A list of messages representing the system message, chat history, and user query.
     :type query: List[Message]
     :param response: A list of messages representing the assistant's response, including tool calls and results.
@@ -300,6 +304,8 @@ class EvaluatorData(BaseModel):
     :type tool_definitions: List[ToolDefinition]
     """
 
+    thread_id: Optional[str] = None
+    run_id: Optional[str] = None
     query: List[Message]
     response: List[Message]
     tool_definitions: List[Union[ToolDefinition, OpenAPIToolDefinition]]

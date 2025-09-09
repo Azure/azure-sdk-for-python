@@ -570,6 +570,8 @@ class AIAgentConverter:
 
             # Finally, let's pack it up into the final result.
             final_result = EvaluatorData(
+                thread_id=thread_id,
+                run_id=run_id,
                 query=query,
                 response=responses,
                 tool_definitions=tool_definitions,
@@ -720,7 +722,10 @@ class AIAgentConverter:
         query, responses = AIAgentConverter._break_into_query_responses(final_messages, run_id)
 
         # Create the final result
-        final_result = EvaluatorData(query=query, response=responses, tool_definitions=tool_definitions)
+        final_result = EvaluatorData(
+            query=query,
+            response=responses,
+            tool_definitions=tool_definitions)
 
         return json.loads(final_result.to_json())
 
