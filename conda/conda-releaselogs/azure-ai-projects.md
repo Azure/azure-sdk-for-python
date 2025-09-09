@@ -4,4 +4,4 @@ Azure AI Projects client library for Python (conda)
 
 ### Packages included
 
-- azure-ai-agents-1.0.0
+- azure-ai-projects-1.0.0

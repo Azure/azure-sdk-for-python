@@ -207,7 +207,7 @@ extends:
                         - package: azure-core
                           version: 1.35.0
                         - package: azure-mgmt-core
-                          version: 1.5.0
+                          version: 1.6.0
                         - package: azure-common
                           version: 1.1.28
                     - name: msrest
@@ -497,7 +497,7 @@ extends:
                       in_batch: ${{ parameters.release_azure_ai_agents }}
                       checkout:
                         - package: azure-ai-agents
-                          version: 1.0.0
+                          version: 1.1.0
                     - name: azure-ai-projects
                       common_root: azure
                       service: projects
