@@ -4,8 +4,6 @@ import subprocess
 import argparse
 import logging
 
-from logging import Logger
-
 from ci_tools.variables import get_log_directory, in_ci
 
 LOGLEVEL = getattr(logging, os.environ.get("LOGLEVEL", "INFO").upper())
