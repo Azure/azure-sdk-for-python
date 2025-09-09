@@ -72,10 +72,7 @@ mcp_tool2 = McpTool(
     allowed_tools=["microsoft_docs_search"],  # Optional: specify allowed tools
 )
 
-tools: list[Tool] = []
-tools.append(mcp_tool1)
-tools.append(mcp_tool2)
-
+tools: list[Tool] = [mcp_tool1, mcp_tool2]
 
 # Create agent with MCP tool and process agent run
 with project_client:
