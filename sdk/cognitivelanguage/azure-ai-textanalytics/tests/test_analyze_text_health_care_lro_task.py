@@ -66,7 +66,7 @@ class TestTextAnalysisCase(TestTextAnalysis):
         details = poller.details
         assert "operation_id" in details
         assert details.get("status") is not None
-        
+
         assert paged_actions is not None
 
         found_healthcare = False

@@ -34,9 +34,7 @@ class TestTextAnalysisCaseAsync(TestTextAnalysisAsync):
     @TextAnalysisPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_analyze_text_extract_key_phrases_async(
-        self, text_analysis_endpoint, text_analysis_key
-    ):
+    async def test_analyze_text_extract_key_phrases_async(self, text_analysis_endpoint, text_analysis_key):
         async with self.create_client(text_analysis_endpoint, text_analysis_key) as client:
             text_a = (
                 "We love this trail and make the trip every year. The views are breathtaking and well worth the hike! "

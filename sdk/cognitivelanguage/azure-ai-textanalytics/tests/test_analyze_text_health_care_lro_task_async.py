@@ -34,9 +34,7 @@ class TestTextAnalysisCaseAsync(TestTextAnalysisAsync):
     @TextAnalysisPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_analyze_text_health_care_lro_task_async(
-        self, text_analysis_endpoint, text_analysis_key
-    ):
+    async def test_analyze_text_health_care_lro_task_async(self, text_analysis_endpoint, text_analysis_key):
         async with self.create_client(text_analysis_endpoint, text_analysis_key) as client:
             text_a = "Prescribed 100mg ibuprofen, taken twice daily."
 

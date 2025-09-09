@@ -33,18 +33,12 @@ class TestTextAnalysisCaseAsync(TestTextAnalysisAsync):
     @TextAnalysisPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_analyze_text_language_detection_async(
-        self, text_analysis_endpoint, text_analysis_key
-    ):
+    async def test_analyze_text_language_detection_async(self, text_analysis_endpoint, text_analysis_key):
         async with self.create_client(text_analysis_endpoint, text_analysis_key) as client:
-            text_a = (
-                "Sentences in different languages."
-            )
+            text_a = "Sentences in different languages."
 
             body = TextLanguageDetectionInput(
-                text_input=LanguageDetectionTextInput(
-                    language_inputs=[LanguageInput(id="A", text=text_a)]
-                )
+                text_input=LanguageDetectionTextInput(language_inputs=[LanguageInput(id="A", text=text_a)])
             )
 
             result = await client.analyze_text(body=body)

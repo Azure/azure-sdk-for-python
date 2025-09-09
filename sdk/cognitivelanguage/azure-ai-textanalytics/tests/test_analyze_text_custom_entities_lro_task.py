@@ -70,7 +70,7 @@ class TestTextAnalysisCase(TestTextAnalysis):
         )
 
         assert poller is not None
-        
+
         paged_actions = poller.result()
         details = poller.details
         assert "operation_id" in details

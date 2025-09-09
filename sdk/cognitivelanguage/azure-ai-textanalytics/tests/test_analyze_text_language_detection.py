@@ -30,9 +30,7 @@ class TestTextAnalysisCase(TestTextAnalysis):
     def test_analyze_text_language_detection(self, text_analysis_endpoint, text_analysis_key):
         client = self.create_client(text_analysis_endpoint, text_analysis_key)
 
-        text_a = (
-            "Sentences in different languages."
-        )
+        text_a = "Sentences in different languages."
 
         body = TextLanguageDetectionInput(
             text_input=LanguageDetectionTextInput(language_inputs=[LanguageInput(id="A", text=text_a)])

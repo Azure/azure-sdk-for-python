@@ -125,6 +125,4 @@ class TestTextAnalysisCaseAsync(TestTextAnalysisAsync):
                                 assert sent.offset is not None
                                 assert sent.length is not None
 
-            assert found_extractive, (
-                "Expected an ExtractiveSummarizationOperationResult in TextActions.items_property"
-            )
+            assert found_extractive, "Expected an ExtractiveSummarizationOperationResult in TextActions.items_property"

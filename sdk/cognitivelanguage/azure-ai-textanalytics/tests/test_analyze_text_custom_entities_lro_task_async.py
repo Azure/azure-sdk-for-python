@@ -32,13 +32,12 @@ class TestTextAnalysisAsync(AzureRecordedTestCase):
     def create_client(self, endpoint: str, key: str) -> TextAnalysisClient:
         return TextAnalysisClient(endpoint, AzureKeyCredential(key))
 
+
 class TestTextAnalysisCaseAsync(TestTextAnalysisAsync):
     @TextAnalysisPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_analyze_text_custom_entities_lro_task_async(
-        self, text_analysis_endpoint, text_analysis_key
-    ):
+    async def test_analyze_text_custom_entities_lro_task_async(self, text_analysis_endpoint, text_analysis_key):
         async with self.create_client(text_analysis_endpoint, text_analysis_key) as client:
             project_name = "Example-ner-project"
             deployment_name = "TestDeployment"
@@ -106,4 +105,6 @@ class TestTextAnalysisCaseAsync(TestTextAnalysisAsync):
                                 assert entity.length is not None
                                 assert entity.confidence_score is not None
 
-            assert found_custom_entities, "Expected a CustomEntityRecognitionOperationResult in TextActions.items_property"
+            assert (
+                found_custom_entities
+            ), "Expected a CustomEntityRecognitionOperationResult in TextActions.items_property"

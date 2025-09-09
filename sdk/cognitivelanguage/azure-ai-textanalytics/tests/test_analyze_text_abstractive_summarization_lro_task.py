@@ -106,18 +106,18 @@ class TestTextAnalysisCase(TestTextAnalysis):
                     assert result is not None
                     assert result.documents is not None
 
-                    for doc in result.documents: 
+                    for doc in result.documents:
                         assert isinstance(doc, AbstractiveSummaryActionResult)
                         assert doc.id is not None
                         assert doc.summaries is not None
 
-                        for summary in doc.summaries: 
+                        for summary in doc.summaries:
                             assert isinstance(summary, AbstractiveSummary)
                             assert summary.text is not None
 
                             # contexts may be optional
                             if summary.contexts is not None:
-                                for ctx in summary.contexts: 
+                                for ctx in summary.contexts:
                                     assert isinstance(ctx, SummaryContext)
                                     assert ctx.offset is not None
                                     assert ctx.length is not None

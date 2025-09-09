@@ -36,9 +36,7 @@ class TestTextAnalysisCaseAsync(TestTextAnalysisAsync):
     @TextAnalysisPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_analyze_text_recognize_linked_entities_async(
-        self, text_analysis_endpoint, text_analysis_key
-    ):
+    async def test_analyze_text_recognize_linked_entities_async(self, text_analysis_endpoint, text_analysis_key):
         async with self.create_client(text_analysis_endpoint, text_analysis_key) as client:
             text_a = (
                 "Microsoft was founded by Bill Gates with some friends he met at Harvard. One of his friends, Steve "

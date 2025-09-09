@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 import functools
 import pytest
 
@@ -34,9 +35,7 @@ class TestTextAnalysisCaseAsync(TestTextAnalysisAsync):
     @TextAnalysisPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_analyze_text_recognize_pii_async(
-        self, text_analysis_endpoint, text_analysis_key
-    ):
+    async def test_analyze_text_recognize_pii_async(self, text_analysis_endpoint, text_analysis_key):
         async with self.create_client(text_analysis_endpoint, text_analysis_key) as client:
             text_a = (
                 "Parker Doe has repaid all of their loans as of 2020-04-25. Their SSN is 859-98-0987. To contact them, "

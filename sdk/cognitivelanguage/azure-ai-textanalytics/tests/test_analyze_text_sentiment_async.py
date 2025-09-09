@@ -34,9 +34,7 @@ class TestTextAnalysisCaseAsync(TestTextAnalysisAsync):
     @TextAnalysisPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_analyze_text_sentiment_async(
-        self, text_analysis_endpoint, text_analysis_key
-    ):
+    async def test_analyze_text_sentiment_async(self, text_analysis_endpoint, text_analysis_key):
         async with self.create_client(text_analysis_endpoint, text_analysis_key) as client:
             text_a = (
                 "The food and service were unacceptable, but the concierge were nice. After talking to them about the "
