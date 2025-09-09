@@ -56,6 +56,7 @@ class _Constants:
     CIRCUIT_BREAKER_ENABLED_CONFIG: str =  "AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"
     CIRCUIT_BREAKER_ENABLED_CONFIG_DEFAULT: str = "False"
     AAD_SCOPE_OVERRIDE: str = "AZURE_COSMOS_AAD_SCOPE_OVERRIDE"
+    AAD_DEFAULT_SCOPE: str = "https://cosmos.azure.com/.default"
 
     # Database Account Retry Policy constants
     AZURE_COSMOS_HEALTH_CHECK_MAX_RETRIES: str = "AZURE_COSMOS_HEALTH_CHECK_MAX_RETRIES"
@@ -94,3 +95,5 @@ class _Constants:
 
         RETRY_WRITE: Literal["retry_write"] = "retry_write"
         """Whether to retry write operations if they fail. Used either at client level or request level."""
+
+        EXCLUDED_LOCATIONS: Literal["excludedLocations"] = "excludedLocations"
