@@ -52,8 +52,6 @@ jobs:
         run: |
           black --check --config eng/black-pyproject.toml eng/tools/azure-sdk-tools --exclude 'templates'
         shell: bash
-        working-directory: eng/tools/azure-sdk-tools
-
 
   dev-setup-and-import:
     runs-on: ubuntu-latest
