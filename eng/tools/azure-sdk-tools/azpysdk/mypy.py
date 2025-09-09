@@ -17,7 +17,7 @@ from ci_tools.logging import logger
 PYTHON_VERSION = "3.9"
 MYPY_VERSION = "1.14.1"
 
-ADDITIONAL_LOCKED_DEPENENCIES = [
+ADDITIONAL_LOCKED_DEPENDENCIES = [
   "types-chardet==5.0.4.6",
   "types-requests==2.31.0.6",
   "types-six==1.16.21.9",
@@ -53,7 +53,7 @@ class mypy(Check):
             package_dir = parsed.folder
             package_name = parsed.name
             # dev_requirements = os.path.join(package_dir, "dev_requirements.txt")
-            additional_requirements = ADDITIONAL_LOCKED_DEPENENCIES
+            additional_requirements = ADDITIONAL_LOCKED_DEPENDENCIES
 
             executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, package_dir)
             logger.info(f"Processing {package_name} for mypy check")
