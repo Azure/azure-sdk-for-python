@@ -28,7 +28,7 @@ from urllib.parse import urlparse
 import uuid
 from typing import (
     Callable, Dict, Any, Iterable, Mapping, Optional, List,
-    Sequence, Tuple, Type, Union, cast
+    Sequence, Tuple, Union, cast
 )
 
 from typing_extensions import TypedDict
@@ -76,15 +76,14 @@ from ..partition_key import (
     _PartitionKeyKind,
     _SequentialPartitionKeyType,
     _return_undefined_or_empty_partition_key,
-    NonePartitionKeyValue, _Empty,
-    _build_partition_key_from_properties,
+    _Empty,
+    _build_partition_key_from_properties, _PartitionKeyType
 )
 from ._auth_policy_async import AsyncCosmosBearerTokenCredentialPolicy
 from .._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
 from .._range_partition_resolver import RangePartitionResolver
 
 
-PartitionKeyType = Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], Type[NonePartitionKeyValue]]  # pylint: disable=line-too-long
 
 
 class CredentialDict(TypedDict, total=False):
@@ -138,7 +137,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             The connection policy for the client.
         :param documents.ConsistencyLevel consistency_level:
             The default consistency policy for client operations.
-
         """
         self.client_id = str(uuid.uuid4())
         self.url_connection = url_connection
@@ -213,11 +211,12 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         credentials_policy = None
         if self.aad_credentials:
             scope_override = os.environ.get(Constants.AAD_SCOPE_OVERRIDE, "")
-            if scope_override:
-                scope = scope_override
-            else:
-                scope = base.create_scope_from_url(self.url_connection)
-            credentials_policy = AsyncCosmosBearerTokenCredentialPolicy(self.aad_credentials, scope)
+            account_scope = base.create_scope_from_url(self.url_connection)
+            credentials_policy = AsyncCosmosBearerTokenCredentialPolicy(
+                self.aad_credentials,
+                account_scope,
+                scope_override
+            )
         self._enable_diagnostics_logging = kwargs.pop("enable_diagnostics_logging", False)
         policies = [
             HeadersPolicy(**kwargs),
@@ -2260,7 +2259,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
     async def read_items(
             self,
             collection_link: str,
-            items: Sequence[Tuple[str, PartitionKeyType]],
+            items: Sequence[Tuple[str, _PartitionKeyType]],
             options: Optional[Mapping[str, Any]] = None,
             **kwargs: Any
      ) -> CosmosList:
@@ -2268,7 +2267,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         :param str collection_link: The link to the document collection.
         :param items: A list of tuples, where each tuple contains an item's ID and partition key.
-        :type items: Sequence[Tuple[str, PartitionKeyType]]
+        :type items: Sequence[Tuple[str, _PartitionKeyType]]
         :param dict options: The request options for the request.
         :return: The list of read items.
         :rtype: CosmosList
@@ -2323,7 +2322,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         database_or_container_link: str,
         query: Optional[Union[str, Dict[str, Any]]],
         options: Optional[Mapping[str, Any]] = None,
-        partition_key: Optional[PartitionKeyType] = None,
+        partition_key: Optional[_PartitionKeyType] = None,
         response_hook: Optional[Callable[[Mapping[str, Any], Dict[str, Any]], None]] = None,
         **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:

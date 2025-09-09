@@ -643,7 +643,8 @@
     {
       "filename": "sdk/identity/azure-identity/tests/*.py",
       "words": [
-        "infile"
+        "infile",
+        "acrs"
       ]
     },
     {
@@ -828,6 +829,11 @@
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-conversations/azure/ai/language/conversations/**/_serialization.py",
       "words": [ "ctxt", "wday", "mday", "astimezone", "unflattened", "JSONify", "deseralize" ]
+    },
+    {
+      "filename": "sdk/cognitivelanguage/azure-ai-language-conversations-authoring/**",
+      "words": [ "unassigning" ],
+      "caseSensitive": false
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-questionanswering/**",

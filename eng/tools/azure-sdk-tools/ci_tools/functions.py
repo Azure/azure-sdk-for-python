@@ -179,8 +179,7 @@ def glob_packages(glob_string: str, target_root_dir: str) -> List[str]:
 
     # drop any packages that exist within a tests or test directory
     collected_top_level_directories = [
-        p for p in collected_top_level_directories
-        if not any(part in ("test", "tests") for part in p.split(os.sep))
+        p for p in collected_top_level_directories if not any(part in ("test", "tests") for part in p.split(os.sep))
     ]
 
     # deduplicate, in case we have double coverage from the glob strings. Example: "azure-mgmt-keyvault,azure-mgmt-*"
@@ -411,7 +410,9 @@ def process_requires(setup_py_path: str, is_dev_build: bool = False):
     else:
         logging.info("Packages not available on PyPI:{}".format(requirement_to_update))
         update_requires(setup_py_path, requirement_to_update)
-        logging.info(f"Package requirement is updated in {'pyproject.toml' if pkg_details.is_pyproject else 'setup.py'}.")
+        logging.info(
+            f"Package requirement is updated in {'pyproject.toml' if pkg_details.is_pyproject else 'setup.py'}."
+        )
 
 
 def find_sdist(dist_dir: str, pkg_name: str, pkg_version: str) -> Optional[str]:
@@ -444,7 +445,10 @@ def find_sdist(dist_dir: str, pkg_name: str, pkg_version: str) -> Optional[str]:
 
 
 def pip_install(
-    requirements: List[str], include_dependencies: bool = True, python_executable: Optional[str] = None, cwd: Optional[str] = None
+    requirements: List[str],
+    include_dependencies: bool = True,
+    python_executable: Optional[str] = None,
+    cwd: Optional[str] = None,
 ) -> bool:
     """
     Attempts to invoke an install operation using the invoking python's pip. Empty requirements are auto-success.
@@ -474,6 +478,7 @@ def pip_uninstall(requirements: List[str], python_executable: str) -> bool:
     """
     Attempts to invoke an install operation using the invoking python's pip. Empty requirements are auto-success.
     """
+    # we do not use get_pip_command here because uv pip doesn't have an uninstall command
     exe = python_executable or sys.executable
     command = [exe, "-m", "pip", "uninstall", "-y"]
 
@@ -487,6 +492,48 @@ def pip_uninstall(requirements: List[str], python_executable: str) -> bool:
         return True
     except subprocess.CalledProcessError as f:
         return False
+
+
+def get_venv_python(venv_path: str) -> str:
+    """
+    Given a python venv path, identify the crossplat reference to the python executable.
+    """
+    # if we already have a path to a python executable, return it
+    if os.path.isfile(venv_path) and os.access(venv_path, os.X_OK) and os.path.basename(venv_path).startswith("python"):
+        return venv_path
+
+    # cross-platform python in a venv
+    bin_dir = "Scripts" if os.name == "nt" else "bin"
+    return os.path.join(venv_path, bin_dir, "python")
+
+
+def install_into_venv(
+    venv_path_or_executable: str, installation_target: str, editable: bool = True, extras: Optional[str] = None
+) -> None:
+    """
+    Install the package into an existing venv (venv_path) without activating it.
+
+    - Uses get_pip_command(get_venv_python) per request.
+    - If get_pip_command returns the 'uv' wrapper, we fall back to get_venv_python -m pip
+      so installation goes into the target venv reliably.
+    """
+    py = get_venv_python(venv_path_or_executable)
+    pip_cmd = get_pip_command(py)
+
+    install_target = installation_target
+    if extras:
+        install_target = f"{installation_target}[{extras}]"
+
+    if editable:
+        cmd = pip_cmd + ["install", "-e", install_target]
+    else:
+        cmd = pip_cmd + ["install", install_target]
+
+    if pip_cmd[0] == "uv":
+        cmd += ["--python", py]
+
+    # todo: clean this up so that we're using run_logged from #42862
+    subprocess.check_call(cmd)
 
 
 def pip_install_requirements_file(requirements_file: str, python_executable: Optional[str] = None) -> bool:
@@ -906,7 +953,9 @@ def handle_incompatible_minimum_dev_reqs(
     return cleansed_reqs
 
 
-def verify_package_classifiers(package_name: str, package_version: str, package_classifiers: List[str]) -> Tuple[bool, Optional[str]]:
+def verify_package_classifiers(
+    package_name: str, package_version: str, package_classifiers: List[str]
+) -> Tuple[bool, Optional[str]]:
     """
     Verify that the package classifiers match the expected classifiers.
     :param str package_name: The name of the package being verified. Used for detail in the error response.
@@ -924,7 +973,10 @@ def verify_package_classifiers(package_name: str, package_version: str, package_
     if dev_status.is_prerelease:
         for c in dev_classifiers:
             if "4 - Beta" not in c:
-                return False, f"{package_name} has version {package_version} and is a beta release, but has development status '{c}'. Expected 'Development Status :: 4 - Beta' ONLY."
+                return (
+                    False,
+                    f"{package_name} has version {package_version} and is a beta release, but has development status '{c}'. Expected 'Development Status :: 4 - Beta' ONLY.",
+                )
         return True, None
 
     # ga releases: all development statuses must be >= 5
@@ -935,9 +987,15 @@ def verify_package_classifiers(package_name: str, package_version: str, package_
             # or Development Status :: 7 - Inactive
             num = int(c.split("::")[1].split("-")[0].strip())
         except (IndexError, ValueError):
-            return False, f"{package_name} has version {package_version} and is a GA release, but failed to pull a status number from status '{c}'. Expecting format identical to 'Development Status :: 5 - Production/Stable'."
+            return (
+                False,
+                f"{package_name} has version {package_version} and is a GA release, but failed to pull a status number from status '{c}'. Expecting format identical to 'Development Status :: 5 - Production/Stable'.",
+            )
         if num < 5:
-            return False, f"{package_name} has version {package_version} and is a GA release, but had development status '{c}'. Expecting a development classifier that is equal or greater than 'Development Status :: 5 - Production/Stable'."
+            return (
+                False,
+                f"{package_name} has version {package_version} and is a GA release, but had development status '{c}'. Expecting a development classifier that is equal or greater than 'Development Status :: 5 - Production/Stable'.",
+            )
     return True, None
 
 
@@ -951,13 +1009,14 @@ def get_venv_call(python_exe: Optional[str] = None) -> List[str]:
 
     """
     # Check TOX_PIP_IMPL environment variable (aligns with tox.ini configuration)
-    pip_impl = os.environ.get('TOX_PIP_IMPL', 'pip').lower()
+    pip_impl = os.environ.get("TOX_PIP_IMPL", "pip").lower()
 
     # soon we will change this to default to uv
-    if pip_impl == 'uv':
+    if pip_impl == "uv":
         return ["uv", "venv"]
     else:
         return [python_exe if python_exe else sys.executable, "-m", "venv"]
+
 
 def get_pip_command(python_exe: Optional[str] = None) -> List[str]:
     """
@@ -969,10 +1028,10 @@ def get_pip_command(python_exe: Optional[str] = None) -> List[str]:
 
     """
     # Check TOX_PIP_IMPL environment variable (aligns with tox.ini configuration)
-    pip_impl = os.environ.get('TOX_PIP_IMPL', 'pip').lower()
+    pip_impl = os.environ.get("TOX_PIP_IMPL", "pip").lower()
 
     # soon we will change this to default to uv
-    if pip_impl == 'uv':
+    if pip_impl == "uv":
         return ["uv", "pip"]
     else:
         return [python_exe if python_exe else sys.executable, "-m", "pip"]

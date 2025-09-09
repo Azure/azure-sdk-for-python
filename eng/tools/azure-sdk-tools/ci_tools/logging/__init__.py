@@ -19,11 +19,11 @@ def configure_logging(
     """
     # use cli arg > log level arg > env var
 
-    if args.quiet:
+    if hasattr(args, "quiet") and args.quiet:
         numeric_level = logging.ERROR
-    elif args.verbose:
+    elif hasattr(args, "verbose") and args.verbose:
         numeric_level = logging.DEBUG
-    elif not args.log_level:
+    elif not getattr(args, "log_level", None):
         numeric_level = getattr(logging, os.environ.get("LOGLEVEL", "INFO").upper())
     else:
         numeric_level = getattr(logging, args.log_level.upper(), None)
