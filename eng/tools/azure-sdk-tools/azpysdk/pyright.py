@@ -1,20 +1,14 @@
 import argparse
 import os
 import sys
-import shutil
-import glob
-import json
 
 from typing import Optional, List
 from subprocess import CalledProcessError, check_call
-from pathlib import Path
 
 from .Check import Check
 from ci_tools.functions import install_into_venv
-from ci_tools.scenario.generation import create_package_and_install
 from ci_tools.variables import in_ci, set_envvar_defaults
 from ci_tools.variables import discover_repo_root
-from ci_tools.variables import in_analyze_weekly
 from ci_tools.environment_exclusions import is_check_enabled, is_typing_ignored
 
 from ci_tools.logging import logger
