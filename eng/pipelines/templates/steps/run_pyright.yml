@@ -20,6 +20,8 @@ steps:
         --disablecov
         ${{ parameters.AdditionalTestArgs }}
     condition: and(succeededOrFailed(), ne(variables['Skip.Pyright'],'true'))
+    env:
+      SHOULD_OUTPUT_VERSION_CONTENT: 'true'  # this is just to help debug version parsing issues
 
   - task: PythonScript@0
     displayName: 'Run verifytypes'

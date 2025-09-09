@@ -476,12 +476,14 @@ def parse_pyproject(
                 content = f.read()
                 parsed_version = re.search(VERSION_REGEX, content, re.MULTILINE)
 
-                print(f"I saw content in version file {parsed_version_py} as:")
-                print(content)
+                if os.getenv("SHOULD_OUTPUT_VERSION_CONTENT", None):
+                    print(f"I saw content in version file {parsed_version_py} as:")
+                    print(content)
                 if parsed_version:
                     parsed_version = parsed_version.group(1)
                 else:
-                    logging.info(f"Unable to find version in {parsed_version_py}, defaulting to 0.0.0")
+                    if os.getenv("SHOULD_OUTPUT_VERSION_CONTENT", None):
+                        logging.info(f"Unable to find version in {parsed_version_py}, defaulting to 0.0.0")
                     parsed_version = "0.0.0"
         else:
             raise ValueError(
