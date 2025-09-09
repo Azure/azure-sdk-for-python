@@ -28,20 +28,20 @@ from ._models import AzureAppConfigurationKeyVaultOptions, SettingSelector
 from ._constants import (
     FEATURE_MANAGEMENT_KEY,
     FEATURE_FLAG_KEY,
-    APP_CONFIG_AI_MIME_PROFILE,
-    APP_CONFIG_AICC_MIME_PROFILE,
 )
 from ._azureappconfigurationproviderbase import (
     AzureAppConfigurationProviderBase,
-    update_correlation_context_header,
     delay_failure,
-    is_json_content_type,
     sdk_allowed_kwargs,
+    validate_load_arguments,
+    process_key_vault_options,
+    determine_uses_key_vault,
+    update_correlation_context_header,
 )
+
 from ._client_manager import ConfigurationClientManager
 from ._client_manager_base import _ConfigurationClientWrapperBase
 from ._user_agent import USER_AGENT
-from ._json import remove_json_comments
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -176,48 +176,11 @@ def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
 
 
 def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
-    endpoint: Optional[str] = kwargs.pop("endpoint", None)
-    credential: Optional["TokenCredential"] = kwargs.pop("credential", None)
-    connection_string: Optional[str] = kwargs.pop("connection_string", None)
-    key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions] = kwargs.pop("key_vault_options", None)
     start_time = datetime.datetime.now()
 
-    # Update endpoint and credential if specified positionally.
-    if len(args) > 2:
-        raise TypeError(
-            "Unexpected positional parameters. Please pass either endpoint and credential, or a connection string."
-        )
-    if len(args) == 1:
-        if endpoint is not None:
-            raise TypeError("Received multiple values for parameter 'endpoint'.")
-        endpoint = args[0]
-    elif len(args) == 2:
-        if credential is not None:
-            raise TypeError("Received multiple values for parameter 'credential'.")
-        endpoint, credential = args
-
-    if (endpoint or credential) and connection_string:
-        raise ValueError("Please pass either endpoint and credential, or a connection string.")
-
-    # Removing use of AzureAppConfigurationKeyVaultOptions
-    if key_vault_options:
-        if "keyvault_credential" in kwargs or "secret_resolver" in kwargs or "keyvault_client_configs" in kwargs:
-            raise ValueError(
-                "Key Vault configurations should only be set by either the key_vault_options or kwargs not both."
-            )
-        kwargs["keyvault_credential"] = key_vault_options.credential
-        kwargs["secret_resolver"] = key_vault_options.secret_resolver
-        kwargs["keyvault_client_configs"] = key_vault_options.client_configs
-
-    if kwargs.get("keyvault_credential") is not None and kwargs.get("secret_resolver") is not None:
-        raise ValueError("A keyvault credential and secret resolver can't both be configured.")
-
-    uses_key_vault = (
-        "keyvault_credential" in kwargs
-        or "keyvault_client_configs" in kwargs
-        or "secret_resolver" in kwargs
-        or kwargs.get("uses_key_vault", False)
-    )
+    endpoint, credential, connection_string = validate_load_arguments(*args, **kwargs)
+    kwargs = process_key_vault_options(**kwargs)
+    uses_key_vault = determine_uses_key_vault(**kwargs)
 
     provider = _buildprovider(connection_string, endpoint, credential, uses_key_vault=uses_key_vault, **kwargs)
     kwargs = sdk_allowed_kwargs(kwargs)
@@ -383,10 +346,10 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
             if refreshed_configs or refreshed_feature_flags:
                 self._dict = self._process_configurations(configuration_settings, refreshed_feature_flags)
                 refreshed = True
-            if tried_refreshing_configs:
+            if tried_refreshing_configs or tried_refreshing_feature_flags:
                 self._refresh_timer.reset()
-            if tried_refreshing_feature_flags:
-                self._feature_flag_refresh_timer.reset()
+                if self._feature_flag_refresh_enabled:
+                    self._feature_flag_refresh_timer.reset()
             return refreshed
         except AzureError as e:
             logger.warning("Failed to refresh configurations from endpoint %s", client.endpoint)
@@ -422,6 +385,8 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
             if not exception:
                 exception = RuntimeError(error_message)
             self._refresh_timer.backoff()
+            if self._feature_flag_refresh_enabled:
+                self._feature_flag_refresh_timer.backoff()
             if self._on_refresh_error:
                 self._on_refresh_error(exception)
                 return
@@ -532,8 +497,8 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
     def _process_key_value(self, config):
         if isinstance(config, SecretReferenceConfigurationSetting):
             return _resolve_keyvault_reference(config, self)
-        # Delegate to base class for all other processing
-        return super()._process_key_value(config)
+        # Use the base class helper method for non-KeyVault processing
+        return self._process_non_keyvault_value(config)
 
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, AzureAppConfigurationProvider):
