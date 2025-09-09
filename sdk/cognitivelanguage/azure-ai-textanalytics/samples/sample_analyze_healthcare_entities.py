@@ -29,8 +29,8 @@ NOTE:
 import os
 
 from azure.identity import DefaultAzureCredential
-from azure.ai.language.text import TextAnalysisClient
-from azure.ai.language.text.models import (
+from azure.ai.textanalytics import TextAnalysisClient
+from azure.ai.textanalytics.models import (
     MultiLanguageTextInput,
     MultiLanguageInput,
     AnalyzeTextOperationAction,

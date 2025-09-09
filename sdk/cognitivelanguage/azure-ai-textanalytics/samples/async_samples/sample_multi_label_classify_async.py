@@ -33,8 +33,8 @@ import os
 import asyncio
 
 from azure.identity.aio import DefaultAzureCredential
-from azure.ai.language.text.aio import TextAnalysisClient
-from azure.ai.language.text.models import (
+from azure.ai.textanalytics.aio import TextAnalysisClient
+from azure.ai.textanalytics.models import (
     MultiLanguageTextInput,
     MultiLanguageInput,
     CustomMultiLabelClassificationActionContent,

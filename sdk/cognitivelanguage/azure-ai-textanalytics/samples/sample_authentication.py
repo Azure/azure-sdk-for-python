@@ -33,7 +33,7 @@ def sample_authentication_api_key():
     # [START create_ta_client_with_key]
     import os
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.language.text import TextAnalysisClient
+    from azure.ai.textanalytics import TextAnalysisClient
 
     endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
     key = os.environ["AZURE_TEXT_KEY"]
@@ -49,7 +49,7 @@ def sample_authentication_with_azure_active_directory():
     print("\n.. authentication_with_azure_active_directory")
     # [START create_ta_client_with_aad]
     import os
-    from azure.ai.language.text import TextAnalysisClient
+    from azure.ai.textanalytics import TextAnalysisClient
     from azure.identity import DefaultAzureCredential
 
     endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
