@@ -24,7 +24,7 @@ from .._client_manager_base import (
     MINIMAL_CLIENT_REFRESH_INTERVAL,
 )
 from .._models import SettingSelector
-from .._constants import FEATURE_FLAG_PREFIX
+from .._constants import FEATURE_FLAG_PREFIX, INITIAL_FAILED_ATTEMPTS, INITIAL_BACKOFF_END_TIME
 from ._async_discovery import find_auto_failover_endpoints
 
 if TYPE_CHECKING:
@@ -60,8 +60,8 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         """
         return cls(
             endpoint,
-            0,
-            0,
+            INITIAL_FAILED_ATTEMPTS,
+            INITIAL_BACKOFF_END_TIME,
             AzureAppConfigurationClient(
                 endpoint,
                 credential,
@@ -90,8 +90,8 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         """
         return cls(
             endpoint,
-            0,
-            0,
+            INITIAL_FAILED_ATTEMPTS,
+            INITIAL_BACKOFF_END_TIME,
             AzureAppConfigurationClient.from_connection_string(
                 connection_string,
                 user_agent=user_agent,
