@@ -29,7 +29,9 @@ from typing import (
     TypeVar,
 )
 from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-module
+    ConfigurationSetting,
     FeatureFlagConfigurationSetting,
+    SecretReferenceConfigurationSetting,
 )
 from ._models import SettingSelector
 from ._constants import (
@@ -52,6 +54,10 @@ from ._constants import (
     ETAG_KEY,
     FEATURE_FLAG_REFERENCE_KEY,
     ALLOCATION_ID_KEY,
+    FEATURE_MANAGEMENT_KEY,
+    FEATURE_FLAG_KEY,
+    APP_CONFIG_AI_MIME_PROFILE,
+    APP_CONFIG_AICC_MIME_PROFILE,
 )
 
 JSON = Mapping[str, Any]
@@ -505,3 +511,32 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
 
     def __ne__(self, other: Any) -> bool:
         return not self == other
+
+    def _process_key_value(self, config):
+        """
+        Processes individual configuration key-value pairs.
+        This method needs to be overridden by subclasses to handle KeyVault references
+        since the resolution mechanism differs between sync and async.
+        """
+        # This base implementation handles everything except KeyVault references
+        # Subclasses should override this to handle SecretReferenceConfigurationSetting
+        if isinstance(config, SecretReferenceConfigurationSetting):
+            raise NotImplementedError("Subclasses must implement KeyVault reference resolution")
+        
+        if is_json_content_type(config.content_type) and not isinstance(config, FeatureFlagConfigurationSetting):
+            # Feature flags are of type json, but don't treat them as such
+            try:
+                if APP_CONFIG_AI_MIME_PROFILE in config.content_type:
+                    self._uses_ai_configuration = True
+                if APP_CONFIG_AICC_MIME_PROFILE in config.content_type:
+                    self._uses_aicc_configuration = True
+                return json.loads(config.value)
+            except json.JSONDecodeError:
+                try:
+                    # If the value is not a valid JSON, check if it has comments and remove them
+                    from ._json import remove_json_comments
+                    return json.loads(remove_json_comments(config.value))
+                except (json.JSONDecodeError, ValueError):
+                    # If the value is not a valid JSON, treat it like regular string value
+                    return config.value
+        return config.value

@@ -532,22 +532,8 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
     def _process_key_value(self, config):
         if isinstance(config, SecretReferenceConfigurationSetting):
             return _resolve_keyvault_reference(config, self)
-        if is_json_content_type(config.content_type) and not isinstance(config, FeatureFlagConfigurationSetting):
-            # Feature flags are of type json, but don't treat them as such
-            try:
-                if APP_CONFIG_AI_MIME_PROFILE in config.content_type:
-                    self._uses_ai_configuration = True
-                if APP_CONFIG_AICC_MIME_PROFILE in config.content_type:
-                    self._uses_aicc_configuration = True
-                return json.loads(config.value)
-            except json.JSONDecodeError:
-                try:
-                    # If the value is not a valid JSON, check if it has comments and remove them
-                    return json.loads(remove_json_comments(config.value))
-                except (json.JSONDecodeError, ValueError):
-                    # If the value is not a valid JSON, treat it like regular string value
-                    return config.value
-        return config.value
+        # Delegate to base class for all other processing
+        return super()._process_key_value(config)
 
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, AzureAppConfigurationProvider):
