@@ -210,15 +210,13 @@ class ResponseResource:
         Create a new response.
 
         :keyword response: Optional response parameters to send.
-        :keyword type response: ResponseCreateParams | Mapping[str, Any] | None
+        :keyword type response: ~azure.ai.voicelive.models.ResponseCreateParams or Mapping[str, Any] or None
         :keyword event_id: Optional ID for the event.
-        :keyword type event_id: str | None
+        :keyword type event_id: str or None
         :keyword additional_instructions: Extra system prompt appended to the session's default, for this response only.
-        :keyword type additional_instructions: str | None
-        :return: None
+        :keyword type additional_instructions: str or None
         :rtype: None
         """
-        # Normalize to a typed model if a dict/mapping was provided
         if response is not None and not isinstance(response, ResponseCreateParams):
             response = ResponseCreateParams(**dict(response))
 

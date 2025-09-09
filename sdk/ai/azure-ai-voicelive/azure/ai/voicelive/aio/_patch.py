@@ -142,15 +142,13 @@ class ResponseResource:
         When in Server VAD mode, the server may create responses automatically.
 
         :keyword response: Optional response configuration to send.
-        :paramtype response: ResponseCreateParams | Mapping[str, Any] | None
+        :keyword type response: ~azure.ai.voicelive.models.ResponseCreateParams or Mapping[str, Any] or None
         :keyword event_id: Optional ID for the event.
-        :paramtype event_id: str | None
-        :keyword additional_instructions: Extra system prompt appended to the session’s default, for this response only.
-        :paramtype additional_instructions: str | None
+        :keyword type event_id: str or None
+        :keyword additional_instructions: Extra system prompt appended to the session's default, for this response only.
+        :keyword type additional_instructions: str or None
         :rtype: None
         """
-
-        # Normalize Mapping → ResponseCreateParams
         if response is not None and not isinstance(response, ResponseCreateParams):
             response = ResponseCreateParams(**dict(response))
 
