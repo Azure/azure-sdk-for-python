@@ -196,110 +196,6 @@ class AssetStatisticsResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AuthConfig(_Model):
-    """Microsoft Authentication Library (MSAL) configuration for frontend authentication.
-
-    :ivar authn_app_id: Application ID for authentication. Required.
-    :vartype authn_app_id: str
-    :ivar tenant_id: Azure Active Directory tenant ID. Required.
-    :vartype tenant_id: str
-    :ivar instance: Azure AD instance URL. Required.
-    :vartype instance: str
-    :ivar redirect_uri: Redirect URI after authentication.
-    :vartype redirect_uri: str
-    """
-
-    authn_app_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Application ID for authentication. Required."""
-    tenant_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Azure Active Directory tenant ID. Required."""
-    instance: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Azure AD instance URL. Required."""
-    redirect_uri: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Redirect URI after authentication."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        authn_app_id: str,
-        tenant_id: str,
-        instance: str,
-        redirect_uri: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AzMapsClientId(_Model):
-    """Represents an Azure Maps client ID for authentication.
-
-    :ivar client_id: The client ID for Azure Maps authentication. Required.
-    :vartype client_id: str
-    """
-
-    client_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The client ID for Azure Maps authentication. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        client_id: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AzMapsToken(_Model):
-    """Represents an Azure Maps token for map visualization.
-
-    :ivar token: The authentication token for Azure Maps. Required.
-    :vartype token: str
-    :ivar expires_on: Expiration timestamp of the token in Unix time. Required.
-    :vartype expires_on: int
-    """
-
-    token: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The authentication token for Azure Maps. Required."""
-    expires_on: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Expiration timestamp of the token in Unix time. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        token: str,
-        expires_on: int,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class BandStatistics(_Model):
     """Statistical information about a data band.
 
@@ -436,8 +332,8 @@ class BoundsResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClassmapLegendResponse(_Model):
-    """Classmap legend response model."""
+class ClassMapLegendResponse(_Model):
+    """ClassMap legend response model."""
 
 
 class ConformanceClasses(_Model):
@@ -512,15 +408,6 @@ class ContextExtension(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CqlFilter(_Model):
-    """Represent a CQL2 query
-
-    `https://github.com/stac-api-extensions/filter
-    <https://github.com/stac-api-extensions/filter>`_.
-
-    """
-
-
 class DefaultLocation(_Model):
     """Defines a default geographic location for map visualization.
 
@@ -541,58 +428,6 @@ class DefaultLocation(_Model):
         *,
         zoom: int,
         coordinates: List[float],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class Extent(_Model):
-    """`https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#extent-object
-    <https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#extent-object>`_
-
-    Represents the spatial and temporal extent of a STAC collection.
-
-    :ivar spatial: Spatial extent defined by bounding boxes.
-
-     See the `STAC Collection Spec
-     <https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#spatial-extent-object>`_.
-     Required.
-    :vartype spatial: ~azure.planetarycomputer.models.SpatialExtent
-    :ivar temporal: Temporal extent defined by time intervals.
-
-     See the `STAC Collection Spec
-     <https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#spatial-extent-object>`_.
-     Required.
-    :vartype temporal: ~azure.planetarycomputer.models.TimeInterval
-    """
-
-    spatial: "_models.SpatialExtent" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Spatial extent defined by bounding boxes.
-     
-     See the `STAC Collection Spec
-     <https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#spatial-extent-object>`_.
-     Required."""
-    temporal: "_models.TimeInterval" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Temporal extent defined by time intervals.
-     
-     See the `STAC Collection Spec
-     <https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#spatial-extent-object>`_.
-     Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        spatial: "_models.SpatialExtent",
-        temporal: "_models.TimeInterval",
     ) -> None: ...
 
     @overload
@@ -686,16 +521,16 @@ class GeoJsonStatisticsItemCollectionResponse(_Model):
     :vartype type: str or ~azure.planetarycomputer.models.ItemCollectionType
     :ivar features: Array of STAC items with statistics. Required.
     :vartype features: list[~azure.planetarycomputer.models.GeoJsonStatisticsItemResponse]
-    :ivar bbox: Bounding box coordinates [west, south, east, north].
-    :vartype bbox: list[float]
+    :ivar bounding_box: Bounding box coordinates [west, south, east, north].
+    :vartype bounding_box: list[float]
     :ivar stac_version: Stac Version.
     :vartype stac_version: str
-    :ivar msft_created: MSFT Created.
-    :vartype msft_created: str
-    :ivar msft_updated: MSFT Updated.
-    :vartype msft_updated: str
-    :ivar msft_short_description: MSFT Short Description.
-    :vartype msft_short_description: str
+    :ivar created_on: MSFT Created.
+    :vartype created_on: str
+    :ivar updated_on: MSFT Updated.
+    :vartype updated_on: str
+    :ivar short_description: MSFT Short Description.
+    :vartype short_description: str
     :ivar stac_extensions: List of STAC extension URLs used by this item collection.
     :vartype stac_extensions: list[str]
     :ivar links: Related links for the item collection.
@@ -715,21 +550,21 @@ class GeoJsonStatisticsItemCollectionResponse(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Array of STAC items with statistics. Required."""
-    bbox: Optional[List[float]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    bounding_box: Optional[List[float]] = rest_field(
+        name="bbox", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Bounding box coordinates [west, south, east, north]."""
     stac_version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Stac Version."""
-    msft_created: Optional[str] = rest_field(
+    created_on: Optional[str] = rest_field(
         name="msft:_created", visibility=["read", "create", "update", "delete", "query"]
     )
     """MSFT Created."""
-    msft_updated: Optional[str] = rest_field(
+    updated_on: Optional[str] = rest_field(
         name="msft:_updated", visibility=["read", "create", "update", "delete", "query"]
     )
     """MSFT Updated."""
-    msft_short_description: Optional[str] = rest_field(
-        name="msft:short_description", visibility=["read", "create", "update", "delete", "query"]
-    )
+    short_description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """MSFT Short Description."""
     stac_extensions: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of STAC extension URLs used by this item collection."""
@@ -749,11 +584,11 @@ class GeoJsonStatisticsItemCollectionResponse(_Model):
         *,
         type: Union[str, "_models.ItemCollectionType"],
         features: List["_models.GeoJsonStatisticsItemResponse"],
-        bbox: Optional[List[float]] = None,
+        bounding_box: Optional[List[float]] = None,
         stac_version: Optional[str] = None,
-        msft_created: Optional[str] = None,
-        msft_updated: Optional[str] = None,
-        msft_short_description: Optional[str] = None,
+        created_on: Optional[str] = None,
+        updated_on: Optional[str] = None,
+        short_description: Optional[str] = None,
         stac_extensions: Optional[List[str]] = None,
         links: Optional[List["_models.Link"]] = None,
         context: Optional["_models.ContextExtension"] = None,
@@ -775,49 +610,49 @@ class GeoJsonStatisticsItemResponse(_Model):
 
     :ivar geometry: Geometry object defining the feature's shape. Required.
     :vartype geometry: ~azure.planetarycomputer.models.Geometry
-    :ivar bbox: Bounding box coordinates for the feature. Required.
-    :vartype bbox: list[float]
+    :ivar bounding_box: Bounding box coordinates for the feature. Required.
+    :vartype bounding_box: list[float]
     :ivar id: Unique identifier for the feature. Required.
     :vartype id: str
     :ivar type: GeoJSON type identifier for Feature. Required. "Feature"
     :vartype type: str or ~azure.planetarycomputer.models.FeatureType
-    :ivar msft_created: MSFT Created.
-    :vartype msft_created: str
-    :ivar msft_updated: MSFT Updated.
-    :vartype msft_updated: str
-    :ivar msft_short_description: MSFT Short Description.
-    :vartype msft_short_description: str
+    :ivar created_on: MSFT Created.
+    :vartype created_on: str
+    :ivar updated_on: MSFT Updated.
+    :vartype updated_on: str
+    :ivar short_description: MSFT Short Description.
+    :vartype short_description: str
     :ivar stac_version: Stac Version.
     :vartype stac_version: str
     :ivar collection: ID of the STAC collection this item belongs to.
     :vartype collection: str
     :ivar properties: Properties. Required.
     :vartype properties: ~azure.planetarycomputer.models.ItemProperties
-    :ivar msft_timestamp: MSFT Timestamp.
-    :vartype msft_timestamp: str
-    :ivar msft_etag: MSFT ETag.
-    :vartype msft_etag: str
+    :ivar timestamp: MSFT Timestamp.
+    :vartype timestamp: str
+    :ivar e_tag: MSFT ETag.
+    :vartype e_tag: str
     :ivar stac_extensions: List of STAC extension URLs used by this item.
     :vartype stac_extensions: list[str]
     """
 
     geometry: "_models.Geometry" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Geometry object defining the feature's shape. Required."""
-    bbox: List[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    bounding_box: List[float] = rest_field(name="bbox", visibility=["read", "create", "update", "delete", "query"])
     """Bounding box coordinates for the feature. Required."""
     id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Unique identifier for the feature. Required."""
     type: Union[str, "_models.FeatureType"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """GeoJSON type identifier for Feature. Required. \"Feature\""""
-    msft_created: Optional[str] = rest_field(
+    created_on: Optional[str] = rest_field(
         name="msft:_created", visibility=["read", "create", "update", "delete", "query"]
     )
     """MSFT Created."""
-    msft_updated: Optional[str] = rest_field(
+    updated_on: Optional[str] = rest_field(
         name="msft:_updated", visibility=["read", "create", "update", "delete", "query"]
     )
     """MSFT Updated."""
-    msft_short_description: Optional[str] = rest_field(
+    short_description: Optional[str] = rest_field(
         name="msft:short_description", visibility=["read", "create", "update", "delete", "query"]
     )
     """MSFT Short Description."""
@@ -827,11 +662,9 @@ class GeoJsonStatisticsItemResponse(_Model):
     """ID of the STAC collection this item belongs to."""
     properties: "_models.ItemProperties" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Properties. Required."""
-    msft_timestamp: Optional[str] = rest_field(
-        name="_msft:ts", visibility=["read", "create", "update", "delete", "query"]
-    )
+    timestamp: Optional[str] = rest_field(name="_msft:ts", visibility=["read", "create", "update", "delete", "query"])
     """MSFT Timestamp."""
-    msft_etag: Optional[str] = rest_field(name="_msft:etag", visibility=["read", "create", "update", "delete", "query"])
+    e_tag: Optional[str] = rest_field(name="_msft:etag", visibility=["read", "create", "update", "delete", "query"])
     """MSFT ETag."""
     stac_extensions: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of STAC extension URLs used by this item."""
@@ -841,17 +674,17 @@ class GeoJsonStatisticsItemResponse(_Model):
         self,
         *,
         geometry: "_models.Geometry",
-        bbox: List[float],
+        bounding_box: List[float],
         id: str,  # pylint: disable=redefined-builtin
         type: Union[str, "_models.FeatureType"],
         properties: "_models.ItemProperties",
-        msft_created: Optional[str] = None,
-        msft_updated: Optional[str] = None,
-        msft_short_description: Optional[str] = None,
+        created_on: Optional[str] = None,
+        updated_on: Optional[str] = None,
+        short_description: Optional[str] = None,
         stac_version: Optional[str] = None,
         collection: Optional[str] = None,
-        msft_timestamp: Optional[str] = None,
-        msft_etag: Optional[str] = None,
+        timestamp: Optional[str] = None,
+        e_tag: Optional[str] = None,
         stac_extensions: Optional[List[str]] = None,
     ) -> None: ...
 
@@ -886,15 +719,17 @@ class Geometry(_Model):
     :ivar type: Discriminator property for Geometry. Required. Known values are: "Point",
      "LineString", "Polygon", "MultiPoint", "MultiLineString", and "MultiPolygon".
     :vartype type: str or ~azure.planetarycomputer.models.GeometryType
-    :ivar bbox: Optional bounding box of the geometry.
-    :vartype bbox: list[float]
+    :ivar bounding_box: Optional bounding box of the geometry.
+    :vartype bounding_box: list[float]
     """
 
     __mapping__: Dict[str, _Model] = {}
     type: str = rest_discriminator(name="type")
     """Discriminator property for Geometry. Required. Known values are: \"Point\", \"LineString\",
      \"Polygon\", \"MultiPoint\", \"MultiLineString\", and \"MultiPolygon\"."""
-    bbox: Optional[List[float]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    bounding_box: Optional[List[float]] = rest_field(
+        name="bbox", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Optional bounding box of the geometry."""
 
     @overload
@@ -902,7 +737,7 @@ class Geometry(_Model):
         self,
         *,
         type: str,
-        bbox: Optional[List[float]] = None,
+        bounding_box: Optional[List[float]] = None,
     ) -> None: ...
 
     @overload
@@ -920,7 +755,7 @@ class ImageRequest(_Model):
     """Parameters for requesting a rendered image from a collection.
 
     :ivar cql: Cql. Required.
-    :vartype cql: ~azure.planetarycomputer.models.CqlFilter
+    :vartype cql: dict[str, any]
     :ivar geometry: Geometry.
     :vartype geometry: ~azure.planetarycomputer.models.Geometry
     :ivar render_params: JSON-encoded visualization parameters. Required.
@@ -930,14 +765,14 @@ class ImageRequest(_Model):
     :ivar rows: Height of the output image in pixels. Required.
     :vartype rows: int
     :ivar format: Output format for the generated image. Known values are: "png" and "cog".
-    :vartype format: str or ~azure.planetarycomputer.models.ImageRequestFormat
+    :vartype format: str or ~azure.planetarycomputer.models.TilerImageExportFormat
     :ivar show_branding: Whether to include branding on the output image.
     :vartype show_branding: bool
     :ivar mask: Whether to apply masking to invalid or no-data areas.
     :vartype mask: bool
     """
 
-    cql: "_models.CqlFilter" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    cql: Dict[str, Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Cql. Required."""
     geometry: Optional["_models.Geometry"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Geometry."""
@@ -947,7 +782,7 @@ class ImageRequest(_Model):
     """Width of the output image in pixels. Required."""
     rows: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Height of the output image in pixels. Required."""
-    format: Optional[Union[str, "_models.ImageRequestFormat"]] = rest_field(
+    format: Optional[Union[str, "_models.TilerImageExportFormat"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Output format for the generated image. Known values are: \"png\" and \"cog\"."""
@@ -962,12 +797,12 @@ class ImageRequest(_Model):
     def __init__(
         self,
         *,
-        cql: "_models.CqlFilter",
+        cql: Dict[str, Any],
         render_params: str,
         cols: int,
         rows: int,
         geometry: Optional["_models.Geometry"] = None,
-        format: Optional[Union[str, "_models.ImageRequestFormat"]] = None,
+        format: Optional[Union[str, "_models.TilerImageExportFormat"]] = None,
         show_branding: Optional[bool] = None,
         mask: Optional[bool] = None,
     ) -> None: ...
@@ -1271,7 +1106,7 @@ class IngestionSource(_Model):
     """Ingestion Source.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    ManagedIdentityIngestionSource, SasTokenIngestionSource
+    ManagedIdentityIngestionSource, SharedAccessSignatureTokenIngestionSource
 
     :ivar id: Ingestion source id. Required.
     :vartype id: str
@@ -1366,12 +1201,12 @@ class StacItemOrItemCollection(_Model):
     :vartype stac_version: str
     :ivar links: Links to related resources and endpoints.
     :vartype links: list[~azure.planetarycomputer.models.Link]
-    :ivar msft_created: MSFT Created.
-    :vartype msft_created: str
-    :ivar msft_updated: MSFT Updated.
-    :vartype msft_updated: str
-    :ivar msft_short_description: MSFT Short Description.
-    :vartype msft_short_description: str
+    :ivar created_on: MSFT Created.
+    :vartype created_on: str
+    :ivar updated_on: MSFT Updated.
+    :vartype updated_on: str
+    :ivar short_description: MSFT Short Description.
+    :vartype short_description: str
     :ivar stac_extensions: URLs to STAC extensions implemented by this STAC resource.
     :vartype stac_extensions: list[str]
     """
@@ -1384,15 +1219,15 @@ class StacItemOrItemCollection(_Model):
     """Stac Version."""
     links: Optional[List["_models.Link"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Links to related resources and endpoints."""
-    msft_created: Optional[str] = rest_field(
+    created_on: Optional[str] = rest_field(
         name="msft:_created", visibility=["read", "create", "update", "delete", "query"]
     )
     """MSFT Created."""
-    msft_updated: Optional[str] = rest_field(
+    updated_on: Optional[str] = rest_field(
         name="msft:_updated", visibility=["read", "create", "update", "delete", "query"]
     )
     """MSFT Updated."""
-    msft_short_description: Optional[str] = rest_field(
+    short_description: Optional[str] = rest_field(
         name="msft:short_description", visibility=["read", "create", "update", "delete", "query"]
     )
     """MSFT Short Description."""
@@ -1406,9 +1241,9 @@ class StacItemOrItemCollection(_Model):
         type: str,
         stac_version: Optional[str] = None,
         links: Optional[List["_models.Link"]] = None,
-        msft_created: Optional[str] = None,
-        msft_updated: Optional[str] = None,
-        msft_short_description: Optional[str] = None,
+        created_on: Optional[str] = None,
+        updated_on: Optional[str] = None,
+        short_description: Optional[str] = None,
         stac_extensions: Optional[List[str]] = None,
     ) -> None: ...
 
@@ -1433,20 +1268,20 @@ class ItemCollection(StacItemOrItemCollection, discriminator="FeatureCollection"
     :vartype stac_version: str
     :ivar links: Links to related resources and endpoints.
     :vartype links: list[~azure.planetarycomputer.models.Link]
-    :ivar msft_created: MSFT Created.
-    :vartype msft_created: str
-    :ivar msft_updated: MSFT Updated.
-    :vartype msft_updated: str
-    :ivar msft_short_description: MSFT Short Description.
-    :vartype msft_short_description: str
+    :ivar created_on: MSFT Created.
+    :vartype created_on: str
+    :ivar updated_on: MSFT Updated.
+    :vartype updated_on: str
+    :ivar short_description: MSFT Short Description.
+    :vartype short_description: str
     :ivar stac_extensions: URLs to STAC extensions implemented by this STAC resource.
     :vartype stac_extensions: list[str]
     :ivar type: GeoJSON FeatureCollection type. Required. GeoJSON FeatureCollection type.
     :vartype type: str or ~azure.planetarycomputer.models.FEATURE_COLLECTION
     :ivar features: Array of STAC Items in the collection. Required.
     :vartype features: list[~azure.planetarycomputer.models.StacItem]
-    :ivar bbox: Bounding box of all items in format [west, south, east, north].
-    :vartype bbox: list[float]
+    :ivar bounding_box: Bounding box of all items in format [west, south, east, north].
+    :vartype bounding_box: list[float]
     :ivar context: Context information for the search response.
     :vartype context: ~azure.planetarycomputer.models.ContextExtension
     """
@@ -1455,7 +1290,9 @@ class ItemCollection(StacItemOrItemCollection, discriminator="FeatureCollection"
     """GeoJSON FeatureCollection type. Required. GeoJSON FeatureCollection type."""
     features: List["_models.StacItem"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Array of STAC Items in the collection. Required."""
-    bbox: Optional[List[float]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    bounding_box: Optional[List[float]] = rest_field(
+        name="bbox", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Bounding box of all items in format [west, south, east, north]."""
     context: Optional["_models.ContextExtension"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -1469,11 +1306,11 @@ class ItemCollection(StacItemOrItemCollection, discriminator="FeatureCollection"
         features: List["_models.StacItem"],
         stac_version: Optional[str] = None,
         links: Optional[List["_models.Link"]] = None,
-        msft_created: Optional[str] = None,
-        msft_updated: Optional[str] = None,
-        msft_short_description: Optional[str] = None,
+        created_on: Optional[str] = None,
+        updated_on: Optional[str] = None,
+        short_description: Optional[str] = None,
         stac_extensions: Optional[List[str]] = None,
-        bbox: Optional[List[float]] = None,
+        bounding_box: Optional[List[float]] = None,
         context: Optional["_models.ContextExtension"] = None,
     ) -> None: ...
 
@@ -1589,22 +1426,18 @@ class ItemProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JsonSchema(_Model):
-    """JSON Schema structure for STAC Queryables."""
-
-
 class LandingPage(_Model):
     """`https://github.com/radiantearth/stac-api-spec/blob/master/api-spec.md#ogc-api---features-endpoints
     <https://github.com/radiantearth/stac-api-spec/blob/master/api-spec.md#ogc-api---features-endpoints>`_
 
     Represents the STAC API landing page with links to available resources.
 
-    :ivar msft_created: MSFT Created.
-    :vartype msft_created: str
-    :ivar msft_updated: MSFT Updated.
-    :vartype msft_updated: str
-    :ivar msft_short_description: MSFT Short Description.
-    :vartype msft_short_description: str
+    :ivar created_on: MSFT Created.
+    :vartype created_on: str
+    :ivar updated_on: MSFT Updated.
+    :vartype updated_on: str
+    :ivar short_description: MSFT Short Description.
+    :vartype short_description: str
     :ivar stac_extensions: URLs to STAC extensions implemented by this STAC resource.
     :vartype stac_extensions: list[str]
     :ivar id: Unique identifier for the STAC catalog. Required.
@@ -1623,15 +1456,15 @@ class LandingPage(_Model):
     :vartype type: str
     """
 
-    msft_created: Optional[str] = rest_field(
+    created_on: Optional[str] = rest_field(
         name="msft:_created", visibility=["read", "create", "update", "delete", "query"]
     )
     """MSFT Created."""
-    msft_updated: Optional[str] = rest_field(
+    updated_on: Optional[str] = rest_field(
         name="msft:_updated", visibility=["read", "create", "update", "delete", "query"]
     )
     """MSFT Updated."""
-    msft_short_description: Optional[str] = rest_field(
+    short_description: Optional[str] = rest_field(
         name="msft:short_description", visibility=["read", "create", "update", "delete", "query"]
     )
     """MSFT Short Description."""
@@ -1660,9 +1493,9 @@ class LandingPage(_Model):
         description: str,
         conforms_to: List[str],
         links: List["_models.Link"],
-        msft_created: Optional[str] = None,
-        msft_updated: Optional[str] = None,
-        msft_short_description: Optional[str] = None,
+        created_on: Optional[str] = None,
+        updated_on: Optional[str] = None,
+        short_description: Optional[str] = None,
         stac_extensions: Optional[List[str]] = None,
         title: Optional[str] = None,
         stac_version: Optional[str] = None,
@@ -1683,8 +1516,8 @@ class LandingPage(_Model):
 class LineString(Geometry, discriminator="LineString"):
     """Represents a LineString.
 
-    :ivar bbox: Optional bounding box of the geometry.
-    :vartype bbox: list[float]
+    :ivar bounding_box: Optional bounding box of the geometry.
+    :vartype bounding_box: list[float]
     :ivar type: The type of the linestring. Required. Represents a LineString geometry.
     :vartype type: str or ~azure.planetarycomputer.models.LINE_STRING
     :ivar coordinates: The coordinates of the linestring. Required.
@@ -1701,7 +1534,7 @@ class LineString(Geometry, discriminator="LineString"):
         self,
         *,
         coordinates: List[float],
-        bbox: Optional[List[float]] = None,
+        bounding_box: Optional[List[float]] = None,
     ) -> None: ...
 
     @overload
@@ -1817,14 +1650,14 @@ class Link(_Model):
 class ManagedIdentityConnection(_Model):
     """Managed Identity connection information.
 
-    :ivar container_url: Azure Blob Storage container URL. Required.
-    :vartype container_url: str
+    :ivar container_uri: Azure Blob Storage container URL. Required.
+    :vartype container_uri: str
     :ivar object_id: Azure Managed Identity configured in the Geo-Catalog with access to the
      container. Required.
     :vartype object_id: str
     """
 
-    container_url: str = rest_field(name="containerUrl", visibility=["read", "create", "update", "delete", "query"])
+    container_uri: str = rest_field(name="containerUrl", visibility=["read", "create", "update", "delete", "query"])
     """Azure Blob Storage container URL. Required."""
     object_id: str = rest_field(name="objectId", visibility=["read", "create", "update", "delete", "query"])
     """Azure Managed Identity configured in the Geo-Catalog with access to the container. Required."""
@@ -1833,7 +1666,7 @@ class ManagedIdentityConnection(_Model):
     def __init__(
         self,
         *,
-        container_url: str,
+        container_uri: str,
         object_id: str,
     ) -> None: ...
 
@@ -1920,6 +1753,41 @@ class ManagedIdentityMetadata(_Model):
         super().__init__(*args, **kwargs)
 
 
+class ManagedStorageSharedAccessSignatureToken(_Model):
+    """Managed Storage Shared Access Signature (SAS) Token.
+
+    :ivar expires_on: Msft:Expiry. Required.
+    :vartype expires_on: ~datetime.datetime
+    :ivar token: Token. Required.
+    :vartype token: str
+    """
+
+    expires_on: datetime.datetime = rest_field(
+        name="msft:expiry", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """Msft:Expiry. Required."""
+    token: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Token. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        expires_on: datetime.datetime,
+        token: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class Metadata(_Model):
     """Metadata information for mosaic or search results.
 
@@ -1991,7 +1859,7 @@ class Mosaic(_Model):
     :vartype description: str
     :ivar cql: A list of valid CQL2-JSON expressions used to filter the collection to moasic.
      Required.
-    :vartype cql: list[~azure.planetarycomputer.models.CqlFilter]
+    :vartype cql: list[dict[str, any]]
     """
 
     id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -2000,7 +1868,7 @@ class Mosaic(_Model):
     """Short descriptive name for the mosaic. Required."""
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Detailed description of the mosaic."""
-    cql: List["_models.CqlFilter"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    cql: List[Dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A list of valid CQL2-JSON expressions used to filter the collection to moasic. Required."""
 
     @overload
@@ -2009,7 +1877,7 @@ class Mosaic(_Model):
         *,
         id: str,  # pylint: disable=redefined-builtin
         name: str,
-        cql: List["_models.CqlFilter"],
+        cql: List[Dict[str, Any]],
         description: Optional[str] = None,
     ) -> None: ...
 
@@ -2035,7 +1903,7 @@ class MosaicInfo(_Model):
     :vartype default_location: ~azure.planetarycomputer.models.DefaultLocation
     :ivar default_custom_query: A list of CQL-JSON expressions to use as the default for  this
      collection.
-    :vartype default_custom_query: ~azure.planetarycomputer.models.CqlFilter
+    :vartype default_custom_query: dict[str, any]
     """
 
     mosaics: List["_models.Mosaic"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -2048,7 +1916,7 @@ class MosaicInfo(_Model):
         name="defaultLocation", visibility=["read", "create", "update", "delete", "query"]
     )
     """Default map location when displaying this collection."""
-    default_custom_query: Optional["_models.CqlFilter"] = rest_field(
+    default_custom_query: Optional[Dict[str, Any]] = rest_field(
         name="defaultCustomQuery", visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of CQL-JSON expressions to use as the default for  this collection."""
@@ -2060,7 +1928,7 @@ class MosaicInfo(_Model):
         mosaics: List["_models.Mosaic"],
         render_options: List["_models.RenderOption"],
         default_location: Optional["_models.DefaultLocation"] = None,
-        default_custom_query: Optional["_models.CqlFilter"] = None,
+        default_custom_query: Optional[Dict[str, Any]] = None,
     ) -> None: ...
 
     @overload
@@ -2077,8 +1945,8 @@ class MosaicInfo(_Model):
 class MultiLineString(Geometry, discriminator="MultiLineString"):
     """Represents a MultiLineString.
 
-    :ivar bbox: Optional bounding box of the geometry.
-    :vartype bbox: list[float]
+    :ivar bounding_box: Optional bounding box of the geometry.
+    :vartype bounding_box: list[float]
     :ivar type: The type of the multilinestring. Required. Represents a MultiLineString geometry.
     :vartype type: str or ~azure.planetarycomputer.models.MULTI_LINE_STRING
     :ivar coordinates: The coordinates of the multilinestring. Required.
@@ -2095,7 +1963,7 @@ class MultiLineString(Geometry, discriminator="MultiLineString"):
         self,
         *,
         coordinates: List[List[float]],
-        bbox: Optional[List[float]] = None,
+        bounding_box: Optional[List[float]] = None,
     ) -> None: ...
 
     @overload
@@ -2112,8 +1980,8 @@ class MultiLineString(Geometry, discriminator="MultiLineString"):
 class MultiPoint(Geometry, discriminator="MultiPoint"):
     """Represents a MultiPoint.
 
-    :ivar bbox: Optional bounding box of the geometry.
-    :vartype bbox: list[float]
+    :ivar bounding_box: Optional bounding box of the geometry.
+    :vartype bounding_box: list[float]
     :ivar type: The type of the multipoint. Required. Represents a MultiPoint geometry.
     :vartype type: str or ~azure.planetarycomputer.models.MULTI_POINT
     :ivar coordinates: The coordinates of the multipoint. Required.
@@ -2130,7 +1998,7 @@ class MultiPoint(Geometry, discriminator="MultiPoint"):
         self,
         *,
         coordinates: List[float],
-        bbox: Optional[List[float]] = None,
+        bounding_box: Optional[List[float]] = None,
     ) -> None: ...
 
     @overload
@@ -2147,8 +2015,8 @@ class MultiPoint(Geometry, discriminator="MultiPoint"):
 class MultiPolygon(Geometry, discriminator="MultiPolygon"):
     """Represents a MultiPolygon.
 
-    :ivar bbox: Optional bounding box of the geometry.
-    :vartype bbox: list[float]
+    :ivar bounding_box: Optional bounding box of the geometry.
+    :vartype bounding_box: list[float]
     :ivar coordinates: The coordinates of the multipolygon. Required.
     :vartype coordinates: list[list[list[float]]]
     :ivar type: The type of the multipolygon. Required. Represents a MultiPolygon geometry.
@@ -2165,7 +2033,7 @@ class MultiPolygon(Geometry, discriminator="MultiPolygon"):
         self,
         *,
         coordinates: List[List[List[float]]],
-        bbox: Optional[List[float]] = None,
+        bounding_box: Optional[List[float]] = None,
     ) -> None: ...
 
     @overload
@@ -2521,76 +2389,11 @@ class PartitionType(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PgStacSearch(_Model):
-    """PgSTAC Search entry.
-
-    ref:
-    `https://github.com/stac-utils/pgstac/blob/3499daa2bfa700ae7bb07503795c169bf2ebafc7/sql/004_search.sql#L907-L915Stored
-    <https://github.com/stac-utils/pgstac/blob/3499daa2bfa700ae7bb07503795c169bf2ebafc7/sql/004_search.sql#L907-L915Stored>`_
-    search query in the PgSTAC database.
-
-    :ivar hash: Unique hash identifier for the search query. Required.
-    :vartype hash: str
-    :ivar search: Search. Required.
-    :vartype search: ~azure.planetarycomputer.models.CqlFilter
-    :ivar where: SQL WHERE clause representing the search filters. Required.
-    :vartype where: str
-    :ivar order_by: SQL ORDER BY clause for sorting results. Required.
-    :vartype order_by: str
-    :ivar last_used: Timestamp when the search was last accessed. Required.
-    :vartype last_used: ~datetime.datetime
-    :ivar use_count: Number of times the search has been accessed. Required.
-    :vartype use_count: int
-    :ivar metadata: Additional metadata associated with the search. Required.
-    :vartype metadata: ~azure.planetarycomputer.models.Metadata
-    """
-
-    hash: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Unique hash identifier for the search query. Required."""
-    search: "_models.CqlFilter" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Search. Required."""
-    where: str = rest_field(name="_where", visibility=["read", "create", "update", "delete", "query"])
-    """SQL WHERE clause representing the search filters. Required."""
-    order_by: str = rest_field(name="orderby", visibility=["read", "create", "update", "delete", "query"])
-    """SQL ORDER BY clause for sorting results. Required."""
-    last_used: datetime.datetime = rest_field(
-        name="lastused", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """Timestamp when the search was last accessed. Required."""
-    use_count: int = rest_field(name="usecount", visibility=["read", "create", "update", "delete", "query"])
-    """Number of times the search has been accessed. Required."""
-    metadata: "_models.Metadata" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Additional metadata associated with the search. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        hash: str,
-        search: "_models.CqlFilter",
-        where: str,
-        order_by: str,
-        last_used: datetime.datetime,
-        use_count: int,
-        metadata: "_models.Metadata",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class Point(Geometry, discriminator="Point"):
     """Represents a GeoJSON Point geometry.
 
-    :ivar bbox: Optional bounding box of the geometry.
-    :vartype bbox: list[float]
+    :ivar bounding_box: Optional bounding box of the geometry.
+    :vartype bounding_box: list[float]
     :ivar type: The geometry type, always "Point" for Point geometries. Required. Represents a
      Point geometry.
     :vartype type: str or ~azure.planetarycomputer.models.POINT
@@ -2609,7 +2412,7 @@ class Point(Geometry, discriminator="Point"):
         self,
         *,
         coordinates: str,
-        bbox: Optional[List[float]] = None,
+        bounding_box: Optional[List[float]] = None,
     ) -> None: ...
 
     @overload
@@ -2626,8 +2429,8 @@ class Point(Geometry, discriminator="Point"):
 class Polygon(Geometry, discriminator="Polygon"):
     """Represents a Polygon.
 
-    :ivar bbox: Optional bounding box of the geometry.
-    :vartype bbox: list[float]
+    :ivar bounding_box: Optional bounding box of the geometry.
+    :vartype bounding_box: list[float]
     :ivar coordinates: The coordinates of the polygon. Required.
     :vartype coordinates: list[list[list[float]]]
     :ivar type: The type of the polygon. Required. Represents a Polygon geometry.
@@ -2644,7 +2447,7 @@ class Polygon(Geometry, discriminator="Polygon"):
         self,
         *,
         coordinates: List[List[List[float]]],
-        bbox: Optional[List[float]] = None,
+        bounding_box: Optional[List[float]] = None,
     ) -> None: ...
 
     @overload
@@ -2691,92 +2494,6 @@ class Provider(_Model):
         description: Optional[str] = None,
         roles: Optional[List[str]] = None,
         url: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class QueryableDefinition(_Model):
-    """Definition of a queryable field for STAC API filtering.
-
-    :ivar name: Name of the queryable field. Required.
-    :vartype name: str
-    :ivar definition: Metadata for the queryable field. Required.
-    :vartype definition: ~azure.planetarycomputer.models.QueryableDefinitionType
-    :ivar create_index: Whether to create a database index for this field.
-    :vartype create_index: bool
-    :ivar data_type: Data type of the queryable field. Known values are: "string", "number",
-     "boolean", "timestamp", and "date".
-    :vartype data_type: str or ~azure.planetarycomputer.models.QueryableDefinitionDataType
-    """
-
-    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Name of the queryable field. Required."""
-    definition: "_models.QueryableDefinitionType" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Metadata for the queryable field. Required."""
-    create_index: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Whether to create a database index for this field."""
-    data_type: Optional[Union[str, "_models.QueryableDefinitionDataType"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Data type of the queryable field. Known values are: \"string\", \"number\", \"boolean\",
-     \"timestamp\", and \"date\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: str,
-        definition: "_models.QueryableDefinitionType",
-        create_index: Optional[bool] = None,
-        data_type: Optional[Union[str, "_models.QueryableDefinitionDataType"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class QueryableDefinitionType(_Model):
-    """QueryableDefinitionType."""
-
-
-class RegisterResponse(_Model):
-    """Response from a successful mosaic registration with search ID and related links.
-
-    :ivar search_id: Unique identifier for the registered search. Required.
-    :vartype search_id: str
-    :ivar links: Related links for the registered mosaic.
-    :vartype links: list[~azure.planetarycomputer.models.Link]
-    """
-
-    search_id: str = rest_field(name="searchid", visibility=["read", "create", "update", "delete", "query"])
-    """Unique identifier for the registered search. Required."""
-    links: Optional[List["_models.Link"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Related links for the registered mosaic."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        search_id: str,
-        links: Optional[List["_models.Link"]] = None,
     ) -> None: ...
 
     @overload
@@ -3042,148 +2759,35 @@ class RenderOptionVectorOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SasToken(_Model):
-    """SasToken.
-
-    :ivar msft_expiry: Msft:Expiry. Required.
-    :vartype msft_expiry: ~datetime.datetime
-    :ivar token: Token. Required.
-    :vartype token: str
-    """
-
-    msft_expiry: datetime.datetime = rest_field(
-        name="msft:expiry", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """Msft:Expiry. Required."""
-    token: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Token. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        msft_expiry: datetime.datetime,
-        token: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class SasTokenConnection(_Model):
-    """SAS Token connection information.
-
-    :ivar container_url: Azure Blob Storage container URL. Required.
-    :vartype container_url: str
-    :ivar sas_token: SAS token.
-    :vartype sas_token: str
-    :ivar expiration: Azure Blob Storage SAS token expiration in UTC format.
-    :vartype expiration: ~datetime.datetime
-    """
-
-    container_url: str = rest_field(name="containerUrl", visibility=["read", "create", "update", "delete", "query"])
-    """Azure Blob Storage container URL. Required."""
-    sas_token: Optional[str] = rest_field(name="sasToken", visibility=["create", "update"])
-    """SAS token."""
-    expiration: Optional[datetime.datetime] = rest_field(visibility=["read"], format="rfc3339")
-    """Azure Blob Storage SAS token expiration in UTC format."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        container_url: str,
-        sas_token: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class SasTokenIngestionSource(IngestionSource, discriminator="SasToken"):
-    """SAS Token ingestion source.
-
-    :ivar id: Ingestion source id. Required.
-    :vartype id: str
-    :ivar created: Created time in UTC format. Required.
-    :vartype created: ~datetime.datetime
-    :ivar kind: Required. Azure Blob Storage SAS token
-    :vartype kind: str or ~azure.planetarycomputer.models.SAS_TOKEN
-    :ivar connection_info: SAS token connection information. Required.
-    :vartype connection_info: ~azure.planetarycomputer.models.SasTokenConnection
-    """
-
-    kind: Literal[IngestionSourceType.SAS_TOKEN] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. Azure Blob Storage SAS token"""
-    connection_info: "_models.SasTokenConnection" = rest_field(
-        name="connectionInfo", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """SAS token connection information. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        connection_info: "_models.SasTokenConnection",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=IngestionSourceType.SAS_TOKEN, **kwargs)
-
-
-class SearchPostRequest(_Model):
+class SearchOptions(_Model):
     """Search model.
-
-    Overrides the validation for datetime from the base request model.
-
+    *
     Defines parameters for a STAC search POST request.
 
     :ivar collections: List of collection IDs to search within.
     :vartype collections: list[str]
     :ivar ids: List of specific item IDs to return.
     :vartype ids: list[str]
-    :ivar bbox: Bounding box for spatial filtering in format [west, south, east, north].
-    :vartype bbox: list[float]
+    :ivar bounding_box: Bounding box for spatial filtering in format [west, south, east, north].
+    :vartype bounding_box: list[float]
     :ivar intersects: GeoJSON geometry for spatial filtering.
     :vartype intersects: ~azure.planetarycomputer.models.Geometry
     :ivar date_time: Temporal filter in RFC 3339 format, can be a single time or range.
     :vartype date_time: str
     :ivar limit: Maximum number of results to return.
     :vartype limit: int
-    :ivar conf: Conf
+    :ivar conformance_class: Conf
 
      Overrides datetime validation from the base request model.
-    :vartype conf: dict[str, any]
+    :vartype conformance_class: dict[str, any]
     :ivar sign: Whether to sign asset URLs in the response. Known values are: "true" and "false".
-    :vartype sign: str or ~azure.planetarycomputer.models.SignType
-    :ivar duration: URL signature duration in seconds.
-    :vartype duration: int
+    :vartype sign: str or ~azure.planetarycomputer.models.StacAssetUrlSigningMode
+    :ivar duration_in_minutes: URL signature duration in minutes.
+    :vartype duration_in_minutes: int
     :ivar query: STAC Query
 
      See the `STAC Query Extension <https://github.com/stac-api-extensions/query>`_.
-    :vartype query: ~azure.planetarycomputer.models.StacQuery
+    :vartype query: dict[str, any]
     :ivar sort_by: Sort criteria for the search results.
 
      See the `STAC Sort Extension <https://github.com/stac-api-extensions/sort>`_.
@@ -3191,16 +2795,16 @@ class SearchPostRequest(_Model):
     :ivar fields: Specifies which fields to include or exclude in the STAC search results.
 
      See the `STAC Fields Extension <https://github.com/stac-api-extensions/fields>`_.
-    :vartype fields: list[~azure.planetarycomputer.models.SearchPostRequestFields]
+    :vartype fields: list[~azure.planetarycomputer.models.SearchOptionsFields]
     :ivar filter: CQL2 Filter
 
      See the `STAC Filter Extension <https://github.com/stac-api-extensions/filter>`_.
-    :vartype filter: ~azure.planetarycomputer.models.CqlFilter
-    :ivar filter_crs: Coordinate reference system for the filter.
-    :vartype filter_crs: str
+    :vartype filter: dict[str, any]
+    :ivar filter_coordinate_reference_system: Coordinate reference system for the filter.
+    :vartype filter_coordinate_reference_system: str
     :ivar filter_lang: Filter language to use for the filter expression. Known values are:
      "cql-json", "cql2-json", and "cql2-text".
-    :vartype filter_lang: str or ~azure.planetarycomputer.models.FilterLang
+    :vartype filter_lang: str or ~azure.planetarycomputer.models.FilterLanguage
     :ivar token: Pagination token for fetching the next set of results.
     :vartype token: str
     """
@@ -3209,7 +2813,9 @@ class SearchPostRequest(_Model):
     """List of collection IDs to search within."""
     ids: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of specific item IDs to return."""
-    bbox: Optional[List[float]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    bounding_box: Optional[List[float]] = rest_field(
+        name="bbox", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Bounding box for spatial filtering in format [west, south, east, north]."""
     intersects: Optional["_models.Geometry"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """GeoJSON geometry for spatial filtering."""
@@ -3217,17 +2823,21 @@ class SearchPostRequest(_Model):
     """Temporal filter in RFC 3339 format, can be a single time or range."""
     limit: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Maximum number of results to return."""
-    conf: Optional[Dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    conformance_class: Optional[Dict[str, Any]] = rest_field(
+        name="conf", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Conf
      
      Overrides datetime validation from the base request model."""
-    sign: Optional[Union[str, "_models.SignType"]] = rest_field(
+    sign: Optional[Union[str, "_models.StacAssetUrlSigningMode"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Whether to sign asset URLs in the response. Known values are: \"true\" and \"false\"."""
-    duration: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """URL signature duration in seconds."""
-    query: Optional["_models.StacQuery"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    duration_in_minutes: Optional[int] = rest_field(
+        name="duration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """URL signature duration in minutes."""
+    query: Optional[Dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """STAC Query
      
      See the `STAC Query Extension <https://github.com/stac-api-extensions/query>`_."""
@@ -3237,21 +2847,21 @@ class SearchPostRequest(_Model):
     """Sort criteria for the search results.
      
      See the `STAC Sort Extension <https://github.com/stac-api-extensions/sort>`_."""
-    fields: Optional[List["_models.SearchPostRequestFields"]] = rest_field(
+    fields: Optional[List["_models.SearchOptionsFields"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies which fields to include or exclude in the STAC search results.
      
      See the `STAC Fields Extension <https://github.com/stac-api-extensions/fields>`_."""
-    filter: Optional["_models.CqlFilter"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    filter: Optional[Dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """CQL2 Filter
      
      See the `STAC Filter Extension <https://github.com/stac-api-extensions/filter>`_."""
-    filter_crs: Optional[str] = rest_field(
+    filter_coordinate_reference_system: Optional[str] = rest_field(
         name="filter-crs", visibility=["read", "create", "update", "delete", "query"]
     )
     """Coordinate reference system for the filter."""
-    filter_lang: Optional[Union[str, "_models.FilterLang"]] = rest_field(
+    filter_lang: Optional[Union[str, "_models.FilterLanguage"]] = rest_field(
         name="filter-lang", visibility=["read", "create", "update", "delete", "query"]
     )
     """Filter language to use for the filter expression. Known values are: \"cql-json\",
@@ -3265,19 +2875,19 @@ class SearchPostRequest(_Model):
         *,
         collections: Optional[List[str]] = None,
         ids: Optional[List[str]] = None,
-        bbox: Optional[List[float]] = None,
+        bounding_box: Optional[List[float]] = None,
         intersects: Optional["_models.Geometry"] = None,
         date_time: Optional[str] = None,
         limit: Optional[int] = None,
-        conf: Optional[Dict[str, Any]] = None,
-        sign: Optional[Union[str, "_models.SignType"]] = None,
-        duration: Optional[int] = None,
-        query: Optional["_models.StacQuery"] = None,
+        conformance_class: Optional[Dict[str, Any]] = None,
+        sign: Optional[Union[str, "_models.StacAssetUrlSigningMode"]] = None,
+        duration_in_minutes: Optional[int] = None,
+        query: Optional[Dict[str, Any]] = None,
         sort_by: Optional[List["_models.SortExtension"]] = None,
-        fields: Optional[List["_models.SearchPostRequestFields"]] = None,
-        filter: Optional["_models.CqlFilter"] = None,  # pylint: disable=redefined-builtin
-        filter_crs: Optional[str] = None,
-        filter_lang: Optional[Union[str, "_models.FilterLang"]] = None,
+        fields: Optional[List["_models.SearchOptionsFields"]] = None,
+        filter: Optional[Dict[str, Any]] = None,  # pylint: disable=redefined-builtin
+        filter_coordinate_reference_system: Optional[str] = None,
+        filter_lang: Optional[Union[str, "_models.FilterLanguage"]] = None,
         token: Optional[str] = None,
     ) -> None: ...
 
@@ -3292,7 +2902,7 @@ class SearchPostRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SearchPostRequestFields(_Model):
+class SearchOptionsFields(_Model):
     """FieldsExtension.
 
     Attributes:
@@ -3331,32 +2941,30 @@ class SearchPostRequestFields(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SortExtension(_Model):
-    """`https://github.com/radiantearth/stac-api-spec/tree/master/extensions/sort#sort-api-extension
-    <https://github.com/radiantearth/stac-api-spec/tree/master/extensions/sort#sort-api-extension>`_
+class SharedAccessSignatureTokenConnection(_Model):
+    """SAS Token connection information.
 
-    Represents a sort specification for STAC API queries.
-
-    :ivar field: The field name to sort by. Required.
-    :vartype field: str
-    :ivar direction: The sort direction (ascending or descending). Required. Known values are:
-     "asc" and "desc".
-    :vartype direction: str or ~azure.planetarycomputer.models.SortDirections
+    :ivar container_uri: Azure Blob Storage container URL. Required.
+    :vartype container_uri: str
+    :ivar hared_access_signature_token: SAS token.
+    :vartype hared_access_signature_token: str
+    :ivar expiration: Azure Blob Storage SAS token expiration in UTC format.
+    :vartype expiration: ~datetime.datetime
     """
 
-    field: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The field name to sort by. Required."""
-    direction: Union[str, "_models.SortDirections"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The sort direction (ascending or descending). Required. Known values are: \"asc\" and \"desc\"."""
+    container_uri: str = rest_field(name="containerUrl", visibility=["read", "create", "update", "delete", "query"])
+    """Azure Blob Storage container URL. Required."""
+    hared_access_signature_token: Optional[str] = rest_field(name="sasToken", visibility=["create", "update"])
+    """SAS token."""
+    expiration: Optional[datetime.datetime] = rest_field(visibility=["read"], format="rfc3339")
+    """Azure Blob Storage SAS token expiration in UTC format."""
 
     @overload
     def __init__(
         self,
         *,
-        field: str,
-        direction: Union[str, "_models.SortDirections"],
+        container_uri: str,
+        hared_access_signature_token: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -3370,25 +2978,73 @@ class SortExtension(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SpatialExtent(_Model):
-    """`https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#spatial-extent-object
-    <https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#spatial-extent-object>`_
+class SharedAccessSignatureTokenIngestionSource(
+    IngestionSource, discriminator="SasToken"
+):  # pylint: disable=name-too-long
+    """SAS Token ingestion source.
 
-    Represents the spatial extent of a STAC collection with bounding boxes.
-
-    :ivar bbox: Array of bounding boxes defining the spatial extent, in format [[west, south, east,
-     north]].
-    :vartype bbox: list[list[float]]
+    :ivar id: Ingestion source id. Required.
+    :vartype id: str
+    :ivar created: Created time in UTC format. Required.
+    :vartype created: ~datetime.datetime
+    :ivar kind: Required. Azure Blob Storage SAS token
+    :vartype kind: str or ~azure.planetarycomputer.models.SHARED_ACCESS_SIGNATURE_TOKEN
+    :ivar connection_info: SAS token connection information. Required.
+    :vartype connection_info: ~azure.planetarycomputer.models.SharedAccessSignatureTokenConnection
     """
 
-    bbox: Optional[List[List[float]]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Array of bounding boxes defining the spatial extent, in format [[west, south, east, north]]."""
+    kind: Literal[IngestionSourceType.SHARED_ACCESS_SIGNATURE_TOKEN] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Azure Blob Storage SAS token"""
+    connection_info: "_models.SharedAccessSignatureTokenConnection" = rest_field(
+        name="connectionInfo", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """SAS token connection information. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        bbox: Optional[List[List[float]]] = None,
+        id: str,  # pylint: disable=redefined-builtin
+        connection_info: "_models.SharedAccessSignatureTokenConnection",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, kind=IngestionSourceType.SHARED_ACCESS_SIGNATURE_TOKEN, **kwargs)
+
+
+class SortExtension(_Model):
+    """`https://github.com/radiantearth/stac-api-spec/tree/master/extensions/sort#sort-api-extension
+    <https://github.com/radiantearth/stac-api-spec/tree/master/extensions/sort#sort-api-extension>`_
+
+    Represents a sort specification for STAC API queries.
+
+    :ivar field: The field name to sort by. Required.
+    :vartype field: str
+    :ivar direction: The sort direction (ascending or descending). Required. Known values are:
+     "asc" and "desc".
+    :vartype direction: str or ~azure.planetarycomputer.models.StacQueryResultsSortingDirection
+    """
+
+    field: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The field name to sort by. Required."""
+    direction: Union[str, "_models.StacQueryResultsSortingDirection"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The sort direction (ascending or descending). Required. Known values are: \"asc\" and \"desc\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        field: str,
+        direction: Union[str, "_models.StacQueryResultsSortingDirection"],
     ) -> None: ...
 
     @overload
@@ -3408,12 +3064,12 @@ class StacCollection(_Model):
 
     Represents a STAC collection.
 
-    :ivar msft_created: MSFT Created.
-    :vartype msft_created: str
-    :ivar msft_updated: MSFT Updated.
-    :vartype msft_updated: str
-    :ivar msft_short_description: MSFT Short Description.
-    :vartype msft_short_description: str
+    :ivar created_on: MSFT Created.
+    :vartype created_on: str
+    :ivar updated_on: MSFT Updated.
+    :vartype updated_on: str
+    :ivar short_description: MSFT Short Description.
+    :vartype short_description: str
     :ivar stac_extensions: URLs to STAC extensions implemented by this STAC resource.
     :vartype stac_extensions: list[str]
     :ivar id: Unique identifier for the collection. Required.
@@ -3433,7 +3089,7 @@ class StacCollection(_Model):
     :ivar license: License identifier for the collection data. Required.
     :vartype license: str
     :ivar extent: Spatial and temporal extent of the collection. Required.
-    :vartype extent: ~azure.planetarycomputer.models.Extent
+    :vartype extent: ~azure.planetarycomputer.models.StacExtensionExtent
     :ivar keywords: Keywords describing the collection.
     :vartype keywords: list[str]
     :ivar providers: Organizations or individuals who provide the collection data.
@@ -3442,18 +3098,18 @@ class StacCollection(_Model):
 
      See the `STAC Collection Spec
      <https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#spatial-extent-object>`_.
-    :vartype summaries: ~azure.planetarycomputer.models.StacCollectionSummaries
+    :vartype summaries: dict[str, any]
     """
 
-    msft_created: Optional[str] = rest_field(
+    created_on: Optional[str] = rest_field(
         name="msft:_created", visibility=["read", "create", "update", "delete", "query"]
     )
     """MSFT Created."""
-    msft_updated: Optional[str] = rest_field(
+    updated_on: Optional[str] = rest_field(
         name="msft:_updated", visibility=["read", "create", "update", "delete", "query"]
     )
     """MSFT Updated."""
-    msft_short_description: Optional[str] = rest_field(
+    short_description: Optional[str] = rest_field(
         name="msft:short_description", visibility=["read", "create", "update", "delete", "query"]
     )
     """MSFT Short Description."""
@@ -3477,7 +3133,7 @@ class StacCollection(_Model):
     """Assets."""
     license: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """License identifier for the collection data. Required."""
-    extent: "_models.Extent" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    extent: "_models.StacExtensionExtent" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Spatial and temporal extent of the collection. Required."""
     keywords: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Keywords describing the collection."""
@@ -3485,9 +3141,7 @@ class StacCollection(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Organizations or individuals who provide the collection data."""
-    summaries: Optional["_models.StacCollectionSummaries"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    summaries: Optional[Dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Summaries
      
      See the `STAC Collection Spec
@@ -3501,10 +3155,10 @@ class StacCollection(_Model):
         description: str,
         links: List["_models.Link"],
         license: str,
-        extent: "_models.Extent",
-        msft_created: Optional[str] = None,
-        msft_updated: Optional[str] = None,
-        msft_short_description: Optional[str] = None,
+        extent: "_models.StacExtensionExtent",
+        created_on: Optional[str] = None,
+        updated_on: Optional[str] = None,
+        short_description: Optional[str] = None,
         stac_extensions: Optional[List[str]] = None,
         stac_version: Optional[str] = None,
         title: Optional[str] = None,
@@ -3512,7 +3166,7 @@ class StacCollection(_Model):
         assets: Optional[Dict[str, "_models.Asset"]] = None,
         keywords: Optional[List[str]] = None,
         providers: Optional[List["_models.Provider"]] = None,
-        summaries: Optional["_models.StacCollectionSummaries"] = None,
+        summaries: Optional[Dict[str, Any]] = None,
     ) -> None: ...
 
     @overload
@@ -3526,8 +3180,125 @@ class StacCollection(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StacCollectionSummaries(_Model):
-    """Represents a collection summary."""
+class StacCollectionTemporalExtent(_Model):
+    """`https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#temporal-extent-object
+    <https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#temporal-extent-object>`_
+
+    Represents the temporal extent of a STAC collection with time intervals.
+
+    :ivar interval: Array of time intervals in format [[start_datetime, end_datetime]]. Required.
+    :vartype interval: list[list[str]]
+    """
+
+    interval: List[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Array of time intervals in format [[start_datetime, end_datetime]]. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        interval: List[List[str]],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class StacExtensionExtent(_Model):
+    """`https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#extent-object
+    <https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#extent-object>`_
+
+    Represents the spatial and temporal extent of a STAC collection.
+
+    :ivar spatial: Spatial extent defined by bounding boxes.
+
+     See the `STAC Collection Spec
+     <https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#spatial-extent-object>`_.
+     Required.
+    :vartype spatial: ~azure.planetarycomputer.models.StacExtensionSpatialExtent
+    :ivar temporal: Temporal extent defined by time intervals.
+
+     See the `STAC Collection Spec
+     <https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#spatial-extent-object>`_.
+     Required.
+    :vartype temporal: ~azure.planetarycomputer.models.StacCollectionTemporalExtent
+    """
+
+    spatial: "_models.StacExtensionSpatialExtent" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Spatial extent defined by bounding boxes.
+     
+     See the `STAC Collection Spec
+     <https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#spatial-extent-object>`_.
+     Required."""
+    temporal: "_models.StacCollectionTemporalExtent" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Temporal extent defined by time intervals.
+     
+     See the `STAC Collection Spec
+     <https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#spatial-extent-object>`_.
+     Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        spatial: "_models.StacExtensionSpatialExtent",
+        temporal: "_models.StacCollectionTemporalExtent",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class StacExtensionSpatialExtent(_Model):
+    """`https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#spatial-extent-object
+    <https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#spatial-extent-object>`_
+
+    Represents the spatial extent of a STAC collection with bounding boxes.
+
+    :ivar bounding_box: Array of bounding boxes defining the spatial extent, in format [[west,
+     south, east, north]].
+    :vartype bounding_box: list[list[float]]
+    """
+
+    bounding_box: Optional[List[List[float]]] = rest_field(
+        name="bbox", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Array of bounding boxes defining the spatial extent, in format [[west, south, east, north]]."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        bounding_box: Optional[List[List[float]]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class StacItem(StacItemOrItemCollection, discriminator="Feature"):
@@ -3537,18 +3308,18 @@ class StacItem(StacItemOrItemCollection, discriminator="Feature"):
     :vartype stac_version: str
     :ivar links: Links to related resources and endpoints.
     :vartype links: list[~azure.planetarycomputer.models.Link]
-    :ivar msft_created: MSFT Created.
-    :vartype msft_created: str
-    :ivar msft_updated: MSFT Updated.
-    :vartype msft_updated: str
-    :ivar msft_short_description: MSFT Short Description.
-    :vartype msft_short_description: str
+    :ivar created_on: MSFT Created.
+    :vartype created_on: str
+    :ivar updated_on: MSFT Updated.
+    :vartype updated_on: str
+    :ivar short_description: MSFT Short Description.
+    :vartype short_description: str
     :ivar stac_extensions: URLs to STAC extensions implemented by this STAC resource.
     :vartype stac_extensions: list[str]
     :ivar geometry: Geometry object defining the feature's shape. Required.
     :vartype geometry: ~azure.planetarycomputer.models.Geometry
-    :ivar bbox: Bounding box coordinates for the feature. Required.
-    :vartype bbox: list[float]
+    :ivar bounding_box: Bounding box coordinates for the feature. Required.
+    :vartype bounding_box: list[float]
     :ivar id: Unique identifier for the feature. Required.
     :vartype id: str
     :ivar type: GeoJSON type identifier for Feature. Required. GeoJSON Feature type.
@@ -3559,15 +3330,15 @@ class StacItem(StacItemOrItemCollection, discriminator="Feature"):
     :vartype properties: ~azure.planetarycomputer.models.ItemProperties
     :ivar assets: Assets. Required.
     :vartype assets: dict[str, ~azure.planetarycomputer.models.Asset]
-    :ivar msft_timestamp: MSFT Timestamp.
-    :vartype msft_timestamp: str
-    :ivar msft_etag: MSFT ETag.
-    :vartype msft_etag: str
+    :ivar timestamp: MSFT Timestamp.
+    :vartype timestamp: str
+    :ivar e_tag: MSFT ETag.
+    :vartype e_tag: str
     """
 
     geometry: "_models.Geometry" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Geometry object defining the feature's shape. Required."""
-    bbox: List[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    bounding_box: List[float] = rest_field(name="bbox", visibility=["read", "create", "update", "delete", "query"])
     """Bounding box coordinates for the feature. Required."""
     id: str = rest_field(visibility=["read", "create", "update"])
     """Unique identifier for the feature. Required."""
@@ -3579,11 +3350,9 @@ class StacItem(StacItemOrItemCollection, discriminator="Feature"):
     """Attributes associated with the feature. Required."""
     assets: Dict[str, "_models.Asset"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Assets. Required."""
-    msft_timestamp: Optional[str] = rest_field(
-        name="_msft:ts", visibility=["read", "create", "update", "delete", "query"]
-    )
+    timestamp: Optional[str] = rest_field(name="_msft:ts", visibility=["read", "create", "update", "delete", "query"])
     """MSFT Timestamp."""
-    msft_etag: Optional[str] = rest_field(name="_msft:etag", visibility=["read", "create", "update", "delete", "query"])
+    e_tag: Optional[str] = rest_field(name="_msft:etag", visibility=["read", "create", "update", "delete", "query"])
     """MSFT ETag."""
 
     @overload
@@ -3591,19 +3360,19 @@ class StacItem(StacItemOrItemCollection, discriminator="Feature"):
         self,
         *,
         geometry: "_models.Geometry",
-        bbox: List[float],
+        bounding_box: List[float],
         id: str,  # pylint: disable=redefined-builtin
         properties: "_models.ItemProperties",
         assets: Dict[str, "_models.Asset"],
         stac_version: Optional[str] = None,
         links: Optional[List["_models.Link"]] = None,
-        msft_created: Optional[str] = None,
-        msft_updated: Optional[str] = None,
-        msft_short_description: Optional[str] = None,
+        created_on: Optional[str] = None,
+        updated_on: Optional[str] = None,
+        short_description: Optional[str] = None,
         stac_extensions: Optional[List[str]] = None,
         collection: Optional[str] = None,
-        msft_timestamp: Optional[str] = None,
-        msft_etag: Optional[str] = None,
+        timestamp: Optional[str] = None,
+        e_tag: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -3617,12 +3386,51 @@ class StacItem(StacItemOrItemCollection, discriminator="Feature"):
         super().__init__(*args, type=StacModelType.FEATURE, **kwargs)
 
 
-class StacQuery(_Model):
-    """Represent a STAC query
+class StacQueryable(_Model):
+    """Definition of a queryable field for STAC API filtering.
 
-    `https://github.com/stac-api-extensions/query <https://github.com/stac-api-extensions/query>`_.
-
+    :ivar name: Name of the queryable field. Required.
+    :vartype name: str
+    :ivar definition: Metadata for the queryable field. Required.
+    :vartype definition: dict[str, any]
+    :ivar create_index: Whether to create a database index for this field.
+    :vartype create_index: bool
+    :ivar data_type: Data type of the queryable field. Known values are: "string", "number",
+     "boolean", "timestamp", and "date".
+    :vartype data_type: str or ~azure.planetarycomputer.models.StacQueryableDefinitionDataType
     """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name of the queryable field. Required."""
+    definition: Dict[str, Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Metadata for the queryable field. Required."""
+    create_index: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether to create a database index for this field."""
+    data_type: Optional[Union[str, "_models.StacQueryableDefinitionDataType"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Data type of the queryable field. Known values are: \"string\", \"number\", \"boolean\",
+     \"timestamp\", and \"date\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        definition: Dict[str, Any],
+        create_index: Optional[bool] = None,
+        data_type: Optional[Union[str, "_models.StacQueryableDefinitionDataType"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class StatisticsResponse(_Model):
@@ -3636,7 +3444,7 @@ class TileJsonResponse(_Model):
     <https://github.com/mapbox/tilejson-spec/tree/master/2.2.0TileJSON>`_ metadata describing a
     tile set according to the TileJSON specification.
 
-    :ivar tilejson: Tilejson.
+    :ivar tilejson: TileJson.
     :vartype tilejson: str
     :ivar name: Human-readable name of the tile set.
     :vartype name: str
@@ -3651,7 +3459,7 @@ class TileJsonResponse(_Model):
     :ivar legend: URL to legend content for the tile set.
     :vartype legend: str
     :ivar scheme: Tile addressing scheme (xyz or tms). Known values are: "xyz" and "tms".
-    :vartype scheme: str or ~azure.planetarycomputer.models.TileJsonScheme
+    :vartype scheme: str or ~azure.planetarycomputer.models.TileAddressingScheme
     :ivar tiles: Array of tile URL templates. Required.
     :vartype tiles: list[str]
     :ivar grids: Array of UTFGrid URL templates.
@@ -3669,7 +3477,7 @@ class TileJsonResponse(_Model):
     """
 
     tilejson: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Tilejson."""
+    """TileJson."""
     name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Human-readable name of the tile set."""
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -3682,7 +3490,7 @@ class TileJsonResponse(_Model):
     """URL template for feature info queries."""
     legend: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """URL to legend content for the tile set."""
-    scheme: Optional[Union[str, "_models.TileJsonScheme"]] = rest_field(
+    scheme: Optional[Union[str, "_models.TileAddressingScheme"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Tile addressing scheme (xyz or tms). Known values are: \"xyz\" and \"tms\"."""
@@ -3713,7 +3521,7 @@ class TileJsonResponse(_Model):
         attribution: Optional[str] = None,
         template: Optional[str] = None,
         legend: Optional[str] = None,
-        scheme: Optional[Union[str, "_models.TileJsonScheme"]] = None,
+        scheme: Optional[Union[str, "_models.TileAddressingScheme"]] = None,
         grids: Optional[List[str]] = None,
         data: Optional[List[str]] = None,
         min_zoom: Optional[int] = None,
@@ -3999,6 +3807,47 @@ class TileMatrixSetBoundingBox(_Model):
         super().__init__(*args, **kwargs)
 
 
+class TilerCoreModelsResponsesPoint(_Model):
+    """Point model.
+
+    response model for ``/point`` endpointsResponse model for point query operations providing
+    values at a specific location.
+
+    :ivar coordinates: Geographic coordinates [longitude, latitude] of the queried point. Required.
+    :vartype coordinates: list[float]
+    :ivar values_property: Array of pixel values at the queried point for each band. Required.
+    :vartype values_property: list[float]
+    :ivar band_names: Names of each band in the raster data. Required.
+    :vartype band_names: list[str]
+    """
+
+    coordinates: List[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Geographic coordinates [longitude, latitude] of the queried point. Required."""
+    values_property: List[float] = rest_field(name="values", visibility=["read", "create", "update", "delete", "query"])
+    """Array of pixel values at the queried point for each band. Required."""
+    band_names: List[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Names of each band in the raster data. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        coordinates: List[float],
+        values_property: List[float],
+        band_names: List[str],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class TilerInfo(_Model):
     """TilerInfo.
 
@@ -4120,8 +3969,8 @@ class TilerInfoGeoJsonFeature(_Model):
     :vartype properties: dict[str, ~azure.planetarycomputer.models.TilerInfo]
     :ivar id: Unique identifier for the feature.
     :vartype id: str
-    :ivar bbox: Bounding box coordinates for the feature.
-    :vartype bbox: float
+    :ivar bounding_box: Bounding box coordinates for the feature.
+    :vartype bounding_box: float
     """
 
     type: Union[str, "_models.FeatureType"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -4132,7 +3981,7 @@ class TilerInfoGeoJsonFeature(_Model):
     """Properties. Required."""
     id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Unique identifier for the feature."""
-    bbox: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    bounding_box: Optional[float] = rest_field(name="bbox", visibility=["read", "create", "update", "delete", "query"])
     """Bounding box coordinates for the feature."""
 
     @overload
@@ -4143,7 +3992,146 @@ class TilerInfoGeoJsonFeature(_Model):
         geometry: "_models.Geometry",
         properties: Dict[str, "_models.TilerInfo"],
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        bbox: Optional[float] = None,
+        bounding_box: Optional[float] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TilerMosaicSearchRegistrationResponse(_Model):
+    """Response from a successful mosaic registration with search ID and related links.
+
+    :ivar search_id: Unique identifier for the registered search. Required.
+    :vartype search_id: str
+    :ivar links: Related links for the registered mosaic.
+    :vartype links: list[~azure.planetarycomputer.models.Link]
+    """
+
+    search_id: str = rest_field(name="searchid", visibility=["read", "create", "update", "delete", "query"])
+    """Unique identifier for the registered search. Required."""
+    links: Optional[List["_models.Link"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Related links for the registered mosaic."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        search_id: str,
+        links: Optional[List["_models.Link"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TilerStacSearchDefinition(_Model):
+    """PgSTAC Search entry.
+
+    ref:
+    `https://github.com/stac-utils/pgstac/blob/3499daa2bfa700ae7bb07503795c169bf2ebafc7/sql/004_search.sql#L907-L915Stored
+    <https://github.com/stac-utils/pgstac/blob/3499daa2bfa700ae7bb07503795c169bf2ebafc7/sql/004_search.sql#L907-L915Stored>`_
+    search query in the PgSTAC database.
+
+    :ivar hash: Unique hash identifier for the search query. Required.
+    :vartype hash: str
+    :ivar search: Search. Required.
+    :vartype search: dict[str, any]
+    :ivar where: SQL WHERE clause representing the search filters. Required.
+    :vartype where: str
+    :ivar order_by: SQL ORDER BY clause for sorting results. Required.
+    :vartype order_by: str
+    :ivar last_used: Timestamp when the search was last accessed. Required.
+    :vartype last_used: ~datetime.datetime
+    :ivar use_count: Number of times the search has been accessed. Required.
+    :vartype use_count: int
+    :ivar metadata: Additional metadata associated with the search. Required.
+    :vartype metadata: ~azure.planetarycomputer.models.Metadata
+    """
+
+    hash: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Unique hash identifier for the search query. Required."""
+    search: Dict[str, Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Search. Required."""
+    where: str = rest_field(name="_where", visibility=["read", "create", "update", "delete", "query"])
+    """SQL WHERE clause representing the search filters. Required."""
+    order_by: str = rest_field(name="orderby", visibility=["read", "create", "update", "delete", "query"])
+    """SQL ORDER BY clause for sorting results. Required."""
+    last_used: datetime.datetime = rest_field(
+        name="lastused", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """Timestamp when the search was last accessed. Required."""
+    use_count: int = rest_field(name="usecount", visibility=["read", "create", "update", "delete", "query"])
+    """Number of times the search has been accessed. Required."""
+    metadata: "_models.Metadata" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Additional metadata associated with the search. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        hash: str,
+        search: Dict[str, Any],
+        where: str,
+        order_by: str,
+        last_used: datetime.datetime,
+        use_count: int,
+        metadata: "_models.Metadata",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TilerStacSearchRegistration(_Model):
+    """Information about a registered STAC search query.
+
+    :ivar search: Details of the saved search query
+
+     See the `PgSTAC Search table definition
+     <https://github.com/stac-utils/pgstac/blob/3499daa2bfa700ae7bb07503795c169bf2ebafc7/sql/004_search.sql#L907-L915>`_.
+     Required.
+    :vartype search: ~azure.planetarycomputer.models.TilerStacSearchDefinition
+    :ivar links: Related links for the search query.
+    :vartype links: list[~azure.planetarycomputer.models.Link]
+    """
+
+    search: "_models.TilerStacSearchDefinition" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Details of the saved search query
+     
+     See the `PgSTAC Search table definition
+     <https://github.com/stac-utils/pgstac/blob/3499daa2bfa700ae7bb07503795c169bf2ebafc7/sql/004_search.sql#L907-L915>`_.
+     Required."""
+    links: Optional[List["_models.Link"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Related links for the search query."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        search: "_models.TilerStacSearchDefinition",
+        links: Optional[List["_models.Link"]] = None,
     ) -> None: ...
 
     @overload
@@ -4205,129 +4193,16 @@ class TileSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TimeInterval(_Model):
-    """`https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#temporal-extent-object
-    <https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#temporal-extent-object>`_
-
-    Represents the temporal extent of a STAC collection with time intervals.
-
-    :ivar interval: Array of time intervals in format [[start_datetime, end_datetime]]. Required.
-    :vartype interval: list[list[str]]
-    """
-
-    interval: List[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Array of time intervals in format [[start_datetime, end_datetime]]. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        interval: List[List[str]],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class TitilerCoreModelsResponsesPoint(_Model):
-    """Point model.
-
-    response model for ``/point`` endpointsResponse model for point query operations providing
-    values at a specific location.
-
-    :ivar coordinates: Geographic coordinates [longitude, latitude] of the queried point. Required.
-    :vartype coordinates: list[float]
-    :ivar values_property: Array of pixel values at the queried point for each band. Required.
-    :vartype values_property: list[float]
-    :ivar band_names: Names of each band in the raster data. Required.
-    :vartype band_names: list[str]
-    """
-
-    coordinates: List[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Geographic coordinates [longitude, latitude] of the queried point. Required."""
-    values_property: List[float] = rest_field(name="values", visibility=["read", "create", "update", "delete", "query"])
-    """Array of pixel values at the queried point for each band. Required."""
-    band_names: List[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Names of each band in the raster data. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        coordinates: List[float],
-        values_property: List[float],
-        band_names: List[str],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class TitilerPgstacModelInfo(_Model):
-    """Information about a registered STAC search query.
-
-    :ivar search: Details of the saved search query
-
-     See the `PgSTAC Search table definition
-     <https://github.com/stac-utils/pgstac/blob/3499daa2bfa700ae7bb07503795c169bf2ebafc7/sql/004_search.sql#L907-L915>`_.
-     Required.
-    :vartype search: ~azure.planetarycomputer.models.PgStacSearch
-    :ivar links: Related links for the search query.
-    :vartype links: list[~azure.planetarycomputer.models.Link]
-    """
-
-    search: "_models.PgStacSearch" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Details of the saved search query
-     
-     See the `PgSTAC Search table definition
-     <https://github.com/stac-utils/pgstac/blob/3499daa2bfa700ae7bb07503795c169bf2ebafc7/sql/004_search.sql#L907-L915>`_.
-     Required."""
-    links: Optional[List["_models.Link"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Related links for the search query."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        search: "_models.PgStacSearch",
-        links: Optional[List["_models.Link"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class UnsignedLink(_Model):
     """UnsignedLink.
 
-    :ivar msft_expiry: Msft:Expiry.
-    :vartype msft_expiry: ~datetime.datetime
+    :ivar expires_on: Msft:Expiry.
+    :vartype expires_on: ~datetime.datetime
     :ivar href: Href. Required.
     :vartype href: str
     """
 
-    msft_expiry: Optional[datetime.datetime] = rest_field(
+    expires_on: Optional[datetime.datetime] = rest_field(
         name="msft:expiry", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """Msft:Expiry."""
@@ -4339,7 +4214,7 @@ class UnsignedLink(_Model):
         self,
         *,
         href: str,
-        msft_expiry: Optional[datetime.datetime] = None,
+        expires_on: Optional[datetime.datetime] = None,
     ) -> None: ...
 
     @overload

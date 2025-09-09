@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.planetarycomputer import TilerClient
+from azure.planetarycomputer import PlanetaryComputerClient
 
 """
 # PREREQUISITES
@@ -25,11 +25,11 @@ from azure.planetarycomputer import TilerClient
 
 
 def main():
-    client = TilerClient(
+    client = PlanetaryComputerClient(
         credential=DefaultAzureCredential(),
     )
 
-    response = client.get_preview_with_format(
+    response = client.tiler.get_preview_with_format(
         collection_id="c1007ec2-3ddc-4335-9edd-b1c26b1b4c92",
         item_id="9bb31abd-91d6-4649-9c6f-beadbec7c622",
         format="png",

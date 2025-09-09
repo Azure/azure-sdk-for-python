@@ -7,16 +7,16 @@
 # --------------------------------------------------------------------------
 import pytest
 from devtools_testutils import recorded_by_proxy
-from testpreparer import StacClientTestBase, StacPreparer
+from testpreparer import PlanetaryComputerClientTestBase, PlanetaryComputerPreparer
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestStac(StacClientTestBase):
-    @StacPreparer()
+class TestPlanetaryComputerStacOperations(PlanetaryComputerClientTestBase):
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_create_collection_asset(self, stac_endpoint):
-        client = self.create_client(endpoint=stac_endpoint)
-        response = client.create_collection_asset(
+    def test_stac_create_collection_asset(self, planetarycomputer_endpoint):
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+        response = client.stac.create_collection_asset(
             collection_id="str",
             body={
                 "data": {"description": "str", "key": "str", "roles": ["str"], "title": "str", "type": "str"},
@@ -27,11 +27,11 @@ class TestStac(StacClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_create_or_replace_collection_asset(self, stac_endpoint):
-        client = self.create_client(endpoint=stac_endpoint)
-        response = client.create_or_replace_collection_asset(
+    def test_stac_create_or_replace_collection_asset(self, planetarycomputer_endpoint):
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+        response = client.stac.create_or_replace_collection_asset(
             collection_id="str",
             asset_id="str",
             body={
@@ -43,11 +43,11 @@ class TestStac(StacClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_delete_collection_asset(self, stac_endpoint):
-        client = self.create_client(endpoint=stac_endpoint)
-        response = client.delete_collection_asset(
+    def test_stac_delete_collection_asset(self, planetarycomputer_endpoint):
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+        response = client.stac.delete_collection_asset(
             collection_id="str",
             asset_id="str",
         )
@@ -55,59 +55,47 @@ class TestStac(StacClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_get_collection_config(self, stac_endpoint):
-        client = self.create_client(endpoint=stac_endpoint)
-        response = client.get_collection_config(
+    def test_stac_get_collection_config(self, planetarycomputer_endpoint):
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+        response = client.stac.get_collection_config(
             collection_id="str",
         )
 
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_add_mosaic(self, stac_endpoint):
-        client = self.create_client(endpoint=stac_endpoint)
-        response = client.add_mosaic(
+    def test_stac_add_mosaic(self, planetarycomputer_endpoint):
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+        response = client.stac.add_mosaic(
             collection_id="str",
-            body={"cql": [{}], "id": "str", "name": "str", "description": "str"},
+            body={"cql": [{"str": {}}], "id": "str", "name": "str", "description": "str"},
         )
 
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_create_or_replace_mosaic(self, stac_endpoint):
-        client = self.create_client(endpoint=stac_endpoint)
-        response = client.create_or_replace_mosaic(
-            collection_id="str",
-            mosaic_id="str",
-            body={"cql": [{}], "id": "str", "name": "str", "description": "str"},
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @StacPreparer()
-    @recorded_by_proxy
-    def test_delete_mosaic(self, stac_endpoint):
-        client = self.create_client(endpoint=stac_endpoint)
-        response = client.delete_mosaic(
+    def test_stac_create_or_replace_mosaic(self, planetarycomputer_endpoint):
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+        response = client.stac.create_or_replace_mosaic(
             collection_id="str",
             mosaic_id="str",
+            body={"cql": [{"str": {}}], "id": "str", "name": "str", "description": "str"},
         )
 
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_get_mosaic(self, stac_endpoint):
-        client = self.create_client(endpoint=stac_endpoint)
-        response = client.get_mosaic(
+    def test_stac_delete_mosaic(self, planetarycomputer_endpoint):
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+        response = client.stac.delete_mosaic(
             collection_id="str",
             mosaic_id="str",
         )
@@ -115,22 +103,34 @@ class TestStac(StacClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_get_all_mosaics(self, stac_endpoint):
-        client = self.create_client(endpoint=stac_endpoint)
-        response = client.get_all_mosaics(
+    def test_stac_get_mosaic(self, planetarycomputer_endpoint):
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+        response = client.stac.get_mosaic(
+            collection_id="str",
+            mosaic_id="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy
+    def test_stac_list_mosaics(self, planetarycomputer_endpoint):
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+        response = client.stac.list_mosaics(
             collection_id="str",
         )
 
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_begin_create_collection(self, stac_endpoint):
-        client = self.create_client(endpoint=stac_endpoint)
-        response = client.begin_create_collection(
+    def test_stac_begin_create_collection(self, planetarycomputer_endpoint):
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+        response = client.stac.begin_create_collection(
             body={
                 "description": "str",
                 "extent": {"spatial": {"bbox": [[0.0]]}, "temporal": {"interval": [["str"]]}},
@@ -174,7 +174,7 @@ class TestStac(StacClientTestBase):
                 "providers": [{"name": "str", "description": "str", "roles": ["str"], "url": "str"}],
                 "stac_extensions": ["str"],
                 "stac_version": "str",
-                "summaries": {},
+                "summaries": {"str": {}},
                 "title": "str",
                 "type": "str",
             },
@@ -183,11 +183,11 @@ class TestStac(StacClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_begin_create_or_replace_collection(self, stac_endpoint):
-        client = self.create_client(endpoint=stac_endpoint)
-        response = client.begin_create_or_replace_collection(
+    def test_stac_begin_create_or_replace_collection(self, planetarycomputer_endpoint):
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+        response = client.stac.begin_create_or_replace_collection(
             collection_id="str",
             body={
                 "description": "str",
@@ -232,7 +232,7 @@ class TestStac(StacClientTestBase):
                 "providers": [{"name": "str", "description": "str", "roles": ["str"], "url": "str"}],
                 "stac_extensions": ["str"],
                 "stac_version": "str",
-                "summaries": {},
+                "summaries": {"str": {}},
                 "title": "str",
                 "type": "str",
             },
@@ -241,53 +241,53 @@ class TestStac(StacClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_begin_delete_collection(self, stac_endpoint):
-        client = self.create_client(endpoint=stac_endpoint)
-        response = client.begin_delete_collection(
+    def test_stac_begin_delete_collection(self, planetarycomputer_endpoint):
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+        response = client.stac.begin_delete_collection(
             collection_id="str",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_get_collection(self, stac_endpoint):
-        client = self.create_client(endpoint=stac_endpoint)
-        response = client.get_collection(
+    def test_stac_get_collection(self, planetarycomputer_endpoint):
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+        response = client.stac.get_collection(
             collection_id="str",
         )
 
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_get_all_collections(self, stac_endpoint):
-        client = self.create_client(endpoint=stac_endpoint)
-        response = client.get_all_collections()
+    def test_stac_list_collections(self, planetarycomputer_endpoint):
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+        response = client.stac.list_collections()
 
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_get_partition_type(self, stac_endpoint):
-        client = self.create_client(endpoint=stac_endpoint)
-        response = client.get_partition_type(
+    def test_stac_get_partition_type(self, planetarycomputer_endpoint):
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+        response = client.stac.get_partition_type(
             collection_id="str",
         )
 
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_replace_partition_type(self, stac_endpoint):
-        client = self.create_client(endpoint=stac_endpoint)
-        response = client.replace_partition_type(
+    def test_stac_replace_partition_type(self, planetarycomputer_endpoint):
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+        response = client.stac.replace_partition_type(
             collection_id="str",
             body={"scheme": "str"},
         )
@@ -295,11 +295,11 @@ class TestStac(StacClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_create_render_option(self, stac_endpoint):
-        client = self.create_client(endpoint=stac_endpoint)
-        response = client.create_render_option(
+    def test_stac_create_render_option(self, planetarycomputer_endpoint):
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+        response = client.stac.create_render_option(
             collection_id="str",
             body={
                 "id": "str",
@@ -324,11 +324,11 @@ class TestStac(StacClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_create_or_replace_render_option(self, stac_endpoint):
-        client = self.create_client(endpoint=stac_endpoint)
-        response = client.create_or_replace_render_option(
+    def test_stac_create_or_replace_render_option(self, planetarycomputer_endpoint):
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+        response = client.stac.create_or_replace_render_option(
             collection_id="str",
             render_option_id="str",
             body={
@@ -354,11 +354,11 @@ class TestStac(StacClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_delete_render_option(self, stac_endpoint):
-        client = self.create_client(endpoint=stac_endpoint)
-        response = client.delete_render_option(
+    def test_stac_delete_render_option(self, planetarycomputer_endpoint):
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+        response = client.stac.delete_render_option(
             collection_id="str",
             render_option_id="str",
         )
@@ -366,11 +366,11 @@ class TestStac(StacClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_get_render_option(self, stac_endpoint):
-        client = self.create_client(endpoint=stac_endpoint)
-        response = client.get_render_option(
+    def test_stac_get_render_option(self, planetarycomputer_endpoint):
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+        response = client.stac.get_render_option(
             collection_id="str",
             render_option_id="str",
         )
@@ -378,44 +378,44 @@ class TestStac(StacClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_get_all_render_options(self, stac_endpoint):
-        client = self.create_client(endpoint=stac_endpoint)
-        response = client.get_all_render_options(
+    def test_stac_list_render_options(self, planetarycomputer_endpoint):
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+        response = client.stac.list_render_options(
             collection_id="str",
         )
 
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_get_collection_thumbnail(self, stac_endpoint):
-        client = self.create_client(endpoint=stac_endpoint)
-        response = client.get_collection_thumbnail(
+    def test_stac_get_collection_thumbnail(self, planetarycomputer_endpoint):
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+        response = client.stac.get_collection_thumbnail(
             collection_id="str",
         )
 
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_get_tile_settings(self, stac_endpoint):
-        client = self.create_client(endpoint=stac_endpoint)
-        response = client.get_tile_settings(
+    def test_stac_get_tile_settings(self, planetarycomputer_endpoint):
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+        response = client.stac.get_tile_settings(
             collection_id="str",
         )
 
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_replace_tile_settings(self, stac_endpoint):
-        client = self.create_client(endpoint=stac_endpoint)
-        response = client.replace_tile_settings(
+    def test_stac_replace_tile_settings(self, planetarycomputer_endpoint):
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+        response = client.stac.replace_tile_settings(
             collection_id="str",
             body={"maxItemsPerTile": 0, "minZoom": 0, "defaultLocation": {"coordinates": [0.0], "zoom": 0}},
         )
@@ -423,20 +423,20 @@ class TestStac(StacClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_get_conformance_class(self, stac_endpoint):
-        client = self.create_client(endpoint=stac_endpoint)
-        response = client.get_conformance_class()
+    def test_stac_get_conformance_class(self, planetarycomputer_endpoint):
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+        response = client.stac.get_conformance_class()
 
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_begin_create_item(self, stac_endpoint):
-        client = self.create_client(endpoint=stac_endpoint)
-        response = client.begin_create_item(
+    def test_stac_begin_create_item(self, planetarycomputer_endpoint):
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+        response = client.stac.begin_create_item(
             collection_id="str",
             body={
                 "assets": {
@@ -503,118 +503,11 @@ class TestStac(StacClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_begin_create_or_replace_item(self, stac_endpoint):
-        client = self.create_client(endpoint=stac_endpoint)
-        response = client.begin_create_or_replace_item(
-            collection_id="str",
-            item_id="str",
-            body={
-                "assets": {
-                    "str": {
-                        "href": "str",
-                        "constellation": "str",
-                        "created": "2020-02-20 00:00:00",
-                        "description": "str",
-                        "gsd": 0.0,
-                        "instruments": ["str"],
-                        "mission": "str",
-                        "platform": "str",
-                        "providers": [{"name": "str", "description": "str", "roles": ["str"], "url": "str"}],
-                        "roles": ["str"],
-                        "title": "str",
-                        "type": "str",
-                        "updated": "2020-02-20 00:00:00",
-                    }
-                },
-                "bbox": [0.0],
-                "geometry": "geometry",
-                "id": "str",
-                "properties": {
-                    "datetime": "str",
-                    "constellation": "str",
-                    "created": "2020-02-20 00:00:00",
-                    "description": "str",
-                    "end_datetime": "2020-02-20 00:00:00",
-                    "gsd": 0.0,
-                    "instruments": ["str"],
-                    "mission": "str",
-                    "platform": "str",
-                    "providers": [{"name": "str", "description": "str", "roles": ["str"], "url": "str"}],
-                    "start_datetime": "2020-02-20 00:00:00",
-                    "title": "str",
-                    "updated": "2020-02-20 00:00:00",
-                },
-                "type": "Feature",
-                "_msft:etag": "str",
-                "_msft:ts": "str",
-                "collection": "str",
-                "links": [
-                    {
-                        "href": "str",
-                        "body": {"str": {}},
-                        "headers": {"str": "str"},
-                        "hreflang": "str",
-                        "length": 0,
-                        "merge": bool,
-                        "method": "GET",
-                        "rel": "str",
-                        "title": "str",
-                        "type": "str",
-                    }
-                ],
-                "msft:_created": "str",
-                "msft:_updated": "str",
-                "msft:short_description": "str",
-                "stac_extensions": ["str"],
-                "stac_version": "str",
-            },
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @StacPreparer()
-    @recorded_by_proxy
-    def test_begin_delete_item(self, stac_endpoint):
-        client = self.create_client(endpoint=stac_endpoint)
-        response = client.begin_delete_item(
-            collection_id="str",
-            item_id="str",
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @StacPreparer()
-    @recorded_by_proxy
-    def test_get_item(self, stac_endpoint):
-        client = self.create_client(endpoint=stac_endpoint)
-        response = client.get_item(
-            collection_id="str",
-            item_id="str",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @StacPreparer()
-    @recorded_by_proxy
-    def test_get_items_as_features(self, stac_endpoint):
-        client = self.create_client(endpoint=stac_endpoint)
-        response = client.get_items_as_features(
-            collection_id="str",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @StacPreparer()
-    @recorded_by_proxy
-    def test_begin_update_item(self, stac_endpoint):
-        client = self.create_client(endpoint=stac_endpoint)
-        response = client.begin_update_item(
+    def test_stac_begin_create_or_replace_item(self, planetarycomputer_endpoint):
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+        response = client.stac.begin_create_or_replace_item(
             collection_id="str",
             item_id="str",
             body={
@@ -682,45 +575,152 @@ class TestStac(StacClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_get_stac_landing_page(self, stac_endpoint):
-        client = self.create_client(endpoint=stac_endpoint)
-        response = client.get_stac_landing_page()
+    def test_stac_begin_delete_item(self, planetarycomputer_endpoint):
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+        response = client.stac.begin_delete_item(
+            collection_id="str",
+            item_id="str",
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_create_queryables(self, stac_endpoint):
-        client = self.create_client(endpoint=stac_endpoint)
-        response = client.create_queryables(
+    def test_stac_get_item(self, planetarycomputer_endpoint):
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+        response = client.stac.get_item(
             collection_id="str",
-            body=[{"definition": {}, "name": "str", "create_index": bool, "data_type": "str"}],
+            item_id="str",
         )
 
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_create_or_replace_queryable(self, stac_endpoint):
-        client = self.create_client(endpoint=stac_endpoint)
-        response = client.create_or_replace_queryable(
+    def test_stac_get_items_as_features(self, planetarycomputer_endpoint):
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+        response = client.stac.get_items_as_features(
+            collection_id="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy
+    def test_stac_begin_update_item(self, planetarycomputer_endpoint):
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+        response = client.stac.begin_update_item(
+            collection_id="str",
+            item_id="str",
+            body={
+                "assets": {
+                    "str": {
+                        "href": "str",
+                        "constellation": "str",
+                        "created": "2020-02-20 00:00:00",
+                        "description": "str",
+                        "gsd": 0.0,
+                        "instruments": ["str"],
+                        "mission": "str",
+                        "platform": "str",
+                        "providers": [{"name": "str", "description": "str", "roles": ["str"], "url": "str"}],
+                        "roles": ["str"],
+                        "title": "str",
+                        "type": "str",
+                        "updated": "2020-02-20 00:00:00",
+                    }
+                },
+                "bbox": [0.0],
+                "geometry": "geometry",
+                "id": "str",
+                "properties": {
+                    "datetime": "str",
+                    "constellation": "str",
+                    "created": "2020-02-20 00:00:00",
+                    "description": "str",
+                    "end_datetime": "2020-02-20 00:00:00",
+                    "gsd": 0.0,
+                    "instruments": ["str"],
+                    "mission": "str",
+                    "platform": "str",
+                    "providers": [{"name": "str", "description": "str", "roles": ["str"], "url": "str"}],
+                    "start_datetime": "2020-02-20 00:00:00",
+                    "title": "str",
+                    "updated": "2020-02-20 00:00:00",
+                },
+                "type": "Feature",
+                "_msft:etag": "str",
+                "_msft:ts": "str",
+                "collection": "str",
+                "links": [
+                    {
+                        "href": "str",
+                        "body": {"str": {}},
+                        "headers": {"str": "str"},
+                        "hreflang": "str",
+                        "length": 0,
+                        "merge": bool,
+                        "method": "GET",
+                        "rel": "str",
+                        "title": "str",
+                        "type": "str",
+                    }
+                ],
+                "msft:_created": "str",
+                "msft:_updated": "str",
+                "msft:short_description": "str",
+                "stac_extensions": ["str"],
+                "stac_version": "str",
+            },
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy
+    def test_stac_get_stac_landing_page(self, planetarycomputer_endpoint):
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+        response = client.stac.get_stac_landing_page()
+
+        # please add some check logic here by yourself
+        # ...
+
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy
+    def test_stac_create_queryables(self, planetarycomputer_endpoint):
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+        response = client.stac.create_queryables(
+            collection_id="str",
+            body=[{"definition": {"str": {}}, "name": "str", "create_index": bool, "data_type": "str"}],
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy
+    def test_stac_create_or_replace_queryable(self, planetarycomputer_endpoint):
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+        response = client.stac.create_or_replace_queryable(
             collection_id="str",
             queryable_name="str",
-            body={"definition": {}, "name": "str", "create_index": bool, "data_type": "str"},
+            body={"definition": {"str": {}}, "name": "str", "create_index": bool, "data_type": "str"},
         )
 
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_delete_queryable(self, stac_endpoint):
-        client = self.create_client(endpoint=stac_endpoint)
-        response = client.delete_queryable(
+    def test_stac_delete_queryable(self, planetarycomputer_endpoint):
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+        response = client.stac.delete_queryable(
             collection_id="str",
             queryable_name="str",
         )
@@ -728,31 +728,31 @@ class TestStac(StacClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_get_all_queryables(self, stac_endpoint):
-        client = self.create_client(endpoint=stac_endpoint)
-        response = client.get_all_queryables()
+    def test_stac_list_queryables(self, planetarycomputer_endpoint):
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+        response = client.stac.list_queryables()
 
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_get_all_queryables_by_collection(self, stac_endpoint):
-        client = self.create_client(endpoint=stac_endpoint)
-        response = client.get_all_queryables_by_collection(
+    def test_stac_list_queryables_by_collection(self, planetarycomputer_endpoint):
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+        response = client.stac.list_queryables_by_collection(
             collection_id="str",
         )
 
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_create_search_operations(self, stac_endpoint):
-        client = self.create_client(endpoint=stac_endpoint)
-        response = client.create_search_operations(
+    def test_stac_create_search_operations(self, planetarycomputer_endpoint):
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+        response = client.stac.create_search_operations(
             body={
                 "bbox": [0.0],
                 "collections": ["str"],
@@ -760,13 +760,13 @@ class TestStac(StacClientTestBase):
                 "datetime": "str",
                 "duration": 0,
                 "fields": [{"exclude": ["str"], "include": ["str"]}],
-                "filter": {},
+                "filter": {"str": {}},
                 "filter-crs": "str",
                 "filter-lang": "str",
                 "ids": ["str"],
                 "intersects": "geometry",
                 "limit": 0,
-                "query": {},
+                "query": {"str": {}},
                 "sign": "str",
                 "sortby": [{"direction": "str", "field": "str"}],
                 "token": "str",
@@ -776,11 +776,11 @@ class TestStac(StacClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_get_search_operations(self, stac_endpoint):
-        client = self.create_client(endpoint=stac_endpoint)
-        response = client.get_search_operations()
+    def test_stac_get_search_operations(self, planetarycomputer_endpoint):
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+        response = client.stac.get_search_operations()
 
         # please add some check logic here by yourself
         # ...

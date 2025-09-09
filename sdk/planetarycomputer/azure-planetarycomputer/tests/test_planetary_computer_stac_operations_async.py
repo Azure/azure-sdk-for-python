@@ -7,17 +7,17 @@
 # --------------------------------------------------------------------------
 import pytest
 from devtools_testutils.aio import recorded_by_proxy_async
-from testpreparer import StacPreparer
-from testpreparer_async import StacClientTestBaseAsync
+from testpreparer import PlanetaryComputerPreparer
+from testpreparer_async import PlanetaryComputerClientTestBaseAsync
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestStacAsync(StacClientTestBaseAsync):
-    @StacPreparer()
+class TestPlanetaryComputerStacOperationsAsync(PlanetaryComputerClientTestBaseAsync):
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_create_collection_asset(self, stac_endpoint):
-        client = self.create_async_client(endpoint=stac_endpoint)
-        response = await client.create_collection_asset(
+    async def test_stac_create_collection_asset(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.stac.create_collection_asset(
             collection_id="str",
             body={
                 "data": {"description": "str", "key": "str", "roles": ["str"], "title": "str", "type": "str"},
@@ -28,11 +28,11 @@ class TestStacAsync(StacClientTestBaseAsync):
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_create_or_replace_collection_asset(self, stac_endpoint):
-        client = self.create_async_client(endpoint=stac_endpoint)
-        response = await client.create_or_replace_collection_asset(
+    async def test_stac_create_or_replace_collection_asset(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.stac.create_or_replace_collection_asset(
             collection_id="str",
             asset_id="str",
             body={
@@ -44,11 +44,11 @@ class TestStacAsync(StacClientTestBaseAsync):
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_delete_collection_asset(self, stac_endpoint):
-        client = self.create_async_client(endpoint=stac_endpoint)
-        response = await client.delete_collection_asset(
+    async def test_stac_delete_collection_asset(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.stac.delete_collection_asset(
             collection_id="str",
             asset_id="str",
         )
@@ -56,59 +56,47 @@ class TestStacAsync(StacClientTestBaseAsync):
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_get_collection_config(self, stac_endpoint):
-        client = self.create_async_client(endpoint=stac_endpoint)
-        response = await client.get_collection_config(
+    async def test_stac_get_collection_config(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.stac.get_collection_config(
             collection_id="str",
         )
 
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_add_mosaic(self, stac_endpoint):
-        client = self.create_async_client(endpoint=stac_endpoint)
-        response = await client.add_mosaic(
+    async def test_stac_add_mosaic(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.stac.add_mosaic(
             collection_id="str",
-            body={"cql": [{}], "id": "str", "name": "str", "description": "str"},
+            body={"cql": [{"str": {}}], "id": "str", "name": "str", "description": "str"},
         )
 
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_create_or_replace_mosaic(self, stac_endpoint):
-        client = self.create_async_client(endpoint=stac_endpoint)
-        response = await client.create_or_replace_mosaic(
-            collection_id="str",
-            mosaic_id="str",
-            body={"cql": [{}], "id": "str", "name": "str", "description": "str"},
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @StacPreparer()
-    @recorded_by_proxy_async
-    async def test_delete_mosaic(self, stac_endpoint):
-        client = self.create_async_client(endpoint=stac_endpoint)
-        response = await client.delete_mosaic(
+    async def test_stac_create_or_replace_mosaic(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.stac.create_or_replace_mosaic(
             collection_id="str",
             mosaic_id="str",
+            body={"cql": [{"str": {}}], "id": "str", "name": "str", "description": "str"},
         )
 
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_get_mosaic(self, stac_endpoint):
-        client = self.create_async_client(endpoint=stac_endpoint)
-        response = await client.get_mosaic(
+    async def test_stac_delete_mosaic(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.stac.delete_mosaic(
             collection_id="str",
             mosaic_id="str",
         )
@@ -116,23 +104,35 @@ class TestStacAsync(StacClientTestBaseAsync):
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_get_all_mosaics(self, stac_endpoint):
-        client = self.create_async_client(endpoint=stac_endpoint)
-        response = await client.get_all_mosaics(
+    async def test_stac_get_mosaic(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.stac.get_mosaic(
+            collection_id="str",
+            mosaic_id="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy_async
+    async def test_stac_list_mosaics(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.stac.list_mosaics(
             collection_id="str",
         )
 
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_begin_create_collection(self, stac_endpoint):
-        client = self.create_async_client(endpoint=stac_endpoint)
+    async def test_stac_begin_create_collection(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
         response = await (
-            await client.begin_create_collection(
+            await client.stac.begin_create_collection(
                 body={
                     "description": "str",
                     "extent": {"spatial": {"bbox": [[0.0]]}, "temporal": {"interval": [["str"]]}},
@@ -176,7 +176,7 @@ class TestStacAsync(StacClientTestBaseAsync):
                     "providers": [{"name": "str", "description": "str", "roles": ["str"], "url": "str"}],
                     "stac_extensions": ["str"],
                     "stac_version": "str",
-                    "summaries": {},
+                    "summaries": {"str": {}},
                     "title": "str",
                     "type": "str",
                 },
@@ -186,12 +186,12 @@ class TestStacAsync(StacClientTestBaseAsync):
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_begin_create_or_replace_collection(self, stac_endpoint):
-        client = self.create_async_client(endpoint=stac_endpoint)
+    async def test_stac_begin_create_or_replace_collection(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
         response = await (
-            await client.begin_create_or_replace_collection(
+            await client.stac.begin_create_or_replace_collection(
                 collection_id="str",
                 body={
                     "description": "str",
@@ -236,7 +236,7 @@ class TestStacAsync(StacClientTestBaseAsync):
                     "providers": [{"name": "str", "description": "str", "roles": ["str"], "url": "str"}],
                     "stac_extensions": ["str"],
                     "stac_version": "str",
-                    "summaries": {},
+                    "summaries": {"str": {}},
                     "title": "str",
                     "type": "str",
                 },
@@ -246,12 +246,12 @@ class TestStacAsync(StacClientTestBaseAsync):
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_begin_delete_collection(self, stac_endpoint):
-        client = self.create_async_client(endpoint=stac_endpoint)
+    async def test_stac_begin_delete_collection(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
         response = await (
-            await client.begin_delete_collection(
+            await client.stac.begin_delete_collection(
                 collection_id="str",
             )
         ).result()  # call '.result()' to poll until service return final result
@@ -259,42 +259,42 @@ class TestStacAsync(StacClientTestBaseAsync):
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_get_collection(self, stac_endpoint):
-        client = self.create_async_client(endpoint=stac_endpoint)
-        response = await client.get_collection(
+    async def test_stac_get_collection(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.stac.get_collection(
             collection_id="str",
         )
 
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_get_all_collections(self, stac_endpoint):
-        client = self.create_async_client(endpoint=stac_endpoint)
-        response = await client.get_all_collections()
+    async def test_stac_list_collections(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.stac.list_collections()
 
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_get_partition_type(self, stac_endpoint):
-        client = self.create_async_client(endpoint=stac_endpoint)
-        response = await client.get_partition_type(
+    async def test_stac_get_partition_type(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.stac.get_partition_type(
             collection_id="str",
         )
 
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_replace_partition_type(self, stac_endpoint):
-        client = self.create_async_client(endpoint=stac_endpoint)
-        response = await client.replace_partition_type(
+    async def test_stac_replace_partition_type(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.stac.replace_partition_type(
             collection_id="str",
             body={"scheme": "str"},
         )
@@ -302,11 +302,11 @@ class TestStacAsync(StacClientTestBaseAsync):
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_create_render_option(self, stac_endpoint):
-        client = self.create_async_client(endpoint=stac_endpoint)
-        response = await client.create_render_option(
+    async def test_stac_create_render_option(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.stac.create_render_option(
             collection_id="str",
             body={
                 "id": "str",
@@ -331,11 +331,11 @@ class TestStacAsync(StacClientTestBaseAsync):
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_create_or_replace_render_option(self, stac_endpoint):
-        client = self.create_async_client(endpoint=stac_endpoint)
-        response = await client.create_or_replace_render_option(
+    async def test_stac_create_or_replace_render_option(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.stac.create_or_replace_render_option(
             collection_id="str",
             render_option_id="str",
             body={
@@ -361,11 +361,11 @@ class TestStacAsync(StacClientTestBaseAsync):
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_delete_render_option(self, stac_endpoint):
-        client = self.create_async_client(endpoint=stac_endpoint)
-        response = await client.delete_render_option(
+    async def test_stac_delete_render_option(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.stac.delete_render_option(
             collection_id="str",
             render_option_id="str",
         )
@@ -373,11 +373,11 @@ class TestStacAsync(StacClientTestBaseAsync):
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_get_render_option(self, stac_endpoint):
-        client = self.create_async_client(endpoint=stac_endpoint)
-        response = await client.get_render_option(
+    async def test_stac_get_render_option(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.stac.get_render_option(
             collection_id="str",
             render_option_id="str",
         )
@@ -385,44 +385,44 @@ class TestStacAsync(StacClientTestBaseAsync):
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_get_all_render_options(self, stac_endpoint):
-        client = self.create_async_client(endpoint=stac_endpoint)
-        response = await client.get_all_render_options(
+    async def test_stac_list_render_options(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.stac.list_render_options(
             collection_id="str",
         )
 
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_get_collection_thumbnail(self, stac_endpoint):
-        client = self.create_async_client(endpoint=stac_endpoint)
-        response = await client.get_collection_thumbnail(
+    async def test_stac_get_collection_thumbnail(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.stac.get_collection_thumbnail(
             collection_id="str",
         )
 
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_get_tile_settings(self, stac_endpoint):
-        client = self.create_async_client(endpoint=stac_endpoint)
-        response = await client.get_tile_settings(
+    async def test_stac_get_tile_settings(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.stac.get_tile_settings(
             collection_id="str",
         )
 
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_replace_tile_settings(self, stac_endpoint):
-        client = self.create_async_client(endpoint=stac_endpoint)
-        response = await client.replace_tile_settings(
+    async def test_stac_replace_tile_settings(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.stac.replace_tile_settings(
             collection_id="str",
             body={"maxItemsPerTile": 0, "minZoom": 0, "defaultLocation": {"coordinates": [0.0], "zoom": 0}},
         )
@@ -430,21 +430,21 @@ class TestStacAsync(StacClientTestBaseAsync):
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_get_conformance_class(self, stac_endpoint):
-        client = self.create_async_client(endpoint=stac_endpoint)
-        response = await client.get_conformance_class()
+    async def test_stac_get_conformance_class(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.stac.get_conformance_class()
 
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_begin_create_item(self, stac_endpoint):
-        client = self.create_async_client(endpoint=stac_endpoint)
+    async def test_stac_begin_create_item(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
         response = await (
-            await client.begin_create_item(
+            await client.stac.begin_create_item(
                 collection_id="str",
                 body={
                     "assets": {
@@ -512,12 +512,12 @@ class TestStacAsync(StacClientTestBaseAsync):
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_begin_create_or_replace_item(self, stac_endpoint):
-        client = self.create_async_client(endpoint=stac_endpoint)
+    async def test_stac_begin_create_or_replace_item(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
         response = await (
-            await client.begin_create_or_replace_item(
+            await client.stac.begin_create_or_replace_item(
                 collection_id="str",
                 item_id="str",
                 body={
@@ -586,12 +586,12 @@ class TestStacAsync(StacClientTestBaseAsync):
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_begin_delete_item(self, stac_endpoint):
-        client = self.create_async_client(endpoint=stac_endpoint)
+    async def test_stac_begin_delete_item(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
         response = await (
-            await client.begin_delete_item(
+            await client.stac.begin_delete_item(
                 collection_id="str",
                 item_id="str",
             )
@@ -600,11 +600,11 @@ class TestStacAsync(StacClientTestBaseAsync):
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_get_item(self, stac_endpoint):
-        client = self.create_async_client(endpoint=stac_endpoint)
-        response = await client.get_item(
+    async def test_stac_get_item(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.stac.get_item(
             collection_id="str",
             item_id="str",
         )
@@ -612,23 +612,23 @@ class TestStacAsync(StacClientTestBaseAsync):
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_get_items_as_features(self, stac_endpoint):
-        client = self.create_async_client(endpoint=stac_endpoint)
-        response = await client.get_items_as_features(
+    async def test_stac_get_items_as_features(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.stac.get_items_as_features(
             collection_id="str",
         )
 
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_begin_update_item(self, stac_endpoint):
-        client = self.create_async_client(endpoint=stac_endpoint)
+    async def test_stac_begin_update_item(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
         response = await (
-            await client.begin_update_item(
+            await client.stac.begin_update_item(
                 collection_id="str",
                 item_id="str",
                 body={
@@ -697,77 +697,77 @@ class TestStacAsync(StacClientTestBaseAsync):
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_get_stac_landing_page(self, stac_endpoint):
-        client = self.create_async_client(endpoint=stac_endpoint)
-        response = await client.get_stac_landing_page()
+    async def test_stac_get_stac_landing_page(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.stac.get_stac_landing_page()
 
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_create_queryables(self, stac_endpoint):
-        client = self.create_async_client(endpoint=stac_endpoint)
-        response = await client.create_queryables(
+    async def test_stac_create_queryables(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.stac.create_queryables(
             collection_id="str",
-            body=[{"definition": {}, "name": "str", "create_index": bool, "data_type": "str"}],
+            body=[{"definition": {"str": {}}, "name": "str", "create_index": bool, "data_type": "str"}],
         )
 
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_create_or_replace_queryable(self, stac_endpoint):
-        client = self.create_async_client(endpoint=stac_endpoint)
-        response = await client.create_or_replace_queryable(
-            collection_id="str",
-            queryable_name="str",
-            body={"definition": {}, "name": "str", "create_index": bool, "data_type": "str"},
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @StacPreparer()
-    @recorded_by_proxy_async
-    async def test_delete_queryable(self, stac_endpoint):
-        client = self.create_async_client(endpoint=stac_endpoint)
-        response = await client.delete_queryable(
+    async def test_stac_create_or_replace_queryable(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.stac.create_or_replace_queryable(
             collection_id="str",
             queryable_name="str",
+            body={"definition": {"str": {}}, "name": "str", "create_index": bool, "data_type": "str"},
         )
 
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_get_all_queryables(self, stac_endpoint):
-        client = self.create_async_client(endpoint=stac_endpoint)
-        response = await client.get_all_queryables()
+    async def test_stac_delete_queryable(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.stac.delete_queryable(
+            collection_id="str",
+            queryable_name="str",
+        )
 
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_get_all_queryables_by_collection(self, stac_endpoint):
-        client = self.create_async_client(endpoint=stac_endpoint)
-        response = await client.get_all_queryables_by_collection(
+    async def test_stac_list_queryables(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.stac.list_queryables()
+
+        # please add some check logic here by yourself
+        # ...
+
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy_async
+    async def test_stac_list_queryables_by_collection(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.stac.list_queryables_by_collection(
             collection_id="str",
         )
 
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_create_search_operations(self, stac_endpoint):
-        client = self.create_async_client(endpoint=stac_endpoint)
-        response = await client.create_search_operations(
+    async def test_stac_create_search_operations(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.stac.create_search_operations(
             body={
                 "bbox": [0.0],
                 "collections": ["str"],
@@ -775,13 +775,13 @@ class TestStacAsync(StacClientTestBaseAsync):
                 "datetime": "str",
                 "duration": 0,
                 "fields": [{"exclude": ["str"], "include": ["str"]}],
-                "filter": {},
+                "filter": {"str": {}},
                 "filter-crs": "str",
                 "filter-lang": "str",
                 "ids": ["str"],
                 "intersects": "geometry",
                 "limit": 0,
-                "query": {},
+                "query": {"str": {}},
                 "sign": "str",
                 "sortby": [{"direction": "str", "field": "str"}],
                 "token": "str",
@@ -791,11 +791,11 @@ class TestStacAsync(StacClientTestBaseAsync):
         # please add some check logic here by yourself
         # ...
 
-    @StacPreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_get_search_operations(self, stac_endpoint):
-        client = self.create_async_client(endpoint=stac_endpoint)
-        response = await client.get_search_operations()
+    async def test_stac_get_search_operations(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.stac.get_search_operations()
 
         # please add some check logic here by yourself
         # ...

@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.planetarycomputer import TilerClient
+from azure.planetarycomputer import PlanetaryComputerClient
 
 """
 # PREREQUISITES
@@ -25,11 +25,11 @@ from azure.planetarycomputer import TilerClient
 
 
 def main():
-    client = TilerClient(
+    client = PlanetaryComputerClient(
         credential=DefaultAzureCredential(),
     )
 
-    response = client.get_geo_json_statistics(
+    response = client.tiler.list_geo_json_statistics(
         collection_id="{{collectionId}}",
         item_id="{{itemId}}",
         body={

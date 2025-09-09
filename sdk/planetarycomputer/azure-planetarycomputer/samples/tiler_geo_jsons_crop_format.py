@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.planetarycomputer import TilerClient
+from azure.planetarycomputer import PlanetaryComputerClient
 
 """
 # PREREQUISITES
@@ -25,11 +25,11 @@ from azure.planetarycomputer import TilerClient
 
 
 def main():
-    client = TilerClient(
+    client = PlanetaryComputerClient(
         credential=DefaultAzureCredential(),
     )
 
-    response = client.crop_geo_json(
+    response = client.tiler.crop_geo_json(
         collection_id="collectionId-0df36a74d7ed",
         item_id="item-0df36a74d7ed",
         format="png",

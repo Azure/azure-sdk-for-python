@@ -9,7 +9,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.planetarycomputer import IngestionManagementClient
+from azure.planetarycomputer import PlanetaryComputerClient
 
 """
 # PREREQUISITES
@@ -26,11 +26,11 @@ from azure.planetarycomputer import IngestionManagementClient
 
 
 def main():
-    client = IngestionManagementClient(
+    client = PlanetaryComputerClient(
         credential=DefaultAzureCredential(),
     )
 
-    response = client.create_ingestion_source(
+    response = client.ingestion.create_ingestion_source(
         ingestion_source={
             "connectionInfo": {
                 "containerUrl": "https://sample.blob.core.windows.net/sample",

@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.planetarycomputer import TilerClient
+from azure.planetarycomputer import PlanetaryComputerClient
 
 """
 # PREREQUISITES
@@ -25,11 +25,11 @@ from azure.planetarycomputer import TilerClient
 
 
 def main():
-    client = TilerClient(
+    client = PlanetaryComputerClient(
         credential=DefaultAzureCredential(),
     )
 
-    response = client.get_mosaics_tile_json(
+    response = client.tiler.get_mosaics_tile_json(
         search_id="searchid-0df36a74d7ed",
     )
     print(response)

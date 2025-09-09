@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.planetarycomputer import TilerClient
+from azure.planetarycomputer import PlanetaryComputerClient
 
 """
 # PREREQUISITES
@@ -25,11 +25,11 @@ from azure.planetarycomputer import TilerClient
 
 
 def main():
-    client = TilerClient(
+    client = PlanetaryComputerClient(
         credential=DefaultAzureCredential(),
     )
 
-    response = client.get_classmap_legend(
+    response = client.tiler.get_class_map_legend(
         classmap_name="mtbs-severity",
     )
     print(response)

@@ -12,11 +12,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from ._patch import *  # pylint: disable=unused-wildcard-import
 
-from ._client import GeocatalogClient  # type: ignore
-from ._client import IngestionManagementClient  # type: ignore
-from ._client import StacClient  # type: ignore
-from ._client import TilerClient  # type: ignore
-from ._client import SharedAccessSignatureClient  # type: ignore
+from ._client import PlanetaryComputerClient  # type: ignore
 from ._version import VERSION
 
 __version__ = VERSION
@@ -29,11 +25,7 @@ except ImportError:
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "GeocatalogClient",
-    "IngestionManagementClient",
-    "StacClient",
-    "TilerClient",
-    "SharedAccessSignatureClient",
+    "PlanetaryComputerClient",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 

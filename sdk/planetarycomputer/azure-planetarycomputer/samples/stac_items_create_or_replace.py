@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.planetarycomputer import StacClient
+from azure.planetarycomputer import PlanetaryComputerClient
 
 """
 # PREREQUISITES
@@ -25,11 +25,11 @@ from azure.planetarycomputer import StacClient
 
 
 def main():
-    client = StacClient(
+    client = PlanetaryComputerClient(
         credential=DefaultAzureCredential(),
     )
 
-    client.begin_create_or_replace_item(
+    client.stac.begin_create_or_replace_item(
         collection_id="36fcb8da-9b15-49e0-b400-0d2e751e2061",
         item_id="f1b3b3b3-0b3b-4b3b-8b3b-3b3b3b3b3b3b",
         body={

@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression,too-many-lines,too-many-locals,too-many-branches,too-many-statements,file-needs-copyright-header
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -34,107 +34,104 @@ from ..._utils.model_base import Model as _Model, SdkJSONEncoder, _deserialize, 
 from ..._utils.serialization import Deserializer, Serializer
 from ..._utils.utils import prepare_multipart_form_data
 from ...operations._operations import (
-    build_geo_catalog_auth_config_operations_get_request,
-    build_geo_catalog_azmaps_client_get_id_request,
-    build_geo_catalog_azmaps_token_get_request,
-    build_ingestion_operations_delete_all_request,
-    build_ingestion_operations_delete_request,
-    build_ingestion_operations_get_request,
-    build_ingestion_operations_list_request,
-    build_ingestion_sources_create_or_replace_request,
-    build_ingestion_sources_create_request,
-    build_ingestion_sources_delete_request,
-    build_ingestion_sources_get_request,
-    build_ingestion_sources_list_managed_identities_request,
-    build_ingestion_sources_list_request,
-    build_ingestions_create_request,
-    build_ingestions_delete_request,
-    build_ingestions_get_request,
-    build_ingestions_ingestion_runs_create_request,
-    build_ingestions_ingestion_runs_get_request,
-    build_ingestions_ingestion_runs_list_request,
-    build_ingestions_list_request,
-    build_ingestions_update_request,
-    build_maps_classmap_legends_get_request,
-    build_maps_interval_legends_get_by_classmap_name_request,
-    build_maps_legends_get_request,
-    build_mosaics_assets_for_points_get_lon_lat_assets_request,
-    build_mosaics_assets_for_tile_matrix_sets_get_zxy_assets_request,
-    build_mosaics_assets_for_tiles_get_zxy_assets_request,
-    build_mosaics_info_search_get_request,
-    build_mosaics_register_search_register_request,
-    build_mosaics_tile_json_operations_get_request,
-    build_mosaics_tile_matrix_sets_get_zxy_scale_by_format_request,
-    build_mosaics_tile_matrix_sets_tile_json_get_request,
-    build_mosaics_tiles_get_zxy_scale_by_format_request,
-    build_mosaics_wmts_mosaics_get_capabilities_xml_request,
-    build_mosaics_wmts_mosaics_tile_matrix_sets_get_capabilities_xml_request,
-    build_sas_get_sign_request,
-    build_sas_get_token_request,
-    build_sas_revoke_token_request,
-    build_stac_collection_assets_create_or_replace_request,
-    build_stac_collection_assets_create_request,
-    build_stac_collection_assets_delete_request,
-    build_stac_collection_config_get_request,
-    build_stac_collection_mosaics_add_request,
-    build_stac_collection_mosaics_create_or_replace_request,
-    build_stac_collection_mosaics_delete_request,
-    build_stac_collection_mosaics_get_all_request,
-    build_stac_collection_mosaics_get_request,
-    build_stac_collection_operations_create_or_replace_request,
-    build_stac_collection_operations_create_request,
-    build_stac_collection_operations_delete_request,
-    build_stac_collection_operations_get_all_request,
-    build_stac_collection_operations_get_request,
-    build_stac_collection_partition_types_get_request,
-    build_stac_collection_partition_types_replace_request,
-    build_stac_collection_render_options_create_or_replace_request,
-    build_stac_collection_render_options_create_request,
-    build_stac_collection_render_options_delete_request,
-    build_stac_collection_render_options_get_all_request,
-    build_stac_collection_render_options_get_request,
-    build_stac_collection_thumbnails_get_request,
-    build_stac_collection_tile_settings_get_request,
-    build_stac_collection_tile_settings_replace_request,
-    build_stac_conformance_class_get_request,
-    build_stac_items_create_or_replace_request,
-    build_stac_items_create_request,
-    build_stac_items_delete_request,
-    build_stac_items_get_features_request,
-    build_stac_items_get_request,
-    build_stac_items_update_request,
-    build_stac_landing_pages_get_request,
-    build_stac_queryables_create_or_replace_request,
-    build_stac_queryables_create_request,
-    build_stac_queryables_delete_request,
-    build_stac_queryables_get_all_by_collection_request,
-    build_stac_queryables_get_all_request,
-    build_stac_search_operations_create_request,
-    build_stac_search_operations_get_request,
-    build_tile_matrix_definitions_get_request,
-    build_tile_matrix_list_get_request,
-    build_tiler_asset_statistics_get_all_request,
-    build_tiler_available_assets_get_all_request,
-    build_tiler_bound_get_all_request,
-    build_tiler_geo_json_statistics_get_all_request,
-    build_tiler_geo_jsons_crop_format_request,
-    build_tiler_geo_jsons_crop_width_by_height_format_request,
-    build_tiler_info_geo_json_operations_get_request,
-    build_tiler_info_operations_get_request,
-    build_tiler_parts_get_cropped_to_bounding_box_request,
-    build_tiler_parts_get_cropped_to_bounding_box_width_by_height_request,
-    build_tiler_points_get_lon_lat_request,
-    build_tiler_previews_get_format_request,
-    build_tiler_previews_get_request,
-    build_tiler_static_images_create_request,
-    build_tiler_static_images_get_request,
-    build_tiler_statistics_get_all_request,
-    build_tiler_tile_json_operations_get_request,
-    build_tiler_tile_json_tile_matrix_sets_get_request,
-    build_tiler_tile_matrix_sets_get_zxy_scale_by_format_request,
-    build_tiler_tiles_get_zxy_scale_by_format_request,
-    build_tiler_wmts_get_capabilities_xml_request,
-    build_tiler_wmts_tile_matrix_sets_get_capabilities_xml_request,
+    build_ingestion_create_ingestion_request,
+    build_ingestion_create_ingestion_run_request,
+    build_ingestion_create_ingestion_source_request,
+    build_ingestion_create_or_replace_ingestion_source_request,
+    build_ingestion_delete_all_ingestion_operations_request,
+    build_ingestion_delete_ingestion_operation_request,
+    build_ingestion_delete_ingestion_request,
+    build_ingestion_delete_ingestion_source_request,
+    build_ingestion_get_ingestion_operation_request,
+    build_ingestion_get_ingestion_operations_request,
+    build_ingestion_get_ingestion_request,
+    build_ingestion_get_ingestion_run_request,
+    build_ingestion_get_ingestion_runs_request,
+    build_ingestion_get_ingestion_source_request,
+    build_ingestion_get_ingestion_sources_request,
+    build_ingestion_get_ingestions_request,
+    build_ingestion_get_managed_identities_request,
+    build_ingestion_update_ingestion_request,
+    build_shared_access_signature_get_sign_request,
+    build_shared_access_signature_get_token_request,
+    build_shared_access_signature_revoke_token_request,
+    build_stac_add_mosaic_request,
+    build_stac_create_collection_asset_request,
+    build_stac_create_collection_request,
+    build_stac_create_item_request,
+    build_stac_create_or_replace_collection_asset_request,
+    build_stac_create_or_replace_collection_request,
+    build_stac_create_or_replace_item_request,
+    build_stac_create_or_replace_mosaic_request,
+    build_stac_create_or_replace_queryable_request,
+    build_stac_create_or_replace_render_option_request,
+    build_stac_create_queryables_request,
+    build_stac_create_render_option_request,
+    build_stac_create_search_operations_request,
+    build_stac_delete_collection_asset_request,
+    build_stac_delete_collection_request,
+    build_stac_delete_item_request,
+    build_stac_delete_mosaic_request,
+    build_stac_delete_queryable_request,
+    build_stac_delete_render_option_request,
+    build_stac_get_collection_config_request,
+    build_stac_get_collection_request,
+    build_stac_get_collection_thumbnail_request,
+    build_stac_get_conformance_class_request,
+    build_stac_get_item_request,
+    build_stac_get_items_as_features_request,
+    build_stac_get_mosaic_request,
+    build_stac_get_partition_type_request,
+    build_stac_get_render_option_request,
+    build_stac_get_search_operations_request,
+    build_stac_get_stac_landing_page_request,
+    build_stac_get_tile_settings_request,
+    build_stac_list_collections_request,
+    build_stac_list_mosaics_request,
+    build_stac_list_queryables_by_collection_request,
+    build_stac_list_queryables_request,
+    build_stac_list_render_options_request,
+    build_stac_replace_partition_type_request,
+    build_stac_replace_tile_settings_request,
+    build_stac_update_item_request,
+    build_tiler_create_static_image_request,
+    build_tiler_crop_geo_json_request,
+    build_tiler_crop_geo_json_with_dimensions_request,
+    build_tiler_get_assets_for_point_request,
+    build_tiler_get_class_map_legend_request,
+    build_tiler_get_info_geo_json_request,
+    build_tiler_get_info_request,
+    build_tiler_get_interval_legend_request,
+    build_tiler_get_legend_request,
+    build_tiler_get_mosaics_assets_for_tile_request,
+    build_tiler_get_mosaics_assets_for_tile_with_matrix_set_request,
+    build_tiler_get_mosaics_search_info_request,
+    build_tiler_get_mosaics_tile_json_request,
+    build_tiler_get_mosaics_tile_json_with_matrix_set_request,
+    build_tiler_get_mosaics_tile_request,
+    build_tiler_get_mosaics_tile_with_matrix_set_request,
+    build_tiler_get_mosaics_wmts_capabilities_request,
+    build_tiler_get_mosaics_wmts_capabilities_with_matrix_set_request,
+    build_tiler_get_part_request,
+    build_tiler_get_part_with_dimensions_request,
+    build_tiler_get_point_request,
+    build_tiler_get_preview_request,
+    build_tiler_get_preview_with_format_request,
+    build_tiler_get_static_image_request,
+    build_tiler_get_tile_json_request,
+    build_tiler_get_tile_json_with_matrix_set_request,
+    build_tiler_get_tile_matrix_definitions_request,
+    build_tiler_get_tile_matrix_list_request,
+    build_tiler_get_tile_request,
+    build_tiler_get_tile_with_matrix_set_request,
+    build_tiler_get_wmts_capabilities_request,
+    build_tiler_get_wmts_capabilities_with_matrix_set_request,
+    build_tiler_list_asset_statistics_request,
+    build_tiler_list_available_assets_request,
+    build_tiler_list_bounds_request,
+    build_tiler_list_geo_json_statistics_request,
+    build_tiler_list_statistics_request,
+    build_tiler_register_mosaics_search_request,
 )
 from .._configuration import PlanetaryComputerClientConfiguration
 
@@ -146,574 +143,14 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 _Unset: Any = object()
 
 
-class IngestionsOperations:
+class IngestionOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`ingestions` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-        self.ingestion_runs = IngestionsIngestionRunsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-
-    @distributed_trace_async
-    async def list(
-        self, collection_id: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
-    ) -> _models.PageIngestionDefinition:
-        """Get ingestions of a catalog.
-
-        :param collection_id: Catalog collection id. Required.
-        :type collection_id: str
-        :keyword top: The number of items to return. Default value is None.
-        :paramtype top: int
-        :keyword skip: The number of items to skip. Default value is None.
-        :paramtype skip: int
-        :return: PageIngestionDefinition. The PageIngestionDefinition is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.PageIngestionDefinition
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.PageIngestionDefinition] = kwargs.pop("cls", None)
-
-        _request = build_ingestions_list_request(
-            collection_id=collection_id,
-            top=top,
-            skip=skip,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.PageIngestionDefinition, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def create(
-        self,
-        collection_id: str,
-        definition: _models.IngestionDefinition,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.IngestionDefinition:
-        """Create a new ingestion.
-
-        :param collection_id: Catalog collection id. Required.
-        :type collection_id: str
-        :param definition: Definition of the ingestion. Required.
-        :type definition: ~azure.planetarycomputer.models.IngestionDefinition
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: IngestionDefinition. The IngestionDefinition is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.IngestionDefinition
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create(
-        self, collection_id: str, definition: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.IngestionDefinition:
-        """Create a new ingestion.
-
-        :param collection_id: Catalog collection id. Required.
-        :type collection_id: str
-        :param definition: Definition of the ingestion. Required.
-        :type definition: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: IngestionDefinition. The IngestionDefinition is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.IngestionDefinition
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create(
-        self, collection_id: str, definition: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.IngestionDefinition:
-        """Create a new ingestion.
-
-        :param collection_id: Catalog collection id. Required.
-        :type collection_id: str
-        :param definition: Definition of the ingestion. Required.
-        :type definition: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: IngestionDefinition. The IngestionDefinition is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.IngestionDefinition
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def create(
-        self, collection_id: str, definition: Union[_models.IngestionDefinition, JSON, IO[bytes]], **kwargs: Any
-    ) -> _models.IngestionDefinition:
-        """Create a new ingestion.
-
-        :param collection_id: Catalog collection id. Required.
-        :type collection_id: str
-        :param definition: Definition of the ingestion. Is one of the following types:
-         IngestionDefinition, JSON, IO[bytes] Required.
-        :type definition: ~azure.planetarycomputer.models.IngestionDefinition or JSON or IO[bytes]
-        :return: IngestionDefinition. The IngestionDefinition is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.IngestionDefinition
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.IngestionDefinition] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(definition, (IOBase, bytes)):
-            _content = definition
-        else:
-            _content = json.dumps(definition, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_ingestions_create_request(
-            collection_id=collection_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [201]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        response_headers = {}
-        response_headers["location"] = self._deserialize("str", response.headers.get("location"))
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.IngestionDefinition, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def get(self, collection_id: str, ingestion_id: str, **kwargs: Any) -> _models.IngestionDefinition:
-        """Get the definition of an ingestion.
-
-        :param collection_id: Catalog collection id. Required.
-        :type collection_id: str
-        :param ingestion_id: Ingestion id. Required.
-        :type ingestion_id: str
-        :return: IngestionDefinition. The IngestionDefinition is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.IngestionDefinition
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.IngestionDefinition] = kwargs.pop("cls", None)
-
-        _request = build_ingestions_get_request(
-            collection_id=collection_id,
-            ingestion_id=ingestion_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.IngestionDefinition, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def update(
-        self,
-        collection_id: str,
-        ingestion_id: str,
-        definition: _models.IngestionDefinition,
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
-    ) -> _models.IngestionDefinition:
-        """Update an existing ingestion.
-
-        :param collection_id: Catalog collection id. Required.
-        :type collection_id: str
-        :param ingestion_id: Ingestion id. Required.
-        :type ingestion_id: str
-        :param definition: Ingestion properties to update. Required.
-        :type definition: ~azure.planetarycomputer.models.IngestionDefinition
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/merge-patch+json".
-        :paramtype content_type: str
-        :return: IngestionDefinition. The IngestionDefinition is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.IngestionDefinition
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def update(
-        self,
-        collection_id: str,
-        ingestion_id: str,
-        definition: JSON,
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
-    ) -> _models.IngestionDefinition:
-        """Update an existing ingestion.
-
-        :param collection_id: Catalog collection id. Required.
-        :type collection_id: str
-        :param ingestion_id: Ingestion id. Required.
-        :type ingestion_id: str
-        :param definition: Ingestion properties to update. Required.
-        :type definition: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/merge-patch+json".
-        :paramtype content_type: str
-        :return: IngestionDefinition. The IngestionDefinition is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.IngestionDefinition
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def update(
-        self,
-        collection_id: str,
-        ingestion_id: str,
-        definition: IO[bytes],
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
-    ) -> _models.IngestionDefinition:
-        """Update an existing ingestion.
-
-        :param collection_id: Catalog collection id. Required.
-        :type collection_id: str
-        :param ingestion_id: Ingestion id. Required.
-        :type ingestion_id: str
-        :param definition: Ingestion properties to update. Required.
-        :type definition: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/merge-patch+json".
-        :paramtype content_type: str
-        :return: IngestionDefinition. The IngestionDefinition is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.IngestionDefinition
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def update(
-        self,
-        collection_id: str,
-        ingestion_id: str,
-        definition: Union[_models.IngestionDefinition, JSON, IO[bytes]],
-        **kwargs: Any
-    ) -> _models.IngestionDefinition:
-        """Update an existing ingestion.
-
-        :param collection_id: Catalog collection id. Required.
-        :type collection_id: str
-        :param ingestion_id: Ingestion id. Required.
-        :type ingestion_id: str
-        :param definition: Ingestion properties to update. Is one of the following types:
-         IngestionDefinition, JSON, IO[bytes] Required.
-        :type definition: ~azure.planetarycomputer.models.IngestionDefinition or JSON or IO[bytes]
-        :return: IngestionDefinition. The IngestionDefinition is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.IngestionDefinition
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
-        cls: ClsType[_models.IngestionDefinition] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/merge-patch+json"
-        _content = None
-        if isinstance(definition, (IOBase, bytes)):
-            _content = definition
-        else:
-            _content = json.dumps(definition, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_ingestions_update_request(
-            collection_id=collection_id,
-            ingestion_id=ingestion_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.IngestionDefinition, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    async def _delete_initial(self, collection_id: str, ingestion_id: str, **kwargs: Any) -> AsyncIterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
-
-        _request = build_ingestions_delete_request(
-            collection_id=collection_id,
-            ingestion_id=ingestion_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = True
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            try:
-                await response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        response_headers = {}
-        response_headers["location"] = self._deserialize("str", response.headers.get("location"))
-        response_headers["operation-location"] = self._deserialize("str", response.headers.get("operation-location"))
-
-        deserialized = response.iter_bytes()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def begin_delete(self, collection_id: str, ingestion_id: str, **kwargs: Any) -> AsyncLROPoller[None]:
-        """Delete an ingestion from a catalog. All runs of the ingestion will be deleted. Ingestion must
-        not have any runs in progress or queued.
-
-        :param collection_id: Catalog collection id. Required.
-        :type collection_id: str
-        :param ingestion_id: Ingestion id. Required.
-        :type ingestion_id: str
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = await self._delete_initial(
-                collection_id=collection_id,
-                ingestion_id=ingestion_id,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            await raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
-            if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: AsyncPollingMethod = cast(
-                AsyncPollingMethod,
-                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
-            )
-        elif polling is False:
-            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return AsyncLROPoller[None].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-
-class StacItemsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`stac_items` attribute.
+        :attr:`ingestion` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
@@ -724,1359 +161,11 @@ class StacItemsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def get_features(
-        self,
-        collection_id: str,
-        *,
-        limit: Optional[int] = None,
-        bbox: Optional[List[str]] = None,
-        datetime: Optional[str] = None,
-        **kwargs: Any
-    ) -> _models.ItemCollection:
-        """Fetch features of the feature collection with id ``collectionId``.
-
-        Every feature in a dataset belongs to a collection. A dataset may
-        consist of multiple feature collections. A feature collection is often a
-        collection of features of a similar type, based on a common schema.").
-
-        :param collection_id: Catalog collection id. Required.
-        :type collection_id: str
-        :keyword limit: The optional limit parameter recommends the number of items that should be
-         present in the response document.
-
-         If the limit parameter value is greater than advertised limit maximum, the server must return
-         the
-         maximum possible number of items, rather than responding with an error.
-
-         Only items are counted that are on the first level of the collection in the response document.
-         Nested objects contained within the explicitly requested items must not be counted.
-
-         Minimum = 1. Maximum = 10000. Default = 10. Default value is None.
-        :paramtype limit: int
-        :keyword bbox: Only features that have a geometry that intersects the bounding box are
-         selected.
-         The bounding box is provided as four or six numbers, depending on whether the
-         coordinate reference system includes a vertical axis (height or depth):
-
-
-
-         * Lower left corner, coordinate axis 1
-         * Lower left corner, coordinate axis 2
-         * Minimum value, coordinate axis 3 (optional)
-         * Upper right corner, coordinate axis 1
-         * Upper right corner, coordinate axis 2
-         * Maximum value, coordinate axis 3 (optional)
-
-         The coordinate reference system of the values is WGS 84 longitude/latitude
-         (`http://www.opengis.net/def/crs/OGC/1.3/CRS84
-         <http://www.opengis.net/def/crs/OGC/1.3/CRS84>`_).
-
-         For WGS 84 longitude/latitude the values are in most cases the sequence of
-         minimum longitude, minimum latitude, maximum longitude and maximum latitude.
-         However, in cases where the box spans the antimeridian the first value
-         (west-most box edge) is larger than the third value (east-most box edge).
-
-         If the vertical axis is included, the third and the sixth number are
-         the bottom and the top of the 3-dimensional bounding box.
-
-         If a feature has multiple spatial geometry properties, it is the decision of the
-         server whether only a single spatial geometry property is used to determine
-         the extent or all relevant geometries. Default value is None.
-        :paramtype bbox: list[str]
-        :keyword datetime: Either a date-time or an interval, open or closed. Date and time expressions
-         adhere to RFC 3339. Open intervals are expressed using double-dots.
-
-         Examples:
-
-
-
-         * A date-time: "2018-02-12T23:20:50Z"
-         * A closed interval: "2018-02-12T00:00:00Z/2018-03-18T12:31:12Z"
-         * Open intervals: "2018-02-12T00:00:00Z/.." or "../2018-03-18T12:31:12Z"
-
-         Only features that have a temporal property that intersects the value of
-         ``datetime`` are selected.
-
-         If a feature has multiple temporal properties, it is the decision of the
-         server whether only a single temporal property is used to determine
-         the extent or all relevant temporal properties. Default value is None.
-        :paramtype datetime: str
-        :return: ItemCollection. The ItemCollection is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.ItemCollection
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.ItemCollection] = kwargs.pop("cls", None)
-
-        _request = build_stac_items_get_features_request(
-            collection_id=collection_id,
-            limit=limit,
-            bbox=bbox,
-            datetime=datetime,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.ItemCollection, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    async def _create_initial(
-        self, collection_id: str, body: Union[_models.StacItemOrItemCollection, JSON, IO[bytes]], **kwargs: Any
-    ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_stac_items_create_request(
-            collection_id=collection_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = True
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            try:
-                await response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        response_headers = {}
-        response_headers["location"] = self._deserialize("str", response.headers.get("location"))
-        response_headers["operation-location"] = self._deserialize("str", response.headers.get("operation-location"))
-
-        deserialized = response.iter_bytes()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def begin_create(
-        self,
-        collection_id: str,
-        body: _models.StacItemOrItemCollection,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[None]:
-        """Create a new STAC item or a set of items in a collection.
-
-        :param collection_id: Catalog collection id. Required.
-        :type collection_id: str
-        :param body: STAC Item or ItemCollection
-
-         Represents a STAC Item or ItemCollection as defined by the STAC 1.0.0 standard.
-
-         **Item**: A GeoJSON Feature that represents a single spatiotemporal asset.
-         It includes metadata such as geometry, datetime, and links to related assets.
-         Example: A satellite image with its metadata.
-
-         **ItemCollection**: A GeoJSON FeatureCollection that contains multiple Items.
-         It is used to group multiple related Items together, such as a collection of satellite images.
-
-         This union allows the request body to accept either a single Item or a collection of Items.
-         Required.
-        :type body: ~azure.planetarycomputer.models.StacItemOrItemCollection
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def begin_create(
-        self, collection_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[None]:
-        """Create a new STAC item or a set of items in a collection.
-
-        :param collection_id: Catalog collection id. Required.
-        :type collection_id: str
-        :param body: STAC Item or ItemCollection
-
-         Represents a STAC Item or ItemCollection as defined by the STAC 1.0.0 standard.
-
-         **Item**: A GeoJSON Feature that represents a single spatiotemporal asset.
-         It includes metadata such as geometry, datetime, and links to related assets.
-         Example: A satellite image with its metadata.
-
-         **ItemCollection**: A GeoJSON FeatureCollection that contains multiple Items.
-         It is used to group multiple related Items together, such as a collection of satellite images.
-
-         This union allows the request body to accept either a single Item or a collection of Items.
-         Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def begin_create(
-        self, collection_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[None]:
-        """Create a new STAC item or a set of items in a collection.
-
-        :param collection_id: Catalog collection id. Required.
-        :type collection_id: str
-        :param body: STAC Item or ItemCollection
-
-         Represents a STAC Item or ItemCollection as defined by the STAC 1.0.0 standard.
-
-         **Item**: A GeoJSON Feature that represents a single spatiotemporal asset.
-         It includes metadata such as geometry, datetime, and links to related assets.
-         Example: A satellite image with its metadata.
-
-         **ItemCollection**: A GeoJSON FeatureCollection that contains multiple Items.
-         It is used to group multiple related Items together, such as a collection of satellite images.
-
-         This union allows the request body to accept either a single Item or a collection of Items.
-         Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def begin_create(
-        self, collection_id: str, body: Union[_models.StacItemOrItemCollection, JSON, IO[bytes]], **kwargs: Any
-    ) -> AsyncLROPoller[None]:
-        """Create a new STAC item or a set of items in a collection.
-
-        :param collection_id: Catalog collection id. Required.
-        :type collection_id: str
-        :param body: STAC Item or ItemCollection
-
-         Represents a STAC Item or ItemCollection as defined by the STAC 1.0.0 standard.
-
-         **Item**: A GeoJSON Feature that represents a single spatiotemporal asset.
-         It includes metadata such as geometry, datetime, and links to related assets.
-         Example: A satellite image with its metadata.
-
-         **ItemCollection**: A GeoJSON FeatureCollection that contains multiple Items.
-         It is used to group multiple related Items together, such as a collection of satellite images.
-
-         This union allows the request body to accept either a single Item or a collection of Items. Is
-         one of the following types: StacItemOrItemCollection, JSON, IO[bytes] Required.
-        :type body: ~azure.planetarycomputer.models.StacItemOrItemCollection or JSON or IO[bytes]
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = await self._create_initial(
-                collection_id=collection_id,
-                body=body,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            await raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
-            if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: AsyncPollingMethod = cast(
-                AsyncPollingMethod,
-                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
-            )
-        elif polling is False:
-            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return AsyncLROPoller[None].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    @distributed_trace_async
-    async def get(self, collection_id: str, item_id: str, **kwargs: Any) -> _models.StacItem:
-        """Fetch a single STAC Item.
-
-        :param collection_id: Catalog collection id. Required.
-        :type collection_id: str
-        :param item_id: STAC Item id. Required.
-        :type item_id: str
-        :return: StacItem. The StacItem is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.StacItem
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.StacItem] = kwargs.pop("cls", None)
-
-        _request = build_stac_items_get_request(
-            collection_id=collection_id,
-            item_id=item_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.StacItem, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    async def _create_or_replace_initial(
-        self, collection_id: str, item_id: str, body: Union[_models.StacItem, JSON, IO[bytes]], **kwargs: Any
-    ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_stac_items_create_or_replace_request(
-            collection_id=collection_id,
-            item_id=item_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = True
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            try:
-                await response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        response_headers = {}
-        response_headers["location"] = self._deserialize("str", response.headers.get("location"))
-        response_headers["operation-location"] = self._deserialize("str", response.headers.get("operation-location"))
-
-        deserialized = response.iter_bytes()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def begin_create_or_replace(
-        self,
-        collection_id: str,
-        item_id: str,
-        body: _models.StacItem,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[None]:
-        """Create or replace a STAC item in a collection.
-
-        :param collection_id: Catalog collection id. Required.
-        :type collection_id: str
-        :param item_id: STAC Item id. Required.
-        :type item_id: str
-        :param body: STAC Item. Required.
-        :type body: ~azure.planetarycomputer.models.StacItem
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def begin_create_or_replace(
-        self, collection_id: str, item_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[None]:
-        """Create or replace a STAC item in a collection.
-
-        :param collection_id: Catalog collection id. Required.
-        :type collection_id: str
-        :param item_id: STAC Item id. Required.
-        :type item_id: str
-        :param body: STAC Item. Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def begin_create_or_replace(
-        self,
-        collection_id: str,
-        item_id: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[None]:
-        """Create or replace a STAC item in a collection.
-
-        :param collection_id: Catalog collection id. Required.
-        :type collection_id: str
-        :param item_id: STAC Item id. Required.
-        :type item_id: str
-        :param body: STAC Item. Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def begin_create_or_replace(
-        self, collection_id: str, item_id: str, body: Union[_models.StacItem, JSON, IO[bytes]], **kwargs: Any
-    ) -> AsyncLROPoller[None]:
-        """Create or replace a STAC item in a collection.
-
-        :param collection_id: Catalog collection id. Required.
-        :type collection_id: str
-        :param item_id: STAC Item id. Required.
-        :type item_id: str
-        :param body: STAC Item. Is one of the following types: StacItem, JSON, IO[bytes] Required.
-        :type body: ~azure.planetarycomputer.models.StacItem or JSON or IO[bytes]
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = await self._create_or_replace_initial(
-                collection_id=collection_id,
-                item_id=item_id,
-                body=body,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            await raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
-            if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: AsyncPollingMethod = cast(
-                AsyncPollingMethod,
-                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
-            )
-        elif polling is False:
-            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return AsyncLROPoller[None].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    async def _update_initial(
-        self, collection_id: str, item_id: str, body: Union[_models.StacItem, JSON, IO[bytes]], **kwargs: Any
-    ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/merge-patch+json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_stac_items_update_request(
-            collection_id=collection_id,
-            item_id=item_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = True
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            try:
-                await response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        response_headers = {}
-        response_headers["location"] = self._deserialize("str", response.headers.get("location"))
-        response_headers["operation-location"] = self._deserialize("str", response.headers.get("operation-location"))
-
-        deserialized = response.iter_bytes()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def begin_update(
-        self,
-        collection_id: str,
-        item_id: str,
-        body: _models.StacItem,
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[None]:
-        """Update a STAC item in a collection.
-
-        :param collection_id: Catalog collection id. Required.
-        :type collection_id: str
-        :param item_id: STAC Item id. Required.
-        :type item_id: str
-        :param body: STAC Item. Required.
-        :type body: ~azure.planetarycomputer.models.StacItem
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/merge-patch+json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def begin_update(
-        self,
-        collection_id: str,
-        item_id: str,
-        body: JSON,
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[None]:
-        """Update a STAC item in a collection.
-
-        :param collection_id: Catalog collection id. Required.
-        :type collection_id: str
-        :param item_id: STAC Item id. Required.
-        :type item_id: str
-        :param body: STAC Item. Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/merge-patch+json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def begin_update(
-        self,
-        collection_id: str,
-        item_id: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[None]:
-        """Update a STAC item in a collection.
-
-        :param collection_id: Catalog collection id. Required.
-        :type collection_id: str
-        :param item_id: STAC Item id. Required.
-        :type item_id: str
-        :param body: STAC Item. Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/merge-patch+json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def begin_update(
-        self, collection_id: str, item_id: str, body: Union[_models.StacItem, JSON, IO[bytes]], **kwargs: Any
-    ) -> AsyncLROPoller[None]:
-        """Update a STAC item in a collection.
-
-        :param collection_id: Catalog collection id. Required.
-        :type collection_id: str
-        :param item_id: STAC Item id. Required.
-        :type item_id: str
-        :param body: STAC Item. Is one of the following types: StacItem, JSON, IO[bytes] Required.
-        :type body: ~azure.planetarycomputer.models.StacItem or JSON or IO[bytes]
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = await self._update_initial(
-                collection_id=collection_id,
-                item_id=item_id,
-                body=body,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            await raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
-            if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: AsyncPollingMethod = cast(
-                AsyncPollingMethod,
-                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
-            )
-        elif polling is False:
-            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return AsyncLROPoller[None].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    async def _delete_initial(self, collection_id: str, item_id: str, **kwargs: Any) -> AsyncIterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
-
-        _request = build_stac_items_delete_request(
-            collection_id=collection_id,
-            item_id=item_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = True
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            try:
-                await response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        response_headers = {}
-        response_headers["location"] = self._deserialize("str", response.headers.get("location"))
-        response_headers["operation-location"] = self._deserialize("str", response.headers.get("operation-location"))
-
-        deserialized = response.iter_bytes()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def begin_delete(self, collection_id: str, item_id: str, **kwargs: Any) -> AsyncLROPoller[None]:
-        """Delete a STAC item from a collection.
-
-        :param collection_id: Catalog collection id. Required.
-        :type collection_id: str
-        :param item_id: STAC Item id. Required.
-        :type item_id: str
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = await self._delete_initial(
-                collection_id=collection_id,
-                item_id=item_id,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            await raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
-            if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: AsyncPollingMethod = cast(
-                AsyncPollingMethod,
-                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
-            )
-        elif polling is False:
-            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return AsyncLROPoller[None].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-
-class IngestionSourcesOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`ingestion_sources` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace_async
-    async def list(
-        self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
-    ) -> _models.PageIngestionSourceSummary:
-        """Get ingestion sources in a geo-catalog.
-
-        :keyword top: The number of items to return. Default value is None.
-        :paramtype top: int
-        :keyword skip: The number of items to skip. Default value is None.
-        :paramtype skip: int
-        :return: PageIngestionSourceSummary. The PageIngestionSourceSummary is compatible with
-         MutableMapping
-        :rtype: ~azure.planetarycomputer.models.PageIngestionSourceSummary
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.PageIngestionSourceSummary] = kwargs.pop("cls", None)
-
-        _request = build_ingestion_sources_list_request(
-            top=top,
-            skip=skip,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.PageIngestionSourceSummary, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def create(
-        self, ingestion_source: _models.IngestionSource, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.IngestionSource:
-        """Create a new ingestion source in a geo-catalog.
-
-        :param ingestion_source: Definition of the ingestion source. Required.
-        :type ingestion_source: ~azure.planetarycomputer.models.IngestionSource
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: IngestionSource. The IngestionSource is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.IngestionSource
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create(
-        self, ingestion_source: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.IngestionSource:
-        """Create a new ingestion source in a geo-catalog.
-
-        :param ingestion_source: Definition of the ingestion source. Required.
-        :type ingestion_source: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: IngestionSource. The IngestionSource is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.IngestionSource
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create(
-        self, ingestion_source: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.IngestionSource:
-        """Create a new ingestion source in a geo-catalog.
-
-        :param ingestion_source: Definition of the ingestion source. Required.
-        :type ingestion_source: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: IngestionSource. The IngestionSource is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.IngestionSource
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def create(
-        self, ingestion_source: Union[_models.IngestionSource, JSON, IO[bytes]], **kwargs: Any
-    ) -> _models.IngestionSource:
-        """Create a new ingestion source in a geo-catalog.
-
-        :param ingestion_source: Definition of the ingestion source. Is one of the following types:
-         IngestionSource, JSON, IO[bytes] Required.
-        :type ingestion_source: ~azure.planetarycomputer.models.IngestionSource or JSON or IO[bytes]
-        :return: IngestionSource. The IngestionSource is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.IngestionSource
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.IngestionSource] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(ingestion_source, (IOBase, bytes)):
-            _content = ingestion_source
-        else:
-            _content = json.dumps(ingestion_source, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_ingestion_sources_create_request(
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [201]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        response_headers = {}
-        response_headers["location"] = self._deserialize("str", response.headers.get("location"))
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.IngestionSource, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def get(self, id: str, **kwargs: Any) -> _models.IngestionSource:
-        """Get an ingestion source in a geo-catalog.
-
-        :param id: Ingestion source id. Required.
-        :type id: str
-        :return: IngestionSource. The IngestionSource is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.IngestionSource
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.IngestionSource] = kwargs.pop("cls", None)
-
-        _request = build_ingestion_sources_get_request(
-            id=id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.IngestionSource, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def create_or_replace(
-        self,
-        id: str,
-        ingestion_source: _models.IngestionSource,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.IngestionSource:
-        """Update an existing ingestion source in a geo-catalog.
-
-        :param id: Ingestion source id. Required.
-        :type id: str
-        :param ingestion_source: Definition of the ingestion source. Required.
-        :type ingestion_source: ~azure.planetarycomputer.models.IngestionSource
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: IngestionSource. The IngestionSource is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.IngestionSource
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create_or_replace(
-        self, id: str, ingestion_source: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.IngestionSource:
-        """Update an existing ingestion source in a geo-catalog.
-
-        :param id: Ingestion source id. Required.
-        :type id: str
-        :param ingestion_source: Definition of the ingestion source. Required.
-        :type ingestion_source: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: IngestionSource. The IngestionSource is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.IngestionSource
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create_or_replace(
-        self, id: str, ingestion_source: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.IngestionSource:
-        """Update an existing ingestion source in a geo-catalog.
-
-        :param id: Ingestion source id. Required.
-        :type id: str
-        :param ingestion_source: Definition of the ingestion source. Required.
-        :type ingestion_source: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: IngestionSource. The IngestionSource is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.IngestionSource
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def create_or_replace(
-        self, id: str, ingestion_source: Union[_models.IngestionSource, JSON, IO[bytes]], **kwargs: Any
-    ) -> _models.IngestionSource:
-        """Update an existing ingestion source in a geo-catalog.
-
-        :param id: Ingestion source id. Required.
-        :type id: str
-        :param ingestion_source: Definition of the ingestion source. Is one of the following types:
-         IngestionSource, JSON, IO[bytes] Required.
-        :type ingestion_source: ~azure.planetarycomputer.models.IngestionSource or JSON or IO[bytes]
-        :return: IngestionSource. The IngestionSource is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.IngestionSource
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.IngestionSource] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(ingestion_source, (IOBase, bytes)):
-            _content = ingestion_source
-        else:
-            _content = json.dumps(ingestion_source, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_ingestion_sources_create_or_replace_request(
-            id=id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 201]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        response_headers = {}
-        response_headers["location"] = self._deserialize("str", response.headers.get("location"))
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.IngestionSource, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def delete(self, id: str, **kwargs: Any) -> None:
-        """Delete an ingestion source from a geo-catalog.
-
-        :param id: Ingestion source id. Required.
-        :type id: str
+    async def delete_ingestion_operation(self, operation_id: str, **kwargs: Any) -> None:
+        """Cancel a running operation of a geo-catalog collection.
+
+        :param operation_id: Operation id. Required.
+        :type operation_id: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2094,8 +183,8 @@ class IngestionSourcesOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_ingestion_sources_delete_request(
-            id=id,
+        _request = build_ingestion_delete_ingestion_operation_request(
+            operation_id=operation_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -2120,12 +209,11 @@ class IngestionSourcesOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
-    async def list_managed_identities(self, **kwargs: Any) -> _models.PageManagedIdentityMetadata:
-        """Get all managed identities with access to storage accounts configured for a geo-catalog.
+    async def delete_all_ingestion_operations(self, **kwargs: Any) -> None:
+        """Cancel all running operations of a geo-catalog collection.
 
-        :return: PageManagedIdentityMetadata. The PageManagedIdentityMetadata is compatible with
-         MutableMapping
-        :rtype: ~azure.planetarycomputer.models.PageManagedIdentityMetadata
+        :return: None
+        :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2139,9 +227,9 @@ class IngestionSourcesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.PageManagedIdentityMetadata] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_ingestion_sources_list_managed_identities_request(
+        _request = build_ingestion_delete_all_ingestion_operations_request(
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -2151,52 +239,22 @@ class IngestionSourcesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = kwargs.pop("stream", False)
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
+        if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.PageManagedIdentityMetadata, response.json())
-
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-
-class IngestionOperationsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`ingestion_operations` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
-    async def get(self, operation_id: str, **kwargs: Any) -> _models.Operation:
+    async def get_ingestion_operation(self, operation_id: str, **kwargs: Any) -> _models.Operation:
         """Get an operation of a geo-catalog collection.
 
         :param operation_id: Operation id. Required.
@@ -2218,7 +276,7 @@ class IngestionOperationsOperations:
 
         cls: ClsType[_models.Operation] = kwargs.pop("cls", None)
 
-        _request = build_ingestion_operations_get_request(
+        _request = build_ingestion_get_ingestion_operation_request(
             operation_id=operation_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -2256,7 +314,7 @@ class IngestionOperationsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def list(
+    async def get_ingestion_operations(
         self,
         *,
         top: Optional[int] = None,
@@ -2293,7 +351,7 @@ class IngestionOperationsOperations:
 
         cls: ClsType[_models.PageOperation] = kwargs.pop("cls", None)
 
-        _request = build_ingestion_operations_list_request(
+        _request = build_ingestion_get_ingestion_operations_request(
             top=top,
             skip=skip,
             collection_id=collection_id,
@@ -2334,11 +392,15 @@ class IngestionOperationsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete_all(self, **kwargs: Any) -> None:
-        """Cancel all running operations of a geo-catalog collection.
+    async def create_ingestion_run(self, collection_id: str, ingestion_id: str, **kwargs: Any) -> _models.IngestionRun:
+        """Create a new run of an ingestion.
 
-        :return: None
-        :rtype: None
+        :param collection_id: Catalog collection id. Required.
+        :type collection_id: str
+        :param ingestion_id: Ingestion id. Required.
+        :type ingestion_id: str
+        :return: IngestionRun. The IngestionRun is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.IngestionRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2352,122 +414,11 @@ class IngestionOperationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[_models.IngestionRun] = kwargs.pop("cls", None)
 
-        _request = build_ingestion_operations_delete_all_request(
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-    @distributed_trace_async
-    async def delete(self, operation_id: str, **kwargs: Any) -> None:
-        """Cancel a running operation of a geo-catalog collection.
-
-        :param operation_id: Operation id. Required.
-        :type operation_id: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_ingestion_operations_delete_request(
-            operation_id=operation_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-
-class StacLandingPagesOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`stac_landing_pages` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace_async
-    async def get(self, **kwargs: Any) -> _models.LandingPage:
-        """Landing Page.
-
-        Endpoint.
-
-        :return: LandingPage. The LandingPage is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.LandingPage
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.LandingPage] = kwargs.pop("cls", None)
-
-        _request = build_stac_landing_pages_get_request(
+        _request = build_ingestion_create_ingestion_run_request(
+            collection_id=collection_id,
+            ingestion_id=ingestion_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -2484,305 +435,118 @@ class StacLandingPagesOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [201]:
             if _stream:
                 try:
                     await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.LandingPage, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-
-class StacCollectionOperationsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`stac_collection_operations` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace_async
-    async def get_all(
-        self, *, sign: Optional[Union[str, _models.SignType]] = None, duration: Optional[int] = None, **kwargs: Any
-    ) -> _models.FeatureCollections:
-        """Get Collections.
-
-        Endpoint.
-
-        :keyword sign: Whether to sign asset URLs in the response. Known values are: "true" and
-         "false". Default value is None.
-        :paramtype sign: str or ~azure.planetarycomputer.models.SignType
-        :keyword duration: URL signature duration in seconds. Default value is None.
-        :paramtype duration: int
-        :return: FeatureCollections. The FeatureCollections is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.FeatureCollections
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.FeatureCollections] = kwargs.pop("cls", None)
-
-        _request = build_stac_collection_operations_get_all_request(
-            sign=sign,
-            duration=duration,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.FeatureCollections, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    async def _create_initial(
-        self, body: Union[_models.StacCollection, JSON, IO[bytes]], **kwargs: Any
-    ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_stac_collection_operations_create_request(
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = True
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            try:
-                await response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         response_headers = {}
         response_headers["location"] = self._deserialize("str", response.headers.get("location"))
-        response_headers["operation-location"] = self._deserialize("str", response.headers.get("operation-location"))
 
-        deserialized = response.iter_bytes()
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.IngestionRun, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
-    @overload
-    async def begin_create(
-        self, body: _models.StacCollection, *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[None]:
-        """Create Collection.
-
-        Create a new collection in the GeoCatalog instance.
-
-        :param body: Request collection body. Required.
-        :type body: ~azure.planetarycomputer.models.StacCollection
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def begin_create(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[None]:
-        """Create Collection.
-
-        Create a new collection in the GeoCatalog instance.
-
-        :param body: Request collection body. Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def begin_create(
-        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[None]:
-        """Create Collection.
-
-        Create a new collection in the GeoCatalog instance.
-
-        :param body: Request collection body. Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
     @distributed_trace_async
-    async def begin_create(
-        self, body: Union[_models.StacCollection, JSON, IO[bytes]], **kwargs: Any
-    ) -> AsyncLROPoller[None]:
-        """Create Collection.
+    async def get_ingestion_run(
+        self, collection_id: str, ingestion_id: str, run_id: str, **kwargs: Any
+    ) -> _models.IngestionRun:
+        """Get a run of an ingestion.
 
-        Create a new collection in the GeoCatalog instance.
-
-        :param body: Request collection body. Is one of the following types: StacCollection, JSON,
-         IO[bytes] Required.
-        :type body: ~azure.planetarycomputer.models.StacCollection or JSON or IO[bytes]
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :param collection_id: Catalog collection id. Required.
+        :type collection_id: str
+        :param ingestion_id: Ingestion id. Required.
+        :type ingestion_id: str
+        :param run_id: Run id. Required.
+        :type run_id: str
+        :return: IngestionRun. The IngestionRun is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.IngestionRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = await self._create_initial(
-                body=body, content_type=content_type, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
-            )
-            await raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
+        cls: ClsType[_models.IngestionRun] = kwargs.pop("cls", None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
-            if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
-
+        _request = build_ingestion_get_ingestion_run_request(
+            collection_id=collection_id,
+            ingestion_id=ingestion_id,
+            run_id=run_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        if polling is True:
-            polling_method: AsyncPollingMethod = cast(
-                AsyncPollingMethod,
-                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
-            )
-        elif polling is False:
-            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
         else:
-            polling_method = polling
-        if cont_token:
-            return AsyncLROPoller[None].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+            deserialized = _deserialize(_models.IngestionRun, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get(
+    async def get_ingestion_runs(
         self,
         collection_id: str,
+        ingestion_id: str,
         *,
-        sign: Optional[Union[str, _models.SignType]] = None,
-        duration: Optional[int] = None,
+        top: Optional[int] = None,
+        skip: Optional[int] = None,
         **kwargs: Any
-    ) -> _models.StacCollection:
-        """Get Collection.
+    ) -> _models.PageIngestionRun:
+        """Get the runs of an ingestion.
 
-        Get a collection in the GeoCatalog instance.
-
-        :param collection_id: Unique identifier for the collection. Required.
+        :param collection_id: Catalog collection id. Required.
         :type collection_id: str
-        :keyword sign: Whether to sign asset URLs in the response. Known values are: "true" and
-         "false". Default value is None.
-        :paramtype sign: str or ~azure.planetarycomputer.models.SignType
-        :keyword duration: URL signature duration in seconds. Default value is None.
-        :paramtype duration: int
-        :return: StacCollection. The StacCollection is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.StacCollection
+        :param ingestion_id: Ingestion id. Required.
+        :type ingestion_id: str
+        :keyword top: The number of items to return. Default value is None.
+        :paramtype top: int
+        :keyword skip: The number of items to skip. Default value is None.
+        :paramtype skip: int
+        :return: PageIngestionRun. The PageIngestionRun is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.PageIngestionRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2796,12 +560,13 @@ class StacCollectionOperationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.StacCollection] = kwargs.pop("cls", None)
+        cls: ClsType[_models.PageIngestionRun] = kwargs.pop("cls", None)
 
-        _request = build_stac_collection_operations_get_request(
+        _request = build_ingestion_get_ingestion_runs_request(
             collection_id=collection_id,
-            sign=sign,
-            duration=duration,
+            ingestion_id=ingestion_id,
+            top=top,
+            skip=skip,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -2830,16 +595,87 @@ class StacCollectionOperationsOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.StacCollection, response.json())
+            deserialized = _deserialize(_models.PageIngestionRun, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-    async def _create_or_replace_initial(
-        self, collection_id: str, body: Union[_models.StacCollection, JSON, IO[bytes]], **kwargs: Any
-    ) -> AsyncIterator[bytes]:
+    @overload
+    async def create_ingestion(
+        self,
+        collection_id: str,
+        definition: _models.IngestionDefinition,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.IngestionDefinition:
+        """Create a new ingestion.
+
+        :param collection_id: Catalog collection id. Required.
+        :type collection_id: str
+        :param definition: Definition of the ingestion. Required.
+        :type definition: ~azure.planetarycomputer.models.IngestionDefinition
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: IngestionDefinition. The IngestionDefinition is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.IngestionDefinition
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_ingestion(
+        self, collection_id: str, definition: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.IngestionDefinition:
+        """Create a new ingestion.
+
+        :param collection_id: Catalog collection id. Required.
+        :type collection_id: str
+        :param definition: Definition of the ingestion. Required.
+        :type definition: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: IngestionDefinition. The IngestionDefinition is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.IngestionDefinition
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_ingestion(
+        self, collection_id: str, definition: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.IngestionDefinition:
+        """Create a new ingestion.
+
+        :param collection_id: Catalog collection id. Required.
+        :type collection_id: str
+        :param definition: Definition of the ingestion. Required.
+        :type definition: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: IngestionDefinition. The IngestionDefinition is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.IngestionDefinition
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def create_ingestion(
+        self, collection_id: str, definition: Union[_models.IngestionDefinition, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.IngestionDefinition:
+        """Create a new ingestion.
+
+        :param collection_id: Catalog collection id. Required.
+        :type collection_id: str
+        :param definition: Definition of the ingestion. Is one of the following types:
+         IngestionDefinition, JSON, IO[bytes] Required.
+        :type definition: ~azure.planetarycomputer.models.IngestionDefinition or JSON or IO[bytes]
+        :return: IngestionDefinition. The IngestionDefinition is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.IngestionDefinition
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -2852,20 +688,77 @@ class StacCollectionOperationsOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+        cls: ClsType[_models.IngestionDefinition] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
+        if isinstance(definition, (IOBase, bytes)):
+            _content = definition
         else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(definition, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_stac_collection_operations_create_or_replace_request(
+        _request = build_ingestion_create_ingestion_request(
             collection_id=collection_id,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["location"] = self._deserialize("str", response.headers.get("location"))
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.IngestionDefinition, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    async def _delete_ingestion_initial(
+        self, collection_id: str, ingestion_id: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_ingestion_delete_ingestion_request(
+            collection_id=collection_id,
+            ingestion_id=ingestion_id,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -2900,96 +793,32 @@ class StacCollectionOperationsOperations:
 
         return deserialized  # type: ignore
 
-    @overload
-    async def begin_create_or_replace(
-        self, collection_id: str, body: _models.StacCollection, *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[None]:
-        """Create or update Collection.
-
-        Create or replace a collection in the GeoCatalog instance.
-
-        :param collection_id: Catalog collection id. Required.
-        :type collection_id: str
-        :param body: Request collection body. Required.
-        :type body: ~azure.planetarycomputer.models.StacCollection
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def begin_create_or_replace(
-        self, collection_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[None]:
-        """Create or update Collection.
-
-        Create or replace a collection in the GeoCatalog instance.
-
-        :param collection_id: Catalog collection id. Required.
-        :type collection_id: str
-        :param body: Request collection body. Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def begin_create_or_replace(
-        self, collection_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[None]:
-        """Create or update Collection.
-
-        Create or replace a collection in the GeoCatalog instance.
-
-        :param collection_id: Catalog collection id. Required.
-        :type collection_id: str
-        :param body: Request collection body. Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
     @distributed_trace_async
-    async def begin_create_or_replace(
-        self, collection_id: str, body: Union[_models.StacCollection, JSON, IO[bytes]], **kwargs: Any
+    async def begin_delete_ingestion(
+        self, collection_id: str, ingestion_id: str, **kwargs: Any
     ) -> AsyncLROPoller[None]:
-        """Create or update Collection.
-
-        Create or replace a collection in the GeoCatalog instance.
+        """Delete an ingestion from a catalog. All runs of the ingestion will be deleted. Ingestion must
+        not have any runs in progress or queued.
 
         :param collection_id: Catalog collection id. Required.
         :type collection_id: str
-        :param body: Request collection body. Is one of the following types: StacCollection, JSON,
-         IO[bytes] Required.
-        :type body: ~azure.planetarycomputer.models.StacCollection or JSON or IO[bytes]
+        :param ingestion_id: Ingestion id. Required.
+        :type ingestion_id: str
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._create_or_replace_initial(
+            raw_result = await self._delete_ingestion_initial(
                 collection_id=collection_id,
-                body=body,
-                content_type=content_type,
+                ingestion_id=ingestion_id,
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
@@ -3024,135 +853,16 @@ class StacCollectionOperationsOperations:
             )
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    async def _delete_initial(self, collection_id: str, **kwargs: Any) -> AsyncIterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
-
-        _request = build_stac_collection_operations_delete_request(
-            collection_id=collection_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = True
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            try:
-                await response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        response_headers = {}
-        response_headers["location"] = self._deserialize("str", response.headers.get("location"))
-        response_headers["operation-location"] = self._deserialize("str", response.headers.get("operation-location"))
-
-        deserialized = response.iter_bytes()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
     @distributed_trace_async
-    async def begin_delete(self, collection_id: str, **kwargs: Any) -> AsyncLROPoller[None]:
-        """Delete Collection.
-
-        Delete a collection in the GeoCatalog instance.
+    async def get_ingestion(self, collection_id: str, ingestion_id: str, **kwargs: Any) -> _models.IngestionDefinition:
+        """Get the definition of an ingestion.
 
         :param collection_id: Catalog collection id. Required.
         :type collection_id: str
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = await self._delete_initial(
-                collection_id=collection_id, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
-            )
-            await raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
-            if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: AsyncPollingMethod = cast(
-                AsyncPollingMethod,
-                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
-            )
-        elif polling is False:
-            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return AsyncLROPoller[None].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-
-class StacQueryablesOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`stac_queryables` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace_async
-    async def get_all(self, **kwargs: Any) -> Optional[_models.JsonSchema]:
-        """Queryables.
-
-        Endpoint.
-
-        :return: JsonSchema or None. The JsonSchema is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.JsonSchema or None
+        :param ingestion_id: Ingestion id. Required.
+        :type ingestion_id: str
+        :return: IngestionDefinition. The IngestionDefinition is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.IngestionDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3166,501 +876,11 @@ class StacQueryablesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[Optional[_models.JsonSchema]] = kwargs.pop("cls", None)
+        cls: ClsType[_models.IngestionDefinition] = kwargs.pop("cls", None)
 
-        _request = build_stac_queryables_get_all_request(
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 204]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        deserialized = None
-        if response.status_code == 200:
-            if _stream:
-                deserialized = response.iter_bytes()
-            else:
-                deserialized = _deserialize(_models.JsonSchema, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def delete(self, collection_id: str, queryable_name: str, **kwargs: Any) -> None:
-        """Delete Queryables.
-
-        Delete queryables by name for specified collection.
-
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
-        :param queryable_name: Name of the queryable property to operate on. Required.
-        :type queryable_name: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_stac_queryables_delete_request(
+        _request = build_ingestion_get_ingestion_request(
             collection_id=collection_id,
-            queryable_name=queryable_name,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-    @distributed_trace_async
-    async def get_all_by_collection(self, collection_id: str, **kwargs: Any) -> Optional[_models.JsonSchema]:
-        """Collection Queryables.
-
-        Endpoint.
-
-        :param collection_id: Collection ID. Required.
-        :type collection_id: str
-        :return: JsonSchema or None. The JsonSchema is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.JsonSchema or None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[Optional[_models.JsonSchema]] = kwargs.pop("cls", None)
-
-        _request = build_stac_queryables_get_all_by_collection_request(
-            collection_id=collection_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 204]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        deserialized = None
-        if response.status_code == 200:
-            if _stream:
-                deserialized = response.iter_bytes()
-            else:
-                deserialized = _deserialize(_models.JsonSchema, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def create(
-        self,
-        collection_id: str,
-        body: List[_models.QueryableDefinition],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> Optional[List[_models.QueryableDefinition]]:
-        """Set Collection Queryables.
-
-        Set queryables for a collection given a list of queryable definitions.
-
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
-        :param body: Request queryable definition body. Required.
-        :type body: list[~azure.planetarycomputer.models.QueryableDefinition]
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: list of QueryableDefinition or None
-        :rtype: list[~azure.planetarycomputer.models.QueryableDefinition] or None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create(
-        self, collection_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> Optional[List[_models.QueryableDefinition]]:
-        """Set Collection Queryables.
-
-        Set queryables for a collection given a list of queryable definitions.
-
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
-        :param body: Request queryable definition body. Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: list of QueryableDefinition or None
-        :rtype: list[~azure.planetarycomputer.models.QueryableDefinition] or None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def create(
-        self, collection_id: str, body: Union[List[_models.QueryableDefinition], IO[bytes]], **kwargs: Any
-    ) -> Optional[List[_models.QueryableDefinition]]:
-        """Set Collection Queryables.
-
-        Set queryables for a collection given a list of queryable definitions.
-
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
-        :param body: Request queryable definition body. Is either a [QueryableDefinition] type or a
-         IO[bytes] type. Required.
-        :type body: list[~azure.planetarycomputer.models.QueryableDefinition] or IO[bytes]
-        :return: list of QueryableDefinition or None
-        :rtype: list[~azure.planetarycomputer.models.QueryableDefinition] or None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Optional[List[_models.QueryableDefinition]]] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_stac_queryables_create_request(
-            collection_id=collection_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [201, 204]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        deserialized = None
-        if response.status_code == 201:
-            if _stream:
-                deserialized = response.iter_bytes()
-            else:
-                deserialized = _deserialize(List[_models.QueryableDefinition], response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def create_or_replace(
-        self,
-        collection_id: str,
-        queryable_name: str,
-        body: _models.QueryableDefinition,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.QueryableDefinition:
-        """Update Collection Queryables.
-
-        Updates a queryable given a queryable definition and
-        corresponding collection id.
-
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
-        :param queryable_name: Name of the queryable property to operate on. Required.
-        :type queryable_name: str
-        :param body: Request queryable definition body. Required.
-        :type body: ~azure.planetarycomputer.models.QueryableDefinition
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: QueryableDefinition. The QueryableDefinition is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.QueryableDefinition
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create_or_replace(
-        self,
-        collection_id: str,
-        queryable_name: str,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.QueryableDefinition:
-        """Update Collection Queryables.
-
-        Updates a queryable given a queryable definition and
-        corresponding collection id.
-
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
-        :param queryable_name: Name of the queryable property to operate on. Required.
-        :type queryable_name: str
-        :param body: Request queryable definition body. Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: QueryableDefinition. The QueryableDefinition is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.QueryableDefinition
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create_or_replace(
-        self,
-        collection_id: str,
-        queryable_name: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.QueryableDefinition:
-        """Update Collection Queryables.
-
-        Updates a queryable given a queryable definition and
-        corresponding collection id.
-
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
-        :param queryable_name: Name of the queryable property to operate on. Required.
-        :type queryable_name: str
-        :param body: Request queryable definition body. Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: QueryableDefinition. The QueryableDefinition is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.QueryableDefinition
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def create_or_replace(
-        self,
-        collection_id: str,
-        queryable_name: str,
-        body: Union[_models.QueryableDefinition, JSON, IO[bytes]],
-        **kwargs: Any
-    ) -> _models.QueryableDefinition:
-        """Update Collection Queryables.
-
-        Updates a queryable given a queryable definition and
-        corresponding collection id.
-
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
-        :param queryable_name: Name of the queryable property to operate on. Required.
-        :type queryable_name: str
-        :param body: Request queryable definition body. Is one of the following types:
-         QueryableDefinition, JSON, IO[bytes] Required.
-        :type body: ~azure.planetarycomputer.models.QueryableDefinition or JSON or IO[bytes]
-        :return: QueryableDefinition. The QueryableDefinition is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.QueryableDefinition
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.QueryableDefinition] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_stac_queryables_create_or_replace_request(
-            collection_id=collection_id,
-            queryable_name=queryable_name,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 201]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.QueryableDefinition, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-
-class StacConformanceClassOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`stac_conformance_class` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace_async
-    async def get(self, **kwargs: Any) -> _models.ConformanceClasses:
-        """Conformance Classes.
-
-        Endpoint.
-
-        :return: ConformanceClasses. The ConformanceClasses is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.ConformanceClasses
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.ConformanceClasses] = kwargs.pop("cls", None)
-
-        _request = build_stac_conformance_class_get_request(
+            ingestion_id=ingestion_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -3689,88 +909,27 @@ class StacConformanceClassOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.ConformanceClasses, response.json())
+            deserialized = _deserialize(_models.IngestionDefinition, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-class StacSearchOperationsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`stac_search_operations` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
     @distributed_trace_async
-    async def get(
-        self,
-        *,
-        collections: Optional[List[str]] = None,
-        ids: Optional[List[str]] = None,
-        bbox: Optional[List[float]] = None,
-        intersects: Optional[str] = None,
-        datetime: Optional[str] = None,
-        limit: Optional[int] = None,
-        sign: Optional[Union[str, _models.SignType]] = None,
-        duration: Optional[int] = None,
-        query: Optional[str] = None,
-        sort_by: Optional[str] = None,
-        fields: Optional[str] = None,
-        filter: Optional[str] = None,
-        token: Optional[str] = None,
-        **kwargs: Any
-    ) -> Optional[_models.ItemCollection]:
-        """Search.
+    async def get_ingestions(
+        self, collection_id: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
+    ) -> _models.PageIngestionDefinition:
+        """Get ingestions of a catalog.
 
-        Endpoint.
-
-        :keyword collections: List of Collection IDs to include in the search. Only items in these
-         collections will be searched. Default value is None.
-        :paramtype collections: list[str]
-        :keyword ids: Array of Item IDs to return specific items. Default value is None.
-        :paramtype ids: list[str]
-        :keyword bbox: Bounding box for spatial filtering in format [west, south, east, north]. Default
-         value is None.
-        :paramtype bbox: list[float]
-        :keyword intersects: GeoJSON geometry for spatial filtering. Default value is None.
-        :paramtype intersects: str
-        :keyword datetime: Temporal filter in RFC 3339 format, can be a single time or range. Default
-         value is None.
-        :paramtype datetime: str
-        :keyword limit: Maximum number of results to return. Default value is None.
-        :paramtype limit: int
-        :keyword sign: Whether to sign asset URLs in the response. Known values are: "true" and
-         "false". Default value is None.
-        :paramtype sign: str or ~azure.planetarycomputer.models.SignType
-        :keyword duration: URL signature duration in seconds. Default value is None.
-        :paramtype duration: int
-        :keyword query: Property-based filtering expressed as a JSON object. Default value is None.
-        :paramtype query: str
-        :keyword sort_by: Sort order for items. Format is property name prefixed with "+" for ascending
-         or "-" for descending. Default value is None.
-        :paramtype sort_by: str
-        :keyword fields: Determines which fields to include in the response. Format is comma-separated
-         field names with "-" prefix to exclude fields. Default value is None.
-        :paramtype fields: str
-        :keyword filter: CQL filter expression for advanced filtering of items. Default value is None.
-        :paramtype filter: str
-        :keyword token: Pagination token for fetching the next set of results. Default value is None.
-        :paramtype token: str
-        :return: ItemCollection or None. The ItemCollection is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.ItemCollection or None
+        :param collection_id: Catalog collection id. Required.
+        :type collection_id: str
+        :keyword top: The number of items to return. Default value is None.
+        :paramtype top: int
+        :keyword skip: The number of items to skip. Default value is None.
+        :paramtype skip: int
+        :return: PageIngestionDefinition. The PageIngestionDefinition is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.PageIngestionDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3784,22 +943,12 @@ class StacSearchOperationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[Optional[_models.ItemCollection]] = kwargs.pop("cls", None)
+        cls: ClsType[_models.PageIngestionDefinition] = kwargs.pop("cls", None)
 
-        _request = build_stac_search_operations_get_request(
-            collections=collections,
-            ids=ids,
-            bbox=bbox,
-            intersects=intersects,
-            datetime=datetime,
-            limit=limit,
-            sign=sign,
-            duration=duration,
-            query=query,
-            sort_by=sort_by,
-            fields=fields,
-            filter=filter,
-            token=token,
+        _request = build_ingestion_get_ingestions_request(
+            collection_id=collection_id,
+            top=top,
+            skip=skip,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -3816,7 +965,7 @@ class StacSearchOperationsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 204]:
+        if response.status_code not in [200]:
             if _stream:
                 try:
                     await response.read()  # Load the body in memory and close the socket
@@ -3825,12 +974,10 @@ class StacSearchOperationsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = None
-        if response.status_code == 200:
-            if _stream:
-                deserialized = response.iter_bytes()
-            else:
-                deserialized = _deserialize(_models.ItemCollection, response.json())
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.PageIngestionDefinition, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3838,72 +985,102 @@ class StacSearchOperationsOperations:
         return deserialized  # type: ignore
 
     @overload
-    async def create(
-        self, body: _models.SearchPostRequest, *, content_type: str = "application/json", **kwargs: Any
-    ) -> Optional[_models.ItemCollection]:
-        """Search.
+    async def update_ingestion(
+        self,
+        collection_id: str,
+        ingestion_id: str,
+        definition: _models.IngestionDefinition,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
+    ) -> _models.IngestionDefinition:
+        """Update an existing ingestion.
 
-        Endpoint.
-
-        :param body: Request body. Required.
-        :type body: ~azure.planetarycomputer.models.SearchPostRequest
+        :param collection_id: Catalog collection id. Required.
+        :type collection_id: str
+        :param ingestion_id: Ingestion id. Required.
+        :type ingestion_id: str
+        :param definition: Ingestion properties to update. Required.
+        :type definition: ~azure.planetarycomputer.models.IngestionDefinition
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :return: ItemCollection or None. The ItemCollection is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.ItemCollection or None
+        :return: IngestionDefinition. The IngestionDefinition is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.IngestionDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def create(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> Optional[_models.ItemCollection]:
-        """Search.
+    async def update_ingestion(
+        self,
+        collection_id: str,
+        ingestion_id: str,
+        definition: JSON,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
+    ) -> _models.IngestionDefinition:
+        """Update an existing ingestion.
 
-        Endpoint.
-
-        :param body: Request body. Required.
-        :type body: JSON
+        :param collection_id: Catalog collection id. Required.
+        :type collection_id: str
+        :param ingestion_id: Ingestion id. Required.
+        :type ingestion_id: str
+        :param definition: Ingestion properties to update. Required.
+        :type definition: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :return: ItemCollection or None. The ItemCollection is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.ItemCollection or None
+        :return: IngestionDefinition. The IngestionDefinition is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.IngestionDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def create(
-        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> Optional[_models.ItemCollection]:
-        """Search.
+    async def update_ingestion(
+        self,
+        collection_id: str,
+        ingestion_id: str,
+        definition: IO[bytes],
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
+    ) -> _models.IngestionDefinition:
+        """Update an existing ingestion.
 
-        Endpoint.
-
-        :param body: Request body. Required.
-        :type body: IO[bytes]
+        :param collection_id: Catalog collection id. Required.
+        :type collection_id: str
+        :param ingestion_id: Ingestion id. Required.
+        :type ingestion_id: str
+        :param definition: Ingestion properties to update. Required.
+        :type definition: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
+         Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :return: ItemCollection or None. The ItemCollection is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.ItemCollection or None
+        :return: IngestionDefinition. The IngestionDefinition is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.IngestionDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
-    async def create(
-        self, body: Union[_models.SearchPostRequest, JSON, IO[bytes]], **kwargs: Any
-    ) -> Optional[_models.ItemCollection]:
-        """Search.
+    async def update_ingestion(
+        self,
+        collection_id: str,
+        ingestion_id: str,
+        definition: Union[_models.IngestionDefinition, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.IngestionDefinition:
+        """Update an existing ingestion.
 
-        Endpoint.
-
-        :param body: Request body. Is one of the following types: SearchPostRequest, JSON, IO[bytes]
-         Required.
-        :type body: ~azure.planetarycomputer.models.SearchPostRequest or JSON or IO[bytes]
-        :return: ItemCollection or None. The ItemCollection is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.ItemCollection or None
+        :param collection_id: Catalog collection id. Required.
+        :type collection_id: str
+        :param ingestion_id: Ingestion id. Required.
+        :type ingestion_id: str
+        :param definition: Ingestion properties to update. Is one of the following types:
+         IngestionDefinition, JSON, IO[bytes] Required.
+        :type definition: ~azure.planetarycomputer.models.IngestionDefinition or JSON or IO[bytes]
+        :return: IngestionDefinition. The IngestionDefinition is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.IngestionDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3917,17 +1094,19 @@ class StacSearchOperationsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Optional[_models.ItemCollection]] = kwargs.pop("cls", None)
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
+        cls: ClsType[_models.IngestionDefinition] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
+        content_type = content_type or "application/merge-patch+json"
         _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
+        if isinstance(definition, (IOBase, bytes)):
+            _content = definition
         else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(definition, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_stac_search_operations_create_request(
+        _request = build_ingestion_update_ingestion_request(
+            collection_id=collection_id,
+            ingestion_id=ingestion_id,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -3946,7 +1125,7 @@ class StacSearchOperationsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 204]:
+        if response.status_code not in [200]:
             if _stream:
                 try:
                     await response.read()  # Load the body in memory and close the socket
@@ -3955,12 +1134,502 @@ class StacSearchOperationsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = None
-        if response.status_code == 200:
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.IngestionDefinition, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def create_ingestion_source(
+        self, ingestion_source: _models.IngestionSource, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.IngestionSource:
+        """Create a new ingestion source in a geo-catalog.
+
+        :param ingestion_source: Definition of the ingestion source. Required.
+        :type ingestion_source: ~azure.planetarycomputer.models.IngestionSource
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: IngestionSource. The IngestionSource is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.IngestionSource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_ingestion_source(
+        self, ingestion_source: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.IngestionSource:
+        """Create a new ingestion source in a geo-catalog.
+
+        :param ingestion_source: Definition of the ingestion source. Required.
+        :type ingestion_source: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: IngestionSource. The IngestionSource is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.IngestionSource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_ingestion_source(
+        self, ingestion_source: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.IngestionSource:
+        """Create a new ingestion source in a geo-catalog.
+
+        :param ingestion_source: Definition of the ingestion source. Required.
+        :type ingestion_source: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: IngestionSource. The IngestionSource is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.IngestionSource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def create_ingestion_source(
+        self, ingestion_source: Union[_models.IngestionSource, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.IngestionSource:
+        """Create a new ingestion source in a geo-catalog.
+
+        :param ingestion_source: Definition of the ingestion source. Is one of the following types:
+         IngestionSource, JSON, IO[bytes] Required.
+        :type ingestion_source: ~azure.planetarycomputer.models.IngestionSource or JSON or IO[bytes]
+        :return: IngestionSource. The IngestionSource is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.IngestionSource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.IngestionSource] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(ingestion_source, (IOBase, bytes)):
+            _content = ingestion_source
+        else:
+            _content = json.dumps(ingestion_source, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_ingestion_create_ingestion_source_request(
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
             if _stream:
-                deserialized = response.iter_bytes()
-            else:
-                deserialized = _deserialize(_models.ItemCollection, response.json())
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["location"] = self._deserialize("str", response.headers.get("location"))
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.IngestionSource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def create_or_replace_ingestion_source(
+        self,
+        id: str,
+        ingestion_source: _models.IngestionSource,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.IngestionSource:
+        """Update an existing ingestion source in a geo-catalog.
+
+        :param id: Ingestion source id. Required.
+        :type id: str
+        :param ingestion_source: Definition of the ingestion source. Required.
+        :type ingestion_source: ~azure.planetarycomputer.models.IngestionSource
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: IngestionSource. The IngestionSource is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.IngestionSource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_replace_ingestion_source(
+        self, id: str, ingestion_source: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.IngestionSource:
+        """Update an existing ingestion source in a geo-catalog.
+
+        :param id: Ingestion source id. Required.
+        :type id: str
+        :param ingestion_source: Definition of the ingestion source. Required.
+        :type ingestion_source: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: IngestionSource. The IngestionSource is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.IngestionSource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_replace_ingestion_source(
+        self, id: str, ingestion_source: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.IngestionSource:
+        """Update an existing ingestion source in a geo-catalog.
+
+        :param id: Ingestion source id. Required.
+        :type id: str
+        :param ingestion_source: Definition of the ingestion source. Required.
+        :type ingestion_source: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: IngestionSource. The IngestionSource is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.IngestionSource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def create_or_replace_ingestion_source(
+        self, id: str, ingestion_source: Union[_models.IngestionSource, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.IngestionSource:
+        """Update an existing ingestion source in a geo-catalog.
+
+        :param id: Ingestion source id. Required.
+        :type id: str
+        :param ingestion_source: Definition of the ingestion source. Is one of the following types:
+         IngestionSource, JSON, IO[bytes] Required.
+        :type ingestion_source: ~azure.planetarycomputer.models.IngestionSource or JSON or IO[bytes]
+        :return: IngestionSource. The IngestionSource is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.IngestionSource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.IngestionSource] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(ingestion_source, (IOBase, bytes)):
+            _content = ingestion_source
+        else:
+            _content = json.dumps(ingestion_source, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_ingestion_create_or_replace_ingestion_source_request(
+            id=id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["location"] = self._deserialize("str", response.headers.get("location"))
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.IngestionSource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def delete_ingestion_source(self, id: str, **kwargs: Any) -> None:
+        """Delete an ingestion source from a geo-catalog.
+
+        :param id: Ingestion source id. Required.
+        :type id: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_ingestion_delete_ingestion_source_request(
+            id=id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace_async
+    async def get_ingestion_source(self, id: str, **kwargs: Any) -> _models.IngestionSource:
+        """Get an ingestion source in a geo-catalog.
+
+        :param id: Ingestion source id. Required.
+        :type id: str
+        :return: IngestionSource. The IngestionSource is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.IngestionSource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.IngestionSource] = kwargs.pop("cls", None)
+
+        _request = build_ingestion_get_ingestion_source_request(
+            id=id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.IngestionSource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def get_ingestion_sources(
+        self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
+    ) -> _models.PageIngestionSourceSummary:
+        """Get ingestion sources in a geo-catalog.
+
+        :keyword top: The number of items to return. Default value is None.
+        :paramtype top: int
+        :keyword skip: The number of items to skip. Default value is None.
+        :paramtype skip: int
+        :return: PageIngestionSourceSummary. The PageIngestionSourceSummary is compatible with
+         MutableMapping
+        :rtype: ~azure.planetarycomputer.models.PageIngestionSourceSummary
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.PageIngestionSourceSummary] = kwargs.pop("cls", None)
+
+        _request = build_ingestion_get_ingestion_sources_request(
+            top=top,
+            skip=skip,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.PageIngestionSourceSummary, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def get_managed_identities(self, **kwargs: Any) -> _models.PageManagedIdentityMetadata:
+        """Get all managed identities with access to storage accounts configured for a geo-catalog.
+
+        :return: PageManagedIdentityMetadata. The PageManagedIdentityMetadata is compatible with
+         MutableMapping
+        :rtype: ~azure.planetarycomputer.models.PageManagedIdentityMetadata
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.PageManagedIdentityMetadata] = kwargs.pop("cls", None)
+
+        _request = build_ingestion_get_managed_identities_request(
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.PageManagedIdentityMetadata, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3968,14 +1637,14 @@ class StacSearchOperationsOperations:
         return deserialized  # type: ignore
 
 
-class StacCollectionAssetsOperations:
+class StacOperations:  # pylint: disable=too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`stac_collection_assets` attribute.
+        :attr:`stac` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
@@ -3986,7 +1655,9 @@ class StacCollectionAssetsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @overload
-    async def create(self, collection_id: str, body: _models.FormContent, **kwargs: Any) -> _models.StacCollection:
+    async def create_collection_asset(
+        self, collection_id: str, body: _models.FormContent, **kwargs: Any
+    ) -> _models.StacCollection:
         """Create Collection Asset.
 
         Create a new asset in the Collection metadata and write the associated
@@ -4012,7 +1683,7 @@ class StacCollectionAssetsOperations:
         """
 
     @overload
-    async def create(self, collection_id: str, body: JSON, **kwargs: Any) -> _models.StacCollection:
+    async def create_collection_asset(self, collection_id: str, body: JSON, **kwargs: Any) -> _models.StacCollection:
         """Create Collection Asset.
 
         Create a new asset in the Collection metadata and write the associated
@@ -4038,7 +1709,7 @@ class StacCollectionAssetsOperations:
         """
 
     @distributed_trace_async
-    async def create(
+    async def create_collection_asset(
         self, collection_id: str, body: Union[_models.FormContent, JSON], **kwargs: Any
     ) -> _models.StacCollection:
         """Create Collection Asset.
@@ -4082,7 +1753,7 @@ class StacCollectionAssetsOperations:
         _data_fields: List[str] = ["data"]
         _files, _data = prepare_multipart_form_data(_body, _file_fields, _data_fields)
 
-        _request = build_stac_collection_assets_create_request(
+        _request = build_stac_create_collection_asset_request(
             collection_id=collection_id,
             api_version=self._config.api_version,
             files=_files,
@@ -4122,7 +1793,7 @@ class StacCollectionAssetsOperations:
         return deserialized  # type: ignore
 
     @overload
-    async def create_or_replace(
+    async def create_or_replace_collection_asset(
         self, collection_id: str, asset_id: str, body: _models.FormContent, **kwargs: Any
     ) -> _models.StacCollection:
         """Update Collection Asset.
@@ -4152,7 +1823,7 @@ class StacCollectionAssetsOperations:
         """
 
     @overload
-    async def create_or_replace(
+    async def create_or_replace_collection_asset(
         self, collection_id: str, asset_id: str, body: JSON, **kwargs: Any
     ) -> _models.StacCollection:
         """Update Collection Asset.
@@ -4182,7 +1853,7 @@ class StacCollectionAssetsOperations:
         """
 
     @distributed_trace_async
-    async def create_or_replace(
+    async def create_or_replace_collection_asset(
         self, collection_id: str, asset_id: str, body: Union[_models.FormContent, JSON], **kwargs: Any
     ) -> _models.StacCollection:
         """Update Collection Asset.
@@ -4228,7 +1899,7 @@ class StacCollectionAssetsOperations:
         _data_fields: List[str] = ["data"]
         _files, _data = prepare_multipart_form_data(_body, _file_fields, _data_fields)
 
-        _request = build_stac_collection_assets_create_or_replace_request(
+        _request = build_stac_create_or_replace_collection_asset_request(
             collection_id=collection_id,
             asset_id=asset_id,
             api_version=self._config.api_version,
@@ -4269,7 +1940,7 @@ class StacCollectionAssetsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete(self, collection_id: str, asset_id: str, **kwargs: Any) -> None:
+    async def delete_collection_asset(self, collection_id: str, asset_id: str, **kwargs: Any) -> None:
         """Delete Collection Asset.
 
         Delete an asset from a given collection.
@@ -4303,7 +1974,7 @@ class StacCollectionAssetsOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_stac_collection_assets_delete_request(
+        _request = build_stac_delete_collection_asset_request(
             collection_id=collection_id,
             asset_id=asset_id,
             api_version=self._config.api_version,
@@ -4322,33 +1993,15 @@ class StacCollectionAssetsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 204]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
-
-class StacCollectionConfigOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`stac_collection_config` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
     @distributed_trace_async
-    async def get(self, collection_id: str, **kwargs: Any) -> _models.UserCollectionSettings:
+    async def get_collection_config(self, collection_id: str, **kwargs: Any) -> _models.UserCollectionSettings:
         """Get Config.
 
         Get the complete user configuration for a given collection.
@@ -4372,7 +2025,7 @@ class StacCollectionConfigOperations:
 
         cls: ClsType[_models.UserCollectionSettings] = kwargs.pop("cls", None)
 
-        _request = build_stac_collection_config_get_request(
+        _request = build_stac_get_collection_config_request(
             collection_id=collection_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -4409,90 +2062,8 @@ class StacCollectionConfigOperations:
 
         return deserialized  # type: ignore
 
-
-class StacCollectionMosaicsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`stac_collection_mosaics` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace_async
-    async def get_all(self, collection_id: str, **kwargs: Any) -> Optional[List[_models.Mosaic]]:
-        """Get Collection Mosaics.
-
-        Get the mosaic definitions for a given collection.
-
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
-        :return: list of Mosaic or None
-        :rtype: list[~azure.planetarycomputer.models.Mosaic] or None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[Optional[List[_models.Mosaic]]] = kwargs.pop("cls", None)
-
-        _request = build_stac_collection_mosaics_get_all_request(
-            collection_id=collection_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 204]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        deserialized = None
-        if response.status_code == 200:
-            if _stream:
-                deserialized = response.iter_bytes()
-            else:
-                deserialized = _deserialize(List[_models.Mosaic], response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
     @overload
-    async def add(
+    async def add_mosaic(
         self, collection_id: str, body: _models.Mosaic, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Mosaic:
         """Add Collection Mosaic.
@@ -4512,7 +2083,7 @@ class StacCollectionMosaicsOperations:
         """
 
     @overload
-    async def add(
+    async def add_mosaic(
         self, collection_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Mosaic:
         """Add Collection Mosaic.
@@ -4532,7 +2103,7 @@ class StacCollectionMosaicsOperations:
         """
 
     @overload
-    async def add(
+    async def add_mosaic(
         self, collection_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Mosaic:
         """Add Collection Mosaic.
@@ -4552,7 +2123,7 @@ class StacCollectionMosaicsOperations:
         """
 
     @distributed_trace_async
-    async def add(
+    async def add_mosaic(
         self, collection_id: str, body: Union[_models.Mosaic, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.Mosaic:
         """Add Collection Mosaic.
@@ -4589,7 +2160,7 @@ class StacCollectionMosaicsOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_stac_collection_mosaics_add_request(
+        _request = build_stac_add_mosaic_request(
             collection_id=collection_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -4628,73 +2199,8 @@ class StacCollectionMosaicsOperations:
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def get(self, collection_id: str, mosaic_id: str, **kwargs: Any) -> _models.Mosaic:
-        """Get Collection Mosaic.
-
-        Get a mosaic definition from a given collection.
-
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
-        :param mosaic_id: Unique identifier for the mosaic configuration. Required.
-        :type mosaic_id: str
-        :return: Mosaic. The Mosaic is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.Mosaic
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.Mosaic] = kwargs.pop("cls", None)
-
-        _request = build_stac_collection_mosaics_get_request(
-            collection_id=collection_id,
-            mosaic_id=mosaic_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.Mosaic, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
     @overload
-    async def create_or_replace(
+    async def create_or_replace_mosaic(
         self,
         collection_id: str,
         mosaic_id: str,
@@ -4722,7 +2228,7 @@ class StacCollectionMosaicsOperations:
         """
 
     @overload
-    async def create_or_replace(
+    async def create_or_replace_mosaic(
         self, collection_id: str, mosaic_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Mosaic:
         """Update Collection Mosaic.
@@ -4744,7 +2250,7 @@ class StacCollectionMosaicsOperations:
         """
 
     @overload
-    async def create_or_replace(
+    async def create_or_replace_mosaic(
         self,
         collection_id: str,
         mosaic_id: str,
@@ -4772,7 +2278,7 @@ class StacCollectionMosaicsOperations:
         """
 
     @distributed_trace_async
-    async def create_or_replace(
+    async def create_or_replace_mosaic(
         self, collection_id: str, mosaic_id: str, body: Union[_models.Mosaic, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.Mosaic:
         """Update Collection Mosaic.
@@ -4811,7 +2317,7 @@ class StacCollectionMosaicsOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_stac_collection_mosaics_create_or_replace_request(
+        _request = build_stac_create_or_replace_mosaic_request(
             collection_id=collection_id,
             mosaic_id=mosaic_id,
             content_type=content_type,
@@ -4852,7 +2358,7 @@ class StacCollectionMosaicsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete(self, collection_id: str, mosaic_id: str, **kwargs: Any) -> None:
+    async def delete_mosaic(self, collection_id: str, mosaic_id: str, **kwargs: Any) -> None:
         """Delete Collection Mosaic.
 
         Delete a mosaic definition from a given collection.
@@ -4878,7 +2384,7 @@ class StacCollectionMosaicsOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_stac_collection_mosaics_delete_request(
+        _request = build_stac_delete_mosaic_request(
             collection_id=collection_id,
             mosaic_id=mosaic_id,
             api_version=self._config.api_version,
@@ -4897,33 +2403,752 @@ class StacCollectionMosaicsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 204]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
+    @distributed_trace_async
+    async def get_mosaic(self, collection_id: str, mosaic_id: str, **kwargs: Any) -> _models.Mosaic:
+        """Get Collection Mosaic.
 
-class StacCollectionPartitionTypesOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
+        Get a mosaic definition from a given collection.
 
-        Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`stac_collection_partition_types` attribute.
-    """
+        :param collection_id: Unique identifier for the STAC collection. Required.
+        :type collection_id: str
+        :param mosaic_id: Unique identifier for the mosaic configuration. Required.
+        :type mosaic_id: str
+        :return: Mosaic. The Mosaic is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.Mosaic
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.Mosaic] = kwargs.pop("cls", None)
+
+        _request = build_stac_get_mosaic_request(
+            collection_id=collection_id,
+            mosaic_id=mosaic_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.Mosaic, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get(self, collection_id: str, **kwargs: Any) -> _models.PartitionType:
+    async def list_mosaics(self, collection_id: str, **kwargs: Any) -> List[_models.Mosaic]:
+        """Get Collection Mosaics.
+
+        Get the mosaic definitions for a given collection.
+
+        :param collection_id: Unique identifier for the STAC collection. Required.
+        :type collection_id: str
+        :return: list of Mosaic
+        :rtype: list[~azure.planetarycomputer.models.Mosaic]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.Mosaic]] = kwargs.pop("cls", None)
+
+        _request = build_stac_list_mosaics_request(
+            collection_id=collection_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(List[_models.Mosaic], response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    async def _create_collection_initial(
+        self, body: Union[_models.StacCollection, JSON, IO[bytes]], **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_stac_create_collection_request(
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["location"] = self._deserialize("str", response.headers.get("location"))
+        response_headers["operation-location"] = self._deserialize("str", response.headers.get("operation-location"))
+
+        deserialized = response.iter_bytes()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_create_collection(
+        self, body: _models.StacCollection, *, content_type: str = "application/json", **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Create Collection.
+
+        Create a new collection in the GeoCatalog instance.
+
+        :param body: Request collection body. Required.
+        :type body: ~azure.planetarycomputer.models.StacCollection
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_collection(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Create Collection.
+
+        Create a new collection in the GeoCatalog instance.
+
+        :param body: Request collection body. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_collection(
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Create Collection.
+
+        Create a new collection in the GeoCatalog instance.
+
+        :param body: Request collection body. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def begin_create_collection(
+        self, body: Union[_models.StacCollection, JSON, IO[bytes]], **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Create Collection.
+
+        Create a new collection in the GeoCatalog instance.
+
+        :param body: Request collection body. Is one of the following types: StacCollection, JSON,
+         IO[bytes] Required.
+        :type body: ~azure.planetarycomputer.models.StacCollection or JSON or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_collection_initial(
+                body=body, content_type=content_type, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod,
+                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    async def _create_or_replace_collection_initial(
+        self, collection_id: str, body: Union[_models.StacCollection, JSON, IO[bytes]], **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_stac_create_or_replace_collection_request(
+            collection_id=collection_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["location"] = self._deserialize("str", response.headers.get("location"))
+        response_headers["operation-location"] = self._deserialize("str", response.headers.get("operation-location"))
+
+        deserialized = response.iter_bytes()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_create_or_replace_collection(
+        self, collection_id: str, body: _models.StacCollection, *, content_type: str = "application/json", **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Create or update Collection.
+
+        Create or replace a collection in the GeoCatalog instance.
+
+        :param collection_id: Catalog collection id. Required.
+        :type collection_id: str
+        :param body: Request collection body. Required.
+        :type body: ~azure.planetarycomputer.models.StacCollection
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_replace_collection(
+        self, collection_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Create or update Collection.
+
+        Create or replace a collection in the GeoCatalog instance.
+
+        :param collection_id: Catalog collection id. Required.
+        :type collection_id: str
+        :param body: Request collection body. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_replace_collection(
+        self, collection_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Create or update Collection.
+
+        Create or replace a collection in the GeoCatalog instance.
+
+        :param collection_id: Catalog collection id. Required.
+        :type collection_id: str
+        :param body: Request collection body. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def begin_create_or_replace_collection(
+        self, collection_id: str, body: Union[_models.StacCollection, JSON, IO[bytes]], **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Create or update Collection.
+
+        Create or replace a collection in the GeoCatalog instance.
+
+        :param collection_id: Catalog collection id. Required.
+        :type collection_id: str
+        :param body: Request collection body. Is one of the following types: StacCollection, JSON,
+         IO[bytes] Required.
+        :type body: ~azure.planetarycomputer.models.StacCollection or JSON or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_or_replace_collection_initial(
+                collection_id=collection_id,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod,
+                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    async def _delete_collection_initial(self, collection_id: str, **kwargs: Any) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_stac_delete_collection_request(
+            collection_id=collection_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["location"] = self._deserialize("str", response.headers.get("location"))
+        response_headers["operation-location"] = self._deserialize("str", response.headers.get("operation-location"))
+
+        deserialized = response.iter_bytes()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def begin_delete_collection(self, collection_id: str, **kwargs: Any) -> AsyncLROPoller[None]:
+        """Delete Collection.
+
+        Delete a collection in the GeoCatalog instance.
+
+        :param collection_id: Catalog collection id. Required.
+        :type collection_id: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_collection_initial(
+                collection_id=collection_id, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod,
+                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace_async
+    async def get_collection(
+        self,
+        collection_id: str,
+        *,
+        sign: Optional[Union[str, _models.StacAssetUrlSigningMode]] = None,
+        duration_in_minutes: Optional[int] = None,
+        **kwargs: Any
+    ) -> _models.StacCollection:
+        """Get Collection.
+
+        Get a collection in the GeoCatalog instance.
+
+        :param collection_id: Unique identifier for the collection. Required.
+        :type collection_id: str
+        :keyword sign: Whether to sign asset URLs in the response. Known values are: "true" and
+         "false". Default value is None.
+        :paramtype sign: str or ~azure.planetarycomputer.models.StacAssetUrlSigningMode
+        :keyword duration_in_minutes: URL signature duration in minutes. Default value is None.
+        :paramtype duration_in_minutes: int
+        :return: StacCollection. The StacCollection is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.StacCollection
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.StacCollection] = kwargs.pop("cls", None)
+
+        _request = build_stac_get_collection_request(
+            collection_id=collection_id,
+            sign=sign,
+            duration_in_minutes=duration_in_minutes,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.StacCollection, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def list_collections(
+        self,
+        *,
+        sign: Optional[Union[str, _models.StacAssetUrlSigningMode]] = None,
+        duration_in_minutes: Optional[int] = None,
+        **kwargs: Any
+    ) -> _models.FeatureCollections:
+        """Get Collections.
+
+        Endpoint.
+
+        :keyword sign: Whether to sign asset URLs in the response. Known values are: "true" and
+         "false". Default value is None.
+        :paramtype sign: str or ~azure.planetarycomputer.models.StacAssetUrlSigningMode
+        :keyword duration_in_minutes: URL signature duration in minutes. Default value is None.
+        :paramtype duration_in_minutes: int
+        :return: FeatureCollections. The FeatureCollections is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.FeatureCollections
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.FeatureCollections] = kwargs.pop("cls", None)
+
+        _request = build_stac_list_collections_request(
+            sign=sign,
+            duration_in_minutes=duration_in_minutes,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.FeatureCollections, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def get_partition_type(self, collection_id: str, **kwargs: Any) -> _models.PartitionType:
         """Get Partitiontype.
 
         Get the partitiontype for a GeoCatalog Collection.
@@ -4953,7 +3178,7 @@ class StacCollectionPartitionTypesOperations:
 
         cls: ClsType[_models.PartitionType] = kwargs.pop("cls", None)
 
-        _request = build_stac_collection_partition_types_get_request(
+        _request = build_stac_get_partition_type_request(
             collection_id=collection_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -4991,9 +3216,9 @@ class StacCollectionPartitionTypesOperations:
         return deserialized  # type: ignore
 
     @overload
-    async def replace(
+    async def replace_partition_type(
         self, collection_id: str, body: _models.PartitionType, *, content_type: str = "application/json", **kwargs: Any
-    ) -> Optional[_models.PartitionType]:
+    ) -> _models.PartitionType:
         """Create Partitiontype.
 
         Updates partition type for a GeoCatalog Collection. This will
@@ -5019,15 +3244,15 @@ class StacCollectionPartitionTypesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: PartitionType or None. The PartitionType is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.PartitionType or None
+        :return: PartitionType. The PartitionType is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.PartitionType
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def replace(
+    async def replace_partition_type(
         self, collection_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> Optional[_models.PartitionType]:
+    ) -> _models.PartitionType:
         """Create Partitiontype.
 
         Updates partition type for a GeoCatalog Collection. This will
@@ -5053,15 +3278,15 @@ class StacCollectionPartitionTypesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: PartitionType or None. The PartitionType is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.PartitionType or None
+        :return: PartitionType. The PartitionType is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.PartitionType
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def replace(
+    async def replace_partition_type(
         self, collection_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> Optional[_models.PartitionType]:
+    ) -> _models.PartitionType:
         """Create Partitiontype.
 
         Updates partition type for a GeoCatalog Collection. This will
@@ -5087,15 +3312,15 @@ class StacCollectionPartitionTypesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: PartitionType or None. The PartitionType is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.PartitionType or None
+        :return: PartitionType. The PartitionType is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.PartitionType
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
-    async def replace(
+    async def replace_partition_type(
         self, collection_id: str, body: Union[_models.PartitionType, JSON, IO[bytes]], **kwargs: Any
-    ) -> Optional[_models.PartitionType]:
+    ) -> _models.PartitionType:
         """Create Partitiontype.
 
         Updates partition type for a GeoCatalog Collection. This will
@@ -5118,8 +3343,8 @@ class StacCollectionPartitionTypesOperations:
         :param body: Partition type configuration determining how items are partitioned in storage. Is
          one of the following types: PartitionType, JSON, IO[bytes] Required.
         :type body: ~azure.planetarycomputer.models.PartitionType or JSON or IO[bytes]
-        :return: PartitionType or None. The PartitionType is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.PartitionType or None
+        :return: PartitionType. The PartitionType is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.PartitionType
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -5134,7 +3359,7 @@ class StacCollectionPartitionTypesOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Optional[_models.PartitionType]] = kwargs.pop("cls", None)
+        cls: ClsType[_models.PartitionType] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -5143,7 +3368,7 @@ class StacCollectionPartitionTypesOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_stac_collection_partition_types_replace_request(
+        _request = build_stac_replace_partition_type_request(
             collection_id=collection_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -5163,7 +3388,7 @@ class StacCollectionPartitionTypesOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 204]:
+        if response.status_code not in [200]:
             if _stream:
                 try:
                     await response.read()  # Load the body in memory and close the socket
@@ -5172,94 +3397,10 @@ class StacCollectionPartitionTypesOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = None
-        if response.status_code == 200:
-            if _stream:
-                deserialized = response.iter_bytes()
-            else:
-                deserialized = _deserialize(_models.PartitionType, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-
-class StacCollectionRenderOptionsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`stac_collection_render_options` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace_async
-    async def get_all(self, collection_id: str, **kwargs: Any) -> Optional[List[_models.RenderOption]]:
-        """Get Collection Render Options.
-
-        Get all render options for a given collection.
-
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
-        :return: list of RenderOption or None
-        :rtype: list[~azure.planetarycomputer.models.RenderOption] or None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[Optional[List[_models.RenderOption]]] = kwargs.pop("cls", None)
-
-        _request = build_stac_collection_render_options_get_all_request(
-            collection_id=collection_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 204]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        deserialized = None
-        if response.status_code == 200:
-            if _stream:
-                deserialized = response.iter_bytes()
-            else:
-                deserialized = _deserialize(List[_models.RenderOption], response.json())
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.PartitionType, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -5267,7 +3408,7 @@ class StacCollectionRenderOptionsOperations:
         return deserialized  # type: ignore
 
     @overload
-    async def create(
+    async def create_render_option(
         self, collection_id: str, body: _models.RenderOption, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.RenderOption:
         """Add Collection Render Option.
@@ -5287,7 +3428,7 @@ class StacCollectionRenderOptionsOperations:
         """
 
     @overload
-    async def create(
+    async def create_render_option(
         self, collection_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.RenderOption:
         """Add Collection Render Option.
@@ -5307,7 +3448,7 @@ class StacCollectionRenderOptionsOperations:
         """
 
     @overload
-    async def create(
+    async def create_render_option(
         self, collection_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.RenderOption:
         """Add Collection Render Option.
@@ -5327,7 +3468,7 @@ class StacCollectionRenderOptionsOperations:
         """
 
     @distributed_trace_async
-    async def create(
+    async def create_render_option(
         self, collection_id: str, body: Union[_models.RenderOption, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.RenderOption:
         """Add Collection Render Option.
@@ -5364,7 +3505,7 @@ class StacCollectionRenderOptionsOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_stac_collection_render_options_create_request(
+        _request = build_stac_create_render_option_request(
             collection_id=collection_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -5403,73 +3544,8 @@ class StacCollectionRenderOptionsOperations:
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def get(self, collection_id: str, render_option_id: str, **kwargs: Any) -> List[_models.RenderOption]:
-        """Get Collection Render Option.
-
-        Get a render option for a given collection.
-
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
-        :param render_option_id: Unique identifier for the render option. Required.
-        :type render_option_id: str
-        :return: list of RenderOption
-        :rtype: list[~azure.planetarycomputer.models.RenderOption]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.RenderOption]] = kwargs.pop("cls", None)
-
-        _request = build_stac_collection_render_options_get_request(
-            collection_id=collection_id,
-            render_option_id=render_option_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(List[_models.RenderOption], response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
     @overload
-    async def create_or_replace(
+    async def create_or_replace_render_option(
         self,
         collection_id: str,
         render_option_id: str,
@@ -5497,7 +3573,7 @@ class StacCollectionRenderOptionsOperations:
         """
 
     @overload
-    async def create_or_replace(
+    async def create_or_replace_render_option(
         self,
         collection_id: str,
         render_option_id: str,
@@ -5525,7 +3601,7 @@ class StacCollectionRenderOptionsOperations:
         """
 
     @overload
-    async def create_or_replace(
+    async def create_or_replace_render_option(
         self,
         collection_id: str,
         render_option_id: str,
@@ -5553,7 +3629,7 @@ class StacCollectionRenderOptionsOperations:
         """
 
     @distributed_trace_async
-    async def create_or_replace(
+    async def create_or_replace_render_option(
         self,
         collection_id: str,
         render_option_id: str,
@@ -5596,7 +3672,7 @@ class StacCollectionRenderOptionsOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_stac_collection_render_options_create_or_replace_request(
+        _request = build_stac_create_or_replace_render_option_request(
             collection_id=collection_id,
             render_option_id=render_option_id,
             content_type=content_type,
@@ -5637,7 +3713,7 @@ class StacCollectionRenderOptionsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete(self, collection_id: str, render_option_id: str, **kwargs: Any) -> None:
+    async def delete_render_option(self, collection_id: str, render_option_id: str, **kwargs: Any) -> None:
         """Delete Collection Render Option.
 
         Delete a render option for a given collection.
@@ -5663,7 +3739,7 @@ class StacCollectionRenderOptionsOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_stac_collection_render_options_delete_request(
+        _request = build_stac_delete_render_option_request(
             collection_id=collection_id,
             render_option_id=render_option_id,
             api_version=self._config.api_version,
@@ -5682,33 +3758,219 @@ class StacCollectionRenderOptionsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 204]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
+    @distributed_trace_async
+    async def get_render_option(
+        self, collection_id: str, render_option_id: str, **kwargs: Any
+    ) -> List[_models.RenderOption]:
+        """Get Collection Render Option.
 
-class StacCollectionTileSettingsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
+        Get a render option for a given collection.
 
-        Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`stac_collection_tile_settings` attribute.
-    """
+        :param collection_id: Unique identifier for the STAC collection. Required.
+        :type collection_id: str
+        :param render_option_id: Unique identifier for the render option. Required.
+        :type render_option_id: str
+        :return: list of RenderOption
+        :rtype: list[~azure.planetarycomputer.models.RenderOption]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.RenderOption]] = kwargs.pop("cls", None)
+
+        _request = build_stac_get_render_option_request(
+            collection_id=collection_id,
+            render_option_id=render_option_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(List[_models.RenderOption], response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get(self, collection_id: str, **kwargs: Any) -> _models.TileSettings:
+    async def list_render_options(self, collection_id: str, **kwargs: Any) -> List[_models.RenderOption]:
+        """Get Collection Render Options.
+
+        Get all render options for a given collection.
+
+        :param collection_id: Unique identifier for the STAC collection. Required.
+        :type collection_id: str
+        :return: list of RenderOption
+        :rtype: list[~azure.planetarycomputer.models.RenderOption]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.RenderOption]] = kwargs.pop("cls", None)
+
+        _request = build_stac_list_render_options_request(
+            collection_id=collection_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(List[_models.RenderOption], response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def get_collection_thumbnail(self, collection_id: str, **kwargs: Any) -> AsyncIterator[bytes]:
+        """Get Collection Thumbnail.
+
+        Get thumbnail for given collection.
+
+        Args:
+        request: The incoming request.
+        collection_id: The ID of the collection to retrieve assets for.
+
+        Returns:
+        thumbnail image.
+
+        :param collection_id: STAC Collection ID. Required.
+        :type collection_id: str
+        :return: AsyncIterator[bytes]
+        :rtype: AsyncIterator[bytes]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_stac_get_collection_thumbnail_request(
+            collection_id=collection_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", True)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+
+        deserialized = response.iter_bytes()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def get_tile_settings(self, collection_id: str, **kwargs: Any) -> _models.TileSettings:
         """Get Collection Tile Settings.
 
         Get the tile settings for a given collection.
@@ -5732,7 +3994,7 @@ class StacCollectionTileSettingsOperations:
 
         cls: ClsType[_models.TileSettings] = kwargs.pop("cls", None)
 
-        _request = build_stac_collection_tile_settings_get_request(
+        _request = build_stac_get_tile_settings_request(
             collection_id=collection_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -5770,7 +4032,7 @@ class StacCollectionTileSettingsOperations:
         return deserialized  # type: ignore
 
     @overload
-    async def replace(
+    async def replace_tile_settings(
         self, collection_id: str, body: _models.TileSettings, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.TileSettings:
         """Update Collection Tile Settings.
@@ -5790,7 +4052,7 @@ class StacCollectionTileSettingsOperations:
         """
 
     @overload
-    async def replace(
+    async def replace_tile_settings(
         self, collection_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.TileSettings:
         """Update Collection Tile Settings.
@@ -5810,7 +4072,7 @@ class StacCollectionTileSettingsOperations:
         """
 
     @overload
-    async def replace(
+    async def replace_tile_settings(
         self, collection_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.TileSettings:
         """Update Collection Tile Settings.
@@ -5830,7 +4092,7 @@ class StacCollectionTileSettingsOperations:
         """
 
     @distributed_trace_async
-    async def replace(
+    async def replace_tile_settings(
         self, collection_id: str, body: Union[_models.TileSettings, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.TileSettings:
         """Update Collection Tile Settings.
@@ -5867,7 +4129,7 @@ class StacCollectionTileSettingsOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_stac_collection_tile_settings_replace_request(
+        _request = build_stac_replace_tile_settings_request(
             collection_id=collection_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -5906,41 +4168,14 @@ class StacCollectionTileSettingsOperations:
 
         return deserialized  # type: ignore
 
-
-class StacCollectionThumbnailsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`stac_collection_thumbnails` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
     @distributed_trace_async
-    async def get(self, collection_id: str, **kwargs: Any) -> Optional[AsyncIterator[bytes]]:
-        """Get Collection Thumbnail.
+    async def get_conformance_class(self, **kwargs: Any) -> _models.ConformanceClasses:
+        """Conformance Classes.
 
-        Get thumbnail for given collection.
+        Endpoint.
 
-        Args:
-        request: The incoming request.
-        collection_id: The ID of the collection to retrieve assets for.
-
-        Returns:
-        thumbnail image.
-
-        :param collection_id: STAC Collection ID. Required.
-        :type collection_id: str
-        :return: AsyncIterator[bytes] or None
-        :rtype: AsyncIterator[bytes] or None
+        :return: ConformanceClasses. The ConformanceClasses is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.ConformanceClasses
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -5954,10 +4189,9 @@ class StacCollectionThumbnailsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[Optional[AsyncIterator[bytes]]] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ConformanceClasses] = kwargs.pop("cls", None)
 
-        _request = build_stac_collection_thumbnails_get_request(
-            collection_id=collection_id,
+        _request = build_stac_get_conformance_class_request(
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -5967,14 +4201,14 @@ class StacCollectionThumbnailsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = kwargs.pop("stream", True)
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 204]:
+        if response.status_code not in [200]:
             if _stream:
                 try:
                     await response.read()  # Load the body in memory and close the socket
@@ -5983,353 +4217,1079 @@ class StacCollectionThumbnailsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = None
-        response_headers = {}
-        if response.status_code == 200:
-            response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-            response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-            response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-            response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-            response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-            response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-            response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-
+        if _stream:
             deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.ConformanceClasses, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    async def _create_item_initial(
+        self, collection_id: str, body: Union[_models.StacItemOrItemCollection, JSON, IO[bytes]], **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_stac_create_item_request(
+            collection_id=collection_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["location"] = self._deserialize("str", response.headers.get("location"))
+        response_headers["operation-location"] = self._deserialize("str", response.headers.get("operation-location"))
+
+        deserialized = response.iter_bytes()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
-
-class GeoCatalogAuthConfigOperationsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`geo_catalog_auth_config_operations` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace_async
-    async def get(self, **kwargs: Any) -> _models.AuthConfig:
-        """Get Auth Config.
-
-        Get the app id and tenant id information to make a MSAL request for this
-        GeoCatalog instance.
-
-        :return: AuthConfig. The AuthConfig is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.AuthConfig
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.AuthConfig] = kwargs.pop("cls", None)
-
-        _request = build_geo_catalog_auth_config_operations_get_request(
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.AuthConfig, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-
-class GeoCatalogAzmapsClientOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`geo_catalog_azmaps_client` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace_async
-    async def get_id(self, **kwargs: Any) -> _models.AzMapsClientId:
-        """Get Azmaps Client Id.
-
-        Fetch the client id for the Azure Maps API service based on the current
-        on the current identity. This client id is used for the Explorer to
-        authenticate with the Azure Maps API service.
-
-        :return: AzMapsClientId. The AzMapsClientId is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.AzMapsClientId
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.AzMapsClientId] = kwargs.pop("cls", None)
-
-        _request = build_geo_catalog_azmaps_client_get_id_request(
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.AzMapsClientId, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-
-class GeoCatalogAzmapsTokenOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`geo_catalog_azmaps_token` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace_async
-    async def get(self, **kwargs: Any) -> _models.AzMapsToken:
-        """Get Azmaps Token.
-
-        Fetch a token for the Azure Maps API service based on the current
-        service identity. This token is used for the Explorer to authenticate
-        with the Azure Maps API service.
-
-        :return: AzMapsToken. The AzMapsToken is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.AzMapsToken
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.AzMapsToken] = kwargs.pop("cls", None)
-
-        _request = build_geo_catalog_azmaps_token_get_request(
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.AzMapsToken, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-
-class TilerStaticImagesOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`tiler_static_images` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
     @overload
-    async def create(
-        self, collection_id: str, body: _models.ImageRequest, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.ImageResponse:
-        """Create Static Image.
+    async def begin_create_item(
+        self,
+        collection_id: str,
+        body: _models.StacItemOrItemCollection,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Create a new STAC item or a set of items in a collection.
 
-        Create a new image export.
-
-        :param collection_id: STAC Collection ID. Required.
+        :param collection_id: Catalog collection id. Required.
         :type collection_id: str
-        :param body: Image request body. Required.
-        :type body: ~azure.planetarycomputer.models.ImageRequest
+        :param body: STAC Item or ItemCollection
+
+         Represents a STAC Item or ItemCollection as defined by the STAC 1.0.0 standard.
+
+         **Item**: A GeoJSON Feature that represents a single spatiotemporal asset.
+         It includes metadata such as geometry, datetime, and links to related assets.
+         Example: A satellite image with its metadata.
+
+         **ItemCollection**: A GeoJSON FeatureCollection that contains multiple Items.
+         It is used to group multiple related Items together, such as a collection of satellite images.
+
+         This union allows the request body to accept either a single Item or a collection of Items.
+         Required.
+        :type body: ~azure.planetarycomputer.models.StacItemOrItemCollection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: ImageResponse. The ImageResponse is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.ImageResponse
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def create(
+    async def begin_create_item(
         self, collection_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.ImageResponse:
-        """Create Static Image.
+    ) -> AsyncLROPoller[None]:
+        """Create a new STAC item or a set of items in a collection.
 
-        Create a new image export.
-
-        :param collection_id: STAC Collection ID. Required.
+        :param collection_id: Catalog collection id. Required.
         :type collection_id: str
-        :param body: Image request body. Required.
+        :param body: STAC Item or ItemCollection
+
+         Represents a STAC Item or ItemCollection as defined by the STAC 1.0.0 standard.
+
+         **Item**: A GeoJSON Feature that represents a single spatiotemporal asset.
+         It includes metadata such as geometry, datetime, and links to related assets.
+         Example: A satellite image with its metadata.
+
+         **ItemCollection**: A GeoJSON FeatureCollection that contains multiple Items.
+         It is used to group multiple related Items together, such as a collection of satellite images.
+
+         This union allows the request body to accept either a single Item or a collection of Items.
+         Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: ImageResponse. The ImageResponse is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.ImageResponse
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def create(
+    async def begin_create_item(
         self, collection_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.ImageResponse:
-        """Create Static Image.
+    ) -> AsyncLROPoller[None]:
+        """Create a new STAC item or a set of items in a collection.
 
-        Create a new image export.
-
-        :param collection_id: STAC Collection ID. Required.
+        :param collection_id: Catalog collection id. Required.
         :type collection_id: str
-        :param body: Image request body. Required.
+        :param body: STAC Item or ItemCollection
+
+         Represents a STAC Item or ItemCollection as defined by the STAC 1.0.0 standard.
+
+         **Item**: A GeoJSON Feature that represents a single spatiotemporal asset.
+         It includes metadata such as geometry, datetime, and links to related assets.
+         Example: A satellite image with its metadata.
+
+         **ItemCollection**: A GeoJSON FeatureCollection that contains multiple Items.
+         It is used to group multiple related Items together, such as a collection of satellite images.
+
+         This union allows the request body to accept either a single Item or a collection of Items.
+         Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: ImageResponse. The ImageResponse is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.ImageResponse
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
-    async def create(
-        self, collection_id: str, body: Union[_models.ImageRequest, JSON, IO[bytes]], **kwargs: Any
-    ) -> _models.ImageResponse:
-        """Create Static Image.
+    async def begin_create_item(
+        self, collection_id: str, body: Union[_models.StacItemOrItemCollection, JSON, IO[bytes]], **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Create a new STAC item or a set of items in a collection.
 
-        Create a new image export.
-
-        :param collection_id: STAC Collection ID. Required.
+        :param collection_id: Catalog collection id. Required.
         :type collection_id: str
-        :param body: Image request body. Is one of the following types: ImageRequest, JSON, IO[bytes]
-         Required.
-        :type body: ~azure.planetarycomputer.models.ImageRequest or JSON or IO[bytes]
-        :return: ImageResponse. The ImageResponse is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.ImageResponse
+        :param body: STAC Item or ItemCollection
+
+         Represents a STAC Item or ItemCollection as defined by the STAC 1.0.0 standard.
+
+         **Item**: A GeoJSON Feature that represents a single spatiotemporal asset.
+         It includes metadata such as geometry, datetime, and links to related assets.
+         Example: A satellite image with its metadata.
+
+         **ItemCollection**: A GeoJSON FeatureCollection that contains multiple Items.
+         It is used to group multiple related Items together, such as a collection of satellite images.
+
+         This union allows the request body to accept either a single Item or a collection of Items. Is
+         one of the following types: StacItemOrItemCollection, JSON, IO[bytes] Required.
+        :type body: ~azure.planetarycomputer.models.StacItemOrItemCollection or JSON or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_item_initial(
+                collection_id=collection_id,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod,
+                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    async def _create_or_replace_item_initial(
+        self, collection_id: str, item_id: str, body: Union[_models.StacItem, JSON, IO[bytes]], **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_stac_create_or_replace_item_request(
+            collection_id=collection_id,
+            item_id=item_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["location"] = self._deserialize("str", response.headers.get("location"))
+        response_headers["operation-location"] = self._deserialize("str", response.headers.get("operation-location"))
+
+        deserialized = response.iter_bytes()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_create_or_replace_item(
+        self,
+        collection_id: str,
+        item_id: str,
+        body: _models.StacItem,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Create or replace a STAC item in a collection.
+
+        :param collection_id: Catalog collection id. Required.
+        :type collection_id: str
+        :param item_id: STAC Item id. Required.
+        :type item_id: str
+        :param body: STAC Item. Required.
+        :type body: ~azure.planetarycomputer.models.StacItem
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_replace_item(
+        self, collection_id: str, item_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Create or replace a STAC item in a collection.
+
+        :param collection_id: Catalog collection id. Required.
+        :type collection_id: str
+        :param item_id: STAC Item id. Required.
+        :type item_id: str
+        :param body: STAC Item. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_replace_item(
+        self,
+        collection_id: str,
+        item_id: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Create or replace a STAC item in a collection.
+
+        :param collection_id: Catalog collection id. Required.
+        :type collection_id: str
+        :param item_id: STAC Item id. Required.
+        :type item_id: str
+        :param body: STAC Item. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def begin_create_or_replace_item(
+        self, collection_id: str, item_id: str, body: Union[_models.StacItem, JSON, IO[bytes]], **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Create or replace a STAC item in a collection.
+
+        :param collection_id: Catalog collection id. Required.
+        :type collection_id: str
+        :param item_id: STAC Item id. Required.
+        :type item_id: str
+        :param body: STAC Item. Is one of the following types: StacItem, JSON, IO[bytes] Required.
+        :type body: ~azure.planetarycomputer.models.StacItem or JSON or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_or_replace_item_initial(
+                collection_id=collection_id,
+                item_id=item_id,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod,
+                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    async def _delete_item_initial(self, collection_id: str, item_id: str, **kwargs: Any) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_stac_delete_item_request(
+            collection_id=collection_id,
+            item_id=item_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["location"] = self._deserialize("str", response.headers.get("location"))
+        response_headers["operation-location"] = self._deserialize("str", response.headers.get("operation-location"))
+
+        deserialized = response.iter_bytes()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def begin_delete_item(self, collection_id: str, item_id: str, **kwargs: Any) -> AsyncLROPoller[None]:
+        """Delete a STAC item from a collection.
+
+        :param collection_id: Catalog collection id. Required.
+        :type collection_id: str
+        :param item_id: STAC Item id. Required.
+        :type item_id: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_item_initial(
+                collection_id=collection_id,
+                item_id=item_id,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod,
+                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace_async
+    async def get_item(self, collection_id: str, item_id: str, **kwargs: Any) -> _models.StacItem:
+        """Fetch a single STAC Item.
+
+        :param collection_id: Catalog collection id. Required.
+        :type collection_id: str
+        :param item_id: STAC Item id. Required.
+        :type item_id: str
+        :return: StacItem. The StacItem is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.StacItem
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.StacItem] = kwargs.pop("cls", None)
+
+        _request = build_stac_get_item_request(
+            collection_id=collection_id,
+            item_id=item_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.StacItem, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def get_items_as_features(
+        self,
+        collection_id: str,
+        *,
+        limit: Optional[int] = None,
+        bounding_box: Optional[List[str]] = None,
+        datetime: Optional[str] = None,
+        **kwargs: Any
+    ) -> _models.ItemCollection:
+        """Fetch features of the feature collection with id ``collectionId``.
+
+        Every feature in a dataset belongs to a collection. A dataset may
+        consist of multiple feature collections. A feature collection is often a
+        collection of features of a similar type, based on a common schema.").
+
+        :param collection_id: Catalog collection id. Required.
+        :type collection_id: str
+        :keyword limit: The optional limit parameter recommends the number of items that should be
+         present in the response document.
+
+         If the limit parameter value is greater than advertised limit maximum, the server must return
+         the
+         maximum possible number of items, rather than responding with an error.
+
+         Only items are counted that are on the first level of the collection in the response document.
+         Nested objects contained within the explicitly requested items must not be counted.
+
+         Minimum = 1. Maximum = 10000. Default = 10. Default value is None.
+        :paramtype limit: int
+        :keyword bounding_box: Only features that have a geometry that intersects the bounding box are
+         selected.
+         The bounding box is provided as four or six numbers, depending on whether the
+         coordinate reference system includes a vertical axis (height or depth):
+
+
+
+         * Lower left corner, coordinate axis 1
+         * Lower left corner, coordinate axis 2
+         * Minimum value, coordinate axis 3 (optional)
+         * Upper right corner, coordinate axis 1
+         * Upper right corner, coordinate axis 2
+         * Maximum value, coordinate axis 3 (optional)
+
+         The coordinate reference system of the values is WGS 84 longitude/latitude
+         (`http://www.opengis.net/def/crs/OGC/1.3/CRS84
+         <http://www.opengis.net/def/crs/OGC/1.3/CRS84>`_).
+
+         For WGS 84 longitude/latitude the values are in most cases the sequence of
+         minimum longitude, minimum latitude, maximum longitude and maximum latitude.
+         However, in cases where the box spans the antimeridian the first value
+         (west-most box edge) is larger than the third value (east-most box edge).
+
+         If the vertical axis is included, the third and the sixth number are
+         the bottom and the top of the 3-dimensional bounding box.
+
+         If a feature has multiple spatial geometry properties, it is the decision of the
+         server whether only a single spatial geometry property is used to determine
+         the extent or all relevant geometries. Default value is None.
+        :paramtype bounding_box: list[str]
+        :keyword datetime: Either a date-time or an interval, open or closed. Date and time expressions
+         adhere to RFC 3339. Open intervals are expressed using double-dots.
+
+         Examples:
+
+
+
+         * A date-time: "2018-02-12T23:20:50Z"
+         * A closed interval: "2018-02-12T00:00:00Z/2018-03-18T12:31:12Z"
+         * Open intervals: "2018-02-12T00:00:00Z/.." or "../2018-03-18T12:31:12Z"
+
+         Only features that have a temporal property that intersects the value of
+         ``datetime`` are selected.
+
+         If a feature has multiple temporal properties, it is the decision of the
+         server whether only a single temporal property is used to determine
+         the extent or all relevant temporal properties. Default value is None.
+        :paramtype datetime: str
+        :return: ItemCollection. The ItemCollection is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.ItemCollection
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ItemCollection] = kwargs.pop("cls", None)
+
+        _request = build_stac_get_items_as_features_request(
+            collection_id=collection_id,
+            limit=limit,
+            bounding_box=bounding_box,
+            datetime=datetime,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.ItemCollection, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    async def _update_item_initial(
+        self, collection_id: str, item_id: str, body: Union[_models.StacItem, JSON, IO[bytes]], **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/merge-patch+json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_stac_update_item_request(
+            collection_id=collection_id,
+            item_id=item_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["location"] = self._deserialize("str", response.headers.get("location"))
+        response_headers["operation-location"] = self._deserialize("str", response.headers.get("operation-location"))
+
+        deserialized = response.iter_bytes()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_update_item(
+        self,
+        collection_id: str,
+        item_id: str,
+        body: _models.StacItem,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Update a STAC item in a collection.
+
+        :param collection_id: Catalog collection id. Required.
+        :type collection_id: str
+        :param item_id: STAC Item id. Required.
+        :type item_id: str
+        :param body: STAC Item. Required.
+        :type body: ~azure.planetarycomputer.models.StacItem
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_update_item(
+        self,
+        collection_id: str,
+        item_id: str,
+        body: JSON,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Update a STAC item in a collection.
+
+        :param collection_id: Catalog collection id. Required.
+        :type collection_id: str
+        :param item_id: STAC Item id. Required.
+        :type item_id: str
+        :param body: STAC Item. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_update_item(
+        self,
+        collection_id: str,
+        item_id: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Update a STAC item in a collection.
+
+        :param collection_id: Catalog collection id. Required.
+        :type collection_id: str
+        :param item_id: STAC Item id. Required.
+        :type item_id: str
+        :param body: STAC Item. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def begin_update_item(
+        self, collection_id: str, item_id: str, body: Union[_models.StacItem, JSON, IO[bytes]], **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Update a STAC item in a collection.
+
+        :param collection_id: Catalog collection id. Required.
+        :type collection_id: str
+        :param item_id: STAC Item id. Required.
+        :type item_id: str
+        :param body: STAC Item. Is one of the following types: StacItem, JSON, IO[bytes] Required.
+        :type body: ~azure.planetarycomputer.models.StacItem or JSON or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._update_item_initial(
+                collection_id=collection_id,
+                item_id=item_id,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod,
+                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace_async
+    async def get_stac_landing_page(self, **kwargs: Any) -> _models.LandingPage:
+        """Landing Page.
+
+        Endpoint.
+
+        :return: LandingPage. The LandingPage is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.LandingPage
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.LandingPage] = kwargs.pop("cls", None)
+
+        _request = build_stac_get_stac_landing_page_request(
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.LandingPage, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def create_queryables(
+        self,
+        collection_id: str,
+        body: List[_models.StacQueryable],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> List[_models.StacQueryable]:
+        """Set Collection Queryables.
+
+        Set queryables for a collection given a list of queryable definitions.
+
+        :param collection_id: Unique identifier for the STAC collection. Required.
+        :type collection_id: str
+        :param body: Request queryable definition body. Required.
+        :type body: list[~azure.planetarycomputer.models.StacQueryable]
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: list of StacQueryable
+        :rtype: list[~azure.planetarycomputer.models.StacQueryable]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_queryables(
+        self, collection_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> List[_models.StacQueryable]:
+        """Set Collection Queryables.
+
+        Set queryables for a collection given a list of queryable definitions.
+
+        :param collection_id: Unique identifier for the STAC collection. Required.
+        :type collection_id: str
+        :param body: Request queryable definition body. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: list of StacQueryable
+        :rtype: list[~azure.planetarycomputer.models.StacQueryable]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def create_queryables(
+        self, collection_id: str, body: Union[List[_models.StacQueryable], IO[bytes]], **kwargs: Any
+    ) -> List[_models.StacQueryable]:
+        """Set Collection Queryables.
+
+        Set queryables for a collection given a list of queryable definitions.
+
+        :param collection_id: Unique identifier for the STAC collection. Required.
+        :type collection_id: str
+        :param body: Request queryable definition body. Is either a [StacQueryable] type or a IO[bytes]
+         type. Required.
+        :type body: list[~azure.planetarycomputer.models.StacQueryable] or IO[bytes]
+        :return: list of StacQueryable
+        :rtype: list[~azure.planetarycomputer.models.StacQueryable]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -6344,7 +5304,7 @@ class TilerStaticImagesOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.ImageResponse] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.StacQueryable]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -6353,8 +5313,482 @@ class TilerStaticImagesOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_tiler_static_images_create_request(
+        _request = build_stac_create_queryables_request(
             collection_id=collection_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(List[_models.StacQueryable], response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def create_or_replace_queryable(
+        self,
+        collection_id: str,
+        queryable_name: str,
+        body: _models.StacQueryable,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.StacQueryable:
+        """Update Collection Queryables.
+
+        Updates a queryable given a queryable definition and
+        corresponding collection id.
+
+        :param collection_id: Unique identifier for the STAC collection. Required.
+        :type collection_id: str
+        :param queryable_name: Name of the queryable property to operate on. Required.
+        :type queryable_name: str
+        :param body: Request queryable definition body. Required.
+        :type body: ~azure.planetarycomputer.models.StacQueryable
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: StacQueryable. The StacQueryable is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.StacQueryable
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_replace_queryable(
+        self,
+        collection_id: str,
+        queryable_name: str,
+        body: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.StacQueryable:
+        """Update Collection Queryables.
+
+        Updates a queryable given a queryable definition and
+        corresponding collection id.
+
+        :param collection_id: Unique identifier for the STAC collection. Required.
+        :type collection_id: str
+        :param queryable_name: Name of the queryable property to operate on. Required.
+        :type queryable_name: str
+        :param body: Request queryable definition body. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: StacQueryable. The StacQueryable is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.StacQueryable
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_replace_queryable(
+        self,
+        collection_id: str,
+        queryable_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.StacQueryable:
+        """Update Collection Queryables.
+
+        Updates a queryable given a queryable definition and
+        corresponding collection id.
+
+        :param collection_id: Unique identifier for the STAC collection. Required.
+        :type collection_id: str
+        :param queryable_name: Name of the queryable property to operate on. Required.
+        :type queryable_name: str
+        :param body: Request queryable definition body. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: StacQueryable. The StacQueryable is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.StacQueryable
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def create_or_replace_queryable(
+        self,
+        collection_id: str,
+        queryable_name: str,
+        body: Union[_models.StacQueryable, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.StacQueryable:
+        """Update Collection Queryables.
+
+        Updates a queryable given a queryable definition and
+        corresponding collection id.
+
+        :param collection_id: Unique identifier for the STAC collection. Required.
+        :type collection_id: str
+        :param queryable_name: Name of the queryable property to operate on. Required.
+        :type queryable_name: str
+        :param body: Request queryable definition body. Is one of the following types: StacQueryable,
+         JSON, IO[bytes] Required.
+        :type body: ~azure.planetarycomputer.models.StacQueryable or JSON or IO[bytes]
+        :return: StacQueryable. The StacQueryable is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.StacQueryable
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.StacQueryable] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_stac_create_or_replace_queryable_request(
+            collection_id=collection_id,
+            queryable_name=queryable_name,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.StacQueryable, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def delete_queryable(self, collection_id: str, queryable_name: str, **kwargs: Any) -> None:
+        """Delete Queryables.
+
+        Delete queryables by name for specified collection.
+
+        :param collection_id: Unique identifier for the STAC collection. Required.
+        :type collection_id: str
+        :param queryable_name: Name of the queryable property to operate on. Required.
+        :type queryable_name: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_stac_delete_queryable_request(
+            collection_id=collection_id,
+            queryable_name=queryable_name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace_async
+    async def list_queryables(self, **kwargs: Any) -> Dict[str, Any]:
+        """Queryables.
+
+        Endpoint.
+
+        :return: dict mapping str to any
+        :rtype: dict[str, any]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Dict[str, Any]] = kwargs.pop("cls", None)
+
+        _request = build_stac_list_queryables_request(
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(Dict[str, Any], response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def list_queryables_by_collection(self, collection_id: str, **kwargs: Any) -> Dict[str, Any]:
+        """Collection Queryables.
+
+        Endpoint.
+
+        :param collection_id: Collection ID. Required.
+        :type collection_id: str
+        :return: dict mapping str to any
+        :rtype: dict[str, any]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Dict[str, Any]] = kwargs.pop("cls", None)
+
+        _request = build_stac_list_queryables_by_collection_request(
+            collection_id=collection_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(Dict[str, Any], response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def create_search_operations(
+        self, body: _models.SearchOptions, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.ItemCollection:
+        """Search.
+
+        Endpoint.
+
+        :param body: Request body. Required.
+        :type body: ~azure.planetarycomputer.models.SearchOptions
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ItemCollection. The ItemCollection is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.ItemCollection
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_search_operations(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.ItemCollection:
+        """Search.
+
+        Endpoint.
+
+        :param body: Request body. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ItemCollection. The ItemCollection is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.ItemCollection
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_search_operations(
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.ItemCollection:
+        """Search.
+
+        Endpoint.
+
+        :param body: Request body. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ItemCollection. The ItemCollection is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.ItemCollection
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def create_search_operations(
+        self, body: Union[_models.SearchOptions, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.ItemCollection:
+        """Search.
+
+        Endpoint.
+
+        :param body: Request body. Is one of the following types: SearchOptions, JSON, IO[bytes]
+         Required.
+        :type body: ~azure.planetarycomputer.models.SearchOptions or JSON or IO[bytes]
+        :return: ItemCollection. The ItemCollection is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.ItemCollection
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ItemCollection] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_stac_create_search_operations_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -6385,7 +5819,7 @@ class TilerStaticImagesOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.ImageResponse, response.json())
+            deserialized = _deserialize(_models.ItemCollection, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -6393,17 +5827,62 @@ class TilerStaticImagesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get(self, collection_id: str, id: str, **kwargs: Any) -> Optional[AsyncIterator[bytes]]:
-        """Get Static Image.
+    async def get_search_operations(
+        self,
+        *,
+        collections: Optional[List[str]] = None,
+        ids: Optional[List[str]] = None,
+        bounding_box: Optional[List[float]] = None,
+        intersects: Optional[str] = None,
+        datetime: Optional[str] = None,
+        limit: Optional[int] = None,
+        sign: Optional[Union[str, _models.StacAssetUrlSigningMode]] = None,
+        duration_in_minutes: Optional[int] = None,
+        query: Optional[str] = None,
+        sort_by: Optional[str] = None,
+        fields: Optional[str] = None,
+        filter: Optional[str] = None,
+        token: Optional[str] = None,
+        **kwargs: Any
+    ) -> _models.ItemCollection:
+        """Search.
 
-        Fetch an existing image export by ID.
+        Endpoint.
 
-        :param collection_id: STAC Collection ID. Required.
-        :type collection_id: str
-        :param id: Image export ID. Required.
-        :type id: str
-        :return: AsyncIterator[bytes] or None
-        :rtype: AsyncIterator[bytes] or None
+        :keyword collections: List of Collection IDs to include in the search. Only items in these
+         collections will be searched. Default value is None.
+        :paramtype collections: list[str]
+        :keyword ids: Array of Item IDs to return specific items. Default value is None.
+        :paramtype ids: list[str]
+        :keyword bounding_box: Bounding box for spatial filtering in format [west, south, east, north].
+         Default value is None.
+        :paramtype bounding_box: list[float]
+        :keyword intersects: GeoJSON geometry for spatial filtering. Default value is None.
+        :paramtype intersects: str
+        :keyword datetime: Temporal filter in RFC 3339 format, can be a single time or range. Default
+         value is None.
+        :paramtype datetime: str
+        :keyword limit: Maximum number of results to return. Default value is None.
+        :paramtype limit: int
+        :keyword sign: Whether to sign asset URLs in the response. Known values are: "true" and
+         "false". Default value is None.
+        :paramtype sign: str or ~azure.planetarycomputer.models.StacAssetUrlSigningMode
+        :keyword duration_in_minutes: URL signature duration in minutes. Default value is None.
+        :paramtype duration_in_minutes: int
+        :keyword query: Property-based filtering expressed as a JSON object. Default value is None.
+        :paramtype query: str
+        :keyword sort_by: Sort order for items. Format is property name prefixed with "+" for ascending
+         or "-" for descending. Default value is None.
+        :paramtype sort_by: str
+        :keyword fields: Determines which fields to include in the response. Format is comma-separated
+         field names with "-" prefix to exclude fields. Default value is None.
+        :paramtype fields: str
+        :keyword filter: CQL filter expression for advanced filtering of items. Default value is None.
+        :paramtype filter: str
+        :keyword token: Pagination token for fetching the next set of results. Default value is None.
+        :paramtype token: str
+        :return: ItemCollection. The ItemCollection is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.ItemCollection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -6417,96 +5896,22 @@ class TilerStaticImagesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[Optional[AsyncIterator[bytes]]] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ItemCollection] = kwargs.pop("cls", None)
 
-        _request = build_tiler_static_images_get_request(
-            collection_id=collection_id,
-            id=id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", True)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 204]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        deserialized = None
-        response_headers = {}
-        if response.status_code == 200:
-            response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-
-            deserialized = response.iter_bytes()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-
-class TilerBoundOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`tiler_bound` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace_async
-    async def get_all(self, collection_id: str, item_id: str, **kwargs: Any) -> _models.BoundsResponse:
-        """Bounds.
-
-        Return all Bounds.
-
-        :param collection_id: STAC Collection Identifier. Required.
-        :type collection_id: str
-        :param item_id: STAC Item Identifier. Required.
-        :type item_id: str
-        :return: BoundsResponse. The BoundsResponse is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.BoundsResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.BoundsResponse] = kwargs.pop("cls", None)
-
-        _request = build_tiler_bound_get_all_request(
-            collection_id=collection_id,
-            item_id=item_id,
+        _request = build_stac_get_search_operations_request(
+            collections=collections,
+            ids=ids,
+            bounding_box=bounding_box,
+            intersects=intersects,
+            datetime=datetime,
+            limit=limit,
+            sign=sign,
+            duration_in_minutes=duration_in_minutes,
+            query=query,
+            sort_by=sort_by,
+            fields=fields,
+            filter=filter,
+            token=token,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -6535,7 +5940,7 @@ class TilerBoundOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.BoundsResponse, response.json())
+            deserialized = _deserialize(_models.ItemCollection, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -6543,14 +5948,14 @@ class TilerBoundOperations:
         return deserialized  # type: ignore
 
 
-class TilerInfoOperationsOperations:
+class TilerOperations:  # pylint: disable=too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`tiler_info_operations` attribute.
+        :attr:`tiler` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
@@ -6561,21 +5966,15 @@ class TilerInfoOperationsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def get(
-        self, collection_id: str, item_id: str, *, assets: Optional[List[str]] = None, **kwargs: Any
-    ) -> _models.InfoOperationResponse:
-        """Info.
+    async def get_tile_matrix_definitions(self, tile_matrix_set_id: str, **kwargs: Any) -> _models.TileMatrixSet:
+        """Matrix Definition.
 
-        Return dataset's basic info.
+        Return Matrix Definition.
 
-        :param collection_id: STAC Collection Identifier. Required.
-        :type collection_id: str
-        :param item_id: STAC Item Identifier. Required.
-        :type item_id: str
-        :keyword assets: Asset's names. Default value is None.
-        :paramtype assets: list[str]
-        :return: InfoOperationResponse. The InfoOperationResponse is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.InfoOperationResponse
+        :param tile_matrix_set_id: Identifier selecting one of the TileMatrixSetId supported. Required.
+        :type tile_matrix_set_id: str
+        :return: TileMatrixSet. The TileMatrixSet is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.TileMatrixSet
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -6589,12 +5988,10 @@ class TilerInfoOperationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.InfoOperationResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.TileMatrixSet] = kwargs.pop("cls", None)
 
-        _request = build_tiler_info_operations_get_request(
-            collection_id=collection_id,
-            item_id=item_id,
-            assets=assets,
+        _request = build_tiler_get_tile_matrix_definitions_request(
+            tile_matrix_set_id=tile_matrix_set_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -6623,47 +6020,21 @@ class TilerInfoOperationsOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.InfoOperationResponse, response.json())
+            deserialized = _deserialize(_models.TileMatrixSet, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-class TilerInfoGeoJsonOperationsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`tiler_info_geo_json_operations` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
     @distributed_trace_async
-    async def get(
-        self, collection_id: str, item_id: str, *, assets: Optional[List[str]] = None, **kwargs: Any
-    ) -> _models.TilerInfoGeoJsonFeature:
-        """Info Geojson.
+    async def get_tile_matrix_list(self, **kwargs: Any) -> List[str]:
+        """Matrix List.
 
-        Return Info Geojson.
+        Return Matrix List.
 
-        :param collection_id: STAC Collection Identifier. Required.
-        :type collection_id: str
-        :param item_id: STAC Item Identifier. Required.
-        :type item_id: str
-        :keyword assets: Asset's names. Default value is None.
-        :paramtype assets: list[str]
-        :return: TilerInfoGeoJsonFeature. The TilerInfoGeoJsonFeature is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.TilerInfoGeoJsonFeature
+        :return: list of str
+        :rtype: list[str]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -6677,12 +6048,9 @@ class TilerInfoGeoJsonOperationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.TilerInfoGeoJsonFeature] = kwargs.pop("cls", None)
+        cls: ClsType[List[str]] = kwargs.pop("cls", None)
 
-        _request = build_tiler_info_geo_json_operations_get_request(
-            collection_id=collection_id,
-            item_id=item_id,
-            assets=assets,
+        _request = build_tiler_get_tile_matrix_list_request(
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -6711,118 +6079,15 @@ class TilerInfoGeoJsonOperationsOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.TilerInfoGeoJsonFeature, response.json())
+            deserialized = _deserialize(List[str], response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-class TilerAvailableAssetsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`tiler_available_assets` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
     @distributed_trace_async
-    async def get_all(self, collection_id: str, item_id: str, **kwargs: Any) -> Optional[List[str]]:
-        """Available Assets.
-
-        Return a list of supported assets.
-
-        :param collection_id: STAC Collection Identifier. Required.
-        :type collection_id: str
-        :param item_id: STAC Item Identifier. Required.
-        :type item_id: str
-        :return: list of str or None
-        :rtype: list[str] or None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[Optional[List[str]]] = kwargs.pop("cls", None)
-
-        _request = build_tiler_available_assets_get_all_request(
-            collection_id=collection_id,
-            item_id=item_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 204]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        deserialized = None
-        if response.status_code == 200:
-            if _stream:
-                deserialized = response.iter_bytes()
-            else:
-                deserialized = _deserialize(List[str], response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-
-class TilerAssetStatisticsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`tiler_asset_statistics` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace_async
-    async def get_all(
+    async def list_asset_statistics(
         self,
         collection_id: str,
         item_id: str,
@@ -6917,7 +6182,7 @@ class TilerAssetStatisticsOperations:
 
         cls: ClsType[_models.AssetStatisticsResponse] = kwargs.pop("cls", None)
 
-        _request = build_tiler_asset_statistics_get_all_request(
+        _request = build_tiler_list_asset_statistics_request(
             collection_id=collection_id,
             item_id=item_id,
             assets=assets,
@@ -6968,105 +6233,18 @@ class TilerAssetStatisticsOperations:
 
         return deserialized  # type: ignore
 
-
-class TilerStatisticsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`tiler_statistics` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
     @distributed_trace_async
-    async def get_all(
-        self,
-        collection_id: str,
-        item_id: str,
-        *,
-        assets: Optional[List[str]] = None,
-        expression: Optional[str] = None,
-        asset_band_indices: Optional[List[str]] = None,
-        asset_as_band: Optional[bool] = None,
-        nodata: Optional[float] = None,
-        unscale: Optional[bool] = None,
-        resampling: Optional[Union[str, _models.Resampling]] = None,
-        max_size: Optional[int] = None,
-        categorical: Optional[bool] = None,
-        categories_pixels: Optional[List[str]] = None,
-        percentiles: Optional[List[int]] = None,
-        histogram_bins: Optional[str] = None,
-        histogram_range: Optional[str] = None,
-        **kwargs: Any
-    ) -> _models.StatisticsResponse:
-        """Statistics.
+    async def list_available_assets(self, collection_id: str, item_id: str, **kwargs: Any) -> List[str]:
+        """Available Assets.
 
-        Merged assets statistics.
+        Return a list of supported assets.
 
         :param collection_id: STAC Collection Identifier. Required.
         :type collection_id: str
         :param item_id: STAC Item Identifier. Required.
         :type item_id: str
-        :keyword assets: Asset's names. Default value is None.
-        :paramtype assets: list[str]
-        :keyword expression: Band math expression between assets. Default value is None.
-        :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
-        :keyword asset_as_band: Asset as Band. Default value is None.
-        :paramtype asset_as_band: bool
-        :keyword nodata: Overwrite internal Nodata value. Default value is None.
-        :paramtype nodata: float
-        :keyword unscale: Apply internal Scale or Offset. Default value is None.
-        :paramtype unscale: bool
-        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
-         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
-        :keyword max_size: Maximum dimension in pixels for the source data used to calculate
-         statistics. Default value is None.
-        :paramtype max_size: int
-        :keyword categorical: Return statistics for categorical dataset. Default value is None.
-        :paramtype categorical: bool
-        :keyword categories_pixels: List of pixel categorical values for which to report counts.
-         Default value is None.
-        :paramtype categories_pixels: list[str]
-        :keyword percentiles: List of percentile values (default to [2, 98]). Default value is None.
-        :paramtype percentiles: list[int]
-        :keyword histogram_bins: Defines the number of equal-width bins in the given range (10, by
-         default).
-
-         If bins is a sequence (comma ``,`` delimited values), it defines a monotonically
-         increasing array of bin edges, including the rightmost edge, allowing for
-         non-uniform bin widths.
-
-         link: `https://numpy.org/doc/stable/reference/generated/numpy.histogram.html
-         <https://numpy.org/doc/stable/reference/generated/numpy.histogram.html>`_. Default value is
-         None.
-        :paramtype histogram_bins: str
-        :keyword histogram_range: Comma ``,`` delimited range of the bins.
-
-         The lower and upper range of the bins. If not provided, range is simply
-         (a.min(), a.max()).
-
-         Values outside the range are ignored. The first element of the range must be
-         less than or equal to the second.
-         range affects the automatic bin computation as well.
-
-         link: `https://numpy.org/doc/stable/reference/generated/numpy.histogram.html
-         <https://numpy.org/doc/stable/reference/generated/numpy.histogram.html>`_. Default value is
-         None.
-        :paramtype histogram_range: str
-        :return: StatisticsResponse. The StatisticsResponse is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.StatisticsResponse
+        :return: list of str
+        :rtype: list[str]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -7080,24 +6258,11 @@ class TilerStatisticsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.StatisticsResponse] = kwargs.pop("cls", None)
+        cls: ClsType[List[str]] = kwargs.pop("cls", None)
 
-        _request = build_tiler_statistics_get_all_request(
+        _request = build_tiler_list_available_assets_request(
             collection_id=collection_id,
             item_id=item_id,
-            assets=assets,
-            expression=expression,
-            asset_band_indices=asset_band_indices,
-            asset_as_band=asset_as_band,
-            nodata=nodata,
-            unscale=unscale,
-            resampling=resampling,
-            max_size=max_size,
-            categorical=categorical,
-            categories_pixels=categories_pixels,
-            percentiles=percentiles,
-            histogram_bins=histogram_bins,
-            histogram_range=histogram_range,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -7126,33 +6291,1224 @@ class TilerStatisticsOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.StatisticsResponse, response.json())
+            deserialized = _deserialize(List[str], response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
+    @distributed_trace_async
+    async def list_bounds(self, collection_id: str, item_id: str, **kwargs: Any) -> _models.BoundsResponse:
+        """Bounds.
 
-class TilerGeoJsonStatisticsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
+        Return all Bounds.
 
-        Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`tiler_geo_json_statistics` attribute.
-    """
+        :param collection_id: STAC Collection Identifier. Required.
+        :type collection_id: str
+        :param item_id: STAC Item Identifier. Required.
+        :type item_id: str
+        :return: BoundsResponse. The BoundsResponse is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.BoundsResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.BoundsResponse] = kwargs.pop("cls", None)
+
+        _request = build_tiler_list_bounds_request(
+            collection_id=collection_id,
+            item_id=item_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.BoundsResponse, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @overload
-    async def get_all(
+    async def crop_geo_json(
+        self,
+        collection_id: str,
+        item_id: str,
+        format: str,
+        body: _models.Geometry,
+        *,
+        assets: Optional[List[str]] = None,
+        expression: Optional[str] = None,
+        asset_band_indices: Optional[List[str]] = None,
+        asset_as_band: Optional[bool] = None,
+        nodata: Optional[float] = None,
+        unscale: Optional[bool] = None,
+        algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
+        algorithm_params: Optional[str] = None,
+        color_formula: Optional[str] = None,
+        coord_crs: Optional[str] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
+        max_size: Optional[int] = None,
+        height: Optional[int] = None,
+        width: Optional[int] = None,
+        rescale: Optional[List[str]] = None,
+        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
+        colormap: Optional[str] = None,
+        return_mask: Optional[bool] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        """Geojson Crop.
+
+        Create image from a geojson feature.
+
+        :param collection_id: STAC Collection Identifier. Required.
+        :type collection_id: str
+        :param item_id: STAC Item Identifier. Required.
+        :type item_id: str
+        :param format: Output format for the tile or image (e.g., png, jpeg, webp) (default: "png").
+         Required.
+        :type format: str
+        :param body: Request GeoJson body. Required.
+        :type body: ~azure.planetarycomputer.models.Geometry
+        :keyword assets: Asset's names. Default value is None.
+        :paramtype assets: list[str]
+        :keyword expression: Band math expression between assets. Default value is None.
+        :paramtype expression: str
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
+         None.
+        :paramtype asset_band_indices: list[str]
+        :keyword asset_as_band: Asset as Band. Default value is None.
+        :paramtype asset_as_band: bool
+        :keyword nodata: Overwrite internal Nodata value. Default value is None.
+        :paramtype nodata: float
+        :keyword unscale: Apply internal Scale or Offset. Default value is None.
+        :paramtype unscale: bool
+        :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
+         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
+        :paramtype algorithm: str or ~azure.planetarycomputer.models.TerrainAlgorithm
+        :keyword algorithm_params: Terrain algorithm parameters. Default value is None.
+        :paramtype algorithm_params: str
+        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
+         <https://github.com/mapbox/rio-color>`_). Default value is None.
+        :paramtype color_formula: str
+        :keyword coord_crs: Coordinate Reference System of the input coords. Default to ``epsg:4326``.
+         Default value is None.
+        :paramtype coord_crs: str
+        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
+         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
+        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
+        :keyword max_size: Image output size limit if width and height limits are not set. Default
+         value is None.
+        :paramtype max_size: int
+        :keyword height: Height in pixels for the output image. Default value is None.
+        :paramtype height: int
+        :keyword width: Width in pixels for the output image. Default value is None.
+        :paramtype width: int
+        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
+         bands. Default value is None.
+        :paramtype rescale: list[str]
+        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
+         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
+         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
+         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
+         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
+         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
+         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
+         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
+         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
+         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
+         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
+         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
+         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
+         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
+         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
+         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
+         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
+         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
+         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
+         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
+         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
+         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
+         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
+         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
+         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
+         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
+         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
+         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
+         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
+         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
+         is None.
+        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
+        :keyword colormap: JSON encoded custom Colormap. Default value is None.
+        :paramtype colormap: str
+        :keyword return_mask: Add mask to the output data. Default value is None.
+        :paramtype return_mask: bool
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AsyncIterator[bytes]
+        :rtype: AsyncIterator[bytes]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def crop_geo_json(
+        self,
+        collection_id: str,
+        item_id: str,
+        format: str,
+        body: JSON,
+        *,
+        assets: Optional[List[str]] = None,
+        expression: Optional[str] = None,
+        asset_band_indices: Optional[List[str]] = None,
+        asset_as_band: Optional[bool] = None,
+        nodata: Optional[float] = None,
+        unscale: Optional[bool] = None,
+        algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
+        algorithm_params: Optional[str] = None,
+        color_formula: Optional[str] = None,
+        coord_crs: Optional[str] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
+        max_size: Optional[int] = None,
+        height: Optional[int] = None,
+        width: Optional[int] = None,
+        rescale: Optional[List[str]] = None,
+        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
+        colormap: Optional[str] = None,
+        return_mask: Optional[bool] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        """Geojson Crop.
+
+        Create image from a geojson feature.
+
+        :param collection_id: STAC Collection Identifier. Required.
+        :type collection_id: str
+        :param item_id: STAC Item Identifier. Required.
+        :type item_id: str
+        :param format: Output format for the tile or image (e.g., png, jpeg, webp) (default: "png").
+         Required.
+        :type format: str
+        :param body: Request GeoJson body. Required.
+        :type body: JSON
+        :keyword assets: Asset's names. Default value is None.
+        :paramtype assets: list[str]
+        :keyword expression: Band math expression between assets. Default value is None.
+        :paramtype expression: str
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
+         None.
+        :paramtype asset_band_indices: list[str]
+        :keyword asset_as_band: Asset as Band. Default value is None.
+        :paramtype asset_as_band: bool
+        :keyword nodata: Overwrite internal Nodata value. Default value is None.
+        :paramtype nodata: float
+        :keyword unscale: Apply internal Scale or Offset. Default value is None.
+        :paramtype unscale: bool
+        :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
+         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
+        :paramtype algorithm: str or ~azure.planetarycomputer.models.TerrainAlgorithm
+        :keyword algorithm_params: Terrain algorithm parameters. Default value is None.
+        :paramtype algorithm_params: str
+        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
+         <https://github.com/mapbox/rio-color>`_). Default value is None.
+        :paramtype color_formula: str
+        :keyword coord_crs: Coordinate Reference System of the input coords. Default to ``epsg:4326``.
+         Default value is None.
+        :paramtype coord_crs: str
+        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
+         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
+        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
+        :keyword max_size: Image output size limit if width and height limits are not set. Default
+         value is None.
+        :paramtype max_size: int
+        :keyword height: Height in pixels for the output image. Default value is None.
+        :paramtype height: int
+        :keyword width: Width in pixels for the output image. Default value is None.
+        :paramtype width: int
+        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
+         bands. Default value is None.
+        :paramtype rescale: list[str]
+        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
+         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
+         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
+         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
+         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
+         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
+         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
+         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
+         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
+         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
+         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
+         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
+         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
+         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
+         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
+         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
+         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
+         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
+         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
+         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
+         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
+         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
+         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
+         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
+         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
+         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
+         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
+         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
+         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
+         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
+         is None.
+        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
+        :keyword colormap: JSON encoded custom Colormap. Default value is None.
+        :paramtype colormap: str
+        :keyword return_mask: Add mask to the output data. Default value is None.
+        :paramtype return_mask: bool
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AsyncIterator[bytes]
+        :rtype: AsyncIterator[bytes]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def crop_geo_json(
+        self,
+        collection_id: str,
+        item_id: str,
+        format: str,
+        body: IO[bytes],
+        *,
+        assets: Optional[List[str]] = None,
+        expression: Optional[str] = None,
+        asset_band_indices: Optional[List[str]] = None,
+        asset_as_band: Optional[bool] = None,
+        nodata: Optional[float] = None,
+        unscale: Optional[bool] = None,
+        algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
+        algorithm_params: Optional[str] = None,
+        color_formula: Optional[str] = None,
+        coord_crs: Optional[str] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
+        max_size: Optional[int] = None,
+        height: Optional[int] = None,
+        width: Optional[int] = None,
+        rescale: Optional[List[str]] = None,
+        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
+        colormap: Optional[str] = None,
+        return_mask: Optional[bool] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        """Geojson Crop.
+
+        Create image from a geojson feature.
+
+        :param collection_id: STAC Collection Identifier. Required.
+        :type collection_id: str
+        :param item_id: STAC Item Identifier. Required.
+        :type item_id: str
+        :param format: Output format for the tile or image (e.g., png, jpeg, webp) (default: "png").
+         Required.
+        :type format: str
+        :param body: Request GeoJson body. Required.
+        :type body: IO[bytes]
+        :keyword assets: Asset's names. Default value is None.
+        :paramtype assets: list[str]
+        :keyword expression: Band math expression between assets. Default value is None.
+        :paramtype expression: str
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
+         None.
+        :paramtype asset_band_indices: list[str]
+        :keyword asset_as_band: Asset as Band. Default value is None.
+        :paramtype asset_as_band: bool
+        :keyword nodata: Overwrite internal Nodata value. Default value is None.
+        :paramtype nodata: float
+        :keyword unscale: Apply internal Scale or Offset. Default value is None.
+        :paramtype unscale: bool
+        :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
+         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
+        :paramtype algorithm: str or ~azure.planetarycomputer.models.TerrainAlgorithm
+        :keyword algorithm_params: Terrain algorithm parameters. Default value is None.
+        :paramtype algorithm_params: str
+        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
+         <https://github.com/mapbox/rio-color>`_). Default value is None.
+        :paramtype color_formula: str
+        :keyword coord_crs: Coordinate Reference System of the input coords. Default to ``epsg:4326``.
+         Default value is None.
+        :paramtype coord_crs: str
+        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
+         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
+        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
+        :keyword max_size: Image output size limit if width and height limits are not set. Default
+         value is None.
+        :paramtype max_size: int
+        :keyword height: Height in pixels for the output image. Default value is None.
+        :paramtype height: int
+        :keyword width: Width in pixels for the output image. Default value is None.
+        :paramtype width: int
+        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
+         bands. Default value is None.
+        :paramtype rescale: list[str]
+        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
+         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
+         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
+         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
+         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
+         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
+         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
+         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
+         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
+         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
+         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
+         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
+         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
+         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
+         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
+         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
+         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
+         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
+         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
+         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
+         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
+         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
+         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
+         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
+         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
+         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
+         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
+         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
+         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
+         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
+         is None.
+        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
+        :keyword colormap: JSON encoded custom Colormap. Default value is None.
+        :paramtype colormap: str
+        :keyword return_mask: Add mask to the output data. Default value is None.
+        :paramtype return_mask: bool
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AsyncIterator[bytes]
+        :rtype: AsyncIterator[bytes]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def crop_geo_json(
+        self,
+        collection_id: str,
+        item_id: str,
+        format: str,
+        body: Union[_models.Geometry, JSON, IO[bytes]],
+        *,
+        assets: Optional[List[str]] = None,
+        expression: Optional[str] = None,
+        asset_band_indices: Optional[List[str]] = None,
+        asset_as_band: Optional[bool] = None,
+        nodata: Optional[float] = None,
+        unscale: Optional[bool] = None,
+        algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
+        algorithm_params: Optional[str] = None,
+        color_formula: Optional[str] = None,
+        coord_crs: Optional[str] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
+        max_size: Optional[int] = None,
+        height: Optional[int] = None,
+        width: Optional[int] = None,
+        rescale: Optional[List[str]] = None,
+        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
+        colormap: Optional[str] = None,
+        return_mask: Optional[bool] = None,
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        """Geojson Crop.
+
+        Create image from a geojson feature.
+
+        :param collection_id: STAC Collection Identifier. Required.
+        :type collection_id: str
+        :param item_id: STAC Item Identifier. Required.
+        :type item_id: str
+        :param format: Output format for the tile or image (e.g., png, jpeg, webp) (default: "png").
+         Required.
+        :type format: str
+        :param body: Request GeoJson body. Is one of the following types: Geometry, JSON, IO[bytes]
+         Required.
+        :type body: ~azure.planetarycomputer.models.Geometry or JSON or IO[bytes]
+        :keyword assets: Asset's names. Default value is None.
+        :paramtype assets: list[str]
+        :keyword expression: Band math expression between assets. Default value is None.
+        :paramtype expression: str
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
+         None.
+        :paramtype asset_band_indices: list[str]
+        :keyword asset_as_band: Asset as Band. Default value is None.
+        :paramtype asset_as_band: bool
+        :keyword nodata: Overwrite internal Nodata value. Default value is None.
+        :paramtype nodata: float
+        :keyword unscale: Apply internal Scale or Offset. Default value is None.
+        :paramtype unscale: bool
+        :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
+         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
+        :paramtype algorithm: str or ~azure.planetarycomputer.models.TerrainAlgorithm
+        :keyword algorithm_params: Terrain algorithm parameters. Default value is None.
+        :paramtype algorithm_params: str
+        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
+         <https://github.com/mapbox/rio-color>`_). Default value is None.
+        :paramtype color_formula: str
+        :keyword coord_crs: Coordinate Reference System of the input coords. Default to ``epsg:4326``.
+         Default value is None.
+        :paramtype coord_crs: str
+        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
+         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
+        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
+        :keyword max_size: Image output size limit if width and height limits are not set. Default
+         value is None.
+        :paramtype max_size: int
+        :keyword height: Height in pixels for the output image. Default value is None.
+        :paramtype height: int
+        :keyword width: Width in pixels for the output image. Default value is None.
+        :paramtype width: int
+        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
+         bands. Default value is None.
+        :paramtype rescale: list[str]
+        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
+         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
+         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
+         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
+         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
+         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
+         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
+         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
+         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
+         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
+         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
+         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
+         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
+         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
+         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
+         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
+         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
+         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
+         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
+         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
+         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
+         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
+         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
+         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
+         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
+         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
+         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
+         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
+         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
+         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
+         is None.
+        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
+        :keyword colormap: JSON encoded custom Colormap. Default value is None.
+        :paramtype colormap: str
+        :keyword return_mask: Add mask to the output data. Default value is None.
+        :paramtype return_mask: bool
+        :return: AsyncIterator[bytes]
+        :rtype: AsyncIterator[bytes]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_tiler_crop_geo_json_request(
+            collection_id=collection_id,
+            item_id=item_id,
+            format=format,
+            assets=assets,
+            expression=expression,
+            asset_band_indices=asset_band_indices,
+            asset_as_band=asset_as_band,
+            nodata=nodata,
+            unscale=unscale,
+            algorithm=algorithm,
+            algorithm_params=algorithm_params,
+            color_formula=color_formula,
+            coord_crs=coord_crs,
+            resampling=resampling,
+            max_size=max_size,
+            height=height,
+            width=width,
+            rescale=rescale,
+            colormap_name=colormap_name,
+            colormap=colormap,
+            return_mask=return_mask,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", True)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+
+        deserialized = response.iter_bytes()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def crop_geo_json_with_dimensions(
+        self,
+        collection_id: str,
+        item_id: str,
+        width: float,
+        height: float,
+        format: str,
+        body: _models.StacItem,
+        *,
+        assets: Optional[List[str]] = None,
+        expression: Optional[str] = None,
+        asset_band_indices: Optional[List[str]] = None,
+        asset_as_band: Optional[bool] = None,
+        nodata: Optional[float] = None,
+        unscale: Optional[bool] = None,
+        algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
+        algorithm_params: Optional[str] = None,
+        color_formula: Optional[str] = None,
+        coord_crs: Optional[str] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
+        max_size: Optional[int] = None,
+        rescale: Optional[List[str]] = None,
+        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
+        colormap: Optional[str] = None,
+        return_mask: Optional[bool] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        """Geojson Crop.
+
+        Create image from a geojson feature.
+
+        :param collection_id: STAC Collection Identifier. Required.
+        :type collection_id: str
+        :param item_id: STAC Item Identifier. Required.
+        :type item_id: str
+        :param width: Width in pixels for the output image. Required.
+        :type width: float
+        :param height: Height in pixels for the output image. Required.
+        :type height: float
+        :param format: Output format for the tile or image (e.g., png, jpeg, webp). Required.
+        :type format: str
+        :param body: Request GeoJson body. Required.
+        :type body: ~azure.planetarycomputer.models.StacItem
+        :keyword assets: Asset's names. Default value is None.
+        :paramtype assets: list[str]
+        :keyword expression: Band math expression between assets. Default value is None.
+        :paramtype expression: str
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
+         None.
+        :paramtype asset_band_indices: list[str]
+        :keyword asset_as_band: Asset as Band. Default value is None.
+        :paramtype asset_as_band: bool
+        :keyword nodata: Overwrite internal Nodata value. Default value is None.
+        :paramtype nodata: float
+        :keyword unscale: Apply internal Scale or Offset. Default value is None.
+        :paramtype unscale: bool
+        :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
+         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
+        :paramtype algorithm: str or ~azure.planetarycomputer.models.TerrainAlgorithm
+        :keyword algorithm_params: Terrain algorithm parameters. Default value is None.
+        :paramtype algorithm_params: str
+        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
+         <https://github.com/mapbox/rio-color>`_). Default value is None.
+        :paramtype color_formula: str
+        :keyword coord_crs: Coordinate Reference System of the input coords. Default to ``epsg:4326``.
+         Default value is None.
+        :paramtype coord_crs: str
+        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
+         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
+        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
+        :keyword max_size: Image output size limit if width and height limits are not set. Default
+         value is None.
+        :paramtype max_size: int
+        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
+         bands. Default value is None.
+        :paramtype rescale: list[str]
+        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
+         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
+         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
+         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
+         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
+         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
+         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
+         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
+         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
+         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
+         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
+         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
+         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
+         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
+         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
+         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
+         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
+         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
+         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
+         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
+         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
+         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
+         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
+         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
+         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
+         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
+         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
+         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
+         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
+         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
+         is None.
+        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
+        :keyword colormap: JSON encoded custom Colormap. Default value is None.
+        :paramtype colormap: str
+        :keyword return_mask: Add mask to the output data. Default value is None.
+        :paramtype return_mask: bool
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AsyncIterator[bytes]
+        :rtype: AsyncIterator[bytes]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def crop_geo_json_with_dimensions(
+        self,
+        collection_id: str,
+        item_id: str,
+        width: float,
+        height: float,
+        format: str,
+        body: JSON,
+        *,
+        assets: Optional[List[str]] = None,
+        expression: Optional[str] = None,
+        asset_band_indices: Optional[List[str]] = None,
+        asset_as_band: Optional[bool] = None,
+        nodata: Optional[float] = None,
+        unscale: Optional[bool] = None,
+        algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
+        algorithm_params: Optional[str] = None,
+        color_formula: Optional[str] = None,
+        coord_crs: Optional[str] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
+        max_size: Optional[int] = None,
+        rescale: Optional[List[str]] = None,
+        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
+        colormap: Optional[str] = None,
+        return_mask: Optional[bool] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        """Geojson Crop.
+
+        Create image from a geojson feature.
+
+        :param collection_id: STAC Collection Identifier. Required.
+        :type collection_id: str
+        :param item_id: STAC Item Identifier. Required.
+        :type item_id: str
+        :param width: Width in pixels for the output image. Required.
+        :type width: float
+        :param height: Height in pixels for the output image. Required.
+        :type height: float
+        :param format: Output format for the tile or image (e.g., png, jpeg, webp). Required.
+        :type format: str
+        :param body: Request GeoJson body. Required.
+        :type body: JSON
+        :keyword assets: Asset's names. Default value is None.
+        :paramtype assets: list[str]
+        :keyword expression: Band math expression between assets. Default value is None.
+        :paramtype expression: str
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
+         None.
+        :paramtype asset_band_indices: list[str]
+        :keyword asset_as_band: Asset as Band. Default value is None.
+        :paramtype asset_as_band: bool
+        :keyword nodata: Overwrite internal Nodata value. Default value is None.
+        :paramtype nodata: float
+        :keyword unscale: Apply internal Scale or Offset. Default value is None.
+        :paramtype unscale: bool
+        :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
+         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
+        :paramtype algorithm: str or ~azure.planetarycomputer.models.TerrainAlgorithm
+        :keyword algorithm_params: Terrain algorithm parameters. Default value is None.
+        :paramtype algorithm_params: str
+        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
+         <https://github.com/mapbox/rio-color>`_). Default value is None.
+        :paramtype color_formula: str
+        :keyword coord_crs: Coordinate Reference System of the input coords. Default to ``epsg:4326``.
+         Default value is None.
+        :paramtype coord_crs: str
+        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
+         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
+        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
+        :keyword max_size: Image output size limit if width and height limits are not set. Default
+         value is None.
+        :paramtype max_size: int
+        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
+         bands. Default value is None.
+        :paramtype rescale: list[str]
+        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
+         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
+         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
+         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
+         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
+         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
+         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
+         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
+         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
+         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
+         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
+         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
+         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
+         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
+         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
+         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
+         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
+         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
+         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
+         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
+         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
+         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
+         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
+         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
+         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
+         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
+         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
+         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
+         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
+         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
+         is None.
+        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
+        :keyword colormap: JSON encoded custom Colormap. Default value is None.
+        :paramtype colormap: str
+        :keyword return_mask: Add mask to the output data. Default value is None.
+        :paramtype return_mask: bool
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AsyncIterator[bytes]
+        :rtype: AsyncIterator[bytes]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def crop_geo_json_with_dimensions(
+        self,
+        collection_id: str,
+        item_id: str,
+        width: float,
+        height: float,
+        format: str,
+        body: IO[bytes],
+        *,
+        assets: Optional[List[str]] = None,
+        expression: Optional[str] = None,
+        asset_band_indices: Optional[List[str]] = None,
+        asset_as_band: Optional[bool] = None,
+        nodata: Optional[float] = None,
+        unscale: Optional[bool] = None,
+        algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
+        algorithm_params: Optional[str] = None,
+        color_formula: Optional[str] = None,
+        coord_crs: Optional[str] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
+        max_size: Optional[int] = None,
+        rescale: Optional[List[str]] = None,
+        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
+        colormap: Optional[str] = None,
+        return_mask: Optional[bool] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        """Geojson Crop.
+
+        Create image from a geojson feature.
+
+        :param collection_id: STAC Collection Identifier. Required.
+        :type collection_id: str
+        :param item_id: STAC Item Identifier. Required.
+        :type item_id: str
+        :param width: Width in pixels for the output image. Required.
+        :type width: float
+        :param height: Height in pixels for the output image. Required.
+        :type height: float
+        :param format: Output format for the tile or image (e.g., png, jpeg, webp). Required.
+        :type format: str
+        :param body: Request GeoJson body. Required.
+        :type body: IO[bytes]
+        :keyword assets: Asset's names. Default value is None.
+        :paramtype assets: list[str]
+        :keyword expression: Band math expression between assets. Default value is None.
+        :paramtype expression: str
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
+         None.
+        :paramtype asset_band_indices: list[str]
+        :keyword asset_as_band: Asset as Band. Default value is None.
+        :paramtype asset_as_band: bool
+        :keyword nodata: Overwrite internal Nodata value. Default value is None.
+        :paramtype nodata: float
+        :keyword unscale: Apply internal Scale or Offset. Default value is None.
+        :paramtype unscale: bool
+        :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
+         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
+        :paramtype algorithm: str or ~azure.planetarycomputer.models.TerrainAlgorithm
+        :keyword algorithm_params: Terrain algorithm parameters. Default value is None.
+        :paramtype algorithm_params: str
+        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
+         <https://github.com/mapbox/rio-color>`_). Default value is None.
+        :paramtype color_formula: str
+        :keyword coord_crs: Coordinate Reference System of the input coords. Default to ``epsg:4326``.
+         Default value is None.
+        :paramtype coord_crs: str
+        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
+         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
+        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
+        :keyword max_size: Image output size limit if width and height limits are not set. Default
+         value is None.
+        :paramtype max_size: int
+        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
+         bands. Default value is None.
+        :paramtype rescale: list[str]
+        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
+         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
+         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
+         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
+         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
+         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
+         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
+         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
+         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
+         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
+         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
+         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
+         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
+         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
+         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
+         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
+         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
+         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
+         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
+         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
+         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
+         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
+         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
+         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
+         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
+         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
+         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
+         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
+         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
+         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
+         is None.
+        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
+        :keyword colormap: JSON encoded custom Colormap. Default value is None.
+        :paramtype colormap: str
+        :keyword return_mask: Add mask to the output data. Default value is None.
+        :paramtype return_mask: bool
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AsyncIterator[bytes]
+        :rtype: AsyncIterator[bytes]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def crop_geo_json_with_dimensions(
+        self,
+        collection_id: str,
+        item_id: str,
+        width: float,
+        height: float,
+        format: str,
+        body: Union[_models.StacItem, JSON, IO[bytes]],
+        *,
+        assets: Optional[List[str]] = None,
+        expression: Optional[str] = None,
+        asset_band_indices: Optional[List[str]] = None,
+        asset_as_band: Optional[bool] = None,
+        nodata: Optional[float] = None,
+        unscale: Optional[bool] = None,
+        algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
+        algorithm_params: Optional[str] = None,
+        color_formula: Optional[str] = None,
+        coord_crs: Optional[str] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
+        max_size: Optional[int] = None,
+        rescale: Optional[List[str]] = None,
+        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
+        colormap: Optional[str] = None,
+        return_mask: Optional[bool] = None,
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        """Geojson Crop.
+
+        Create image from a geojson feature.
+
+        :param collection_id: STAC Collection Identifier. Required.
+        :type collection_id: str
+        :param item_id: STAC Item Identifier. Required.
+        :type item_id: str
+        :param width: Width in pixels for the output image. Required.
+        :type width: float
+        :param height: Height in pixels for the output image. Required.
+        :type height: float
+        :param format: Output format for the tile or image (e.g., png, jpeg, webp). Required.
+        :type format: str
+        :param body: Request GeoJson body. Is one of the following types: StacItem, JSON, IO[bytes]
+         Required.
+        :type body: ~azure.planetarycomputer.models.StacItem or JSON or IO[bytes]
+        :keyword assets: Asset's names. Default value is None.
+        :paramtype assets: list[str]
+        :keyword expression: Band math expression between assets. Default value is None.
+        :paramtype expression: str
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
+         None.
+        :paramtype asset_band_indices: list[str]
+        :keyword asset_as_band: Asset as Band. Default value is None.
+        :paramtype asset_as_band: bool
+        :keyword nodata: Overwrite internal Nodata value. Default value is None.
+        :paramtype nodata: float
+        :keyword unscale: Apply internal Scale or Offset. Default value is None.
+        :paramtype unscale: bool
+        :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
+         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
+        :paramtype algorithm: str or ~azure.planetarycomputer.models.TerrainAlgorithm
+        :keyword algorithm_params: Terrain algorithm parameters. Default value is None.
+        :paramtype algorithm_params: str
+        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
+         <https://github.com/mapbox/rio-color>`_). Default value is None.
+        :paramtype color_formula: str
+        :keyword coord_crs: Coordinate Reference System of the input coords. Default to ``epsg:4326``.
+         Default value is None.
+        :paramtype coord_crs: str
+        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
+         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
+        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
+        :keyword max_size: Image output size limit if width and height limits are not set. Default
+         value is None.
+        :paramtype max_size: int
+        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
+         bands. Default value is None.
+        :paramtype rescale: list[str]
+        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
+         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
+         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
+         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
+         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
+         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
+         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
+         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
+         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
+         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
+         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
+         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
+         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
+         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
+         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
+         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
+         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
+         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
+         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
+         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
+         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
+         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
+         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
+         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
+         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
+         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
+         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
+         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
+         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
+         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
+         is None.
+        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
+        :keyword colormap: JSON encoded custom Colormap. Default value is None.
+        :paramtype colormap: str
+        :keyword return_mask: Add mask to the output data. Default value is None.
+        :paramtype return_mask: bool
+        :return: AsyncIterator[bytes]
+        :rtype: AsyncIterator[bytes]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_tiler_crop_geo_json_with_dimensions_request(
+            collection_id=collection_id,
+            item_id=item_id,
+            width=width,
+            height=height,
+            format=format,
+            assets=assets,
+            expression=expression,
+            asset_band_indices=asset_band_indices,
+            asset_as_band=asset_as_band,
+            nodata=nodata,
+            unscale=unscale,
+            algorithm=algorithm,
+            algorithm_params=algorithm_params,
+            color_formula=color_formula,
+            coord_crs=coord_crs,
+            resampling=resampling,
+            max_size=max_size,
+            rescale=rescale,
+            colormap_name=colormap_name,
+            colormap=colormap,
+            return_mask=return_mask,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", True)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+
+        deserialized = response.iter_bytes()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def list_geo_json_statistics(
         self,
         collection_id: str,
         item_id: str,
@@ -7248,7 +7604,7 @@ class TilerGeoJsonStatisticsOperations:
         """
 
     @overload
-    async def get_all(
+    async def list_geo_json_statistics(
         self,
         collection_id: str,
         item_id: str,
@@ -7344,7 +7700,7 @@ class TilerGeoJsonStatisticsOperations:
         """
 
     @overload
-    async def get_all(
+    async def list_geo_json_statistics(
         self,
         collection_id: str,
         item_id: str,
@@ -7440,7 +7796,7 @@ class TilerGeoJsonStatisticsOperations:
         """
 
     @distributed_trace_async
-    async def get_all(
+    async def list_geo_json_statistics(
         self,
         collection_id: str,
         item_id: str,
@@ -7552,7 +7908,7 @@ class TilerGeoJsonStatisticsOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_tiler_geo_json_statistics_get_all_request(
+        _request = build_tiler_list_geo_json_statistics_request(
             collection_id=collection_id,
             item_id=item_id,
             assets=assets,
@@ -7606,160 +7962,22 @@ class TilerGeoJsonStatisticsOperations:
 
         return deserialized  # type: ignore
 
-
-class TilerTilesOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`tiler_tiles` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
     @distributed_trace_async
-    async def get_zxy_scale_by_format(
-        self,
-        collection_id: str,
-        item_id: str,
-        z: float,
-        x: float,
-        y: float,
-        scale: float,
-        format: str,
-        *,
-        assets: Optional[List[str]] = None,
-        expression: Optional[str] = None,
-        asset_band_indices: Optional[List[str]] = None,
-        asset_as_band: Optional[bool] = None,
-        nodata: Optional[float] = None,
-        unscale: Optional[bool] = None,
-        algorithm: Optional[Union[str, _models.Algorithm]] = None,
-        algorithm_params: Optional[str] = None,
-        tile_matrix_set_id: Optional[Union[str, _models.TileMatrixSetId]] = None,
-        buffer: Optional[str] = None,
-        color_formula: Optional[str] = None,
-        resampling: Optional[Union[str, _models.Resampling]] = None,
-        rescale: Optional[List[str]] = None,
-        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        colormap: Optional[str] = None,
-        return_mask: Optional[bool] = None,
-        subdataset_name: Optional[str] = None,
-        subdataset_bands: Optional[List[str]] = None,
-        **kwargs: Any
-    ) -> Optional[AsyncIterator[bytes]]:
-        """Tile.
+    async def get_info_geo_json(
+        self, collection_id: str, item_id: str, *, assets: Optional[List[str]] = None, **kwargs: Any
+    ) -> _models.TilerInfoGeoJsonFeature:
+        """Info Geojson.
 
-        Create map tile from a dataset.
+        Return Info Geojson.
 
         :param collection_id: STAC Collection Identifier. Required.
         :type collection_id: str
         :param item_id: STAC Item Identifier. Required.
         :type item_id: str
-        :param z: Identifier (Z) selecting one of the scales defined in the TileMatrixSet and
-         representing the scaleDenominator the tile. Required.
-        :type z: float
-        :param x: Column (X) index of the tile on the selected TileMatrix. It cannot exceed the
-         MatrixHeight-1 for the selected TileMatrix. Required.
-        :type x: float
-        :param y: Row (Y) index of the tile on the selected TileMatrix. It cannot exceed the
-         MatrixWidth-1 for the selected TileMatrix. Required.
-        :type y: float
-        :param scale: Numeric scale factor for the tile. Higher values produce larger tiles (default:
-         "1"). Required.
-        :type scale: float
-        :param format: Output format for the tile or image (e.g., png, jpeg, webp) (default: "png").
-         Required.
-        :type format: str
         :keyword assets: Asset's names. Default value is None.
         :paramtype assets: list[str]
-        :keyword expression: Band math expression between assets. Default value is None.
-        :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
-        :keyword asset_as_band: Asset as Band. Default value is None.
-        :paramtype asset_as_band: bool
-        :keyword nodata: Overwrite internal Nodata value. Default value is None.
-        :paramtype nodata: float
-        :keyword unscale: Apply internal Scale or Offset. Default value is None.
-        :paramtype unscale: bool
-        :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
-         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~azure.planetarycomputer.models.Algorithm
-        :keyword algorithm_params: Algorithm parameter. Default value is None.
-        :paramtype algorithm_params: str
-        :keyword tile_matrix_set_id: Identifier selecting one of the TileMatrixSetId supported
-         (default:
-         'WebMercatorQuad'). Known values are: "CanadianNAD83_LCC", "EuropeanETRS89_LAEAQuad",
-         "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
-         "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
-         "WorldMercatorWGS84Quad". Default value is None.
-        :paramtype tile_matrix_set_id: str or ~azure.planetarycomputer.models.TileMatrixSetId
-        :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
-         Output
-         **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
-         1.0 = 258x258). Default value is None.
-        :paramtype buffer: str
-        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
-         <https://github.com/mapbox/rio-color>`_). Default value is None.
-        :paramtype color_formula: str
-        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
-         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
-        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
-         bands. Default value is None.
-        :paramtype rescale: list[str]
-        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
-         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
-         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
-         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
-         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
-         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
-         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
-         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
-         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
-         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
-         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
-         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
-         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
-         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
-         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
-         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
-         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
-         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
-         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
-         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
-         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
-         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
-         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
-         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
-         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
-         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
-         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
-         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
-         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
-         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
-         is None.
-        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword colormap: JSON encoded custom Colormap. Default value is None.
-        :paramtype colormap: str
-        :keyword return_mask: Add mask to the output data. Default value is None.
-        :paramtype return_mask: bool
-        :keyword subdataset_name: The name of a subdataset within the asset. Default value is None.
-        :paramtype subdataset_name: str
-        :keyword subdataset_bands: The index of a subdataset band within the asset. Default value is
-         None.
-        :paramtype subdataset_bands: list[str]
-        :return: AsyncIterator[bytes] or None
-        :rtype: AsyncIterator[bytes] or None
+        :return: TilerInfoGeoJsonFeature. The TilerInfoGeoJsonFeature is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.TilerInfoGeoJsonFeature
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -7773,489 +7991,12 @@ class TilerTilesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[Optional[AsyncIterator[bytes]]] = kwargs.pop("cls", None)
+        cls: ClsType[_models.TilerInfoGeoJsonFeature] = kwargs.pop("cls", None)
 
-        _request = build_tiler_tiles_get_zxy_scale_by_format_request(
-            collection_id=collection_id,
-            item_id=item_id,
-            z=z,
-            x=x,
-            y=y,
-            scale=scale,
-            format=format,
-            assets=assets,
-            expression=expression,
-            asset_band_indices=asset_band_indices,
-            asset_as_band=asset_as_band,
-            nodata=nodata,
-            unscale=unscale,
-            algorithm=algorithm,
-            algorithm_params=algorithm_params,
-            tile_matrix_set_id=tile_matrix_set_id,
-            buffer=buffer,
-            color_formula=color_formula,
-            resampling=resampling,
-            rescale=rescale,
-            colormap_name=colormap_name,
-            colormap=colormap,
-            return_mask=return_mask,
-            subdataset_name=subdataset_name,
-            subdataset_bands=subdataset_bands,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", True)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 204]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        deserialized = None
-        response_headers = {}
-        if response.status_code == 200:
-            response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-            response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-            response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-            response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-            response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-            response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-            response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-
-            deserialized = response.iter_bytes()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-
-class TilerTileMatrixSetsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`tiler_tile_matrix_sets` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace_async
-    async def get_zxy_scale_by_format(
-        self,
-        collection_id: str,
-        item_id: str,
-        tile_matrix_set_id: str,
-        z: float,
-        x: float,
-        y: float,
-        scale: float,
-        format: str,
-        *,
-        assets: Optional[List[str]] = None,
-        expression: Optional[str] = None,
-        asset_band_indices: Optional[List[str]] = None,
-        asset_as_band: Optional[bool] = None,
-        nodata: Optional[float] = None,
-        unscale: Optional[bool] = None,
-        algorithm: Optional[Union[str, _models.Algorithm]] = None,
-        algorithm_params: Optional[str] = None,
-        buffer: Optional[str] = None,
-        color_formula: Optional[str] = None,
-        resampling: Optional[Union[str, _models.Resampling]] = None,
-        rescale: Optional[List[str]] = None,
-        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        colormap: Optional[str] = None,
-        return_mask: Optional[bool] = None,
-        subdataset_name: Optional[str] = None,
-        subdataset_bands: Optional[List[str]] = None,
-        **kwargs: Any
-    ) -> AsyncIterator[bytes]:
-        """Tile Tilematrixsetid As Path.
-
-        Create map tile from a dataset.
-
-        :param collection_id: STAC Collection Identifier. Required.
-        :type collection_id: str
-        :param item_id: STAC Item Identifier. Required.
-        :type item_id: str
-        :param tile_matrix_set_id: Identifier selecting one of the TileMatrixSetId supported. Required.
-        :type tile_matrix_set_id: str
-        :param z: Identifier (Z) selecting one of the scales defined in the TileMatrixSet and
-         representing the scaleDenominator the tile. Required.
-        :type z: float
-        :param x: Column (X) index of the tile on the selected TileMatrix. It cannot exceed the
-         MatrixHeight-1 for the selected TileMatrix. Required.
-        :type x: float
-        :param y: Row (Y) index of the tile on the selected TileMatrix. It cannot exceed the
-         MatrixWidth-1 for the selected TileMatrix. Required.
-        :type y: float
-        :param scale: Numeric scale factor for the tile. Higher values produce larger tiles (default:
-         "1"). Required.
-        :type scale: float
-        :param format: Output format for the tile or image (e.g., png, jpeg, webp) (default: "png").
-         Required.
-        :type format: str
-        :keyword assets: Asset's names. Default value is None.
-        :paramtype assets: list[str]
-        :keyword expression: Band math expression between assets. Default value is None.
-        :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
-        :keyword asset_as_band: Asset as Band. Default value is None.
-        :paramtype asset_as_band: bool
-        :keyword nodata: Overwrite internal Nodata value. Default value is None.
-        :paramtype nodata: float
-        :keyword unscale: Apply internal Scale or Offset. Default value is None.
-        :paramtype unscale: bool
-        :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
-         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~azure.planetarycomputer.models.Algorithm
-        :keyword algorithm_params: Algorithm parameter. Default value is None.
-        :paramtype algorithm_params: str
-        :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
-         Output
-         **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
-         1.0 = 258x258). Default value is None.
-        :paramtype buffer: str
-        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
-         <https://github.com/mapbox/rio-color>`_). Default value is None.
-        :paramtype color_formula: str
-        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
-         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
-        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
-         bands. Default value is None.
-        :paramtype rescale: list[str]
-        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
-         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
-         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
-         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
-         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
-         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
-         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
-         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
-         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
-         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
-         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
-         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
-         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
-         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
-         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
-         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
-         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
-         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
-         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
-         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
-         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
-         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
-         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
-         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
-         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
-         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
-         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
-         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
-         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
-         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
-         is None.
-        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword colormap: JSON encoded custom Colormap. Default value is None.
-        :paramtype colormap: str
-        :keyword return_mask: Add mask to the output data. Default value is None.
-        :paramtype return_mask: bool
-        :keyword subdataset_name: The name of a subdataset within the asset. Default value is None.
-        :paramtype subdataset_name: str
-        :keyword subdataset_bands: The index of a subdataset band within the asset. Default value is
-         None.
-        :paramtype subdataset_bands: list[str]
-        :return: AsyncIterator[bytes]
-        :rtype: AsyncIterator[bytes]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
-
-        _request = build_tiler_tile_matrix_sets_get_zxy_scale_by_format_request(
-            collection_id=collection_id,
-            item_id=item_id,
-            tile_matrix_set_id=tile_matrix_set_id,
-            z=z,
-            x=x,
-            y=y,
-            scale=scale,
-            format=format,
-            assets=assets,
-            expression=expression,
-            asset_band_indices=asset_band_indices,
-            asset_as_band=asset_as_band,
-            nodata=nodata,
-            unscale=unscale,
-            algorithm=algorithm,
-            algorithm_params=algorithm_params,
-            buffer=buffer,
-            color_formula=color_formula,
-            resampling=resampling,
-            rescale=rescale,
-            colormap_name=colormap_name,
-            colormap=colormap,
-            return_mask=return_mask,
-            subdataset_name=subdataset_name,
-            subdataset_bands=subdataset_bands,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", True)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        response_headers = {}
-        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-
-        deserialized = response.iter_bytes()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-
-class TilerTileJsonOperationsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`tiler_tile_json_operations` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace_async
-    async def get(
-        self,
-        collection_id: str,
-        item_id: str,
-        *,
-        assets: Optional[List[str]] = None,
-        expression: Optional[str] = None,
-        asset_band_indices: Optional[List[str]] = None,
-        asset_as_band: Optional[bool] = None,
-        nodata: Optional[float] = None,
-        unscale: Optional[bool] = None,
-        algorithm: Optional[Union[str, _models.Algorithm]] = None,
-        algorithm_params: Optional[str] = None,
-        tile_matrix_set_id: Optional[Union[str, _models.TileMatrixSetId]] = None,
-        tile_format: Optional[Union[str, _models.ImageType]] = None,
-        tile_scale: Optional[int] = None,
-        min_zoom: Optional[int] = None,
-        max_zoom: Optional[int] = None,
-        buffer: Optional[str] = None,
-        color_formula: Optional[str] = None,
-        resampling: Optional[Union[str, _models.Resampling]] = None,
-        rescale: Optional[List[str]] = None,
-        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        colormap: Optional[str] = None,
-        return_mask: Optional[bool] = None,
-        **kwargs: Any
-    ) -> _models.TileJsonResponse:
-        """Tilejson.
-
-        Return Tilejson.
-
-        :param collection_id: STAC Collection Identifier. Required.
-        :type collection_id: str
-        :param item_id: STAC Item Identifier. Required.
-        :type item_id: str
-        :keyword assets: Asset's names. Default value is None.
-        :paramtype assets: list[str]
-        :keyword expression: Band math expression between assets. Default value is None.
-        :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
-        :keyword asset_as_band: Asset as Band. Default value is None.
-        :paramtype asset_as_band: bool
-        :keyword nodata: Overwrite internal Nodata value. Default value is None.
-        :paramtype nodata: float
-        :keyword unscale: Apply internal Scale or Offset. Default value is None.
-        :paramtype unscale: bool
-        :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
-         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~azure.planetarycomputer.models.Algorithm
-        :keyword algorithm_params: Algorithm parameter. Default value is None.
-        :paramtype algorithm_params: str
-        :keyword tile_matrix_set_id: Identifier selecting one of the TileMatrixSetId supported
-         (default:
-         'WebMercatorQuad'). Known values are: "CanadianNAD83_LCC", "EuropeanETRS89_LAEAQuad",
-         "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
-         "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
-         "WorldMercatorWGS84Quad". Default value is None.
-        :paramtype tile_matrix_set_id: str or ~azure.planetarycomputer.models.TileMatrixSetId
-        :keyword tile_format: Default will be automatically defined if the output image needs a mask
-         (png) or
-         not (jpeg). Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and "pngraw".
-         Default value is None.
-        :paramtype tile_format: str or ~azure.planetarycomputer.models.ImageType
-        :keyword tile_scale: Tile scale factor affecting output size. Values > 1 produce larger tiles
-         (e.g., 1=256x256, 2=512x512). Default value is None.
-        :paramtype tile_scale: int
-        :keyword min_zoom: Overwrite default minzoom. Default value is None.
-        :paramtype min_zoom: int
-        :keyword max_zoom: Overwrite default maxzoom. Default value is None.
-        :paramtype max_zoom: int
-        :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
-         Output
-         **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
-         1.0 = 258x258). Default value is None.
-        :paramtype buffer: str
-        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
-         <https://github.com/mapbox/rio-color>`_). Default value is None.
-        :paramtype color_formula: str
-        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
-         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
-        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
-         bands. Default value is None.
-        :paramtype rescale: list[str]
-        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
-         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
-         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
-         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
-         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
-         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
-         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
-         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
-         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
-         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
-         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
-         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
-         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
-         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
-         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
-         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
-         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
-         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
-         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
-         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
-         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
-         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
-         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
-         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
-         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
-         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
-         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
-         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
-         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
-         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
-         is None.
-        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword colormap: JSON encoded custom Colormap. Default value is None.
-        :paramtype colormap: str
-        :keyword return_mask: Add mask to the output data. Default value is None.
-        :paramtype return_mask: bool
-        :return: TileJsonResponse. The TileJsonResponse is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.TileJsonResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.TileJsonResponse] = kwargs.pop("cls", None)
-
-        _request = build_tiler_tile_json_operations_get_request(
+        _request = build_tiler_get_info_geo_json_request(
             collection_id=collection_id,
             item_id=item_id,
             assets=assets,
-            expression=expression,
-            asset_band_indices=asset_band_indices,
-            asset_as_band=asset_as_band,
-            nodata=nodata,
-            unscale=unscale,
-            algorithm=algorithm,
-            algorithm_params=algorithm_params,
-            tile_matrix_set_id=tile_matrix_set_id,
-            tile_format=tile_format,
-            tile_scale=tile_scale,
-            min_zoom=min_zoom,
-            max_zoom=max_zoom,
-            buffer=buffer,
-            color_formula=color_formula,
-            resampling=resampling,
-            rescale=rescale,
-            colormap_name=colormap_name,
-            colormap=colormap,
-            return_mask=return_mask,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -8284,151 +8025,29 @@ class TilerTileJsonOperationsOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.TileJsonResponse, response.json())
+            deserialized = _deserialize(_models.TilerInfoGeoJsonFeature, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-class TilerTileJsonTileMatrixSetsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`tiler_tile_json_tile_matrix_sets` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
     @distributed_trace_async
-    async def get(
-        self,
-        collection_id: str,
-        item_id: str,
-        tile_matrix_set_id: str,
-        *,
-        assets: Optional[List[str]] = None,
-        expression: Optional[str] = None,
-        asset_band_indices: Optional[List[str]] = None,
-        asset_as_band: Optional[bool] = None,
-        nodata: Optional[float] = None,
-        unscale: Optional[bool] = None,
-        algorithm: Optional[Union[str, _models.Algorithm]] = None,
-        algorithm_params: Optional[str] = None,
-        tile_format: Optional[Union[str, _models.ImageType]] = None,
-        tile_scale: Optional[int] = None,
-        min_zoom: Optional[int] = None,
-        max_zoom: Optional[int] = None,
-        buffer: Optional[str] = None,
-        color_formula: Optional[str] = None,
-        resampling: Optional[Union[str, _models.Resampling]] = None,
-        rescale: Optional[List[str]] = None,
-        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        colormap: Optional[str] = None,
-        return_mask: Optional[bool] = None,
-        **kwargs: Any
-    ) -> _models.TileJsonResponse:
-        """Tilejson Tilematrixsetid As Path.
+    async def get_info(
+        self, collection_id: str, item_id: str, *, assets: Optional[List[str]] = None, **kwargs: Any
+    ) -> _models.InfoOperationResponse:
+        """Info.
 
-        Return the Tilejson Tilematrixsetid As a path.
+        Return dataset's basic info.
 
         :param collection_id: STAC Collection Identifier. Required.
         :type collection_id: str
         :param item_id: STAC Item Identifier. Required.
         :type item_id: str
-        :param tile_matrix_set_id: Identifier selecting one of the TileMatrixSetId supported. Required.
-        :type tile_matrix_set_id: str
         :keyword assets: Asset's names. Default value is None.
         :paramtype assets: list[str]
-        :keyword expression: Band math expression between assets. Default value is None.
-        :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
-        :keyword asset_as_band: Asset as Band. Default value is None.
-        :paramtype asset_as_band: bool
-        :keyword nodata: Overwrite internal Nodata value. Default value is None.
-        :paramtype nodata: float
-        :keyword unscale: Apply internal Scale or Offset. Default value is None.
-        :paramtype unscale: bool
-        :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
-         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~azure.planetarycomputer.models.Algorithm
-        :keyword algorithm_params: Algorithm parameter. Default value is None.
-        :paramtype algorithm_params: str
-        :keyword tile_format: Default will be automatically defined if the output image needs a mask
-         (png) or
-         not (jpeg). Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and "pngraw".
-         Default value is None.
-        :paramtype tile_format: str or ~azure.planetarycomputer.models.ImageType
-        :keyword tile_scale: Tile scale factor affecting output size. Values > 1 produce larger tiles
-         (e.g., 1=256x256, 2=512x512). Default value is None.
-        :paramtype tile_scale: int
-        :keyword min_zoom: Overwrite default minzoom. Default value is None.
-        :paramtype min_zoom: int
-        :keyword max_zoom: Overwrite default maxzoom. Default value is None.
-        :paramtype max_zoom: int
-        :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
-         Output
-         **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
-         1.0 = 258x258). Default value is None.
-        :paramtype buffer: str
-        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
-         <https://github.com/mapbox/rio-color>`_). Default value is None.
-        :paramtype color_formula: str
-        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
-         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
-        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
-         bands. Default value is None.
-        :paramtype rescale: list[str]
-        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
-         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
-         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
-         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
-         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
-         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
-         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
-         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
-         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
-         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
-         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
-         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
-         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
-         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
-         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
-         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
-         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
-         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
-         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
-         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
-         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
-         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
-         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
-         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
-         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
-         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
-         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
-         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
-         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
-         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
-         is None.
-        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword colormap: JSON encoded custom Colormap. Default value is None.
-        :paramtype colormap: str
-        :keyword return_mask: Add mask to the output data. Default value is None.
-        :paramtype return_mask: bool
-        :return: TileJsonResponse. The TileJsonResponse is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.TileJsonResponse
+        :return: InfoOperationResponse. The InfoOperationResponse is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.InfoOperationResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -8442,31 +8061,12 @@ class TilerTileJsonTileMatrixSetsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.TileJsonResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.InfoOperationResponse] = kwargs.pop("cls", None)
 
-        _request = build_tiler_tile_json_tile_matrix_sets_get_request(
+        _request = build_tiler_get_info_request(
             collection_id=collection_id,
             item_id=item_id,
-            tile_matrix_set_id=tile_matrix_set_id,
             assets=assets,
-            expression=expression,
-            asset_band_indices=asset_band_indices,
-            asset_as_band=asset_as_band,
-            nodata=nodata,
-            unscale=unscale,
-            algorithm=algorithm,
-            algorithm_params=algorithm_params,
-            tile_format=tile_format,
-            tile_scale=tile_scale,
-            min_zoom=min_zoom,
-            max_zoom=max_zoom,
-            buffer=buffer,
-            color_formula=color_formula,
-            resampling=resampling,
-            rescale=rescale,
-            colormap_name=colormap_name,
-            colormap=colormap,
-            return_mask=return_mask,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -8495,36 +8095,23 @@ class TilerTileJsonTileMatrixSetsOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.TileJsonResponse, response.json())
+            deserialized = _deserialize(_models.InfoOperationResponse, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-class TilerWmtsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`tiler_wmts` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
     @distributed_trace_async
-    async def get_capabilities_xml(
+    async def get_part(
         self,
         collection_id: str,
         item_id: str,
+        minx: float,
+        miny: float,
+        maxx: float,
+        maxy: float,
+        format: str,
         *,
         assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
@@ -8532,251 +8119,39 @@ class TilerWmtsOperations:
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
-        algorithm: Optional[Union[str, _models.Algorithm]] = None,
+        algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
         algorithm_params: Optional[str] = None,
-        tile_matrix_set_id: Optional[Union[str, _models.TileMatrixSetId]] = None,
-        tile_format: Optional[Union[str, _models.ImageType]] = None,
-        tile_scale: Optional[int] = None,
-        min_zoom: Optional[int] = None,
-        max_zoom: Optional[int] = None,
-        buffer: Optional[str] = None,
         color_formula: Optional[str] = None,
+        dst_crs: Optional[str] = None,
+        coord_crs: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
-        rescale: Optional[List[str]] = None,
-        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        colormap: Optional[str] = None,
-        return_mask: Optional[bool] = None,
-        **kwargs: Any
-    ) -> Optional[str]:
-        """Wmts.
-
-        OGC WMTS endpoint.
-
-        :param collection_id: STAC Collection Identifier. Required.
-        :type collection_id: str
-        :param item_id: STAC Item Identifier. Required.
-        :type item_id: str
-        :keyword assets: Asset's names. Default value is None.
-        :paramtype assets: list[str]
-        :keyword expression: Band math expression between assets. Default value is None.
-        :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
-        :keyword asset_as_band: Asset as Band. Default value is None.
-        :paramtype asset_as_band: bool
-        :keyword nodata: Overwrite internal Nodata value. Default value is None.
-        :paramtype nodata: float
-        :keyword unscale: Apply internal Scale or Offset. Default value is None.
-        :paramtype unscale: bool
-        :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
-         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~azure.planetarycomputer.models.Algorithm
-        :keyword algorithm_params: Algorithm parameter. Default value is None.
-        :paramtype algorithm_params: str
-        :keyword tile_matrix_set_id: Identifier selecting one of the TileMatrixSetId supported
-         (default:
-         'WebMercatorQuad'). Known values are: "CanadianNAD83_LCC", "EuropeanETRS89_LAEAQuad",
-         "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
-         "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
-         "WorldMercatorWGS84Quad". Default value is None.
-        :paramtype tile_matrix_set_id: str or ~azure.planetarycomputer.models.TileMatrixSetId
-        :keyword tile_format: Output image type. Default is png. Known values are: "png", "npy", "tif",
-         "jpeg", "jpg", "jp2", "webp", and "pngraw". Default value is None.
-        :paramtype tile_format: str or ~azure.planetarycomputer.models.ImageType
-        :keyword tile_scale: Tile scale factor affecting output size. Values > 1 produce larger tiles
-         (e.g., 1=256x256, 2=512x512). Default value is None.
-        :paramtype tile_scale: int
-        :keyword min_zoom: Overwrite default minzoom. Default value is None.
-        :paramtype min_zoom: int
-        :keyword max_zoom: Overwrite default maxzoom. Default value is None.
-        :paramtype max_zoom: int
-        :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
-         Output
-         **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
-         1.0 = 258x258). Default value is None.
-        :paramtype buffer: str
-        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
-         <https://github.com/mapbox/rio-color>`_). Default value is None.
-        :paramtype color_formula: str
-        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
-         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
-        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
-         bands. Default value is None.
-        :paramtype rescale: list[str]
-        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
-         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
-         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
-         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
-         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
-         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
-         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
-         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
-         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
-         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
-         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
-         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
-         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
-         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
-         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
-         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
-         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
-         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
-         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
-         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
-         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
-         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
-         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
-         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
-         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
-         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
-         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
-         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
-         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
-         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
-         is None.
-        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword colormap: JSON encoded custom Colormap. Default value is None.
-        :paramtype colormap: str
-        :keyword return_mask: Add mask to the output data. Default value is None.
-        :paramtype return_mask: bool
-        :return: str or None
-        :rtype: str or None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[Optional[str]] = kwargs.pop("cls", None)
-
-        _request = build_tiler_wmts_get_capabilities_xml_request(
-            collection_id=collection_id,
-            item_id=item_id,
-            assets=assets,
-            expression=expression,
-            asset_band_indices=asset_band_indices,
-            asset_as_band=asset_as_band,
-            nodata=nodata,
-            unscale=unscale,
-            algorithm=algorithm,
-            algorithm_params=algorithm_params,
-            tile_matrix_set_id=tile_matrix_set_id,
-            tile_format=tile_format,
-            tile_scale=tile_scale,
-            min_zoom=min_zoom,
-            max_zoom=max_zoom,
-            buffer=buffer,
-            color_formula=color_formula,
-            resampling=resampling,
-            rescale=rescale,
-            colormap_name=colormap_name,
-            colormap=colormap,
-            return_mask=return_mask,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 204]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        deserialized = None
-        response_headers = {}
-        if response.status_code == 200:
-            response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-
-            if _stream:
-                deserialized = response.iter_bytes()
-            else:
-                deserialized = _deserialize_xml(str, response.text())
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-
-class TilerWmtsTileMatrixSetsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`tiler_wmts_tile_matrix_sets` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace_async
-    async def get_capabilities_xml(
-        self,
-        collection_id: str,
-        item_id: str,
-        tile_matrix_set_id: str,
-        *,
-        assets: Optional[List[str]] = None,
-        expression: Optional[str] = None,
-        asset_band_indices: Optional[List[str]] = None,
-        asset_as_band: Optional[bool] = None,
-        nodata: Optional[float] = None,
-        unscale: Optional[bool] = None,
-        algorithm: Optional[Union[str, _models.Algorithm]] = None,
-        algorithm_params: Optional[str] = None,
-        tile_format: Optional[Union[str, _models.ImageType]] = None,
-        tile_scale: Optional[int] = None,
-        min_zoom: Optional[int] = None,
-        max_zoom: Optional[int] = None,
-        buffer: Optional[str] = None,
-        color_formula: Optional[str] = None,
-        resampling: Optional[Union[str, _models.Resampling]] = None,
+        max_size: Optional[int] = None,
+        height: Optional[int] = None,
+        width: Optional[int] = None,
         rescale: Optional[List[str]] = None,
         colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        """Wmts Tilematrixsetid As Path.
+        """Part.
 
-        OGC WMTS endpoint.
+        Create image from part of a dataset.
 
         :param collection_id: STAC Collection Identifier. Required.
         :type collection_id: str
         :param item_id: STAC Item Identifier. Required.
         :type item_id: str
-        :param tile_matrix_set_id: Identifier selecting one of the TileMatrixSetId supported. Required.
-        :type tile_matrix_set_id: str
+        :param minx: Bounding box min X. Required.
+        :type minx: float
+        :param miny: Bounding box min Y. Required.
+        :type miny: float
+        :param maxx: Bounding box max X. Required.
+        :type maxx: float
+        :param maxy: Bounding box max Y. Required.
+        :type maxy: float
+        :param format: Output format for the tile or image (e.g., png, jpeg, webp). Required.
+        :type format: str
         :keyword assets: Asset's names. Default value is None.
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
@@ -8790,32 +8165,29 @@ class TilerWmtsTileMatrixSetsOperations:
         :paramtype nodata: float
         :keyword unscale: Apply internal Scale or Offset. Default value is None.
         :paramtype unscale: bool
-        :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
+        :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~azure.planetarycomputer.models.Algorithm
-        :keyword algorithm_params: Algorithm parameter. Default value is None.
+        :paramtype algorithm: str or ~azure.planetarycomputer.models.TerrainAlgorithm
+        :keyword algorithm_params: Terrain algorithm parameters. Default value is None.
         :paramtype algorithm_params: str
-        :keyword tile_format: Output image type. Default is png. Known values are: "png", "npy", "tif",
-         "jpeg", "jpg", "jp2", "webp", and "pngraw". Default value is None.
-        :paramtype tile_format: str or ~azure.planetarycomputer.models.ImageType
-        :keyword tile_scale: Tile scale factor affecting output size. Values > 1 produce larger tiles
-         (e.g., 1=256x256, 2=512x512). Default value is None.
-        :paramtype tile_scale: int
-        :keyword min_zoom: Overwrite default minzoom. Default value is None.
-        :paramtype min_zoom: int
-        :keyword max_zoom: Overwrite default maxzoom. Default value is None.
-        :paramtype max_zoom: int
-        :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
-         Output
-         **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
-         1.0 = 258x258). Default value is None.
-        :paramtype buffer: str
         :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
          <https://github.com/mapbox/rio-color>`_). Default value is None.
         :paramtype color_formula: str
+        :keyword dst_crs: Output Coordinate Reference System. Default value is None.
+        :paramtype dst_crs: str
+        :keyword coord_crs: Coordinate Reference System of the input coords. Default to ``epsg:4326``.
+         Default value is None.
+        :paramtype coord_crs: str
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
         :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
+        :keyword max_size: Image output size limit if width and height limits are not set. Default
+         value is None.
+        :paramtype max_size: int
+        :keyword height: Height in pixels for the output image. Default value is None.
+        :paramtype height: int
+        :keyword width: Width in pixels for the output image. Default value is None.
+        :paramtype width: int
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
          bands. Default value is None.
         :paramtype rescale: list[str]
@@ -8872,10 +8244,14 @@ class TilerWmtsTileMatrixSetsOperations:
 
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_tiler_wmts_tile_matrix_sets_get_capabilities_xml_request(
+        _request = build_tiler_get_part_request(
             collection_id=collection_id,
             item_id=item_id,
-            tile_matrix_set_id=tile_matrix_set_id,
+            minx=minx,
+            miny=miny,
+            maxx=maxx,
+            maxy=maxy,
+            format=format,
             assets=assets,
             expression=expression,
             asset_band_indices=asset_band_indices,
@@ -8884,13 +8260,13 @@ class TilerWmtsTileMatrixSetsOperations:
             unscale=unscale,
             algorithm=algorithm,
             algorithm_params=algorithm_params,
-            tile_format=tile_format,
-            tile_scale=tile_scale,
-            min_zoom=min_zoom,
-            max_zoom=max_zoom,
-            buffer=buffer,
             color_formula=color_formula,
+            dst_crs=dst_crs,
+            coord_crs=coord_crs,
             resampling=resampling,
+            max_size=max_size,
+            height=height,
+            width=width,
             rescale=rescale,
             colormap_name=colormap_name,
             colormap=colormap,
@@ -8922,6 +8298,12 @@ class TilerWmtsTileMatrixSetsOperations:
 
         response_headers = {}
         response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
 
         deserialized = response.iter_bytes()
 
@@ -8930,26 +8312,218 @@ class TilerWmtsTileMatrixSetsOperations:
 
         return deserialized  # type: ignore
 
+    @distributed_trace_async
+    async def get_part_with_dimensions(
+        self,
+        collection_id: str,
+        item_id: str,
+        minx: float,
+        miny: float,
+        maxx: float,
+        maxy: float,
+        width: float,
+        height: float,
+        format: str,
+        *,
+        assets: Optional[List[str]] = None,
+        expression: Optional[str] = None,
+        asset_band_indices: Optional[List[str]] = None,
+        asset_as_band: Optional[bool] = None,
+        nodata: Optional[float] = None,
+        unscale: Optional[bool] = None,
+        algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
+        algorithm_params: Optional[str] = None,
+        color_formula: Optional[str] = None,
+        dst_crs: Optional[str] = None,
+        coord_crs: Optional[str] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
+        max_size: Optional[int] = None,
+        rescale: Optional[List[str]] = None,
+        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
+        colormap: Optional[str] = None,
+        return_mask: Optional[bool] = None,
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        """Part.
 
-class TilerPointsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
+        Create image from part of a dataset.
 
-        Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`tiler_points` attribute.
-    """
+        :param collection_id: STAC Collection Identifier. Required.
+        :type collection_id: str
+        :param item_id: STAC Item Identifier. Required.
+        :type item_id: str
+        :param minx: Bounding box min X. Required.
+        :type minx: float
+        :param miny: Bounding box min Y. Required.
+        :type miny: float
+        :param maxx: Bounding box max X. Required.
+        :type maxx: float
+        :param maxy: Bounding box max Y. Required.
+        :type maxy: float
+        :param width: Width in pixels for the output image. Required.
+        :type width: float
+        :param height: Height in pixels for the output image. Required.
+        :type height: float
+        :param format: Output format for the tile or image (e.g., png, jpeg, webp). Required.
+        :type format: str
+        :keyword assets: Asset's names. Default value is None.
+        :paramtype assets: list[str]
+        :keyword expression: Band math expression between assets. Default value is None.
+        :paramtype expression: str
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
+         None.
+        :paramtype asset_band_indices: list[str]
+        :keyword asset_as_band: Asset as Band. Default value is None.
+        :paramtype asset_as_band: bool
+        :keyword nodata: Overwrite internal Nodata value. Default value is None.
+        :paramtype nodata: float
+        :keyword unscale: Apply internal Scale or Offset. Default value is None.
+        :paramtype unscale: bool
+        :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
+         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
+        :paramtype algorithm: str or ~azure.planetarycomputer.models.TerrainAlgorithm
+        :keyword algorithm_params: Terrain algorithm parameters. Default value is None.
+        :paramtype algorithm_params: str
+        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
+         <https://github.com/mapbox/rio-color>`_). Default value is None.
+        :paramtype color_formula: str
+        :keyword dst_crs: Output Coordinate Reference System. Default value is None.
+        :paramtype dst_crs: str
+        :keyword coord_crs: Coordinate Reference System of the input coords. Default to ``epsg:4326``.
+         Default value is None.
+        :paramtype coord_crs: str
+        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
+         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
+        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
+        :keyword max_size: Image output size limit if width and height limits are not set. Default
+         value is None.
+        :paramtype max_size: int
+        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
+         bands. Default value is None.
+        :paramtype rescale: list[str]
+        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
+         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
+         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
+         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
+         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
+         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
+         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
+         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
+         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
+         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
+         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
+         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
+         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
+         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
+         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
+         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
+         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
+         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
+         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
+         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
+         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
+         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
+         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
+         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
+         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
+         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
+         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
+         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
+         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
+         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
+         is None.
+        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
+        :keyword colormap: JSON encoded custom Colormap. Default value is None.
+        :paramtype colormap: str
+        :keyword return_mask: Add mask to the output data. Default value is None.
+        :paramtype return_mask: bool
+        :return: AsyncIterator[bytes]
+        :rtype: AsyncIterator[bytes]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_tiler_get_part_with_dimensions_request(
+            collection_id=collection_id,
+            item_id=item_id,
+            minx=minx,
+            miny=miny,
+            maxx=maxx,
+            maxy=maxy,
+            width=width,
+            height=height,
+            format=format,
+            assets=assets,
+            expression=expression,
+            asset_band_indices=asset_band_indices,
+            asset_as_band=asset_as_band,
+            nodata=nodata,
+            unscale=unscale,
+            algorithm=algorithm,
+            algorithm_params=algorithm_params,
+            color_formula=color_formula,
+            dst_crs=dst_crs,
+            coord_crs=coord_crs,
+            resampling=resampling,
+            max_size=max_size,
+            rescale=rescale,
+            colormap_name=colormap_name,
+            colormap=colormap,
+            return_mask=return_mask,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", True)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+
+        deserialized = response.iter_bytes()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_lon_lat(
+    async def get_point(
         self,
         collection_id: str,
         item_id: str,
@@ -8965,7 +8539,7 @@ class TilerPointsOperations:
         coord_crs: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
         **kwargs: Any
-    ) -> _models.TitilerCoreModelsResponsesPoint:
+    ) -> _models.TilerCoreModelsResponsesPoint:
         """Point.
 
         Get Point value for a dataset.
@@ -8997,9 +8571,9 @@ class TilerPointsOperations:
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
         :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
-        :return: TitilerCoreModelsResponsesPoint. The TitilerCoreModelsResponsesPoint is compatible
-         with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.TitilerCoreModelsResponsesPoint
+        :return: TilerCoreModelsResponsesPoint. The TilerCoreModelsResponsesPoint is compatible with
+         MutableMapping
+        :rtype: ~azure.planetarycomputer.models.TilerCoreModelsResponsesPoint
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -9013,9 +8587,9 @@ class TilerPointsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.TitilerCoreModelsResponsesPoint] = kwargs.pop("cls", None)
+        cls: ClsType[_models.TilerCoreModelsResponsesPoint] = kwargs.pop("cls", None)
 
-        _request = build_tiler_points_get_lon_lat_request(
+        _request = build_tiler_get_point_request(
             collection_id=collection_id,
             item_id=item_id,
             lon=lon,
@@ -9056,222 +8630,15 @@ class TilerPointsOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.TitilerCoreModelsResponsesPoint, response.json())
+            deserialized = _deserialize(_models.TilerCoreModelsResponsesPoint, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-class TilerPreviewsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`tiler_previews` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
     @distributed_trace_async
-    async def get_format(
-        self,
-        collection_id: str,
-        item_id: str,
-        format: str,
-        *,
-        assets: Optional[List[str]] = None,
-        expression: Optional[str] = None,
-        asset_band_indices: Optional[List[str]] = None,
-        asset_as_band: Optional[bool] = None,
-        nodata: Optional[float] = None,
-        unscale: Optional[bool] = None,
-        algorithm: Optional[Union[str, _models.Algorithm]] = None,
-        algorithm_params: Optional[str] = None,
-        color_formula: Optional[str] = None,
-        dst_crs: Optional[str] = None,
-        resampling: Optional[Union[str, _models.Resampling]] = None,
-        max_size: Optional[int] = None,
-        height: Optional[int] = None,
-        width: Optional[int] = None,
-        rescale: Optional[List[str]] = None,
-        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        colormap: Optional[str] = None,
-        return_mask: Optional[bool] = None,
-        **kwargs: Any
-    ) -> AsyncIterator[bytes]:
-        """Preview.
-
-        Create preview of a dataset.
-
-        :param collection_id: STAC Collection Identifier. Required.
-        :type collection_id: str
-        :param item_id: STAC Item Identifier. Required.
-        :type item_id: str
-        :param format: Output format for the tile or image (e.g., png, jpeg, webp). Required.
-        :type format: str
-        :keyword assets: Asset's names. Default value is None.
-        :paramtype assets: list[str]
-        :keyword expression: Band math expression between assets. Default value is None.
-        :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
-        :keyword asset_as_band: Asset as Band. Default value is None.
-        :paramtype asset_as_band: bool
-        :keyword nodata: Overwrite internal Nodata value. Default value is None.
-        :paramtype nodata: float
-        :keyword unscale: Apply internal Scale or Offset. Default value is None.
-        :paramtype unscale: bool
-        :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
-         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~azure.planetarycomputer.models.Algorithm
-        :keyword algorithm_params: Algorithm parameter. Default value is None.
-        :paramtype algorithm_params: str
-        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
-         <https://github.com/mapbox/rio-color>`_). Default value is None.
-        :paramtype color_formula: str
-        :keyword dst_crs: Output Coordinate Reference System. Default value is None.
-        :paramtype dst_crs: str
-        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
-         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
-        :keyword max_size: Image output size limit if width and height limits are not set. Default
-         value is None.
-        :paramtype max_size: int
-        :keyword height: Height in pixels for the output image. Default value is None.
-        :paramtype height: int
-        :keyword width: Width in pixels for the output image. Default value is None.
-        :paramtype width: int
-        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
-         bands. Default value is None.
-        :paramtype rescale: list[str]
-        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
-         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
-         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
-         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
-         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
-         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
-         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
-         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
-         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
-         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
-         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
-         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
-         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
-         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
-         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
-         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
-         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
-         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
-         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
-         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
-         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
-         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
-         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
-         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
-         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
-         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
-         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
-         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
-         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
-         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
-         is None.
-        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword colormap: JSON encoded custom Colormap. Default value is None.
-        :paramtype colormap: str
-        :keyword return_mask: Add mask to the output data. Default value is None.
-        :paramtype return_mask: bool
-        :return: AsyncIterator[bytes]
-        :rtype: AsyncIterator[bytes]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
-
-        _request = build_tiler_previews_get_format_request(
-            collection_id=collection_id,
-            item_id=item_id,
-            format=format,
-            assets=assets,
-            expression=expression,
-            asset_band_indices=asset_band_indices,
-            asset_as_band=asset_as_band,
-            nodata=nodata,
-            unscale=unscale,
-            algorithm=algorithm,
-            algorithm_params=algorithm_params,
-            color_formula=color_formula,
-            dst_crs=dst_crs,
-            resampling=resampling,
-            max_size=max_size,
-            height=height,
-            width=width,
-            rescale=rescale,
-            colormap_name=colormap_name,
-            colormap=colormap,
-            return_mask=return_mask,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", True)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        response_headers = {}
-        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-
-        deserialized = response.iter_bytes()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def get(
+    async def get_preview(
         self,
         collection_id: str,
         item_id: str,
@@ -9282,9 +8649,9 @@ class TilerPreviewsOperations:
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
-        algorithm: Optional[Union[str, _models.Algorithm]] = None,
+        algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
         algorithm_params: Optional[str] = None,
-        format: Optional[Union[str, _models.ImageType]] = None,
+        format: Optional[Union[str, _models.TilerImageFormat]] = None,
         color_formula: Optional[str] = None,
         dst_crs: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
@@ -9318,14 +8685,14 @@ class TilerPreviewsOperations:
         :paramtype nodata: float
         :keyword unscale: Apply internal Scale or Offset. Default value is None.
         :paramtype unscale: bool
-        :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
+        :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~azure.planetarycomputer.models.Algorithm
-        :keyword algorithm_params: Algorithm parameter. Default value is None.
+        :paramtype algorithm: str or ~azure.planetarycomputer.models.TerrainAlgorithm
+        :keyword algorithm_params: Terrain algorithm parameters. Default value is None.
         :paramtype algorithm_params: str
         :keyword format: Output format for the tile or image (e.g., png, jpeg, webp). Known values are:
          "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and "pngraw". Default value is None.
-        :paramtype format: str or ~azure.planetarycomputer.models.ImageType
+        :paramtype format: str or ~azure.planetarycomputer.models.TilerImageFormat
         :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
          <https://github.com/mapbox/rio-color>`_). Default value is None.
         :paramtype color_formula: str
@@ -9397,7 +8764,7 @@ class TilerPreviewsOperations:
 
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_tiler_previews_get_request(
+        _request = build_tiler_get_preview_request(
             collection_id=collection_id,
             item_id=item_id,
             assets=assets,
@@ -9460,35 +8827,11 @@ class TilerPreviewsOperations:
 
         return deserialized  # type: ignore
 
-
-class TilerPartsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`tiler_parts` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
     @distributed_trace_async
-    async def get_cropped_to_bounding_box_width_by_height(  # pylint: disable=name-too-long
+    async def get_preview_with_format(
         self,
         collection_id: str,
         item_id: str,
-        minx: float,
-        miny: float,
-        maxx: float,
-        maxy: float,
-        width: float,
-        height: float,
         format: str,
         *,
         assets: Optional[List[str]] = None,
@@ -9497,219 +8840,10 @@ class TilerPartsOperations:
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
-        algorithm: Optional[Union[str, _models.Algorithm]] = None,
+        algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
         algorithm_params: Optional[str] = None,
         color_formula: Optional[str] = None,
         dst_crs: Optional[str] = None,
-        coord_crs: Optional[str] = None,
-        resampling: Optional[Union[str, _models.Resampling]] = None,
-        max_size: Optional[int] = None,
-        rescale: Optional[List[str]] = None,
-        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        colormap: Optional[str] = None,
-        return_mask: Optional[bool] = None,
-        **kwargs: Any
-    ) -> AsyncIterator[bytes]:
-        """Part.
-
-        Create image from part of a dataset.
-
-        :param collection_id: STAC Collection Identifier. Required.
-        :type collection_id: str
-        :param item_id: STAC Item Identifier. Required.
-        :type item_id: str
-        :param minx: Bounding box min X. Required.
-        :type minx: float
-        :param miny: Bounding box min Y. Required.
-        :type miny: float
-        :param maxx: Bounding box max X. Required.
-        :type maxx: float
-        :param maxy: Bounding box max Y. Required.
-        :type maxy: float
-        :param width: Width in pixels for the output image. Required.
-        :type width: float
-        :param height: Height in pixels for the output image. Required.
-        :type height: float
-        :param format: Output format for the tile or image (e.g., png, jpeg, webp). Required.
-        :type format: str
-        :keyword assets: Asset's names. Default value is None.
-        :paramtype assets: list[str]
-        :keyword expression: Band math expression between assets. Default value is None.
-        :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
-        :keyword asset_as_band: Asset as Band. Default value is None.
-        :paramtype asset_as_band: bool
-        :keyword nodata: Overwrite internal Nodata value. Default value is None.
-        :paramtype nodata: float
-        :keyword unscale: Apply internal Scale or Offset. Default value is None.
-        :paramtype unscale: bool
-        :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
-         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~azure.planetarycomputer.models.Algorithm
-        :keyword algorithm_params: Algorithm parameter. Default value is None.
-        :paramtype algorithm_params: str
-        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
-         <https://github.com/mapbox/rio-color>`_). Default value is None.
-        :paramtype color_formula: str
-        :keyword dst_crs: Output Coordinate Reference System. Default value is None.
-        :paramtype dst_crs: str
-        :keyword coord_crs: Coordinate Reference System of the input coords. Default to ``epsg:4326``.
-         Default value is None.
-        :paramtype coord_crs: str
-        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
-         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
-        :keyword max_size: Image output size limit if width and height limits are not set. Default
-         value is None.
-        :paramtype max_size: int
-        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
-         bands. Default value is None.
-        :paramtype rescale: list[str]
-        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
-         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
-         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
-         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
-         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
-         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
-         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
-         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
-         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
-         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
-         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
-         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
-         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
-         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
-         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
-         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
-         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
-         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
-         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
-         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
-         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
-         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
-         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
-         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
-         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
-         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
-         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
-         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
-         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
-         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
-         is None.
-        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword colormap: JSON encoded custom Colormap. Default value is None.
-        :paramtype colormap: str
-        :keyword return_mask: Add mask to the output data. Default value is None.
-        :paramtype return_mask: bool
-        :return: AsyncIterator[bytes]
-        :rtype: AsyncIterator[bytes]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
-
-        _request = build_tiler_parts_get_cropped_to_bounding_box_width_by_height_request(
-            collection_id=collection_id,
-            item_id=item_id,
-            minx=minx,
-            miny=miny,
-            maxx=maxx,
-            maxy=maxy,
-            width=width,
-            height=height,
-            format=format,
-            assets=assets,
-            expression=expression,
-            asset_band_indices=asset_band_indices,
-            asset_as_band=asset_as_band,
-            nodata=nodata,
-            unscale=unscale,
-            algorithm=algorithm,
-            algorithm_params=algorithm_params,
-            color_formula=color_formula,
-            dst_crs=dst_crs,
-            coord_crs=coord_crs,
-            resampling=resampling,
-            max_size=max_size,
-            rescale=rescale,
-            colormap_name=colormap_name,
-            colormap=colormap,
-            return_mask=return_mask,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", True)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        response_headers = {}
-        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-
-        deserialized = response.iter_bytes()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def get_cropped_to_bounding_box(
-        self,
-        collection_id: str,
-        item_id: str,
-        minx: float,
-        miny: float,
-        maxx: float,
-        maxy: float,
-        format: str,
-        *,
-        assets: Optional[List[str]] = None,
-        expression: Optional[str] = None,
-        asset_band_indices: Optional[List[str]] = None,
-        asset_as_band: Optional[bool] = None,
-        nodata: Optional[float] = None,
-        unscale: Optional[bool] = None,
-        algorithm: Optional[Union[str, _models.Algorithm]] = None,
-        algorithm_params: Optional[str] = None,
-        color_formula: Optional[str] = None,
-        dst_crs: Optional[str] = None,
-        coord_crs: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
         height: Optional[int] = None,
@@ -9720,22 +8854,14 @@ class TilerPartsOperations:
         return_mask: Optional[bool] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        """Part.
+        """Preview.
 
-        Create image from part of a dataset.
+        Create preview of a dataset.
 
         :param collection_id: STAC Collection Identifier. Required.
         :type collection_id: str
         :param item_id: STAC Item Identifier. Required.
         :type item_id: str
-        :param minx: Bounding box min X. Required.
-        :type minx: float
-        :param miny: Bounding box min Y. Required.
-        :type miny: float
-        :param maxx: Bounding box max X. Required.
-        :type maxx: float
-        :param maxy: Bounding box max Y. Required.
-        :type maxy: float
         :param format: Output format for the tile or image (e.g., png, jpeg, webp). Required.
         :type format: str
         :keyword assets: Asset's names. Default value is None.
@@ -9751,19 +8877,16 @@ class TilerPartsOperations:
         :paramtype nodata: float
         :keyword unscale: Apply internal Scale or Offset. Default value is None.
         :paramtype unscale: bool
-        :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
+        :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~azure.planetarycomputer.models.Algorithm
-        :keyword algorithm_params: Algorithm parameter. Default value is None.
+        :paramtype algorithm: str or ~azure.planetarycomputer.models.TerrainAlgorithm
+        :keyword algorithm_params: Terrain algorithm parameters. Default value is None.
         :paramtype algorithm_params: str
         :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
          <https://github.com/mapbox/rio-color>`_). Default value is None.
         :paramtype color_formula: str
         :keyword dst_crs: Output Coordinate Reference System. Default value is None.
         :paramtype dst_crs: str
-        :keyword coord_crs: Coordinate Reference System of the input coords. Default to ``epsg:4326``.
-         Default value is None.
-        :paramtype coord_crs: str
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
         :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
@@ -9830,13 +8953,9 @@ class TilerPartsOperations:
 
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_tiler_parts_get_cropped_to_bounding_box_request(
+        _request = build_tiler_get_preview_with_format_request(
             collection_id=collection_id,
             item_id=item_id,
-            minx=minx,
-            miny=miny,
-            maxx=maxx,
-            maxy=maxy,
             format=format,
             assets=assets,
             expression=expression,
@@ -9848,7 +8967,6 @@ class TilerPartsOperations:
             algorithm_params=algorithm_params,
             color_formula=color_formula,
             dst_crs=dst_crs,
-            coord_crs=coord_crs,
             resampling=resampling,
             max_size=max_size,
             height=height,
@@ -9898,506 +9016,81 @@ class TilerPartsOperations:
 
         return deserialized  # type: ignore
 
-
-class TilerGeoJsonsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`tiler_geo_jsons` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
     @overload
-    async def crop_width_by_height_format(
-        self,
-        collection_id: str,
-        item_id: str,
-        width: float,
-        height: float,
-        format: str,
-        body: _models.StacItem,
-        *,
-        assets: Optional[List[str]] = None,
-        expression: Optional[str] = None,
-        asset_band_indices: Optional[List[str]] = None,
-        asset_as_band: Optional[bool] = None,
-        nodata: Optional[float] = None,
-        unscale: Optional[bool] = None,
-        algorithm: Optional[Union[str, _models.Algorithm]] = None,
-        algorithm_params: Optional[str] = None,
-        color_formula: Optional[str] = None,
-        coord_crs: Optional[str] = None,
-        resampling: Optional[Union[str, _models.Resampling]] = None,
-        max_size: Optional[int] = None,
-        rescale: Optional[List[str]] = None,
-        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        colormap: Optional[str] = None,
-        return_mask: Optional[bool] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncIterator[bytes]:
-        """Geojson Crop.
+    async def create_static_image(
+        self, collection_id: str, body: _models.ImageRequest, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.ImageResponse:
+        """Create Static Image.
 
-        Create image from a geojson feature.
+        Create a new image export.
 
-        :param collection_id: STAC Collection Identifier. Required.
+        :param collection_id: STAC Collection ID. Required.
         :type collection_id: str
-        :param item_id: STAC Item Identifier. Required.
-        :type item_id: str
-        :param width: Width in pixels for the output image. Required.
-        :type width: float
-        :param height: Height in pixels for the output image. Required.
-        :type height: float
-        :param format: Output format for the tile or image (e.g., png, jpeg, webp). Required.
-        :type format: str
-        :param body: Request GeoJson body. Required.
-        :type body: ~azure.planetarycomputer.models.StacItem
-        :keyword assets: Asset's names. Default value is None.
-        :paramtype assets: list[str]
-        :keyword expression: Band math expression between assets. Default value is None.
-        :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
-        :keyword asset_as_band: Asset as Band. Default value is None.
-        :paramtype asset_as_band: bool
-        :keyword nodata: Overwrite internal Nodata value. Default value is None.
-        :paramtype nodata: float
-        :keyword unscale: Apply internal Scale or Offset. Default value is None.
-        :paramtype unscale: bool
-        :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
-         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~azure.planetarycomputer.models.Algorithm
-        :keyword algorithm_params: Algorithm parameter. Default value is None.
-        :paramtype algorithm_params: str
-        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
-         <https://github.com/mapbox/rio-color>`_). Default value is None.
-        :paramtype color_formula: str
-        :keyword coord_crs: Coordinate Reference System of the input coords. Default to ``epsg:4326``.
-         Default value is None.
-        :paramtype coord_crs: str
-        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
-         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
-        :keyword max_size: Image output size limit if width and height limits are not set. Default
-         value is None.
-        :paramtype max_size: int
-        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
-         bands. Default value is None.
-        :paramtype rescale: list[str]
-        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
-         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
-         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
-         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
-         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
-         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
-         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
-         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
-         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
-         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
-         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
-         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
-         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
-         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
-         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
-         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
-         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
-         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
-         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
-         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
-         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
-         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
-         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
-         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
-         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
-         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
-         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
-         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
-         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
-         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
-         is None.
-        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword colormap: JSON encoded custom Colormap. Default value is None.
-        :paramtype colormap: str
-        :keyword return_mask: Add mask to the output data. Default value is None.
-        :paramtype return_mask: bool
+        :param body: Image request body. Required.
+        :type body: ~azure.planetarycomputer.models.ImageRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: AsyncIterator[bytes]
-        :rtype: AsyncIterator[bytes]
+        :return: ImageResponse. The ImageResponse is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.ImageResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def crop_width_by_height_format(
-        self,
-        collection_id: str,
-        item_id: str,
-        width: float,
-        height: float,
-        format: str,
-        body: JSON,
-        *,
-        assets: Optional[List[str]] = None,
-        expression: Optional[str] = None,
-        asset_band_indices: Optional[List[str]] = None,
-        asset_as_band: Optional[bool] = None,
-        nodata: Optional[float] = None,
-        unscale: Optional[bool] = None,
-        algorithm: Optional[Union[str, _models.Algorithm]] = None,
-        algorithm_params: Optional[str] = None,
-        color_formula: Optional[str] = None,
-        coord_crs: Optional[str] = None,
-        resampling: Optional[Union[str, _models.Resampling]] = None,
-        max_size: Optional[int] = None,
-        rescale: Optional[List[str]] = None,
-        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        colormap: Optional[str] = None,
-        return_mask: Optional[bool] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncIterator[bytes]:
-        """Geojson Crop.
+    async def create_static_image(
+        self, collection_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.ImageResponse:
+        """Create Static Image.
 
-        Create image from a geojson feature.
+        Create a new image export.
 
-        :param collection_id: STAC Collection Identifier. Required.
+        :param collection_id: STAC Collection ID. Required.
         :type collection_id: str
-        :param item_id: STAC Item Identifier. Required.
-        :type item_id: str
-        :param width: Width in pixels for the output image. Required.
-        :type width: float
-        :param height: Height in pixels for the output image. Required.
-        :type height: float
-        :param format: Output format for the tile or image (e.g., png, jpeg, webp). Required.
-        :type format: str
-        :param body: Request GeoJson body. Required.
+        :param body: Image request body. Required.
         :type body: JSON
-        :keyword assets: Asset's names. Default value is None.
-        :paramtype assets: list[str]
-        :keyword expression: Band math expression between assets. Default value is None.
-        :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
-        :keyword asset_as_band: Asset as Band. Default value is None.
-        :paramtype asset_as_band: bool
-        :keyword nodata: Overwrite internal Nodata value. Default value is None.
-        :paramtype nodata: float
-        :keyword unscale: Apply internal Scale or Offset. Default value is None.
-        :paramtype unscale: bool
-        :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
-         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~azure.planetarycomputer.models.Algorithm
-        :keyword algorithm_params: Algorithm parameter. Default value is None.
-        :paramtype algorithm_params: str
-        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
-         <https://github.com/mapbox/rio-color>`_). Default value is None.
-        :paramtype color_formula: str
-        :keyword coord_crs: Coordinate Reference System of the input coords. Default to ``epsg:4326``.
-         Default value is None.
-        :paramtype coord_crs: str
-        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
-         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
-        :keyword max_size: Image output size limit if width and height limits are not set. Default
-         value is None.
-        :paramtype max_size: int
-        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
-         bands. Default value is None.
-        :paramtype rescale: list[str]
-        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
-         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
-         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
-         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
-         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
-         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
-         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
-         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
-         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
-         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
-         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
-         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
-         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
-         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
-         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
-         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
-         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
-         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
-         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
-         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
-         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
-         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
-         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
-         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
-         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
-         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
-         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
-         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
-         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
-         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
-         is None.
-        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword colormap: JSON encoded custom Colormap. Default value is None.
-        :paramtype colormap: str
-        :keyword return_mask: Add mask to the output data. Default value is None.
-        :paramtype return_mask: bool
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: AsyncIterator[bytes]
-        :rtype: AsyncIterator[bytes]
+        :return: ImageResponse. The ImageResponse is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.ImageResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def crop_width_by_height_format(
-        self,
-        collection_id: str,
-        item_id: str,
-        width: float,
-        height: float,
-        format: str,
-        body: IO[bytes],
-        *,
-        assets: Optional[List[str]] = None,
-        expression: Optional[str] = None,
-        asset_band_indices: Optional[List[str]] = None,
-        asset_as_band: Optional[bool] = None,
-        nodata: Optional[float] = None,
-        unscale: Optional[bool] = None,
-        algorithm: Optional[Union[str, _models.Algorithm]] = None,
-        algorithm_params: Optional[str] = None,
-        color_formula: Optional[str] = None,
-        coord_crs: Optional[str] = None,
-        resampling: Optional[Union[str, _models.Resampling]] = None,
-        max_size: Optional[int] = None,
-        rescale: Optional[List[str]] = None,
-        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        colormap: Optional[str] = None,
-        return_mask: Optional[bool] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncIterator[bytes]:
-        """Geojson Crop.
+    async def create_static_image(
+        self, collection_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.ImageResponse:
+        """Create Static Image.
 
-        Create image from a geojson feature.
+        Create a new image export.
 
-        :param collection_id: STAC Collection Identifier. Required.
+        :param collection_id: STAC Collection ID. Required.
         :type collection_id: str
-        :param item_id: STAC Item Identifier. Required.
-        :type item_id: str
-        :param width: Width in pixels for the output image. Required.
-        :type width: float
-        :param height: Height in pixels for the output image. Required.
-        :type height: float
-        :param format: Output format for the tile or image (e.g., png, jpeg, webp). Required.
-        :type format: str
-        :param body: Request GeoJson body. Required.
+        :param body: Image request body. Required.
         :type body: IO[bytes]
-        :keyword assets: Asset's names. Default value is None.
-        :paramtype assets: list[str]
-        :keyword expression: Band math expression between assets. Default value is None.
-        :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
-        :keyword asset_as_band: Asset as Band. Default value is None.
-        :paramtype asset_as_band: bool
-        :keyword nodata: Overwrite internal Nodata value. Default value is None.
-        :paramtype nodata: float
-        :keyword unscale: Apply internal Scale or Offset. Default value is None.
-        :paramtype unscale: bool
-        :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
-         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~azure.planetarycomputer.models.Algorithm
-        :keyword algorithm_params: Algorithm parameter. Default value is None.
-        :paramtype algorithm_params: str
-        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
-         <https://github.com/mapbox/rio-color>`_). Default value is None.
-        :paramtype color_formula: str
-        :keyword coord_crs: Coordinate Reference System of the input coords. Default to ``epsg:4326``.
-         Default value is None.
-        :paramtype coord_crs: str
-        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
-         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
-        :keyword max_size: Image output size limit if width and height limits are not set. Default
-         value is None.
-        :paramtype max_size: int
-        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
-         bands. Default value is None.
-        :paramtype rescale: list[str]
-        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
-         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
-         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
-         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
-         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
-         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
-         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
-         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
-         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
-         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
-         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
-         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
-         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
-         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
-         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
-         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
-         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
-         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
-         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
-         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
-         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
-         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
-         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
-         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
-         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
-         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
-         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
-         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
-         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
-         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
-         is None.
-        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword colormap: JSON encoded custom Colormap. Default value is None.
-        :paramtype colormap: str
-        :keyword return_mask: Add mask to the output data. Default value is None.
-        :paramtype return_mask: bool
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: AsyncIterator[bytes]
-        :rtype: AsyncIterator[bytes]
+        :return: ImageResponse. The ImageResponse is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.ImageResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
-    async def crop_width_by_height_format(
-        self,
-        collection_id: str,
-        item_id: str,
-        width: float,
-        height: float,
-        format: str,
-        body: Union[_models.StacItem, JSON, IO[bytes]],
-        *,
-        assets: Optional[List[str]] = None,
-        expression: Optional[str] = None,
-        asset_band_indices: Optional[List[str]] = None,
-        asset_as_band: Optional[bool] = None,
-        nodata: Optional[float] = None,
-        unscale: Optional[bool] = None,
-        algorithm: Optional[Union[str, _models.Algorithm]] = None,
-        algorithm_params: Optional[str] = None,
-        color_formula: Optional[str] = None,
-        coord_crs: Optional[str] = None,
-        resampling: Optional[Union[str, _models.Resampling]] = None,
-        max_size: Optional[int] = None,
-        rescale: Optional[List[str]] = None,
-        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        colormap: Optional[str] = None,
-        return_mask: Optional[bool] = None,
-        **kwargs: Any
-    ) -> AsyncIterator[bytes]:
-        """Geojson Crop.
+    async def create_static_image(
+        self, collection_id: str, body: Union[_models.ImageRequest, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.ImageResponse:
+        """Create Static Image.
 
-        Create image from a geojson feature.
+        Create a new image export.
 
-        :param collection_id: STAC Collection Identifier. Required.
+        :param collection_id: STAC Collection ID. Required.
         :type collection_id: str
-        :param item_id: STAC Item Identifier. Required.
-        :type item_id: str
-        :param width: Width in pixels for the output image. Required.
-        :type width: float
-        :param height: Height in pixels for the output image. Required.
-        :type height: float
-        :param format: Output format for the tile or image (e.g., png, jpeg, webp). Required.
-        :type format: str
-        :param body: Request GeoJson body. Is one of the following types: StacItem, JSON, IO[bytes]
+        :param body: Image request body. Is one of the following types: ImageRequest, JSON, IO[bytes]
          Required.
-        :type body: ~azure.planetarycomputer.models.StacItem or JSON or IO[bytes]
-        :keyword assets: Asset's names. Default value is None.
-        :paramtype assets: list[str]
-        :keyword expression: Band math expression between assets. Default value is None.
-        :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
-        :keyword asset_as_band: Asset as Band. Default value is None.
-        :paramtype asset_as_band: bool
-        :keyword nodata: Overwrite internal Nodata value. Default value is None.
-        :paramtype nodata: float
-        :keyword unscale: Apply internal Scale or Offset. Default value is None.
-        :paramtype unscale: bool
-        :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
-         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~azure.planetarycomputer.models.Algorithm
-        :keyword algorithm_params: Algorithm parameter. Default value is None.
-        :paramtype algorithm_params: str
-        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
-         <https://github.com/mapbox/rio-color>`_). Default value is None.
-        :paramtype color_formula: str
-        :keyword coord_crs: Coordinate Reference System of the input coords. Default to ``epsg:4326``.
-         Default value is None.
-        :paramtype coord_crs: str
-        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
-         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
-        :keyword max_size: Image output size limit if width and height limits are not set. Default
-         value is None.
-        :paramtype max_size: int
-        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
-         bands. Default value is None.
-        :paramtype rescale: list[str]
-        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
-         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
-         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
-         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
-         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
-         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
-         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
-         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
-         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
-         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
-         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
-         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
-         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
-         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
-         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
-         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
-         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
-         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
-         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
-         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
-         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
-         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
-         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
-         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
-         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
-         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
-         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
-         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
-         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
-         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
-         is None.
-        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword colormap: JSON encoded custom Colormap. Default value is None.
-        :paramtype colormap: str
-        :keyword return_mask: Add mask to the output data. Default value is None.
-        :paramtype return_mask: bool
-        :return: AsyncIterator[bytes]
-        :rtype: AsyncIterator[bytes]
+        :type body: ~azure.planetarycomputer.models.ImageRequest or JSON or IO[bytes]
+        :return: ImageResponse. The ImageResponse is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.ImageResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -10412,7 +9105,7 @@ class TilerGeoJsonsOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ImageResponse] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -10421,11 +9114,802 @@ class TilerGeoJsonsOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_tiler_geo_jsons_crop_width_by_height_format_request(
+        _request = build_tiler_create_static_image_request(
+            collection_id=collection_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.ImageResponse, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def get_static_image(self, collection_id: str, id: str, **kwargs: Any) -> AsyncIterator[bytes]:
+        """Get Static Image.
+
+        Fetch an existing image export by ID.
+
+        :param collection_id: STAC Collection ID. Required.
+        :type collection_id: str
+        :param id: Image export ID. Required.
+        :type id: str
+        :return: AsyncIterator[bytes]
+        :rtype: AsyncIterator[bytes]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_tiler_get_static_image_request(
+            collection_id=collection_id,
+            id=id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", True)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+
+        deserialized = response.iter_bytes()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def list_statistics(
+        self,
+        collection_id: str,
+        item_id: str,
+        *,
+        assets: Optional[List[str]] = None,
+        expression: Optional[str] = None,
+        asset_band_indices: Optional[List[str]] = None,
+        asset_as_band: Optional[bool] = None,
+        nodata: Optional[float] = None,
+        unscale: Optional[bool] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
+        max_size: Optional[int] = None,
+        categorical: Optional[bool] = None,
+        categories_pixels: Optional[List[str]] = None,
+        percentiles: Optional[List[int]] = None,
+        histogram_bins: Optional[str] = None,
+        histogram_range: Optional[str] = None,
+        **kwargs: Any
+    ) -> _models.StatisticsResponse:
+        """Statistics.
+
+        Merged assets statistics.
+
+        :param collection_id: STAC Collection Identifier. Required.
+        :type collection_id: str
+        :param item_id: STAC Item Identifier. Required.
+        :type item_id: str
+        :keyword assets: Asset's names. Default value is None.
+        :paramtype assets: list[str]
+        :keyword expression: Band math expression between assets. Default value is None.
+        :paramtype expression: str
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
+         None.
+        :paramtype asset_band_indices: list[str]
+        :keyword asset_as_band: Asset as Band. Default value is None.
+        :paramtype asset_as_band: bool
+        :keyword nodata: Overwrite internal Nodata value. Default value is None.
+        :paramtype nodata: float
+        :keyword unscale: Apply internal Scale or Offset. Default value is None.
+        :paramtype unscale: bool
+        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
+         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
+        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
+        :keyword max_size: Maximum dimension in pixels for the source data used to calculate
+         statistics. Default value is None.
+        :paramtype max_size: int
+        :keyword categorical: Return statistics for categorical dataset. Default value is None.
+        :paramtype categorical: bool
+        :keyword categories_pixels: List of pixel categorical values for which to report counts.
+         Default value is None.
+        :paramtype categories_pixels: list[str]
+        :keyword percentiles: List of percentile values (default to [2, 98]). Default value is None.
+        :paramtype percentiles: list[int]
+        :keyword histogram_bins: Defines the number of equal-width bins in the given range (10, by
+         default).
+
+         If bins is a sequence (comma ``,`` delimited values), it defines a monotonically
+         increasing array of bin edges, including the rightmost edge, allowing for
+         non-uniform bin widths.
+
+         link: `https://numpy.org/doc/stable/reference/generated/numpy.histogram.html
+         <https://numpy.org/doc/stable/reference/generated/numpy.histogram.html>`_. Default value is
+         None.
+        :paramtype histogram_bins: str
+        :keyword histogram_range: Comma ``,`` delimited range of the bins.
+
+         The lower and upper range of the bins. If not provided, range is simply
+         (a.min(), a.max()).
+
+         Values outside the range are ignored. The first element of the range must be
+         less than or equal to the second.
+         range affects the automatic bin computation as well.
+
+         link: `https://numpy.org/doc/stable/reference/generated/numpy.histogram.html
+         <https://numpy.org/doc/stable/reference/generated/numpy.histogram.html>`_. Default value is
+         None.
+        :paramtype histogram_range: str
+        :return: StatisticsResponse. The StatisticsResponse is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.StatisticsResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.StatisticsResponse] = kwargs.pop("cls", None)
+
+        _request = build_tiler_list_statistics_request(
             collection_id=collection_id,
             item_id=item_id,
-            width=width,
-            height=height,
+            assets=assets,
+            expression=expression,
+            asset_band_indices=asset_band_indices,
+            asset_as_band=asset_as_band,
+            nodata=nodata,
+            unscale=unscale,
+            resampling=resampling,
+            max_size=max_size,
+            categorical=categorical,
+            categories_pixels=categories_pixels,
+            percentiles=percentiles,
+            histogram_bins=histogram_bins,
+            histogram_range=histogram_range,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.StatisticsResponse, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def get_tile_json(
+        self,
+        collection_id: str,
+        item_id: str,
+        *,
+        assets: Optional[List[str]] = None,
+        expression: Optional[str] = None,
+        asset_band_indices: Optional[List[str]] = None,
+        asset_as_band: Optional[bool] = None,
+        nodata: Optional[float] = None,
+        unscale: Optional[bool] = None,
+        algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
+        algorithm_params: Optional[str] = None,
+        tile_matrix_set_id: Optional[Union[str, _models.TileMatrixSetId]] = None,
+        tile_format: Optional[Union[str, _models.TilerImageFormat]] = None,
+        tile_scale: Optional[int] = None,
+        min_zoom: Optional[int] = None,
+        max_zoom: Optional[int] = None,
+        buffer: Optional[str] = None,
+        color_formula: Optional[str] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
+        rescale: Optional[List[str]] = None,
+        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
+        colormap: Optional[str] = None,
+        return_mask: Optional[bool] = None,
+        **kwargs: Any
+    ) -> _models.TileJsonResponse:
+        """TileJson.
+
+        Return TileJson.
+
+        :param collection_id: STAC Collection Identifier. Required.
+        :type collection_id: str
+        :param item_id: STAC Item Identifier. Required.
+        :type item_id: str
+        :keyword assets: Asset's names. Default value is None.
+        :paramtype assets: list[str]
+        :keyword expression: Band math expression between assets. Default value is None.
+        :paramtype expression: str
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
+         None.
+        :paramtype asset_band_indices: list[str]
+        :keyword asset_as_band: Asset as Band. Default value is None.
+        :paramtype asset_as_band: bool
+        :keyword nodata: Overwrite internal Nodata value. Default value is None.
+        :paramtype nodata: float
+        :keyword unscale: Apply internal Scale or Offset. Default value is None.
+        :paramtype unscale: bool
+        :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
+         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
+        :paramtype algorithm: str or ~azure.planetarycomputer.models.TerrainAlgorithm
+        :keyword algorithm_params: Terrain algorithm parameters. Default value is None.
+        :paramtype algorithm_params: str
+        :keyword tile_matrix_set_id: Identifier selecting one of the TileMatrixSetId supported
+         (default:
+         'WebMercatorQuad'). Known values are: "CanadianNAD83_LCC", "EuropeanETRS89_LAEAQuad",
+         "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
+         "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
+         "WorldMercatorWGS84Quad". Default value is None.
+        :paramtype tile_matrix_set_id: str or ~azure.planetarycomputer.models.TileMatrixSetId
+        :keyword tile_format: Default will be automatically defined if the output image needs a mask
+         (png) or
+         not (jpeg). Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and "pngraw".
+         Default value is None.
+        :paramtype tile_format: str or ~azure.planetarycomputer.models.TilerImageFormat
+        :keyword tile_scale: Tile scale factor affecting output size. Values > 1 produce larger tiles
+         (e.g., 1=256x256, 2=512x512). Default value is None.
+        :paramtype tile_scale: int
+        :keyword min_zoom: Overwrite default minzoom. Default value is None.
+        :paramtype min_zoom: int
+        :keyword max_zoom: Overwrite default maxzoom. Default value is None.
+        :paramtype max_zoom: int
+        :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
+         Output
+         **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
+         1.0 = 258x258). Default value is None.
+        :paramtype buffer: str
+        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
+         <https://github.com/mapbox/rio-color>`_). Default value is None.
+        :paramtype color_formula: str
+        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
+         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
+        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
+        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
+         bands. Default value is None.
+        :paramtype rescale: list[str]
+        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
+         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
+         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
+         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
+         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
+         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
+         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
+         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
+         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
+         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
+         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
+         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
+         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
+         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
+         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
+         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
+         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
+         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
+         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
+         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
+         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
+         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
+         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
+         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
+         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
+         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
+         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
+         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
+         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
+         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
+         is None.
+        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
+        :keyword colormap: JSON encoded custom Colormap. Default value is None.
+        :paramtype colormap: str
+        :keyword return_mask: Add mask to the output data. Default value is None.
+        :paramtype return_mask: bool
+        :return: TileJsonResponse. The TileJsonResponse is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.TileJsonResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.TileJsonResponse] = kwargs.pop("cls", None)
+
+        _request = build_tiler_get_tile_json_request(
+            collection_id=collection_id,
+            item_id=item_id,
+            assets=assets,
+            expression=expression,
+            asset_band_indices=asset_band_indices,
+            asset_as_band=asset_as_band,
+            nodata=nodata,
+            unscale=unscale,
+            algorithm=algorithm,
+            algorithm_params=algorithm_params,
+            tile_matrix_set_id=tile_matrix_set_id,
+            tile_format=tile_format,
+            tile_scale=tile_scale,
+            min_zoom=min_zoom,
+            max_zoom=max_zoom,
+            buffer=buffer,
+            color_formula=color_formula,
+            resampling=resampling,
+            rescale=rescale,
+            colormap_name=colormap_name,
+            colormap=colormap,
+            return_mask=return_mask,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.TileJsonResponse, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def get_tile_json_with_matrix_set(
+        self,
+        collection_id: str,
+        item_id: str,
+        tile_matrix_set_id: str,
+        *,
+        assets: Optional[List[str]] = None,
+        expression: Optional[str] = None,
+        asset_band_indices: Optional[List[str]] = None,
+        asset_as_band: Optional[bool] = None,
+        nodata: Optional[float] = None,
+        unscale: Optional[bool] = None,
+        algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
+        algorithm_params: Optional[str] = None,
+        tile_format: Optional[Union[str, _models.TilerImageFormat]] = None,
+        tile_scale: Optional[int] = None,
+        min_zoom: Optional[int] = None,
+        max_zoom: Optional[int] = None,
+        buffer: Optional[str] = None,
+        color_formula: Optional[str] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
+        rescale: Optional[List[str]] = None,
+        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
+        colormap: Optional[str] = None,
+        return_mask: Optional[bool] = None,
+        **kwargs: Any
+    ) -> _models.TileJsonResponse:
+        """TileJson Tilematrixsetid As Path.
+
+        Return the TileJson Tilematrixsetid As a path.
+
+        :param collection_id: STAC Collection Identifier. Required.
+        :type collection_id: str
+        :param item_id: STAC Item Identifier. Required.
+        :type item_id: str
+        :param tile_matrix_set_id: Identifier selecting one of the TileMatrixSetId supported. Required.
+        :type tile_matrix_set_id: str
+        :keyword assets: Asset's names. Default value is None.
+        :paramtype assets: list[str]
+        :keyword expression: Band math expression between assets. Default value is None.
+        :paramtype expression: str
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
+         None.
+        :paramtype asset_band_indices: list[str]
+        :keyword asset_as_band: Asset as Band. Default value is None.
+        :paramtype asset_as_band: bool
+        :keyword nodata: Overwrite internal Nodata value. Default value is None.
+        :paramtype nodata: float
+        :keyword unscale: Apply internal Scale or Offset. Default value is None.
+        :paramtype unscale: bool
+        :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
+         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
+        :paramtype algorithm: str or ~azure.planetarycomputer.models.TerrainAlgorithm
+        :keyword algorithm_params: Terrain algorithm parameters. Default value is None.
+        :paramtype algorithm_params: str
+        :keyword tile_format: Default will be automatically defined if the output image needs a mask
+         (png) or
+         not (jpeg). Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and "pngraw".
+         Default value is None.
+        :paramtype tile_format: str or ~azure.planetarycomputer.models.TilerImageFormat
+        :keyword tile_scale: Tile scale factor affecting output size. Values > 1 produce larger tiles
+         (e.g., 1=256x256, 2=512x512). Default value is None.
+        :paramtype tile_scale: int
+        :keyword min_zoom: Overwrite default minzoom. Default value is None.
+        :paramtype min_zoom: int
+        :keyword max_zoom: Overwrite default maxzoom. Default value is None.
+        :paramtype max_zoom: int
+        :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
+         Output
+         **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
+         1.0 = 258x258). Default value is None.
+        :paramtype buffer: str
+        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
+         <https://github.com/mapbox/rio-color>`_). Default value is None.
+        :paramtype color_formula: str
+        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
+         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
+        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
+        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
+         bands. Default value is None.
+        :paramtype rescale: list[str]
+        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
+         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
+         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
+         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
+         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
+         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
+         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
+         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
+         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
+         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
+         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
+         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
+         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
+         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
+         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
+         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
+         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
+         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
+         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
+         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
+         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
+         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
+         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
+         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
+         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
+         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
+         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
+         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
+         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
+         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
+         is None.
+        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
+        :keyword colormap: JSON encoded custom Colormap. Default value is None.
+        :paramtype colormap: str
+        :keyword return_mask: Add mask to the output data. Default value is None.
+        :paramtype return_mask: bool
+        :return: TileJsonResponse. The TileJsonResponse is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.TileJsonResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.TileJsonResponse] = kwargs.pop("cls", None)
+
+        _request = build_tiler_get_tile_json_with_matrix_set_request(
+            collection_id=collection_id,
+            item_id=item_id,
+            tile_matrix_set_id=tile_matrix_set_id,
+            assets=assets,
+            expression=expression,
+            asset_band_indices=asset_band_indices,
+            asset_as_band=asset_as_band,
+            nodata=nodata,
+            unscale=unscale,
+            algorithm=algorithm,
+            algorithm_params=algorithm_params,
+            tile_format=tile_format,
+            tile_scale=tile_scale,
+            min_zoom=min_zoom,
+            max_zoom=max_zoom,
+            buffer=buffer,
+            color_formula=color_formula,
+            resampling=resampling,
+            rescale=rescale,
+            colormap_name=colormap_name,
+            colormap=colormap,
+            return_mask=return_mask,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.TileJsonResponse, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def get_tile_with_matrix_set(
+        self,
+        collection_id: str,
+        item_id: str,
+        tile_matrix_set_id: str,
+        z: float,
+        x: float,
+        y: float,
+        scale: float,
+        format: str,
+        *,
+        assets: Optional[List[str]] = None,
+        expression: Optional[str] = None,
+        asset_band_indices: Optional[List[str]] = None,
+        asset_as_band: Optional[bool] = None,
+        nodata: Optional[float] = None,
+        unscale: Optional[bool] = None,
+        algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
+        algorithm_params: Optional[str] = None,
+        buffer: Optional[str] = None,
+        color_formula: Optional[str] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
+        rescale: Optional[List[str]] = None,
+        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
+        colormap: Optional[str] = None,
+        return_mask: Optional[bool] = None,
+        subdataset_name: Optional[str] = None,
+        subdataset_bands: Optional[List[str]] = None,
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        """Tile Tilematrixsetid As Path.
+
+        Create map tile from a dataset.
+
+        :param collection_id: STAC Collection Identifier. Required.
+        :type collection_id: str
+        :param item_id: STAC Item Identifier. Required.
+        :type item_id: str
+        :param tile_matrix_set_id: Identifier selecting one of the TileMatrixSetId supported. Required.
+        :type tile_matrix_set_id: str
+        :param z: Identifier (Z) selecting one of the scales defined in the TileMatrixSet and
+         representing the scaleDenominator the tile. Required.
+        :type z: float
+        :param x: Column (X) index of the tile on the selected TileMatrix. It cannot exceed the
+         MatrixHeight-1 for the selected TileMatrix. Required.
+        :type x: float
+        :param y: Row (Y) index of the tile on the selected TileMatrix. It cannot exceed the
+         MatrixWidth-1 for the selected TileMatrix. Required.
+        :type y: float
+        :param scale: Numeric scale factor for the tile. Higher values produce larger tiles (default:
+         "1"). Required.
+        :type scale: float
+        :param format: Output format for the tile or image (e.g., png, jpeg, webp) (default: "png").
+         Required.
+        :type format: str
+        :keyword assets: Asset's names. Default value is None.
+        :paramtype assets: list[str]
+        :keyword expression: Band math expression between assets. Default value is None.
+        :paramtype expression: str
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
+         None.
+        :paramtype asset_band_indices: list[str]
+        :keyword asset_as_band: Asset as Band. Default value is None.
+        :paramtype asset_as_band: bool
+        :keyword nodata: Overwrite internal Nodata value. Default value is None.
+        :paramtype nodata: float
+        :keyword unscale: Apply internal Scale or Offset. Default value is None.
+        :paramtype unscale: bool
+        :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
+         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
+        :paramtype algorithm: str or ~azure.planetarycomputer.models.TerrainAlgorithm
+        :keyword algorithm_params: Terrain algorithm parameters. Default value is None.
+        :paramtype algorithm_params: str
+        :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
+         Output
+         **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
+         1.0 = 258x258). Default value is None.
+        :paramtype buffer: str
+        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
+         <https://github.com/mapbox/rio-color>`_). Default value is None.
+        :paramtype color_formula: str
+        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
+         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
+        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
+        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
+         bands. Default value is None.
+        :paramtype rescale: list[str]
+        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
+         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
+         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
+         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
+         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
+         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
+         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
+         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
+         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
+         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
+         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
+         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
+         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
+         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
+         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
+         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
+         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
+         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
+         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
+         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
+         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
+         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
+         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
+         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
+         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
+         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
+         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
+         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
+         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
+         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
+         is None.
+        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
+        :keyword colormap: JSON encoded custom Colormap. Default value is None.
+        :paramtype colormap: str
+        :keyword return_mask: Add mask to the output data. Default value is None.
+        :paramtype return_mask: bool
+        :keyword subdataset_name: The name of a subdataset within the asset. Default value is None.
+        :paramtype subdataset_name: str
+        :keyword subdataset_bands: The index of a subdataset band within the asset. Default value is
+         None.
+        :paramtype subdataset_bands: list[str]
+        :return: AsyncIterator[bytes]
+        :rtype: AsyncIterator[bytes]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_tiler_get_tile_with_matrix_set_request(
+            collection_id=collection_id,
+            item_id=item_id,
+            tile_matrix_set_id=tile_matrix_set_id,
+            z=z,
+            x=x,
+            y=y,
+            scale=scale,
             format=format,
             assets=assets,
             expression=expression,
@@ -10435,17 +9919,16 @@ class TilerGeoJsonsOperations:
             unscale=unscale,
             algorithm=algorithm,
             algorithm_params=algorithm_params,
+            buffer=buffer,
             color_formula=color_formula,
-            coord_crs=coord_crs,
             resampling=resampling,
-            max_size=max_size,
             rescale=rescale,
             colormap_name=colormap_name,
             colormap=colormap,
             return_mask=return_mask,
-            content_type=content_type,
+            subdataset_name=subdataset_name,
+            subdataset_bands=subdataset_bands,
             api_version=self._config.api_version,
-            content=_content,
             headers=_headers,
             params=_params,
         )
@@ -10486,13 +9969,16 @@ class TilerGeoJsonsOperations:
 
         return deserialized  # type: ignore
 
-    @overload
-    async def crop_format(
+    @distributed_trace_async
+    async def get_tile(
         self,
         collection_id: str,
         item_id: str,
+        z: float,
+        x: float,
+        y: float,
+        scale: float,
         format: str,
-        body: _models.Geometry,
         *,
         assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
@@ -10500,34 +9986,43 @@ class TilerGeoJsonsOperations:
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
-        algorithm: Optional[Union[str, _models.Algorithm]] = None,
+        algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
         algorithm_params: Optional[str] = None,
+        tile_matrix_set_id: Optional[Union[str, _models.TileMatrixSetId]] = None,
+        buffer: Optional[str] = None,
         color_formula: Optional[str] = None,
-        coord_crs: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
-        max_size: Optional[int] = None,
-        height: Optional[int] = None,
-        width: Optional[int] = None,
         rescale: Optional[List[str]] = None,
         colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
-        content_type: str = "application/json",
+        subdataset_name: Optional[str] = None,
+        subdataset_bands: Optional[List[str]] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        """Geojson Crop.
+        """Tile.
 
-        Create image from a geojson feature.
+        Create map tile from a dataset.
 
         :param collection_id: STAC Collection Identifier. Required.
         :type collection_id: str
         :param item_id: STAC Item Identifier. Required.
         :type item_id: str
+        :param z: Identifier (Z) selecting one of the scales defined in the TileMatrixSet and
+         representing the scaleDenominator the tile. Required.
+        :type z: float
+        :param x: Column (X) index of the tile on the selected TileMatrix. It cannot exceed the
+         MatrixHeight-1 for the selected TileMatrix. Required.
+        :type x: float
+        :param y: Row (Y) index of the tile on the selected TileMatrix. It cannot exceed the
+         MatrixWidth-1 for the selected TileMatrix. Required.
+        :type y: float
+        :param scale: Numeric scale factor for the tile. Higher values produce larger tiles (default:
+         "1"). Required.
+        :type scale: float
         :param format: Output format for the tile or image (e.g., png, jpeg, webp) (default: "png").
          Required.
         :type format: str
-        :param body: Request GeoJson body. Required.
-        :type body: ~azure.planetarycomputer.models.Geometry
         :keyword assets: Asset's names. Default value is None.
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
@@ -10541,27 +10036,29 @@ class TilerGeoJsonsOperations:
         :paramtype nodata: float
         :keyword unscale: Apply internal Scale or Offset. Default value is None.
         :paramtype unscale: bool
-        :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
+        :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~azure.planetarycomputer.models.Algorithm
-        :keyword algorithm_params: Algorithm parameter. Default value is None.
+        :paramtype algorithm: str or ~azure.planetarycomputer.models.TerrainAlgorithm
+        :keyword algorithm_params: Terrain algorithm parameters. Default value is None.
         :paramtype algorithm_params: str
+        :keyword tile_matrix_set_id: Identifier selecting one of the TileMatrixSetId supported
+         (default:
+         'WebMercatorQuad'). Known values are: "CanadianNAD83_LCC", "EuropeanETRS89_LAEAQuad",
+         "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
+         "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
+         "WorldMercatorWGS84Quad". Default value is None.
+        :paramtype tile_matrix_set_id: str or ~azure.planetarycomputer.models.TileMatrixSetId
+        :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
+         Output
+         **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
+         1.0 = 258x258). Default value is None.
+        :paramtype buffer: str
         :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
          <https://github.com/mapbox/rio-color>`_). Default value is None.
         :paramtype color_formula: str
-        :keyword coord_crs: Coordinate Reference System of the input coords. Default to ``epsg:4326``.
-         Default value is None.
-        :paramtype coord_crs: str
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
         :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
-        :keyword max_size: Image output size limit if width and height limits are not set. Default
-         value is None.
-        :paramtype max_size: int
-        :keyword height: Height in pixels for the output image. Default value is None.
-        :paramtype height: int
-        :keyword width: Width in pixels for the output image. Default value is None.
-        :paramtype width: int
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
          bands. Default value is None.
         :paramtype rescale: list[str]
@@ -10601,267 +10098,100 @@ class TilerGeoJsonsOperations:
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
         :paramtype return_mask: bool
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AsyncIterator[bytes]
-        :rtype: AsyncIterator[bytes]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def crop_format(
-        self,
-        collection_id: str,
-        item_id: str,
-        format: str,
-        body: JSON,
-        *,
-        assets: Optional[List[str]] = None,
-        expression: Optional[str] = None,
-        asset_band_indices: Optional[List[str]] = None,
-        asset_as_band: Optional[bool] = None,
-        nodata: Optional[float] = None,
-        unscale: Optional[bool] = None,
-        algorithm: Optional[Union[str, _models.Algorithm]] = None,
-        algorithm_params: Optional[str] = None,
-        color_formula: Optional[str] = None,
-        coord_crs: Optional[str] = None,
-        resampling: Optional[Union[str, _models.Resampling]] = None,
-        max_size: Optional[int] = None,
-        height: Optional[int] = None,
-        width: Optional[int] = None,
-        rescale: Optional[List[str]] = None,
-        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        colormap: Optional[str] = None,
-        return_mask: Optional[bool] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncIterator[bytes]:
-        """Geojson Crop.
-
-        Create image from a geojson feature.
-
-        :param collection_id: STAC Collection Identifier. Required.
-        :type collection_id: str
-        :param item_id: STAC Item Identifier. Required.
-        :type item_id: str
-        :param format: Output format for the tile or image (e.g., png, jpeg, webp) (default: "png").
-         Required.
-        :type format: str
-        :param body: Request GeoJson body. Required.
-        :type body: JSON
-        :keyword assets: Asset's names. Default value is None.
-        :paramtype assets: list[str]
-        :keyword expression: Band math expression between assets. Default value is None.
-        :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
+        :keyword subdataset_name: The name of a subdataset within the asset. Default value is None.
+        :paramtype subdataset_name: str
+        :keyword subdataset_bands: The index of a subdataset band within the asset. Default value is
          None.
-        :paramtype asset_band_indices: list[str]
-        :keyword asset_as_band: Asset as Band. Default value is None.
-        :paramtype asset_as_band: bool
-        :keyword nodata: Overwrite internal Nodata value. Default value is None.
-        :paramtype nodata: float
-        :keyword unscale: Apply internal Scale or Offset. Default value is None.
-        :paramtype unscale: bool
-        :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
-         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~azure.planetarycomputer.models.Algorithm
-        :keyword algorithm_params: Algorithm parameter. Default value is None.
-        :paramtype algorithm_params: str
-        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
-         <https://github.com/mapbox/rio-color>`_). Default value is None.
-        :paramtype color_formula: str
-        :keyword coord_crs: Coordinate Reference System of the input coords. Default to ``epsg:4326``.
-         Default value is None.
-        :paramtype coord_crs: str
-        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
-         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
-        :keyword max_size: Image output size limit if width and height limits are not set. Default
-         value is None.
-        :paramtype max_size: int
-        :keyword height: Height in pixels for the output image. Default value is None.
-        :paramtype height: int
-        :keyword width: Width in pixels for the output image. Default value is None.
-        :paramtype width: int
-        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
-         bands. Default value is None.
-        :paramtype rescale: list[str]
-        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
-         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
-         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
-         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
-         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
-         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
-         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
-         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
-         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
-         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
-         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
-         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
-         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
-         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
-         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
-         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
-         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
-         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
-         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
-         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
-         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
-         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
-         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
-         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
-         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
-         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
-         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
-         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
-         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
-         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
-         is None.
-        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword colormap: JSON encoded custom Colormap. Default value is None.
-        :paramtype colormap: str
-        :keyword return_mask: Add mask to the output data. Default value is None.
-        :paramtype return_mask: bool
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
+        :paramtype subdataset_bands: list[str]
         :return: AsyncIterator[bytes]
         :rtype: AsyncIterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-    @overload
-    async def crop_format(
-        self,
-        collection_id: str,
-        item_id: str,
-        format: str,
-        body: IO[bytes],
-        *,
-        assets: Optional[List[str]] = None,
-        expression: Optional[str] = None,
-        asset_band_indices: Optional[List[str]] = None,
-        asset_as_band: Optional[bool] = None,
-        nodata: Optional[float] = None,
-        unscale: Optional[bool] = None,
-        algorithm: Optional[Union[str, _models.Algorithm]] = None,
-        algorithm_params: Optional[str] = None,
-        color_formula: Optional[str] = None,
-        coord_crs: Optional[str] = None,
-        resampling: Optional[Union[str, _models.Resampling]] = None,
-        max_size: Optional[int] = None,
-        height: Optional[int] = None,
-        width: Optional[int] = None,
-        rescale: Optional[List[str]] = None,
-        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        colormap: Optional[str] = None,
-        return_mask: Optional[bool] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncIterator[bytes]:
-        """Geojson Crop.
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
 
-        Create image from a geojson feature.
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
-        :param collection_id: STAC Collection Identifier. Required.
-        :type collection_id: str
-        :param item_id: STAC Item Identifier. Required.
-        :type item_id: str
-        :param format: Output format for the tile or image (e.g., png, jpeg, webp) (default: "png").
-         Required.
-        :type format: str
-        :param body: Request GeoJson body. Required.
-        :type body: IO[bytes]
-        :keyword assets: Asset's names. Default value is None.
-        :paramtype assets: list[str]
-        :keyword expression: Band math expression between assets. Default value is None.
-        :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
-        :keyword asset_as_band: Asset as Band. Default value is None.
-        :paramtype asset_as_band: bool
-        :keyword nodata: Overwrite internal Nodata value. Default value is None.
-        :paramtype nodata: float
-        :keyword unscale: Apply internal Scale or Offset. Default value is None.
-        :paramtype unscale: bool
-        :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
-         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~azure.planetarycomputer.models.Algorithm
-        :keyword algorithm_params: Algorithm parameter. Default value is None.
-        :paramtype algorithm_params: str
-        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
-         <https://github.com/mapbox/rio-color>`_). Default value is None.
-        :paramtype color_formula: str
-        :keyword coord_crs: Coordinate Reference System of the input coords. Default to ``epsg:4326``.
-         Default value is None.
-        :paramtype coord_crs: str
-        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
-         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
-        :keyword max_size: Image output size limit if width and height limits are not set. Default
-         value is None.
-        :paramtype max_size: int
-        :keyword height: Height in pixels for the output image. Default value is None.
-        :paramtype height: int
-        :keyword width: Width in pixels for the output image. Default value is None.
-        :paramtype width: int
-        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
-         bands. Default value is None.
-        :paramtype rescale: list[str]
-        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
-         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
-         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
-         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
-         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
-         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
-         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
-         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
-         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
-         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
-         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
-         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
-         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
-         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
-         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
-         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
-         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
-         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
-         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
-         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
-         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
-         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
-         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
-         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
-         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
-         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
-         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
-         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
-         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
-         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
-         is None.
-        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword colormap: JSON encoded custom Colormap. Default value is None.
-        :paramtype colormap: str
-        :keyword return_mask: Add mask to the output data. Default value is None.
-        :paramtype return_mask: bool
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AsyncIterator[bytes]
-        :rtype: AsyncIterator[bytes]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+        _request = build_tiler_get_tile_request(
+            collection_id=collection_id,
+            item_id=item_id,
+            z=z,
+            x=x,
+            y=y,
+            scale=scale,
+            format=format,
+            assets=assets,
+            expression=expression,
+            asset_band_indices=asset_band_indices,
+            asset_as_band=asset_as_band,
+            nodata=nodata,
+            unscale=unscale,
+            algorithm=algorithm,
+            algorithm_params=algorithm_params,
+            tile_matrix_set_id=tile_matrix_set_id,
+            buffer=buffer,
+            color_formula=color_formula,
+            resampling=resampling,
+            rescale=rescale,
+            colormap_name=colormap_name,
+            colormap=colormap,
+            return_mask=return_mask,
+            subdataset_name=subdataset_name,
+            subdataset_bands=subdataset_bands,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", True)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+
+        deserialized = response.iter_bytes()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def crop_format(
+    async def get_wmts_capabilities(
         self,
         collection_id: str,
         item_id: str,
-        format: str,
-        body: Union[_models.Geometry, JSON, IO[bytes]],
         *,
         assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
@@ -10869,34 +10199,30 @@ class TilerGeoJsonsOperations:
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
-        algorithm: Optional[Union[str, _models.Algorithm]] = None,
+        algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
         algorithm_params: Optional[str] = None,
+        tile_matrix_set_id: Optional[Union[str, _models.TileMatrixSetId]] = None,
+        tile_format: Optional[Union[str, _models.TilerImageFormat]] = None,
+        tile_scale: Optional[int] = None,
+        min_zoom: Optional[int] = None,
+        max_zoom: Optional[int] = None,
+        buffer: Optional[str] = None,
         color_formula: Optional[str] = None,
-        coord_crs: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
-        max_size: Optional[int] = None,
-        height: Optional[int] = None,
-        width: Optional[int] = None,
         rescale: Optional[List[str]] = None,
         colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
         **kwargs: Any
-    ) -> AsyncIterator[bytes]:
-        """Geojson Crop.
+    ) -> str:
+        """Wmts.
 
-        Create image from a geojson feature.
+        OGC WMTS endpoint.
 
         :param collection_id: STAC Collection Identifier. Required.
         :type collection_id: str
         :param item_id: STAC Item Identifier. Required.
         :type item_id: str
-        :param format: Output format for the tile or image (e.g., png, jpeg, webp) (default: "png").
-         Required.
-        :type format: str
-        :param body: Request GeoJson body. Is one of the following types: Geometry, JSON, IO[bytes]
-         Required.
-        :type body: ~azure.planetarycomputer.models.Geometry or JSON or IO[bytes]
         :keyword assets: Asset's names. Default value is None.
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
@@ -10910,27 +10236,233 @@ class TilerGeoJsonsOperations:
         :paramtype nodata: float
         :keyword unscale: Apply internal Scale or Offset. Default value is None.
         :paramtype unscale: bool
-        :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
+        :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~azure.planetarycomputer.models.Algorithm
-        :keyword algorithm_params: Algorithm parameter. Default value is None.
+        :paramtype algorithm: str or ~azure.planetarycomputer.models.TerrainAlgorithm
+        :keyword algorithm_params: Terrain algorithm parameters. Default value is None.
         :paramtype algorithm_params: str
+        :keyword tile_matrix_set_id: Identifier selecting one of the TileMatrixSetId supported
+         (default:
+         'WebMercatorQuad'). Known values are: "CanadianNAD83_LCC", "EuropeanETRS89_LAEAQuad",
+         "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
+         "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
+         "WorldMercatorWGS84Quad". Default value is None.
+        :paramtype tile_matrix_set_id: str or ~azure.planetarycomputer.models.TileMatrixSetId
+        :keyword tile_format: Output image type. Default is png. Known values are: "png", "npy", "tif",
+         "jpeg", "jpg", "jp2", "webp", and "pngraw". Default value is None.
+        :paramtype tile_format: str or ~azure.planetarycomputer.models.TilerImageFormat
+        :keyword tile_scale: Tile scale factor affecting output size. Values > 1 produce larger tiles
+         (e.g., 1=256x256, 2=512x512). Default value is None.
+        :paramtype tile_scale: int
+        :keyword min_zoom: Overwrite default minzoom. Default value is None.
+        :paramtype min_zoom: int
+        :keyword max_zoom: Overwrite default maxzoom. Default value is None.
+        :paramtype max_zoom: int
+        :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
+         Output
+         **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
+         1.0 = 258x258). Default value is None.
+        :paramtype buffer: str
         :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
          <https://github.com/mapbox/rio-color>`_). Default value is None.
         :paramtype color_formula: str
-        :keyword coord_crs: Coordinate Reference System of the input coords. Default to ``epsg:4326``.
-         Default value is None.
-        :paramtype coord_crs: str
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
         :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
-        :keyword max_size: Image output size limit if width and height limits are not set. Default
-         value is None.
-        :paramtype max_size: int
-        :keyword height: Height in pixels for the output image. Default value is None.
-        :paramtype height: int
-        :keyword width: Width in pixels for the output image. Default value is None.
-        :paramtype width: int
+        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
+         bands. Default value is None.
+        :paramtype rescale: list[str]
+        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
+         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
+         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
+         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
+         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
+         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
+         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
+         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
+         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
+         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
+         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
+         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
+         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
+         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
+         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
+         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
+         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
+         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
+         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
+         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
+         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
+         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
+         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
+         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
+         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
+         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
+         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
+         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
+         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
+         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
+         is None.
+        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
+        :keyword colormap: JSON encoded custom Colormap. Default value is None.
+        :paramtype colormap: str
+        :keyword return_mask: Add mask to the output data. Default value is None.
+        :paramtype return_mask: bool
+        :return: str
+        :rtype: str
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[str] = kwargs.pop("cls", None)
+
+        _request = build_tiler_get_wmts_capabilities_request(
+            collection_id=collection_id,
+            item_id=item_id,
+            assets=assets,
+            expression=expression,
+            asset_band_indices=asset_band_indices,
+            asset_as_band=asset_as_band,
+            nodata=nodata,
+            unscale=unscale,
+            algorithm=algorithm,
+            algorithm_params=algorithm_params,
+            tile_matrix_set_id=tile_matrix_set_id,
+            tile_format=tile_format,
+            tile_scale=tile_scale,
+            min_zoom=min_zoom,
+            max_zoom=max_zoom,
+            buffer=buffer,
+            color_formula=color_formula,
+            resampling=resampling,
+            rescale=rescale,
+            colormap_name=colormap_name,
+            colormap=colormap,
+            return_mask=return_mask,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize_xml(str, response.text())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def get_wmts_capabilities_with_matrix_set(
+        self,
+        collection_id: str,
+        item_id: str,
+        tile_matrix_set_id: str,
+        *,
+        assets: Optional[List[str]] = None,
+        expression: Optional[str] = None,
+        asset_band_indices: Optional[List[str]] = None,
+        asset_as_band: Optional[bool] = None,
+        nodata: Optional[float] = None,
+        unscale: Optional[bool] = None,
+        algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
+        algorithm_params: Optional[str] = None,
+        tile_format: Optional[Union[str, _models.TilerImageFormat]] = None,
+        tile_scale: Optional[int] = None,
+        min_zoom: Optional[int] = None,
+        max_zoom: Optional[int] = None,
+        buffer: Optional[str] = None,
+        color_formula: Optional[str] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
+        rescale: Optional[List[str]] = None,
+        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
+        colormap: Optional[str] = None,
+        return_mask: Optional[bool] = None,
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        """Wmts Tilematrixsetid As Path.
+
+        OGC WMTS endpoint.
+
+        :param collection_id: STAC Collection Identifier. Required.
+        :type collection_id: str
+        :param item_id: STAC Item Identifier. Required.
+        :type item_id: str
+        :param tile_matrix_set_id: Identifier selecting one of the TileMatrixSetId supported. Required.
+        :type tile_matrix_set_id: str
+        :keyword assets: Asset's names. Default value is None.
+        :paramtype assets: list[str]
+        :keyword expression: Band math expression between assets. Default value is None.
+        :paramtype expression: str
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
+         None.
+        :paramtype asset_band_indices: list[str]
+        :keyword asset_as_band: Asset as Band. Default value is None.
+        :paramtype asset_as_band: bool
+        :keyword nodata: Overwrite internal Nodata value. Default value is None.
+        :paramtype nodata: float
+        :keyword unscale: Apply internal Scale or Offset. Default value is None.
+        :paramtype unscale: bool
+        :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
+         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
+        :paramtype algorithm: str or ~azure.planetarycomputer.models.TerrainAlgorithm
+        :keyword algorithm_params: Terrain algorithm parameters. Default value is None.
+        :paramtype algorithm_params: str
+        :keyword tile_format: Output image type. Default is png. Known values are: "png", "npy", "tif",
+         "jpeg", "jpg", "jp2", "webp", and "pngraw". Default value is None.
+        :paramtype tile_format: str or ~azure.planetarycomputer.models.TilerImageFormat
+        :keyword tile_scale: Tile scale factor affecting output size. Values > 1 produce larger tiles
+         (e.g., 1=256x256, 2=512x512). Default value is None.
+        :paramtype tile_scale: int
+        :keyword min_zoom: Overwrite default minzoom. Default value is None.
+        :paramtype min_zoom: int
+        :keyword max_zoom: Overwrite default maxzoom. Default value is None.
+        :paramtype max_zoom: int
+        :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
+         Output
+         **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
+         1.0 = 258x258). Default value is None.
+        :paramtype buffer: str
+        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
+         <https://github.com/mapbox/rio-color>`_). Default value is None.
+        :paramtype color_formula: str
+        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
+         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
+        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
          bands. Default value is None.
         :paramtype rescale: list[str]
@@ -10982,23 +10514,15 @@ class TilerGeoJsonsOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_tiler_geo_jsons_crop_format_request(
+        _request = build_tiler_get_wmts_capabilities_with_matrix_set_request(
             collection_id=collection_id,
             item_id=item_id,
-            format=format,
+            tile_matrix_set_id=tile_matrix_set_id,
             assets=assets,
             expression=expression,
             asset_band_indices=asset_band_indices,
@@ -11007,19 +10531,18 @@ class TilerGeoJsonsOperations:
             unscale=unscale,
             algorithm=algorithm,
             algorithm_params=algorithm_params,
+            tile_format=tile_format,
+            tile_scale=tile_scale,
+            min_zoom=min_zoom,
+            max_zoom=max_zoom,
+            buffer=buffer,
             color_formula=color_formula,
-            coord_crs=coord_crs,
             resampling=resampling,
-            max_size=max_size,
-            height=height,
-            width=width,
             rescale=rescale,
             colormap_name=colormap_name,
             colormap=colormap,
             return_mask=return_mask,
-            content_type=content_type,
             api_version=self._config.api_version,
-            content=_content,
             headers=_headers,
             params=_params,
         )
@@ -11046,12 +10569,6 @@ class TilerGeoJsonsOperations:
 
         response_headers = {}
         response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
 
         deserialized = response.iter_bytes()
 
@@ -11060,29 +10577,11 @@ class TilerGeoJsonsOperations:
 
         return deserialized  # type: ignore
 
-
-class MapsClassmapLegendsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`maps_classmap_legends` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
     @distributed_trace_async
-    async def get(
+    async def get_class_map_legend(
         self, classmap_name: str, *, trim_start: Optional[int] = None, trim_end: Optional[int] = None, **kwargs: Any
-    ) -> Optional[_models.ClassmapLegendResponse]:
-        """Get Classmap Legend.
+    ) -> _models.ClassMapLegendResponse:
+        """Get ClassMap Legend.
 
         Generate values and color swatches mapping for a given classmap.
 
@@ -11097,9 +10596,8 @@ class MapsClassmapLegendsOperations:
         :paramtype trim_start: int
         :keyword trim_end: Number of items to trim from the end of the cmap. Default value is None.
         :paramtype trim_end: int
-        :return: ClassmapLegendResponse or None. The ClassmapLegendResponse is compatible with
-         MutableMapping
-        :rtype: ~azure.planetarycomputer.models.ClassmapLegendResponse or None
+        :return: ClassMapLegendResponse. The ClassMapLegendResponse is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.ClassMapLegendResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -11113,9 +10611,9 @@ class MapsClassmapLegendsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[Optional[_models.ClassmapLegendResponse]] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ClassMapLegendResponse] = kwargs.pop("cls", None)
 
-        _request = build_maps_classmap_legends_get_request(
+        _request = build_tiler_get_class_map_legend_request(
             classmap_name=classmap_name,
             trim_start=trim_start,
             trim_end=trim_end,
@@ -11135,7 +10633,7 @@ class MapsClassmapLegendsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 204]:
+        if response.status_code not in [200]:
             if _stream:
                 try:
                     await response.read()  # Load the body in memory and close the socket
@@ -11144,38 +10642,96 @@ class MapsClassmapLegendsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = None
-        if response.status_code == 200:
-            if _stream:
-                deserialized = response.iter_bytes()
-            else:
-                deserialized = _deserialize(_models.ClassmapLegendResponse, response.json())
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.ClassMapLegendResponse, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
+    @distributed_trace_async
+    async def get_interval_legend(
+        self, classmap_name: str, *, trim_start: Optional[int] = None, trim_end: Optional[int] = None, **kwargs: Any
+    ) -> List[List["_types.IntervalLegendsElement"]]:
+        """Get Interval Legend.
 
-class MapsLegendsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
+        Generate values and color swatches mapping for a given interval classmap.
 
-        Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`maps_legends` attribute.
-    """
+        Args:
+        trim_start (int, optional): Number of items to trim from
+        the start of the cmap
+        trim_end (int, optional): Number of items to trim from the end of the cmap.
 
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        :param classmap_name: classmap name. Required.
+        :type classmap_name: str
+        :keyword trim_start: Number of items to trim from the start of the cmap. Default value is None.
+        :paramtype trim_start: int
+        :keyword trim_end: Number of items to trim from the end of the cmap. Default value is None.
+        :paramtype trim_end: int
+        :return: list of list of list of int or dict mapping str to str
+        :rtype: list[list[list[int] or dict[str, str]]]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[List["_types.IntervalLegendsElement"]]] = kwargs.pop("cls", None)
+
+        _request = build_tiler_get_interval_legend_request(
+            classmap_name=classmap_name,
+            trim_start=trim_start,
+            trim_end=trim_end,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(List[List["_types.IntervalLegendsElement"]], response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get(
+    async def get_legend(
         self,
         cmap_name: str,
         *,
@@ -11184,7 +10740,7 @@ class MapsLegendsOperations:
         trim_start: Optional[int] = None,
         trim_end: Optional[int] = None,
         **kwargs: Any
-    ) -> Optional[AsyncIterator[bytes]]:
+    ) -> AsyncIterator[bytes]:
         """Get Legend.
 
         Generate a legend image for a given colormap.
@@ -11215,8 +10771,8 @@ class MapsLegendsOperations:
         :paramtype trim_start: int
         :keyword trim_end: Number of items to trim from the end of the cmap. Default value is None.
         :paramtype trim_end: int
-        :return: AsyncIterator[bytes] or None
-        :rtype: AsyncIterator[bytes] or None
+        :return: AsyncIterator[bytes]
+        :rtype: AsyncIterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -11230,9 +10786,9 @@ class MapsLegendsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[Optional[AsyncIterator[bytes]]] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_maps_legends_get_request(
+        _request = build_tiler_get_legend_request(
             cmap_name=cmap_name,
             height=height,
             width=width,
@@ -11254,867 +10810,6 @@ class MapsLegendsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 204]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        deserialized = None
-        response_headers = {}
-        if response.status_code == 200:
-            response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-
-            deserialized = response.iter_bytes()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-
-class MapsIntervalLegendsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`maps_interval_legends` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace_async
-    async def get_by_classmap_name(
-        self, classmap_name: str, *, trim_start: Optional[int] = None, trim_end: Optional[int] = None, **kwargs: Any
-    ) -> Optional[List[List["_types.IntervalLegendsElement"]]]:
-        """Get Interval Legend.
-
-        Generate values and color swatches mapping for a given interval classmap.
-
-        Args:
-        trim_start (int, optional): Number of items to trim from
-        the start of the cmap
-        trim_end (int, optional): Number of items to trim from the end of the cmap.
-
-        :param classmap_name: classmap name. Required.
-        :type classmap_name: str
-        :keyword trim_start: Number of items to trim from the start of the cmap. Default value is None.
-        :paramtype trim_start: int
-        :keyword trim_end: Number of items to trim from the end of the cmap. Default value is None.
-        :paramtype trim_end: int
-        :return: list of list of list of int or dict mapping str to str or None
-        :rtype: list[list[list[int] or dict[str, str]]] or None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[Optional[List[List["_types.IntervalLegendsElement"]]]] = kwargs.pop("cls", None)
-
-        _request = build_maps_interval_legends_get_by_classmap_name_request(
-            classmap_name=classmap_name,
-            trim_start=trim_start,
-            trim_end=trim_end,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 204]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        deserialized = None
-        response_headers = {}
-        if response.status_code == 200:
-            response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-
-            if _stream:
-                deserialized = response.iter_bytes()
-            else:
-                deserialized = _deserialize(List[List["_types.IntervalLegendsElement"]], response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-
-class MosaicsTilesOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`mosaics_tiles` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace_async
-    async def get_zxy_scale_by_format(
-        self,
-        search_id: str,
-        z: float,
-        x: float,
-        y: float,
-        scale: float,
-        format: str,
-        *,
-        assets: Optional[List[str]] = None,
-        expression: Optional[str] = None,
-        asset_band_indices: Optional[List[str]] = None,
-        asset_as_band: Optional[bool] = None,
-        nodata: Optional[float] = None,
-        unscale: Optional[bool] = None,
-        scan_limit: Optional[int] = None,
-        items_limit: Optional[int] = None,
-        time_limit: Optional[int] = None,
-        exit_when_full: Optional[bool] = None,
-        skip_covered: Optional[bool] = None,
-        algorithm: Optional[Union[str, _models.Algorithm]] = None,
-        algorithm_params: Optional[str] = None,
-        tile_matrix_set_id: Optional[Union[str, _models.TileMatrixSetId]] = None,
-        buffer: Optional[str] = None,
-        color_formula: Optional[str] = None,
-        collection: Optional[str] = None,
-        resampling: Optional[Union[str, _models.Resampling]] = None,
-        pixel_selection: Optional[Union[str, _models.PixelSelection]] = None,
-        rescale: Optional[List[str]] = None,
-        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        colormap: Optional[str] = None,
-        return_mask: Optional[bool] = None,
-        **kwargs: Any
-    ) -> Optional[AsyncIterator[bytes]]:
-        """Tile.
-
-        Create map tile.
-
-        :param search_id: Search Id (pgSTAC Search Hash). Required.
-        :type search_id: str
-        :param z: Identifier (Z) selecting one of the scales defined in the TileMatrixSet and
-         representing the scaleDenominator the tile. Required.
-        :type z: float
-        :param x: Column (X) index of the tile on the selected TileMatrix. It cannot exceed the
-         MatrixHeight-1 for the selected TileMatrix. Required.
-        :type x: float
-        :param y: Row (Y) index of the tile on the selected TileMatrix. It cannot exceed the
-         MatrixWidth-1 for the selected TileMatrix. Required.
-        :type y: float
-        :param scale: Numeric scale factor for the tile. Higher values produce larger tiles (default:
-         "1"). Required.
-        :type scale: float
-        :param format: Output format for the tile or image (e.g., png, jpeg, webp) (default: "png").
-         Required.
-        :type format: str
-        :keyword assets: Asset's names. Default value is None.
-        :paramtype assets: list[str]
-        :keyword expression: Band math expression between assets. Default value is None.
-        :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
-        :keyword asset_as_band: Asset as Band. Default value is None.
-        :paramtype asset_as_band: bool
-        :keyword nodata: Overwrite internal Nodata value. Default value is None.
-        :paramtype nodata: float
-        :keyword unscale: Apply internal Scale or Offset. Default value is None.
-        :paramtype unscale: bool
-        :keyword scan_limit: Return as soon as we scan N items (defaults to 10000 in PgSTAC). Default
-         value is None.
-        :paramtype scan_limit: int
-        :keyword items_limit: Return as soon as we have N items per geometry (defaults to 100 in
-         PgSTAC). Default value is None.
-        :paramtype items_limit: int
-        :keyword time_limit: Return after N seconds to avoid long requests (defaults to 5 in PgSTAC).
-         Default value is None.
-        :paramtype time_limit: int
-        :keyword exit_when_full: Return as soon as the geometry is fully covered (defaults to True in
-         PgSTAC). Default value is None.
-        :paramtype exit_when_full: bool
-        :keyword skip_covered: Skip any items that would show up completely under the previous items
-         (defaults
-         to True in PgSTAC). Default value is None.
-        :paramtype skip_covered: bool
-        :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
-         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~azure.planetarycomputer.models.Algorithm
-        :keyword algorithm_params: Algorithm parameter. Default value is None.
-        :paramtype algorithm_params: str
-        :keyword tile_matrix_set_id: Identifier selecting one of the TileMatrixSetId supported
-         (default:
-         'WebMercatorQuad'). Known values are: "CanadianNAD83_LCC", "EuropeanETRS89_LAEAQuad",
-         "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
-         "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
-         "WorldMercatorWGS84Quad". Default value is None.
-        :paramtype tile_matrix_set_id: str or ~azure.planetarycomputer.models.TileMatrixSetId
-        :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
-         Output
-         **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
-         1.0 = 258x258). Default value is None.
-        :paramtype buffer: str
-        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
-         <https://github.com/mapbox/rio-color>`_). Default value is None.
-        :paramtype color_formula: str
-        :keyword collection: STAC Collection ID. Default value is None.
-        :paramtype collection: str
-        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
-         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
-        :keyword pixel_selection: Pixel selection method. Known values are: "first", "highest",
-         "lowest", "mean", "median", "stdev", "lastbandlow", and "lastbandhight". Default value is None.
-        :paramtype pixel_selection: str or ~azure.planetarycomputer.models.PixelSelection
-        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
-         bands. Default value is None.
-        :paramtype rescale: list[str]
-        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
-         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
-         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
-         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
-         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
-         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
-         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
-         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
-         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
-         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
-         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
-         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
-         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
-         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
-         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
-         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
-         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
-         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
-         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
-         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
-         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
-         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
-         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
-         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
-         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
-         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
-         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
-         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
-         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
-         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
-         is None.
-        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword colormap: JSON encoded custom Colormap. Default value is None.
-        :paramtype colormap: str
-        :keyword return_mask: Add mask to the output data. Default value is None.
-        :paramtype return_mask: bool
-        :return: AsyncIterator[bytes] or None
-        :rtype: AsyncIterator[bytes] or None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[Optional[AsyncIterator[bytes]]] = kwargs.pop("cls", None)
-
-        _request = build_mosaics_tiles_get_zxy_scale_by_format_request(
-            search_id=search_id,
-            z=z,
-            x=x,
-            y=y,
-            scale=scale,
-            format=format,
-            assets=assets,
-            expression=expression,
-            asset_band_indices=asset_band_indices,
-            asset_as_band=asset_as_band,
-            nodata=nodata,
-            unscale=unscale,
-            scan_limit=scan_limit,
-            items_limit=items_limit,
-            time_limit=time_limit,
-            exit_when_full=exit_when_full,
-            skip_covered=skip_covered,
-            algorithm=algorithm,
-            algorithm_params=algorithm_params,
-            tile_matrix_set_id=tile_matrix_set_id,
-            buffer=buffer,
-            color_formula=color_formula,
-            collection=collection,
-            resampling=resampling,
-            pixel_selection=pixel_selection,
-            rescale=rescale,
-            colormap_name=colormap_name,
-            colormap=colormap,
-            return_mask=return_mask,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", True)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 204]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        deserialized = None
-        response_headers = {}
-        if response.status_code == 200:
-            response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-            response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-            response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-            response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-            response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-            response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-            response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-
-            deserialized = response.iter_bytes()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-
-class MosaicsTileMatrixSetsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`mosaics_tile_matrix_sets` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace_async
-    async def get_zxy_scale_by_format(
-        self,
-        search_id: str,
-        tile_matrix_set_id: str,
-        z: float,
-        x: float,
-        y: float,
-        scale: float,
-        format: str,
-        *,
-        assets: Optional[List[str]] = None,
-        expression: Optional[str] = None,
-        asset_band_indices: Optional[List[str]] = None,
-        asset_as_band: Optional[bool] = None,
-        nodata: Optional[float] = None,
-        unscale: Optional[bool] = None,
-        scan_limit: Optional[int] = None,
-        items_limit: Optional[int] = None,
-        time_limit: Optional[int] = None,
-        exit_when_full: Optional[bool] = None,
-        skip_covered: Optional[bool] = None,
-        algorithm: Optional[Union[str, _models.Algorithm]] = None,
-        algorithm_params: Optional[str] = None,
-        buffer: Optional[str] = None,
-        color_formula: Optional[str] = None,
-        collection: Optional[str] = None,
-        resampling: Optional[Union[str, _models.Resampling]] = None,
-        pixel_selection: Optional[Union[str, _models.PixelSelection]] = None,
-        rescale: Optional[List[str]] = None,
-        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        colormap: Optional[str] = None,
-        return_mask: Optional[bool] = None,
-        **kwargs: Any
-    ) -> Optional[AsyncIterator[bytes]]:
-        """Tile Tilematrixsetid As Path.
-
-        Create map tile.
-
-        :param search_id: Search Id (pgSTAC Search Hash). Required.
-        :type search_id: str
-        :param tile_matrix_set_id: Identifier selecting one of the TileMatrixSetId supported. Required.
-        :type tile_matrix_set_id: str
-        :param z: Identifier (Z) selecting one of the scales defined in the TileMatrixSet and
-         representing the scaleDenominator the tile. Required.
-        :type z: float
-        :param x: Column (X) index of the tile on the selected TileMatrix. It cannot exceed the
-         MatrixHeight-1 for the selected TileMatrix. Required.
-        :type x: float
-        :param y: Row (Y) index of the tile on the selected TileMatrix. It cannot exceed the
-         MatrixWidth-1 for the selected TileMatrix. Required.
-        :type y: float
-        :param scale: Numeric scale factor for the tile. Higher values produce larger tiles (default:
-         "1"). Required.
-        :type scale: float
-        :param format: Output format for the tile or image (e.g., png, jpeg, webp) (default: "png").
-         Required.
-        :type format: str
-        :keyword assets: Asset's names. Default value is None.
-        :paramtype assets: list[str]
-        :keyword expression: Band math expression between assets. Default value is None.
-        :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
-        :keyword asset_as_band: Asset as Band. Default value is None.
-        :paramtype asset_as_band: bool
-        :keyword nodata: Overwrite internal Nodata value. Default value is None.
-        :paramtype nodata: float
-        :keyword unscale: Apply internal Scale or Offset. Default value is None.
-        :paramtype unscale: bool
-        :keyword scan_limit: Return as soon as we scan N items (defaults to 10000 in PgSTAC). Default
-         value is None.
-        :paramtype scan_limit: int
-        :keyword items_limit: Return as soon as we have N items per geometry (defaults to 100 in
-         PgSTAC). Default value is None.
-        :paramtype items_limit: int
-        :keyword time_limit: Return after N seconds to avoid long requests (defaults to 5 in PgSTAC).
-         Default value is None.
-        :paramtype time_limit: int
-        :keyword exit_when_full: Return as soon as the geometry is fully covered (defaults to True in
-         PgSTAC). Default value is None.
-        :paramtype exit_when_full: bool
-        :keyword skip_covered: Skip any items that would show up completely under the previous items
-         (defaults
-         to True in PgSTAC). Default value is None.
-        :paramtype skip_covered: bool
-        :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
-         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~azure.planetarycomputer.models.Algorithm
-        :keyword algorithm_params: Algorithm parameter. Default value is None.
-        :paramtype algorithm_params: str
-        :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
-         Output
-         **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
-         1.0 = 258x258). Default value is None.
-        :paramtype buffer: str
-        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
-         <https://github.com/mapbox/rio-color>`_). Default value is None.
-        :paramtype color_formula: str
-        :keyword collection: STAC Collection ID. Default value is None.
-        :paramtype collection: str
-        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
-         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
-        :keyword pixel_selection: Pixel selection method. Known values are: "first", "highest",
-         "lowest", "mean", "median", "stdev", "lastbandlow", and "lastbandhight". Default value is None.
-        :paramtype pixel_selection: str or ~azure.planetarycomputer.models.PixelSelection
-        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
-         bands. Default value is None.
-        :paramtype rescale: list[str]
-        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
-         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
-         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
-         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
-         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
-         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
-         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
-         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
-         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
-         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
-         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
-         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
-         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
-         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
-         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
-         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
-         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
-         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
-         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
-         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
-         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
-         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
-         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
-         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
-         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
-         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
-         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
-         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
-         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
-         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
-         is None.
-        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword colormap: JSON encoded custom Colormap. Default value is None.
-        :paramtype colormap: str
-        :keyword return_mask: Add mask to the output data. Default value is None.
-        :paramtype return_mask: bool
-        :return: AsyncIterator[bytes] or None
-        :rtype: AsyncIterator[bytes] or None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[Optional[AsyncIterator[bytes]]] = kwargs.pop("cls", None)
-
-        _request = build_mosaics_tile_matrix_sets_get_zxy_scale_by_format_request(
-            search_id=search_id,
-            tile_matrix_set_id=tile_matrix_set_id,
-            z=z,
-            x=x,
-            y=y,
-            scale=scale,
-            format=format,
-            assets=assets,
-            expression=expression,
-            asset_band_indices=asset_band_indices,
-            asset_as_band=asset_as_band,
-            nodata=nodata,
-            unscale=unscale,
-            scan_limit=scan_limit,
-            items_limit=items_limit,
-            time_limit=time_limit,
-            exit_when_full=exit_when_full,
-            skip_covered=skip_covered,
-            algorithm=algorithm,
-            algorithm_params=algorithm_params,
-            buffer=buffer,
-            color_formula=color_formula,
-            collection=collection,
-            resampling=resampling,
-            pixel_selection=pixel_selection,
-            rescale=rescale,
-            colormap_name=colormap_name,
-            colormap=colormap,
-            return_mask=return_mask,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", True)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 204]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        deserialized = None
-        response_headers = {}
-        if response.status_code == 200:
-            response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-            response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-            response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-            response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-            response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-            response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-            response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-
-            deserialized = response.iter_bytes()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-
-class MosaicsTileJsonOperationsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`mosaics_tile_json_operations` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace_async
-    async def get(
-        self,
-        search_id: str,
-        *,
-        assets: Optional[List[str]] = None,
-        expression: Optional[str] = None,
-        asset_band_indices: Optional[List[str]] = None,
-        asset_as_band: Optional[bool] = None,
-        nodata: Optional[float] = None,
-        unscale: Optional[bool] = None,
-        scan_limit: Optional[int] = None,
-        items_limit: Optional[int] = None,
-        time_limit: Optional[int] = None,
-        exit_when_full: Optional[bool] = None,
-        skip_covered: Optional[bool] = None,
-        tile_matrix_set_id: Optional[Union[str, _models.TileMatrixSetId]] = None,
-        tile_format: Optional[Union[str, _models.ImageType]] = None,
-        tile_scale: Optional[int] = None,
-        min_zoom: Optional[int] = None,
-        max_zoom: Optional[int] = None,
-        buffer: Optional[float] = None,
-        color_formula: Optional[str] = None,
-        collection: Optional[str] = None,
-        resampling: Optional[Union[str, _models.Resampling]] = None,
-        pixel_selection: Optional[Union[str, _models.PixelSelection]] = None,
-        algorithm: Optional[Union[str, _models.Algorithm]] = None,
-        algorithm_params: Optional[str] = None,
-        rescale: Optional[List[str]] = None,
-        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        colormap: Optional[str] = None,
-        return_mask: Optional[bool] = None,
-        **kwargs: Any
-    ) -> _models.TileJsonResponse:
-        """Tilejson.
-
-        Return TileJSON document for a searchId.
-
-        :param search_id: Search Id (pgSTAC Search Hash). Required.
-        :type search_id: str
-        :keyword assets: Asset's names. Default value is None.
-        :paramtype assets: list[str]
-        :keyword expression: Band math expression between assets. Default value is None.
-        :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
-        :keyword asset_as_band: Asset as Band. Default value is None.
-        :paramtype asset_as_band: bool
-        :keyword nodata: Overwrite internal Nodata value. Default value is None.
-        :paramtype nodata: float
-        :keyword unscale: Apply internal Scale or Offset. Default value is None.
-        :paramtype unscale: bool
-        :keyword scan_limit: Return as soon as we scan N items (defaults to 10000 in PgSTAC). Default
-         value is None.
-        :paramtype scan_limit: int
-        :keyword items_limit: Return as soon as we have N items per geometry (defaults to 100 in
-         PgSTAC). Default value is None.
-        :paramtype items_limit: int
-        :keyword time_limit: Return after N seconds to avoid long requests (defaults to 5 in PgSTAC).
-         Default value is None.
-        :paramtype time_limit: int
-        :keyword exit_when_full: Return as soon as the geometry is fully covered (defaults to True in
-         PgSTAC). Default value is None.
-        :paramtype exit_when_full: bool
-        :keyword skip_covered: Skip any items that would show up completely under the previous items
-         (defaults
-         to True in PgSTAC). Default value is None.
-        :paramtype skip_covered: bool
-        :keyword tile_matrix_set_id: Identifier selecting one of the TileMatrixSetId supported
-         (default: 'WebMercatorQuad'). Known values are: "CanadianNAD83_LCC", "EuropeanETRS89_LAEAQuad",
-         "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
-         "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
-         "WorldMercatorWGS84Quad". Default value is None.
-        :paramtype tile_matrix_set_id: str or ~azure.planetarycomputer.models.TileMatrixSetId
-        :keyword tile_format: Default will be automatically defined if the output image needs a mask
-         (png) or
-         not (jpeg). Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and "pngraw".
-         Default value is None.
-        :paramtype tile_format: str or ~azure.planetarycomputer.models.ImageType
-        :keyword tile_scale: Tile scale factor affecting output size. Values > 1 produce larger tiles
-         (e.g., 1=256x256, 2=512x512). Default value is None.
-        :paramtype tile_scale: int
-        :keyword min_zoom: Overwrite default minzoom. Default value is None.
-        :paramtype min_zoom: int
-        :keyword max_zoom: Overwrite default maxzoom. Default value is None.
-        :paramtype max_zoom: int
-        :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
-         Output
-         **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
-         1.0 = 258x258). Default value is None.
-        :paramtype buffer: float
-        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
-         <https://github.com/mapbox/rio-color>`_). Default value is None.
-        :paramtype color_formula: str
-        :keyword collection: STAC Collection ID. Default value is None.
-        :paramtype collection: str
-        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
-         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
-        :keyword pixel_selection: Pixel selection method. Known values are: "first", "highest",
-         "lowest", "mean", "median", "stdev", "lastbandlow", and "lastbandhight". Default value is None.
-        :paramtype pixel_selection: str or ~azure.planetarycomputer.models.PixelSelection
-        :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
-         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~azure.planetarycomputer.models.Algorithm
-        :keyword algorithm_params: Algorithm parameter. Default value is None.
-        :paramtype algorithm_params: str
-        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
-         bands. Default value is None.
-        :paramtype rescale: list[str]
-        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
-         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
-         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
-         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
-         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
-         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
-         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
-         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
-         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
-         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
-         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
-         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
-         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
-         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
-         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
-         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
-         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
-         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
-         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
-         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
-         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
-         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
-         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
-         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
-         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
-         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
-         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
-         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
-         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
-         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
-         is None.
-        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword colormap: JSON encoded custom Colormap. Default value is None.
-        :paramtype colormap: str
-        :keyword return_mask: Add mask to the output data. Default value is None.
-        :paramtype return_mask: bool
-        :return: TileJsonResponse. The TileJsonResponse is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.TileJsonResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.TileJsonResponse] = kwargs.pop("cls", None)
-
-        _request = build_mosaics_tile_json_operations_get_request(
-            search_id=search_id,
-            assets=assets,
-            expression=expression,
-            asset_band_indices=asset_band_indices,
-            asset_as_band=asset_as_band,
-            nodata=nodata,
-            unscale=unscale,
-            scan_limit=scan_limit,
-            items_limit=items_limit,
-            time_limit=time_limit,
-            exit_when_full=exit_when_full,
-            skip_covered=skip_covered,
-            tile_matrix_set_id=tile_matrix_set_id,
-            tile_format=tile_format,
-            tile_scale=tile_scale,
-            min_zoom=min_zoom,
-            max_zoom=max_zoom,
-            buffer=buffer,
-            color_formula=color_formula,
-            collection=collection,
-            resampling=resampling,
-            pixel_selection=pixel_selection,
-            algorithm=algorithm,
-            algorithm_params=algorithm_params,
-            rescale=rescale,
-            colormap_name=colormap_name,
-            colormap=colormap,
-            return_mask=return_mask,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
         if response.status_code not in [200]:
             if _stream:
                 try:
@@ -12124,1277 +10819,18 @@ class MosaicsTileJsonOperationsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.TileJsonResponse, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-
-class MosaicsTileMatrixSetsTileJsonOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`mosaics_tile_matrix_sets_tile_json` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace_async
-    async def get(
-        self,
-        search_id: str,
-        tile_matrix_set_id: str,
-        *,
-        assets: Optional[List[str]] = None,
-        expression: Optional[str] = None,
-        asset_band_indices: Optional[List[str]] = None,
-        asset_as_band: Optional[bool] = None,
-        nodata: Optional[float] = None,
-        unscale: Optional[bool] = None,
-        scan_limit: Optional[int] = None,
-        items_limit: Optional[int] = None,
-        time_limit: Optional[int] = None,
-        exit_when_full: Optional[bool] = None,
-        skip_covered: Optional[bool] = None,
-        algorithm: Optional[Union[str, _models.Algorithm]] = None,
-        algorithm_params: Optional[str] = None,
-        min_zoom: Optional[int] = None,
-        max_zoom: Optional[int] = None,
-        tile_format: Optional[Union[str, _models.ImageType]] = None,
-        tile_scale: Optional[int] = None,
-        buffer: Optional[str] = None,
-        color_formula: Optional[str] = None,
-        collection: Optional[str] = None,
-        resampling: Optional[Union[str, _models.Resampling]] = None,
-        pixel_selection: Optional[Union[str, _models.PixelSelection]] = None,
-        rescale: Optional[List[str]] = None,
-        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        colormap: Optional[str] = None,
-        return_mask: Optional[bool] = None,
-        **kwargs: Any
-    ) -> _models.TileJsonResponse:
-        """Tilejson Tilematrixsetid As Path.
-
-        Return TileJSON document for a searchId.
-
-        :param search_id: Search Id (pgSTAC Search Hash). Required.
-        :type search_id: str
-        :param tile_matrix_set_id: Identifier selecting one of the TileMatrixSetId supported. Required.
-        :type tile_matrix_set_id: str
-        :keyword assets: Asset's names. Default value is None.
-        :paramtype assets: list[str]
-        :keyword expression: Band math expression between assets. Default value is None.
-        :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
-        :keyword asset_as_band: Asset as Band. Default value is None.
-        :paramtype asset_as_band: bool
-        :keyword nodata: Overwrite internal Nodata value. Default value is None.
-        :paramtype nodata: float
-        :keyword unscale: Apply internal Scale or Offset. Default value is None.
-        :paramtype unscale: bool
-        :keyword scan_limit: Return as soon as we scan N items (defaults to 10000 in PgSTAC). Default
-         value is None.
-        :paramtype scan_limit: int
-        :keyword items_limit: Return as soon as we have N items per geometry (defaults to 100 in
-         PgSTAC). Default value is None.
-        :paramtype items_limit: int
-        :keyword time_limit: Return after N seconds to avoid long requests (defaults to 5 in PgSTAC).
-         Default value is None.
-        :paramtype time_limit: int
-        :keyword exit_when_full: Return as soon as the geometry is fully covered (defaults to True in
-         PgSTAC). Default value is None.
-        :paramtype exit_when_full: bool
-        :keyword skip_covered: Skip any items that would show up completely under the previous items
-         (defaults
-         to True in PgSTAC). Default value is None.
-        :paramtype skip_covered: bool
-        :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
-         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~azure.planetarycomputer.models.Algorithm
-        :keyword algorithm_params: Algorithm parameter. Default value is None.
-        :paramtype algorithm_params: str
-        :keyword min_zoom: Overwrite default minzoom. Default value is None.
-        :paramtype min_zoom: int
-        :keyword max_zoom: Overwrite default maxzoom. Default value is None.
-        :paramtype max_zoom: int
-        :keyword tile_format: Default will be automatically defined if the output image needs a mask
-         (png) or
-         not (jpeg). Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and "pngraw".
-         Default value is None.
-        :paramtype tile_format: str or ~azure.planetarycomputer.models.ImageType
-        :keyword tile_scale: Tile scale factor affecting output size. Values > 1 produce larger tiles
-         (e.g., 1=256x256, 2=512x512). Default value is None.
-        :paramtype tile_scale: int
-        :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
-         Output
-         **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
-         1.0 = 258x258). Default value is None.
-        :paramtype buffer: str
-        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
-         <https://github.com/mapbox/rio-color>`_). Default value is None.
-        :paramtype color_formula: str
-        :keyword collection: STAC Collection ID. Default value is None.
-        :paramtype collection: str
-        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
-         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
-        :keyword pixel_selection: Pixel selection method. Known values are: "first", "highest",
-         "lowest", "mean", "median", "stdev", "lastbandlow", and "lastbandhight". Default value is None.
-        :paramtype pixel_selection: str or ~azure.planetarycomputer.models.PixelSelection
-        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
-         bands. Default value is None.
-        :paramtype rescale: list[str]
-        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
-         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
-         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
-         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
-         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
-         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
-         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
-         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
-         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
-         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
-         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
-         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
-         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
-         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
-         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
-         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
-         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
-         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
-         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
-         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
-         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
-         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
-         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
-         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
-         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
-         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
-         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
-         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
-         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
-         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
-         is None.
-        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword colormap: JSON encoded custom Colormap. Default value is None.
-        :paramtype colormap: str
-        :keyword return_mask: Add mask to the output data. Default value is None.
-        :paramtype return_mask: bool
-        :return: TileJsonResponse. The TileJsonResponse is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.TileJsonResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.TileJsonResponse] = kwargs.pop("cls", None)
-
-        _request = build_mosaics_tile_matrix_sets_tile_json_get_request(
-            search_id=search_id,
-            tile_matrix_set_id=tile_matrix_set_id,
-            assets=assets,
-            expression=expression,
-            asset_band_indices=asset_band_indices,
-            asset_as_band=asset_as_band,
-            nodata=nodata,
-            unscale=unscale,
-            scan_limit=scan_limit,
-            items_limit=items_limit,
-            time_limit=time_limit,
-            exit_when_full=exit_when_full,
-            skip_covered=skip_covered,
-            algorithm=algorithm,
-            algorithm_params=algorithm_params,
-            min_zoom=min_zoom,
-            max_zoom=max_zoom,
-            tile_format=tile_format,
-            tile_scale=tile_scale,
-            buffer=buffer,
-            color_formula=color_formula,
-            collection=collection,
-            resampling=resampling,
-            pixel_selection=pixel_selection,
-            rescale=rescale,
-            colormap_name=colormap_name,
-            colormap=colormap,
-            return_mask=return_mask,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.TileJsonResponse, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-
-class MosaicsWmtsMosaicsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`mosaics_wmts_mosaics` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace_async
-    async def get_capabilities_xml(
-        self,
-        search_id: str,
-        *,
-        assets: Optional[List[str]] = None,
-        expression: Optional[str] = None,
-        asset_band_indices: Optional[List[str]] = None,
-        asset_as_band: Optional[bool] = None,
-        nodata: Optional[float] = None,
-        unscale: Optional[bool] = None,
-        algorithm: Optional[Union[str, _models.Algorithm]] = None,
-        algorithm_params: Optional[str] = None,
-        tile_matrix_set_id: Optional[Union[str, _models.TileMatrixSetId]] = None,
-        tile_format: Optional[Union[str, _models.ImageType]] = None,
-        tile_scale: Optional[int] = None,
-        min_zoom: Optional[int] = None,
-        max_zoom: Optional[int] = None,
-        buffer: Optional[str] = None,
-        color_formula: Optional[str] = None,
-        resampling: Optional[Union[str, _models.Resampling]] = None,
-        rescale: Optional[List[str]] = None,
-        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        colormap: Optional[str] = None,
-        return_mask: Optional[bool] = None,
-        **kwargs: Any
-    ) -> Optional[AsyncIterator[bytes]]:
-        """Wmts.
-
-        OGC WMTS endpoint.
-
-        :param search_id: Search Id (pgSTAC Search Hash). Required.
-        :type search_id: str
-        :keyword assets: Asset's names. Default value is None.
-        :paramtype assets: list[str]
-        :keyword expression: Band math expression between assets. Default value is None.
-        :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
-        :keyword asset_as_band: Asset as Band. Default value is None.
-        :paramtype asset_as_band: bool
-        :keyword nodata: Overwrite internal Nodata value. Default value is None.
-        :paramtype nodata: float
-        :keyword unscale: Apply internal Scale or Offset. Default value is None.
-        :paramtype unscale: bool
-        :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
-         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~azure.planetarycomputer.models.Algorithm
-        :keyword algorithm_params: Algorithm parameter. Default value is None.
-        :paramtype algorithm_params: str
-        :keyword tile_matrix_set_id: Identifier selecting one of the TileMatrixSetId supported
-         (default:
-         'WebMercatorQuad'). Known values are: "CanadianNAD83_LCC", "EuropeanETRS89_LAEAQuad",
-         "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
-         "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
-         "WorldMercatorWGS84Quad". Default value is None.
-        :paramtype tile_matrix_set_id: str or ~azure.planetarycomputer.models.TileMatrixSetId
-        :keyword tile_format: Output image type. Default is png. Known values are: "png", "npy", "tif",
-         "jpeg", "jpg", "jp2", "webp", and "pngraw". Default value is None.
-        :paramtype tile_format: str or ~azure.planetarycomputer.models.ImageType
-        :keyword tile_scale: Tile scale factor affecting output size. Values > 1 produce larger tiles
-         (e.g., 1=256x256, 2=512x512). Default value is None.
-        :paramtype tile_scale: int
-        :keyword min_zoom: Overwrite default minzoom. Default value is None.
-        :paramtype min_zoom: int
-        :keyword max_zoom: Overwrite default maxzoom. Default value is None.
-        :paramtype max_zoom: int
-        :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
-         Output
-         **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
-         1.0 = 258x258). Default value is None.
-        :paramtype buffer: str
-        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
-         <https://github.com/mapbox/rio-color>`_). Default value is None.
-        :paramtype color_formula: str
-        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
-         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
-        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
-         bands. Default value is None.
-        :paramtype rescale: list[str]
-        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
-         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
-         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
-         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
-         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
-         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
-         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
-         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
-         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
-         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
-         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
-         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
-         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
-         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
-         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
-         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
-         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
-         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
-         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
-         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
-         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
-         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
-         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
-         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
-         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
-         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
-         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
-         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
-         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
-         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
-         is None.
-        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword colormap: JSON encoded custom Colormap. Default value is None.
-        :paramtype colormap: str
-        :keyword return_mask: Add mask to the output data. Default value is None.
-        :paramtype return_mask: bool
-        :return: AsyncIterator[bytes] or None
-        :rtype: AsyncIterator[bytes] or None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[Optional[AsyncIterator[bytes]]] = kwargs.pop("cls", None)
-
-        _request = build_mosaics_wmts_mosaics_get_capabilities_xml_request(
-            search_id=search_id,
-            assets=assets,
-            expression=expression,
-            asset_band_indices=asset_band_indices,
-            asset_as_band=asset_as_band,
-            nodata=nodata,
-            unscale=unscale,
-            algorithm=algorithm,
-            algorithm_params=algorithm_params,
-            tile_matrix_set_id=tile_matrix_set_id,
-            tile_format=tile_format,
-            tile_scale=tile_scale,
-            min_zoom=min_zoom,
-            max_zoom=max_zoom,
-            buffer=buffer,
-            color_formula=color_formula,
-            resampling=resampling,
-            rescale=rescale,
-            colormap_name=colormap_name,
-            colormap=colormap,
-            return_mask=return_mask,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", True)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 204]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        deserialized = None
         response_headers = {}
-        if response.status_code == 200:
-            response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
 
-            deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
-
-class MosaicsWmtsMosaicsTileMatrixSetsOperations:  # pylint: disable=name-too-long
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`mosaics_wmts_mosaics_tile_matrix_sets` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
     @distributed_trace_async
-    async def get_capabilities_xml(
-        self,
-        search_id: str,
-        tile_matrix_set_id: str,
-        *,
-        assets: Optional[List[str]] = None,
-        expression: Optional[str] = None,
-        asset_band_indices: Optional[List[str]] = None,
-        asset_as_band: Optional[bool] = None,
-        nodata: Optional[float] = None,
-        unscale: Optional[bool] = None,
-        algorithm: Optional[Union[str, _models.Algorithm]] = None,
-        algorithm_params: Optional[str] = None,
-        tile_format: Optional[Union[str, _models.ImageType]] = None,
-        tile_scale: Optional[int] = None,
-        min_zoom: Optional[int] = None,
-        max_zoom: Optional[int] = None,
-        buffer: Optional[str] = None,
-        color_formula: Optional[str] = None,
-        resampling: Optional[Union[str, _models.Resampling]] = None,
-        rescale: Optional[List[str]] = None,
-        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        colormap: Optional[str] = None,
-        return_mask: Optional[bool] = None,
-        **kwargs: Any
-    ) -> Optional[AsyncIterator[bytes]]:
-        """Wmts Tilematrixsetid As Path.
-
-        OGC WMTS endpoint.
-
-        :param search_id: Search Id (pgSTAC Search Hash). Required.
-        :type search_id: str
-        :param tile_matrix_set_id: Identifier selecting one of the TileMatrixSetId supported. Required.
-        :type tile_matrix_set_id: str
-        :keyword assets: Asset's names. Default value is None.
-        :paramtype assets: list[str]
-        :keyword expression: Band math expression between assets. Default value is None.
-        :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
-        :keyword asset_as_band: Asset as Band. Default value is None.
-        :paramtype asset_as_band: bool
-        :keyword nodata: Overwrite internal Nodata value. Default value is None.
-        :paramtype nodata: float
-        :keyword unscale: Apply internal Scale or Offset. Default value is None.
-        :paramtype unscale: bool
-        :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
-         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~azure.planetarycomputer.models.Algorithm
-        :keyword algorithm_params: Algorithm parameter. Default value is None.
-        :paramtype algorithm_params: str
-        :keyword tile_format: Output image type. Default is png. Known values are: "png", "npy", "tif",
-         "jpeg", "jpg", "jp2", "webp", and "pngraw". Default value is None.
-        :paramtype tile_format: str or ~azure.planetarycomputer.models.ImageType
-        :keyword tile_scale: Tile scale factor affecting output size. Values > 1 produce larger tiles
-         (e.g., 1=256x256, 2=512x512). Default value is None.
-        :paramtype tile_scale: int
-        :keyword min_zoom: Overwrite default minzoom. Default value is None.
-        :paramtype min_zoom: int
-        :keyword max_zoom: Overwrite default maxzoom. Default value is None.
-        :paramtype max_zoom: int
-        :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
-         Output
-         **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
-         1.0 = 258x258). Default value is None.
-        :paramtype buffer: str
-        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
-         <https://github.com/mapbox/rio-color>`_). Default value is None.
-        :paramtype color_formula: str
-        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
-         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
-        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
-         bands. Default value is None.
-        :paramtype rescale: list[str]
-        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
-         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
-         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
-         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
-         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
-         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
-         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
-         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
-         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
-         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
-         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
-         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
-         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
-         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
-         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
-         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
-         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
-         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
-         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
-         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
-         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
-         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
-         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
-         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
-         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
-         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
-         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
-         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
-         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
-         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
-         is None.
-        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword colormap: JSON encoded custom Colormap. Default value is None.
-        :paramtype colormap: str
-        :keyword return_mask: Add mask to the output data. Default value is None.
-        :paramtype return_mask: bool
-        :return: AsyncIterator[bytes] or None
-        :rtype: AsyncIterator[bytes] or None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[Optional[AsyncIterator[bytes]]] = kwargs.pop("cls", None)
-
-        _request = build_mosaics_wmts_mosaics_tile_matrix_sets_get_capabilities_xml_request(
-            search_id=search_id,
-            tile_matrix_set_id=tile_matrix_set_id,
-            assets=assets,
-            expression=expression,
-            asset_band_indices=asset_band_indices,
-            asset_as_band=asset_as_band,
-            nodata=nodata,
-            unscale=unscale,
-            algorithm=algorithm,
-            algorithm_params=algorithm_params,
-            tile_format=tile_format,
-            tile_scale=tile_scale,
-            min_zoom=min_zoom,
-            max_zoom=max_zoom,
-            buffer=buffer,
-            color_formula=color_formula,
-            resampling=resampling,
-            rescale=rescale,
-            colormap_name=colormap_name,
-            colormap=colormap,
-            return_mask=return_mask,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", True)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 204]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        deserialized = None
-        response_headers = {}
-        if response.status_code == 200:
-            response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-
-            deserialized = response.iter_bytes()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-
-class MosaicsRegisterSearchOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`mosaics_register_search` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @overload
-    async def register(
-        self,
-        *,
-        content_type: str = "application/json",
-        collections: Optional[List[str]] = None,
-        ids: Optional[List[str]] = None,
-        bbox: Optional[float] = None,
-        intersects: Optional[_models.Geometry] = None,
-        query: Optional[_models.StacQuery] = None,
-        filter: Optional[_models.CqlFilter] = None,
-        datetime: Optional[str] = None,
-        sort_by: Optional[List[_models.SortExtension]] = None,
-        filter_lang: Optional[Union[str, _models.FilterLang]] = None,
-        metadata: Optional[_models.Metadata] = None,
-        **kwargs: Any
-    ) -> _models.RegisterResponse:
-        """Register Search.
-
-        Register a Search query.
-
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword collections: List of STAC collection IDs to include in the mosaic. Default value is
-         None.
-        :paramtype collections: list[str]
-        :keyword ids: List of specific STAC item IDs to include in the mosaic. Default value is None.
-        :paramtype ids: list[str]
-        :keyword bbox: Geographic bounding box to filter items [west, south, east, north]. Default
-         value is None.
-        :paramtype bbox: float
-        :keyword intersects: GeoJSON geometry to spatially filter items by intersection. Default value
-         is None.
-        :paramtype intersects: ~azure.planetarycomputer.models.Geometry
-        :keyword query: Query. Default value is None.
-        :paramtype query: ~azure.planetarycomputer.models.StacQuery
-        :keyword filter: Filter. Default value is None.
-        :paramtype filter: ~azure.planetarycomputer.models.CqlFilter
-        :keyword datetime: Temporal filter in RFC 3339 format or interval. Default value is None.
-        :paramtype datetime: str
-        :keyword sort_by: Criteria for ordering items in the mosaic. Default value is None.
-        :paramtype sort_by: list[~azure.planetarycomputer.models.SortExtension]
-        :keyword filter_lang: Query language format used in the filter parameter. Known values are:
-         "cql-json", "cql2-json", and "cql2-text". Default value is None.
-        :paramtype filter_lang: str or ~azure.planetarycomputer.models.FilterLang
-        :keyword metadata: Additional metadata to associate with the mosaic. Default value is None.
-        :paramtype metadata: ~azure.planetarycomputer.models.Metadata
-        :return: RegisterResponse. The RegisterResponse is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.RegisterResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def register(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.RegisterResponse:
-        """Register Search.
-
-        Register a Search query.
-
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: RegisterResponse. The RegisterResponse is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.RegisterResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def register(
-        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.RegisterResponse:
-        """Register Search.
-
-        Register a Search query.
-
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: RegisterResponse. The RegisterResponse is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.RegisterResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def register(
-        self,
-        body: Union[JSON, IO[bytes]] = _Unset,
-        *,
-        collections: Optional[List[str]] = None,
-        ids: Optional[List[str]] = None,
-        bbox: Optional[float] = None,
-        intersects: Optional[_models.Geometry] = None,
-        query: Optional[_models.StacQuery] = None,
-        filter: Optional[_models.CqlFilter] = None,
-        datetime: Optional[str] = None,
-        sort_by: Optional[List[_models.SortExtension]] = None,
-        filter_lang: Optional[Union[str, _models.FilterLang]] = None,
-        metadata: Optional[_models.Metadata] = None,
-        **kwargs: Any
-    ) -> _models.RegisterResponse:
-        """Register Search.
-
-        Register a Search query.
-
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
-        :keyword collections: List of STAC collection IDs to include in the mosaic. Default value is
-         None.
-        :paramtype collections: list[str]
-        :keyword ids: List of specific STAC item IDs to include in the mosaic. Default value is None.
-        :paramtype ids: list[str]
-        :keyword bbox: Geographic bounding box to filter items [west, south, east, north]. Default
-         value is None.
-        :paramtype bbox: float
-        :keyword intersects: GeoJSON geometry to spatially filter items by intersection. Default value
-         is None.
-        :paramtype intersects: ~azure.planetarycomputer.models.Geometry
-        :keyword query: Query. Default value is None.
-        :paramtype query: ~azure.planetarycomputer.models.StacQuery
-        :keyword filter: Filter. Default value is None.
-        :paramtype filter: ~azure.planetarycomputer.models.CqlFilter
-        :keyword datetime: Temporal filter in RFC 3339 format or interval. Default value is None.
-        :paramtype datetime: str
-        :keyword sort_by: Criteria for ordering items in the mosaic. Default value is None.
-        :paramtype sort_by: list[~azure.planetarycomputer.models.SortExtension]
-        :keyword filter_lang: Query language format used in the filter parameter. Known values are:
-         "cql-json", "cql2-json", and "cql2-text". Default value is None.
-        :paramtype filter_lang: str or ~azure.planetarycomputer.models.FilterLang
-        :keyword metadata: Additional metadata to associate with the mosaic. Default value is None.
-        :paramtype metadata: ~azure.planetarycomputer.models.Metadata
-        :return: RegisterResponse. The RegisterResponse is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.RegisterResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.RegisterResponse] = kwargs.pop("cls", None)
-
-        if body is _Unset:
-            body = {
-                "bbox": bbox,
-                "collections": collections,
-                "datetime_property": datetime,
-                "filter": filter,
-                "filter_lang": filter_lang,
-                "ids": ids,
-                "intersects": intersects,
-                "metadata": metadata,
-                "query": query,
-                "sortby": sort_by,
-            }
-            body = {k: v for k, v in body.items() if v is not None}
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_mosaics_register_search_register_request(
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.RegisterResponse, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-
-class MosaicsInfoSearchOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`mosaics_info_search` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace_async
-    async def get(self, search_id: str, **kwargs: Any) -> _models.TitilerPgstacModelInfo:
-        """Info Search.
-
-        Get Search query metadata.
-
-        :param search_id: Search Id (pgSTAC Search Hash). Required.
-        :type search_id: str
-        :return: TitilerPgstacModelInfo. The TitilerPgstacModelInfo is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.TitilerPgstacModelInfo
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.TitilerPgstacModelInfo] = kwargs.pop("cls", None)
-
-        _request = build_mosaics_info_search_get_request(
-            search_id=search_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.TitilerPgstacModelInfo, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-
-class MosaicsAssetsForTilesOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`mosaics_assets_for_tiles` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace_async
-    async def get_zxy_assets(
-        self,
-        search_id: str,
-        z: float,
-        x: float,
-        y: float,
-        *,
-        scan_limit: Optional[int] = None,
-        items_limit: Optional[int] = None,
-        time_limit: Optional[int] = None,
-        exit_when_full: Optional[bool] = None,
-        skip_covered: Optional[bool] = None,
-        tile_matrix_set_id: Optional[Union[str, _models.TileMatrixSetId]] = None,
-        **kwargs: Any
-    ) -> Optional[List[Any]]:
-        """Assets For Tile.
-
-        Return a list of assets which overlap a given tile.
-
-        :param search_id: Search Id (pgSTAC Search Hash). Required.
-        :type search_id: str
-        :param z: Identifier (Z) selecting one of the scales defined in the TileMatrixSet and
-         representing the scaleDenominator the tile. Required.
-        :type z: float
-        :param x: Column (X) index of the tile on the selected TileMatrix. It cannot exceed the
-         MatrixHeight-1 for the selected TileMatrix. Required.
-        :type x: float
-        :param y: Row (Y) index of the tile on the selected TileMatrix. It cannot exceed the
-         MatrixWidth-1 for the selected TileMatrix. Required.
-        :type y: float
-        :keyword scan_limit: Return as soon as we scan N items (defaults to 10000 in PgSTAC). Default
-         value is None.
-        :paramtype scan_limit: int
-        :keyword items_limit: Return as soon as we have N items per geometry (defaults to 100 in
-         PgSTAC). Default value is None.
-        :paramtype items_limit: int
-        :keyword time_limit: Return after N seconds to avoid long requests (defaults to 5 in PgSTAC).
-         Default value is None.
-        :paramtype time_limit: int
-        :keyword exit_when_full: Return as soon as the geometry is fully covered (defaults to True in
-         PgSTAC). Default value is None.
-        :paramtype exit_when_full: bool
-        :keyword skip_covered: Skip any items that would show up completely under the previous items
-         (defaults
-         to True in PgSTAC). Default value is None.
-        :paramtype skip_covered: bool
-        :keyword tile_matrix_set_id: Identifier selecting one of the TileMatrixSetId supported
-         (default:
-         'WebMercatorQuad'). Known values are: "CanadianNAD83_LCC", "EuropeanETRS89_LAEAQuad",
-         "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
-         "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
-         "WorldMercatorWGS84Quad". Default value is None.
-        :paramtype tile_matrix_set_id: str or ~azure.planetarycomputer.models.TileMatrixSetId
-        :return: list of any or None
-        :rtype: list[any] or None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[Optional[List[Any]]] = kwargs.pop("cls", None)
-
-        _request = build_mosaics_assets_for_tiles_get_zxy_assets_request(
-            search_id=search_id,
-            z=z,
-            x=x,
-            y=y,
-            scan_limit=scan_limit,
-            items_limit=items_limit,
-            time_limit=time_limit,
-            exit_when_full=exit_when_full,
-            skip_covered=skip_covered,
-            tile_matrix_set_id=tile_matrix_set_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 204]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        deserialized = None
-        if response.status_code == 200:
-            if _stream:
-                deserialized = response.iter_bytes()
-            else:
-                deserialized = _deserialize(List[Any], response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-
-class MosaicsAssetsForTileMatrixSetsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`mosaics_assets_for_tile_matrix_sets` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace_async
-    async def get_zxy_assets(
-        self,
-        search_id: str,
-        tile_matrix_set_id: str,
-        z: float,
-        x: float,
-        y: float,
-        *,
-        scan_limit: Optional[int] = None,
-        items_limit: Optional[int] = None,
-        time_limit: Optional[int] = None,
-        exit_when_full: Optional[bool] = None,
-        skip_covered: Optional[bool] = None,
-        **kwargs: Any
-    ) -> Optional[List[Any]]:
-        """Assets For Tile Tilematrixsetid As Path.
-
-        Return a list of assets which overlap a given tile.
-
-        :param search_id: Search Id (pgSTAC Search Hash). Required.
-        :type search_id: str
-        :param tile_matrix_set_id: Identifier selecting one of the TileMatrixSetId supported. Required.
-        :type tile_matrix_set_id: str
-        :param z: Identifier (Z) selecting one of the scales defined in the TileMatrixSet and
-         representing the scaleDenominator the tile. Required.
-        :type z: float
-        :param x: Column (X) index of the tile on the selected TileMatrix. It cannot exceed the
-         MatrixHeight-1 for the selected TileMatrix. Required.
-        :type x: float
-        :param y: Row (Y) index of the tile on the selected TileMatrix. It cannot exceed the
-         MatrixWidth-1 for the selected TileMatrix. Required.
-        :type y: float
-        :keyword scan_limit: Return as soon as we scan N items (defaults to 10000 in PgSTAC). Default
-         value is None.
-        :paramtype scan_limit: int
-        :keyword items_limit: Return as soon as we have N items per geometry (defaults to 100 in
-         PgSTAC). Default value is None.
-        :paramtype items_limit: int
-        :keyword time_limit: Return after N seconds to avoid long requests (defaults to 5 in PgSTAC).
-         Default value is None.
-        :paramtype time_limit: int
-        :keyword exit_when_full: Return as soon as the geometry is fully covered (defaults to True in
-         PgSTAC). Default value is None.
-        :paramtype exit_when_full: bool
-        :keyword skip_covered: Skip any items that would show up completely under the previous items
-         (defaults
-         to True in PgSTAC). Default value is None.
-        :paramtype skip_covered: bool
-        :return: list of any or None
-        :rtype: list[any] or None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[Optional[List[Any]]] = kwargs.pop("cls", None)
-
-        _request = build_mosaics_assets_for_tile_matrix_sets_get_zxy_assets_request(
-            search_id=search_id,
-            tile_matrix_set_id=tile_matrix_set_id,
-            z=z,
-            x=x,
-            y=y,
-            scan_limit=scan_limit,
-            items_limit=items_limit,
-            time_limit=time_limit,
-            exit_when_full=exit_when_full,
-            skip_covered=skip_covered,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 204]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        deserialized = None
-        if response.status_code == 200:
-            if _stream:
-                deserialized = response.iter_bytes()
-            else:
-                deserialized = _deserialize(List[Any], response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-
-class MosaicsAssetsForPointsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`mosaics_assets_for_points` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace_async
-    async def get_lon_lat_assets(
+    async def get_assets_for_point(
         self,
         search_id: str,
         lon: float,
@@ -13454,7 +10890,7 @@ class MosaicsAssetsForPointsOperations:
 
         cls: ClsType[List[_models.Asset]] = kwargs.pop("cls", None)
 
-        _request = build_mosaics_assets_for_points_get_lon_lat_assets_request(
+        _request = build_tiler_get_assets_for_point_request(
             search_id=search_id,
             lon=lon,
             lat=lat,
@@ -13499,32 +10935,57 @@ class MosaicsAssetsForPointsOperations:
 
         return deserialized  # type: ignore
 
-
-class TileMatrixListOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`tile_matrix_list` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
     @distributed_trace_async
-    async def get(self, **kwargs: Any) -> Optional[List[str]]:
-        """Matrix List.
+    async def get_mosaics_assets_for_tile_with_matrix_set(  # pylint: disable=name-too-long
+        self,
+        search_id: str,
+        tile_matrix_set_id: str,
+        z: float,
+        x: float,
+        y: float,
+        *,
+        scan_limit: Optional[int] = None,
+        items_limit: Optional[int] = None,
+        time_limit: Optional[int] = None,
+        exit_when_full: Optional[bool] = None,
+        skip_covered: Optional[bool] = None,
+        **kwargs: Any
+    ) -> List[Any]:
+        """Assets For Tile Tilematrixsetid As Path.
 
-        Return Matrix List.
+        Return a list of assets which overlap a given tile.
 
-        :return: list of str or None
-        :rtype: list[str] or None
+        :param search_id: Search Id (pgSTAC Search Hash). Required.
+        :type search_id: str
+        :param tile_matrix_set_id: Identifier selecting one of the TileMatrixSetId supported. Required.
+        :type tile_matrix_set_id: str
+        :param z: Identifier (Z) selecting one of the scales defined in the TileMatrixSet and
+         representing the scaleDenominator the tile. Required.
+        :type z: float
+        :param x: Column (X) index of the tile on the selected TileMatrix. It cannot exceed the
+         MatrixHeight-1 for the selected TileMatrix. Required.
+        :type x: float
+        :param y: Row (Y) index of the tile on the selected TileMatrix. It cannot exceed the
+         MatrixWidth-1 for the selected TileMatrix. Required.
+        :type y: float
+        :keyword scan_limit: Return as soon as we scan N items (defaults to 10000 in PgSTAC). Default
+         value is None.
+        :paramtype scan_limit: int
+        :keyword items_limit: Return as soon as we have N items per geometry (defaults to 100 in
+         PgSTAC). Default value is None.
+        :paramtype items_limit: int
+        :keyword time_limit: Return after N seconds to avoid long requests (defaults to 5 in PgSTAC).
+         Default value is None.
+        :paramtype time_limit: int
+        :keyword exit_when_full: Return as soon as the geometry is fully covered (defaults to True in
+         PgSTAC). Default value is None.
+        :paramtype exit_when_full: bool
+        :keyword skip_covered: Skip any items that would show up completely under the previous items
+         (defaults
+         to True in PgSTAC). Default value is None.
+        :paramtype skip_covered: bool
+        :return: list of any
+        :rtype: list[any]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -13538,9 +10999,19 @@ class TileMatrixListOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[Optional[List[str]]] = kwargs.pop("cls", None)
+        cls: ClsType[List[Any]] = kwargs.pop("cls", None)
 
-        _request = build_tile_matrix_list_get_request(
+        _request = build_tiler_get_mosaics_assets_for_tile_with_matrix_set_request(
+            search_id=search_id,
+            tile_matrix_set_id=tile_matrix_set_id,
+            z=z,
+            x=x,
+            y=y,
+            scan_limit=scan_limit,
+            items_limit=items_limit,
+            time_limit=time_limit,
+            exit_when_full=exit_when_full,
+            skip_covered=skip_covered,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -13557,7 +11028,7 @@ class TileMatrixListOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 204]:
+        if response.status_code not in [200]:
             if _stream:
                 try:
                     await response.read()  # Load the body in memory and close the socket
@@ -13566,46 +11037,72 @@ class TileMatrixListOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = None
-        if response.status_code == 200:
-            if _stream:
-                deserialized = response.iter_bytes()
-            else:
-                deserialized = _deserialize(List[str], response.json())
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(List[Any], response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-class TileMatrixDefinitionsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`tile_matrix_definitions` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
     @distributed_trace_async
-    async def get(self, tile_matrix_set_id: str, **kwargs: Any) -> _models.TileMatrixSet:
-        """Matrix Definition.
+    async def get_mosaics_assets_for_tile(
+        self,
+        search_id: str,
+        z: float,
+        x: float,
+        y: float,
+        *,
+        scan_limit: Optional[int] = None,
+        items_limit: Optional[int] = None,
+        time_limit: Optional[int] = None,
+        exit_when_full: Optional[bool] = None,
+        skip_covered: Optional[bool] = None,
+        tile_matrix_set_id: Optional[Union[str, _models.TileMatrixSetId]] = None,
+        **kwargs: Any
+    ) -> List[Any]:
+        """Assets For Tile.
 
-        Return Matrix Definition.
+        Return a list of assets which overlap a given tile.
 
-        :param tile_matrix_set_id: Identifier selecting one of the TileMatrixSetId supported. Required.
-        :type tile_matrix_set_id: str
-        :return: TileMatrixSet. The TileMatrixSet is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.TileMatrixSet
+        :param search_id: Search Id (pgSTAC Search Hash). Required.
+        :type search_id: str
+        :param z: Identifier (Z) selecting one of the scales defined in the TileMatrixSet and
+         representing the scaleDenominator the tile. Required.
+        :type z: float
+        :param x: Column (X) index of the tile on the selected TileMatrix. It cannot exceed the
+         MatrixHeight-1 for the selected TileMatrix. Required.
+        :type x: float
+        :param y: Row (Y) index of the tile on the selected TileMatrix. It cannot exceed the
+         MatrixWidth-1 for the selected TileMatrix. Required.
+        :type y: float
+        :keyword scan_limit: Return as soon as we scan N items (defaults to 10000 in PgSTAC). Default
+         value is None.
+        :paramtype scan_limit: int
+        :keyword items_limit: Return as soon as we have N items per geometry (defaults to 100 in
+         PgSTAC). Default value is None.
+        :paramtype items_limit: int
+        :keyword time_limit: Return after N seconds to avoid long requests (defaults to 5 in PgSTAC).
+         Default value is None.
+        :paramtype time_limit: int
+        :keyword exit_when_full: Return as soon as the geometry is fully covered (defaults to True in
+         PgSTAC). Default value is None.
+        :paramtype exit_when_full: bool
+        :keyword skip_covered: Skip any items that would show up completely under the previous items
+         (defaults
+         to True in PgSTAC). Default value is None.
+        :paramtype skip_covered: bool
+        :keyword tile_matrix_set_id: Identifier selecting one of the TileMatrixSetId supported
+         (default:
+         'WebMercatorQuad'). Known values are: "CanadianNAD83_LCC", "EuropeanETRS89_LAEAQuad",
+         "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
+         "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
+         "WorldMercatorWGS84Quad". Default value is None.
+        :paramtype tile_matrix_set_id: str or ~azure.planetarycomputer.models.TileMatrixSetId
+        :return: list of any
+        :rtype: list[any]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -13619,9 +11116,18 @@ class TileMatrixDefinitionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.TileMatrixSet] = kwargs.pop("cls", None)
+        cls: ClsType[List[Any]] = kwargs.pop("cls", None)
 
-        _request = build_tile_matrix_definitions_get_request(
+        _request = build_tiler_get_mosaics_assets_for_tile_request(
+            search_id=search_id,
+            z=z,
+            x=x,
+            y=y,
+            scan_limit=scan_limit,
+            items_limit=items_limit,
+            time_limit=time_limit,
+            exit_when_full=exit_when_full,
+            skip_covered=skip_covered,
             tile_matrix_set_id=tile_matrix_set_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -13651,46 +11157,24 @@ class TileMatrixDefinitionsOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.TileMatrixSet, response.json())
+            deserialized = _deserialize(List[Any], response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-class SasOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`sas` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
     @distributed_trace_async
-    async def get_token(self, collection_id: str, *, duration: Optional[int] = None, **kwargs: Any) -> _models.SasToken:
-        """generate a SAS Token for the given Azure Blob storage account and container.
+    async def get_mosaics_search_info(self, search_id: str, **kwargs: Any) -> _models.TilerStacSearchRegistration:
+        """Info Search.
 
-        Generate a `SAS Token
-        <https://docs.microsoft.com/en-us/azure/storage/common/storage-sas-overview#how-a-shared-access-signature-works>`_
-        for the given storage account and container. The storage account and container
-        must be associated with a Planetary Computer dataset indexed by the STAC API.
+        Get Search query metadata.
 
-        :param collection_id: Collection Id. Required.
-        :type collection_id: str
-        :keyword duration: Duration. Default value is None.
-        :paramtype duration: int
-        :return: SasToken. The SasToken is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.SasToken
+        :param search_id: Search Id (pgSTAC Search Hash). Required.
+        :type search_id: str
+        :return: TilerStacSearchRegistration. The TilerStacSearchRegistration is compatible with
+         MutableMapping
+        :rtype: ~azure.planetarycomputer.models.TilerStacSearchRegistration
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -13704,11 +11188,10 @@ class SasOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.SasToken] = kwargs.pop("cls", None)
+        cls: ClsType[_models.TilerStacSearchRegistration] = kwargs.pop("cls", None)
 
-        _request = build_sas_get_token_request(
-            collection_id=collection_id,
-            duration=duration,
+        _request = build_tiler_get_mosaics_search_info_request(
+            search_id=search_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -13737,7 +11220,224 @@ class SasOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.SasToken, response.json())
+            deserialized = _deserialize(_models.TilerStacSearchRegistration, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def register_mosaics_search(
+        self,
+        *,
+        content_type: str = "application/json",
+        collections: Optional[List[str]] = None,
+        ids: Optional[List[str]] = None,
+        bounding_box: Optional[float] = None,
+        intersects: Optional[_models.Geometry] = None,
+        query: Optional[Dict[str, Any]] = None,
+        filter: Optional[Dict[str, Any]] = None,
+        datetime: Optional[str] = None,
+        sort_by: Optional[List[_models.SortExtension]] = None,
+        filter_language: Optional[Union[str, _models.FilterLanguage]] = None,
+        metadata: Optional[_models.Metadata] = None,
+        **kwargs: Any
+    ) -> _models.TilerMosaicSearchRegistrationResponse:
+        """Register Search.
+
+        Register a Search query.
+
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword collections: List of STAC collection IDs to include in the mosaic. Default value is
+         None.
+        :paramtype collections: list[str]
+        :keyword ids: List of specific STAC item IDs to include in the mosaic. Default value is None.
+        :paramtype ids: list[str]
+        :keyword bounding_box: Geographic bounding box to filter items [west, south, east, north].
+         Default value is None.
+        :paramtype bounding_box: float
+        :keyword intersects: GeoJSON geometry to spatially filter items by intersection. Default value
+         is None.
+        :paramtype intersects: ~azure.planetarycomputer.models.Geometry
+        :keyword query: Query. Default value is None.
+        :paramtype query: dict[str, any]
+        :keyword filter: Filter. Default value is None.
+        :paramtype filter: dict[str, any]
+        :keyword datetime: Temporal filter in RFC 3339 format or interval. Default value is None.
+        :paramtype datetime: str
+        :keyword sort_by: Criteria for ordering items in the mosaic. Default value is None.
+        :paramtype sort_by: list[~azure.planetarycomputer.models.SortExtension]
+        :keyword filter_language: Query language format used in the filter parameter. Known values are:
+         "cql-json", "cql2-json", and "cql2-text". Default value is None.
+        :paramtype filter_language: str or ~azure.planetarycomputer.models.FilterLanguage
+        :keyword metadata: Additional metadata to associate with the mosaic. Default value is None.
+        :paramtype metadata: ~azure.planetarycomputer.models.Metadata
+        :return: TilerMosaicSearchRegistrationResponse. The TilerMosaicSearchRegistrationResponse is
+         compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.TilerMosaicSearchRegistrationResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def register_mosaics_search(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.TilerMosaicSearchRegistrationResponse:
+        """Register Search.
+
+        Register a Search query.
+
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: TilerMosaicSearchRegistrationResponse. The TilerMosaicSearchRegistrationResponse is
+         compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.TilerMosaicSearchRegistrationResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def register_mosaics_search(
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.TilerMosaicSearchRegistrationResponse:
+        """Register Search.
+
+        Register a Search query.
+
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: TilerMosaicSearchRegistrationResponse. The TilerMosaicSearchRegistrationResponse is
+         compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.TilerMosaicSearchRegistrationResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def register_mosaics_search(
+        self,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        collections: Optional[List[str]] = None,
+        ids: Optional[List[str]] = None,
+        bounding_box: Optional[float] = None,
+        intersects: Optional[_models.Geometry] = None,
+        query: Optional[Dict[str, Any]] = None,
+        filter: Optional[Dict[str, Any]] = None,
+        datetime: Optional[str] = None,
+        sort_by: Optional[List[_models.SortExtension]] = None,
+        filter_language: Optional[Union[str, _models.FilterLanguage]] = None,
+        metadata: Optional[_models.Metadata] = None,
+        **kwargs: Any
+    ) -> _models.TilerMosaicSearchRegistrationResponse:
+        """Register Search.
+
+        Register a Search query.
+
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword collections: List of STAC collection IDs to include in the mosaic. Default value is
+         None.
+        :paramtype collections: list[str]
+        :keyword ids: List of specific STAC item IDs to include in the mosaic. Default value is None.
+        :paramtype ids: list[str]
+        :keyword bounding_box: Geographic bounding box to filter items [west, south, east, north].
+         Default value is None.
+        :paramtype bounding_box: float
+        :keyword intersects: GeoJSON geometry to spatially filter items by intersection. Default value
+         is None.
+        :paramtype intersects: ~azure.planetarycomputer.models.Geometry
+        :keyword query: Query. Default value is None.
+        :paramtype query: dict[str, any]
+        :keyword filter: Filter. Default value is None.
+        :paramtype filter: dict[str, any]
+        :keyword datetime: Temporal filter in RFC 3339 format or interval. Default value is None.
+        :paramtype datetime: str
+        :keyword sort_by: Criteria for ordering items in the mosaic. Default value is None.
+        :paramtype sort_by: list[~azure.planetarycomputer.models.SortExtension]
+        :keyword filter_language: Query language format used in the filter parameter. Known values are:
+         "cql-json", "cql2-json", and "cql2-text". Default value is None.
+        :paramtype filter_language: str or ~azure.planetarycomputer.models.FilterLanguage
+        :keyword metadata: Additional metadata to associate with the mosaic. Default value is None.
+        :paramtype metadata: ~azure.planetarycomputer.models.Metadata
+        :return: TilerMosaicSearchRegistrationResponse. The TilerMosaicSearchRegistrationResponse is
+         compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.TilerMosaicSearchRegistrationResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.TilerMosaicSearchRegistrationResponse] = kwargs.pop("cls", None)
+
+        if body is _Unset:
+            body = {
+                "bbox": bounding_box,
+                "collections": collections,
+                "datetime_property": datetime,
+                "filter": filter,
+                "filter_lang": filter_language,
+                "ids": ids,
+                "intersects": intersects,
+                "metadata": metadata,
+                "query": query,
+                "sortby": sort_by,
+            }
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_tiler_register_mosaics_search_request(
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.TilerMosaicSearchRegistrationResponse, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -13745,17 +11445,154 @@ class SasOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def revoke_token(self, *, duration: Optional[int] = None, **kwargs: Any) -> None:
-        """revoke a SAS Token for the given Azure Blob storage account.
+    async def get_mosaics_tile_json(
+        self,
+        search_id: str,
+        *,
+        assets: Optional[List[str]] = None,
+        expression: Optional[str] = None,
+        asset_band_indices: Optional[List[str]] = None,
+        asset_as_band: Optional[bool] = None,
+        nodata: Optional[float] = None,
+        unscale: Optional[bool] = None,
+        scan_limit: Optional[int] = None,
+        items_limit: Optional[int] = None,
+        time_limit: Optional[int] = None,
+        exit_when_full: Optional[bool] = None,
+        skip_covered: Optional[bool] = None,
+        tile_matrix_set_id: Optional[Union[str, _models.TileMatrixSetId]] = None,
+        tile_format: Optional[Union[str, _models.TilerImageFormat]] = None,
+        tile_scale: Optional[int] = None,
+        min_zoom: Optional[int] = None,
+        max_zoom: Optional[int] = None,
+        buffer: Optional[float] = None,
+        color_formula: Optional[str] = None,
+        collection: Optional[str] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
+        pixel_selection: Optional[Union[str, _models.PixelSelection]] = None,
+        algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
+        algorithm_params: Optional[str] = None,
+        rescale: Optional[List[str]] = None,
+        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
+        colormap: Optional[str] = None,
+        return_mask: Optional[bool] = None,
+        **kwargs: Any
+    ) -> _models.TileJsonResponse:
+        """TileJson.
 
-        Revoke a `SAS Token
-        <https://docs.microsoft.com/en-us/azure/storage/common/storage-sas-overview#how-a-shared-access-signature-works>`_
-        for managed storage account of this GeoCatalog.
+        Return TileJSON document for a searchId.
 
-        :keyword duration: Duration. Default value is None.
-        :paramtype duration: int
-        :return: None
-        :rtype: None
+        :param search_id: Search Id (pgSTAC Search Hash). Required.
+        :type search_id: str
+        :keyword assets: Asset's names. Default value is None.
+        :paramtype assets: list[str]
+        :keyword expression: Band math expression between assets. Default value is None.
+        :paramtype expression: str
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
+         None.
+        :paramtype asset_band_indices: list[str]
+        :keyword asset_as_band: Asset as Band. Default value is None.
+        :paramtype asset_as_band: bool
+        :keyword nodata: Overwrite internal Nodata value. Default value is None.
+        :paramtype nodata: float
+        :keyword unscale: Apply internal Scale or Offset. Default value is None.
+        :paramtype unscale: bool
+        :keyword scan_limit: Return as soon as we scan N items (defaults to 10000 in PgSTAC). Default
+         value is None.
+        :paramtype scan_limit: int
+        :keyword items_limit: Return as soon as we have N items per geometry (defaults to 100 in
+         PgSTAC). Default value is None.
+        :paramtype items_limit: int
+        :keyword time_limit: Return after N seconds to avoid long requests (defaults to 5 in PgSTAC).
+         Default value is None.
+        :paramtype time_limit: int
+        :keyword exit_when_full: Return as soon as the geometry is fully covered (defaults to True in
+         PgSTAC). Default value is None.
+        :paramtype exit_when_full: bool
+        :keyword skip_covered: Skip any items that would show up completely under the previous items
+         (defaults
+         to True in PgSTAC). Default value is None.
+        :paramtype skip_covered: bool
+        :keyword tile_matrix_set_id: Identifier selecting one of the TileMatrixSetId supported
+         (default: 'WebMercatorQuad'). Known values are: "CanadianNAD83_LCC", "EuropeanETRS89_LAEAQuad",
+         "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
+         "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
+         "WorldMercatorWGS84Quad". Default value is None.
+        :paramtype tile_matrix_set_id: str or ~azure.planetarycomputer.models.TileMatrixSetId
+        :keyword tile_format: Default will be automatically defined if the output image needs a mask
+         (png) or
+         not (jpeg). Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and "pngraw".
+         Default value is None.
+        :paramtype tile_format: str or ~azure.planetarycomputer.models.TilerImageFormat
+        :keyword tile_scale: Tile scale factor affecting output size. Values > 1 produce larger tiles
+         (e.g., 1=256x256, 2=512x512). Default value is None.
+        :paramtype tile_scale: int
+        :keyword min_zoom: Overwrite default minzoom. Default value is None.
+        :paramtype min_zoom: int
+        :keyword max_zoom: Overwrite default maxzoom. Default value is None.
+        :paramtype max_zoom: int
+        :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
+         Output
+         **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
+         1.0 = 258x258). Default value is None.
+        :paramtype buffer: float
+        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
+         <https://github.com/mapbox/rio-color>`_). Default value is None.
+        :paramtype color_formula: str
+        :keyword collection: STAC Collection ID. Default value is None.
+        :paramtype collection: str
+        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
+         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
+        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
+        :keyword pixel_selection: Pixel selection method. Known values are: "first", "highest",
+         "lowest", "mean", "median", "stdev", "lastbandlow", and "lastbandhight". Default value is None.
+        :paramtype pixel_selection: str or ~azure.planetarycomputer.models.PixelSelection
+        :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
+         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
+        :paramtype algorithm: str or ~azure.planetarycomputer.models.TerrainAlgorithm
+        :keyword algorithm_params: Terrain algorithm parameters. Default value is None.
+        :paramtype algorithm_params: str
+        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
+         bands. Default value is None.
+        :paramtype rescale: list[str]
+        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
+         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
+         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
+         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
+         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
+         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
+         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
+         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
+         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
+         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
+         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
+         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
+         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
+         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
+         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
+         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
+         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
+         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
+         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
+         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
+         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
+         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
+         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
+         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
+         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
+         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
+         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
+         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
+         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
+         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
+         is None.
+        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
+        :keyword colormap: JSON encoded custom Colormap. Default value is None.
+        :paramtype colormap: str
+        :keyword return_mask: Add mask to the output data. Default value is None.
+        :paramtype return_mask: bool
+        :return: TileJsonResponse. The TileJsonResponse is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.TileJsonResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -13769,10 +11606,37 @@ class SasOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[_models.TileJsonResponse] = kwargs.pop("cls", None)
 
-        _request = build_sas_revoke_token_request(
-            duration=duration,
+        _request = build_tiler_get_mosaics_tile_json_request(
+            search_id=search_id,
+            assets=assets,
+            expression=expression,
+            asset_band_indices=asset_band_indices,
+            asset_as_band=asset_as_band,
+            nodata=nodata,
+            unscale=unscale,
+            scan_limit=scan_limit,
+            items_limit=items_limit,
+            time_limit=time_limit,
+            exit_when_full=exit_when_full,
+            skip_covered=skip_covered,
+            tile_matrix_set_id=tile_matrix_set_id,
+            tile_format=tile_format,
+            tile_scale=tile_scale,
+            min_zoom=min_zoom,
+            max_zoom=max_zoom,
+            buffer=buffer,
+            color_formula=color_formula,
+            collection=collection,
+            resampling=resampling,
+            pixel_selection=pixel_selection,
+            algorithm=algorithm,
+            algorithm_params=algorithm_params,
+            rescale=rescale,
+            colormap_name=colormap_name,
+            colormap=colormap,
+            return_mask=return_mask,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -13782,7 +11646,7 @@ class SasOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = False
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -13790,14 +11654,1124 @@ class SasOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.TileJsonResponse, response.json())
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_sign(self, *, href: str, duration: Optional[int] = None, **kwargs: Any) -> _models.UnsignedLink:
+    async def get_mosaics_tile_with_matrix_set(
+        self,
+        search_id: str,
+        tile_matrix_set_id: str,
+        z: float,
+        x: float,
+        y: float,
+        scale: float,
+        format: str,
+        *,
+        assets: Optional[List[str]] = None,
+        expression: Optional[str] = None,
+        asset_band_indices: Optional[List[str]] = None,
+        asset_as_band: Optional[bool] = None,
+        nodata: Optional[float] = None,
+        unscale: Optional[bool] = None,
+        scan_limit: Optional[int] = None,
+        items_limit: Optional[int] = None,
+        time_limit: Optional[int] = None,
+        exit_when_full: Optional[bool] = None,
+        skip_covered: Optional[bool] = None,
+        algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
+        algorithm_params: Optional[str] = None,
+        buffer: Optional[str] = None,
+        color_formula: Optional[str] = None,
+        collection: Optional[str] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
+        pixel_selection: Optional[Union[str, _models.PixelSelection]] = None,
+        rescale: Optional[List[str]] = None,
+        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
+        colormap: Optional[str] = None,
+        return_mask: Optional[bool] = None,
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        """Tile Tilematrixsetid As Path.
+
+        Create map tile.
+
+        :param search_id: Search Id (pgSTAC Search Hash). Required.
+        :type search_id: str
+        :param tile_matrix_set_id: Identifier selecting one of the TileMatrixSetId supported. Required.
+        :type tile_matrix_set_id: str
+        :param z: Identifier (Z) selecting one of the scales defined in the TileMatrixSet and
+         representing the scaleDenominator the tile. Required.
+        :type z: float
+        :param x: Column (X) index of the tile on the selected TileMatrix. It cannot exceed the
+         MatrixHeight-1 for the selected TileMatrix. Required.
+        :type x: float
+        :param y: Row (Y) index of the tile on the selected TileMatrix. It cannot exceed the
+         MatrixWidth-1 for the selected TileMatrix. Required.
+        :type y: float
+        :param scale: Numeric scale factor for the tile. Higher values produce larger tiles (default:
+         "1"). Required.
+        :type scale: float
+        :param format: Output format for the tile or image (e.g., png, jpeg, webp) (default: "png").
+         Required.
+        :type format: str
+        :keyword assets: Asset's names. Default value is None.
+        :paramtype assets: list[str]
+        :keyword expression: Band math expression between assets. Default value is None.
+        :paramtype expression: str
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
+         None.
+        :paramtype asset_band_indices: list[str]
+        :keyword asset_as_band: Asset as Band. Default value is None.
+        :paramtype asset_as_band: bool
+        :keyword nodata: Overwrite internal Nodata value. Default value is None.
+        :paramtype nodata: float
+        :keyword unscale: Apply internal Scale or Offset. Default value is None.
+        :paramtype unscale: bool
+        :keyword scan_limit: Return as soon as we scan N items (defaults to 10000 in PgSTAC). Default
+         value is None.
+        :paramtype scan_limit: int
+        :keyword items_limit: Return as soon as we have N items per geometry (defaults to 100 in
+         PgSTAC). Default value is None.
+        :paramtype items_limit: int
+        :keyword time_limit: Return after N seconds to avoid long requests (defaults to 5 in PgSTAC).
+         Default value is None.
+        :paramtype time_limit: int
+        :keyword exit_when_full: Return as soon as the geometry is fully covered (defaults to True in
+         PgSTAC). Default value is None.
+        :paramtype exit_when_full: bool
+        :keyword skip_covered: Skip any items that would show up completely under the previous items
+         (defaults
+         to True in PgSTAC). Default value is None.
+        :paramtype skip_covered: bool
+        :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
+         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
+        :paramtype algorithm: str or ~azure.planetarycomputer.models.TerrainAlgorithm
+        :keyword algorithm_params: Terrain algorithm parameters. Default value is None.
+        :paramtype algorithm_params: str
+        :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
+         Output
+         **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
+         1.0 = 258x258). Default value is None.
+        :paramtype buffer: str
+        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
+         <https://github.com/mapbox/rio-color>`_). Default value is None.
+        :paramtype color_formula: str
+        :keyword collection: STAC Collection ID. Default value is None.
+        :paramtype collection: str
+        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
+         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
+        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
+        :keyword pixel_selection: Pixel selection method. Known values are: "first", "highest",
+         "lowest", "mean", "median", "stdev", "lastbandlow", and "lastbandhight". Default value is None.
+        :paramtype pixel_selection: str or ~azure.planetarycomputer.models.PixelSelection
+        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
+         bands. Default value is None.
+        :paramtype rescale: list[str]
+        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
+         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
+         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
+         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
+         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
+         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
+         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
+         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
+         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
+         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
+         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
+         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
+         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
+         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
+         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
+         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
+         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
+         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
+         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
+         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
+         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
+         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
+         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
+         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
+         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
+         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
+         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
+         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
+         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
+         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
+         is None.
+        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
+        :keyword colormap: JSON encoded custom Colormap. Default value is None.
+        :paramtype colormap: str
+        :keyword return_mask: Add mask to the output data. Default value is None.
+        :paramtype return_mask: bool
+        :return: AsyncIterator[bytes]
+        :rtype: AsyncIterator[bytes]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_tiler_get_mosaics_tile_with_matrix_set_request(
+            search_id=search_id,
+            tile_matrix_set_id=tile_matrix_set_id,
+            z=z,
+            x=x,
+            y=y,
+            scale=scale,
+            format=format,
+            assets=assets,
+            expression=expression,
+            asset_band_indices=asset_band_indices,
+            asset_as_band=asset_as_band,
+            nodata=nodata,
+            unscale=unscale,
+            scan_limit=scan_limit,
+            items_limit=items_limit,
+            time_limit=time_limit,
+            exit_when_full=exit_when_full,
+            skip_covered=skip_covered,
+            algorithm=algorithm,
+            algorithm_params=algorithm_params,
+            buffer=buffer,
+            color_formula=color_formula,
+            collection=collection,
+            resampling=resampling,
+            pixel_selection=pixel_selection,
+            rescale=rescale,
+            colormap_name=colormap_name,
+            colormap=colormap,
+            return_mask=return_mask,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", True)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+
+        deserialized = response.iter_bytes()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def get_mosaics_tile_json_with_matrix_set(
+        self,
+        search_id: str,
+        tile_matrix_set_id: str,
+        *,
+        assets: Optional[List[str]] = None,
+        expression: Optional[str] = None,
+        asset_band_indices: Optional[List[str]] = None,
+        asset_as_band: Optional[bool] = None,
+        nodata: Optional[float] = None,
+        unscale: Optional[bool] = None,
+        scan_limit: Optional[int] = None,
+        items_limit: Optional[int] = None,
+        time_limit: Optional[int] = None,
+        exit_when_full: Optional[bool] = None,
+        skip_covered: Optional[bool] = None,
+        algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
+        algorithm_params: Optional[str] = None,
+        min_zoom: Optional[int] = None,
+        max_zoom: Optional[int] = None,
+        tile_format: Optional[Union[str, _models.TilerImageFormat]] = None,
+        tile_scale: Optional[int] = None,
+        buffer: Optional[str] = None,
+        color_formula: Optional[str] = None,
+        collection: Optional[str] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
+        pixel_selection: Optional[Union[str, _models.PixelSelection]] = None,
+        rescale: Optional[List[str]] = None,
+        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
+        colormap: Optional[str] = None,
+        return_mask: Optional[bool] = None,
+        **kwargs: Any
+    ) -> _models.TileJsonResponse:
+        """TileJson Tilematrixsetid As Path.
+
+        Return TileJSON document for a searchId.
+
+        :param search_id: Search Id (pgSTAC Search Hash). Required.
+        :type search_id: str
+        :param tile_matrix_set_id: Identifier selecting one of the TileMatrixSetId supported. Required.
+        :type tile_matrix_set_id: str
+        :keyword assets: Asset's names. Default value is None.
+        :paramtype assets: list[str]
+        :keyword expression: Band math expression between assets. Default value is None.
+        :paramtype expression: str
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
+         None.
+        :paramtype asset_band_indices: list[str]
+        :keyword asset_as_band: Asset as Band. Default value is None.
+        :paramtype asset_as_band: bool
+        :keyword nodata: Overwrite internal Nodata value. Default value is None.
+        :paramtype nodata: float
+        :keyword unscale: Apply internal Scale or Offset. Default value is None.
+        :paramtype unscale: bool
+        :keyword scan_limit: Return as soon as we scan N items (defaults to 10000 in PgSTAC). Default
+         value is None.
+        :paramtype scan_limit: int
+        :keyword items_limit: Return as soon as we have N items per geometry (defaults to 100 in
+         PgSTAC). Default value is None.
+        :paramtype items_limit: int
+        :keyword time_limit: Return after N seconds to avoid long requests (defaults to 5 in PgSTAC).
+         Default value is None.
+        :paramtype time_limit: int
+        :keyword exit_when_full: Return as soon as the geometry is fully covered (defaults to True in
+         PgSTAC). Default value is None.
+        :paramtype exit_when_full: bool
+        :keyword skip_covered: Skip any items that would show up completely under the previous items
+         (defaults
+         to True in PgSTAC). Default value is None.
+        :paramtype skip_covered: bool
+        :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
+         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
+        :paramtype algorithm: str or ~azure.planetarycomputer.models.TerrainAlgorithm
+        :keyword algorithm_params: Terrain algorithm parameters. Default value is None.
+        :paramtype algorithm_params: str
+        :keyword min_zoom: Overwrite default minzoom. Default value is None.
+        :paramtype min_zoom: int
+        :keyword max_zoom: Overwrite default maxzoom. Default value is None.
+        :paramtype max_zoom: int
+        :keyword tile_format: Default will be automatically defined if the output image needs a mask
+         (png) or
+         not (jpeg). Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and "pngraw".
+         Default value is None.
+        :paramtype tile_format: str or ~azure.planetarycomputer.models.TilerImageFormat
+        :keyword tile_scale: Tile scale factor affecting output size. Values > 1 produce larger tiles
+         (e.g., 1=256x256, 2=512x512). Default value is None.
+        :paramtype tile_scale: int
+        :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
+         Output
+         **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
+         1.0 = 258x258). Default value is None.
+        :paramtype buffer: str
+        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
+         <https://github.com/mapbox/rio-color>`_). Default value is None.
+        :paramtype color_formula: str
+        :keyword collection: STAC Collection ID. Default value is None.
+        :paramtype collection: str
+        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
+         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
+        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
+        :keyword pixel_selection: Pixel selection method. Known values are: "first", "highest",
+         "lowest", "mean", "median", "stdev", "lastbandlow", and "lastbandhight". Default value is None.
+        :paramtype pixel_selection: str or ~azure.planetarycomputer.models.PixelSelection
+        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
+         bands. Default value is None.
+        :paramtype rescale: list[str]
+        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
+         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
+         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
+         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
+         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
+         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
+         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
+         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
+         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
+         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
+         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
+         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
+         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
+         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
+         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
+         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
+         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
+         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
+         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
+         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
+         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
+         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
+         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
+         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
+         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
+         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
+         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
+         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
+         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
+         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
+         is None.
+        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
+        :keyword colormap: JSON encoded custom Colormap. Default value is None.
+        :paramtype colormap: str
+        :keyword return_mask: Add mask to the output data. Default value is None.
+        :paramtype return_mask: bool
+        :return: TileJsonResponse. The TileJsonResponse is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.TileJsonResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.TileJsonResponse] = kwargs.pop("cls", None)
+
+        _request = build_tiler_get_mosaics_tile_json_with_matrix_set_request(
+            search_id=search_id,
+            tile_matrix_set_id=tile_matrix_set_id,
+            assets=assets,
+            expression=expression,
+            asset_band_indices=asset_band_indices,
+            asset_as_band=asset_as_band,
+            nodata=nodata,
+            unscale=unscale,
+            scan_limit=scan_limit,
+            items_limit=items_limit,
+            time_limit=time_limit,
+            exit_when_full=exit_when_full,
+            skip_covered=skip_covered,
+            algorithm=algorithm,
+            algorithm_params=algorithm_params,
+            min_zoom=min_zoom,
+            max_zoom=max_zoom,
+            tile_format=tile_format,
+            tile_scale=tile_scale,
+            buffer=buffer,
+            color_formula=color_formula,
+            collection=collection,
+            resampling=resampling,
+            pixel_selection=pixel_selection,
+            rescale=rescale,
+            colormap_name=colormap_name,
+            colormap=colormap,
+            return_mask=return_mask,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.TileJsonResponse, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def get_mosaics_tile(
+        self,
+        search_id: str,
+        z: float,
+        x: float,
+        y: float,
+        scale: float,
+        format: str,
+        *,
+        assets: Optional[List[str]] = None,
+        expression: Optional[str] = None,
+        asset_band_indices: Optional[List[str]] = None,
+        asset_as_band: Optional[bool] = None,
+        nodata: Optional[float] = None,
+        unscale: Optional[bool] = None,
+        scan_limit: Optional[int] = None,
+        items_limit: Optional[int] = None,
+        time_limit: Optional[int] = None,
+        exit_when_full: Optional[bool] = None,
+        skip_covered: Optional[bool] = None,
+        algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
+        algorithm_params: Optional[str] = None,
+        tile_matrix_set_id: Optional[Union[str, _models.TileMatrixSetId]] = None,
+        buffer: Optional[str] = None,
+        color_formula: Optional[str] = None,
+        collection: Optional[str] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
+        pixel_selection: Optional[Union[str, _models.PixelSelection]] = None,
+        rescale: Optional[List[str]] = None,
+        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
+        colormap: Optional[str] = None,
+        return_mask: Optional[bool] = None,
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        """Tile.
+
+        Create map tile.
+
+        :param search_id: Search Id (pgSTAC Search Hash). Required.
+        :type search_id: str
+        :param z: Identifier (Z) selecting one of the scales defined in the TileMatrixSet and
+         representing the scaleDenominator the tile. Required.
+        :type z: float
+        :param x: Column (X) index of the tile on the selected TileMatrix. It cannot exceed the
+         MatrixHeight-1 for the selected TileMatrix. Required.
+        :type x: float
+        :param y: Row (Y) index of the tile on the selected TileMatrix. It cannot exceed the
+         MatrixWidth-1 for the selected TileMatrix. Required.
+        :type y: float
+        :param scale: Numeric scale factor for the tile. Higher values produce larger tiles (default:
+         "1"). Required.
+        :type scale: float
+        :param format: Output format for the tile or image (e.g., png, jpeg, webp) (default: "png").
+         Required.
+        :type format: str
+        :keyword assets: Asset's names. Default value is None.
+        :paramtype assets: list[str]
+        :keyword expression: Band math expression between assets. Default value is None.
+        :paramtype expression: str
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
+         None.
+        :paramtype asset_band_indices: list[str]
+        :keyword asset_as_band: Asset as Band. Default value is None.
+        :paramtype asset_as_band: bool
+        :keyword nodata: Overwrite internal Nodata value. Default value is None.
+        :paramtype nodata: float
+        :keyword unscale: Apply internal Scale or Offset. Default value is None.
+        :paramtype unscale: bool
+        :keyword scan_limit: Return as soon as we scan N items (defaults to 10000 in PgSTAC). Default
+         value is None.
+        :paramtype scan_limit: int
+        :keyword items_limit: Return as soon as we have N items per geometry (defaults to 100 in
+         PgSTAC). Default value is None.
+        :paramtype items_limit: int
+        :keyword time_limit: Return after N seconds to avoid long requests (defaults to 5 in PgSTAC).
+         Default value is None.
+        :paramtype time_limit: int
+        :keyword exit_when_full: Return as soon as the geometry is fully covered (defaults to True in
+         PgSTAC). Default value is None.
+        :paramtype exit_when_full: bool
+        :keyword skip_covered: Skip any items that would show up completely under the previous items
+         (defaults
+         to True in PgSTAC). Default value is None.
+        :paramtype skip_covered: bool
+        :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
+         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
+        :paramtype algorithm: str or ~azure.planetarycomputer.models.TerrainAlgorithm
+        :keyword algorithm_params: Terrain algorithm parameters. Default value is None.
+        :paramtype algorithm_params: str
+        :keyword tile_matrix_set_id: Identifier selecting one of the TileMatrixSetId supported
+         (default:
+         'WebMercatorQuad'). Known values are: "CanadianNAD83_LCC", "EuropeanETRS89_LAEAQuad",
+         "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
+         "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
+         "WorldMercatorWGS84Quad". Default value is None.
+        :paramtype tile_matrix_set_id: str or ~azure.planetarycomputer.models.TileMatrixSetId
+        :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
+         Output
+         **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
+         1.0 = 258x258). Default value is None.
+        :paramtype buffer: str
+        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
+         <https://github.com/mapbox/rio-color>`_). Default value is None.
+        :paramtype color_formula: str
+        :keyword collection: STAC Collection ID. Default value is None.
+        :paramtype collection: str
+        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
+         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
+        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
+        :keyword pixel_selection: Pixel selection method. Known values are: "first", "highest",
+         "lowest", "mean", "median", "stdev", "lastbandlow", and "lastbandhight". Default value is None.
+        :paramtype pixel_selection: str or ~azure.planetarycomputer.models.PixelSelection
+        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
+         bands. Default value is None.
+        :paramtype rescale: list[str]
+        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
+         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
+         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
+         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
+         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
+         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
+         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
+         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
+         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
+         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
+         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
+         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
+         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
+         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
+         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
+         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
+         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
+         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
+         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
+         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
+         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
+         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
+         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
+         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
+         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
+         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
+         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
+         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
+         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
+         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
+         is None.
+        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
+        :keyword colormap: JSON encoded custom Colormap. Default value is None.
+        :paramtype colormap: str
+        :keyword return_mask: Add mask to the output data. Default value is None.
+        :paramtype return_mask: bool
+        :return: AsyncIterator[bytes]
+        :rtype: AsyncIterator[bytes]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_tiler_get_mosaics_tile_request(
+            search_id=search_id,
+            z=z,
+            x=x,
+            y=y,
+            scale=scale,
+            format=format,
+            assets=assets,
+            expression=expression,
+            asset_band_indices=asset_band_indices,
+            asset_as_band=asset_as_band,
+            nodata=nodata,
+            unscale=unscale,
+            scan_limit=scan_limit,
+            items_limit=items_limit,
+            time_limit=time_limit,
+            exit_when_full=exit_when_full,
+            skip_covered=skip_covered,
+            algorithm=algorithm,
+            algorithm_params=algorithm_params,
+            tile_matrix_set_id=tile_matrix_set_id,
+            buffer=buffer,
+            color_formula=color_formula,
+            collection=collection,
+            resampling=resampling,
+            pixel_selection=pixel_selection,
+            rescale=rescale,
+            colormap_name=colormap_name,
+            colormap=colormap,
+            return_mask=return_mask,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", True)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+
+        deserialized = response.iter_bytes()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def get_mosaics_wmts_capabilities(
+        self,
+        search_id: str,
+        *,
+        assets: Optional[List[str]] = None,
+        expression: Optional[str] = None,
+        asset_band_indices: Optional[List[str]] = None,
+        asset_as_band: Optional[bool] = None,
+        nodata: Optional[float] = None,
+        unscale: Optional[bool] = None,
+        algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
+        algorithm_params: Optional[str] = None,
+        tile_matrix_set_id: Optional[Union[str, _models.TileMatrixSetId]] = None,
+        tile_format: Optional[Union[str, _models.TilerImageFormat]] = None,
+        tile_scale: Optional[int] = None,
+        min_zoom: Optional[int] = None,
+        max_zoom: Optional[int] = None,
+        buffer: Optional[str] = None,
+        color_formula: Optional[str] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
+        rescale: Optional[List[str]] = None,
+        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
+        colormap: Optional[str] = None,
+        return_mask: Optional[bool] = None,
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        """Wmts.
+
+        OGC WMTS endpoint.
+
+        :param search_id: Search Id (pgSTAC Search Hash). Required.
+        :type search_id: str
+        :keyword assets: Asset's names. Default value is None.
+        :paramtype assets: list[str]
+        :keyword expression: Band math expression between assets. Default value is None.
+        :paramtype expression: str
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
+         None.
+        :paramtype asset_band_indices: list[str]
+        :keyword asset_as_band: Asset as Band. Default value is None.
+        :paramtype asset_as_band: bool
+        :keyword nodata: Overwrite internal Nodata value. Default value is None.
+        :paramtype nodata: float
+        :keyword unscale: Apply internal Scale or Offset. Default value is None.
+        :paramtype unscale: bool
+        :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
+         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
+        :paramtype algorithm: str or ~azure.planetarycomputer.models.TerrainAlgorithm
+        :keyword algorithm_params: Terrain algorithm parameters. Default value is None.
+        :paramtype algorithm_params: str
+        :keyword tile_matrix_set_id: Identifier selecting one of the TileMatrixSetId supported
+         (default:
+         'WebMercatorQuad'). Known values are: "CanadianNAD83_LCC", "EuropeanETRS89_LAEAQuad",
+         "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
+         "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
+         "WorldMercatorWGS84Quad". Default value is None.
+        :paramtype tile_matrix_set_id: str or ~azure.planetarycomputer.models.TileMatrixSetId
+        :keyword tile_format: Output image type. Default is png. Known values are: "png", "npy", "tif",
+         "jpeg", "jpg", "jp2", "webp", and "pngraw". Default value is None.
+        :paramtype tile_format: str or ~azure.planetarycomputer.models.TilerImageFormat
+        :keyword tile_scale: Tile scale factor affecting output size. Values > 1 produce larger tiles
+         (e.g., 1=256x256, 2=512x512). Default value is None.
+        :paramtype tile_scale: int
+        :keyword min_zoom: Overwrite default minzoom. Default value is None.
+        :paramtype min_zoom: int
+        :keyword max_zoom: Overwrite default maxzoom. Default value is None.
+        :paramtype max_zoom: int
+        :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
+         Output
+         **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
+         1.0 = 258x258). Default value is None.
+        :paramtype buffer: str
+        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
+         <https://github.com/mapbox/rio-color>`_). Default value is None.
+        :paramtype color_formula: str
+        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
+         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
+        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
+        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
+         bands. Default value is None.
+        :paramtype rescale: list[str]
+        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
+         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
+         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
+         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
+         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
+         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
+         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
+         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
+         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
+         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
+         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
+         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
+         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
+         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
+         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
+         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
+         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
+         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
+         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
+         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
+         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
+         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
+         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
+         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
+         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
+         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
+         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
+         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
+         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
+         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
+         is None.
+        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
+        :keyword colormap: JSON encoded custom Colormap. Default value is None.
+        :paramtype colormap: str
+        :keyword return_mask: Add mask to the output data. Default value is None.
+        :paramtype return_mask: bool
+        :return: AsyncIterator[bytes]
+        :rtype: AsyncIterator[bytes]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_tiler_get_mosaics_wmts_capabilities_request(
+            search_id=search_id,
+            assets=assets,
+            expression=expression,
+            asset_band_indices=asset_band_indices,
+            asset_as_band=asset_as_band,
+            nodata=nodata,
+            unscale=unscale,
+            algorithm=algorithm,
+            algorithm_params=algorithm_params,
+            tile_matrix_set_id=tile_matrix_set_id,
+            tile_format=tile_format,
+            tile_scale=tile_scale,
+            min_zoom=min_zoom,
+            max_zoom=max_zoom,
+            buffer=buffer,
+            color_formula=color_formula,
+            resampling=resampling,
+            rescale=rescale,
+            colormap_name=colormap_name,
+            colormap=colormap,
+            return_mask=return_mask,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", True)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+
+        deserialized = response.iter_bytes()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def get_mosaics_wmts_capabilities_with_matrix_set(  # pylint: disable=name-too-long
+        self,
+        search_id: str,
+        tile_matrix_set_id: str,
+        *,
+        assets: Optional[List[str]] = None,
+        expression: Optional[str] = None,
+        asset_band_indices: Optional[List[str]] = None,
+        asset_as_band: Optional[bool] = None,
+        nodata: Optional[float] = None,
+        unscale: Optional[bool] = None,
+        algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
+        algorithm_params: Optional[str] = None,
+        tile_format: Optional[Union[str, _models.TilerImageFormat]] = None,
+        tile_scale: Optional[int] = None,
+        min_zoom: Optional[int] = None,
+        max_zoom: Optional[int] = None,
+        buffer: Optional[str] = None,
+        color_formula: Optional[str] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
+        rescale: Optional[List[str]] = None,
+        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
+        colormap: Optional[str] = None,
+        return_mask: Optional[bool] = None,
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        """Wmts Tilematrixsetid As Path.
+
+        OGC WMTS endpoint.
+
+        :param search_id: Search Id (pgSTAC Search Hash). Required.
+        :type search_id: str
+        :param tile_matrix_set_id: Identifier selecting one of the TileMatrixSetId supported. Required.
+        :type tile_matrix_set_id: str
+        :keyword assets: Asset's names. Default value is None.
+        :paramtype assets: list[str]
+        :keyword expression: Band math expression between assets. Default value is None.
+        :paramtype expression: str
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
+         None.
+        :paramtype asset_band_indices: list[str]
+        :keyword asset_as_band: Asset as Band. Default value is None.
+        :paramtype asset_as_band: bool
+        :keyword nodata: Overwrite internal Nodata value. Default value is None.
+        :paramtype nodata: float
+        :keyword unscale: Apply internal Scale or Offset. Default value is None.
+        :paramtype unscale: bool
+        :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
+         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
+        :paramtype algorithm: str or ~azure.planetarycomputer.models.TerrainAlgorithm
+        :keyword algorithm_params: Terrain algorithm parameters. Default value is None.
+        :paramtype algorithm_params: str
+        :keyword tile_format: Output image type. Default is png. Known values are: "png", "npy", "tif",
+         "jpeg", "jpg", "jp2", "webp", and "pngraw". Default value is None.
+        :paramtype tile_format: str or ~azure.planetarycomputer.models.TilerImageFormat
+        :keyword tile_scale: Tile scale factor affecting output size. Values > 1 produce larger tiles
+         (e.g., 1=256x256, 2=512x512). Default value is None.
+        :paramtype tile_scale: int
+        :keyword min_zoom: Overwrite default minzoom. Default value is None.
+        :paramtype min_zoom: int
+        :keyword max_zoom: Overwrite default maxzoom. Default value is None.
+        :paramtype max_zoom: int
+        :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
+         Output
+         **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
+         1.0 = 258x258). Default value is None.
+        :paramtype buffer: str
+        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
+         <https://github.com/mapbox/rio-color>`_). Default value is None.
+        :paramtype color_formula: str
+        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
+         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
+        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
+        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
+         bands. Default value is None.
+        :paramtype rescale: list[str]
+        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
+         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
+         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
+         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
+         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
+         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
+         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
+         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
+         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
+         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
+         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
+         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
+         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
+         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
+         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
+         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
+         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
+         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
+         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
+         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
+         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
+         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
+         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
+         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
+         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
+         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
+         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
+         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
+         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
+         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
+         is None.
+        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
+        :keyword colormap: JSON encoded custom Colormap. Default value is None.
+        :paramtype colormap: str
+        :keyword return_mask: Add mask to the output data. Default value is None.
+        :paramtype return_mask: bool
+        :return: AsyncIterator[bytes]
+        :rtype: AsyncIterator[bytes]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_tiler_get_mosaics_wmts_capabilities_with_matrix_set_request(
+            search_id=search_id,
+            tile_matrix_set_id=tile_matrix_set_id,
+            assets=assets,
+            expression=expression,
+            asset_band_indices=asset_band_indices,
+            asset_as_band=asset_as_band,
+            nodata=nodata,
+            unscale=unscale,
+            algorithm=algorithm,
+            algorithm_params=algorithm_params,
+            tile_format=tile_format,
+            tile_scale=tile_scale,
+            min_zoom=min_zoom,
+            max_zoom=max_zoom,
+            buffer=buffer,
+            color_formula=color_formula,
+            resampling=resampling,
+            rescale=rescale,
+            colormap_name=colormap_name,
+            colormap=colormap,
+            return_mask=return_mask,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", True)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+
+        deserialized = response.iter_bytes()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class SharedAccessSignatureOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
+        :attr:`shared_access_signature` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    async def get_sign(
+        self, *, href: str, duration_in_minutes: Optional[int] = None, **kwargs: Any
+    ) -> _models.UnsignedLink:
         """sign an HREF in the format of a URL and returns a SingedLink.
 
         Signs a HREF (a link URL) by appending a `SAS Token
@@ -13806,8 +12780,8 @@ class SasOperations:
 
         :keyword href: Href. Required.
         :paramtype href: str
-        :keyword duration: Duration. Default value is None.
-        :paramtype duration: int
+        :keyword duration_in_minutes: Duration. Default value is None.
+        :paramtype duration_in_minutes: int
         :return: UnsignedLink. The UnsignedLink is compatible with MutableMapping
         :rtype: ~azure.planetarycomputer.models.UnsignedLink
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -13825,9 +12799,9 @@ class SasOperations:
 
         cls: ClsType[_models.UnsignedLink] = kwargs.pop("cls", None)
 
-        _request = build_sas_get_sign_request(
+        _request = build_shared_access_signature_get_sign_request(
             href=href,
-            duration=duration,
+            duration_in_minutes=duration_in_minutes,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -13863,46 +12837,24 @@ class SasOperations:
 
         return deserialized  # type: ignore
 
-
-class IngestionsIngestionRunsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`ingestion_runs` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
     @distributed_trace_async
-    async def list(
-        self,
-        collection_id: str,
-        ingestion_id: str,
-        *,
-        top: Optional[int] = None,
-        skip: Optional[int] = None,
-        **kwargs: Any
-    ) -> _models.PageIngestionRun:
-        """Get the runs of an ingestion.
+    async def get_token(
+        self, collection_id: str, *, duration_in_minutes: Optional[int] = None, **kwargs: Any
+    ) -> _models.ManagedStorageSharedAccessSignatureToken:
+        """generate a SAS Token for the given Azure Blob storage account and container.
 
-        :param collection_id: Catalog collection id. Required.
+        Generate a `SAS Token
+        <https://docs.microsoft.com/en-us/azure/storage/common/storage-sas-overview#how-a-shared-access-signature-works>`_
+        for the given storage account and container. The storage account and container
+        must be associated with a Planetary Computer dataset indexed by the STAC API.
+
+        :param collection_id: Collection Id. Required.
         :type collection_id: str
-        :param ingestion_id: Ingestion id. Required.
-        :type ingestion_id: str
-        :keyword top: The number of items to return. Default value is None.
-        :paramtype top: int
-        :keyword skip: The number of items to skip. Default value is None.
-        :paramtype skip: int
-        :return: PageIngestionRun. The PageIngestionRun is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.PageIngestionRun
+        :keyword duration_in_minutes: Duration. Default value is None.
+        :paramtype duration_in_minutes: int
+        :return: ManagedStorageSharedAccessSignatureToken. The ManagedStorageSharedAccessSignatureToken
+         is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.ManagedStorageSharedAccessSignatureToken
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -13916,13 +12868,11 @@ class IngestionsIngestionRunsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.PageIngestionRun] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ManagedStorageSharedAccessSignatureToken] = kwargs.pop("cls", None)
 
-        _request = build_ingestions_ingestion_runs_list_request(
+        _request = build_shared_access_signature_get_token_request(
             collection_id=collection_id,
-            ingestion_id=ingestion_id,
-            top=top,
-            skip=skip,
+            duration_in_minutes=duration_in_minutes,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -13951,7 +12901,7 @@ class IngestionsIngestionRunsOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.PageIngestionRun, response.json())
+            deserialized = _deserialize(_models.ManagedStorageSharedAccessSignatureToken, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -13959,15 +12909,17 @@ class IngestionsIngestionRunsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def create(self, collection_id: str, ingestion_id: str, **kwargs: Any) -> _models.IngestionRun:
-        """Create a new run of an ingestion.
+    async def revoke_token(self, *, duration_in_minutes: Optional[int] = None, **kwargs: Any) -> None:
+        """revoke a SAS Token for the given Azure Blob storage account.
 
-        :param collection_id: Catalog collection id. Required.
-        :type collection_id: str
-        :param ingestion_id: Ingestion id. Required.
-        :type ingestion_id: str
-        :return: IngestionRun. The IngestionRun is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.IngestionRun
+        Revoke a `SAS Token
+        <https://docs.microsoft.com/en-us/azure/storage/common/storage-sas-overview#how-a-shared-access-signature-works>`_
+        for managed storage account of this GeoCatalog.
+
+        :keyword duration_in_minutes: Duration. Default value is None.
+        :paramtype duration_in_minutes: int
+        :return: None
+        :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -13981,11 +12933,10 @@ class IngestionsIngestionRunsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.IngestionRun] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_ingestions_ingestion_runs_create_request(
-            collection_id=collection_id,
-            ingestion_id=ingestion_id,
+        _request = build_shared_access_signature_revoke_token_request(
+            duration_in_minutes=duration_in_minutes,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -13995,76 +12946,7 @@ class IngestionsIngestionRunsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [201]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        response_headers = {}
-        response_headers["location"] = self._deserialize("str", response.headers.get("location"))
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.IngestionRun, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def get(self, collection_id: str, ingestion_id: str, run_id: str, **kwargs: Any) -> _models.IngestionRun:
-        """Get a run of an ingestion.
-
-        :param collection_id: Catalog collection id. Required.
-        :type collection_id: str
-        :param ingestion_id: Ingestion id. Required.
-        :type ingestion_id: str
-        :param run_id: Run id. Required.
-        :type run_id: str
-        :return: IngestionRun. The IngestionRun is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.IngestionRun
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.IngestionRun] = kwargs.pop("cls", None)
-
-        _request = build_ingestions_ingestion_runs_get_request(
-            collection_id=collection_id,
-            ingestion_id=ingestion_id,
-            run_id=run_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -14072,20 +12954,8 @@ class IngestionsIngestionRunsOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.IngestionRun, response.json())
-
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
+            return cls(pipeline_response, None, {})  # type: ignore

@@ -7,38 +7,38 @@
 # --------------------------------------------------------------------------
 import pytest
 from devtools_testutils import recorded_by_proxy
-from testpreparer import SharedAccessSignatureClientTestBase, SharedAccessSignaturePreparer
+from testpreparer import PlanetaryComputerClientTestBase, PlanetaryComputerPreparer
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestSharedAccessSignature(SharedAccessSignatureClientTestBase):
-    @SharedAccessSignaturePreparer()
+class TestPlanetaryComputerSharedAccessSignatureOperations(PlanetaryComputerClientTestBase):
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_get_sign(self, sharedaccesssignature_endpoint):
-        client = self.create_client(endpoint=sharedaccesssignature_endpoint)
-        response = client.get_sign(
+    def test_shared_access_signature_get_sign(self, planetarycomputer_endpoint):
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+        response = client.shared_access_signature.get_sign(
             href="str",
         )
 
         # please add some check logic here by yourself
         # ...
 
-    @SharedAccessSignaturePreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_get_token(self, sharedaccesssignature_endpoint):
-        client = self.create_client(endpoint=sharedaccesssignature_endpoint)
-        response = client.get_token(
+    def test_shared_access_signature_get_token(self, planetarycomputer_endpoint):
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+        response = client.shared_access_signature.get_token(
             collection_id="str",
         )
 
         # please add some check logic here by yourself
         # ...
 
-    @SharedAccessSignaturePreparer()
+    @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_revoke_token(self, sharedaccesssignature_endpoint):
-        client = self.create_client(endpoint=sharedaccesssignature_endpoint)
-        response = client.revoke_token()
+    def test_shared_access_signature_revoke_token(self, planetarycomputer_endpoint):
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+        response = client.shared_access_signature.revoke_token()
 
         # please add some check logic here by yourself
         # ...

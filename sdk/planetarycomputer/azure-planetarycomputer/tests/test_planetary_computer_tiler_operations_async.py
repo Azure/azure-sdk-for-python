@@ -6,37 +6,38 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from devtools_testutils import recorded_by_proxy
-from testpreparer import TilerClientTestBase, TilerPreparer
+from devtools_testutils.aio import recorded_by_proxy_async
+from testpreparer import PlanetaryComputerPreparer
+from testpreparer_async import PlanetaryComputerClientTestBaseAsync
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestTiler(TilerClientTestBase):
-    @TilerPreparer()
-    @recorded_by_proxy
-    def test_get_tile_matrix_definitions(self, tiler_endpoint):
-        client = self.create_client(endpoint=tiler_endpoint)
-        response = client.get_tile_matrix_definitions(
+class TestPlanetaryComputerTilerOperationsAsync(PlanetaryComputerClientTestBaseAsync):
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy_async
+    async def test_tiler_get_tile_matrix_definitions(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.tiler.get_tile_matrix_definitions(
             tile_matrix_set_id="str",
         )
 
         # please add some check logic here by yourself
         # ...
 
-    @TilerPreparer()
-    @recorded_by_proxy
-    def test_get_tile_matrix_list(self, tiler_endpoint):
-        client = self.create_client(endpoint=tiler_endpoint)
-        response = client.get_tile_matrix_list()
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy_async
+    async def test_tiler_get_tile_matrix_list(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.tiler.get_tile_matrix_list()
 
         # please add some check logic here by yourself
         # ...
 
-    @TilerPreparer()
-    @recorded_by_proxy
-    def test_get_asset_statistics(self, tiler_endpoint):
-        client = self.create_client(endpoint=tiler_endpoint)
-        response = client.get_asset_statistics(
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy_async
+    async def test_tiler_list_asset_statistics(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.tiler.list_asset_statistics(
             collection_id="str",
             item_id="str",
         )
@@ -44,11 +45,11 @@ class TestTiler(TilerClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @TilerPreparer()
-    @recorded_by_proxy
-    def test_get_available_assets(self, tiler_endpoint):
-        client = self.create_client(endpoint=tiler_endpoint)
-        response = client.get_available_assets(
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy_async
+    async def test_tiler_list_available_assets(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.tiler.list_available_assets(
             collection_id="str",
             item_id="str",
         )
@@ -56,11 +57,11 @@ class TestTiler(TilerClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @TilerPreparer()
-    @recorded_by_proxy
-    def test_get_bounds(self, tiler_endpoint):
-        client = self.create_client(endpoint=tiler_endpoint)
-        response = client.get_bounds(
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy_async
+    async def test_tiler_list_bounds(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.tiler.list_bounds(
             collection_id="str",
             item_id="str",
         )
@@ -68,11 +69,11 @@ class TestTiler(TilerClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @TilerPreparer()
-    @recorded_by_proxy
-    def test_crop_geo_json(self, tiler_endpoint):
-        client = self.create_client(endpoint=tiler_endpoint)
-        response = client.crop_geo_json(
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy_async
+    async def test_tiler_crop_geo_json(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.tiler.crop_geo_json(
             collection_id="str",
             item_id="str",
             format="str",
@@ -82,11 +83,11 @@ class TestTiler(TilerClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @TilerPreparer()
-    @recorded_by_proxy
-    def test_crop_geo_json_with_dimensions(self, tiler_endpoint):
-        client = self.create_client(endpoint=tiler_endpoint)
-        response = client.crop_geo_json_with_dimensions(
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy_async
+    async def test_tiler_crop_geo_json_with_dimensions(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.tiler.crop_geo_json_with_dimensions(
             collection_id="str",
             item_id="str",
             width=0.0,
@@ -157,11 +158,11 @@ class TestTiler(TilerClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @TilerPreparer()
-    @recorded_by_proxy
-    def test_get_geo_json_statistics(self, tiler_endpoint):
-        client = self.create_client(endpoint=tiler_endpoint)
-        response = client.get_geo_json_statistics(
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy_async
+    async def test_tiler_list_geo_json_statistics(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.tiler.list_geo_json_statistics(
             collection_id="str",
             item_id="str",
             body={
@@ -255,11 +256,11 @@ class TestTiler(TilerClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @TilerPreparer()
-    @recorded_by_proxy
-    def test_get_info_geo_json(self, tiler_endpoint):
-        client = self.create_client(endpoint=tiler_endpoint)
-        response = client.get_info_geo_json(
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy_async
+    async def test_tiler_get_info_geo_json(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.tiler.get_info_geo_json(
             collection_id="str",
             item_id="str",
         )
@@ -267,11 +268,11 @@ class TestTiler(TilerClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @TilerPreparer()
-    @recorded_by_proxy
-    def test_get_info(self, tiler_endpoint):
-        client = self.create_client(endpoint=tiler_endpoint)
-        response = client.get_info(
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy_async
+    async def test_tiler_get_info(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.tiler.get_info(
             collection_id="str",
             item_id="str",
         )
@@ -279,11 +280,11 @@ class TestTiler(TilerClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @TilerPreparer()
-    @recorded_by_proxy
-    def test_get_part(self, tiler_endpoint):
-        client = self.create_client(endpoint=tiler_endpoint)
-        response = client.get_part(
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy_async
+    async def test_tiler_get_part(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.tiler.get_part(
             collection_id="str",
             item_id="str",
             minx=0.0,
@@ -296,11 +297,11 @@ class TestTiler(TilerClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @TilerPreparer()
-    @recorded_by_proxy
-    def test_get_part_with_dimensions(self, tiler_endpoint):
-        client = self.create_client(endpoint=tiler_endpoint)
-        response = client.get_part_with_dimensions(
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy_async
+    async def test_tiler_get_part_with_dimensions(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.tiler.get_part_with_dimensions(
             collection_id="str",
             item_id="str",
             minx=0.0,
@@ -315,11 +316,11 @@ class TestTiler(TilerClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @TilerPreparer()
-    @recorded_by_proxy
-    def test_get_point(self, tiler_endpoint):
-        client = self.create_client(endpoint=tiler_endpoint)
-        response = client.get_point(
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy_async
+    async def test_tiler_get_point(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.tiler.get_point(
             collection_id="str",
             item_id="str",
             lon=0.0,
@@ -329,11 +330,11 @@ class TestTiler(TilerClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @TilerPreparer()
-    @recorded_by_proxy
-    def test_get_preview(self, tiler_endpoint):
-        client = self.create_client(endpoint=tiler_endpoint)
-        response = client.get_preview(
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy_async
+    async def test_tiler_get_preview(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.tiler.get_preview(
             collection_id="str",
             item_id="str",
         )
@@ -341,11 +342,11 @@ class TestTiler(TilerClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @TilerPreparer()
-    @recorded_by_proxy
-    def test_get_preview_with_format(self, tiler_endpoint):
-        client = self.create_client(endpoint=tiler_endpoint)
-        response = client.get_preview_with_format(
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy_async
+    async def test_tiler_get_preview_with_format(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.tiler.get_preview_with_format(
             collection_id="str",
             item_id="str",
             format="str",
@@ -354,15 +355,15 @@ class TestTiler(TilerClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @TilerPreparer()
-    @recorded_by_proxy
-    def test_create_static_image(self, tiler_endpoint):
-        client = self.create_client(endpoint=tiler_endpoint)
-        response = client.create_static_image(
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy_async
+    async def test_tiler_create_static_image(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.tiler.create_static_image(
             collection_id="str",
             body={
                 "cols": 0,
-                "cql": {},
+                "cql": {"str": {}},
                 "render_params": "str",
                 "rows": 0,
                 "format": "str",
@@ -375,11 +376,11 @@ class TestTiler(TilerClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @TilerPreparer()
-    @recorded_by_proxy
-    def test_get_static_image(self, tiler_endpoint):
-        client = self.create_client(endpoint=tiler_endpoint)
-        response = client.get_static_image(
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy_async
+    async def test_tiler_get_static_image(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.tiler.get_static_image(
             collection_id="str",
             id="str",
         )
@@ -387,11 +388,11 @@ class TestTiler(TilerClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @TilerPreparer()
-    @recorded_by_proxy
-    def test_get_statistics(self, tiler_endpoint):
-        client = self.create_client(endpoint=tiler_endpoint)
-        response = client.get_statistics(
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy_async
+    async def test_tiler_list_statistics(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.tiler.list_statistics(
             collection_id="str",
             item_id="str",
         )
@@ -399,11 +400,11 @@ class TestTiler(TilerClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @TilerPreparer()
-    @recorded_by_proxy
-    def test_get_tile_json(self, tiler_endpoint):
-        client = self.create_client(endpoint=tiler_endpoint)
-        response = client.get_tile_json(
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy_async
+    async def test_tiler_get_tile_json(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.tiler.get_tile_json(
             collection_id="str",
             item_id="str",
         )
@@ -411,11 +412,11 @@ class TestTiler(TilerClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @TilerPreparer()
-    @recorded_by_proxy
-    def test_get_tile_json_with_matrix_set(self, tiler_endpoint):
-        client = self.create_client(endpoint=tiler_endpoint)
-        response = client.get_tile_json_with_matrix_set(
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy_async
+    async def test_tiler_get_tile_json_with_matrix_set(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.tiler.get_tile_json_with_matrix_set(
             collection_id="str",
             item_id="str",
             tile_matrix_set_id="str",
@@ -424,11 +425,11 @@ class TestTiler(TilerClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @TilerPreparer()
-    @recorded_by_proxy
-    def test_get_tile_with_matrix_set(self, tiler_endpoint):
-        client = self.create_client(endpoint=tiler_endpoint)
-        response = client.get_tile_with_matrix_set(
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy_async
+    async def test_tiler_get_tile_with_matrix_set(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.tiler.get_tile_with_matrix_set(
             collection_id="str",
             item_id="str",
             tile_matrix_set_id="str",
@@ -442,11 +443,11 @@ class TestTiler(TilerClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @TilerPreparer()
-    @recorded_by_proxy
-    def test_get_tile(self, tiler_endpoint):
-        client = self.create_client(endpoint=tiler_endpoint)
-        response = client.get_tile(
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy_async
+    async def test_tiler_get_tile(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.tiler.get_tile(
             collection_id="str",
             item_id="str",
             z=0.0,
@@ -459,11 +460,11 @@ class TestTiler(TilerClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @TilerPreparer()
-    @recorded_by_proxy
-    def test_get_wmts_capabilities(self, tiler_endpoint):
-        client = self.create_client(endpoint=tiler_endpoint)
-        response = client.get_wmts_capabilities(
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy_async
+    async def test_tiler_get_wmts_capabilities(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.tiler.get_wmts_capabilities(
             collection_id="str",
             item_id="str",
         )
@@ -471,11 +472,11 @@ class TestTiler(TilerClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @TilerPreparer()
-    @recorded_by_proxy
-    def test_get_wmts_capabilities_with_matrix_set(self, tiler_endpoint):
-        client = self.create_client(endpoint=tiler_endpoint)
-        response = client.get_wmts_capabilities_with_matrix_set(
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy_async
+    async def test_tiler_get_wmts_capabilities_with_matrix_set(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.tiler.get_wmts_capabilities_with_matrix_set(
             collection_id="str",
             item_id="str",
             tile_matrix_set_id="str",
@@ -484,44 +485,44 @@ class TestTiler(TilerClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @TilerPreparer()
-    @recorded_by_proxy
-    def test_get_classmap_legend(self, tiler_endpoint):
-        client = self.create_client(endpoint=tiler_endpoint)
-        response = client.get_classmap_legend(
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy_async
+    async def test_tiler_get_class_map_legend(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.tiler.get_class_map_legend(
             classmap_name="str",
         )
 
         # please add some check logic here by yourself
         # ...
 
-    @TilerPreparer()
-    @recorded_by_proxy
-    def test_get_interval_legend(self, tiler_endpoint):
-        client = self.create_client(endpoint=tiler_endpoint)
-        response = client.get_interval_legend(
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy_async
+    async def test_tiler_get_interval_legend(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.tiler.get_interval_legend(
             classmap_name="str",
         )
 
         # please add some check logic here by yourself
         # ...
 
-    @TilerPreparer()
-    @recorded_by_proxy
-    def test_get_legend(self, tiler_endpoint):
-        client = self.create_client(endpoint=tiler_endpoint)
-        response = client.get_legend(
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy_async
+    async def test_tiler_get_legend(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.tiler.get_legend(
             cmap_name="str",
         )
 
         # please add some check logic here by yourself
         # ...
 
-    @TilerPreparer()
-    @recorded_by_proxy
-    def test_get_assets_for_point(self, tiler_endpoint):
-        client = self.create_client(endpoint=tiler_endpoint)
-        response = client.get_assets_for_point(
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy_async
+    async def test_tiler_get_assets_for_point(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.tiler.get_assets_for_point(
             search_id="str",
             lon=0.0,
             lat=0.0,
@@ -530,11 +531,11 @@ class TestTiler(TilerClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @TilerPreparer()
-    @recorded_by_proxy
-    def test_get_mosaics_assets_for_tile_with_matrix_set(self, tiler_endpoint):
-        client = self.create_client(endpoint=tiler_endpoint)
-        response = client.get_mosaics_assets_for_tile_with_matrix_set(
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy_async
+    async def test_tiler_get_mosaics_assets_for_tile_with_matrix_set(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.tiler.get_mosaics_assets_for_tile_with_matrix_set(
             search_id="str",
             tile_matrix_set_id="str",
             z=0.0,
@@ -545,11 +546,11 @@ class TestTiler(TilerClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @TilerPreparer()
-    @recorded_by_proxy
-    def test_get_mosaics_assets_for_tile(self, tiler_endpoint):
-        client = self.create_client(endpoint=tiler_endpoint)
-        response = client.get_mosaics_assets_for_tile(
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy_async
+    async def test_tiler_get_mosaics_assets_for_tile(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.tiler.get_mosaics_assets_for_tile(
             search_id="str",
             z=0.0,
             x=0.0,
@@ -559,27 +560,27 @@ class TestTiler(TilerClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @TilerPreparer()
-    @recorded_by_proxy
-    def test_get_mosaics_search_info(self, tiler_endpoint):
-        client = self.create_client(endpoint=tiler_endpoint)
-        response = client.get_mosaics_search_info(
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy_async
+    async def test_tiler_get_mosaics_search_info(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.tiler.get_mosaics_search_info(
             search_id="str",
         )
 
         # please add some check logic here by yourself
         # ...
 
-    @TilerPreparer()
-    @recorded_by_proxy
-    def test_register_mosaics_search(self, tiler_endpoint):
-        client = self.create_client(endpoint=tiler_endpoint)
-        response = client.register_mosaics_search(
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy_async
+    async def test_tiler_register_mosaics_search(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.tiler.register_mosaics_search(
             body={
                 "bbox": 0.0,
                 "collections": ["str"],
                 "datetime": "str",
-                "filter": {},
+                "filter": {"str": {}},
                 "filter-lang": "str",
                 "ids": ["str"],
                 "intersects": "geometry",
@@ -592,7 +593,7 @@ class TestTiler(TilerClientTestBase):
                     "name": "str",
                     "type": "str",
                 },
-                "query": {},
+                "query": {"str": {}},
                 "sortby": [{"direction": "str", "field": "str"}],
             },
         )
@@ -600,22 +601,22 @@ class TestTiler(TilerClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @TilerPreparer()
-    @recorded_by_proxy
-    def test_get_mosaics_tile_json(self, tiler_endpoint):
-        client = self.create_client(endpoint=tiler_endpoint)
-        response = client.get_mosaics_tile_json(
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy_async
+    async def test_tiler_get_mosaics_tile_json(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.tiler.get_mosaics_tile_json(
             search_id="str",
         )
 
         # please add some check logic here by yourself
         # ...
 
-    @TilerPreparer()
-    @recorded_by_proxy
-    def test_get_mosaics_tile_with_matrix_set(self, tiler_endpoint):
-        client = self.create_client(endpoint=tiler_endpoint)
-        response = client.get_mosaics_tile_with_matrix_set(
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy_async
+    async def test_tiler_get_mosaics_tile_with_matrix_set(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.tiler.get_mosaics_tile_with_matrix_set(
             search_id="str",
             tile_matrix_set_id="str",
             z=0.0,
@@ -628,11 +629,11 @@ class TestTiler(TilerClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @TilerPreparer()
-    @recorded_by_proxy
-    def test_get_mosaics_tile_json_with_matrix_set(self, tiler_endpoint):
-        client = self.create_client(endpoint=tiler_endpoint)
-        response = client.get_mosaics_tile_json_with_matrix_set(
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy_async
+    async def test_tiler_get_mosaics_tile_json_with_matrix_set(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.tiler.get_mosaics_tile_json_with_matrix_set(
             search_id="str",
             tile_matrix_set_id="str",
         )
@@ -640,11 +641,11 @@ class TestTiler(TilerClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @TilerPreparer()
-    @recorded_by_proxy
-    def test_get_mosaics_tile(self, tiler_endpoint):
-        client = self.create_client(endpoint=tiler_endpoint)
-        response = client.get_mosaics_tile(
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy_async
+    async def test_tiler_get_mosaics_tile(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.tiler.get_mosaics_tile(
             search_id="str",
             z=0.0,
             x=0.0,
@@ -656,22 +657,22 @@ class TestTiler(TilerClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @TilerPreparer()
-    @recorded_by_proxy
-    def test_get_mosaics_wmts_capabilities(self, tiler_endpoint):
-        client = self.create_client(endpoint=tiler_endpoint)
-        response = client.get_mosaics_wmts_capabilities(
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy_async
+    async def test_tiler_get_mosaics_wmts_capabilities(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.tiler.get_mosaics_wmts_capabilities(
             search_id="str",
         )
 
         # please add some check logic here by yourself
         # ...
 
-    @TilerPreparer()
-    @recorded_by_proxy
-    def test_get_mosaics_wmts_capabilities_with_matrix_set(self, tiler_endpoint):
-        client = self.create_client(endpoint=tiler_endpoint)
-        response = client.get_mosaics_wmts_capabilities_with_matrix_set(
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy_async
+    async def test_tiler_get_mosaics_wmts_capabilities_with_matrix_set(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.tiler.get_mosaics_wmts_capabilities_with_matrix_set(
             search_id="str",
             tile_matrix_set_id="str",
         )

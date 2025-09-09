@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.planetarycomputer import SharedAccessSignatureClient
+from azure.planetarycomputer import PlanetaryComputerClient
 
 """
 # PREREQUISITES
@@ -25,11 +25,11 @@ from azure.planetarycomputer import SharedAccessSignatureClient
 
 
 def main():
-    client = SharedAccessSignatureClient(
+    client = PlanetaryComputerClient(
         credential=DefaultAzureCredential(),
     )
 
-    response = client.get_sign(
+    response = client.shared_access_signature.get_sign(
         href="https://contoso.com",
     )
     print(response)

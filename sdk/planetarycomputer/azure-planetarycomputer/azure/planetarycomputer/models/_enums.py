@@ -10,21 +10,6 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class Algorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Supported algorithms for terrain and index-based analysis."""
-
-    HILLSHADE = "hillshade"
-    """Creates hillshade visualization from elevation data"""
-    CONTOURS = "contours"
-    """Generates elevation contour lines"""
-    NORMALIZED_INDEX = "normalizedIndex"
-    """Calculates normalized difference index between bands"""
-    TERRARIUM = "terrarium"
-    """Encodes elevation data in Mapbox Terrarium RGB format"""
-    TERRAINRGB = "terrainrgb"
-    """Encodes elevation data in Mapbox TerrainRGB format"""
-
-
 class ColorMapNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Available color maps for data visualization."""
 
@@ -469,7 +454,7 @@ class FeatureType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Standard GeoJSON Feature type identifier"""
 
 
-class FilterLang(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class FilterLanguage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Choices for filter-lang value in a POST request.
 
     Based on
@@ -507,40 +492,10 @@ class GeometryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Represents a MultiPolygon geometry."""
 
 
-class ImageRequestFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Format specification for image request outputs."""
-
-    PNG = "png"
-    """Portable Network Graphics format"""
-    COG = "cog"
-    """Cloud Optimized GeoTIFF format"""
-
-
-class ImageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Image format specifier for tile and image requests."""
-
-    PNG = "png"
-    """Portable Network Graphics format - supports transparency"""
-    NPY = "npy"
-    """NumPy array format for raw data access"""
-    TIF = "tif"
-    """GeoTIFF format for georeferenced raster data"""
-    JPEG = "jpeg"
-    """JPEG format - smaller file size but lossy compression"""
-    JPG = "jpg"
-    """Alternate extension for JPEG format"""
-    JP2 = "jp2"
-    """JPEG 2000 format - supports both lossy and lossless compression"""
-    WEBP = "webp"
-    """WebP format - modern image format with good compression"""
-    PNGRAW = "pngraw"
-    """Raw PNG format for access to unprocessed data"""
-
-
 class IngestionSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Ingestion source type."""
 
-    SAS_TOKEN = "SasToken"
+    SHARED_ACCESS_SIGNATURE_TOKEN = "SasToken"
     """Azure Blob Storage SAS token"""
     BLOB_MANAGED_IDENTITY = "BlobManagedIdentity"
     """Azure Blob Managed Identity"""
@@ -693,28 +648,6 @@ class PixelSelection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Select image with highest value in the last band"""
 
 
-class QueryableDefinitionDataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Queryable data types for the queryables extension.
-    These are the data types supported by Basic CQL2.
-    """
-
-    STRING = "string"
-    """Character strings.
-    Example: 'This is a literal string.'"""
-    NUMBER = "number"
-    """Numbers including integers and floating point values.
-    Examples: -100, 3.14159"""
-    BOOLEAN = "boolean"
-    """Booleans.
-    Examples: true, false"""
-    TIMESTAMP = "timestamp"
-    """An instant with a granularity of a second or smaller.
-    Example (JSON): { "timestamp": "1969-07-20T20:17:40Z" }"""
-    DATE = "date"
-    """An instant with a granularity of a day.
-    Example (JSON): { "date": "1969-07-20" }"""
-
-
 class RenderOptionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the types of render options for map visualization."""
 
@@ -749,22 +682,13 @@ class Resampling(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Root mean square resampling - useful for resampling error or deviation grids"""
 
 
-class SignType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class StacAssetUrlSigningMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Represent the signature type for asset URLs."""
 
     TRUE = "true"
     """Sign asset URLs in the response."""
     FALSE = "false"
     """Do not sign asset URLs in the response."""
-
-
-class SortDirections(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Defines the sorting directions for query results in STAC API."""
-
-    ASC = "asc"
-    """Sort results in ascending order."""
-    DESC = "desc"
-    """Sort results in descending order."""
 
 
 class StacModelType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -776,7 +700,53 @@ class StacModelType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """GeoJSON FeatureCollection type."""
 
 
-class TileJsonScheme(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class StacQueryableDefinitionDataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Queryable data types for the queryables extension.
+    These are the data types supported by Basic CQL2.
+    """
+
+    STRING = "string"
+    """Character strings.
+    Example: 'This is a literal string.'"""
+    NUMBER = "number"
+    """Numbers including integers and floating point values.
+    Examples: -100, 3.14159"""
+    BOOLEAN = "boolean"
+    """Booleans.
+    Examples: true, false"""
+    TIMESTAMP = "timestamp"
+    """An instant with a granularity of a second or smaller.
+    Example (JSON): { "timestamp": "1969-07-20T20:17:40Z" }"""
+    DATE = "date"
+    """An instant with a granularity of a day.
+    Example (JSON): { "date": "1969-07-20" }"""
+
+
+class StacQueryResultsSortingDirection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defines the sorting directions for query results in STAC API."""
+
+    ASC = "asc"
+    """Sort results in ascending order."""
+    DESC = "desc"
+    """Sort results in descending order."""
+
+
+class TerrainAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Supported algorithms for terrain and index-based analysis."""
+
+    HILLSHADE = "hillshade"
+    """Creates hillshade visualization from elevation data"""
+    CONTOURS = "contours"
+    """Generates elevation contour lines"""
+    NORMALIZED_INDEX = "normalizedIndex"
+    """Calculates normalized difference index between bands"""
+    TERRARIUM = "terrarium"
+    """Encodes elevation data in Mapbox Terrarium RGB format"""
+    TERRAINRGB = "terrainrgb"
+    """Encodes elevation data in Mapbox TerrainRGB format"""
+
+
+class TileAddressingScheme(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Scheme for tile addressing in TileJSON specification."""
 
     XYZ = "xyz"
@@ -825,3 +795,33 @@ class TileMatrixSetId(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """World CRS84 Quad tile matrix set"""
     WORLD_MERCATOR_WGS84_QUAD = "WorldMercatorWGS84Quad"
     """World Mercator WGS84 Quad tile matrix set"""
+
+
+class TilerImageExportFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Format specification for image request outputs."""
+
+    PNG = "png"
+    """Portable Network Graphics format"""
+    COG = "cog"
+    """Cloud Optimized GeoTIFF format"""
+
+
+class TilerImageFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Image format specifier for tile and image requests."""
+
+    PNG = "png"
+    """Portable Network Graphics format - supports transparency"""
+    NPY = "npy"
+    """NumPy array format for raw data access"""
+    TIF = "tif"
+    """GeoTIFF format for georeferenced raster data"""
+    JPEG = "jpeg"
+    """JPEG format - smaller file size but lossy compression"""
+    JPG = "jpg"
+    """Alternate extension for JPEG format"""
+    JP2 = "jp2"
+    """JPEG 2000 format - supports both lossy and lossless compression"""
+    WEBP = "webp"
+    """WebP format - modern image format with good compression"""
+    PNGRAW = "pngraw"
+    """Raw PNG format for access to unprocessed data"""

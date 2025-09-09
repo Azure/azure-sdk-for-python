@@ -5,27 +5,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from abc import ABC
 import json
-from typing import Any, Dict, Generic, IO, List, Mapping, Optional, TYPE_CHECKING, Tuple, TypeVar, Union
+from typing import Any, Dict, IO, List, Mapping, Optional, Tuple, Union
 
 from .._utils.model_base import Model, SdkJSONEncoder
-
-if TYPE_CHECKING:
-    from .serialization import Deserializer, Serializer
-
-
-TClient = TypeVar("TClient")
-TConfig = TypeVar("TConfig")
-
-
-class ClientMixinABC(ABC, Generic[TClient, TConfig]):
-    """DO NOT use this class. It is for internal typing use only."""
-
-    _client: TClient
-    _config: TConfig
-    _serialize: "Serializer"
-    _deserialize: "Deserializer"
 
 
 # file-like tuple could be `(filename, IO (or bytes))` or `(filename, IO (or bytes), content_type)`
