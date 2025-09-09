@@ -160,13 +160,11 @@ resources, and sanitizing credentials in recordings.
 
 The `devtools_testutils` package also has other classes and functions to provide test utility, which are documented in
 the
-[package README](https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/README.md).
+[package README](https://github.com/Azure/azure-sdk-for-python/blob/main/eng/tools/azure-sdk-tools/devtools_testutils/README.md).
 
 ## Write or run tests
 
-Newer SDK tests utilize the [Azure SDK Tools Test Proxy][proxy_general_docs] to record and playback HTTP interactions, while also automatically sanitizing sensitive information from recordings.
-To migrate an existing test suite to use the test proxy, or to learn more about using the test proxy, refer to the
-[test proxy migration guide][proxy_migration_guide].
+SDK tests utilize the [Azure SDK Tools Test Proxy][proxy_general_docs] to record and playback HTTP interactions, while also automatically sanitizing sensitive information from recordings.
 
 ### Set up test resources
 
@@ -261,9 +259,6 @@ As shown in the example, it's recommended to also request the `patch_sleep` and 
 your tests have a unique need to use `time.sleep` or `asyncio.sleep` during playback tests (this is unusual). All of
 these fixtures are imported by the central [`/sdk/conftest.py`][central_conftest], so `pytest` will automatically
 resolve the references.
-
-For more details about how this fixture starts up the test proxy, or the test proxy itself, refer to the
-[test proxy migration guide][test_proxy_startup].
 
 ### Deliver environment variables to tests
 
@@ -506,7 +501,7 @@ def add_sanitizers(test_proxy):
     remove_batch_sanitizers(["AZSDK3493"])
 ```
 
-A list of sanitizers and their IDs can be found [here][test_proxy_sanitizers]. However, **please be mindful when opting out of a sanitizer, and ensure that no sensitive data is being exposed**.
+A list of sanitizers and their IDs can be found in the test proxy's [SanitizerDictionary][test_proxy_sanitizers]. However, **please be mindful when opting out of a sanitizer, and ensure that no sensitive data is being exposed**.
 
 Some sanitizers IDs that are often opted out of are:
   - `AZSDK2003`: `Location` - Header regex sanitizer
@@ -583,12 +578,11 @@ For information about more advanced testing scenarios, refer to the [advanced te
 [advanced_tests_notes]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests-advanced.md
 [azure_cli_service_principal]: https://docs.microsoft.com/cli/azure/ad/sp?view=azure-cli-latest#az-ad-sp-create-for-rbac
 [azure_portal]: https://portal.azure.com/
-[azure_recorded_test_case]: https://github.com/Azure/azure-sdk-for-python/blob/7e66e3877519a15c1d4304eb69abf0a2281773/tools/azure-sdk-tools/devtools_testutils/azure_recorded_testcase.py#L44
+[azure_recorded_test_case]: https://github.com/Azure/azure-sdk-for-python/blob/main/eng/tools/azure-sdk-tools/devtools_testutils/azure_recorded_testcase.py
 [central_conftest]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/conftest.py
-[env_var_docs]: https://github.com/Azure/azure-sdk-for-python/tree/main/tools/azure-sdk-tools/devtools_testutils#use-the-environmentvariableloader
-[env_var_loader]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/envvariable_loader.py
-[generate_sas]: https://github.com/Azure/azure-sdk-for-python/blob/bf4749babb363e2dc972775f4408036e31f361b4/tools/azure-sdk-tools/devtools_testutils/azure_recorded_testcase.py#L196
-[get_credential]: https://github.com/Azure/azure-sdk-for-python/blob/20cf5b0bd9b87f90bd5ad4fd36358d3b257f95c5/tools/azure-sdk-tools/devtools_testutils/azure_recorded_testcase.py#L96
+[env_var_docs]: https://github.com/Azure/azure-sdk-for-python/tree/main/eng/tools/azure-sdk-tools/devtools_testutils#use-the-environmentvariableloader
+[env_var_loader]: https://github.com/Azure/azure-sdk-for-python/blob/main/eng/tools/azure-sdk-tools/devtools_testutils/envvariable_loader.py
+[get_credential]: https://github.com/Azure/azure-sdk-for-python/blob/4df650d2ce4c292942009ed648cae21eb9c2121d/eng/tools/azure-sdk-tools/devtools_testutils/azure_recorded_testcase.py#L78
 [git_setup]: https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup
 [kv_test_resources]: https://github.com/Azure/azure-sdk-for-python/blob/fbdb860630bcc13c1e355828231161849a9bd5a4/sdk/keyvault/test-resources.json
 [kv_test_resources_outputs]: https://github.com/Azure/azure-sdk-for-python/blob/fbdb860630bcc13c1e355828231161849a9bd5a4/sdk/keyvault/test-resources.json#L255
@@ -596,14 +590,12 @@ For information about more advanced testing scenarios, refer to the [advanced te
 [manage_recordings]: https://github.com/Azure/azure-sdk-for-python/blob/main/scripts/manage_recordings.py
 [packaging]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/packaging.md
 [proxy_general_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy/README.md
-[proxy_migration_guide]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md
-[py_sanitizers]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/sanitizers.py
+[py_sanitizers]: https://github.com/Azure/azure-sdk-for-python/blob/main/eng/tools/azure-sdk-tools/devtools_testutils/sanitizers.py
 [pytest_invocation]: https://pytest.org/latest/how-to/usage.html
 [pytest_logging]: https://docs.pytest.org/en/stable/logging.html
 [python-dotenv_readme]: https://github.com/theskumar/python-dotenv
 [recording_move]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/recording_migration_guide.md
 [setup]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests-advanced.md#pre-test-setup
-[test_proxy_sanitizers]: https://github.com/Azure/azure-sdk-tools/blob/57382d5dc00b10a2f9cfd597293eeee0c2dbd8fd/tools/test-proxy/Azure.Sdk.Tools.TestProxy/Common/SanitizerDictionary.cs#L65
-[test_proxy_startup]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md#start-the-proxy-server
+[test_proxy_sanitizers]: https://github.com/Azure/azure-sdk-tools/blob/e14a7ddd90a6177b9b60e7a6486c03bf1fa31177/tools/test-proxy/Azure.Sdk.Tools.TestProxy/Common/SanitizerDictionary.cs#L65
 [test_resources]: https://github.com/Azure/azure-sdk-for-python/tree/main/eng/common/TestResources#readme
 [troubleshooting_guide]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_troubleshooting.md

@@ -1,4 +1,4 @@
--e ../../../tools/azure-sdk-tools
+-e ../../../eng/tools/azure-sdk-tools
 aiohttp
 azure-mgmt-managementgroups==1.0.0
 azure-mgmt-msi==1.0.0

@@ -246,8 +246,8 @@ class AgentPool(SubResource):
     :vartype os_type: str or ~azure.mgmt.containerservice.models.OSType
     :ivar os_sku: Specifies the OS SKU used by the agent pool. The default is Ubuntu if OSType is
      Linux. The default is Windows2019 when Kubernetes <= 1.24 or Windows2022 when Kubernetes >=
-     1.25 if OSType is Windows. Known values are: "Ubuntu", "AzureLinux", "CBLMariner",
-     "Windows2019", "Windows2022", and "Ubuntu2204".
+     1.25 if OSType is Windows. Known values are: "Ubuntu", "AzureLinux", "AzureLinux3",
+     "CBLMariner", "Windows2019", "Windows2022", and "Ubuntu2204".
     :vartype os_sku: str or ~azure.mgmt.containerservice.models.OSSKU
     :ivar max_count: The maximum number of nodes for auto-scaling.
     :vartype max_count: int
@@ -563,8 +563,8 @@ class AgentPool(SubResource):
         :paramtype os_type: str or ~azure.mgmt.containerservice.models.OSType
         :keyword os_sku: Specifies the OS SKU used by the agent pool. The default is Ubuntu if OSType
          is Linux. The default is Windows2019 when Kubernetes <= 1.24 or Windows2022 when Kubernetes >=
-         1.25 if OSType is Windows. Known values are: "Ubuntu", "AzureLinux", "CBLMariner",
-         "Windows2019", "Windows2022", and "Ubuntu2204".
+         1.25 if OSType is Windows. Known values are: "Ubuntu", "AzureLinux", "AzureLinux3",
+         "CBLMariner", "Windows2019", "Windows2022", and "Ubuntu2204".
         :paramtype os_sku: str or ~azure.mgmt.containerservice.models.OSSKU
         :keyword max_count: The maximum number of nodes for auto-scaling.
         :paramtype max_count: int
@@ -3127,6 +3127,9 @@ class ManagedCluster(TrackedResource):
     :vartype extended_location: ~azure.mgmt.containerservice.models.ExtendedLocation
     :ivar identity: The identity of the managed cluster, if configured.
     :vartype identity: ~azure.mgmt.containerservice.models.ManagedClusterIdentity
+    :ivar kind: This is primarily used to expose different UI experiences in the portal for
+     different kinds.
+    :vartype kind: str
     :ivar provisioning_state: The current provisioning state.
     :vartype provisioning_state: str
     :ivar power_state: The Power State of the cluster.
@@ -3292,6 +3295,7 @@ class ManagedCluster(TrackedResource):
         "sku": {"key": "sku", "type": "ManagedClusterSKU"},
         "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
         "identity": {"key": "identity", "type": "ManagedClusterIdentity"},
+        "kind": {"key": "kind", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "power_state": {"key": "properties.powerState", "type": "PowerState"},
         "max_agent_pools": {"key": "properties.maxAgentPools", "type": "int"},
@@ -3368,6 +3372,7 @@ class ManagedCluster(TrackedResource):
         sku: Optional["_models.ManagedClusterSKU"] = None,
         extended_location: Optional["_models.ExtendedLocation"] = None,
         identity: Optional["_models.ManagedClusterIdentity"] = None,
+        kind: Optional[str] = None,
         kubernetes_version: Optional[str] = None,
         dns_prefix: Optional[str] = None,
         fqdn_subdomain: Optional[str] = None,
@@ -3418,6 +3423,9 @@ class ManagedCluster(TrackedResource):
         :paramtype extended_location: ~azure.mgmt.containerservice.models.ExtendedLocation
         :keyword identity: The identity of the managed cluster, if configured.
         :paramtype identity: ~azure.mgmt.containerservice.models.ManagedClusterIdentity
+        :keyword kind: This is primarily used to expose different UI experiences in the portal for
+         different kinds.
+        :paramtype kind: str
         :keyword kubernetes_version: The version of Kubernetes specified by the user. Both patch
          version <major.minor.patch> (e.g. 1.20.13) and <major.minor> (e.g. 1.20) are supported. When
          <major.minor> is specified, the latest supported GA patch version is chosen automatically.
@@ -3541,6 +3549,7 @@ class ManagedCluster(TrackedResource):
         self.sku = sku
         self.extended_location = extended_location
         self.identity = identity
+        self.kind = kind
         self.provisioning_state: Optional[str] = None
         self.power_state: Optional["_models.PowerState"] = None
         self.max_agent_pools: Optional[int] = None
@@ -3882,8 +3891,8 @@ class ManagedClusterAgentPoolProfileProperties(_serialization.Model):
     :vartype os_type: str or ~azure.mgmt.containerservice.models.OSType
     :ivar os_sku: Specifies the OS SKU used by the agent pool. The default is Ubuntu if OSType is
      Linux. The default is Windows2019 when Kubernetes <= 1.24 or Windows2022 when Kubernetes >=
-     1.25 if OSType is Windows. Known values are: "Ubuntu", "AzureLinux", "CBLMariner",
-     "Windows2019", "Windows2022", and "Ubuntu2204".
+     1.25 if OSType is Windows. Known values are: "Ubuntu", "AzureLinux", "AzureLinux3",
+     "CBLMariner", "Windows2019", "Windows2022", and "Ubuntu2204".
     :vartype os_sku: str or ~azure.mgmt.containerservice.models.OSSKU
     :ivar max_count: The maximum number of nodes for auto-scaling.
     :vartype max_count: int
@@ -4190,8 +4199,8 @@ class ManagedClusterAgentPoolProfileProperties(_serialization.Model):
         :paramtype os_type: str or ~azure.mgmt.containerservice.models.OSType
         :keyword os_sku: Specifies the OS SKU used by the agent pool. The default is Ubuntu if OSType
          is Linux. The default is Windows2019 when Kubernetes <= 1.24 or Windows2022 when Kubernetes >=
-         1.25 if OSType is Windows. Known values are: "Ubuntu", "AzureLinux", "CBLMariner",
-         "Windows2019", "Windows2022", and "Ubuntu2204".
+         1.25 if OSType is Windows. Known values are: "Ubuntu", "AzureLinux", "AzureLinux3",
+         "CBLMariner", "Windows2019", "Windows2022", and "Ubuntu2204".
         :paramtype os_sku: str or ~azure.mgmt.containerservice.models.OSSKU
         :keyword max_count: The maximum number of nodes for auto-scaling.
         :paramtype max_count: int
@@ -4438,8 +4447,8 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
     :vartype os_type: str or ~azure.mgmt.containerservice.models.OSType
     :ivar os_sku: Specifies the OS SKU used by the agent pool. The default is Ubuntu if OSType is
      Linux. The default is Windows2019 when Kubernetes <= 1.24 or Windows2022 when Kubernetes >=
-     1.25 if OSType is Windows. Known values are: "Ubuntu", "AzureLinux", "CBLMariner",
-     "Windows2019", "Windows2022", and "Ubuntu2204".
+     1.25 if OSType is Windows. Known values are: "Ubuntu", "AzureLinux", "AzureLinux3",
+     "CBLMariner", "Windows2019", "Windows2022", and "Ubuntu2204".
     :vartype os_sku: str or ~azure.mgmt.containerservice.models.OSSKU
     :ivar max_count: The maximum number of nodes for auto-scaling.
     :vartype max_count: int
@@ -4752,8 +4761,8 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
         :paramtype os_type: str or ~azure.mgmt.containerservice.models.OSType
         :keyword os_sku: Specifies the OS SKU used by the agent pool. The default is Ubuntu if OSType
          is Linux. The default is Windows2019 when Kubernetes <= 1.24 or Windows2022 when Kubernetes >=
-         1.25 if OSType is Windows. Known values are: "Ubuntu", "AzureLinux", "CBLMariner",
-         "Windows2019", "Windows2022", and "Ubuntu2204".
+         1.25 if OSType is Windows. Known values are: "Ubuntu", "AzureLinux", "AzureLinux3",
+         "CBLMariner", "Windows2019", "Windows2022", and "Ubuntu2204".
         :paramtype os_sku: str or ~azure.mgmt.containerservice.models.OSSKU
         :keyword max_count: The maximum number of nodes for auto-scaling.
         :paramtype max_count: int
@@ -6768,7 +6777,7 @@ class ManagedClusterServicePrincipalProfile(_serialization.Model):
 class ManagedClusterSKU(_serialization.Model):
     """The SKU of a Managed Cluster.
 
-    :ivar name: The name of a managed cluster SKU. "Base"
+    :ivar name: The name of a managed cluster SKU. Known values are: "Base" and "Automatic".
     :vartype name: str or ~azure.mgmt.containerservice.models.ManagedClusterSKUName
     :ivar tier: The tier of a managed cluster SKU. If not specified, the default is 'Free'. See
      `AKS Pricing Tier <https://learn.microsoft.com/azure/aks/free-standard-pricing-tiers>`_ for
@@ -6789,7 +6798,7 @@ class ManagedClusterSKU(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword name: The name of a managed cluster SKU. "Base"
+        :keyword name: The name of a managed cluster SKU. Known values are: "Base" and "Automatic".
         :paramtype name: str or ~azure.mgmt.containerservice.models.ManagedClusterSKUName
         :keyword tier: The tier of a managed cluster SKU. If not specified, the default is 'Free'. See
          `AKS Pricing Tier <https://learn.microsoft.com/azure/aks/free-standard-pricing-tiers>`_ for
@@ -8274,8 +8283,8 @@ class Snapshot(TrackedResource):
     :vartype os_type: str or ~azure.mgmt.containerservice.models.OSType
     :ivar os_sku: Specifies the OS SKU used by the agent pool. The default is Ubuntu if OSType is
      Linux. The default is Windows2019 when Kubernetes <= 1.24 or Windows2022 when Kubernetes >=
-     1.25 if OSType is Windows. Known values are: "Ubuntu", "AzureLinux", "CBLMariner",
-     "Windows2019", "Windows2022", and "Ubuntu2204".
+     1.25 if OSType is Windows. Known values are: "Ubuntu", "AzureLinux", "AzureLinux3",
+     "CBLMariner", "Windows2019", "Windows2022", and "Ubuntu2204".
     :vartype os_sku: str or ~azure.mgmt.containerservice.models.OSSKU
     :ivar vm_size: The size of the VM.
     :vartype vm_size: str

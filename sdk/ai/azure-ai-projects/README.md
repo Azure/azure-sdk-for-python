@@ -91,10 +91,7 @@ project_client = AIProjectClient(
 
 The `.agents` property on the `AIProjectsClient` gives you access to an authenticated `AgentsClient` from the `azure-ai-agents` package. Below we show how to create an Agent and delete it. To see what you can do with the Agent you created, see the [many samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-agents/samples) and the [README.md](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-agents) file of the dependent `azure-ai-agents` package.
 
-The code below assumes the following:
-
-* `model_deployment_name` (a string) is defined. It's the deployment name of an AI model in your Foundry Project, as shown in the "Models + endpoints" tab, under the "Name" column.
-* `connection_name` (a string) is defined. It's the name of the connection to a resource of type "Azure OpenAI", as shown in the "Connected resources" tab, under the "Name" column, in the "Management Center" of your Foundry Project.
+The code below assumes `model_deployment_name` (a string) is defined. It's the deployment name of an AI model in your Foundry Project, as shown in the "Models + endpoints" tab, under the "Name" column.
 
 <!-- SNIPPET:sample_agents.agents_sample -->
 
@@ -122,8 +119,11 @@ These could be OpenAI models, Microsoft models, or models from other providers.
 Use the code below to get an authenticated [AzureOpenAI](https://github.com/openai/openai-python?tab=readme-ov-file#microsoft-azure-openai)
 from the [openai](https://pypi.org/project/openai/) package, and execute a chat completions or responses calls.
 
-The code below assumes `model_deployment_name` (a string) is defined. It's the deployment name of an AI model in your
+The code below assumes the following:
+
+* `model_deployment_name` (a string) is defined. It's the deployment name of an AI model in your
 Foundry Project, or a connected Azure OpenAI resource. As shown in the "Models + endpoints" tab, under the "Name" column.
+* `connection_name` (a string) is defined. It's the name of the connection to a resource of type "Azure OpenAI", as shown in the "Connected resources" tab, under the "Name" column, in the "Management Center" of your Foundry Project.
 
 Update the `api_version` value with one found in the "Data plane - inference" row [in this table](https://learn.microsoft.com/azure/ai-foundry/openai/reference#api-specs).
 
