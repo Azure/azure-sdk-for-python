@@ -182,11 +182,11 @@ async def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
 async def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
     start_time = datetime.datetime.now()
 
-    endpoint, credential, connection_string = validate_load_arguments(*args, **kwargs)
+    validate_load_arguments(*args, **kwargs)
     kwargs = process_key_vault_options(**kwargs)
     uses_key_vault = determine_uses_key_vault(**kwargs)
 
-    provider = await _buildprovider(connection_string, endpoint, credential, uses_key_vault=uses_key_vault, **kwargs)
+    provider = await _buildprovider(uses_key_vault=uses_key_vault, **kwargs)
     kwargs = sdk_allowed_kwargs(kwargs)
 
     try:
@@ -197,18 +197,14 @@ async def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
     return provider
 
 
-async def _buildprovider(
-    connection_string: Optional[str], endpoint: Optional[str], credential: Optional["AsyncTokenCredential"], **kwargs
-) -> "AzureAppConfigurationProvider":
+async def _buildprovider(**kwargs) -> "AzureAppConfigurationProvider":
     # pylint:disable=protected-access
-    if connection_string:
-        endpoint = connection_string.split(";")[0].split("=")[1]
-    if not endpoint:
-        raise ValueError("No endpoint specified.")
+    connection_string = kwargs.get("connection_string")
 
-    kwargs["endpoint"] = endpoint
-    kwargs["connection_string"] = connection_string
-    kwargs["credential"] = credential
+    if connection_string:
+        kwargs["endpoint"] = connection_string.split(";")[0].split("=")[1]
+    if not kwargs["endpoint"]:
+        raise ValueError("No endpoint specified.")
 
     return AzureAppConfigurationProvider(**kwargs)
 

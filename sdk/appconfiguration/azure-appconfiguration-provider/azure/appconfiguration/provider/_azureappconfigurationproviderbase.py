@@ -91,7 +91,7 @@ def update_correlation_context_header(
 ) -> Dict[str, str]:
     """
     Updates the correlation context header with telemetry information.
-    
+
     :param headers: The headers dictionary to update.
     :type headers: Dict[str, str]
     :param request_type: The type of request being made.
@@ -176,7 +176,7 @@ def update_correlation_context_header(
 def _uses_feature_flags(uses_feature_flags):
     """
     Determines the feature management version if feature flags are being used.
-    
+
     :param uses_feature_flags: Whether feature flags are being used.
     :type uses_feature_flags: bool
     :return: Version string for feature management or empty string.
@@ -197,7 +197,7 @@ def _uses_feature_flags(uses_feature_flags):
 def is_json_content_type(content_type: str) -> bool:
     """
     Determines if the given content type indicates JSON content.
-    
+
     :param content_type: The content type string to check.
     :type content_type: str
     :return: True if the content type indicates JSON, False otherwise.
@@ -227,7 +227,7 @@ def is_json_content_type(content_type: str) -> bool:
 def _build_sentinel(setting: Union[str, Tuple[str, str]]) -> Tuple[str, str]:
     """
     Builds a sentinel tuple from a setting specification.
-    
+
     :param setting: Either a string key or a tuple of (key, label).
     :type setting: Union[str, Tuple[str, str]]
     :return: A tuple of (key, label).
@@ -247,7 +247,7 @@ def _build_sentinel(setting: Union[str, Tuple[str, str]]) -> Tuple[str, str]:
 def sdk_allowed_kwargs(kwargs):
     """
     Filters kwargs to only include those allowed by the Azure SDK.
-    
+
     :param kwargs: The keyword arguments to filter.
     :type kwargs: Dict[str, Any]
     :return: A dictionary containing only allowed keyword arguments.
@@ -285,20 +285,18 @@ def sdk_allowed_kwargs(kwargs):
     return {k: v for k, v in kwargs.items() if k in allowed_kwargs}
 
 
-def validate_load_arguments(*args, **kwargs) -> Tuple[str, Any, str]:
+def validate_load_arguments(*args, **kwargs) -> None:
     """
     Common validation logic for load function arguments.
-    
+
     :param args: Positional arguments (endpoint and optionally credential).
     :type args: Tuple[Any, ...]
-    :return: A tuple of (endpoint, credential, connection_string).
-    :rtype: Tuple[str, Any, str]
     :raises TypeError: If unexpected positional parameters are provided.
     :raises ValueError: If both endpoint/credential and connection_string are provided.
     """
-    endpoint = kwargs.pop("endpoint", None)
-    credential = kwargs.pop("credential", None)
-    connection_string = kwargs.pop("connection_string", None)
+    endpoint = kwargs.get("endpoint", None)
+    credential = kwargs.get("credential", None)
+    connection_string = kwargs.get("connection_string", None)
 
     # Update endpoint and credential if specified positionally.
     if len(args) > 2:
@@ -308,22 +306,20 @@ def validate_load_arguments(*args, **kwargs) -> Tuple[str, Any, str]:
     if len(args) == 1:
         if endpoint is not None:
             raise TypeError("Received multiple values for argument 'endpoint'")
-        endpoint = args[0]
+        kwargs["endpoint"] = args[0]
     elif len(args) == 2:
         if credential is not None:
             raise TypeError("Received multiple values for argument 'credential'")
-        endpoint, credential = args
+        kwargs["endpoint"], kwargs["credential"] = args
 
     if (endpoint or credential) and connection_string:
         raise ValueError("Please pass either endpoint and credential, or a connection string.")
-
-    return endpoint, credential, connection_string
 
 
 def process_key_vault_options(**kwargs):
     """
     Process key vault options and update kwargs accordingly.
-    
+
     :return: Updated kwargs with processed key vault options.
     :rtype: Dict[str, Any]
     :raises ValueError: If conflicting key vault options are specified.
@@ -350,7 +346,7 @@ def process_key_vault_options(**kwargs):
 def determine_uses_key_vault(**kwargs) -> bool:
     """
     Determine if key vault is being used based on configuration.
-    
+
     :return: True if key vault is being used, False otherwise.
     :rtype: bool
     """
@@ -370,7 +366,7 @@ class _RefreshTimer:
     def __init__(self, **kwargs):
         """
         Initialize the refresh timer with the specified configuration.
-        
+
         :keyword kwargs: Configuration options including refresh_interval, min_backoff, and max_backoff.
         :paramtype kwargs: Dict[str, Any]
         :raises ValueError: If refresh_interval is less than 1 second.
@@ -402,7 +398,7 @@ class _RefreshTimer:
     def needs_refresh(self) -> bool:
         """
         Check if a refresh is needed based on the current time.
-        
+
         :return: True if a refresh is needed, False otherwise.
         :rtype: bool
         """
@@ -411,7 +407,7 @@ class _RefreshTimer:
     def _calculate_backoff(self) -> float:
         """
         Calculate the exponential backoff time in milliseconds.
-        
+
         :return: The backoff time in milliseconds.
         :rtype: float
         """
@@ -444,7 +440,7 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
     def __init__(self, **kwargs: Any) -> None:
         """
         Initialize the Azure App Configuration Provider.
-        
+
         :keyword kwargs: Configuration options for the provider.
         :paramtype kwargs: Dict[str, Any]
         """
@@ -483,7 +479,7 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
     def _process_key_name(self, config):
         """
         Process the configuration key name by trimming configured prefixes.
-        
+
         :param config: The configuration setting object.
         :type config: Any
         :return: The processed key name with trimmed prefix.
@@ -502,7 +498,7 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
     ):
         """
         Add telemetry metadata to feature flag values.
-        
+
         :param endpoint: The App Configuration endpoint URL.
         :type endpoint: str
         :param feature_flag: The feature flag configuration setting.
@@ -529,7 +525,7 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
     def _feature_flag_appconfig_telemetry(self, feature_flag: FeatureFlagConfigurationSetting):
         """
         Track feature filter usage for App Configuration telemetry.
-        
+
         :param feature_flag: The feature flag to analyze for filter usage.
         :type feature_flag: FeatureFlagConfigurationSetting
         """
@@ -708,7 +704,7 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
     def _process_non_keyvault_value(self, config):
         """
         Process configuration values that are not KeyVault references.
-        
+
         :param config: The configuration setting to process.
         :type config: Any
         :return: The processed configuration value (JSON object if JSON content type, string otherwise).
