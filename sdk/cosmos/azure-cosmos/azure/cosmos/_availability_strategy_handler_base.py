@@ -23,12 +23,12 @@
 
 from typing import List, Optional, Union, TYPE_CHECKING
 
-from build.lib.azure.cosmos.http_constants import StatusCodes, SubStatusCodes
 from . import exceptions
 from ._location_cache import RegionalRoutingContext
 from ._request_object import RequestObject
 
 from .documents import _OperationType
+from .http_constants import StatusCodes, SubStatusCodes
 
 GlobalEndpointManagerType = Union['_GlobalPartitionEndpointManagerForCircuitBreaker',
                                 '_GlobalPartitionEndpointManagerForCircuitBreakerAsync']
