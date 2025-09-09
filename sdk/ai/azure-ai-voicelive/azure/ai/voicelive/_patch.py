@@ -337,7 +337,11 @@ class ConversationItemResource:
         self._connection = connection
 
     def create(
-        self, *, item: Mapping[str, Any], previous_item_id: Optional[str] = None, event_id: Optional[str] = None
+        self,
+        *,
+        item: Mapping[str, Any],
+        previous_item_id: Optional[str] = None,
+        event_id: Optional[str] = None
     ) -> None:
         """Create a new conversation item.
 
