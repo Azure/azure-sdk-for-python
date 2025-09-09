@@ -1,4 +1,5 @@
 """Swagger to SDK"""
+
 import os
 import shutil
 import logging

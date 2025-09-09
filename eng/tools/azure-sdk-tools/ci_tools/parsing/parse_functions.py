@@ -46,7 +46,7 @@ EXCLUDE = {
     "local",
     "scripts",
     "images",
-    ".tox"
+    ".tox",
 }
 
 
@@ -54,16 +54,16 @@ def discover_namespace(package_root_path: str) -> Optional[str]:
     """
     Discover the true namespace of a package by walking through its directory structure
     and finding the first __init__.py that contains actual content (not just namespace extension).
-    
+
     :param str package_root_path: Root path of the package directory
     :rtype: str or None
     :return: The discovered namespace string, or None if no suitable namespace found
     """
     if not os.path.exists(package_root_path):
         return None
-        
+
     namespace = None
-    
+
     for root, subdirs, files in os.walk(package_root_path):
         # Ignore any modules with name starts with "_"
         # For e.g. _generated, _shared etc
@@ -73,26 +73,22 @@ def discover_namespace(package_root_path: str) -> Optional[str]:
         for d in dirs_to_skip:
             logging.debug("Dirs to skip: {}".format(dirs_to_skip))
             subdirs.remove(d)
-            
+
         if INIT_PY_FILE in files:
-            module_name = os.path.relpath(root, package_root_path).replace(
-                os.path.sep, "."
-            )
-            
+            module_name = os.path.relpath(root, package_root_path).replace(os.path.sep, ".")
+
             # If namespace has not been set yet, try to find the first __init__.py that's not purely for extension.
             if not namespace:
-                namespace = _set_root_namespace(
-                    os.path.join(root, INIT_PY_FILE), module_name
-                )
-    
+                namespace = _set_root_namespace(os.path.join(root, INIT_PY_FILE), module_name)
+
     return namespace
 
 
 def _set_root_namespace(init_file_path: str, module_name: str) -> Optional[str]:
     """
-    Examine an __init__.py file to determine if it represents a substantial namespace 
+    Examine an __init__.py file to determine if it represents a substantial namespace
     or is just a namespace extension file.
-    
+
     :param str init_file_path: Path to the __init__.py file
     :param str module_name: The module name corresponding to this __init__.py
     :rtype: str or None
@@ -111,16 +107,14 @@ def _set_root_namespace(init_file_path: str, module_name: str) -> Optional[str]:
                 # If comment, skip line. Otherwise, add to content.
                 if not in_docstring and not stripped_line.startswith("#"):
                     content.append(line)
-            
+
             # If there's more than one line of content, or if there's one line that's not just namespace extension
-            if len(content) > 1 or (
-                len(content) == 1 and INIT_EXTENSION_SUBSTRING not in content[0]
-            ):
+            if len(content) > 1 or (len(content) == 1 and INIT_EXTENSION_SUBSTRING not in content[0]):
                 return module_name
-                
+
     except Exception as e:
         logging.error(f"Error reading {init_file_path}: {e}")
-        
+
     return None
 
 
@@ -459,7 +453,9 @@ def parse_pyproject(
 
     project_config = toml_dict.get("project", None)
 
-    assert project_config is not None, f"Unable to find [project] section in {pyproject_filename}. Please ensure it is present."
+    assert (
+        project_config is not None
+    ), f"Unable to find [project] section in {pyproject_filename}. Please ensure it is present."
 
     # to pull a version from pyproject.toml, we need to get a dynamic version out. We can ask
     # setuptools to give us the metadata for a package, but that will involve _partially building_ the package

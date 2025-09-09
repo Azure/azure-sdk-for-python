@@ -52,14 +52,8 @@ def build_package() -> None:
     if args.package_type == "whl":
         enable_sdist = False
 
-    build_packages(
-        [target_package.folder],
-        artifact_directory,
-        False,
-        DEFAULT_BUILD_ID,
-        enable_wheel,
-        enable_sdist
-    )
+    build_packages([target_package.folder], artifact_directory, False, DEFAULT_BUILD_ID, enable_wheel, enable_sdist)
+
 
 def build() -> None:
     parser = argparse.ArgumentParser(
@@ -171,14 +165,7 @@ def build() -> None:
 
     build_id = format_build_id(args.build_id or DEFAULT_BUILD_ID)
 
-    build_packages(
-        targeted_packages,
-        artifact_directory,
-        str_to_bool(args.is_dev_build),
-        build_id,
-        True,
-        True
-    )
+    build_packages(targeted_packages, artifact_directory, str_to_bool(args.is_dev_build), build_id, True, True)
 
 
 def cleanup_build_artifacts(build_folder):
@@ -200,7 +187,7 @@ def build_packages(
     is_dev_build: bool = False,
     build_id: str = "",
     enable_wheel: bool = True,
-    enable_sdist: bool = True
+    enable_sdist: bool = True,
 ):
     logging.log(level=logging.INFO, msg=f"Generating {targeted_packages} using python{sys.version}")
 
@@ -246,9 +233,22 @@ def create_package(
         # given the additional requirements of the package, we should install them in the current environment before attempting to build the package
         # we assume the presence of `wheel`, `build`, `setuptools>=61.0.0`
         pip_output = get_pip_list_output(sys.executable)
-        necessary_install_requirements = [req for req in setup_parsed.requires if parse_require(req).name not in pip_output.keys()]
+        necessary_install_requirements = [
+            req for req in setup_parsed.requires if parse_require(req).name not in pip_output.keys()
+        ]
         run([sys.executable, "-m", "pip", "install", *necessary_install_requirements], cwd=setup_parsed.folder)
-        run([sys.executable, "-m", "build", f"-n{'s' if enable_sdist else ''}{'w' if enable_wheel else ''}", "-o", dist], cwd=setup_parsed.folder, check=True)
+        run(
+            [
+                sys.executable,
+                "-m",
+                "build",
+                f"-n{'s' if enable_sdist else ''}{'w' if enable_wheel else ''}",
+                "-o",
+                dist,
+            ],
+            cwd=setup_parsed.folder,
+            check=True,
+        )
     else:
         if enable_wheel:
             if setup_parsed.ext_modules:

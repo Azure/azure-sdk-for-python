@@ -1,4 +1,5 @@
 """This file is specific to Azure SDK for Python and should be split somewhere else."""
+
 import logging
 from pathlib import Path
 import re
