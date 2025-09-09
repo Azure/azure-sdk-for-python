@@ -479,11 +479,12 @@ def generate_share_sas(
         using this shared access signature.
     :keyword str protocol:
         Specifies the protocol permitted for a request made. The default value is https.
-    :keyword Optional[~azure.storage.fileshare.UserDelegationKey] user_delegation_key:
+    :keyword ~azure.storage.fileshare.UserDelegationKey user_delegation_key:
         Instead of an account shared key, the user could pass in a user delegation key.
         A user delegation key can be obtained from the service by authenticating with an AAD identity;
         this can be accomplished by calling :func:`~azure.storage.fileshare.ShareServiceClient.get_user_delegation_key`.
         When present, the SAS is signed with the user delegation key instead.
+    :paramtype user_delegation_key: ~azure.storage.fileshare.UserDelegationKey
     :keyword str user_delegation_oid:
         Specifies the Entra ID of the user that is authorized to use the resulting SAS URL.
         The resulting SAS URL must be used in conjunction with an Entra ID token that has been
