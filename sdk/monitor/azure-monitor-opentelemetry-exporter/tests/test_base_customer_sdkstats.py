@@ -546,7 +546,81 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
             True,
             _exception_categories.CLIENT_EXCEPTION.value
         )
+        
+    def test_track_dropped_items_client_exception_unknown_telemetry_type(self):
+        """Test that CLIENT_EXCEPTION is properly tracked with telemetry_success=True for UNKNOWN telemetry type."""
+        from azure.monitor.opentelemetry.exporter.statsbeat._state import get_customer_sdkstats_metrics
+        
+        exporter = self._create_exporter_with_customer_sdkstats_enabled()
+        
+        customer_metrics = get_customer_sdkstats_metrics()
+        self.assertIsNotNone(customer_metrics)
+        customer_metrics.count_dropped_items = mock.Mock()
 
+        envelope = TelemetryItem(
+            name="Test Unknown", 
+            time=datetime.now()
+        )
+
+        envelopes = [envelope]
+
+        customer_metrics.count_dropped_items.reset_mock()
+
+        from azure.monitor.opentelemetry.exporter.statsbeat._utils import _track_dropped_items
+        with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._utils.get_customer_sdkstats_metrics", return_value=customer_metrics):
+            _track_dropped_items(envelopes, DropCode.CLIENT_EXCEPTION, _exception_categories.CLIENT_EXCEPTION.value)
+
+        customer_metrics.count_dropped_items.assert_called_once_with(
+            1,
+            'UNKNOWN',
+            DropCode.CLIENT_EXCEPTION,
+            True,
+            _exception_categories.CLIENT_EXCEPTION.value
+        )
+        
+    def test_track_dropped_items_broken_envelope_no_recording(self):
+        """Test that REQUEST/DEPENDENCY envelopes missing base_data call count_dropped_items with telemetry_success=None."""
+        from azure.monitor.opentelemetry.exporter.statsbeat._state import get_customer_sdkstats_metrics
+        
+        exporter = self._create_exporter_with_customer_sdkstats_enabled()
+        
+        customer_metrics = get_customer_sdkstats_metrics()
+        self.assertIsNotNone(customer_metrics)
+        customer_metrics.count_dropped_items = mock.Mock()
+
+        from azure.monitor.opentelemetry.exporter._generated.models import MonitorBase
+        broken_request_envelope = TelemetryItem(
+            name="Test Broken Request", 
+            time=datetime.now(),
+            data=MonitorBase(base_type="RequestData")
+        )
+        
+        broken_dependency_envelope = TelemetryItem(
+            name="Test Broken Dependency", 
+            time=datetime.now(),
+            data=MonitorBase(base_type="RemoteDependencyData")
+        )
+        
+        test_cases = [
+            ("broken_request", [broken_request_envelope], "REQUEST"),
+            ("broken_dependency", [broken_dependency_envelope], "DEPENDENCY")
+        ]
+        
+        for test_name, envelopes, expected_telemetry_type in test_cases:
+            with self.subTest(test_case=test_name):
+                customer_metrics.count_dropped_items.reset_mock()
+
+                from azure.monitor.opentelemetry.exporter.statsbeat._utils import _track_dropped_items
+                with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._utils.get_customer_sdkstats_metrics", return_value=customer_metrics):
+                    _track_dropped_items(envelopes, DropCode.CLIENT_EXCEPTION, _exception_categories.CLIENT_EXCEPTION.value)
+
+                customer_metrics.count_dropped_items.assert_called_once_with(
+                    1,
+                    expected_telemetry_type,
+                    DropCode.CLIENT_EXCEPTION,
+                    None,
+                    _exception_categories.CLIENT_EXCEPTION.value
+                )
 
 if __name__ == "__main__":
     unittest.main()

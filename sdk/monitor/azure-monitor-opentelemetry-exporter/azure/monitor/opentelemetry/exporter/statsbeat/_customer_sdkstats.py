@@ -114,7 +114,7 @@ class CustomerSdkStatsMetrics(metaclass=Singleton): # pylint: disable=too-many-i
         self, count: int, telemetry_type: str, drop_code: DropCodeType, telemetry_success: Union[bool, None],
         exception_message: Optional[str] = None
     ) -> None:
-        if not self._is_enabled or count <= 0:
+        if not self._is_enabled or count <= 0 or telemetry_success is None:
             return
         with _CUSTOMER_SDKSTATS_REQUESTS_LOCK:
             if telemetry_type not in self._counters.total_item_drop_count:
@@ -131,8 +131,7 @@ class CustomerSdkStatsMetrics(metaclass=Singleton): # pylint: disable=too-many-i
             reason_map[reason] = {}
         success_map = reason_map[reason]
 
-        if telemetry_success is not None:
-            success_key = telemetry_success
+        success_key = telemetry_success
 
         current_count = success_map.get(success_key, 0)
         success_map[success_key] = current_count + count
