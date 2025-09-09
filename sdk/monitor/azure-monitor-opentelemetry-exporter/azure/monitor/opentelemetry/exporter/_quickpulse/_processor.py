@@ -40,5 +40,4 @@ class _QuickpulseSpanProcessor(SpanProcessor):
         qpm = _QuickpulseManager()
         if qpm:
             qpm._record_span(span)
-        # mypy: disable-error-code="no-any-return"
-        return super().on_end(span)
+        return super().on_end(span)  # mypy: disable-error-code="no-any-return"
