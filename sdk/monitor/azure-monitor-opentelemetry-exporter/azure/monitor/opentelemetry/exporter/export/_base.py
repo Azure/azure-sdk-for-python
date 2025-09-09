@@ -196,7 +196,10 @@ class BaseExporter:
             # give a few more seconds for blob lease operation
             # to reduce the chance of race (for perf consideration)
             if blob.lease(self._timeout + 5):
-                envelopes = [_format_storage_telemetry_item(TelemetryItem.from_dict(x)) for x in blob.get()]
+                blob_data = blob.get()
+                if blob_data is None:
+                    continue
+                envelopes = [_format_storage_telemetry_item(TelemetryItem.from_dict(x)) for x in blob_data]
                 result = self._transmit(envelopes)
                 if result == ExportResult.FAILED_RETRYABLE:
                     blob.lease(1)
