@@ -22,28 +22,55 @@
 """Internal class for database account retry policy implementation in the
 Azure Cosmos database service.
 """
+import os
+from azure.core.exceptions import ServiceRequestError, ServiceResponseError
+from azure.cosmos import _constants
+
 
 class DatabaseAccountRetryPolicy(object):
-    """The database account retry policy which should only retry once regardless of errors.
-    """
+    """Implements retry logic for database account reads in Azure Cosmos DB."""
+
+    # List of HTTP status codes considered transient errors for retry logic.
+    transient_status_codes = [502, 503, 504]
+
+    # Tuple of exception types considered transient errors for retry logic.
+    transient_exceptions = (ServiceRequestError, ServiceResponseError)
 
     def __init__(self, connection_policy):
         self.retry_count = 0
-        self.retry_after_in_milliseconds = 0
-        self.max_retry_attempt_count = 1
+        self.retry_after_in_milliseconds = int(os.getenv(
+            _constants._Constants.AZURE_COSMOS_HEALTH_CHECK_RETRY_AFTER_MS,
+            str(_constants._Constants.AZURE_COSMOS_HEALTH_CHECK_RETRY_AFTER_MS_DEFAULT)
+        ))
+        self.max_retry_attempt_count = int(os.getenv(
+            _constants._Constants.AZURE_COSMOS_HEALTH_CHECK_MAX_RETRIES,
+            str(_constants._Constants.AZURE_COSMOS_HEALTH_CHECK_MAX_RETRIES_DEFAULT)
+        ))
         self.connection_policy = connection_policy
 
-    def ShouldRetry(self, exception):  # pylint: disable=unused-argument
-        """Returns true if the request should retry based on the passed-in exception.
+    def ShouldRetry(self, exception):
+        """
+        Determines if the given exception is transient and if a retry should be attempted.
 
-        :param exceptions.CosmosHttpResponseError exception:
-        :returns: a boolean stating whether the request should be retried
+        :param exception: The exception instance to evaluate.
+        :type exception: Exception
+        :return: True if the exception is transient and retry attempts to remain, False otherwise.
         :rtype: bool
         """
 
-        if self.retry_count >= self.max_retry_attempt_count:
-            return False
+        is_transient = False
 
-        self.retry_count += 1
+        # Check for transient HTTP status codes
+        status_code = getattr(exception, "status_code", None)
+        if status_code in self.transient_status_codes:
+            is_transient = True
 
-        return True
+        # Check for transient exception types
+        if isinstance(exception, self.transient_exceptions):
+            is_transient = True
+
+        if is_transient and self.retry_count < self.max_retry_attempt_count:
+            self.retry_count += 1
+            return True
+
+        return False

@@ -90,11 +90,11 @@ class TestDatasetsAsync(TestBase):
             )
 
             print(f"[test_datasets_upload_file] Get credentials of an existing Dataset version `{dataset_version}`:")
-            asset_credential = await project_client.datasets.get_credentials(
+            dataset_credential = await project_client.datasets.get_credentials(
                 name=dataset_name, version=str(dataset_version)
             )
-            print(asset_credential)
-            TestBase.validate_asset_credential(asset_credential)
+            print(dataset_credential)
+            TestBase.validate_dataset_credential(dataset_credential)
 
             """
             print("[test_datasets_upload_file] List latest versions of all Datasets:")
@@ -188,11 +188,11 @@ class TestDatasetsAsync(TestBase):
             )
 
             print(f"[test_datasets_upload_file] Get credentials of an existing Dataset version `{dataset_version}`:")
-            asset_credential = await project_client.datasets.get_credentials(
+            dataset_credential = await project_client.datasets.get_credentials(
                 name=dataset_name, version=str(dataset_version)
             )
-            print(asset_credential)
-            TestBase.validate_asset_credential(asset_credential)
+            print(dataset_credential)
+            TestBase.validate_dataset_credential(dataset_credential)
 
             print(
                 f"[test_datasets_upload_file] Delete Dataset `{dataset_name}`, version `{dataset_version}` that was created above."

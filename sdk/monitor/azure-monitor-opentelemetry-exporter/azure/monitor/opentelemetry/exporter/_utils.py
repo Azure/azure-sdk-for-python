@@ -124,6 +124,7 @@ def _getlocale():
             # by continuing to use getdefaultlocale() even though it has been deprecated.
             # we ignore the deprecation warnings to reduce noise
             warnings.simplefilter("ignore", category=DeprecationWarning)
+            # pylint: disable=deprecated-method
             return locale.getdefaultlocale()[0]
     except AttributeError:
         # locale.getlocal() has issues on Windows: https://github.com/python/cpython/issues/82986
@@ -379,10 +380,13 @@ def _get_scope(aad_audience=None):
 
 class Singleton(type):
     _instance = None
+    _lock = threading.Lock()
 
-    def __call__(cls, *args, **kwargs):
+    def __call__(cls, *args: Any, **kwargs: Any):
         if not cls._instance:
-            cls._instance = super(Singleton, cls).__call__(*args, **kwargs)
+            with cls._lock:
+                if not cls._instance:
+                    cls._instance = super(Singleton, cls).__call__(*args, **kwargs)
         return cls._instance
 
 def _get_telemetry_type(item: TelemetryItem):

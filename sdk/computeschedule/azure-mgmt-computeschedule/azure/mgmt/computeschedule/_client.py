@@ -19,7 +19,13 @@ from azure.mgmt.core.tools import get_arm_endpoints
 
 from ._configuration import ComputeScheduleMgmtClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
-from .operations import Operations, ScheduledActionsOperations
+from .operations import (
+    OccurrenceExtensionOperations,
+    OccurrencesOperations,
+    Operations,
+    ScheduledActionExtensionOperations,
+    ScheduledActionsOperations,
+)
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -32,15 +38,26 @@ class ComputeScheduleMgmtClient:
     :vartype operations: azure.mgmt.computeschedule.operations.Operations
     :ivar scheduled_actions: ScheduledActionsOperations operations
     :vartype scheduled_actions: azure.mgmt.computeschedule.operations.ScheduledActionsOperations
+    :ivar scheduled_action_extension: ScheduledActionExtensionOperations operations
+    :vartype scheduled_action_extension:
+     azure.mgmt.computeschedule.operations.ScheduledActionExtensionOperations
+    :ivar occurrences: OccurrencesOperations operations
+    :vartype occurrences: azure.mgmt.computeschedule.operations.OccurrencesOperations
+    :ivar occurrence_extension: OccurrenceExtensionOperations operations
+    :vartype occurrence_extension:
+     azure.mgmt.computeschedule.operations.OccurrenceExtensionOperations
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
     :type subscription_id: str
     :param base_url: Service host. Default value is None.
     :type base_url: str
-    :keyword api_version: The API version to use for this operation. Default value is "2025-05-01".
-     Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Default value is
+     "2025-04-15-preview". Note that overriding this default value may result in unsupported
+     behavior.
     :paramtype api_version: str
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+     Retry-After header is present.
     """
 
     def __init__(
@@ -85,6 +102,13 @@ class ComputeScheduleMgmtClient:
         self._serialize.client_side_validation = False
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.scheduled_actions = ScheduledActionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.scheduled_action_extension = ScheduledActionExtensionOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.occurrences = OccurrencesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.occurrence_extension = OccurrenceExtensionOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
 

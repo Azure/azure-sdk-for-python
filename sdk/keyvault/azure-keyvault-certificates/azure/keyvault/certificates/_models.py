@@ -61,22 +61,30 @@ class AdministratorContact(object):
 
     @property
     def email(self) -> Optional[str]:
-        """:rtype: str or None"""
+        """Email address of the issuer.
+
+        :rtype: str or None"""
         return self._email
 
     @property
     def first_name(self) -> Optional[str]:
-        """:rtype: str or None"""
+        """First name of the issuer.
+
+        :rtype: str or None"""
         return self._first_name
 
     @property
     def last_name(self) -> Optional[str]:
-        """:rtype: str or None"""
+        """Last name of the issuer.
+
+        :rtype: str or None"""
         return self._last_name
 
     @property
     def phone(self) -> Optional[str]:
-        """:rtype: str or None"""
+        """Phone number of the issuer.
+
+        :rtype: str or None"""
         return self._phone
 
 
@@ -1134,17 +1142,23 @@ class CertificateContact(object):
 
     @property
     def email(self) -> Optional[str]:
-        """:rtype: str or None"""
+        """Email address of a contact for the certificate.
+
+        :rtype: str or None"""
         return self._email
 
     @property
     def name(self) -> Optional[str]:
-        """:rtype: str or None"""
+        """Name of a contact for the certificate.
+
+        :rtype: str or None"""
         return self._name
 
     @property
     def phone(self) -> Optional[str]:
-        """:rtype: str or None"""
+        """Phone number of a contact for the certificate.
+
+        :rtype: str or None"""
         return self._phone
 
 

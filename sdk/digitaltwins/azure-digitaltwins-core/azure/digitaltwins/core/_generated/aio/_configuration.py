@@ -6,60 +6,69 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, TYPE_CHECKING
+from typing import Any, Optional, TYPE_CHECKING
 
-from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
 
-from .._version import VERSION
-
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
+VERSION = "unknown"
 
-class AzureDigitalTwinsAPIConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
+
+class AzureDigitalTwinsAPIConfiguration:  # pylint: disable=too-many-instance-attributes
     """Configuration for AzureDigitalTwinsAPI.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: Api Version. Default value is "2022-05-31". Note that overriding
-     this default value may result in unsupported behavior.
+    :param operation_id: ID for the operation's status monitor. The ID is generated if header was
+     not passed by the client. Default value is None.
+    :type operation_id: str
+    :param timeout_in_minutes: Desired timeout for the delete job. Once the specified timeout is
+     reached, service will stop any delete operations triggered by the current delete job that are
+     in progress, and go to a failed state. Please note that this will leave your instance in an
+     unknown state as there won't be any rollback operation. Default value is None.
+    :type timeout_in_minutes: int
+    :keyword api_version: Api Version. Default value is "2023-10-31". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(
         self,
         credential: "AsyncTokenCredential",
+        operation_id: Optional[str] = None,
+        timeout_in_minutes: Optional[int] = None,
         **kwargs: Any
     ) -> None:
-        super(AzureDigitalTwinsAPIConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
+        api_version: str = kwargs.pop("api_version", "2023-10-31")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
 
         self.credential = credential
+        self.operation_id = operation_id
+        self.timeout_in_minutes = timeout_in_minutes
         self.api_version = api_version
-        self.credential_scopes = kwargs.pop('credential_scopes', ['https://digitaltwins.azure.net/.default'])
-        kwargs.setdefault('sdk_moniker', 'azuredigitaltwinsapi/{}'.format(VERSION))
+        self.credential_scopes = kwargs.pop("credential_scopes", ["https://digitaltwins.azure.net/.default"])
+        kwargs.setdefault("sdk_moniker", "azuredigitaltwinsapi/{}".format(VERSION))
+        self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
 
-    def _configure(
-        self,
-        **kwargs: Any
-    ) -> None:
-        self.user_agent_policy = kwargs.get('user_agent_policy') or policies.UserAgentPolicy(**kwargs)
-        self.headers_policy = kwargs.get('headers_policy') or policies.HeadersPolicy(**kwargs)
-        self.proxy_policy = kwargs.get('proxy_policy') or policies.ProxyPolicy(**kwargs)
-        self.logging_policy = kwargs.get('logging_policy') or policies.NetworkTraceLoggingPolicy(**kwargs)
-        self.http_logging_policy = kwargs.get('http_logging_policy') or policies.HttpLoggingPolicy(**kwargs)
-        self.retry_policy = kwargs.get('retry_policy') or policies.AsyncRetryPolicy(**kwargs)
-        self.custom_hook_policy = kwargs.get('custom_hook_policy') or policies.CustomHookPolicy(**kwargs)
-        self.redirect_policy = kwargs.get('redirect_policy') or policies.AsyncRedirectPolicy(**kwargs)
-        self.authentication_policy = kwargs.get('authentication_policy')
+    def _configure(self, **kwargs: Any) -> None:
+        self.user_agent_policy = kwargs.get("user_agent_policy") or policies.UserAgentPolicy(**kwargs)
+        self.headers_policy = kwargs.get("headers_policy") or policies.HeadersPolicy(**kwargs)
+        self.proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)
+        self.logging_policy = kwargs.get("logging_policy") or policies.NetworkTraceLoggingPolicy(**kwargs)
+        self.http_logging_policy = kwargs.get("http_logging_policy") or policies.HttpLoggingPolicy(**kwargs)
+        self.custom_hook_policy = kwargs.get("custom_hook_policy") or policies.CustomHookPolicy(**kwargs)
+        self.redirect_policy = kwargs.get("redirect_policy") or policies.AsyncRedirectPolicy(**kwargs)
+        self.retry_policy = kwargs.get("retry_policy") or policies.AsyncRetryPolicy(**kwargs)
+        self.authentication_policy = kwargs.get("authentication_policy")
         if self.credential and not self.authentication_policy:
-            self.authentication_policy = policies.AsyncBearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)
+            self.authentication_policy = policies.AsyncBearerTokenCredentialPolicy(
+                self.credential, *self.credential_scopes, **kwargs
+            )

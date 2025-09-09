@@ -25,6 +25,7 @@ USAGE:
 from typing import Any
 
 import os, sys
+from azure.ai.agents.models._models import FunctionToolOutput
 from azure.ai.projects import AIProjectClient
 from azure.ai.agents.models import (
     FunctionTool,
@@ -41,10 +42,11 @@ from azure.ai.agents.models import (
 )
 from azure.identity import DefaultAzureCredential
 
-current_path = os.path.dirname(__file__)
-root_path = os.path.abspath(os.path.join(current_path, os.pardir, os.pardir))
-if root_path not in sys.path:
-    sys.path.insert(0, root_path)
+# Add package directory to sys.path to import user_functions
+current_dir = os.path.dirname(os.path.abspath(__file__))
+package_dir = os.path.abspath(os.path.join(current_dir, os.pardir, os.pardir))
+if package_dir not in sys.path:
+    sys.path.insert(0, package_dir)
 from samples.utils.user_functions import user_functions
 
 project_client = AIProjectClient(
@@ -107,7 +109,7 @@ with project_client:
                             try:
                                 output = functions.execute(tool_call)
                                 tool_outputs.append(
-                                    ToolOutput(
+                                    FunctionToolOutput(
                                         tool_call_id=tool_call.id,
                                         output=output,
                                     )

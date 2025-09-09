@@ -186,10 +186,14 @@ class TestHealthCheckAsync:
         try:
             setup[COLLECTION].client_connection._global_endpoint_manager.startup = False
             setup[COLLECTION].client_connection._global_endpoint_manager.refresh_needed = True
-            for i in range(2):
-                await setup[COLLECTION].create_item(body={'id': 'item' + str(uuid.uuid4()), 'pk': 'pk'})
-                # wait for background task to finish
-                await asyncio.sleep(2)
+            # Trigger the background health check
+            await setup[COLLECTION].create_item(body={'id': 'item' + str(uuid.uuid4()), 'pk': 'pk'})
+
+            # Poll until the background task marks the endpoints as unavailable
+            start_time = time.time()
+            while (len(setup[COLLECTION].client_connection._global_endpoint_manager.location_cache.location_unavailability_info_by_endpoint) < len(
+                    REGIONS) and time.time() - start_time < 10):
+                await asyncio.sleep(0.1)
         finally:
             _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
             setup[COLLECTION].client_connection.connection_policy.PreferredLocations = self.original_preferred_locations
@@ -197,6 +201,19 @@ class TestHealthCheckAsync:
         num_unavailable_endpoints = len(REGIONS)
         unavailable_endpoint_info = setup[COLLECTION].client_connection._global_endpoint_manager.location_cache.location_unavailability_info_by_endpoint
         assert len(unavailable_endpoint_info) == num_unavailable_endpoints
+        # Allow both global and regional endpoint to be considered write endpoints when global write is enabled
+        write_endpoints = {
+            _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_1)
+        }
+        if use_write_global_endpoint:
+            write_endpoints.add(self.host)
+
+        for endpoint, info in unavailable_endpoint_info.items():
+            assert _location_cache.EndpointOperationType.ReadType in info["operationType"]
+            if endpoint in write_endpoints:
+                assert _location_cache.EndpointOperationType.WriteType in info["operationType"]
+            else:
+                assert _location_cache.EndpointOperationType.WriteType not in info["operationType"]
 
     async def mock_health_check(self, **kwargs):
         await asyncio.sleep(100)

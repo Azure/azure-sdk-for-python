@@ -9,12 +9,22 @@ from azure.monitor.opentelemetry.exporter._quickpulse._live_metrics import _Quic
 
 # pylint: disable=protected-access
 class _QuickpulseLogRecordProcessor(LogRecordProcessor):
+    def __init__(self):
+        super().__init__()
+        self.call_on_emit = hasattr(super(), 'on_emit')
 
-    def emit(self, log_data: LogData) -> None:  # type: ignore
+    def on_emit(self, log_data: LogData) -> None:  # type: ignore
         qpm = _QuickpulseManager._instance
         if qpm:
             qpm._record_log_record(log_data)
-        super().emit(log_data)  # type: ignore[safe-super]
+        if self.call_on_emit:
+            super().on_emit(log_data)  # type: ignore[safe-super]
+        else:
+            # this method was removed in opentelemetry-sdk and replaced with on_emit
+            super().emit(log_data)  # type: ignore[safe-super,misc] # pylint: disable=no-member
+
+    def emit(self, log_data: LogData) -> None:
+        self.on_emit(log_data)
 
     def shutdown(self):
         pass

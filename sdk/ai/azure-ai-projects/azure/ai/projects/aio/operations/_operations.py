@@ -47,8 +47,10 @@ from ...operations._operations import (
     build_datasets_pending_upload_request,
     build_deployments_get_request,
     build_deployments_list_request,
+    build_evaluations_cancel_request,
     build_evaluations_create_agent_evaluation_request,
     build_evaluations_create_request,
+    build_evaluations_delete_request,
     build_evaluations_get_request,
     build_evaluations_list_request,
     build_indexes_create_or_update_request,
@@ -333,6 +335,7 @@ class EvaluationsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "name", "client_request_id", "accept"]},
+        api_versions_list=["2025-05-15-preview"],
     )
     async def get(self, name: str, **kwargs: Any) -> _models.Evaluation:
         """Get an evaluation run by name.
@@ -402,6 +405,7 @@ class EvaluationsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "accept"]},
+        api_versions_list=["2025-05-15-preview"],
     )
     def list(self, **kwargs: Any) -> AsyncItemPaged["_models.Evaluation"]:
         """List evaluation runs.
@@ -536,6 +540,7 @@ class EvaluationsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "content_type", "accept"]},
+        api_versions_list=["2025-05-15-preview"],
     )
     async def create(self, evaluation: Union[_models.Evaluation, JSON, IO[bytes]], **kwargs: Any) -> _models.Evaluation:
         """Creates an evaluation run.
@@ -658,6 +663,7 @@ class EvaluationsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "content_type", "accept"]},
+        api_versions_list=["2025-05-15-preview"],
     )
     async def create_agent_evaluation(
         self, evaluation: Union[_models.AgentEvaluationRequest, JSON, IO[bytes]], **kwargs: Any
@@ -729,6 +735,122 @@ class EvaluationsOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-05-15-preview",
+        params_added_on={"2025-05-15-preview": ["api_version", "name", "client_request_id", "accept"]},
+        api_versions_list=["2025-05-15-preview"],
+    )
+    async def cancel(self, name: str, **kwargs: Any) -> None:
+        """Cancel an evaluation run by name.
+
+        :param name: Identifier of the evaluation. Required.
+        :type name: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_evaluations_cancel_request(
+            name=name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-05-15-preview",
+        params_added_on={"2025-05-15-preview": ["api_version", "name", "client_request_id", "accept"]},
+        api_versions_list=["2025-05-15-preview"],
+    )
+    async def delete(self, name: str, **kwargs: Any) -> None:
+        """Delete an evaluation run by name.
+
+        :param name: Identifier of the evaluation. Required.
+        :type name: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_evaluations_delete_request(
+            name=name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
 
 class DatasetsOperations:
@@ -917,7 +1039,8 @@ class DatasetsOperations:
 
     @distributed_trace_async
     async def get(self, name: str, version: str, **kwargs: Any) -> _models.DatasetVersion:
-        """Get the specific version of the DatasetVersion.
+        """Get the specific version of the DatasetVersion. The service returns 404 Not Found error if the
+        DatasetVersion does not exist.
 
         :param name: The name of the resource. Required.
         :type name: str
@@ -980,7 +1103,8 @@ class DatasetsOperations:
 
     @distributed_trace_async
     async def delete(self, name: str, version: str, **kwargs: Any) -> None:
-        """Delete the specific version of the DatasetVersion.
+        """Delete the specific version of the DatasetVersion. The service returns 204 No Content if the
+        DatasetVersion was deleted successfully or if the DatasetVersion does not exist.
 
         :param name: The name of the resource. Required.
         :type name: str
@@ -1022,7 +1146,7 @@ class DatasetsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [204, 200]:
+        if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -1347,15 +1471,15 @@ class DatasetsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_credentials(self, name: str, version: str, **kwargs: Any) -> _models.AssetCredentialResponse:
+    async def get_credentials(self, name: str, version: str, **kwargs: Any) -> _models.DatasetCredential:
         """Get the SAS credential to access the storage account associated with a Dataset version.
 
         :param name: The name of the resource. Required.
         :type name: str
         :param version: The specific version id of the DatasetVersion to operate on. Required.
         :type version: str
-        :return: AssetCredentialResponse. The AssetCredentialResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AssetCredentialResponse
+        :return: DatasetCredential. The DatasetCredential is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.DatasetCredential
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1369,7 +1493,7 @@ class DatasetsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AssetCredentialResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.DatasetCredential] = kwargs.pop("cls", None)
 
         _request = build_datasets_get_credentials_request(
             name=name,
@@ -1402,7 +1526,7 @@ class DatasetsOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.AssetCredentialResponse, response.json())
+            deserialized = _deserialize(_models.DatasetCredential, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1596,7 +1720,8 @@ class IndexesOperations:
 
     @distributed_trace_async
     async def get(self, name: str, version: str, **kwargs: Any) -> _models.Index:
-        """Get the specific version of the Index.
+        """Get the specific version of the Index. The service returns 404 Not Found error if the Index
+        does not exist.
 
         :param name: The name of the resource. Required.
         :type name: str
@@ -1659,7 +1784,8 @@ class IndexesOperations:
 
     @distributed_trace_async
     async def delete(self, name: str, version: str, **kwargs: Any) -> None:
-        """Delete the specific version of the Index.
+        """Delete the specific version of the Index. The service returns 204 No Content if the Index was
+        deleted successfully or if the Index does not exist.
 
         :param name: The name of the resource. Required.
         :type name: str
@@ -2063,6 +2189,7 @@ class RedTeamsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "name", "client_request_id", "accept"]},
+        api_versions_list=["2025-05-15-preview"],
     )
     async def get(self, name: str, **kwargs: Any) -> _models.RedTeam:
         """Get a redteam by name.
@@ -2132,6 +2259,7 @@ class RedTeamsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "accept"]},
+        api_versions_list=["2025-05-15-preview"],
     )
     def list(self, **kwargs: Any) -> AsyncItemPaged["_models.RedTeam"]:
         """List a redteam by name.
@@ -2264,6 +2392,7 @@ class RedTeamsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "content_type", "accept"]},
+        api_versions_list=["2025-05-15-preview"],
     )
     async def create(self, red_team: Union[_models.RedTeam, JSON, IO[bytes]], **kwargs: Any) -> _models.RedTeam:
         """Creates a redteam run.

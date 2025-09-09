@@ -1,3 +1,59 @@
+[build-system]
+requires = ["setuptools>=77.0.3", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "azure-messaging-webpubsubclient"
+authors = [
+    {name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com"},
+]
+description = "Microsoft Azure Web PubSub Client Library for Python"
+keywords = ["azure", "azure sdk"]
+requires-python = ">=3.9"
+license = "MIT"
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+dependencies = [
+    "isodate>=0.6.1",
+    "azure-core>=1.26.3",
+    "websocket-client>=1.6.0",
+]
+dynamic = ["version", "readme"]
+
+[project.optional-dependencies]
+aio = [
+    "aiohttp>=3.9.3",
+]
+
+[project.urls]
+repository = "https://github.com/Azure/azure-sdk-for-python"
+
+[tool.setuptools.dynamic]
+version = {attr = "azure.messaging.webpubsubclient._version.VERSION"}
+readme = {file = ["README.md", "CHANGELOG.md"], content-type = "text/markdown"}
+
+[tool.setuptools.packages.find]
+exclude = [
+    "tests*",
+    "doc*",
+    "stress*",
+    "samples*",
+    "azure",
+    "azure.messaging",
+]
+
+[tool.setuptools.package-data]
+pytyped = ["py.typed"]
+
 [tool.azure-sdk-build]
 pylint = false
 pyright = false

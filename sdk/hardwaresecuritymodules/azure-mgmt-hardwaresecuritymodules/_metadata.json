@@ -1,0 +1,7 @@
+{
+  "apiVersion": "2025-03-31",
+  "commit": "292b2f01ed2c626f777fdb31ec0cd153db11c967",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/hardwaresecuritymodules/HardwareSecurityModules.Management",
+  "emitterVersion": "0.45.5"
+}

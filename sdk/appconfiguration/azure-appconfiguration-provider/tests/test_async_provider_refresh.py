@@ -26,8 +26,8 @@ try:
         @pytest.mark.asyncio
         async def test_refresh(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
             mock_callback = AsyncMock()
-            async with await self.create_aad_client(
-                appconfiguration_endpoint_string,
+            async with await self.create_client(
+                endpoint=appconfiguration_endpoint_string,
                 keyvault_secret_url=appconfiguration_keyvault_secret_url,
                 refresh_on=[WatchKey("refresh_message")],
                 refresh_interval=1,
@@ -95,8 +95,8 @@ try:
         @pytest.mark.asyncio
         async def test_empty_refresh(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
             mock_callback = AsyncMock()
-            async with await self.create_aad_client(
-                appconfiguration_endpoint_string,
+            async with await self.create_client(
+                endpoint=appconfiguration_endpoint_string,
                 keyvault_secret_url=appconfiguration_keyvault_secret_url,
                 on_refresh_success=mock_callback,
                 feature_flag_enabled=True,

@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.security import SecurityCenter
 
 """
@@ -26,13 +28,15 @@ from azure.mgmt.security import SecurityCenter
 def main():
     client = SecurityCenter(
         credential=DefaultAzureCredential(),
-        subscription_id="20ff7fc3-e762-44dd-bd96-b71116dcdc23",
+        subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.pricings.list()
+    response = client.pricings.list(
+        scope_id="subscriptions/20ff7fc3-e762-44dd-bd96-b71116dcdc23",
+    )
     print(response)
 
 
-# x-ms-original-file: specification/security/resource-manager/Microsoft.Security/stable/2023-01-01/examples/Pricings/ListPricings_example.json
+# x-ms-original-file: specification/security/resource-manager/Microsoft.Security/stable/2024-01-01/examples/Pricings/ListPricings_example.json
 if __name__ == "__main__":
     main()

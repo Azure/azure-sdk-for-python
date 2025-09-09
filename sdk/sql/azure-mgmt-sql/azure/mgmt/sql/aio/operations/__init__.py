@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -17,9 +18,6 @@ from ._server_blob_auditing_policies_operations import ServerBlobAuditingPolicie
 from ._database_blob_auditing_policies_operations import DatabaseBlobAuditingPoliciesOperations  # type: ignore
 from ._extended_database_blob_auditing_policies_operations import ExtendedDatabaseBlobAuditingPoliciesOperations  # type: ignore
 from ._extended_server_blob_auditing_policies_operations import ExtendedServerBlobAuditingPoliciesOperations  # type: ignore
-from ._data_masking_policies_operations import DataMaskingPoliciesOperations  # type: ignore
-from ._data_masking_rules_operations import DataMaskingRulesOperations  # type: ignore
-from ._data_warehouse_user_activities_operations import DataWarehouseUserActivitiesOperations  # type: ignore
 from ._database_advanced_threat_protection_settings_operations import DatabaseAdvancedThreatProtectionSettingsOperations  # type: ignore
 from ._database_advisors_operations import DatabaseAdvisorsOperations  # type: ignore
 from ._database_automatic_tuning_operations import DatabaseAutomaticTuningOperations  # type: ignore
@@ -28,6 +26,7 @@ from ._database_encryption_protectors_operations import DatabaseEncryptionProtec
 from ._database_extensions_operations import DatabaseExtensionsOperations  # type: ignore
 from ._database_operations_operations import DatabaseOperationsOperations  # type: ignore
 from ._database_recommended_actions_operations import DatabaseRecommendedActionsOperations  # type: ignore
+from ._databases_operations import DatabasesOperations  # type: ignore
 from ._database_schemas_operations import DatabaseSchemasOperations  # type: ignore
 from ._database_security_alert_policies_operations import DatabaseSecurityAlertPoliciesOperations  # type: ignore
 from ._database_sql_vulnerability_assessment_baselines_operations import DatabaseSqlVulnerabilityAssessmentBaselinesOperations  # type: ignore
@@ -39,9 +38,11 @@ from ._database_sql_vulnerability_assessments_settings_operations import Databas
 from ._database_tables_operations import DatabaseTablesOperations  # type: ignore
 from ._database_usages_operations import DatabaseUsagesOperations  # type: ignore
 from ._database_vulnerability_assessment_rule_baselines_operations import DatabaseVulnerabilityAssessmentRuleBaselinesOperations  # type: ignore
-from ._database_vulnerability_assessment_scans_operations import DatabaseVulnerabilityAssessmentScansOperations  # type: ignore
 from ._database_vulnerability_assessments_operations import DatabaseVulnerabilityAssessmentsOperations  # type: ignore
-from ._databases_operations import DatabasesOperations  # type: ignore
+from ._database_vulnerability_assessment_scans_operations import DatabaseVulnerabilityAssessmentScansOperations  # type: ignore
+from ._data_masking_policies_operations import DataMaskingPoliciesOperations  # type: ignore
+from ._data_masking_rules_operations import DataMaskingRulesOperations  # type: ignore
+from ._data_warehouse_user_activities_operations import DataWarehouseUserActivitiesOperations  # type: ignore
 from ._deleted_servers_operations import DeletedServersOperations  # type: ignore
 from ._distributed_availability_groups_operations import DistributedAvailabilityGroupsOperations  # type: ignore
 from ._elastic_pool_operations_operations import ElasticPoolOperationsOperations  # type: ignore
@@ -51,20 +52,20 @@ from ._endpoint_certificates_operations import EndpointCertificatesOperations  #
 from ._failover_groups_operations import FailoverGroupsOperations  # type: ignore
 from ._firewall_rules_operations import FirewallRulesOperations  # type: ignore
 from ._geo_backup_policies_operations import GeoBackupPoliciesOperations  # type: ignore
-from ._ipv6_firewall_rules_operations import IPv6FirewallRulesOperations  # type: ignore
 from ._instance_failover_groups_operations import InstanceFailoverGroupsOperations  # type: ignore
-from ._instance_pools_operations import InstancePoolsOperations  # type: ignore
 from ._instance_pool_operations_operations import InstancePoolOperationsOperations  # type: ignore
+from ._instance_pools_operations import InstancePoolsOperations  # type: ignore
+from ._ipv6_firewall_rules_operations import IPv6FirewallRulesOperations  # type: ignore
 from ._job_agents_operations import JobAgentsOperations  # type: ignore
 from ._job_credentials_operations import JobCredentialsOperations  # type: ignore
 from ._job_executions_operations import JobExecutionsOperations  # type: ignore
 from ._job_private_endpoints_operations import JobPrivateEndpointsOperations  # type: ignore
+from ._jobs_operations import JobsOperations  # type: ignore
 from ._job_step_executions_operations import JobStepExecutionsOperations  # type: ignore
 from ._job_steps_operations import JobStepsOperations  # type: ignore
 from ._job_target_executions_operations import JobTargetExecutionsOperations  # type: ignore
 from ._job_target_groups_operations import JobTargetGroupsOperations  # type: ignore
 from ._job_versions_operations import JobVersionsOperations  # type: ignore
-from ._jobs_operations import JobsOperations  # type: ignore
 from ._ledger_digest_uploads_operations import LedgerDigestUploadsOperations  # type: ignore
 from ._capabilities_operations import CapabilitiesOperations  # type: ignore
 from ._long_term_retention_backups_operations import LongTermRetentionBackupsOperations  # type: ignore
@@ -78,6 +79,7 @@ from ._managed_database_columns_operations import ManagedDatabaseColumnsOperatio
 from ._managed_database_move_operations_operations import ManagedDatabaseMoveOperationsOperations  # type: ignore
 from ._managed_database_queries_operations import ManagedDatabaseQueriesOperations  # type: ignore
 from ._managed_database_restore_details_operations import ManagedDatabaseRestoreDetailsOperations  # type: ignore
+from ._managed_databases_operations import ManagedDatabasesOperations  # type: ignore
 from ._managed_database_schemas_operations import ManagedDatabaseSchemasOperations  # type: ignore
 from ._managed_database_security_alert_policies_operations import ManagedDatabaseSecurityAlertPoliciesOperations  # type: ignore
 from ._managed_database_security_events_operations import ManagedDatabaseSecurityEventsOperations  # type: ignore
@@ -86,9 +88,8 @@ from ._managed_database_recommended_sensitivity_labels_operations import Managed
 from ._managed_database_tables_operations import ManagedDatabaseTablesOperations  # type: ignore
 from ._managed_database_transparent_data_encryption_operations import ManagedDatabaseTransparentDataEncryptionOperations  # type: ignore
 from ._managed_database_vulnerability_assessment_rule_baselines_operations import ManagedDatabaseVulnerabilityAssessmentRuleBaselinesOperations  # type: ignore
-from ._managed_database_vulnerability_assessment_scans_operations import ManagedDatabaseVulnerabilityAssessmentScansOperations  # type: ignore
 from ._managed_database_vulnerability_assessments_operations import ManagedDatabaseVulnerabilityAssessmentsOperations  # type: ignore
-from ._managed_databases_operations import ManagedDatabasesOperations  # type: ignore
+from ._managed_database_vulnerability_assessment_scans_operations import ManagedDatabaseVulnerabilityAssessmentScansOperations  # type: ignore
 from ._managed_instance_administrators_operations import ManagedInstanceAdministratorsOperations  # type: ignore
 from ._managed_instance_advanced_threat_protection_settings_operations import ManagedInstanceAdvancedThreatProtectionSettingsOperations  # type: ignore
 from ._managed_instance_azure_ad_only_authentications_operations import ManagedInstanceAzureADOnlyAuthenticationsOperations  # type: ignore
@@ -99,9 +100,9 @@ from ._managed_instance_long_term_retention_policies_operations import ManagedIn
 from ._managed_instance_operations_operations import ManagedInstanceOperationsOperations  # type: ignore
 from ._managed_instance_private_endpoint_connections_operations import ManagedInstancePrivateEndpointConnectionsOperations  # type: ignore
 from ._managed_instance_private_link_resources_operations import ManagedInstancePrivateLinkResourcesOperations  # type: ignore
+from ._managed_instances_operations import ManagedInstancesOperations  # type: ignore
 from ._managed_instance_tde_certificates_operations import ManagedInstanceTdeCertificatesOperations  # type: ignore
 from ._managed_instance_vulnerability_assessments_operations import ManagedInstanceVulnerabilityAssessmentsOperations  # type: ignore
-from ._managed_instances_operations import ManagedInstancesOperations  # type: ignore
 from ._managed_ledger_digest_uploads_operations import ManagedLedgerDigestUploadsOperations  # type: ignore
 from ._managed_restorable_dropped_database_backup_short_term_retention_policies_operations import ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations  # type: ignore
 from ._managed_server_dns_aliases_operations import ManagedServerDnsAliasesOperations  # type: ignore
@@ -130,12 +131,12 @@ from ._server_dev_ops_audit_settings_operations import ServerDevOpsAuditSettings
 from ._server_dns_aliases_operations import ServerDnsAliasesOperations  # type: ignore
 from ._server_keys_operations import ServerKeysOperations  # type: ignore
 from ._server_operations_operations import ServerOperationsOperations  # type: ignore
+from ._servers_operations import ServersOperations  # type: ignore
 from ._server_security_alert_policies_operations import ServerSecurityAlertPoliciesOperations  # type: ignore
 from ._server_trust_certificates_operations import ServerTrustCertificatesOperations  # type: ignore
 from ._server_trust_groups_operations import ServerTrustGroupsOperations  # type: ignore
 from ._server_usages_operations import ServerUsagesOperations  # type: ignore
 from ._server_vulnerability_assessments_operations import ServerVulnerabilityAssessmentsOperations  # type: ignore
-from ._servers_operations import ServersOperations  # type: ignore
 from ._sql_agent_operations import SqlAgentOperations  # type: ignore
 from ._sql_vulnerability_assessment_baseline_operations import SqlVulnerabilityAssessmentBaselineOperations  # type: ignore
 from ._sql_vulnerability_assessment_baselines_operations import SqlVulnerabilityAssessmentBaselinesOperations  # type: ignore
@@ -171,9 +172,6 @@ __all__ = [
     "DatabaseBlobAuditingPoliciesOperations",
     "ExtendedDatabaseBlobAuditingPoliciesOperations",
     "ExtendedServerBlobAuditingPoliciesOperations",
-    "DataMaskingPoliciesOperations",
-    "DataMaskingRulesOperations",
-    "DataWarehouseUserActivitiesOperations",
     "DatabaseAdvancedThreatProtectionSettingsOperations",
     "DatabaseAdvisorsOperations",
     "DatabaseAutomaticTuningOperations",
@@ -182,6 +180,7 @@ __all__ = [
     "DatabaseExtensionsOperations",
     "DatabaseOperationsOperations",
     "DatabaseRecommendedActionsOperations",
+    "DatabasesOperations",
     "DatabaseSchemasOperations",
     "DatabaseSecurityAlertPoliciesOperations",
     "DatabaseSqlVulnerabilityAssessmentBaselinesOperations",
@@ -193,9 +192,11 @@ __all__ = [
     "DatabaseTablesOperations",
     "DatabaseUsagesOperations",
     "DatabaseVulnerabilityAssessmentRuleBaselinesOperations",
-    "DatabaseVulnerabilityAssessmentScansOperations",
     "DatabaseVulnerabilityAssessmentsOperations",
-    "DatabasesOperations",
+    "DatabaseVulnerabilityAssessmentScansOperations",
+    "DataMaskingPoliciesOperations",
+    "DataMaskingRulesOperations",
+    "DataWarehouseUserActivitiesOperations",
     "DeletedServersOperations",
     "DistributedAvailabilityGroupsOperations",
     "ElasticPoolOperationsOperations",
@@ -205,20 +206,20 @@ __all__ = [
     "FailoverGroupsOperations",
     "FirewallRulesOperations",
     "GeoBackupPoliciesOperations",
-    "IPv6FirewallRulesOperations",
     "InstanceFailoverGroupsOperations",
-    "InstancePoolsOperations",
     "InstancePoolOperationsOperations",
+    "InstancePoolsOperations",
+    "IPv6FirewallRulesOperations",
     "JobAgentsOperations",
     "JobCredentialsOperations",
     "JobExecutionsOperations",
     "JobPrivateEndpointsOperations",
+    "JobsOperations",
     "JobStepExecutionsOperations",
     "JobStepsOperations",
     "JobTargetExecutionsOperations",
     "JobTargetGroupsOperations",
     "JobVersionsOperations",
-    "JobsOperations",
     "LedgerDigestUploadsOperations",
     "CapabilitiesOperations",
     "LongTermRetentionBackupsOperations",
@@ -232,6 +233,7 @@ __all__ = [
     "ManagedDatabaseMoveOperationsOperations",
     "ManagedDatabaseQueriesOperations",
     "ManagedDatabaseRestoreDetailsOperations",
+    "ManagedDatabasesOperations",
     "ManagedDatabaseSchemasOperations",
     "ManagedDatabaseSecurityAlertPoliciesOperations",
     "ManagedDatabaseSecurityEventsOperations",
@@ -240,9 +242,8 @@ __all__ = [
     "ManagedDatabaseTablesOperations",
     "ManagedDatabaseTransparentDataEncryptionOperations",
     "ManagedDatabaseVulnerabilityAssessmentRuleBaselinesOperations",
-    "ManagedDatabaseVulnerabilityAssessmentScansOperations",
     "ManagedDatabaseVulnerabilityAssessmentsOperations",
-    "ManagedDatabasesOperations",
+    "ManagedDatabaseVulnerabilityAssessmentScansOperations",
     "ManagedInstanceAdministratorsOperations",
     "ManagedInstanceAdvancedThreatProtectionSettingsOperations",
     "ManagedInstanceAzureADOnlyAuthenticationsOperations",
@@ -253,9 +254,9 @@ __all__ = [
     "ManagedInstanceOperationsOperations",
     "ManagedInstancePrivateEndpointConnectionsOperations",
     "ManagedInstancePrivateLinkResourcesOperations",
+    "ManagedInstancesOperations",
     "ManagedInstanceTdeCertificatesOperations",
     "ManagedInstanceVulnerabilityAssessmentsOperations",
-    "ManagedInstancesOperations",
     "ManagedLedgerDigestUploadsOperations",
     "ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations",
     "ManagedServerDnsAliasesOperations",
@@ -284,12 +285,12 @@ __all__ = [
     "ServerDnsAliasesOperations",
     "ServerKeysOperations",
     "ServerOperationsOperations",
+    "ServersOperations",
     "ServerSecurityAlertPoliciesOperations",
     "ServerTrustCertificatesOperations",
     "ServerTrustGroupsOperations",
     "ServerUsagesOperations",
     "ServerVulnerabilityAssessmentsOperations",
-    "ServersOperations",
     "SqlAgentOperations",
     "SqlVulnerabilityAssessmentBaselineOperations",
     "SqlVulnerabilityAssessmentBaselinesOperations",

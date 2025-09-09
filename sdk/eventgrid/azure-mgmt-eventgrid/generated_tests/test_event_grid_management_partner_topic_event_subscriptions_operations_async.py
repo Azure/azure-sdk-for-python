@@ -26,7 +26,7 @@ class TestEventGridManagementPartnerTopicEventSubscriptionsOperationsAsync(Azure
             resource_group_name=resource_group.name,
             partner_topic_name="str",
             event_subscription_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -44,11 +44,19 @@ class TestEventGridManagementPartnerTopicEventSubscriptionsOperationsAsync(Azure
                     "deadLetterDestination": "dead_letter_destination",
                     "deadLetterWithResourceIdentity": {
                         "deadLetterDestination": "dead_letter_destination",
-                        "identity": {"type": "str", "userAssignedIdentity": "str"},
+                        "identity": {
+                            "federatedIdentityCredentialInfo": {"federatedClientId": "str"},
+                            "type": "str",
+                            "userAssignedIdentity": "str",
+                        },
                     },
                     "deliveryWithResourceIdentity": {
                         "destination": "event_subscription_destination",
-                        "identity": {"type": "str", "userAssignedIdentity": "str"},
+                        "identity": {
+                            "federatedIdentityCredentialInfo": {"federatedClientId": "str"},
+                            "type": "str",
+                            "userAssignedIdentity": "str",
+                        },
                     },
                     "destination": "event_subscription_destination",
                     "eventDeliverySchema": "str",
@@ -77,7 +85,7 @@ class TestEventGridManagementPartnerTopicEventSubscriptionsOperationsAsync(Azure
                     "topic": "str",
                     "type": "str",
                 },
-                api_version="2025-02-15",
+                api_version="2025-04-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -92,7 +100,7 @@ class TestEventGridManagementPartnerTopicEventSubscriptionsOperationsAsync(Azure
                 resource_group_name=resource_group.name,
                 partner_topic_name="str",
                 event_subscription_name="str",
-                api_version="2025-02-15",
+                api_version="2025-04-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -111,11 +119,19 @@ class TestEventGridManagementPartnerTopicEventSubscriptionsOperationsAsync(Azure
                     "deadLetterDestination": "dead_letter_destination",
                     "deadLetterWithResourceIdentity": {
                         "deadLetterDestination": "dead_letter_destination",
-                        "identity": {"type": "str", "userAssignedIdentity": "str"},
+                        "identity": {
+                            "federatedIdentityCredentialInfo": {"federatedClientId": "str"},
+                            "type": "str",
+                            "userAssignedIdentity": "str",
+                        },
                     },
                     "deliveryWithResourceIdentity": {
                         "destination": "event_subscription_destination",
-                        "identity": {"type": "str", "userAssignedIdentity": "str"},
+                        "identity": {
+                            "federatedIdentityCredentialInfo": {"federatedClientId": "str"},
+                            "type": "str",
+                            "userAssignedIdentity": "str",
+                        },
                     },
                     "destination": "event_subscription_destination",
                     "eventDeliverySchema": "str",
@@ -131,7 +147,7 @@ class TestEventGridManagementPartnerTopicEventSubscriptionsOperationsAsync(Azure
                     "labels": ["str"],
                     "retryPolicy": {"eventTimeToLiveInMinutes": 1440, "maxDeliveryAttempts": 30},
                 },
-                api_version="2025-02-15",
+                api_version="2025-04-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -145,7 +161,7 @@ class TestEventGridManagementPartnerTopicEventSubscriptionsOperationsAsync(Azure
             resource_group_name=resource_group.name,
             partner_topic_name="str",
             event_subscription_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -157,7 +173,7 @@ class TestEventGridManagementPartnerTopicEventSubscriptionsOperationsAsync(Azure
         response = self.client.partner_topic_event_subscriptions.list_by_partner_topic(
             resource_group_name=resource_group.name,
             partner_topic_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -170,7 +186,7 @@ class TestEventGridManagementPartnerTopicEventSubscriptionsOperationsAsync(Azure
             resource_group_name=resource_group.name,
             partner_topic_name="str",
             event_subscription_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
 
         # please add some check logic here by yourself

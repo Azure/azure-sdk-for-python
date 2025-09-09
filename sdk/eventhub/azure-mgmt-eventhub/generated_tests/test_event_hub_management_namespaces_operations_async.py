@@ -23,7 +23,7 @@ class TestEventHubManagementNamespacesOperationsAsync(AzureMgmtRecordedTestCase)
     @recorded_by_proxy_async
     async def test_namespaces_list(self, resource_group):
         response = self.client.namespaces.list(
-            api_version="2024-01-01",
+            api_version="2022-01-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestEventHubManagementNamespacesOperationsAsync(AzureMgmtRecordedTestCase)
     async def test_namespaces_list_by_resource_group(self, resource_group):
         response = self.client.namespaces.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-01-01",
+            api_version="2022-01-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -115,7 +115,7 @@ class TestEventHubManagementNamespacesOperationsAsync(AzureMgmtRecordedTestCase)
                     "updatedAt": "2020-02-20 00:00:00",
                     "zoneRedundant": bool,
                 },
-                api_version="2024-01-01",
+                api_version="2022-01-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -129,7 +129,7 @@ class TestEventHubManagementNamespacesOperationsAsync(AzureMgmtRecordedTestCase)
             await self.client.namespaces.begin_delete(
                 resource_group_name=resource_group.name,
                 namespace_name="str",
-                api_version="2024-01-01",
+                api_version="2022-01-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -142,7 +142,7 @@ class TestEventHubManagementNamespacesOperationsAsync(AzureMgmtRecordedTestCase)
         response = await self.client.namespaces.get(
             resource_group_name=resource_group.name,
             namespace_name="str",
-            api_version="2024-01-01",
+            api_version="2022-01-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -222,7 +222,7 @@ class TestEventHubManagementNamespacesOperationsAsync(AzureMgmtRecordedTestCase)
                 "updatedAt": "2020-02-20 00:00:00",
                 "zoneRedundant": bool,
             },
-            api_version="2024-01-01",
+            api_version="2022-01-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -253,7 +253,7 @@ class TestEventHubManagementNamespacesOperationsAsync(AzureMgmtRecordedTestCase)
                 "type": "str",
                 "virtualNetworkRules": [{"ignoreMissingVnetServiceEndpoint": bool, "subnet": {"id": "str"}}],
             },
-            api_version="2024-01-01",
+            api_version="2022-01-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -265,7 +265,7 @@ class TestEventHubManagementNamespacesOperationsAsync(AzureMgmtRecordedTestCase)
         response = await self.client.namespaces.get_network_rule_set(
             resource_group_name=resource_group.name,
             namespace_name="str",
-            api_version="2024-01-01",
+            api_version="2022-01-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -277,7 +277,7 @@ class TestEventHubManagementNamespacesOperationsAsync(AzureMgmtRecordedTestCase)
         response = await self.client.namespaces.list_network_rule_set(
             resource_group_name=resource_group.name,
             namespace_name="str",
-            api_version="2024-01-01",
+            api_version="2022-01-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -289,7 +289,7 @@ class TestEventHubManagementNamespacesOperationsAsync(AzureMgmtRecordedTestCase)
         response = self.client.namespaces.list_authorization_rules(
             resource_group_name=resource_group.name,
             namespace_name="str",
-            api_version="2024-01-01",
+            api_version="2022-01-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -317,7 +317,7 @@ class TestEventHubManagementNamespacesOperationsAsync(AzureMgmtRecordedTestCase)
                 },
                 "type": "str",
             },
-            api_version="2024-01-01",
+            api_version="2022-01-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -330,7 +330,7 @@ class TestEventHubManagementNamespacesOperationsAsync(AzureMgmtRecordedTestCase)
             resource_group_name=resource_group.name,
             namespace_name="str",
             authorization_rule_name="str",
-            api_version="2024-01-01",
+            api_version="2022-01-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -343,7 +343,7 @@ class TestEventHubManagementNamespacesOperationsAsync(AzureMgmtRecordedTestCase)
             resource_group_name=resource_group.name,
             namespace_name="str",
             authorization_rule_name="str",
-            api_version="2024-01-01",
+            api_version="2022-01-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -356,7 +356,7 @@ class TestEventHubManagementNamespacesOperationsAsync(AzureMgmtRecordedTestCase)
             resource_group_name=resource_group.name,
             namespace_name="str",
             authorization_rule_name="str",
-            api_version="2024-01-01",
+            api_version="2022-01-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -370,7 +370,7 @@ class TestEventHubManagementNamespacesOperationsAsync(AzureMgmtRecordedTestCase)
             namespace_name="str",
             authorization_rule_name="str",
             parameters={"keyType": "str", "key": "str"},
-            api_version="2024-01-01",
+            api_version="2022-01-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -381,7 +381,7 @@ class TestEventHubManagementNamespacesOperationsAsync(AzureMgmtRecordedTestCase)
     async def test_namespaces_check_name_availability(self, resource_group):
         response = await self.client.namespaces.check_name_availability(
             parameters={"name": "str"},
-            api_version="2024-01-01",
+            api_version="2022-01-01-preview",
         )
 
         # please add some check logic here by yourself
