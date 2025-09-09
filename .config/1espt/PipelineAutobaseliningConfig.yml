@@ -24,6 +24,10 @@ pipelines:
       source:
         armory:
           lastModifiedDate: 2025-09-05
+        credscan:
+          lastModifiedDate: 2025-09-09
       binary:
         binskim:
           lastModifiedDate: 2025-09-05
+        credscan:
+          lastModifiedDate: 2025-09-09
