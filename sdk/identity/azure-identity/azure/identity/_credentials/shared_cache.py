@@ -4,11 +4,12 @@
 # ------------------------------------
 from typing import Any, Optional, TypeVar, cast
 from azure.core.credentials import AccessToken, TokenRequestOptions, AccessTokenInfo, SupportsTokenInfo, TokenCredential
+from azure.core.exceptions import ClientAuthenticationError
 
 from .silent import SilentAuthenticationCredential
 from .. import CredentialUnavailableError
 from .._constants import DEVELOPER_SIGN_ON_CLIENT_ID
-from .._internal import AadClient, AadClientBase
+from .._internal import AadClient, AadClientBase, within_dac
 from .._internal.decorators import log_get_token
 from .._internal.shared_token_cache import NO_TOKEN, SharedTokenCacheBase
 
@@ -191,11 +192,17 @@ class _SharedTokenCacheCredential(SharedTokenCacheBase):
 
         # try each refresh token, returning the first access token acquired
         for refresh_token in self._get_refresh_tokens(account, is_cae=is_cae):
-            token = cast(AadClient, self._client).obtain_token_by_refresh_token(
-                scopes, refresh_token, claims=claims, tenant_id=tenant_id, enable_cae=is_cae, **kwargs
-            )
-            return token
-
+            try:
+                token = cast(AadClient, self._client).obtain_token_by_refresh_token(
+                    scopes, refresh_token, claims=claims, tenant_id=tenant_id, enable_cae=is_cae, **kwargs
+                )
+                return token
+            except ClientAuthenticationError as e:
+                if within_dac.get():
+                    raise CredentialUnavailableError(  # pylint: disable=raise-missing-from
+                        message=e.message, response=e.response
+                    )
+                raise
         raise CredentialUnavailableError(message=NO_TOKEN.format(account.get("username")))
 
     def _get_auth_client(self, **kwargs: Any) -> AadClientBase:

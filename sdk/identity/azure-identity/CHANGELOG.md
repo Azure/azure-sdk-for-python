@@ -16,6 +16,9 @@
 
 ### Other Changes
 
+- Updated `SharedTokenCacheCredential` to raise `CredentialUnavailableError` instead of `ClientAuthenticationError` during token refresh failures when within the context of `DefaultAzureCredential`. ([#42934](https://github.com/Azure/azure-sdk-for-python/pull/42934))
+
+
 ## 1.24.0 (2025-08-07)
 
 ### Bugs Fixed
