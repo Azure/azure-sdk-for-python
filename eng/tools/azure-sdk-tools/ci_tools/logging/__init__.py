@@ -10,10 +10,8 @@ LOGLEVEL = getattr(logging, os.environ.get("LOGLEVEL", "INFO").upper())
 
 logger = logging.getLogger("azure-sdk-tools")
 
-def configure_logging(
-    args: argparse.Namespace,
-    fmt: str = "%(asctime)s [%(levelname)s] %(name)s: %(message)s"
-) -> None:
+
+def configure_logging(args: argparse.Namespace, fmt: str = "%(asctime)s [%(levelname)s] %(name)s: %(message)s") -> None:
     """
     Configures the shared logger. Should be called **once** at startup.
     """

@@ -13,7 +13,7 @@ from .parse_functions import (
     get_pyproject,
     VERSION_REGEX,
     VERSION_PY,
-    OLD_VERSION_PY
+    OLD_VERSION_PY,
 )
 
 __all__ = [
@@ -31,5 +31,5 @@ __all__ = [
     "get_pyproject",
     "VERSION_REGEX",
     "VERSION_PY",
-    "OLD_VERSION_PY"
+    "OLD_VERSION_PY",
 ]
