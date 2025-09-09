@@ -509,10 +509,10 @@ def get_venv_python(venv_path: str) -> str:
 
 
 def install_into_venv(
-    venv_path_or_executable: str, installation_target: str, editable: bool = True, extras: Optional[str] = None
+    venv_path_or_executable: str, requirements: List[str]
 ) -> None:
     """
-    Install the package into an existing venv (venv_path) without activating it.
+    Install the requirements into an existing venv (venv_path) without activating it.
 
     - Uses get_pip_command(get_venv_python) per request.
     - If get_pip_command returns the 'uv' wrapper, we fall back to get_venv_python -m pip
@@ -521,14 +521,8 @@ def install_into_venv(
     py = get_venv_python(venv_path_or_executable)
     pip_cmd = get_pip_command(py)
 
-    install_target = installation_target
-    if extras:
-        install_target = f"{installation_target}[{extras}]"
-
-    if editable:
-        cmd = pip_cmd + ["install", "-e", install_target]
-    else:
-        cmd = pip_cmd + ["install", install_target]
+    install_targets = [r.strip() for r in requirements]
+    cmd = pip_cmd + ["install"] + install_targets
 
     if pip_cmd[0] == "uv":
         cmd += ["--python", py]
