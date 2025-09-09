@@ -285,14 +285,16 @@ def sdk_allowed_kwargs(kwargs):
     return {k: v for k, v in kwargs.items() if k in allowed_kwargs}
 
 
-def validate_load_arguments(*args, **kwargs) -> None:
+def validate_load_arguments(*args, **kwargs) -> dict:
     """
     Common validation logic for load function arguments.
 
     :param args: Positional arguments (endpoint and optionally credential).
     :type args: Tuple[Any, ...]
+    :return: Updated kwargs with validated arguments.
+    :rtype: dict
     :raises TypeError: If unexpected positional parameters are provided.
-    :raises ValueError: If both endpoint/credential and connection_string are provided.
+    :raises ValueError: If both endpoint/credential and connection_string are provided, or if neither is provided.
     """
     endpoint = kwargs.get("endpoint", None)
     credential = kwargs.get("credential", None)
@@ -307,13 +309,21 @@ def validate_load_arguments(*args, **kwargs) -> None:
         if endpoint is not None:
             raise TypeError("Received multiple values for argument 'endpoint'")
         kwargs["endpoint"] = args[0]
+        endpoint = args[0]  # Update local variable for validation
     elif len(args) == 2:
         if credential is not None:
             raise TypeError("Received multiple values for argument 'credential'")
         kwargs["endpoint"], kwargs["credential"] = args
+        endpoint, credential = args  # Update local variables for validation
+
+    # Validate that either endpoint or connection_string is provided
+    if not endpoint and not connection_string:
+        raise ValueError("Either 'endpoint' or 'connection_string' must be provided.")
 
     if (endpoint or credential) and connection_string:
         raise ValueError("Please pass either endpoint and credential, or a connection string.")
+    
+    return kwargs
 
 
 def process_key_vault_options(**kwargs):

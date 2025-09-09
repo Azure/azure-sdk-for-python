@@ -178,7 +178,7 @@ def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
 def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
     start_time = datetime.datetime.now()
 
-    validate_load_arguments(*args, **kwargs)
+    kwargs = validate_load_arguments(*args, **kwargs)
     kwargs = process_key_vault_options(**kwargs)
     uses_key_vault = determine_uses_key_vault(**kwargs)
 
