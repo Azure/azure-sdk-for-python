@@ -508,7 +508,7 @@ def get_venv_python(venv_path: str) -> str:
 
 
 def install_into_venv(
-    venv_path_or_executable: str, requirements: List[str], editable: bool = True, extras: Optional[str] = None
+    venv_path_or_executable: str, requirements: List[str]
 ) -> None:
     """
     Install the requirements into an existing venv (venv_path) without activating it.
@@ -520,15 +520,8 @@ def install_into_venv(
     py = get_venv_python(venv_path_or_executable)
     pip_cmd = get_pip_command(py)
 
-    if extras and requirements:
-        install_targets = [f"{requirements[0].strip()}[{extras}]"] + [r.strip() for r in requirements[1:]]
-    else:
-        install_targets = [r.strip() for r in requirements]
-
-    if editable:
-        cmd = pip_cmd + ["install", "-e"] + install_targets
-    else:
-        cmd = pip_cmd + ["install"] + install_targets
+    install_targets = [r.strip() for r in requirements]
+    cmd = pip_cmd + ["install"] + install_targets
 
     if pip_cmd[0] == "uv":
         cmd += ["--python", py]

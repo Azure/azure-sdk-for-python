@@ -48,7 +48,7 @@ class black(Check):
 
             # install black
             try:
-                install_into_venv(executable, [f"black=={BLACK_VERSION}"], False)
+                install_into_venv(executable, [f"black=={BLACK_VERSION}"])
             except CalledProcessError as e:
                 logger.error("Failed to install black:", e)
                 return e.returncode
