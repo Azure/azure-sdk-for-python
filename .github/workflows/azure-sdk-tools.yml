@@ -48,7 +48,7 @@ jobs:
           python -m pip freeze
         shell: bash
 
-      - name: Run tests
+      - name: Run black
         run: |
           black --check --config eng/black-pyproject.toml eng/tools/azure-sdk-tools --exclude 'templates'
         shell: bash
