@@ -2,8 +2,8 @@ import functools
 
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.language.text import TextAnalysisClient
-from azure.ai.language.text.models import (
+from azure.ai.textanalytics import TextAnalysisClient
+from azure.ai.textanalytics.models import (
     TextLanguageDetectionInput,
     LanguageDetectionTextInput,
     LanguageInput,

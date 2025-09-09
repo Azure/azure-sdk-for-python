@@ -7,8 +7,8 @@ from devtools_testutils import (
 )
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.language.text.aio import TextAnalysisClient
-from azure.ai.language.text.models import (
+from azure.ai.textanalytics.aio import TextAnalysisClient
+from azure.ai.textanalytics.models import (
     MultiLanguageTextInput,
     MultiLanguageInput,
     CustomMultiLabelClassificationActionContent,
