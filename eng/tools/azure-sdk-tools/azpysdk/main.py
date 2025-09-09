@@ -15,6 +15,7 @@ from typing import Sequence, Optional
 from .whl import whl
 from .import_all import import_all
 from .mypy import mypy
+from .next_mypy import next_mypy
 from .pylint import pylint
 from .next_pylint import next_pylint
 from .sphinx import sphinx
@@ -76,10 +77,11 @@ def build_parser() -> argparse.ArgumentParser:
     whl().register(subparsers, [common])
     import_all().register(subparsers, [common])
     mypy().register(subparsers, [common])
+    next_mypy().register(subparsers, [common])
     pylint().register(subparsers, [common])
+    next_pylint().register(subparsers, [common])
     sphinx().register(subparsers, [common])
     black().register(subparsers, [common])
-    next_pylint().register(subparsers, [common])
 
     return parser
 
