@@ -3601,7 +3601,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
     def test_blob_user_delegation_oid(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         variables = kwargs.pop("variables", {})
-        token_credential = self.get_credential(BlobClient)
+        token_credential = self.get_credential(BlobServiceClient)
         data = b"abc123"
 
         service = BlobServiceClient(
