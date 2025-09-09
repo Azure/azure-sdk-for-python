@@ -4,7 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 
-from typing import Union
+from typing import Union, cast
 from azure.core.credentials import TokenCredential, AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline.policies import (
@@ -32,7 +32,7 @@ def get_authentication_policy(
     :return: Either AsyncBearerTokenCredentialPolicy or BearerTokenCredentialPolicy or HMACCredentialsPolicy
     :rtype: ~azure.core.pipeline.policies.AsyncBearerTokenCredentialPolicy or
     ~azure.core.pipeline.policies.BearerTokenCredentialPolicy or
-    ~azure.communication.phonenumbers.shared.policy.HMACCredentialsPolicy
+    ~azure.communication.callautomation.shared.policy.HMACCredentialsPolicy
     """
 
     if credential is None:
@@ -40,9 +40,11 @@ def get_authentication_policy(
     if hasattr(credential, "get_token"):
         if is_async:
             return AsyncBearerTokenCredentialPolicy(
-                credential, "https://communication.azure.com//.default"  # type: ignore
+                cast(AsyncTokenCredential, credential), "https://communication.azure.com//.default"
             )
-        return BearerTokenCredentialPolicy(credential, "https://communication.azure.com//.default")  # type: ignore
+        return BearerTokenCredentialPolicy(
+            cast(TokenCredential, credential), "https://communication.azure.com//.default"
+        )
     if isinstance(credential, (AzureKeyCredential, str)):
         return HMACCredentialsPolicy(endpoint, credential, decode_url=decode_url)
 
