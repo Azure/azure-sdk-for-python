@@ -15,6 +15,7 @@
 - Fix issue with tracing an Agent message, when the message has "in progress" status (related to [GitHub Issue 42645](https://github.com/Azure/azure-sdk-for-python/issues/42645)).
 - Fix issue with tracing `RunStepOpenAPIToolCall` ([GitHub issue 42645](https://github.com/Azure/azure-sdk-for-python/issues/42645)).
 - Fix issue when `.threads.create(messages=[ThreadMessageOptions(...])` is called on the `AgentsClient`, when tracing is enabled ([GitHub issue 42805](https://github.com/Azure/azure-sdk-for-python/issues/42805))
+- Fix an issue in the code where, when tracing is enabled and the function AgentsClient.runs.create_and_process is used, the span "start_thread_run" appears twice in trace, once as a parent and once as a child span. The parent span name has been changed to "process_thread_run". Note that the semantic conventions used in the traces (including spans and attributes) are still subject to change.
 
 ### Sample updates
 
