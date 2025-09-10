@@ -14,12 +14,6 @@ import logging
 from contextlib import AbstractContextManager
 from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
 
-# === Typing ===
-if sys.version_info >= (3, 11):
-    from typing import NotRequired  # noqa: F401
-else:
-    from typing_extensions import NotRequired  # noqa: F401
-
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -69,6 +63,11 @@ else:
 if TYPE_CHECKING:
     # Not imported at runtime; only for type checkers (mypy/pyright).
     from websockets.sync.client import ClientConnection as _WSClientConnection
+
+if sys.version_info >= (3, 11):
+    from typing import NotRequired  # noqa: F401
+else:
+    from typing_extensions import NotRequired  # noqa: F401
 
 __all__: List[str] = [
     "connect",
