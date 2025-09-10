@@ -7,7 +7,9 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Any, TYPE_CHECKING, Union
+from ._configuration import TextAuthoringProjectClientConfiguration
+from ._utils.serialization import Deserializer, Serializer
+from typing import Any, TYPE_CHECKING, Union, Optional
 from ._client import TextAuthoringClient as AuthoringClientGenerated
 from ._client import TextAuthoringProjectClient as AuthoringProjectClientGenerated
 from .operations._patch import ProjectOperations, DeploymentOperations, ExportedModelOperations, TrainedModelOperations
@@ -17,9 +19,6 @@ from azure.core.pipeline import policies
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
-
-from ._configuration import TextAuthoringClientConfiguration, TextAuthoringProjectClientConfiguration
-from ._utils.serialization import Deserializer, Serializer
 
 
 class TextAuthoringProjectClient(AuthoringProjectClientGenerated):
@@ -37,10 +36,28 @@ class TextAuthoringProjectClient(AuthoringProjectClientGenerated):
     trained_model: TrainedModelOperations
 
     def __init__(
-        self, endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], *, project_name: str, **kwargs: Any
+        self, endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], *, 
+        api_version: Optional[str] = None,
+        project_name: str, 
+        **kwargs: Any
     ) -> None:
+        """
+        Initialize a TextAuthoringProjectClient.
+
+        :param str endpoint: Supported Cognitive Services endpoint, e.g.
+            ``https://<resource>.cognitiveservices.azure.com``.
+        :param credential: Credential used to authenticate requests to the service.
+        :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.TokenCredential
+        :keyword str api_version: The API version to use for this operation.
+            Default value is ``2025-05-15-preview``.
+            Note that overriding this default value may result in unsupported behavior.
+        :keyword str project_name: The name of the project to scope operations. **Required**.
+        """
         self._project_name = project_name
         _endpoint = f"{endpoint}/language"
+
+        if api_version is not None:
+            kwargs["api_version"] = api_version
 
         # Build configuration
         self._config = TextAuthoringProjectClientConfiguration(
@@ -90,6 +107,31 @@ class TextAuthoringProjectClient(AuthoringProjectClientGenerated):
 
 
 class TextAuthoringClient(AuthoringClientGenerated):
+
+    def __init__(
+        self,
+        endpoint: str,
+        credential: Union[AzureKeyCredential, "TokenCredential"],
+        *,
+        api_version: Optional[str] = None,
+        **kwargs: Any,
+    ) -> None:
+        """
+        Create a TextAuthoringClient.
+
+        :param str endpoint: Supported Cognitive Services endpoint, e.g.
+            ``https://<resource-name>.api.cognitiveservices.azure.com``.
+        :param credential: Key or token credential.
+        :type credential: ~azure.core.credentials.AzureKeyCredential or
+            ~azure.core.credentials.TokenCredential
+        :keyword str api_version: The API version to use for this operation.
+            Default value is ``2025-05-15-preview``.
+            Note that overriding this default value may result in unsupported behavior.
+        """
+        if api_version is not None:
+            kwargs["api_version"] = api_version
+        super().__init__(endpoint=endpoint, credential=credential, **kwargs)
+
     def get_project_client(self, project_name: str) -> TextAuthoringProjectClient:
         return TextAuthoringProjectClient(
             endpoint=self._config.endpoint,
