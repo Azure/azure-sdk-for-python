@@ -12,12 +12,12 @@ import logging
 from contextlib import AbstractAsyncContextManager
 from urllib.parse import urlparse, urlunparse, urlencode, parse_qs
 
-# pylint: disable=ungrouped-imports
-try:  # Python 3.11+
-    from typing import NotRequired  # type: ignore[attr-defined]
-except ImportError:  # Python <=3.10
+try:
+    # Preferred: works on all supported runtimes
     from typing_extensions import NotRequired
-# pylint: enable=ungrouped-imports
+except ImportError:  # very rare (if typing_extensions is missing entirely)
+    # Python 3.11+ has these in typing
+    from typing import NotRequired  # type: ignore[attr-defined]
 
 from typing import Any, Dict, List, Mapping, Optional, Union, AsyncIterator, cast
 from typing_extensions import TypedDict
@@ -399,6 +399,16 @@ class VoiceLiveConnection:
     :ivar transcription_session: Resource for updating transcription session configuration.
     :vartype transcription_session: ~azure.ai.voicelive.aio.TranscriptionSessionResource
     """
+
+    _client_session: aiohttp.ClientSession
+    _connection: aiohttp.ClientWebSocketResponse
+
+    session: "SessionResource"
+    response: "ResponseResource"
+    input_audio_buffer: "InputAudioBufferResource"
+    conversation: "ConversationResource"
+    output_audio_buffer: "OutputAudioBufferResource"
+    transcription_session: "TranscriptionSessionResource"
 
     def __init__(self, client_session: aiohttp.ClientSession, ws: aiohttp.ClientWebSocketResponse) -> None:
         """Initialize a VoiceLiveConnection instance.

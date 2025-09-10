@@ -13,10 +13,12 @@ import logging
 from contextlib import AbstractContextManager
 from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
 
-try:  # Python 3.11+
-    from typing import NotRequired  # type: ignore[attr-defined]
-except Exception:  # Python <=3.10
+try:
+    # Preferred: works on all supported runtimes
     from typing_extensions import NotRequired
+except ImportError:  # very rare (if typing_extensions is missing entirely)
+    # Python 3.11+ has these in typing
+    from typing import NotRequired  # type: ignore[attr-defined]
 
 from typing import TYPE_CHECKING, Optional, Mapping, Sequence, Tuple, Union, Iterator, Any, Dict, List, cast
 from typing_extensions import TypedDict
@@ -491,6 +493,13 @@ class VoiceLiveConnection:
     :ivar transcription_session: Resource for updating transcription session parameters.
     :vartype transcription_session: ~azure.ai.voicelive.TranscriptionSessionResource
     """
+
+    session: SessionResource
+    response: ResponseResource
+    input_audio_buffer: InputAudioBufferResource
+    conversation: ConversationResource
+    output_audio_buffer: OutputAudioBufferResource
+    transcription_session: TranscriptionSessionResource
 
     def __init__(self, connection) -> None:
         """Initialize a VoiceLiveConnection.
