@@ -13,12 +13,15 @@ import logging
 from contextlib import AbstractAsyncContextManager
 from urllib.parse import urlparse, urlunparse, urlencode, parse_qs
 
+# === Typing (stdlib) ===
 if sys.version_info >= (3, 11):
-    from typing import NotRequired, TypedDict  # noqa: F401
+    from typing import NotRequired  # noqa: F401
 else:
-    from typing_extensions import NotRequired, TypedDict  # noqa: F401
+    from typing_extensions import NotRequired  # noqa: F401
 
 from typing import Any, Dict, List, Mapping, Optional, Union, AsyncIterator, cast
+
+# === Third-party ===
 from typing_extensions import TypedDict
 import aiohttp
 from azure.ai.voicelive.models._models import (
@@ -37,6 +40,8 @@ from azure.ai.voicelive.models._models import (
 )
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.pipeline import policies
+
+# === Local ===
 from ..models import ClientEvent, ServerEvent, RequestSession
 from .._patch import ConnectionError, ConnectionClosed
 
