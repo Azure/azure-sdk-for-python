@@ -12,6 +12,7 @@
         "quantitive",
         "balapvbyostoragecanary",
         "fspath",
+        "Pylance",
     ],
     "ignorePaths": [
     ]
