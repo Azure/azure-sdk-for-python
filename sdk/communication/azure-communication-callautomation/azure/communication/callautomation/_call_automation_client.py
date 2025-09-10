@@ -113,7 +113,7 @@ class CallAutomationClient:
             api_version=api_version or DEFAULT_VERSION,
             authentication_policy=get_authentication_policy(endpoint, credential),
             sdk_moniker=SDK_MONIKER,
-            **kwargs
+            **kwargs,
         )
 
         self._call_recording_client = self._client.call_recording

@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines, disable=line-too-long, disable=too-many-locals
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -270,7 +270,7 @@ class CallConnectionClient:  # pylint:disable=too-many-public-methods
             user_custom_context: Optional[CustomCallingContext] = CustomCallingContext(
                 voip_headers=dict(voip_headers) if voip_headers is not None else None,
                 sip_headers=dict(sip_headers) if sip_headers is not None else None,
-                teams_phone_call_details=teams_phone_call_details._to_generated() if teams_phone_call_details is not None else None,
+                teams_phone_call_details=teams_phone_call_details._to_generated() if teams_phone_call_details is not None else None, # pylint:disable=protected-access
             )
         else:
             user_custom_context = None
@@ -342,7 +342,7 @@ class CallConnectionClient:  # pylint:disable=too-many-public-methods
             user_custom_context: Optional[CustomCallingContext] = CustomCallingContext(
                 voip_headers=dict(voip_headers) if voip_headers is not None else None,
                 sip_headers=dict(sip_headers) if sip_headers is not None else None,
-                teams_phone_call_details=teams_phone_call_details._to_generated() if teams_phone_call_details else None,
+                teams_phone_call_details=teams_phone_call_details._to_generated() if teams_phone_call_details else None,  # pylint:disable=protected-access
             )
         else:
             user_custom_context = None
@@ -350,10 +350,10 @@ class CallConnectionClient:  # pylint:disable=too-many-public-methods
             participant_to_add=serialize_identifier(target_participant),
             source_caller_id_number=serialize_phone_identifier(source_caller_id_number),
             source_display_name=source_display_name,
-            invitation_timeout_in_seconds=invitation_timeout,   
+            invitation_timeout_in_seconds=invitation_timeout,
             operation_context=operation_context,
             operation_callback_uri=operation_callback_url,
-            custom_calling_context=user_custom_context, 
+            custom_calling_context=user_custom_context,
         )
         process_repeatability_first_sent(kwargs)
         response = await self._call_connection_client.add_participant(
@@ -736,7 +736,7 @@ class CallConnectionClient:  # pylint:disable=too-many-public-methods
         :keyword dtmf_stop_tones: List of tones that will stop recognizing. Will be ignored
          unless input_type is 'dtmf' or 'speechOrDtmf'.
         :paramtype dtmf_stop_tones: list[str or ~azure.communication.callautomation.DtmfTone]
-        :keyword speech_language: Speech language to be recognized, If not set default is en-US 
+        :keyword speech_language: Speech language to be recognized, If not set default is en-US
          or list of languages for language identification.
         :paramtype speech_language: str or list[str]
         :keyword choices: Defines Ivr choices for recognize. Will be ignored unless input_type is 'choices'.
@@ -758,12 +758,21 @@ class CallConnectionClient:  # pylint:disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+
+        speech_language_single: Optional[str] = None
+        speech_languages: Optional[List[str]] = None
+        if isinstance(speech_language, str):
+            speech_language_single = speech_language
+        else:
+            speech_languages = list(speech_language) if speech_language is not None else None
         options = RecognizeOptions(
             interrupt_prompt=interrupt_prompt,
             initial_silence_timeout_in_seconds=initial_silence_timeout,
             target_participant=serialize_identifier(target_participant),
             speech_recognition_model_endpoint_id=speech_recognition_model_endpoint_id,
             enable_sentiment_analysis=enable_sentiment_analysis,
+            speech_language=speech_language_single,
+            speech_languages=speech_languages,
         )
         play_prompt_single: Optional[PlaySource] = None
         play_prompts: Optional[List[PlaySource]] = None
@@ -805,8 +814,6 @@ class CallConnectionClient:  # pylint:disable=too-many-public-methods
             recognize_input_type=input_type,
             play_prompt=play_prompt_single,
             play_prompts=play_prompts,
-            speech_language=speech_language if not isinstance(speech_language, list) else None,
-            speech_languages=speech_language if isinstance(speech_language, list) else None,
             interrupt_call_media_operation=interrupt_call_media_operation,
             operation_context=operation_context,
             recognize_options=options,
@@ -986,7 +993,7 @@ class CallConnectionClient:  # pylint:disable=too-many-public-methods
     async def start_transcription(
         self,
         *,
-        locale: Optional[Union[str, list[str]]] = None,
+        locale: Optional[Union[str, Sequence[str]]] = None,
         operation_context: Optional[str] = None,
         speech_recognition_model_endpoint_id: Optional[str] = None,
         operation_callback_url: Optional[str] = None,
@@ -997,7 +1004,7 @@ class CallConnectionClient:  # pylint:disable=too-many-public-methods
     ) -> None:
         """Starts transcription in the call.
 
-        :keyword locale: Defines Locale for the transcription e,g en-US. 
+        :keyword locale: Defines Locale for the transcription e,g en-US.
          or List of languages for Language Identification.
         :paramtype locale: str or  list[str]
         :keyword operation_context: The value to identify context of the operation.
@@ -1022,14 +1029,20 @@ class CallConnectionClient:  # pylint:disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
+        locale_single: Optional[str] = None
+        locales: Optional[List[str]] = None
+        if isinstance(locale, str):
+            locale_single = locale
+        else:
+            locales = list(locale) if locale is not None else None
         start_transcription_request = StartTranscriptionRequest(
-            locale=locale if not isinstance(locale, list) else None,
+            locale=locale_single,
             operation_context=operation_context,
             speech_recognition_model_endpoint_id=speech_recognition_model_endpoint_id,
             operation_callback_uri=operation_callback_url,
             pii_redaction_options=pii_redaction._to_generated() if pii_redaction is not None else None,  # pylint:disable=protected-access
             enable_sentiment_analysis=enable_sentiment_analysis,
-            locales=locale if isinstance(locale, list) else None,
+            locales=locales,
             summarization_options=summarization._to_generated() if summarization is not None else None,  # pylint:disable=protected-access
             **kwargs
         )

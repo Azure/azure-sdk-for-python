@@ -72,7 +72,7 @@ class AzureCommunicationCallAutomationService(_AzureCommunicationCallAutomationS
         self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
 
         client_models = {k: v for k, v in _models._models.__dict__.items() if isinstance(v, type)}
-        client_models.update({k: v for k, v in _models.__dict__.items() if isinstance(v, type)})
+        client_models |= {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False

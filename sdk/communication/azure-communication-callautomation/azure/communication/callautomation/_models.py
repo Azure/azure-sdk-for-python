@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -1067,7 +1068,7 @@ class PiiRedactionOptions:
     redaction_type: Optional[Union[str, "RedactionType"]] = "maskWithCharacter"
     """Gets or sets the type of PII redaction to be used."""
 
-    def __init__(self, *, enable: bool = None, redaction_type: Optional[Union[str, "RedactionType"]] = None):
+    def __init__(self, *, enable: Optional[bool] = None, redaction_type: Optional[Union[str, "RedactionType"]] = None):
         self.enable = enable
         self.redaction_type = redaction_type
 
@@ -1146,8 +1147,8 @@ class TeamsPhoneCallDetails:
 
     def _to_generated(self):
         return TeamsPhoneCallDetailsInternal(
-            teams_phone_caller_details=self.teams_phone_caller._to_generated() if self.teams_phone_caller else None,
-            teams_phone_source_details=self.teams_phone_source._to_generated() if self.teams_phone_source else None,
+            teams_phone_caller_details=self.teams_phone_caller._to_generated() if self.teams_phone_caller else None, # pylint:disable=protected-access
+            teams_phone_source_details=self.teams_phone_source._to_generated() if self.teams_phone_source else None, # pylint:disable=protected-access
             session_id=self.session_id,
             intent=self.intent,
             call_topic=self.call_topic,
@@ -1272,7 +1273,7 @@ class SummarizationOptions:
     locale: Optional[str]
     """Gets or sets the locale for summarization (e.g., en-US)."""
 
-    def __init__(self, *, enable_end_call_summary: bool = None, locale: Optional[str] = None):
+    def __init__(self, *, enable_end_call_summary: Optional[bool] = None, locale: Optional[str] = None):
         self.enable_end_call_summary = enable_end_call_summary
         self.locale = locale
 
