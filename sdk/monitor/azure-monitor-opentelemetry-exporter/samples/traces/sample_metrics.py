@@ -45,7 +45,7 @@ tracer = trace.get_tracer(__name__)
 span_processor = BatchSpanProcessor(
     AzureMonitorTraceExporter.from_connection_string(os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"])
 )
-trace.get_tracer_provider().add_span_processor(span_processor)  # mypy: disable-error-code="attr-defined"
+trace.get_tracer_provider().add_span_processor(span_processor)  # type: ignore
 
 
 @app.route("/")
