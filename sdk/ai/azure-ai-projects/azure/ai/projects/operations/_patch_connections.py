@@ -10,7 +10,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import Optional, Any, Union
 from azure.core.tracing.decorator import distributed_trace
 from ._operations import ConnectionsOperations as ConnectionsOperationsGenerated
-from ..models._models import Connection
+from ..models._models import Connection, CustomCredential
 from ..models._enums import ConnectionType
 
 
@@ -37,7 +37,41 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         if include_credentials:
-            return super()._get_with_credentials(name, **kwargs)
+            connection = super()._get_with_credentials(name, **kwargs)
+            if connection.type == ConnectionType.CUSTOM:
+                if isinstance(connection.credentials, CustomCredential):
+                    """
+                    Fix for GitHub issue https://github.com/Azure/azure-sdk-for-net/issues/52355
+                    Although the issue was filed on C# Projects SDK, the same problem exists in Python SDK.
+                    Assume your Foundry project has a connection of type `Custom`, named "test_custom_connection",
+                    and you defined two public and two private keys. When you get the connection, the response
+                    payload will look something like this:
+                        {
+                            "name": "test_custom_connection",
+                            "id": "/subscriptions/.../connections/test_custom_connection",
+                            "type": "CustomKeys",
+                            "target": "_",
+                            "isDefault": true,
+                            "credentials": {
+                                "nameofprivatekey1": "PrivateKey1",
+                                "nameofprivatekey2": "PrivateKey2",
+                                "type": "CustomKeys"
+                            },
+                            "metadata": {
+                                "NameOfPublicKey1": "PublicKey1",
+                                "NameOfPublicKey2": "PublicKey2"
+                            }
+                        }
+                    If you look at the `credentials` field above, you will see that it does not match the definition of the Python class 
+                    `CustomCredential` defined in this package. In class `CustomCredential`, the `credential_keys` field is expected to 
+                    be a dictionary containing all the custom private keys. Therefore private keys fail to be deserialized into
+                    `credential_keys` dictionary by the auto-generated code. To fix this, we manually copy all the fields in `credentials`,
+                    except `type`, into `credential_keys`.
+                    """
+                    connection.credentials.credential_keys = {k: v for k, v in connection.credentials.as_dict().items() if k != "type"}
+                else:
+                    raise TypeError("Connection credentials should have been of type CustomCredential.")
+            return connection
 
         return super()._get(name, **kwargs)
 
@@ -58,7 +92,5 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
         """
         connections = super().list(connection_type=connection_type, default_connection=True, **kwargs)
         for connection in connections:
-            if include_credentials:
-                connection = super()._get_with_credentials(connection.name, **kwargs)
-            return connection
+            return self.get(connection.name, include_credentials=include_credentials, **kwargs)
         raise ValueError(f"No default connection found for type: {connection_type}.")
