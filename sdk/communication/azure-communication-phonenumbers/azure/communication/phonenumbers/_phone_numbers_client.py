@@ -11,7 +11,6 @@ from azure.core.credentials import TokenCredential, AzureKeyCredential
 from azure.core.paging import ItemPaged
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.exceptions import HttpResponseError
 
 from ._generated._client import PhoneNumbersClient as PhoneNumbersClientGen
 from ._generated.models import (
