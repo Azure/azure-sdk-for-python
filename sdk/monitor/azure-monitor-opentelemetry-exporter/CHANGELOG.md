@@ -32,6 +32,8 @@
   ([#42508] https://github.com/Azure/azure-sdk-for-python/pull/42508)
 - Refactoring of statsbeat to use `StatsbeatManager`
   ([#42716] https://github.com/Azure/azure-sdk-for-python/pull/42716)
+- Support sdk stats dynamic change on OneSettings config change
+  ([#42877] https://github.com/Azure/azure-sdk-for-python/pull/42877)
 
 ## 1.0.0b41 (2025-07-31)
 

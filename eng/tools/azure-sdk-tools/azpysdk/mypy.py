@@ -8,34 +8,36 @@ from subprocess import CalledProcessError, check_call
 
 from .Check import Check
 from ci_tools.parsing import ParsedSetup
-from ci_tools.functions import pip_install
+from ci_tools.functions import install_into_venv
 from ci_tools.scenario.generation import create_package_and_install
 from ci_tools.variables import in_ci, set_envvar_defaults
-from ci_tools.environment_exclusions import (
-    is_check_enabled, is_typing_ignored
-)
+from ci_tools.environment_exclusions import is_check_enabled, is_typing_ignored
 from ci_tools.logging import logger
 
 PYTHON_VERSION = "3.9"
 MYPY_VERSION = "1.14.1"
 
+ADDITIONAL_LOCKED_DEPENDENCIES = [
+  "types-chardet==5.0.4.6",
+  "types-requests==2.31.0.6",
+  "types-six==1.16.21.9",
+  "types-redis==4.6.0.7",
+  "PyGitHub>=1.59.0"
+]
+
 class mypy(Check):
     def __init__(self) -> None:
         super().__init__()
 
-    def register(self, subparsers: "argparse._SubParsersAction", parent_parsers: Optional[List[argparse.ArgumentParser]] = None) -> None:
-        """Register the `mypy` check. The mypy check installs mypy and runs mypy against the target package.
-        """
+    def register(
+        self, subparsers: "argparse._SubParsersAction", parent_parsers: Optional[List[argparse.ArgumentParser]] = None
+    ) -> None:
+        """Register the `mypy` check. The mypy check installs mypy and runs mypy against the target package."""
         parents = parent_parsers or []
         p = subparsers.add_parser("mypy", parents=parents, help="Run the mypy check")
         p.set_defaults(func=self.run)
 
-        p.add_argument(
-            "--next",
-            default=False,
-            help="Next version of mypy is being tested",
-            required=False
-        )
+        p.add_argument("--next", default=False, help="Next version of mypy is being tested", required=False)
 
     def run(self, args: argparse.Namespace) -> int:
         """Run the mypy check command."""
@@ -50,17 +52,23 @@ class mypy(Check):
         for parsed in targeted:
             package_dir = parsed.folder
             package_name = parsed.name
-            
+            dev_requirements = os.path.join(package_dir, "dev_requirements.txt")
+            additional_requirements = ADDITIONAL_LOCKED_DEPENDENCIES
+
             executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, package_dir)
             logger.info(f"Processing {package_name} for mypy check")
 
+            # # need to install dev_requirements to ensure that type-hints properly resolve
+            if os.path.exists(dev_requirements):
+                additional_requirements += ["-r", dev_requirements]
+
             # install mypy
             try:
-                if (args.next):
+                if args.next:
                     # use latest version of mypy
-                    pip_install(["mypy"], True, executable, package_dir)
+                    install_into_venv(executable, ["mypy"] + additional_requirements)
                 else:
-                    pip_install([f"mypy=={MYPY_VERSION}"], True, executable, package_dir)
+                    install_into_venv(executable, [f"mypy=={MYPY_VERSION}"] + additional_requirements)
             except CalledProcessError as e:
                 logger.error("Failed to install mypy:", e)
                 return e.returncode
@@ -89,9 +97,7 @@ class mypy(Check):
             src_code_error = None
             sample_code_error = None
             try:
-                logger.info(
-                    f"Running mypy commands on src code: {src_code}"
-                )
+                logger.info(f"Running mypy commands on src code: {src_code}")
                 results.append(check_call(src_code))
                 logger.info("Verified mypy, no issues found")
             except CalledProcessError as src_error:
@@ -99,18 +105,14 @@ class mypy(Check):
                 results.append(src_error.returncode)
 
             if not args.next and in_ci() and not is_check_enabled(package_dir, "type_check_samples", True):
-                logger.info(
-                    f"Package {package_name} opts-out of mypy check on samples."
-                )
+                logger.info(f"Package {package_name} opts-out of mypy check on samples.")
                 continue
             else:
                 # check if sample dirs exists, if not, skip sample code check
                 samples = os.path.exists(os.path.join(package_dir, "samples"))
                 generated_samples = os.path.exists(os.path.join(package_dir, "generated_samples"))
                 if not samples and not generated_samples:
-                    logger.info(
-                        f"Package {package_name} does not have a samples directory."
-                    )
+                    logger.info(f"Package {package_name} does not have a samples directory.")
                 else:
                     sample_code = [
                         *commands,
@@ -119,9 +121,7 @@ class mypy(Check):
                         os.path.join(package_dir, "samples" if samples else "generated_samples"),
                     ]
                     try:
-                        logger.info(
-                            f"Running mypy commands on sample code: {sample_code}"
-                        )
+                        logger.info(f"Running mypy commands on sample code: {sample_code}")
                         results.append(check_call(sample_code))
                     except CalledProcessError as sample_error:
                         sample_code_error = sample_error
@@ -129,6 +129,7 @@ class mypy(Check):
 
             if args.next and in_ci() and not is_typing_ignored(package_name):
                 from gh_tools.vnext_issue_creator import create_vnext_issue, close_vnext_issue
+
                 if src_code_error or sample_code_error:
                     create_vnext_issue(package_dir, "mypy")
                 else:

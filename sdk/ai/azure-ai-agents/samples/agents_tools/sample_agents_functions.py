@@ -22,6 +22,7 @@ USAGE:
        the "Models + endpoints" tab in your Azure AI Foundry project.
 """
 import os, time, sys
+from azure.ai.agents.models._models import FunctionToolOutput
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.agents.models import (
@@ -90,7 +91,7 @@ with project_client:
                         print(f"Executing tool call: {tool_call}")
                         output = functions.execute(tool_call)
                         tool_outputs.append(
-                            ToolOutput(
+                            FunctionToolOutput(
                                 tool_call_id=tool_call.id,
                                 output=output,
                             )
