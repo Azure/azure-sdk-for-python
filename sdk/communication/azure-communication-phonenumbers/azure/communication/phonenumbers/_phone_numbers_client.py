@@ -276,7 +276,7 @@ class PhoneNumbersClient:
         if not phone_number:
             raise ValueError("phone_number can't be empty")
 
-        poller = self._phone_number_client.phone_numbers.begin_update_capabilities(
+        return self._phone_number_client.phone_numbers.begin_update_capabilities(
             phone_number,
             body=capabilities_request,
             polling_interval=polling_interval,
@@ -284,19 +284,6 @@ class PhoneNumbersClient:
             polling=polling,
             **kwargs
         )
-
-        result_properties = poller.result().additional_properties
-        if (result_properties is not None and
-            isinstance(result_properties, dict) and
-            "status" in result_properties and
-            isinstance(result_properties.get("status"), str) and
-            result_properties["status"].lower() == "failed"):
-            error_info = result_properties.get("error", {})
-            error_message = (error_info.get("message", "Operation failed")
-                           if isinstance(error_info, dict) else "Operation failed")
-            raise HttpResponseError(message=error_message)
-
-        return poller
 
     @distributed_trace
     def get_purchased_phone_number(self, phone_number: str, **kwargs: Any) -> PurchasedPhoneNumber:
