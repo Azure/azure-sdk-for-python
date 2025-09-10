@@ -13,6 +13,7 @@
 ### Other Changes
 
 - `BearerTokenCredentialPolicy` and `AsyncBearerTokenCredentialPolicy` will now properly surface credential exceptions when handling claims challenges. Previously, exceptions from credential token requests were suppressed; now they are raised and chained with the original 401 `HttpResponseError` response for better debugging visibility. #42536
+- Updated `BearerTokenCredentialPolicy` and `AsyncBearerTokenCredentialPolicy` to set the `enable_cae` parameter to `True` by default. This change enables Continuous Access Evaluation (CAE) for all token requests made through these policies.  #42941
 
 ## 1.35.0 (2025-07-02)
 
