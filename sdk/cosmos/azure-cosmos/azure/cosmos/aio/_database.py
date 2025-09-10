@@ -37,6 +37,9 @@ from .._base import (
     _replace_throughput
 )
 from .._constants import _Constants as Constants
+# Shorter aliases for convenient usage
+_InternalOptions = Constants.InternalOptions
+_Kwargs = Constants.Kwargs
 from ._container import ContainerProxy
 from ..offer import ThroughputProperties
 from ..http_constants import StatusCodes
@@ -153,7 +156,7 @@ class DatabaseProxy(object):
         :returns: A dict representing the database properties
         :rtype: Dict[str, Any]
         """
-        session_token = kwargs.get(Constants.Kwargs.SESSION_TOKEN)
+        session_token = kwargs.get(_Kwargs.SESSION_TOKEN)
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and is always "
@@ -162,7 +165,7 @@ class DatabaseProxy(object):
 
         database_link = _get_database_link(self)
         if initial_headers is not None:
-            kwargs[Constants.Kwargs.INITIAL_HEADERS] = initial_headers
+            kwargs[_Kwargs.INITIAL_HEADERS] = initial_headers
         request_options = _build_options(kwargs)
 
         self._properties = await self.client_connection.ReadDatabase(
@@ -243,19 +246,19 @@ class DatabaseProxy(object):
                 :caption: Create a container with specific settings; in this case, a custom partition key:
                 :name: create_container_with_settings
         """
-        session_token = kwargs.get(Constants.Kwargs.SESSION_TOKEN)
+        session_token = kwargs.get(_Kwargs.SESSION_TOKEN)
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
-        etag = kwargs.get(Constants.Kwargs.ETAG)
+        etag = kwargs.get(_Kwargs.ETAG)
         if etag is not None:
             warnings.warn(
                 "The 'etag' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
-        match_condition = kwargs.get(Constants.Kwargs.MATCH_CONDITION)
+        match_condition = kwargs.get(_Kwargs.MATCH_CONDITION)
         if match_condition is not None:
             warnings.warn(
                 "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
@@ -289,7 +292,7 @@ class DatabaseProxy(object):
         if full_text_policy is not None:
             definition["fullTextPolicy"] = full_text_policy
         if initial_headers is not None:
-            kwargs[Constants.Kwargs.INITIAL_HEADERS] = initial_headers
+            kwargs[_Kwargs.INITIAL_HEADERS] = initial_headers
         request_options = _build_options(kwargs)
         _set_throughput_options(offer=offer_throughput, request_options=request_options)
 
@@ -362,19 +365,19 @@ class DatabaseProxy(object):
         :returns: A `ContainerProxy` instance representing the new container.
         :rtype: ~azure.cosmos.aio.ContainerProxy
         """
-        session_token = kwargs.get(Constants.Kwargs.SESSION_TOKEN)
+        session_token = kwargs.get(_Kwargs.SESSION_TOKEN)
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
-        etag = kwargs.get(Constants.Kwargs.ETAG)
+        etag = kwargs.get(_Kwargs.ETAG)
         if etag is not None:
             warnings.warn(
                 "The 'etag' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
-        match_condition = kwargs.get(Constants.Kwargs.MATCH_CONDITION)
+        match_condition = kwargs.get(_Kwargs.MATCH_CONDITION)
         if match_condition is not None:
             warnings.warn(
                 "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
@@ -464,17 +467,17 @@ class DatabaseProxy(object):
                 :caption: List all containers in the database:
                 :name: list_containers
         """
-        session_token = kwargs.get(Constants.Kwargs.SESSION_TOKEN)
+        session_token = kwargs.get(_Kwargs.SESSION_TOKEN)
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
         if initial_headers is not None:
-            kwargs[Constants.Kwargs.INITIAL_HEADERS] = initial_headers
+            kwargs[_Kwargs.INITIAL_HEADERS] = initial_headers
         feed_options = _build_options(kwargs)
         if max_item_count is not None:
-            feed_options[Constants.InternalOptions.MAX_ITEM_COUNT] = max_item_count
+            feed_options[_InternalOptions.MAX_ITEM_COUNT] = max_item_count
 
         result = self.client_connection.ReadContainers(
             database_link=self.database_link, options=feed_options, **kwargs
@@ -509,17 +512,17 @@ class DatabaseProxy(object):
         :returns: An AsyncItemPaged of container properties (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
         """
-        session_token = kwargs.get(Constants.Kwargs.SESSION_TOKEN)
+        session_token = kwargs.get(_Kwargs.SESSION_TOKEN)
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
         if initial_headers is not None:
-            kwargs[Constants.Kwargs.INITIAL_HEADERS] = initial_headers
+            kwargs[_Kwargs.INITIAL_HEADERS] = initial_headers
         feed_options = _build_options(kwargs)
         if max_item_count is not None:
-            feed_options[Constants.InternalOptions.MAX_ITEM_COUNT] = max_item_count
+            feed_options[_InternalOptions.MAX_ITEM_COUNT] = max_item_count
 
         result = self.client_connection.QueryContainers(
             database_link=self.database_link,
@@ -588,26 +591,26 @@ class DatabaseProxy(object):
                 :caption: Reset the TTL property on a container, and display the updated properties:
                 :name: reset_container_properties
         """
-        session_token = kwargs.get(Constants.Kwargs.SESSION_TOKEN)
+        session_token = kwargs.get(_Kwargs.SESSION_TOKEN)
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
-        etag = kwargs.get(Constants.Kwargs.ETAG)
+        etag = kwargs.get(_Kwargs.ETAG)
         if etag is not None:
             warnings.warn(
                 "The 'etag' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
-        match_condition = kwargs.get(Constants.Kwargs.MATCH_CONDITION)
+        match_condition = kwargs.get(_Kwargs.MATCH_CONDITION)
         if match_condition is not None:
             warnings.warn(
                 "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
         if initial_headers is not None:
-            kwargs[Constants.Kwargs.INITIAL_HEADERS] = initial_headers
+            kwargs[_Kwargs.INITIAL_HEADERS] = initial_headers
         request_options = _build_options(kwargs)
 
         container_id = self._get_container_id(container)
@@ -658,26 +661,26 @@ class DatabaseProxy(object):
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the container couldn't be deleted.
         :rtype: None
         """
-        session_token = kwargs.get(Constants.Kwargs.SESSION_TOKEN)
+        session_token = kwargs.get(_Kwargs.SESSION_TOKEN)
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
-        etag = kwargs.get(Constants.Kwargs.ETAG)
+        etag = kwargs.get(_Kwargs.ETAG)
         if etag is not None:
             warnings.warn(
                 "The 'etag' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
-        match_condition = kwargs.get(Constants.Kwargs.MATCH_CONDITION)
+        match_condition = kwargs.get(_Kwargs.MATCH_CONDITION)
         if match_condition is not None:
             warnings.warn(
                 "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
         if initial_headers is not None:
-            kwargs[Constants.Kwargs.INITIAL_HEADERS] = initial_headers
+            kwargs[_Kwargs.INITIAL_HEADERS] = initial_headers
         request_options = _build_options(kwargs)
 
         collection_link = self._get_container_link(container)
@@ -770,7 +773,7 @@ class DatabaseProxy(object):
         """
         feed_options = _build_options(kwargs)
         if max_item_count is not None:
-            feed_options[Constants.InternalOptions.MAX_ITEM_COUNT] = max_item_count
+            feed_options[_InternalOptions.MAX_ITEM_COUNT] = max_item_count
 
         result = self.client_connection.ReadUsers(
             database_link=self.database_link, options=feed_options, **kwargs
@@ -806,7 +809,7 @@ class DatabaseProxy(object):
         """
         feed_options = _build_options(kwargs)
         if max_item_count is not None:
-            feed_options[Constants.InternalOptions.MAX_ITEM_COUNT] = max_item_count
+            feed_options[_InternalOptions.MAX_ITEM_COUNT] = max_item_count
 
         result = self.client_connection.QueryUsers(
             database_link=self.database_link,

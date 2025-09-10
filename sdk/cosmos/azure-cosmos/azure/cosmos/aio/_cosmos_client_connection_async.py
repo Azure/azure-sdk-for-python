@@ -61,6 +61,9 @@ from .._change_feed.feed_range_internal import FeedRangeInternalEpk
 from .._routing import routing_range
 from ..documents import ConnectionPolicy, DatabaseAccount
 from .._constants import _Constants as Constants
+# Shorter aliases for convenient usage
+_InternalOptions = Constants.InternalOptions
+_Kwargs = Constants.Kwargs
 from .._cosmos_responses import CosmosDict, CosmosList
 from .. import http_constants, exceptions
 from . import _query_iterable_async as query_iterable
@@ -166,7 +169,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             http_constants.HttpHeaders.IsContinuationExpected: False,
         }
 
-        throughput_bucket = kwargs.pop(Constants.Kwargs.THROUGHPUT_BUCKET, None)
+        throughput_bucket = kwargs.pop(_Kwargs.THROUGHPUT_BUCKET, None)
         if throughput_bucket:
             self.default_headers[http_constants.HttpHeaders.ThroughputBucket] = throughput_bucket
 
@@ -198,14 +201,14 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             raise TypeError(
                 "Unsupported retry policy. Must be an azure.cosmos.ConnectionRetryPolicy, int, or urllib3.Retry")
 
-        proxies = kwargs.pop(Constants.Kwargs.PROXIES, {})
+        proxies = kwargs.pop(_Kwargs.PROXIES, {})
         if self.connection_policy.ProxyConfiguration and self.connection_policy.ProxyConfiguration.Host:
             host = self.connection_policy.ProxyConfiguration.Host
             url = urlparse(host)
             proxy = host if url.port else host + ":" + str(self.connection_policy.ProxyConfiguration.Port)
             proxies.update({url.scheme: proxy})
 
-        suffix = kwargs.pop(Constants.Kwargs.USER_AGENT_SUFFIX, None)
+        suffix = kwargs.pop(_Kwargs.USER_AGENT_SUFFIX, None)
         self._user_agent = _utils.get_user_agent_async(suffix)
 
         credentials_policy = None
@@ -218,7 +221,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 account_scope,
                 scope_override
             )
-        self._enable_diagnostics_logging = kwargs.pop(Constants.Kwargs.ENABLE_DIAGNOSTICS_LOGGING, False)
+        self._enable_diagnostics_logging = kwargs.pop(_Kwargs.ENABLE_DIAGNOSTICS_LOGGING, False)
         policies = [
             HeadersPolicy(**kwargs),
             ProxyPolicy(proxies=proxies),
@@ -230,14 +233,14 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             NetworkTraceLoggingPolicy(**kwargs),
             DistributedTracingPolicy(**kwargs),
             CosmosHttpLoggingPolicy(
-                logger=kwargs.pop(Constants.Kwargs.LOGGER, None),
+                logger=kwargs.pop(_Kwargs.LOGGER, None),
                 enable_diagnostics_logging=self._enable_diagnostics_logging,
                 global_endpoint_manager=self._global_endpoint_manager,
                 **kwargs
             ),
         ]
 
-        transport = kwargs.pop(Constants.Kwargs.TRANSPORT, None)
+        transport = kwargs.pop(_Kwargs.TRANSPORT, None)
         self.pipeline_client: AsyncPipelineClient[HttpRequest, AsyncHttpResponse] = AsyncPipelineClient(
             base_url=url_connection,
             transport=transport,
@@ -785,7 +788,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             CosmosDict
 
         """
-        response_hook = kwargs.pop(Constants.Kwargs.RESPONSE_HOOK, None)
+        response_hook = kwargs.pop(_Kwargs.RESPONSE_HOOK, None)
         if options is None:
             options = {}
 
@@ -928,7 +931,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             CosmosDict
 
         """
-        response_hook = kwargs.pop(Constants.Kwargs.RESPONSE_HOOK, None)
+        response_hook = kwargs.pop(_Kwargs.RESPONSE_HOOK, None)
         if options is None:
             options = {}
 
@@ -1236,7 +1239,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             CosmosDict
 
         """
-        response_hook = kwargs.pop(Constants.Kwargs.RESPONSE_HOOK, None)
+        response_hook = kwargs.pop(_Kwargs.RESPONSE_HOOK, None)
         if options is None:
             options = {}
 
@@ -1500,7 +1503,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             CosmosDict
 
         """
-        response_hook = kwargs.pop(Constants.Kwargs.RESPONSE_HOOK, None)
+        response_hook = kwargs.pop(_Kwargs.RESPONSE_HOOK, None)
         path = base.GetPathFromLink(document_link)
         document_id = base.GetResourceIdOrFullNameFromLink(document_link)
         resource_type = http_constants.ResourceType.Document
@@ -1614,7 +1617,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             CosmosDict
 
         """
-        response_hook = kwargs.pop(Constants.Kwargs.RESPONSE_HOOK, None)
+        response_hook = kwargs.pop(_Kwargs.RESPONSE_HOOK, None)
         if options is None:
             options = {}
 
@@ -1943,7 +1946,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             dict
 
         """
-        response_hook = kwargs.pop(Constants.Kwargs.RESPONSE_HOOK, None)
+        response_hook = kwargs.pop(_Kwargs.RESPONSE_HOOK, None)
         if options is None:
             options = {}
 
@@ -2012,7 +2015,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             CosmosList
 
         """
-        response_hook = kwargs.pop(Constants.Kwargs.RESPONSE_HOOK, None)
+        response_hook = kwargs.pop(_Kwargs.RESPONSE_HOOK, None)
         if options is None:
             options = {}
 
@@ -2363,7 +2366,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         async def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], CaseInsensitiveDict]:
             await kwargs["containerProperties"](options)
             new_options = dict(options)
-            new_options[Constants.InternalOptions.CONTAINER_RID] = self.__container_properties_cache[database_or_container_link]["_rid"]
+            new_options[_InternalOptions.CONTAINER_RID] = self.__container_properties_cache[database_or_container_link]["_rid"]
             return (
                 await self.__QueryFeed(
                     path,
@@ -2460,7 +2463,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         async def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], CaseInsensitiveDict]:
             if collection_link in self.__container_properties_cache:
                 new_options = dict(options)
-                new_options[Constants.InternalOptions.CONTAINER_RID] = self.__container_properties_cache[collection_link]["_rid"]
+                new_options[_InternalOptions.CONTAINER_RID] = self.__container_properties_cache[collection_link]["_rid"]
                 options = new_options
             return (
                 await self.__QueryFeed(
@@ -3010,8 +3013,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             change_feed_state: Optional[ChangeFeedState] = options.get("changeFeedState")
             if change_feed_state is not None:
                 feed_options = {}
-                if Constants.InternalOptions.EXCLUDED_LOCATIONS in options:
-                    feed_options[Constants.InternalOptions.EXCLUDED_LOCATIONS] = options[Constants.InternalOptions.EXCLUDED_LOCATIONS]
+                if _InternalOptions.EXCLUDED_LOCATIONS in options:
+                    feed_options[_InternalOptions.EXCLUDED_LOCATIONS] = options[_InternalOptions.EXCLUDED_LOCATIONS]
                 await change_feed_state.populate_request_headers_async(self._routing_map_provider, headers,
                                                                        feed_options)
                 request_params.headers = headers
@@ -3050,8 +3053,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         # Check if the over lapping ranges can be populated
         feed_range_epk = None
-        if Constants.Kwargs.FEED_RANGE in kwargs:
-            feed_range = kwargs.pop(Constants.Kwargs.FEED_RANGE)
+        if _Kwargs.FEED_RANGE in kwargs:
+            feed_range = kwargs.pop(_Kwargs.FEED_RANGE)
             feed_range_epk = FeedRangeInternalEpk.from_json(feed_range).get_normalized_range()
         elif options.get("partitionKey") is not None and container_property is not None:
             # check if query has prefix partition key
@@ -3280,9 +3283,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         # If the collection doesn't have a partition key definition, skip it as it's a legacy collection
         if partitionKeyDefinition:
             # If the user has passed in the partitionKey in options use that else extract it from the document
-            if Constants.InternalOptions.PARTITION_KEY not in options:
+            if _InternalOptions.PARTITION_KEY not in options:
                 partitionKeyValue = self._ExtractPartitionKey(partitionKeyDefinition, document)
-                new_options[Constants.InternalOptions.PARTITION_KEY] = partitionKeyValue
+                new_options[_InternalOptions.PARTITION_KEY] = partitionKeyValue
 
         return new_options
 
@@ -3413,7 +3416,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             None
 
         """
-        response_hook = kwargs.pop(Constants.Kwargs.RESPONSE_HOOK, None)
+        response_hook = kwargs.pop(_Kwargs.RESPONSE_HOOK, None)
         if options is None:
             options = {}
 

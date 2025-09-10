@@ -35,6 +35,9 @@ from azure.cosmos.offer import ThroughputProperties
 
 from ..cosmos_client import _parse_connection_str
 from .._constants import _Constants as Constants
+# Shorter aliases for convenient usage
+_InternalOptions = Constants.InternalOptions
+_Kwargs = Constants.Kwargs
 from ._cosmos_client_connection_async import CosmosClientConnection, CredentialDict
 from .._base import build_options as _build_options, _set_throughput_options
 from ._retry_utility_async import _ConnectionRetryPolicy
@@ -124,7 +127,7 @@ def _build_connection_policy(kwargs: Dict[str, Any]) -> ConnectionPolicy:
         )
     policy.ConnectionRetryConfiguration = connection_retry
     policy.ResponsePayloadOnWriteDisabled = kwargs.pop('no_response_on_write', False)
-    policy.RetryNonIdempotentWrites = kwargs.pop(Constants.Kwargs.RETRY_WRITE, False)
+    policy.RetryNonIdempotentWrites = kwargs.pop(_Kwargs.RETRY_WRITE, False)
     return policy
 
 
@@ -289,28 +292,28 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 :caption: Create a database in the Cosmos DB account:
                 :name: create_database
         """
-        session_token = kwargs.get(Constants.Kwargs.SESSION_TOKEN)
+        session_token = kwargs.get(_Kwargs.SESSION_TOKEN)
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
-        etag = kwargs.get(Constants.Kwargs.ETAG)
+        etag = kwargs.get(_Kwargs.ETAG)
         if etag is not None:
             warnings.warn(
                 "The 'etag' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
-        match_condition = kwargs.get(Constants.Kwargs.MATCH_CONDITION)
+        match_condition = kwargs.get(_Kwargs.MATCH_CONDITION)
         if match_condition is not None:
             warnings.warn(
                 "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
         if initial_headers is not None:
-            kwargs[Constants.Kwargs.INITIAL_HEADERS] = initial_headers
+            kwargs[_Kwargs.INITIAL_HEADERS] = initial_headers
         if throughput_bucket is not None:
-            kwargs[Constants.Kwargs.THROUGHPUT_BUCKET] = throughput_bucket
+            kwargs[_Kwargs.THROUGHPUT_BUCKET] = throughput_bucket
         request_options = _build_options(kwargs)
         _set_throughput_options(offer=offer_throughput, request_options=request_options)
 
@@ -347,28 +350,28 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :returns: A DatabaseProxy instance representing the database.
         :rtype: ~azure.cosmos.DatabaseProxy
         """
-        session_token = kwargs.get(Constants.Kwargs.SESSION_TOKEN)
+        session_token = kwargs.get(_Kwargs.SESSION_TOKEN)
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
-        etag = kwargs.get(Constants.Kwargs.ETAG)
+        etag = kwargs.get(_Kwargs.ETAG)
         if etag is not None:
             warnings.warn(
                 "The 'etag' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
-        match_condition = kwargs.get(Constants.Kwargs.MATCH_CONDITION)
+        match_condition = kwargs.get(_Kwargs.MATCH_CONDITION)
         if match_condition is not None:
             warnings.warn(
                 "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
         if throughput_bucket is not None:
-            kwargs[Constants.Kwargs.THROUGHPUT_BUCKET] = throughput_bucket
+            kwargs[_Kwargs.THROUGHPUT_BUCKET] = throughput_bucket
         if initial_headers is not None:
-            kwargs[Constants.Kwargs.INITIAL_HEADERS] = initial_headers
+            kwargs[_Kwargs.INITIAL_HEADERS] = initial_headers
         try:
             database_proxy = self.get_database_client(id)
             await database_proxy.read(**kwargs)
@@ -425,12 +428,12 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 " It will now be removed in the future.",
                 DeprecationWarning)
         if initial_headers is not None:
-            kwargs[Constants.Kwargs.INITIAL_HEADERS] = initial_headers
+            kwargs[_Kwargs.INITIAL_HEADERS] = initial_headers
         if throughput_bucket is not None:
-            kwargs[Constants.Kwargs.THROUGHPUT_BUCKET] = throughput_bucket
+            kwargs[_Kwargs.THROUGHPUT_BUCKET] = throughput_bucket
         feed_options = _build_options(kwargs)
         if max_item_count is not None:
-            feed_options[Constants.InternalOptions.MAX_ITEM_COUNT] = max_item_count
+            feed_options[_InternalOptions.MAX_ITEM_COUNT] = max_item_count
 
         result = self.client_connection.ReadDatabases(options=feed_options, **kwargs)
         if response_hook:
@@ -464,19 +467,19 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :returns: An AsyncItemPaged of database properties (dicts).
         :rtype: AsyncItemPaged[Dict[str, str]]
         """
-        session_token = kwargs.get(Constants.Kwargs.SESSION_TOKEN)
+        session_token = kwargs.get(_Kwargs.SESSION_TOKEN)
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
         if initial_headers is not None:
-            kwargs[Constants.Kwargs.INITIAL_HEADERS] = initial_headers
+            kwargs[_Kwargs.INITIAL_HEADERS] = initial_headers
         if throughput_bucket is not None:
-            kwargs[Constants.Kwargs.THROUGHPUT_BUCKET] = throughput_bucket
+            kwargs[_Kwargs.THROUGHPUT_BUCKET] = throughput_bucket
         feed_options = _build_options(kwargs)
         if max_item_count is not None:
-            feed_options[Constants.InternalOptions.MAX_ITEM_COUNT] = max_item_count
+            feed_options[_InternalOptions.MAX_ITEM_COUNT] = max_item_count
 
         result = self.client_connection.QueryDatabases(
             query=query if parameters is None else {"query": query, "parameters": parameters},
@@ -508,28 +511,28 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the database couldn't be deleted.
         :rtype: None
         """
-        session_token = kwargs.get(Constants.Kwargs.SESSION_TOKEN)
+        session_token = kwargs.get(_Kwargs.SESSION_TOKEN)
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
-        etag = kwargs.get(Constants.Kwargs.ETAG)
+        etag = kwargs.get(_Kwargs.ETAG)
         if etag is not None:
             warnings.warn(
                 "The 'etag' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
-        match_condition = kwargs.get(Constants.Kwargs.MATCH_CONDITION)
+        match_condition = kwargs.get(_Kwargs.MATCH_CONDITION)
         if match_condition is not None:
             warnings.warn(
                 "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
         if throughput_bucket is not None:
-            kwargs[Constants.Kwargs.THROUGHPUT_BUCKET] = throughput_bucket
+            kwargs[_Kwargs.THROUGHPUT_BUCKET] = throughput_bucket
         if initial_headers is not None:
-            kwargs[Constants.Kwargs.INITIAL_HEADERS] = initial_headers
+            kwargs[_Kwargs.INITIAL_HEADERS] = initial_headers
         request_options = _build_options(kwargs)
         database_link = _get_database_link(database)
         await self.client_connection.DeleteDatabase(database_link, options=request_options, **kwargs)
