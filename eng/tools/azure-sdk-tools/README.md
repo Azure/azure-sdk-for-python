@@ -217,6 +217,9 @@ class my_check(Check):
         for parsed in targeted:
             pkg_dir = parsed.folder
             pkg_name = parsed.name
+            executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, pkg)
+            # the rest of the check should use executable, not sys.executable
+            # if a staging area is needed use staging_directory
             print(f"Processing {pkg_name} for my_check")
 ```
 

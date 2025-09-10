@@ -50,12 +50,11 @@
 # PRLabel: %Azure.Identity
 /sdk/identity/                                                       @pvaneck @xiangyan99 @Azure/azure-sdk-write-identity
 
-# AzureSdkOwners: @kashifkhan
 # ServiceLabel: %Event Hubs
-# ServiceOwners: @kasun04
+# ServiceOwners: @axisc @sjkwak @hmlam
 
 # PRLabel: %Event Hubs
-/sdk/eventhub/                                                       @annatisch @kashifkhan @swathipil @l0lawrence
+/sdk/eventhub/                                                       @axisc @sjkwak @hmlam
 
 # ServiceLabel: %Storage
 # ServiceOwners: @jalauzon-msft @vincenttran-msft
@@ -344,12 +343,11 @@
 # PRLabel: %Recovery Services
 /sdk/recoveryservices/                                               @DheerendraRathor
 
-# AzureSdkOwners: @kashifkhan
 # ServiceLabel: %Schema Registry
-# ServiceOwners: @arerlend @alzimmermsft
+# ServiceOwners: @axisc @sjkwak @hmlam
 
 # PRLabel: %Schema Registry
-/sdk/schemaregistry/                                                 @kashifkhan @swathipil
+/sdk/schemaregistry/                                                 @axisc @sjkwak @hmlam
 
 # ServiceLabel: %Search
 # AzureSdkOwners: @xiangyan99
@@ -364,12 +362,11 @@
 # ServiceLabel: %SQL
 # ServiceOwners: @azureSQLGitHub
 
-# AzureSdkOwners: @kashifkhan
 # ServiceLabel: %Service Bus
-# ServiceOwners:  @EldertGrootenboer
+# ServiceOwners: @skarri-microsoft @EldertGrootenboer
 
 # PRLabel: %Service Bus
-/sdk/servicebus/                                                     @annatisch @kashifkhan @swathipil @l0lawrence
+/sdk/servicebus/                                                     @skarri-microsoft @EldertGrootenboer
 
 # ServiceOwners:  @wanyang7 @zesluo
 # ServiceLabel: %Synapse
