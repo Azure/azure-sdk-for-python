@@ -1,8 +1,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 import os
-from typing import Optional, List, Tuple
-
+import logging
+import json
+from collections.abc import Iterable
+from typing import Optional, List, Tuple, Dict
+# mypy: disable-error-code="import-untyped"
 from requests import ReadTimeout, Timeout
 from azure.core.exceptions import ServiceRequestTimeoutError
 from azure.monitor.opentelemetry.exporter._constants import (
@@ -19,7 +22,6 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     get_customer_sdkstats_metrics,
 )
 
-
 from azure.monitor.opentelemetry.exporter._constants import (
     _APPLICATIONINSIGHTS_STATS_CONNECTION_STRING_ENV_NAME,
     _APPLICATIONINSIGHTS_STATS_LONG_EXPORT_INTERVAL_ENV_NAME,
@@ -32,6 +34,8 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _REQ_DURATION_NAME,
     _REQ_SUCCESS_NAME,
     _APPLICATIONINSIGHTS_SDKSTATS_EXPORT_INTERVAL,
+    _ONE_SETTINGS_DEFAULT_STATS_CONNECTION_STRING_KEY,
+    _ONE_SETTINGS_SUPPORTED_DATA_BOUNDARIES_KEY,
     _exception_categories,
 )
 
@@ -56,7 +60,10 @@ def _get_stats_short_export_interval() -> int:
     ei_env = os.environ.get(_APPLICATIONINSIGHTS_STATS_SHORT_EXPORT_INTERVAL_ENV_NAME)
     if ei_env:
         try:
-            return int(ei_env)
+            value = int(ei_env)
+            if value < 1:
+                return _DEFAULT_STATS_SHORT_EXPORT_INTERVAL
+            return value
         except ValueError:
             return _DEFAULT_STATS_SHORT_EXPORT_INTERVAL
     return _DEFAULT_STATS_SHORT_EXPORT_INTERVAL
@@ -67,7 +74,10 @@ def _get_stats_long_export_interval() -> int:
     ei_env = os.environ.get(_APPLICATIONINSIGHTS_STATS_LONG_EXPORT_INTERVAL_ENV_NAME)
     if ei_env:
         try:
-            return int(ei_env)
+            value = int(ei_env)
+            if value < 1:
+                return _DEFAULT_STATS_LONG_EXPORT_INTERVAL
+            return value
         except ValueError:
             return _DEFAULT_STATS_LONG_EXPORT_INTERVAL
     return _DEFAULT_STATS_LONG_EXPORT_INTERVAL
@@ -88,6 +98,8 @@ def _update_requests_map(type_name, value):
                 _REQUESTS_MAP[type_name] = {}
             _REQUESTS_MAP[type_name][value] = prev + 1
 
+
+## Customer SDK stats
 
 def categorize_status_code(status_code: int) -> str:
     status_map = {
@@ -236,6 +248,7 @@ def _track_dropped_items_from_storage(result_from_storage_put, envelopes):
         # LocalFileBlob.put returns StorageExportResult.LOCAL_FILE_BLOB_SUCCESS here. Don't need to track anything in this case. # pylint: disable=line-too-long
         pass
 
+# seconds
 def _get_customer_sdkstats_export_interval() -> int:
     customer_sdkstats_ei_env = os.environ.get(_APPLICATIONINSIGHTS_SDKSTATS_EXPORT_INTERVAL)
     if customer_sdkstats_ei_env:
@@ -244,3 +257,84 @@ def _get_customer_sdkstats_export_interval() -> int:
         except ValueError:
             return _DEFAULT_STATS_SHORT_EXPORT_INTERVAL
     return _DEFAULT_STATS_SHORT_EXPORT_INTERVAL
+
+
+## OneSettings Config
+
+# pylint: disable=too-many-return-statements
+def _get_connection_string_for_region_from_config(target_region: str, settings: Dict[str, str]) -> Optional[str]:
+    """Get the appropriate stats connection string for the given region.
+
+    This function determines which data boundary the given region
+    belongs to and returns the corresponding stats connection string. The logic:
+
+    1. Checks if the given region is in any of the supported data boundary regions
+    2. Returns the matching stats connection string for that boundary
+    3. Falls back to DEFAULT if region is not found in any boundary
+
+    :param target_region: The Azure region name (e.g., "westeurope", "eastus")
+    :type target_region: str
+    :param settings: Dictionary containing OneSettings configuration values
+    :type settings: Dict[str, str]
+    :return: The stats connection string for the region's data boundary,
+            or None if no configuration is available
+    :rtype: Optional[str]
+    """
+    logger = logging.getLogger(__name__)
+
+    default_connection_string = settings.get(_ONE_SETTINGS_DEFAULT_STATS_CONNECTION_STRING_KEY)
+
+    try:
+        # Get supported data boundaries
+        supported_boundaries = settings.get(_ONE_SETTINGS_SUPPORTED_DATA_BOUNDARIES_KEY)
+        if not supported_boundaries:
+            logger.warning("Supported data boundaries key not found in configuration")
+            return default_connection_string
+
+        # Parse if it's a JSON string
+        if isinstance(supported_boundaries, str):
+            supported_boundaries = json.loads(supported_boundaries)
+
+        # supported_boundaries should be a list
+        if not isinstance(supported_boundaries, Iterable):
+            logger.warning("Supported data boundaries is not iterable")
+            return default_connection_string
+
+        # Check each supported boundary to find the region
+        for boundary in supported_boundaries:
+            # Skip DEFAULT
+            if boundary.upper() == "DEFAULT":
+                continue
+            boundary_regions_key = f"{boundary}_REGIONS"
+            boundary_regions = settings.get(boundary_regions_key)
+
+            if boundary_regions:
+                # Parse if it's a JSON string
+                if isinstance(boundary_regions, str):
+                    boundary_regions = json.loads(boundary_regions)
+
+                # Check if the region is in this boundary's regions
+                if isinstance(boundary_regions, list) and \
+                    any(target_region.lower() == r.lower() for r in boundary_regions):
+                    # Found the boundary, get the corresponding connection string
+                    connection_string_key = f"{boundary}_STATS_CONNECTION_STRING"
+                    connection_string = settings.get(connection_string_key)
+
+                    if connection_string:
+                        return connection_string
+
+                    logger.warning("Connection string key '%s' not found in configuration",
+                                    connection_string_key)
+
+        # Region not found in any specific boundary, try DEFAULT
+        if not default_connection_string:
+            logger.warning("Default stats connection string not found in configuration")
+            return None
+        return default_connection_string
+    except (ValueError, TypeError, KeyError) as ex:
+        logger.warning("Error parsing configuration for region '%s': %s", target_region, str(ex))
+        return None
+    except Exception as ex:  # pylint: disable=broad-exception-caught
+        logger.warning("Unexpected error getting stats connection string for region '%s': %s",
+                     target_region, str(ex))
+        return None
