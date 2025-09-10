@@ -27,6 +27,8 @@ from ._models import (
     CancelAddParticipantOperationResult,
     AzureBlobContainerRecordingStorage,
     AzureCommunicationsRecordingStorage,
+    MediaStreamingSubscription,
+    TranscriptionSubscription,
     MoveParticipantsResult,
     PiiRedactionOptions,
     SummarizationOptions,
@@ -56,20 +58,22 @@ from ._generated.models._enums import (
     RecognizeInputType,
     MediaStreamingAudioChannelType,
     MediaStreamingContentType,
+    MediaStreamingSubscriptionState,
+    TranscriptionResultType,
+    TranscriptionSubscriptionState,
     StreamingTransportType,
     DtmfTone,
     CallConnectionState,
     RecordingState,
     VoiceKind,
     AudioFormat,
-    RedactionType
+    RedactionType,
 )
 
 __all__ = [
     # clients
     "CallAutomationClient",
     "CallConnectionClient",
-
     # models for input
     "FileSource",
     "TextSource",
@@ -88,6 +92,8 @@ __all__ = [
 
     # models for output
     "CallConnectionProperties",
+    "MediaStreamingSubscription",
+    "TranscriptionSubscription",
     "CallParticipant",
     "RecordingProperties",
     "AddParticipantResult",
@@ -108,7 +114,6 @@ __all__ = [
     "UnknownIdentifier",
     "TeamsExtensionUserProperties",
     "TeamsExtensionUserIdentifier",
-
     # enums
     "CallRejectReason",
     "RecordingContent",
@@ -119,13 +124,16 @@ __all__ = [
     "RecognizeInputType",
     "MediaStreamingAudioChannelType",
     "MediaStreamingContentType",
+    "MediaStreamingSubscriptionState",
+    "TranscriptionResultType",
+    "TranscriptionSubscriptionState",
     "StreamingTransportType",
     "DtmfTone",
     "CallConnectionState",
     "RecordingState",
     "VoiceKind",
     "AudioFormat",
-    "RedactionType"
+    "RedactionType",
 ]
 __version__ = VERSION
 

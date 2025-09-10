@@ -50,7 +50,7 @@ class PartitionKeyRangeCache(object):
         # keeps the cached collection routing map by collection id
         self._collection_routing_map_by_item = {}
 
-    async def get_overlapping_ranges(self, collection_link, partition_key_ranges, feed_options = None, **kwargs):
+    async def get_overlapping_ranges(self, collection_link, partition_key_ranges, feed_options, **kwargs):
         """Given a partition key range and a collection, return the list of
         overlapping partition key ranges.
 
@@ -69,7 +69,7 @@ class PartitionKeyRangeCache(object):
             self,
             collection_link: str,
             collection_id: str,
-            feed_options: Optional[Dict[str, Any]] = None,
+            feed_options: Dict[str, Any],
             **kwargs: Dict[str, Any]
     ):
         collection_routing_map = self._collection_routing_map_by_item.get(collection_id)
@@ -91,10 +91,11 @@ class PartitionKeyRangeCache(object):
             self,
             collection_link: str,
             partition_key_range_id: int,
+            feed_options: Dict[str, Any],
             **kwargs: Dict[str, Any]
     ) -> Optional[Dict[str, Any]]:
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
-        await self.init_collection_routing_map_if_needed(collection_link, collection_id, **kwargs)
+        await self.init_collection_routing_map_if_needed(collection_link, collection_id, feed_options, **kwargs)
 
         return self._collection_routing_map_by_item[collection_id].get_range_by_partition_key_range_id(
             partition_key_range_id)

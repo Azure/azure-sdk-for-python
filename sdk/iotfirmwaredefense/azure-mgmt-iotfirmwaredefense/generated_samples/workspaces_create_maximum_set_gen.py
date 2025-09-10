@@ -34,15 +34,15 @@ def main():
         resource_group_name="rgiotfirmwaredefense",
         workspace_name="exampleWorkspaceName",
         resource={
-            "location": "emiscxuo",
+            "location": "East US",
             "properties": {},
-            "sku": {"capacity": 22, "family": "fwsu", "name": "pb", "size": "unh", "tier": "Free"},
+            "sku": {"capacity": 30, "family": "F", "name": "Free", "size": "Free", "tier": "Free"},
             "tags": {"key4630": "rov"},
         },
     )
     print(response)
 
 
-# x-ms-original-file: 2025-04-01-preview/Workspaces_Create_MaximumSet_Gen.json
+# x-ms-original-file: 2025-08-02/Workspaces_Create_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

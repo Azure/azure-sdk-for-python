@@ -8,7 +8,7 @@ import pytest
 import asyncio
 import os
 from typing import Dict, Any
-from azure.identity.aio import AzureCliCredential  
+from azure.identity.aio import AzureCliCredential
 from azure.communication.callautomation import (
     FileSource,
     MediaStreamingOptions,
@@ -17,7 +17,7 @@ from azure.communication.callautomation import (
     MediaStreamingAudioChannelType,
     TranscriptionOptions,
     TextSource,
-)   
+)
 from azure.communication.callautomation._shared.models import identifier_from_raw_id
 from azure.communication.callautomation.aio import (
     CallAutomationClient as CallAutomationClientAsync,
@@ -35,6 +35,7 @@ from azure.communication.phonenumbers.aio import PhoneNumbersClient
 from azure.servicebus.aio import ServiceBusClient
 
 from callautomation_test_case_async import CallAutomationRecordedTestCaseAsync
+
 
 class TestMediaAutomatedLiveTestAsync(CallAutomationRecordedTestCaseAsync):
 
@@ -72,7 +73,9 @@ class TestMediaAutomatedLiveTestAsync(CallAutomationRecordedTestCaseAsync):
         await self.terminate_call(unique_id)
         # Do not return anything from this test method
 
-    @pytest.mark.skip(reason="Known issues - Bug 3949487: [GA4] [Python] [SDK] [Async] Get Participant fails with authentication error HMAC-SHA256, Bug 4182867: [SDK] Hmac Validation with ':' (GetParticipant) mismatch")
+    @pytest.mark.skip(
+        reason="Known issues - Bug 3949487: [GA4] [Python] [SDK] [Async] Get Participant fails with authentication error HMAC-SHA256, Bug 4182867: [SDK] Hmac Validation with ':' (GetParticipant) mismatch"
+    )
     @recorded_by_proxy_async
     async def test_add_and_mute_participant_in_a_call(self):
         caller = await self.identity_client.create_user()
@@ -115,7 +118,9 @@ class TestMediaAutomatedLiveTestAsync(CallAutomationRecordedTestCaseAsync):
 
         await self.terminate_call(unique_id)
 
-    @pytest.mark.skip(reason="Known issues - Bug 3949487: [GA4] [Python] [SDK] [Async] Get Participant fails with authentication error HMAC-SHA256, Bug 4182867: [SDK] Hmac Validation with ':' (GetParticipant) mismatch")
+    @pytest.mark.skip(
+        reason="Known issues - Bug 3949487: [GA4] [Python] [SDK] [Async] Get Participant fails with authentication error HMAC-SHA256, Bug 4182867: [SDK] Hmac Validation with ':' (GetParticipant) mismatch"
+    )
     @recorded_by_proxy_async
     async def test_add_and_hold_unhold_participant_in_a_call(self):
         caller = await self.identity_client.create_user()
@@ -175,15 +180,19 @@ class TestMediaAutomatedLiveTestAsync(CallAutomationRecordedTestCaseAsync):
             transport_type=StreamingTransportType.WEBSOCKET,
             content_type=MediaStreamingContentType.AUDIO,
             audio_channel_type=MediaStreamingAudioChannelType.MIXED,
-            start_media_streaming=False
+            start_media_streaming=False,
         )
 
         unique_id, call_connection, _ = await self.establish_callconnection_voip_with_streaming_options(
             caller, target, media_streaming_options, False
         )
 
-        connected_event = self.check_for_event('CallConnected', call_connection._call_connection_id, timedelta(seconds=15))
-        participant_updated_event = self.check_for_event('ParticipantsUpdated', call_connection._call_connection_id, timedelta(seconds=15))
+        connected_event = self.check_for_event(
+            "CallConnected", call_connection._call_connection_id, timedelta(seconds=15)
+        )
+        participant_updated_event = self.check_for_event(
+            "ParticipantsUpdated", call_connection._call_connection_id, timedelta(seconds=15)
+        )
 
         if connected_event is None:
             raise ValueError("Caller CallConnected event is None")
@@ -192,8 +201,10 @@ class TestMediaAutomatedLiveTestAsync(CallAutomationRecordedTestCaseAsync):
 
         await call_connection.start_media_streaming()
 
-        media_streaming_started = self.check_for_event('MediaStreamingStarted', call_connection._call_connection_id, timedelta(seconds=30))
-        
+        media_streaming_started = self.check_for_event(
+            "MediaStreamingStarted", call_connection._call_connection_id, timedelta(seconds=30)
+        )
+
         if media_streaming_started is None:
             raise ValueError("MediaStreamingStarted event is None")
 
@@ -204,12 +215,14 @@ class TestMediaAutomatedLiveTestAsync(CallAutomationRecordedTestCaseAsync):
             raise ValueError("call_connection_properties is None")
         if call_connection_properties.media_streaming_subscription is None:
             raise ValueError("call_connection_properties.media_streaming_subscription is None")
-        if call_connection_properties.media_streaming_subscription.state != 'active':
+        if call_connection_properties.media_streaming_subscription.state != "active":
             raise ValueError("media streaming state is invalid for MediaStreamingStarted event")
 
         await call_connection.stop_media_streaming()
 
-        media_streaming_stopped = self.check_for_event('MediaStreamingStopped', call_connection._call_connection_id, timedelta(seconds=30))
+        media_streaming_stopped = self.check_for_event(
+            "MediaStreamingStopped", call_connection._call_connection_id, timedelta(seconds=30)
+        )
         if media_streaming_stopped is None:
             raise ValueError("MediaStreamingStopped event is None")
 
@@ -218,7 +231,7 @@ class TestMediaAutomatedLiveTestAsync(CallAutomationRecordedTestCaseAsync):
             raise ValueError("call_connection_properties is None")
         if call_connection_properties.media_streaming_subscription is None:
             raise ValueError("call_connection_properties.media_streaming_subscription is None")
-        if call_connection_properties.media_streaming_subscription.state != 'inactive':
+        if call_connection_properties.media_streaming_subscription.state != "inactive":
             raise ValueError("media streaming state is invalid for MediaStreamingStopped event")
 
         await self.terminate_call(unique_id)
@@ -233,15 +246,19 @@ class TestMediaAutomatedLiveTestAsync(CallAutomationRecordedTestCaseAsync):
             transport_url=self.transport_url,
             transport_type=StreamingTransportType.WEBSOCKET,
             locale="en-US",
-            start_transcription=False
+            start_transcription=False,
         )
 
         unique_id, call_connection, _ = await self.establish_callconnection_voip_with_streaming_options(
             caller, target, transcription_options, True
         )
 
-        connected_event = self.check_for_event('CallConnected', call_connection._call_connection_id, timedelta(seconds=15))
-        participant_updated_event = self.check_for_event('ParticipantsUpdated', call_connection._call_connection_id, timedelta(seconds=15))
+        connected_event = self.check_for_event(
+            "CallConnected", call_connection._call_connection_id, timedelta(seconds=15)
+        )
+        participant_updated_event = self.check_for_event(
+            "ParticipantsUpdated", call_connection._call_connection_id, timedelta(seconds=15)
+        )
 
         if connected_event is None:
             raise ValueError("Caller CallConnected event is None")
@@ -250,7 +267,9 @@ class TestMediaAutomatedLiveTestAsync(CallAutomationRecordedTestCaseAsync):
 
         await call_connection.start_transcription(locale="en-ca")
 
-        transcription_started = self.check_for_event('TranscriptionStarted', call_connection._call_connection_id, timedelta(seconds=30))
+        transcription_started = self.check_for_event(
+            "TranscriptionStarted", call_connection._call_connection_id, timedelta(seconds=30)
+        )
         if transcription_started is None:
             raise ValueError("TranscriptionStarted event is None")
 
@@ -259,13 +278,15 @@ class TestMediaAutomatedLiveTestAsync(CallAutomationRecordedTestCaseAsync):
             raise ValueError("call_connection_properties is None")
         if call_connection_properties.transcription_subscription is None:
             raise ValueError("call_connection_properties.transcription_subscription is None")
-        if call_connection_properties.transcription_subscription.state != 'active':
+        if call_connection_properties.transcription_subscription.state != "active":
             raise ValueError("transcription subscription state is invalid for TranscriptionStarted event")
 
         await asyncio.sleep(3)
         await call_connection.update_transcription(locale="en-gb")
 
-        transcription_updated = self.check_for_event('TranscriptionUpdated', call_connection._call_connection_id, timedelta(seconds=30))
+        transcription_updated = self.check_for_event(
+            "TranscriptionUpdated", call_connection._call_connection_id, timedelta(seconds=30)
+        )
         if transcription_updated is None:
             raise ValueError("TranscriptionUpdated event is None")
 
@@ -273,7 +294,9 @@ class TestMediaAutomatedLiveTestAsync(CallAutomationRecordedTestCaseAsync):
 
         await call_connection.stop_transcription()
 
-        transcription_stopped = self.check_for_event('TranscriptionStopped', call_connection._call_connection_id, timedelta(seconds=30))
+        transcription_stopped = self.check_for_event(
+            "TranscriptionStopped", call_connection._call_connection_id, timedelta(seconds=30)
+        )
         if transcription_stopped is None:
             raise ValueError("TranscriptionStopped event is None")
 
@@ -282,7 +305,7 @@ class TestMediaAutomatedLiveTestAsync(CallAutomationRecordedTestCaseAsync):
             raise ValueError("call_connection_properties is None")
         if call_connection_properties.transcription_subscription is None:
             raise ValueError("call_connection_properties.transcription_subscription is None")
-        if call_connection_properties.transcription_subscription.state != 'inactive':
+        if call_connection_properties.transcription_subscription.state != "inactive":
             raise ValueError("transcription subscription state is invalid for TranscriptionStopped event")
 
         await self.terminate_call(unique_id)
@@ -294,8 +317,12 @@ class TestMediaAutomatedLiveTestAsync(CallAutomationRecordedTestCaseAsync):
         target = await self.identity_client.create_user()
         unique_id, call_connection, _ = await self.establish_callconnection_voip(caller, target)
 
-        connected_event = self.check_for_event('CallConnected', call_connection._call_connection_id, timedelta(seconds=15))
-        participant_updated_event = self.check_for_event('ParticipantsUpdated', call_connection._call_connection_id, timedelta(seconds=15))
+        connected_event = self.check_for_event(
+            "CallConnected", call_connection._call_connection_id, timedelta(seconds=15)
+        )
+        participant_updated_event = self.check_for_event(
+            "ParticipantsUpdated", call_connection._call_connection_id, timedelta(seconds=15)
+        )
 
         if connected_event is None:
             raise ValueError("Caller CallConnected event is None")
@@ -305,14 +332,14 @@ class TestMediaAutomatedLiveTestAsync(CallAutomationRecordedTestCaseAsync):
         play_multiple_file_source = [
             FileSource(url=self.file_source_url),
             FileSource(url=self.file_source_url),
-            FileSource(url=self.file_source_url)
+            FileSource(url=self.file_source_url),
         ]
 
-        await call_connection.play_media_to_all(
-            play_source=play_multiple_file_source
-        )
+        await call_connection.play_media_to_all(play_source=play_multiple_file_source)
 
-        play_completed_event_file_source = self.check_for_event('PlayCompleted', call_connection._call_connection_id, timedelta(seconds=30))
+        play_completed_event_file_source = self.check_for_event(
+            "PlayCompleted", call_connection._call_connection_id, timedelta(seconds=30)
+        )
         if play_completed_event_file_source is None:
             raise ValueError("Play media all PlayCompleted event is None")
 
@@ -325,8 +352,12 @@ class TestMediaAutomatedLiveTestAsync(CallAutomationRecordedTestCaseAsync):
         target = await self.identity_client.create_user()
         unique_id, call_connection, _ = await self.establish_callconnection_voip(caller, target)
 
-        connected_event = self.check_for_event('CallConnected', call_connection._call_connection_id, timedelta(seconds=15))
-        participant_updated_event = self.check_for_event('ParticipantsUpdated', call_connection._call_connection_id, timedelta(seconds=15))
+        connected_event = self.check_for_event(
+            "CallConnected", call_connection._call_connection_id, timedelta(seconds=15)
+        )
+        participant_updated_event = self.check_for_event(
+            "ParticipantsUpdated", call_connection._call_connection_id, timedelta(seconds=15)
+        )
 
         if connected_event is None:
             raise ValueError("Caller CallConnected event is None")
@@ -336,15 +367,14 @@ class TestMediaAutomatedLiveTestAsync(CallAutomationRecordedTestCaseAsync):
         play_multiple_file_source = [
             FileSource(url=self.file_source_url),
             FileSource(url=self.file_source_url),
-            FileSource(url=self.file_source_url)
+            FileSource(url=self.file_source_url),
         ]
 
-        await call_connection.play_media(
-            play_source=play_multiple_file_source,
-            play_to=[target]
-        )
+        await call_connection.play_media(play_source=play_multiple_file_source, play_to=[target])
 
-        play_completed_event_file_source_to_target = self.check_for_event('PlayCompleted', call_connection._call_connection_id, timedelta(seconds=30))
+        play_completed_event_file_source_to_target = self.check_for_event(
+            "PlayCompleted", call_connection._call_connection_id, timedelta(seconds=30)
+        )
         if play_completed_event_file_source_to_target is None:
             raise ValueError("Play media PlayCompleted event is None")
 
@@ -357,8 +387,12 @@ class TestMediaAutomatedLiveTestAsync(CallAutomationRecordedTestCaseAsync):
         target = await self.identity_client.create_user()
         unique_id, call_connection, _ = await self.establish_callconnection_voip(caller, target)
 
-        connected_event = self.check_for_event('CallConnected', call_connection._call_connection_id, timedelta(seconds=15))
-        participant_updated_event = self.check_for_event('ParticipantsUpdated', call_connection._call_connection_id, timedelta(seconds=15))
+        connected_event = self.check_for_event(
+            "CallConnected", call_connection._call_connection_id, timedelta(seconds=15)
+        )
+        participant_updated_event = self.check_for_event(
+            "ParticipantsUpdated", call_connection._call_connection_id, timedelta(seconds=15)
+        )
 
         if connected_event is None:
             raise ValueError("Caller CallConnected event is None")
@@ -368,17 +402,19 @@ class TestMediaAutomatedLiveTestAsync(CallAutomationRecordedTestCaseAsync):
         play_multiple_file_source = [
             FileSource(url=self.file_source_url),
             FileSource(url=self.file_source_url),
-            FileSource(url=self.file_source_url)
+            FileSource(url=self.file_source_url),
         ]
 
         random_unique_id = self._unique_key_gen(caller, target)
 
         await call_connection.play_media_to_all(
             play_source=play_multiple_file_source,
-            operation_callback_url=(self.dispatcher_callback + "?q={}".format(random_unique_id))
+            operation_callback_url=(self.dispatcher_callback + "?q={}".format(random_unique_id)),
         )
 
-        play_completed_event_file_source = self.check_for_event('PlayCompleted', call_connection._call_connection_id, timedelta(seconds=30))
+        play_completed_event_file_source = self.check_for_event(
+            "PlayCompleted", call_connection._call_connection_id, timedelta(seconds=30)
+        )
         if play_completed_event_file_source is None:
             raise ValueError("PlayCompleted event is None")
 
@@ -391,8 +427,12 @@ class TestMediaAutomatedLiveTestAsync(CallAutomationRecordedTestCaseAsync):
         target = await self.identity_client.create_user()
         unique_id, call_connection, _ = await self.establish_callconnection_voip(caller, target)
 
-        connected_event = self.check_for_event('CallConnected', call_connection._call_connection_id, timedelta(seconds=15))
-        participant_updated_event = self.check_for_event('ParticipantsUpdated', call_connection._call_connection_id, timedelta(seconds=15))
+        connected_event = self.check_for_event(
+            "CallConnected", call_connection._call_connection_id, timedelta(seconds=15)
+        )
+        participant_updated_event = self.check_for_event(
+            "ParticipantsUpdated", call_connection._call_connection_id, timedelta(seconds=15)
+        )
 
         if connected_event is None:
             raise ValueError("Caller CallConnected event is None")
@@ -402,7 +442,7 @@ class TestMediaAutomatedLiveTestAsync(CallAutomationRecordedTestCaseAsync):
         play_multiple_file_source = [
             FileSource(url=self.file_source_url),
             FileSource(url=self.file_source_url),
-            FileSource(url=self.file_source_url)
+            FileSource(url=self.file_source_url),
         ]
 
         random_unique_id = self._unique_key_gen(caller, target)
@@ -410,10 +450,12 @@ class TestMediaAutomatedLiveTestAsync(CallAutomationRecordedTestCaseAsync):
         await call_connection.play_media(
             play_source=play_multiple_file_source,
             play_to=[target],
-            operation_callback_url=(self.dispatcher_callback + "?q={}".format(random_unique_id))
+            operation_callback_url=(self.dispatcher_callback + "?q={}".format(random_unique_id)),
         )
 
-        play_completed_event_file_source_to_target = self.check_for_event('PlayCompleted', call_connection._call_connection_id, timedelta(seconds=30))
+        play_completed_event_file_source_to_target = self.check_for_event(
+            "PlayCompleted", call_connection._call_connection_id, timedelta(seconds=30)
+        )
         if play_completed_event_file_source_to_target is None:
             raise ValueError("PlayCompleted event is None")
 
@@ -424,10 +466,16 @@ class TestMediaAutomatedLiveTestAsync(CallAutomationRecordedTestCaseAsync):
     async def test_play_multiple_text_sources_with_play_media(self):
         caller = await self.identity_client.create_user()
         target = await self.identity_client.create_user()
-        unique_id, call_connection, _ = await self.establish_callconnection_voip(caller, target, cognitive_service_enabled=True)
+        unique_id, call_connection, _ = await self.establish_callconnection_voip(
+            caller, target, cognitive_service_enabled=True
+        )
 
-        connected_event = self.check_for_event('CallConnected', call_connection._call_connection_id, timedelta(seconds=15))
-        participant_updated_event = self.check_for_event('ParticipantsUpdated', call_connection._call_connection_id, timedelta(seconds=15))
+        connected_event = self.check_for_event(
+            "CallConnected", call_connection._call_connection_id, timedelta(seconds=15)
+        )
+        participant_updated_event = self.check_for_event(
+            "ParticipantsUpdated", call_connection._call_connection_id, timedelta(seconds=15)
+        )
 
         if connected_event is None:
             raise ValueError("Caller CallConnected event is None")
@@ -437,15 +485,14 @@ class TestMediaAutomatedLiveTestAsync(CallAutomationRecordedTestCaseAsync):
         play_multiple_text_source = [
             TextSource(text="this is test one", voice_name="en-US-NancyNeural"),
             TextSource(text="this is test two", voice_name="en-US-NancyNeural"),
-            TextSource(text="this is test three", voice_name="en-US-NancyNeural")
+            TextSource(text="this is test three", voice_name="en-US-NancyNeural"),
         ]
 
-        await call_connection.play_media(
-            play_source=play_multiple_text_source,
-            play_to=[target]
-        )
+        await call_connection.play_media(play_source=play_multiple_text_source, play_to=[target])
 
-        play_completed_event_text_source_to_target = self.check_for_event('PlayCompleted', call_connection._call_connection_id, timedelta(seconds=30))
+        play_completed_event_text_source_to_target = self.check_for_event(
+            "PlayCompleted", call_connection._call_connection_id, timedelta(seconds=30)
+        )
         if play_completed_event_text_source_to_target is None:
             raise ValueError("PlayCompleted event is None")
 
@@ -456,10 +503,16 @@ class TestMediaAutomatedLiveTestAsync(CallAutomationRecordedTestCaseAsync):
     async def test_play_multiple_text_sources_with_play_media_all(self):
         caller = await self.identity_client.create_user()
         target = await self.identity_client.create_user()
-        unique_id, call_connection, _ = await self.establish_callconnection_voip(caller, target, cognitive_service_enabled=True)
+        unique_id, call_connection, _ = await self.establish_callconnection_voip(
+            caller, target, cognitive_service_enabled=True
+        )
 
-        connected_event = self.check_for_event('CallConnected', call_connection._call_connection_id, timedelta(seconds=15))
-        participant_updated_event = self.check_for_event('ParticipantsUpdated', call_connection._call_connection_id, timedelta(seconds=15))
+        connected_event = self.check_for_event(
+            "CallConnected", call_connection._call_connection_id, timedelta(seconds=15)
+        )
+        participant_updated_event = self.check_for_event(
+            "ParticipantsUpdated", call_connection._call_connection_id, timedelta(seconds=15)
+        )
 
         if connected_event is None:
             raise ValueError("Caller CallConnected event is None")
@@ -469,14 +522,14 @@ class TestMediaAutomatedLiveTestAsync(CallAutomationRecordedTestCaseAsync):
         play_multiple_text_source = [
             TextSource(text="this is test one", voice_name="en-US-NancyNeural"),
             TextSource(text="this is test two", voice_name="en-US-NancyNeural"),
-            TextSource(text="this is test three", voice_name="en-US-NancyNeural")
+            TextSource(text="this is test three", voice_name="en-US-NancyNeural"),
         ]
 
-        await call_connection.play_media_to_all(
-            play_source=play_multiple_text_source
-        )
+        await call_connection.play_media_to_all(play_source=play_multiple_text_source)
 
-        play_completed_event_text_source = self.check_for_event('PlayCompleted', call_connection._call_connection_id, timedelta(seconds=30))
+        play_completed_event_text_source = self.check_for_event(
+            "PlayCompleted", call_connection._call_connection_id, timedelta(seconds=30)
+        )
         if play_completed_event_text_source is None:
             raise ValueError("PlayCompleted event is None")
 
@@ -487,10 +540,16 @@ class TestMediaAutomatedLiveTestAsync(CallAutomationRecordedTestCaseAsync):
     async def test_play_combined_file_and_text_sources_with_play_media(self):
         caller = await self.identity_client.create_user()
         target = await self.identity_client.create_user()
-        unique_id, call_connection, _ = await self.establish_callconnection_voip(caller, target, cognitive_service_enabled=True)
+        unique_id, call_connection, _ = await self.establish_callconnection_voip(
+            caller, target, cognitive_service_enabled=True
+        )
 
-        connected_event = self.check_for_event('CallConnected', call_connection._call_connection_id, timedelta(seconds=15))
-        participant_updated_event = self.check_for_event('ParticipantsUpdated', call_connection._call_connection_id, timedelta(seconds=15))
+        connected_event = self.check_for_event(
+            "CallConnected", call_connection._call_connection_id, timedelta(seconds=15)
+        )
+        participant_updated_event = self.check_for_event(
+            "ParticipantsUpdated", call_connection._call_connection_id, timedelta(seconds=15)
+        )
 
         if connected_event is None:
             raise ValueError("Caller CallConnected event is None")
@@ -502,12 +561,11 @@ class TestMediaAutomatedLiveTestAsync(CallAutomationRecordedTestCaseAsync):
             TextSource(text="this is test.", voice_name="en-US-NancyNeural"),
         ]
 
-        await call_connection.play_media(
-            play_source=play_multiple_source,
-            play_to=[target]
-        )
+        await call_connection.play_media(play_source=play_multiple_source, play_to=[target])
 
-        play_completed_event_multiple_source_to_target = self.check_for_event('PlayCompleted', call_connection._call_connection_id, timedelta(seconds=30))
+        play_completed_event_multiple_source_to_target = self.check_for_event(
+            "PlayCompleted", call_connection._call_connection_id, timedelta(seconds=30)
+        )
         if play_completed_event_multiple_source_to_target is None:
             raise ValueError("PlayCompleted event is None")
 
@@ -518,10 +576,16 @@ class TestMediaAutomatedLiveTestAsync(CallAutomationRecordedTestCaseAsync):
     async def test_play_combined_file_and_text_sources_with_play_media_all(self):
         caller = await self.identity_client.create_user()
         target = await self.identity_client.create_user()
-        unique_id, call_connection, _ = await self.establish_callconnection_voip(caller, target, cognitive_service_enabled=True)
+        unique_id, call_connection, _ = await self.establish_callconnection_voip(
+            caller, target, cognitive_service_enabled=True
+        )
 
-        connected_event = self.check_for_event('CallConnected', call_connection._call_connection_id, timedelta(seconds=15))
-        participant_updated_event = self.check_for_event('ParticipantsUpdated', call_connection._call_connection_id, timedelta(seconds=15))
+        connected_event = self.check_for_event(
+            "CallConnected", call_connection._call_connection_id, timedelta(seconds=15)
+        )
+        participant_updated_event = self.check_for_event(
+            "ParticipantsUpdated", call_connection._call_connection_id, timedelta(seconds=15)
+        )
 
         if connected_event is None:
             raise ValueError("Caller CallConnected event is None")
@@ -533,11 +597,11 @@ class TestMediaAutomatedLiveTestAsync(CallAutomationRecordedTestCaseAsync):
             TextSource(text="this is test.", voice_name="en-US-NancyNeural"),
         ]
 
-        await call_connection.play_media_to_all(
-            play_source=play_multiple_source
-        )
+        await call_connection.play_media_to_all(play_source=play_multiple_source)
 
-        play_completed_event_multiple_source = self.check_for_event('PlayCompleted', call_connection._call_connection_id, timedelta(seconds=30))
+        play_completed_event_multiple_source = self.check_for_event(
+            "PlayCompleted", call_connection._call_connection_id, timedelta(seconds=30)
+        )
         if play_completed_event_multiple_source is None:
             raise ValueError("PlayCompleted event is None")
 
@@ -550,8 +614,12 @@ class TestMediaAutomatedLiveTestAsync(CallAutomationRecordedTestCaseAsync):
         target = await self.identity_client.create_user()
         unique_id, call_connection, _ = await self.establish_callconnection_voip(caller, target)
 
-        connected_event = self.check_for_event('CallConnected', call_connection._call_connection_id, timedelta(seconds=15))
-        participant_updated_event = self.check_for_event('ParticipantsUpdated', call_connection._call_connection_id, timedelta(seconds=15))
+        connected_event = self.check_for_event(
+            "CallConnected", call_connection._call_connection_id, timedelta(seconds=15)
+        )
+        participant_updated_event = self.check_for_event(
+            "ParticipantsUpdated", call_connection._call_connection_id, timedelta(seconds=15)
+        )
 
         if connected_event is None:
             raise ValueError("Caller CallConnected event is None")
@@ -560,11 +628,11 @@ class TestMediaAutomatedLiveTestAsync(CallAutomationRecordedTestCaseAsync):
 
         file_prompt = [FileSource(url="https://dummy.com/dummyurl.wav")]
 
-        await call_connection.play_media_to_all(
-            play_source=file_prompt
-        )
+        await call_connection.play_media_to_all(play_source=file_prompt)
 
-        play_failed_event = self.check_for_event('PlayFailed', call_connection._call_connection_id, timedelta(seconds=30))
+        play_failed_event = self.check_for_event(
+            "PlayFailed", call_connection._call_connection_id, timedelta(seconds=30)
+        )
         if play_failed_event is None:
             raise ValueError("PlayFailed event is None")
 
@@ -577,8 +645,12 @@ class TestMediaAutomatedLiveTestAsync(CallAutomationRecordedTestCaseAsync):
         target = await self.identity_client.create_user()
         unique_id, call_connection, _ = await self.establish_callconnection_voip(caller, target)
 
-        connected_event = self.check_for_event('CallConnected', call_connection._call_connection_id, timedelta(seconds=15))
-        participant_updated_event = self.check_for_event('ParticipantsUpdated', call_connection._call_connection_id, timedelta(seconds=15))
+        connected_event = self.check_for_event(
+            "CallConnected", call_connection._call_connection_id, timedelta(seconds=15)
+        )
+        participant_updated_event = self.check_for_event(
+            "ParticipantsUpdated", call_connection._call_connection_id, timedelta(seconds=15)
+        )
 
         if connected_event is None:
             raise ValueError("Caller CallConnected event is None")
@@ -587,11 +659,11 @@ class TestMediaAutomatedLiveTestAsync(CallAutomationRecordedTestCaseAsync):
 
         file_prompt = [FileSource(url=self.file_source_url), FileSource(url="https://dummy.com/dummyurl.wav")]
 
-        await call_connection.play_media_to_all(
-            play_source=file_prompt
-        )
+        await call_connection.play_media_to_all(play_source=file_prompt)
 
-        play_failed_event = self.check_for_event('PlayFailed', call_connection._call_connection_id, timedelta(seconds=30))
+        play_failed_event = self.check_for_event(
+            "PlayFailed", call_connection._call_connection_id, timedelta(seconds=30)
+        )
         if play_failed_event is None:
             raise ValueError("PlayFailed event is None")
 
@@ -604,8 +676,12 @@ class TestMediaAutomatedLiveTestAsync(CallAutomationRecordedTestCaseAsync):
         target = await self.identity_client.create_user()
         unique_id, call_connection, _ = await self.establish_callconnection_voip(caller, target)
 
-        connected_event = self.check_for_event('CallConnected', call_connection._call_connection_id, timedelta(seconds=15))
-        participant_updated_event = self.check_for_event('ParticipantsUpdated', call_connection._call_connection_id, timedelta(seconds=15))
+        connected_event = self.check_for_event(
+            "CallConnected", call_connection._call_connection_id, timedelta(seconds=15)
+        )
+        participant_updated_event = self.check_for_event(
+            "ParticipantsUpdated", call_connection._call_connection_id, timedelta(seconds=15)
+        )
 
         if connected_event is None:
             raise ValueError("Caller CallConnected event is None")
@@ -614,12 +690,11 @@ class TestMediaAutomatedLiveTestAsync(CallAutomationRecordedTestCaseAsync):
 
         file_prompt = [FileSource(url="https://dummy.com/dummyurl.wav")]
 
-        await call_connection._play_media(
-            play_source=file_prompt,
-            play_to=[target]
-        )
+        await call_connection._play_media(play_source=file_prompt, play_to=[target])
 
-        play_failed_event_to_target = self.check_for_event('PlayFailed', call_connection._call_connection_id, timedelta(seconds=30))
+        play_failed_event_to_target = self.check_for_event(
+            "PlayFailed", call_connection._call_connection_id, timedelta(seconds=30)
+        )
         if play_failed_event_to_target is None:
             raise ValueError("PlayFailed event is None")
 
@@ -632,8 +707,12 @@ class TestMediaAutomatedLiveTestAsync(CallAutomationRecordedTestCaseAsync):
         target = await self.identity_client.create_user()
         unique_id, call_connection, _ = await self.establish_callconnection_voip(caller, target)
 
-        connected_event = self.check_for_event('CallConnected', call_connection._call_connection_id, timedelta(seconds=15))
-        participant_updated_event = self.check_for_event('ParticipantsUpdated', call_connection._call_connection_id, timedelta(seconds=15))
+        connected_event = self.check_for_event(
+            "CallConnected", call_connection._call_connection_id, timedelta(seconds=15)
+        )
+        participant_updated_event = self.check_for_event(
+            "ParticipantsUpdated", call_connection._call_connection_id, timedelta(seconds=15)
+        )
 
         if connected_event is None:
             raise ValueError("Caller CallConnected event is None")
@@ -642,12 +721,11 @@ class TestMediaAutomatedLiveTestAsync(CallAutomationRecordedTestCaseAsync):
 
         file_prompt = [FileSource(url=self.file_source_url), FileSource(url="https://dummy.com/dummyurl.wav")]
 
-        await call_connection._play_media(
-            play_source=file_prompt,
-            play_to=[target]
-        )
+        await call_connection._play_media(play_source=file_prompt, play_to=[target])
 
-        play_failed_event_to_target = self.check_for_event('PlayFailed', call_connection._call_connection_id, timedelta(seconds=30))
+        play_failed_event_to_target = self.check_for_event(
+            "PlayFailed", call_connection._call_connection_id, timedelta(seconds=30)
+        )
         print(play_failed_event_to_target)
         if play_failed_event_to_target is None:
             raise ValueError("PlayFailed event is None")

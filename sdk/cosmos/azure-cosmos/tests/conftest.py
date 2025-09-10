@@ -21,6 +21,7 @@ def pytest_sessionstart(session):
     before performing collection and entering the run test loop.
     """
     config = test_config.TestConfig
+    config.get_account_info(cosmos_sync_client)
     config.create_database_if_not_exist(cosmos_sync_client)
     config.create_single_partition_container_if_not_exist(cosmos_sync_client)
     config.create_multi_partition_container_if_not_exist(cosmos_sync_client)

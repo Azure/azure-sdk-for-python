@@ -467,3 +467,24 @@ class ResourceType:
     Topology = "topology"
     DatabaseAccount = "databaseaccount"
     PartitionKey = "partitionkey"
+
+    @staticmethod
+    def IsCollectionChild(resourceType: str) -> bool:
+        return resourceType in (
+            ResourceType.Document,
+            ResourceType.Attachment,
+            ResourceType.Conflict,
+            ResourceType.Schema,
+            ResourceType.UserDefinedFunction,
+            ResourceType.Trigger,
+            ResourceType.StoredProcedure,
+            ResourceType.PartitionKey,
+        )
+
+# The list of headers we do not want to log, it needs to be updated if any new headers should not be logged
+_cosmos_disallow_list = ["Authorization", "ProxyAuthorization", "TransferEncoding"]
+_cosmos_allow_list = set(
+    v.lower()
+    for k, v in HttpHeaders.__dict__.items()
+    if not k.startswith("_") and k not in _cosmos_disallow_list
+)

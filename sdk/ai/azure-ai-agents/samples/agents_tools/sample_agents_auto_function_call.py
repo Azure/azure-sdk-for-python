@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -25,7 +26,13 @@ USAGE:
 import os, sys
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
-from azure.ai.agents.models import FunctionTool
+from azure.ai.agents.models import FunctionTool, ListSortOrder
+
+# Add package directory to sys.path to import user_functions
+current_dir = os.path.dirname(os.path.abspath(__file__))
+package_dir = os.path.abspath(os.path.join(current_dir, os.pardir, os.pardir))
+if package_dir not in sys.path:
+    sys.path.insert(0, package_dir)
 from samples.utils.user_functions import user_functions
 
 project_client = AIProjectClient(
@@ -96,7 +103,7 @@ with project_client:
     print("Deleted agent")
 
     # Fetch and log all messages
-    messages = agents_client.messages.list(thread_id=thread.id)
+    messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
     for msg in messages:
         if msg.text_messages:
             last_text = msg.text_messages[-1]
