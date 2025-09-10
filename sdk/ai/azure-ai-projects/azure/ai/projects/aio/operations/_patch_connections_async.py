@@ -42,10 +42,13 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
             connection = await super()._get_with_credentials(name, **kwargs)
             if connection.type == ConnectionType.CUSTOM:
                 if isinstance(connection.credentials, CustomCredential):
-                    # Why do we do this? See comment in the sync version of this code (file _patch_connections.py)
-                    connection.credentials.credential_keys = {
-                        k: v for k, v in connection.credentials.as_dict().items() if k != "type"
-                    }
+                    # Why do we do this? See comment in the sync version of this code (file _patch_connections.py).
+                    # Use setattr() to avoid Pylance reporting "attribute unknown" for CustomCredential.
+                    setattr(
+                        connection.credentials,
+                        "credential_keys",
+                        {k: v for k, v in connection.credentials.as_dict().items() if k != "type"},
+                    )
                 else:
                     raise TypeError("Connection credentials should have been of type CustomCredential.")
             return connection

@@ -44,7 +44,7 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
                     Fix for GitHub issue https://github.com/Azure/azure-sdk-for-net/issues/52355
                     Although the issue was filed on C# Projects SDK, the same problem exists in Python SDK.
                     Assume your Foundry project has a connection of type `Custom`, named "test_custom_connection",
-                    and you defined two public and two private keys. When you get the connection, the response
+                    and you defined two public and two secrete (private) keys. When you get the connection, the response
                     payload will look something like this:
                         {
                             "name": "test_custom_connection",
@@ -62,15 +62,16 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
                                 "NameOfPublicKey2": "PublicKey2"
                             }
                         }
-                    If you look at the `credentials` field above, you will see that it does not match the definition of the Python class
-                    `CustomCredential` defined in this package. In class `CustomCredential`, the `credential_keys` field is expected to
-                    be a dictionary containing all the custom private keys. Therefore private keys fail to be deserialized into
-                    `credential_keys` dictionary by the auto-generated code. To fix this, we manually copy all the fields in `credentials`,
-                    except `type`, into `credential_keys`.
+                    We would like to add a new Dict property on the Python `credentials` object, named `credential_keys`, 
+                    to hold all the secret keys. This is done by the line below.
+
+                    Use setattr() to avoid Pylance reporting "attribute unknown" for CustomCredential.
                     """
-                    connection.credentials.credential_keys = {
-                        k: v for k, v in connection.credentials.as_dict().items() if k != "type"
-                    }
+                    setattr(
+                        connection.credentials,
+                        "credential_keys",
+                        {k: v for k, v in connection.credentials.as_dict().items() if k != "type"},
+                    )
                 else:
                     raise TypeError("Connection credentials should have been of type CustomCredential.")
             return connection
