@@ -181,6 +181,273 @@ class TestQuickpulseManager(unittest.TestCase):
             qpm2._base_monitoring_data_point.role_name, part_a_fields.get(ContextTagKeys.AI_CLOUD_ROLE, "")
         )
 
+    def test_initialize_success(self):
+        """Test successful initialization."""
+        qpm = _QuickpulseManager(
+            connection_string="InstrumentationKey=test-key",
+            resource=Resource.create({"service.name": "test"})
+        )
+        
+        # Initially not initialized
+        self.assertFalse(qpm.is_initialized())
+        
+        # Initialize should succeed
+        result = qpm.initialize()
+        self.assertTrue(result)
+        self.assertTrue(qpm.is_initialized())
+        
+        # Should have created all necessary components
+        self.assertIsNotNone(qpm._exporter)
+        self.assertIsNotNone(qpm._reader)
+        self.assertIsNotNone(qpm._meter_provider)
+        self.assertIsNotNone(qpm._meter)
+        self.assertIsNotNone(qpm._base_monitoring_data_point)
+        
+        # Cleanup
+        qpm.shutdown()
+
+    def test_initialize_already_initialized(self):
+        """Test initialization when already initialized."""
+        qpm = _QuickpulseManager(
+            connection_string="InstrumentationKey=test-key"
+        )
+        
+        # First initialization
+        result1 = qpm.initialize()
+        self.assertTrue(result1)
+        self.assertTrue(qpm.is_initialized())
+        
+        # Second initialization should return True without reinitializing
+        result2 = qpm.initialize()
+        self.assertTrue(result2)
+        self.assertTrue(qpm.is_initialized())
+        
+        # Cleanup
+        qpm.shutdown()
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._exporter._QuickpulseExporter")
+    def test_initialize_failure(self, exporter_mock):
+        """Test initialization failure handling."""
+        exporter_mock.side_effect = Exception("Exporter creation failed")
+        
+        qpm = _QuickpulseManager(
+            connection_string="InstrumentationKey=test-key"
+        )
+        
+        # Initialize should fail
+        result = qpm.initialize()
+        self.assertFalse(result)
+        self.assertFalse(qpm.is_initialized())
+        
+        # Components should be cleaned up
+        self.assertIsNone(qpm._exporter)
+        self.assertIsNone(qpm._reader)
+        self.assertIsNone(qpm._meter_provider)
+        self.assertIsNone(qpm._meter)
+
+    def test_initialize_with_default_resource(self):
+        """Test initialization with default resource when none provided."""
+        qpm = _QuickpulseManager(
+            connection_string="InstrumentationKey=test-key"
+        )
+        
+        result = qpm.initialize()
+        self.assertTrue(result)
+        self.assertTrue(qpm.is_initialized())
+        self.assertIsNotNone(qpm._base_monitoring_data_point)
+        
+        # Cleanup
+        qpm.shutdown()
+
+    def test_shutdown_success(self):
+        """Test successful shutdown."""
+        qpm = _QuickpulseManager(
+            connection_string="InstrumentationKey=test-key"
+        )
+        
+        # Initialize first
+        qpm.initialize()
+        self.assertTrue(qpm.is_initialized())
+        
+        # Shutdown should succeed
+        result = qpm.shutdown()
+        self.assertTrue(result)
+        self.assertFalse(qpm.is_initialized())
+        
+        # Components should be cleaned up
+        self.assertIsNone(qpm._exporter)
+        self.assertIsNone(qpm._reader)
+        self.assertIsNone(qpm._meter_provider)
+        self.assertIsNone(qpm._meter)
+
+    def test_shutdown_not_initialized(self):
+        """Test shutdown when not initialized."""
+        qpm = _QuickpulseManager(
+            connection_string="InstrumentationKey=test-key"
+        )
+        
+        # Shutdown should return False when not initialized
+        result = qpm.shutdown()
+        self.assertFalse(result)
+        self.assertFalse(qpm.is_initialized())
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._logger")
+    def test_shutdown_meter_provider_exception(self, logger_mock):
+        """Test shutdown handling meter provider exception."""
+        qpm = _QuickpulseManager(
+            connection_string="InstrumentationKey=test-key"
+        )
+        
+        # Initialize first
+        qpm.initialize()
+        
+        # Mock meter provider to raise exception on shutdown
+        qpm._meter_provider.shutdown = mock.Mock(side_effect=Exception("Shutdown failed"))
+        
+        # Shutdown should handle exception and return False
+        result = qpm.shutdown()
+        self.assertFalse(result)
+        self.assertFalse(qpm.is_initialized())
+        
+        # Should log warning
+        logger_mock.warning.assert_called_once()
+
+    def test_get_current_config_with_all_params(self):
+        """Test get_current_config with all parameters."""
+        resource = Resource.create({"service.name": "test"})
+        credential = mock.Mock()
+        
+        qpm = _QuickpulseManager(
+            connection_string="InstrumentationKey=test-key",
+            credential=credential,
+            resource=resource
+        )
+        
+        config = qpm.get_current_config()
+        self.assertIsNotNone(config)
+        self.assertEqual(config["connection_string"], "InstrumentationKey=test-key")
+        self.assertEqual(config["credential"], credential)
+        self.assertEqual(config["resource"], resource)
+
+    def test_get_current_config_partial_params(self):
+        """Test get_current_config with partial parameters."""
+        qpm = _QuickpulseManager(
+            connection_string="InstrumentationKey=test-key"
+        )
+        
+        config = qpm.get_current_config()
+        self.assertIsNotNone(config)
+        self.assertEqual(config["connection_string"], "InstrumentationKey=test-key")
+        self.assertNotIn("credential", config)
+        self.assertNotIn("resource", config)
+
+    def test_get_current_config_no_params(self):
+        """Test get_current_config with no parameters."""
+        qpm = _QuickpulseManager()
+        
+        config = qpm.get_current_config()
+        self.assertIsNone(config)
+
+    def test_config_preserved_across_shutdown_restart(self):
+        """Test that configuration is preserved across shutdown/restart cycles."""
+        resource = Resource.create({"service.name": "test"})
+        qpm = _QuickpulseManager(
+            connection_string="InstrumentationKey=test-key",
+            resource=resource
+        )
+        
+        # Initialize
+        qpm.initialize()
+        self.assertTrue(qpm.is_initialized())
+        
+        # Get config while initialized
+        config1 = qpm.get_current_config()
+        
+        # Shutdown
+        qpm.shutdown()
+        self.assertFalse(qpm.is_initialized())
+        
+        # Config should still be available after shutdown
+        config2 = qpm.get_current_config()
+        self.assertEqual(config1, config2)
+        
+        # Should be able to reinitialize with preserved config
+        result = qpm.initialize()
+        self.assertTrue(result)
+        self.assertTrue(qpm.is_initialized())
+        
+        # Config should still be the same
+        config3 = qpm.get_current_config()
+        self.assertEqual(config1, config3)
+        
+        # Cleanup
+        qpm.shutdown()
+
+    @mock.patch("threading.Lock")
+    def test_thread_safety_initialize(self, lock_mock):
+        """Test thread safety of initialize method."""
+        lock_instance = mock.Mock()
+        lock_mock.return_value = lock_instance
+        
+        qpm = _QuickpulseManager(
+            connection_string="InstrumentationKey=test-key"
+        )
+        
+        qpm.initialize()
+        
+        # Verify lock was used
+        lock_instance.__enter__.assert_called()
+        lock_instance.__exit__.assert_called()
+
+    @mock.patch("threading.Lock")
+    def test_thread_safety_shutdown(self, lock_mock):
+        """Test thread safety of shutdown method."""
+        lock_instance = mock.Mock()
+        lock_mock.return_value = lock_instance
+        
+        qpm = _QuickpulseManager(
+            connection_string="InstrumentationKey=test-key"
+        )
+        
+        qpm.initialize()
+        qpm.shutdown()
+        
+        # Verify lock was used for both calls
+        self.assertEqual(lock_instance.__enter__.call_count, 2)
+        self.assertEqual(lock_instance.__exit__.call_count, 2)
+
+    @mock.patch("threading.Lock")
+    def test_thread_safety_is_initialized(self, lock_mock):
+        """Test thread safety of is_initialized method."""
+        lock_instance = mock.Mock()
+        lock_mock.return_value = lock_instance
+        
+        qpm = _QuickpulseManager(
+            connection_string="InstrumentationKey=test-key"
+        )
+        
+        qpm.is_initialized()
+        
+        # Verify lock was used
+        lock_instance.__enter__.assert_called()
+        lock_instance.__exit__.assert_called()
+
+    @mock.patch("threading.Lock")
+    def test_thread_safety_get_current_config(self, lock_mock):
+        """Test thread safety of get_current_config method."""
+        lock_instance = mock.Mock()
+        lock_mock.return_value = lock_instance
+        
+        qpm = _QuickpulseManager(
+            connection_string="InstrumentationKey=test-key"
+        )
+        
+        qpm.get_current_config()
+        
+        # Verify lock was used
+        lock_instance.__enter__.assert_called()
+        lock_instance.__exit__.assert_called()
+
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._apply_document_filters_from_telemetry_data")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._derive_metrics_from_telemetry_data")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._TelemetryData")

@@ -6,9 +6,10 @@ from typing import Any, Dict, List, Optional
 import logging
 import platform
 import psutil
+import threading
 
 from opentelemetry.sdk._logs import LogData
-from opentelemetry.sdk.metrics import MeterProvider
+from opentelemetry.sdk.metrics import MeterProvider, Meter
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import ReadableSpan
 from opentelemetry.sdk.trace.id_generator import RandomIdGenerator
@@ -70,9 +71,6 @@ from azure.monitor.opentelemetry.exporter._quickpulse._utils import (
     _get_log_record_document,
     _get_span_document,
 )
-from azure.monitor.opentelemetry.exporter.statsbeat._state import (
-    set_statsbeat_live_metrics_feature_set,
-)
 from azure.monitor.opentelemetry.exporter._utils import (
     _get_sdk_version,
     _is_on_app_service,
@@ -91,12 +89,33 @@ NUM_CPUS = psutil.cpu_count()
 class _QuickpulseManager(metaclass=Singleton):
 
     def __init__(self, **kwargs: Any) -> None:
-        _set_global_quickpulse_state(_QuickpulseState.PING_SHORT)
-        self._exporter = _QuickpulseExporter(**kwargs)
-        part_a_fields = {}
-        resource = kwargs.get("resource")
+        """Initialize the QuickpulseManager singleton.
+        
+        Expected keyword arguments:
+        :param connection_string: The connection string used for your Application Insights resource
+        :type connection_string: Optional[str]
+        :param credential: Token credential for Azure Active Directory authentication
+        :type credential: Optional[Any]
+        :param resource: The OpenTelemetry Resource used for this Python application.
+            This is the primary parameter used by the underlying _QuickpulseExporter.
+        :type resource: Optional[Resource]
+        """
+        # Initialize instance attributes. Called only once due to Singleton metaclass.
+        self._lock = threading.Lock()
+        self._initialized: bool = False
+        
+        # Extract and store configuration parameters from kwargs
+        self._connection_string: Optional[str] = kwargs.get("connection_string")
+        self._credential = kwargs.get("credential")
+        self._resource: Optional[Resource] = kwargs.get("resource")
+        
+        # Initialize most components during construction
+        # Use provided resource or create default
+        resource = self._resource
         if not resource:
             resource = Resource.create({})
+            
+        # Create base monitoring data point
         part_a_fields = _populate_part_a_fields(resource)
         id_generator = RandomIdGenerator()
         self._base_monitoring_data_point = MonitoringDataPoint(
@@ -110,13 +129,73 @@ class _QuickpulseManager(metaclass=Singleton):
             is_web_app=_is_on_app_service(),
             performance_collection_supported=True,
         )
-        self._reader = _QuickpulseMetricReader(self._exporter, self._base_monitoring_data_point)
-        self._meter_provider = MeterProvider(
-            metric_readers=[self._reader],
-            resource=resource,
-        )
-        self._meter = self._meter_provider.get_meter("azure_monitor_live_metrics")
+        
+        # Create meter provider and meter
+        self._meter_provider: Optional[MeterProvider] = MeterProvider(resource=resource)
+        self._meter: Optional[Meter] = self._meter_provider.get_meter("azure_monitor_live_metrics")
+        
+        # Only _reader and _exporter are created during initialize() since they depend on connection parameters
+        self._exporter: Optional[_QuickpulseExporter] = None
+        self._reader: Optional[_QuickpulseMetricReader] = None
+        
+        # Create metric instruments once during construction - these won't change
+        self._create_metric_instruments()
 
+    def initialize(self) -> bool:
+        """Initialize the QuickpulseManager using the configuration set during creation.
+        
+        Uses the configuration parameters (connection_string, credential, resource) that were
+        provided when the manager was created. Configuration is preserved across shutdown/startup
+        cycles, allowing efficient reinitialization without re-specifying parameters.
+        
+        :return: True if initialization was successful, False otherwise
+        :rtype: bool
+        """
+        with self._lock:
+            if self._initialized:
+                # Manager is already initialized, no need to reinitialize
+                _logger.debug("QuickpulseManager is already initialized.")
+                return True
+            
+            # Initialize using the configuration stored during creation
+            return self._do_initialize()
+
+    def _do_initialize(self) -> bool:
+        """Internal initialization method."""
+        try:
+            _set_global_quickpulse_state(_QuickpulseState.PING_SHORT)
+            
+            # Create exporter with explicit parameters
+            exporter_kwargs = {}
+            if self._connection_string:
+                exporter_kwargs["connection_string"] = self._connection_string
+            if self._credential:
+                exporter_kwargs["credential"] = self._credential
+                
+            self._exporter = _QuickpulseExporter(**exporter_kwargs)
+            self._reader = _QuickpulseMetricReader(self._exporter, self._base_monitoring_data_point)
+            self._meter_provider = MeterProvider(
+                metric_readers=[self._reader],
+                resource=resource,
+            )
+            self._meter = self._meter_provider.get_meter("azure_monitor_live_metrics")
+
+            # Only set initialized to True after everything succeeds
+            self._initialized = True
+            _logger.info("QuickpulseManager initialized successfully.")
+            return True
+
+        except Exception as e:  # pylint: disable=broad-except
+            _logger.warning("Failed to initialize QuickpulseManager: %s", e)
+            # Ensure cleanup happens and state is consistent
+            self._cleanup()
+            return False
+            
+    def _create_metric_instruments(self) -> None:
+        """Create all metric instruments. Called during construction."""
+        if not self._meter:
+            raise ValueError("Meter must be initialized before creating instruments")
+            
         self._request_duration = self._meter.create_histogram(
             _REQUEST_DURATION_NAME[0], "ms", "live metrics avg request duration in ms"
         )
@@ -158,70 +237,190 @@ class _QuickpulseManager(metaclass=Singleton):
             [_get_process_time_normalized],
         )
 
-    def _record_span(self, span: ReadableSpan) -> None:
-        # Only record if in post state
-        if _is_post_state():
-            try:
-                duration_ms = 0
-                if span.end_time and span.start_time:
-                    duration_ms = (span.end_time - span.start_time) / 1e9  # type: ignore
-                # TODO: Spec out what "success" is
-                success = span.status.is_ok
+    def shutdown(self) -> bool:
+        """Shutdown the QuickpulseManager.
+        
+        Note: The singleton instance and configuration are preserved after shutdown.
+        This allows for efficient reinitialization using the same configuration
+        without needing to pass parameters again.
+        
+        :return: True if shutdown was successful, False otherwise
+        :rtype: bool
+        """
+        with self._lock:
+            if not self._initialized:
+                return False
 
-                if span.kind in (SpanKind.SERVER, SpanKind.CONSUMER):
-                    if success:
-                        self._request_rate_counter.add(1)
-                    else:
-                        self._request_failed_rate_counter.add(1)
-                    self._request_duration.record(duration_ms)
+            # Shutdown but preserve singleton instance and configuration
+            # This allows reinitialization with the same config later
+            return self._do_shutdown()
+
+    def _do_shutdown(self) -> bool:
+        """Internal shutdown method."""
+        shutdown_success = False
+        try:
+            if self._meter_provider is not None:
+                # Store reference before cleanup to avoid race conditions
+                meter_provider = self._meter_provider
+                # Clean up resources first
+                self._cleanup()
+                # Now shutdown the meter provider outside the lock to avoid deadlock
+                meter_provider.shutdown()
+                shutdown_success = True
+        except Exception as e:  # pylint: disable=broad-except
+            _logger.warning("Error during QuickpulseManager shutdown: %s", e)
+            # Ensure cleanup happens even if shutdown fails
+            self._cleanup()
+        
+        if shutdown_success:
+            _set_global_quickpulse_state(_QuickpulseState.OFFLINE)
+            _logger.info("QuickpulseManager shutdown successfully.")
+
+        return shutdown_success
+
+    def _cleanup(self) -> None:
+        """Clean up resources.
+        
+        Note: Configuration parameters (_connection_string, _credential, _resource),
+        base monitoring data point, and metric instruments are intentionally preserved 
+        to allow efficient reinitialization.
+        """
+        self._exporter = None
+        self._reader = None
+        # Note: _meter_provider and _meter are recreated during initialization
+        # but we don't set them to None here to preserve the metric instruments
+        
+        self._initialized = False
+        
+        # Configuration parameters (_connection_string, _credential, _resource) are preserved
+        # This allows reinitialization without re-passing the same parameters
+
+    def is_initialized(self) -> bool:
+        """Check if the manager is initialized.
+        
+        :return: True if initialized, False otherwise
+        :rtype: bool
+        """
+        with self._lock:
+            return self._initialized
+
+    def get_current_config(self) -> Optional[Dict[str, Any]]:
+        """Get the current configuration.
+        
+        Returns the stored configuration parameters regardless of initialization state.
+        This configuration is preserved across shutdown/startup cycles, allowing
+        for efficient reinitialization without re-specifying parameters.
+        
+        :return: Current configuration parameters, None if no configuration has been set
+        :rtype: Optional[Dict[str, Any]]
+        """
+        with self._lock:
+            # Return config even if not initialized - config is preserved across shutdown/startup
+            if self._connection_string or self._credential or self._resource:
+                config = {}
+                if self._connection_string:
+                    config["connection_string"] = self._connection_string
+                if self._credential:
+                    config["credential"] = self._credential
+                if self._resource:
+                    config["resource"] = self._resource
+                return config
+            return None
+
+    def _record_span(self, span: ReadableSpan) -> None:
+        # Only record if in post state and manager is initialized
+        if not (_is_post_state() and self.is_initialized()):
+            return
+
+        # Validate required resources are available
+        if not self._validate_recording_resources():
+            _logger.warning("QuickpulseManager: Cannot record span, resources not properly initialized")
+            return
+
+        try:
+            duration_ms = 0
+            if span.end_time and span.start_time:
+                duration_ms = (span.end_time - span.start_time) / 1e9  # type: ignore
+            # TODO: Spec out what "success" is
+            success = span.status.is_ok
+
+            if span.kind in (SpanKind.SERVER, SpanKind.CONSUMER):
+                if success:
+                    self._request_rate_counter.add(1)  # type: ignore
                 else:
-                    if success:
-                        self._dependency_rate_counter.add(1)
-                    else:
-                        self._dependency_failure_rate_counter.add(1)
-                    self._dependency_duration.record(duration_ms)
+                    self._request_failed_rate_counter.add(1)  # type: ignore
+                self._request_duration.record(duration_ms)  # type: ignore
+            else:
+                if success:
+                    self._dependency_rate_counter.add(1)  # type: ignore
+                else:
+                    self._dependency_failure_rate_counter.add(1)  # type: ignore
+                self._dependency_duration.record(duration_ms)  # type: ignore
+
+            # Derive metrics for quickpulse filtering
+            data = _TelemetryData._from_span(span)
+            _derive_metrics_from_telemetry_data(data)
+
+            # Process docs for quickpulse filtering
+            _apply_document_filters_from_telemetry_data(data)
+
+            # Derive exception metrics from span events
+            if span.events:
+                for event in span.events:
+                    if event.name == "exception":
+                        self._exception_rate_counter.add(1)  # type: ignore
+                        # Derive metrics for quickpulse filtering for exception
+                        exc_data = _ExceptionData._from_span_event(event)
+                        _derive_metrics_from_telemetry_data(exc_data)
+                        # Process docs for quickpulse filtering for exception
+                        _apply_document_filters_from_telemetry_data(exc_data)
+        except Exception as e:  # pylint: disable=broad-except
+            _logger.exception("Exception occurred while recording span: %s", e)  # pylint: disable=C4769
+
+    def _record_log_record(self, log_data: LogData) -> None:
+        # Only record if in post state and manager is initialized
+        if not (_is_post_state() and self.is_initialized()):
+            return
+
+        # Validate required resources are available
+        if not self._validate_recording_resources():
+            _logger.warning("QuickpulseManager: Cannot record log, resources not properly initialized")
+            return
+
+        try:
+            if log_data.log_record:
+                exc_type = None
+                log_record = log_data.log_record
+                if log_record.attributes:
+                    exc_type = log_record.attributes.get(SpanAttributes.EXCEPTION_TYPE)
+                    exc_message = log_record.attributes.get(SpanAttributes.EXCEPTION_MESSAGE)
+                    if exc_type is not None or exc_message is not None:
+                        self._exception_rate_counter.add(1)  # type: ignore
 
                 # Derive metrics for quickpulse filtering
-                data = _TelemetryData._from_span(span)
+                data = _TelemetryData._from_log_record(log_record)
                 _derive_metrics_from_telemetry_data(data)
 
                 # Process docs for quickpulse filtering
-                _apply_document_filters_from_telemetry_data(data)
+                _apply_document_filters_from_telemetry_data(data, exc_type)  # type: ignore
+        except Exception as e:  # pylint: disable=broad-except
+            _logger.exception("Exception occurred while recording log record: %s", e)  # pylint: disable=C4769
 
-                # Derive exception metrics from span events
-                if span.events:
-                    for event in span.events:
-                        if event.name == "exception":
-                            self._exception_rate_counter.add(1)
-                            # Derive metrics for quickpulse filtering for exception
-                            exc_data = _ExceptionData._from_span_event(event)
-                            _derive_metrics_from_telemetry_data(exc_data)
-                            # Process docs for quickpulse filtering for exception
-                            _apply_document_filters_from_telemetry_data(exc_data)
-            except Exception:  # pylint: disable=broad-except
-                _logger.exception("Exception occurred while recording span.")  # pylint: disable=C4769
-
-    def _record_log_record(self, log_data: LogData) -> None:
-        # Only record if in post state
-        if _is_post_state():
-            try:
-                if log_data.log_record:
-                    exc_type = None
-                    log_record = log_data.log_record
-                    if log_record.attributes:
-                        exc_type = log_record.attributes.get(SpanAttributes.EXCEPTION_TYPE)
-                        exc_message = log_record.attributes.get(SpanAttributes.EXCEPTION_MESSAGE)
-                        if exc_type is not None or exc_message is not None:
-                            self._exception_rate_counter.add(1)
-
-                    # Derive metrics for quickpulse filtering
-                    data = _TelemetryData._from_log_record(log_record)
-                    _derive_metrics_from_telemetry_data(data)
-
-                    # Process docs for quickpulse filtering
-                    _apply_document_filters_from_telemetry_data(data, exc_type)  # type: ignore
-            except Exception:  # pylint: disable=broad-except
-                _logger.exception("Exception occurred while recording log record.")  # pylint: disable=C4769
+    def _validate_recording_resources(self) -> bool:
+        """Validate that all required resources for recording are available.
+        
+        :return: True if all required resources are available, False otherwise
+        :rtype: bool
+        """
+        return all([
+            self._request_rate_counter is not None,
+            self._request_failed_rate_counter is not None,
+            self._request_duration is not None,
+            self._dependency_rate_counter is not None,
+            self._dependency_failure_rate_counter is not None,
+            self._dependency_duration is not None,
+            self._exception_rate_counter is not None,
+        ])
 
 
 # Filtering
