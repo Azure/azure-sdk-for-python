@@ -1,5 +1,80 @@
 # Release History
 
+## 1.2.0b3 (2025-09-10)
+
+### Features Added
+
+  - Model `GroupIdInformation` added property `system_data`
+  - Model `IotDpsPropertiesDescription` added property `device_registry_namespace`
+  - Model `Resource` added property `system_data`
+  - Added enum `DeviceRegistryNamespaceAuthenticationType`
+  - Added model `DeviceRegistryNamespaceDescription`
+  - Added model `ErrorAdditionalInfo`
+  - Added model `ErrorDetail`
+  - Added model `ErrorResponse`
+  - Added model `ProxyResource`
+  - Added model `TrackedResource`
+  - Model `DpsCertificateOperations` added parameter `etag` in method `create_or_update`
+  - Model `DpsCertificateOperations` added parameter `match_condition` in method `create_or_update`
+  - Model `DpsCertificateOperations` added parameter `etag` in method `delete`
+  - Model `DpsCertificateOperations` added parameter `match_condition` in method `delete`
+  - Model `DpsCertificateOperations` added parameter `etag` in method `generate_verification_code`
+  - Model `DpsCertificateOperations` added parameter `match_condition` in method `generate_verification_code`
+  - Model `DpsCertificateOperations` added parameter `etag` in method `get`
+  - Model `DpsCertificateOperations` added parameter `match_condition` in method `get`
+  - Model `DpsCertificateOperations` added parameter `etag` in method `verify_certificate`
+  - Model `DpsCertificateOperations` added parameter `match_condition` in method `verify_certificate`
+
+### Breaking Changes
+
+  - Deleted or renamed client `IotDpsClient`
+  - Method `DpsCertificateOperations.list` changed from `asynchronous` to `synchronous`
+  - Method `IotDpsResourceOperations.list_private_link_resources` changed from `asynchronous` to `synchronous`
+  - Model `Resource` deleted or renamed its instance variable `location`
+  - Model `Resource` deleted or renamed its instance variable `resourcegroup`
+  - Model `Resource` deleted or renamed its instance variable `subscriptionid`
+  - Model `Resource` deleted or renamed its instance variable `tags`
+  - Deleted or renamed model `CertificateBodyDescription`
+  - Deleted or renamed model `CertificateListDescription`
+  - Deleted or renamed model `PrivateLinkResources`
+  - Method `DpsCertificateOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `DpsCertificateOperations.delete` changed its parameter `certificate_name1` from `positional_or_keyword` to `keyword_only`
+  - Method `DpsCertificateOperations.delete` changed its parameter `certificate_raw_bytes` from `positional_or_keyword` to `keyword_only`
+  - Method `DpsCertificateOperations.delete` changed its parameter `certificate_is_verified` from `positional_or_keyword` to `keyword_only`
+  - Method `DpsCertificateOperations.delete` changed its parameter `certificate_purpose` from `positional_or_keyword` to `keyword_only`
+  - Method `DpsCertificateOperations.delete` changed its parameter `certificate_created` from `positional_or_keyword` to `keyword_only`
+  - Method `DpsCertificateOperations.delete` changed its parameter `certificate_last_updated` from `positional_or_keyword` to `keyword_only`
+  - Method `DpsCertificateOperations.delete` changed its parameter `certificate_has_private_key` from `positional_or_keyword` to `keyword_only`
+  - Method `DpsCertificateOperations.delete` changed its parameter `certificate_nonce` from `positional_or_keyword` to `keyword_only`
+  - Method `DpsCertificateOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `DpsCertificateOperations.generate_verification_code` changed its parameter `certificate_name1` from `positional_or_keyword` to `keyword_only`
+  - Method `DpsCertificateOperations.generate_verification_code` changed its parameter `certificate_raw_bytes` from `positional_or_keyword` to `keyword_only`
+  - Method `DpsCertificateOperations.generate_verification_code` changed its parameter `certificate_is_verified` from `positional_or_keyword` to `keyword_only`
+  - Method `DpsCertificateOperations.generate_verification_code` changed its parameter `certificate_purpose` from `positional_or_keyword` to `keyword_only`
+  - Method `DpsCertificateOperations.generate_verification_code` changed its parameter `certificate_created` from `positional_or_keyword` to `keyword_only`
+  - Method `DpsCertificateOperations.generate_verification_code` changed its parameter `certificate_last_updated` from `positional_or_keyword` to `keyword_only`
+  - Method `DpsCertificateOperations.generate_verification_code` changed its parameter `certificate_has_private_key` from `positional_or_keyword` to `keyword_only`
+  - Method `DpsCertificateOperations.generate_verification_code` changed its parameter `certificate_nonce` from `positional_or_keyword` to `keyword_only`
+  - Method `DpsCertificateOperations.generate_verification_code` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `DpsCertificateOperations.get` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `DpsCertificateOperations.verify_certificate` changed its parameter `certificate_name1` from `positional_or_keyword` to `keyword_only`
+  - Method `DpsCertificateOperations.verify_certificate` changed its parameter `certificate_raw_bytes` from `positional_or_keyword` to `keyword_only`
+  - Method `DpsCertificateOperations.verify_certificate` changed its parameter `certificate_is_verified` from `positional_or_keyword` to `keyword_only`
+  - Method `DpsCertificateOperations.verify_certificate` changed its parameter `certificate_purpose` from `positional_or_keyword` to `keyword_only`
+  - Method `DpsCertificateOperations.verify_certificate` changed its parameter `certificate_created` from `positional_or_keyword` to `keyword_only`
+  - Method `DpsCertificateOperations.verify_certificate` changed its parameter `certificate_last_updated` from `positional_or_keyword` to `keyword_only`
+  - Method `DpsCertificateOperations.verify_certificate` changed its parameter `certificate_has_private_key` from `positional_or_keyword` to `keyword_only`
+  - Method `DpsCertificateOperations.verify_certificate` changed its parameter `certificate_nonce` from `positional_or_keyword` to `keyword_only`
+  - Method `DpsCertificateOperations.verify_certificate` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `IotDpsResourceOperations.get_operation_result` removed default value `None` from its parameter `asyncinfo`
+  - Method `IotDpsResourceOperations.get_operation_result` changed its parameter `asyncinfo` from `positional_or_keyword` to `keyword_only`
+  - Method `IotDpsResourceOperations.list_keys` re-ordered its parameters from `['self', 'provisioning_service_name', 'resource_group_name', 'kwargs']` to `['self', 'resource_group_name', 'provisioning_service_name', 'kwargs']`
+  - Method `IotDpsResourceOperations.get` re-ordered its parameters from `['self', 'provisioning_service_name', 'resource_group_name', 'kwargs']` to `['self', 'resource_group_name', 'provisioning_service_name', 'kwargs']`
+  - Method `IotDpsResourceOperations.begin_delete` re-ordered its parameters from `['self', 'provisioning_service_name', 'resource_group_name', 'kwargs']` to `['self', 'resource_group_name', 'provisioning_service_name', 'kwargs']`
+  - Method `IotDpsResourceOperations.get_operation_result` re-ordered its parameters from `['self', 'operation_id', 'resource_group_name', 'provisioning_service_name', 'asyncinfo', 'kwargs']` to `['self', 'resource_group_name', 'provisioning_service_name', 'operation_id', 'asyncinfo', 'kwargs']`
+  - Method `IotDpsResourceOperations.list_valid_skus` re-ordered its parameters from `['self', 'provisioning_service_name', 'resource_group_name', 'kwargs']` to `['self', 'resource_group_name', 'provisioning_service_name', 'kwargs']`
+  - Method `IotDpsResourceOperations.list_keys_for_key_name` re-ordered its parameters from `['self', 'provisioning_service_name', 'key_name', 'resource_group_name', 'kwargs']` to `['self', 'resource_group_name', 'provisioning_service_name', 'key_name', 'kwargs']`
+
 ## 1.2.0b2 (2023-06-16)
 
 ### Features Added
