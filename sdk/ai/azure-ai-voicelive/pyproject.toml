@@ -24,7 +24,7 @@ keywords = ["azure", "azure sdk", "voice", "voicelive", "realtime", "websocket",
 dependencies = [
   "isodate>=0.6.1",
   "azure-core>=1.35.0",
-  "typing-extensions>=4.6.0; python_version < '3.11'",
+  "typing-extensions>=4.6.0,
 ]
 
 dynamic = ["version", "readme"]
