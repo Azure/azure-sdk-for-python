@@ -322,7 +322,7 @@ def validate_load_arguments(*args, **kwargs) -> dict:
 
     if (endpoint or credential) and connection_string:
         raise ValueError("Please pass either endpoint and credential, or a connection string.")
-    
+
     return kwargs
 
 

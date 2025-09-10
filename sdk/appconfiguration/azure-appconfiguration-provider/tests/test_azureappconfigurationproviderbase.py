@@ -492,17 +492,27 @@ class TestRefreshTimer(unittest.TestCase):
         """Test that backoff calculation progresses correctly."""
         timer = _RefreshTimer(refresh_interval=60, min_backoff=1, max_backoff=60)
 
-        # Test multiple backoff calculations
+        # Test multiple backoff calculations to verify exponential progression
+        # Since backoff includes randomization, we test the range of possible values
+        min_backoff_ms = 1000  # min_backoff in milliseconds
+        max_backoff_ms = 60000  # max_backoff in milliseconds
+
+        # For attempts=1, calculated value should be min_backoff * 2^1 = 2000ms
+        # Random component can range from min_backoff (1000) to calculated (2000)
         backoff1 = timer._calculate_backoff()
+        self.assertGreaterEqual(backoff1, min_backoff_ms)
+        self.assertLessEqual(backoff1, 2000)  # min_backoff * 2^1
+
         timer._attempts += 1
+        # For attempts=2, calculated value should be min_backoff * 2^2 = 4000ms
+        # Random component can range from min_backoff (1000) to calculated (4000)
         backoff2 = timer._calculate_backoff()
+        self.assertGreaterEqual(backoff2, min_backoff_ms)
+        self.assertLessEqual(backoff2, 4000)  # min_backoff * 2^2
 
-        # Second backoff should generally be larger (exponential)
-        self.assertGreaterEqual(backoff2, backoff1)
-
-        # Both should be within min/max bounds
-        self.assertGreaterEqual(backoff1, 1000)  # min_backoff in milliseconds
-        self.assertLessEqual(backoff1, 60000)  # max_backoff in milliseconds
+        # Both should be within overall min/max bounds
+        self.assertLessEqual(backoff1, max_backoff_ms)
+        self.assertLessEqual(backoff2, max_backoff_ms)
 
 
 class TestAzureAppConfigurationProviderBase(unittest.TestCase):
