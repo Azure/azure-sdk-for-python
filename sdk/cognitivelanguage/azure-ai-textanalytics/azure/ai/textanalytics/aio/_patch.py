@@ -27,6 +27,7 @@ from ._client import TextAnalysisClient as AnalysisTextClientGenerated
 from .. import models as _models
 from ..models import AnalyzeTextOperationState, TextActions
 from .._utils.serialization import Serializer
+from .._patch import _parse_operation_id
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -39,24 +40,6 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
-
-
-def _parse_operation_id(op_loc: Optional[str]) -> Optional[str]:
-    """Extract the operation ID from an Operation-Location URL.
-
-    :param op_loc: The ``Operation-Location`` header value or URL to parse.
-        If ``None`` or malformed, no ID can be extracted.
-    :type op_loc: Optional[str]
-    :return: The trailing path segment as the operation ID, or ``None`` if not found.
-    :rtype: Optional[str]
-    """
-    if not op_loc:
-        return None
-    path = urlparse(op_loc).path.rstrip("/")
-    if "/" not in path:
-        return None
-    return path.rsplit("/", 1)[-1]
-
 
 class AnalyzeTextAsyncLROPoller(AsyncLROPoller[PollingReturnType_co], Generic[PollingReturnType_co]):
     """Custom **async** poller that returns ``PollingReturnType_co`` and exposes operation metadata."""
