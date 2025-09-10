@@ -64,7 +64,7 @@ pip install azure-ai-textanalytics
 ```python
 import os
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.language.text import TextAnalysisClient
+from azure.ai.textanalytics import TextAnalysisClient
 
 endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
 key = os.environ["AZURE_TEXT_KEY"]
@@ -120,7 +120,7 @@ to authenticate the client:
 ```python
 import os
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.language.text import TextAnalysisClient
+from azure.ai.textanalytics import TextAnalysisClient
 
 endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
 key = os.environ["AZURE_TEXT_KEY"]
@@ -157,7 +157,7 @@ Use the returned token credential to authenticate the client:
 
 ```python
 import os
-from azure.ai.language.text import TextAnalysisClient
+from azure.ai.textanalytics import TextAnalysisClient
 from azure.identity import DefaultAzureCredential
 
 endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
@@ -277,8 +277,8 @@ The following section provides several code snippets covering some of the most c
 import os
 
 from azure.identity import DefaultAzureCredential
-from azure.ai.language.text import TextAnalysisClient
-from azure.ai.language.text.models import (
+from azure.ai.textanalytics import TextAnalysisClient
+from azure.ai.textanalytics.models import (
     MultiLanguageTextInput,
     MultiLanguageInput,
     TextSentimentAnalysisInput,
@@ -355,8 +355,8 @@ Please refer to the service documentation for a conceptual discussion of [sentim
 import os
 
 from azure.identity import DefaultAzureCredential
-from azure.ai.language.text import TextAnalysisClient
-from azure.ai.language.text.models import (
+from azure.ai.textanalytics import TextAnalysisClient
+from azure.ai.textanalytics.models import (
     MultiLanguageTextInput,
     MultiLanguageInput,
     TextEntityRecognitionInput,
@@ -429,8 +429,8 @@ Roman god of war). Recognized entities are associated with URLs to a well-known 
 import os
 
 from azure.identity import DefaultAzureCredential
-from azure.ai.language.text import TextAnalysisClient
-from azure.ai.language.text.models import (
+from azure.ai.textanalytics import TextAnalysisClient
+from azure.ai.textanalytics.models import (
     MultiLanguageTextInput,
     MultiLanguageInput,
     TextEntityLinkingInput,
@@ -510,8 +510,8 @@ Social Security Numbers, bank account information, credit card numbers, and more
 import os
 
 from azure.identity import DefaultAzureCredential
-from azure.ai.language.text import TextAnalysisClient
-from azure.ai.language.text.models import (
+from azure.ai.textanalytics import TextAnalysisClient
+from azure.ai.textanalytics.models import (
     MultiLanguageTextInput,
     MultiLanguageInput,
     TextPiiEntitiesRecognitionInput,
@@ -581,8 +581,8 @@ Note: The Recognize PII Entities service is available in API version v3.1 and ne
 import os
 
 from azure.identity import DefaultAzureCredential
-from azure.ai.language.text import TextAnalysisClient
-from azure.ai.language.text.models import (
+from azure.ai.textanalytics import TextAnalysisClient
+from azure.ai.textanalytics.models import (
     MultiLanguageTextInput,
     MultiLanguageInput,
     TextKeyPhraseExtractionInput,
@@ -655,8 +655,8 @@ Please refer to the service documentation for a conceptual discussion of [key ph
 import os
 
 from azure.identity import DefaultAzureCredential
-from azure.ai.language.text import TextAnalysisClient
-from azure.ai.language.text.models import (
+from azure.ai.textanalytics import TextAnalysisClient
+from azure.ai.textanalytics.models import (
     TextLanguageDetectionInput,
     LanguageDetectionTextInput,
     LanguageInput,
@@ -722,8 +722,8 @@ and [language and regional support][language_and_regional_support].
 import os
 
 from azure.identity import DefaultAzureCredential
-from azure.ai.language.text import TextAnalysisClient
-from azure.ai.language.text.models import (
+from azure.ai.textanalytics import TextAnalysisClient
+from azure.ai.textanalytics.models import (
     MultiLanguageTextInput,
     MultiLanguageInput,
     AnalyzeTextOperationAction,
@@ -856,8 +856,8 @@ import os
 
 from azure.identity import DefaultAzureCredential
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.language.text import TextAnalysisClient
-from azure.ai.language.text.models import (
+from azure.ai.textanalytics import TextAnalysisClient
+from azure.ai.textanalytics.models import (
     MultiLanguageTextInput,
     MultiLanguageInput,
     EntitiesLROTask,
@@ -922,10 +922,10 @@ def sample_analyze():
         # --- Entities ---
         if isinstance(action_result, EntityRecognitionOperationResult):
             print("=== Entity Recognition Results ===")
-            for doc in action_result.results.documents:
-                print(f'Result for document with Id = "{doc.id}":')
-                print(f"  Recognized {len(doc.entities)} entities:")
-                for entity in doc.entities:
+            for ent_doc in action_result.results.documents:
+                print(f'Result for document with Id = "{ent_doc.id}":')
+                print(f"  Recognized {len(ent_doc.entities)} entities:")
+                for entity in ent_doc.entities:
                     print(f"    Text: {entity.text}")
                     print(f"    Offset: {entity.offset}")
                     print(f"    Length: {entity.length}")
@@ -949,9 +949,9 @@ def sample_analyze():
         # --- Key Phrases ---
         elif isinstance(action_result, KeyPhraseExtractionOperationResult):
             print("=== Key Phrase Extraction Results ===")
-            for doc in action_result.results.documents:
-                print(f'Result for document with Id = "{doc.id}":')
-                for kp in doc.key_phrases:
+            for kp_doc in action_result.results.documents:
+                print(f'Result for document with Id = "{kp_doc.id}":')
+                for kp in kp_doc.key_phrases:
                     print(f"    {kp}")
                 print()
             for err in action_result.results.errors:
