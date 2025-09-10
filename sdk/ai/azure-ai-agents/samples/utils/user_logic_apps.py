@@ -1,5 +1,10 @@
+# pylint: disable=line-too-long,useless-suppression
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
 import json
-import requests
+import requests  # type: ignore
 from typing import Dict, Any, Callable
 
 from azure.identity import DefaultAzureCredential

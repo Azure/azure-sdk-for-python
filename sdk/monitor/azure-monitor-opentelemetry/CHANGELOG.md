@@ -1,16 +1,20 @@
 # Release History
 
-## 1.7.1 (Unreleased)
+## 1.8.1 (Unreleased)
 
 ### Features Added
-- Added configuration changes for RateLimited Sampler
-  ([#41976](https://github.com/Azure/azure-sdk-for-python/pull/41976))
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.8.0 (2025-09-08)
+
+### Features Added
+- Added configuration changes for RateLimited Sampler
+  ([#41976](https://github.com/Azure/azure-sdk-for-python/pull/41976))
 
 ## 1.7.0 (2025-08-21)
 

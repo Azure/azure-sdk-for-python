@@ -8,16 +8,18 @@
 
 ### Features Added
 
+- Added Computer Use Preview tool for use with the computer-use-preview model
 - Added static `merge_resources` method to `McpTool` with accompanying sample.
 
 ### Bugs Fixed
 
 - Fix issue with tracing an Agent message, when the message has "in progress" status (related to [GitHub Issue 42645](https://github.com/Azure/azure-sdk-for-python/issues/42645)).
-- Fix issue with tracing `RunStepOpenAPIToolCall` ([GitHub issue 42645](https://github.com/Azure/azure-sdk-for-python/issues/42645)).
+- Fix issue with tracing `RunStepOpenAPIToolCall` (GitHub issues [42645](https://github.com/Azure/azure-sdk-for-python/issues/42645) and [42864](https://github.com/Azure/azure-sdk-for-python/issues/42864)).
 - Fix issue when `.threads.create(messages=[ThreadMessageOptions(...])` is called on the `AgentsClient`, when tracing is enabled ([GitHub issue 42805](https://github.com/Azure/azure-sdk-for-python/issues/42805))
 
 ### Sample updates
 
+- Added Computer Use Preview tool sample demonstrating use with the computer-use-preview model
 - Added sample demonstrating multiple McpTool instance usage.
 
 ## 1.2.0b3 (2025-08-22)

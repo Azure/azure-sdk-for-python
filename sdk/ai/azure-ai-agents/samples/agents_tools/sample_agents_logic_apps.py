@@ -41,7 +41,7 @@ import sys
 from typing import Set
 
 from azure.ai.projects import AIProjectClient
-from azure.ai.agents.models import ToolSet, FunctionTool
+from azure.ai.agents.models import ListSortOrder, ToolSet, FunctionTool
 from azure.identity import DefaultAzureCredential
 
 # Add package directory to sys.path to import user_functions
@@ -126,7 +126,7 @@ with project_client:
     print("Deleted agent")
 
     # Fetch and log all messages
-    messages = agents_client.messages.list(thread_id=thread.id)
+    messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
     for msg in messages:
         if msg.text_messages:
             last_text = msg.text_messages[-1]
