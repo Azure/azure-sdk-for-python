@@ -8,17 +8,16 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+import sys
 import json
 import logging
 from contextlib import AbstractContextManager
 from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
 
-try:
-    # Preferred: works on all supported runtimes
-    from typing_extensions import NotRequired
-except ImportError:  # very rare (if typing_extensions is missing entirely)
-    # Python 3.11+ has these in typing
-    from typing import NotRequired  # type: ignore[attr-defined]
+if sys.version_info >= (3, 11):
+    from typing import NotRequired, TypedDict  # noqa: F401
+else:
+    from typing_extensions import NotRequired, TypedDict  # noqa: F401
 
 from typing import TYPE_CHECKING, Optional, Mapping, Sequence, Tuple, Union, Iterator, Any, Dict, List, cast
 from typing_extensions import TypedDict
