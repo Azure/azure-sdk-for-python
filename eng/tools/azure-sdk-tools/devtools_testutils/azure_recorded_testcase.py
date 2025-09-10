@@ -6,12 +6,8 @@
 import functools
 import logging
 import os
-import os.path
-import re
-import six
 import sys
 import time
-from typing import Dict
 
 from dotenv import load_dotenv, find_dotenv
 
@@ -24,7 +20,6 @@ from .azure_testcase import (
 from .fake_credentials import SANITIZED
 from .fake_credentials_async import AsyncFakeCredential
 from .helpers import is_live, trim_kwargs_from_test_function
-from .sanitizers import add_general_string_sanitizer
 
 
 _LOGGER = logging.getLogger()
@@ -77,7 +72,7 @@ class AzureRecordedTestCase(object):
             try:
                 key_value = getattr(self.settings, key)
             except Exception as ex:
-                six.raise_from(ValueError("Could not get {}".format(key)), ex)
+                raise ValueError(f"Could not get {key}") from ex
         return key_value
 
     def get_credential(self, client_class, **kwargs):

@@ -86,10 +86,36 @@ class TestSession(unittest.TestCase):
         assert self.created_db.client_connection.last_response_headers.get(HttpHeaders.SessionToken) is not None
         assert self.created_db.client_connection.last_response_headers.get(HttpHeaders.SessionToken) != batch_response_token
 
+    def test_session_token_with_space_in_container_name(self):
+
+        # Session token should not be sent for control plane operations
+        test_container = self.created_db.create_container(
+            "Container with space" + str(uuid.uuid4()),
+            PartitionKey(path="/pk"),
+            raw_response_hook=test_config.no_token_response_hook
+        )
+        try:
+            # Session token should be sent for document read/batch requests only - verify it is not sent for write requests
+            created_document = test_container.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},
+                                                                   raw_response_hook=test_config.no_token_response_hook)
+            response_session_token = created_document.get_response_headers().get(HttpHeaders.SessionToken)
+            read_item = test_container.read_item(item=created_document['id'], partition_key='mypk',
+                                                          raw_response_hook=test_config.token_response_hook)
+            query_iterable = test_container.query_items(
+                "SELECT * FROM c WHERE c.id = '" + str(created_document['id']) + "'",
+                partition_key='mypk',
+                raw_response_hook=test_config.token_response_hook)
+            for _ in query_iterable:
+                pass
+
+            assert (read_item.get_response_headers().get(HttpHeaders.SessionToken) ==
+                    response_session_token)
+        finally:
+            self.created_db.delete_container(test_container)
+
     def test_session_token_mwr_for_ops(self):
         # For multiple write regions, all document requests should send out session tokens
         # We will use fault injection to simulate the regions the emulator needs
-        first_region_uri: str = test_config.TestConfig.local_host.replace("localhost", "127.0.0.1")
         custom_transport = FaultInjectionTransport()
 
         # Inject topology transformation that would make Emulator look like a multiple write region account

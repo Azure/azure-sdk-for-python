@@ -71,7 +71,7 @@ setup(
         "azure-core>=1.30.0",
         "typing-extensions>=4.12.2",
         "azure-storage-blob>=12.15.0",
-        "azure-ai-agents>=1.2.0b1",
+        "azure-ai-agents>=1.2.0b3",
     ],
     python_requires=">=3.9",
 )
