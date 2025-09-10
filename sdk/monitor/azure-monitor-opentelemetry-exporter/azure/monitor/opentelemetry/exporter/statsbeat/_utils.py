@@ -4,16 +4,18 @@ import os
 import logging
 import json
 from collections.abc import Iterable
-from typing import Optional, List, Tuple, Dict
+from typing import Optional, List, Tuple, Union, Dict
 # mypy: disable-error-code="import-untyped"
 from requests import ReadTimeout, Timeout
 from azure.core.exceptions import ServiceRequestTimeoutError
 from azure.monitor.opentelemetry.exporter._constants import (
+    _REQUEST,
     RetryCode,
     RetryCodeType,
     DropCodeType,
     DropCode,
     _UNKNOWN,
+    _DEPENDENCY,
 )
 from azure.monitor.opentelemetry.exporter._utils import _get_telemetry_type
 from azure.monitor.opentelemetry.exporter._generated.models import TelemetryItem
@@ -180,7 +182,8 @@ def _track_dropped_items(
             customer_sdkstats_metrics.count_dropped_items(
                 1,
                 telemetry_type,
-                drop_code
+                drop_code,
+                _get_telemetry_success_flag(envelope) if telemetry_type in (_REQUEST, _DEPENDENCY) else True
             )
     else:
         for envelope in envelopes:
@@ -189,6 +192,7 @@ def _track_dropped_items(
                 1,
                 telemetry_type,
                 drop_code,
+                _get_telemetry_success_flag(envelope) if telemetry_type in (_REQUEST, _DEPENDENCY) else True,
                 error_message
             )
 
@@ -338,3 +342,20 @@ def _get_connection_string_for_region_from_config(target_region: str, settings: 
         logger.warning("Unexpected error getting stats connection string for region '%s': %s",
                      target_region, str(ex))
         return None
+
+def _get_telemetry_success_flag(envelope: TelemetryItem) -> Union[bool, None]:
+    if not hasattr(envelope, "data") or envelope.data is None:
+        return None
+
+    if not hasattr(envelope.data, "base_type") or envelope.data.base_type is None:
+        return None
+
+    if not hasattr(envelope.data, "base_data") or envelope.data.base_data is None:
+        return None
+
+    base_type = envelope.data.base_type
+
+    if base_type in ("RequestData", "RemoteDependencyData") and hasattr(envelope.data.base_data, "success"):
+        if isinstance(envelope.data.base_data.success, bool):
+            return envelope.data.base_data.success
+    return None
