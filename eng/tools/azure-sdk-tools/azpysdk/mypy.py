@@ -16,7 +16,7 @@ from ci_tools.logging import logger
 
 PYTHON_VERSION = "3.9"
 MYPY_VERSION = "1.14.1"
-
+PYGITHUB_VERSION = "1.59.0"
 
 class mypy(Check):
     def __init__(self) -> None:
@@ -53,7 +53,7 @@ class mypy(Check):
             try:
                 if args.next:
                     # use latest version of mypy
-                    install_into_venv(executable, ["mypy"])
+                    install_into_venv(executable, ["mypy", f"PyGithub=={PYGITHUB_VERSION}"])
                 else:
                     install_into_venv(executable, [f"mypy=={MYPY_VERSION}"])
             except CalledProcessError as e:

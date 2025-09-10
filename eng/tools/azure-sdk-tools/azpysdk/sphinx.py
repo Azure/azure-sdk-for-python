@@ -22,6 +22,7 @@ SPHINX_VERSION = "8.2.0"
 SPHINX_RTD_THEME_VERSION = "3.0.2"
 MYST_PARSER_VERSION = "4.0.1"
 SPHINX_CONTRIB_JQUERY_VERSION = "4.1"
+PYGITHUB_VERSION = "1.59.0"
 
 RST_EXTENSION_FOR_INDEX = """
 
@@ -280,7 +281,7 @@ class sphinx(Check):
             try:
                 if args.next:
                     install_into_venv(
-                        executable, ["sphinx", "sphinx_rtd_theme", "myst_parser", "sphinxcontrib-jquery"],
+                        executable, ["sphinx", "sphinx_rtd_theme", "myst_parser", "sphinxcontrib-jquery", f"PyGithub=={PYGITHUB_VERSION}"],
                     )
                 else:
                     install_into_venv(

@@ -13,6 +13,7 @@ from ci_tools.logging import logger
 
 REPO_ROOT = discover_repo_root()
 PYLINT_VERSION = "3.2.7"
+PYGITHUB_VERSION = "1.59.0"
 
 class pylint(Check):
     def __init__(self) -> None:
@@ -58,7 +59,7 @@ class pylint(Check):
             try:
                 if args.next:
                     # use latest version of pylint
-                    install_into_venv(executable, ["pylint"])
+                    install_into_venv(executable, ["pylint", f"PyGithub=={PYGITHUB_VERSION}"])
                 else:
                     install_into_venv(executable, [f"pylint=={PYLINT_VERSION}"])
             except CalledProcessError as e:
