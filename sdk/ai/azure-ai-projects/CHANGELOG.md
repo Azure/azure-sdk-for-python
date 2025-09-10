@@ -1,5 +1,11 @@
 # Release History
 
+## 1.2.0b4 (Unreleased)
+
+### Bugs Fixed
+
+* Fix getting secret keys for connections of type "Custom Keys" ([GitHub issue 52355](https://github.com/Azure/azure-sdk-for-net/issues/52355))
+
 ## 1.1.0b3 (2025-08-26)
 
 ### Features added
