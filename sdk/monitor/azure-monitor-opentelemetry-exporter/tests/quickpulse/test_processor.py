@@ -7,7 +7,7 @@ from azure.monitor.opentelemetry.exporter._quickpulse._processor import (
     _QuickpulseLogRecordProcessor,
     _QuickpulseSpanProcessor,
 )
-from azure.monitor.opentelemetry.exporter._quickpulse._live_metrics import _QuickpulseManager
+from azure.monitor.opentelemetry.exporter._quickpulse._manager import _QuickpulseManager
 
 
 class TestQuickpulseLogRecordProcessor(unittest.TestCase):

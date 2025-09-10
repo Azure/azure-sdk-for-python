@@ -4,7 +4,7 @@
 from opentelemetry.sdk._logs import LogData, LogRecordProcessor
 from opentelemetry.sdk.trace import ReadableSpan, SpanProcessor
 
-from azure.monitor.opentelemetry.exporter._quickpulse._live_metrics import _QuickpulseManager
+from azure.monitor.opentelemetry.exporter._quickpulse._manager import _QuickpulseManager
 
 
 # pylint: disable=protected-access
