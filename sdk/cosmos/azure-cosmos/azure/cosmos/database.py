@@ -362,6 +362,9 @@ class DatabaseProxy(object):
         offer_throughput = args[5] if len(args) > 5 else kwargs.pop('offer_throughput', None)
         unique_key_policy = args[6] if len(args) > 6 else kwargs.pop('unique_key_policy', None)
         conflict_resolution_policy = args[7] if len(args) > 7 else kwargs.pop('conflict_resolution_policy', None)
+        if len(args) > 8:
+            extra_args = args[8:]
+            raise TypeError(f"Unexpected positional arguments: {', '.join(map(str, extra_args))}")
         analytical_storage_ttl = kwargs.pop('analytical_storage_ttl', None)
         vector_embedding_policy = kwargs.pop('vector_embedding_policy', None)
         computed_properties = kwargs.pop('computed_properties', None)
@@ -593,6 +596,9 @@ class DatabaseProxy(object):
         offer_throughput = args[5] if len(args) > 5 else kwargs.pop('offer_throughput', None)
         unique_key_policy = args[6] if len(args) > 6 else kwargs.pop('unique_key_policy', None)
         conflict_resolution_policy = args[7] if len(args) > 7 else kwargs.pop('conflict_resolution_policy', None)
+        if len(args) > 8:
+            extra_args = args[8:]
+            raise TypeError(f"Unexpected positional arguments: {', '.join(map(str, extra_args))}")
         initial_headers = kwargs.pop('initial_headers', None)
         analytical_storage_ttl = kwargs.pop('analytical_storage_ttl', None)
         vector_embedding_policy = kwargs.pop('vector_embedding_policy', None)
@@ -631,7 +637,7 @@ class DatabaseProxy(object):
                 return container_proxy
             return container_proxy, properties
         except CosmosResourceNotFoundError:
-            return (self.create_container(
+            return self.create_container(
                 id=id,
                 partition_key=partition_key,
                 indexing_policy=indexing_policy,
@@ -648,7 +654,7 @@ class DatabaseProxy(object):
                 full_text_policy=full_text_policy,
                 return_properties=return_properties,
                 **kwargs
-            ))
+            )
 
     @distributed_trace
     def delete_container(  # pylint:disable=docstring-missing-param
@@ -842,8 +848,8 @@ class DatabaseProxy(object):
         indexing_policy: Optional[Dict[str, Any]] = None,
         default_ttl: Optional[int] = None,
         conflict_resolution_policy: Optional[Dict[str, Any]] = None,
-        *,
         populate_query_metrics: Optional[bool] = None,
+        *,
         initial_headers: Optional[Dict[str, str]] = None,
         analytical_storage_ttl: Optional[int] = None,
         computed_properties: Optional[List[Dict[str, str]]] = None,
@@ -902,8 +908,8 @@ class DatabaseProxy(object):
             indexing_policy: Optional[Dict[str, Any]] = None,
             default_ttl: Optional[int] = None,
             conflict_resolution_policy: Optional[Dict[str, Any]] = None,
-            *,
             populate_query_metrics: Optional[bool] = None,
+            *,
             initial_headers: Optional[Dict[str, str]] = None,
             analytical_storage_ttl: Optional[int] = None,
             computed_properties: Optional[List[Dict[str, str]]] = None,
@@ -1001,6 +1007,9 @@ class DatabaseProxy(object):
         default_ttl = args[3] if len(args) > 3 else kwargs.pop('default_ttl', None)
         conflict_resolution_policy = args[4] if len(args) > 4 else kwargs.pop('conflict_resolution_policy', None)
         populate_query_metrics = args[5] if len(args) > 5 else kwargs.pop('populate_query_metrics', None)
+        if len(args) > 6:
+            extra_args = args[6:]
+            raise TypeError(f"Unexpected positional arguments: {', '.join(map(str, extra_args))}")
         initial_headers = kwargs.pop('initial_headers', None)
         analytical_storage_ttl = kwargs.pop('analytical_storage_ttl', None)
         computed_properties = kwargs.pop('computed_properties', None)

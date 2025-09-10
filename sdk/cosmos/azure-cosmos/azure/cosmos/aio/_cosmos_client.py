@@ -337,13 +337,13 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     @distributed_trace_async
     async def create_database(
         self,
-        *args: Any,
+        id: str,
         **kwargs: Any
     ) -> Union[DatabaseProxy, tuple[DatabaseProxy, CosmosDict]]:
         """
         Create a new database with the given ID (name).
 
-        :param Any args: args
+        :param str id: ID (name) of the database to read or create.
         :keyword offer_throughput: The provisioned throughput for this offer.
         :paramtype offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
         :keyword bool return_properties: Specifies function to return either a DatabaseProxy
@@ -386,7 +386,6 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 " It will now be removed in the future.",
                 DeprecationWarning)
 
-        id = args[0] if args else kwargs.pop("id")
         offer_throughput = kwargs.pop("offer_throughput", None)
         return_properties = kwargs.pop("return_properties", False)
 
@@ -426,9 +425,9 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         ...
 
     @distributed_trace_async
-    async def create_database_if_not_exists(  # pylint: disable=redefined-builtin
+    async def create_database_if_not_exists( # pylint: disable=redefined-builtin
         self,
-        *args: Any,
+        id: str,
         **kwargs: Any
     ) -> Union[DatabaseProxy, tuple[DatabaseProxy, CosmosDict]]:
 
@@ -441,7 +440,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             This function does not check or update existing database settings or
             offer throughput if they differ from what is passed in.
 
-        :param Any args: args
+        :param str id: ID (name) of the database to read or create.
         :keyword offer_throughput: The provisioned throughput for this offer.
         :paramtype offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
         :keyword bool return_properties: Specifies function to return either a DatabaseProxy
@@ -474,7 +473,6 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 " It will now be removed in the future.",
                 DeprecationWarning)
 
-        id = args[0] if args else kwargs.pop("id")
         offer_throughput = kwargs.pop("offer_throughput", None)
         return_properties = kwargs.pop("return_properties", False)
 

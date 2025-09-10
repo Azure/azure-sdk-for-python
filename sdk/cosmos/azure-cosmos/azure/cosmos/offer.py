@@ -21,7 +21,7 @@
 """
 
 
-from typing import Optional, Any, Union
+from typing import Optional, Any, Mapping
 
 from azure.core.utils import CaseInsensitiveDict
 from ._cosmos_responses import CosmosDict
@@ -48,7 +48,7 @@ class ThroughputProperties:
         self.auto_scale_max_throughput: Optional[int] = kwargs.get('auto_scale_max_throughput')
         self.auto_scale_increment_percent: Optional[int] = kwargs.get('auto_scale_increment_percent')
 
-    def get_response_headers(self) -> Union[CaseInsensitiveDict, Any]:
+    def get_response_headers(self) -> Mapping[str, Any]:
         """Returns a copy of the response headers associated to this response
 
         :return: Dict of response headers
