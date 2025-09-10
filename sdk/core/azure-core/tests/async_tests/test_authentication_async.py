@@ -689,3 +689,49 @@ async def test_async_bearer_policy_on_challenge_exception_chaining(http_request)
     # Verify the HttpResponseError contains the original 401 response
     http_response_error = original_exception.__cause__
     assert http_response_error.response is response_mock
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+async def test_async_bearer_policy_reads_streamed_response_on_challenge_exception(http_request):
+    """Test that the async policy reads streamed response body when on_challenge raises exception"""
+
+    # Create a credential that will raise an exception when get_token is called with claims
+    async def failing_get_token(*scopes, **kwargs):
+        if "claims" in kwargs:
+            raise ClientAuthenticationError("Failed to get token with claims")
+        return AccessToken("initial_token", int(time.time()) + 3600)
+
+    credential = Mock(spec_set=["get_token"], get_token=failing_get_token)
+    policy = AsyncBearerTokenCredentialPolicy(credential, "scope")
+
+    # Create a 401 response with insufficient_claims challenge that will trigger the exception
+    test_claims = '{"access_token":{"foo":"bar"}}'
+    encoded_claims = base64.urlsafe_b64encode(test_claims.encode()).decode().rstrip("=")
+    challenge_header = f'Bearer error="insufficient_claims", claims="{encoded_claims}"'
+
+    # Create the mock HTTP response with stream reading capability
+    http_response_mock = Mock()
+    http_response_mock.status_code = 401
+    http_response_mock.headers = {"WWW-Authenticate": challenge_header}
+    http_response_mock.read = AsyncMock(return_value=b"Error details from server")
+
+    # Mock transport that returns the HTTP response directly (it will be wrapped by Pipeline)
+    async def mock_transport_send(request, **kwargs):
+        return http_response_mock
+
+    transport = Mock(send=mock_transport_send)
+
+    # Create pipeline with stream option
+    pipeline = AsyncPipeline(transport=transport, policies=[policy])
+
+    # Execute the request and verify exception handling
+    with pytest.raises(ClientAuthenticationError) as exc_info:
+        await pipeline.run(http_request("GET", "https://example.com"), stream=True)
+
+    # Verify that the response.read() was called to consume the stream
+    http_response_mock.read.assert_called_once()
+
+    # Verify the exception chaining
+    assert exc_info.value.__cause__ is not None
+    assert isinstance(exc_info.value.__cause__, HttpResponseError)
