@@ -9,34 +9,27 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-from typing import Any, Callable, Dict, IO, Iterator, List, Optional, TypeVar, Union, cast, overload
-from azure.core.polling import LROPoller, NoPolling, PollingMethod
+from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, overload
+from collections.abc import MutableMapping # pylint: disable=import-error
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.paging import ItemPaged
+from azure.core.polling import LROPoller
+from azure.core.pipeline import PipelineResponse
+from azure.core.rest import HttpRequest, HttpResponse
 
 from ._operations import (
-    ProjectOperations as ProjectOperationsGenerated,
-    DeploymentOperations as DeploymentOperationsGenerated,
-    ExportedModelOperations as ExportedModelOperationsGenerated,
     TrainedModelOperations as TrainedModelOperationsGenerated,
 )
-from .._utils.model_base import SdkJSONEncoder, _deserialize
-from azure.core.utils import case_insensitive_dict
-from azure.core.polling.base_polling import LROBasePolling
 from ..models import (
     ProjectTrainedModel,
     EvaluationDetails,
     EvaluationJobResult,
     EvaluationState,
     LoadSnapshotState,
-    ProjectTrainedModel,
     EvalSummary,
     StringIndexType,
     DocumentEvalResult,
 )
-from azure.core.paging import ItemPaged
-from collections.abc import MutableMapping
-from azure.core.pipeline import PipelineResponse
-from azure.core.rest import HttpRequest, HttpResponse
 
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
@@ -188,9 +181,23 @@ class TrainedModelOperations(TrainedModelOperationsGenerated):
         skip: Optional[int] = None,
         **kwargs: Any,
     ) -> ItemPaged[DocumentEvalResult]:
-        """Gets model evaluation results for the current project.
+        """Gets the detailed results of the evaluation for a trained model. This includes the raw
+        inference results for the data included in the evaluation process.
 
-        This custom overload removes `project_name` and binds it to `self._project_name`.
+        :param trained_model_label: The trained model label. Required.
+        :type trained_model_label: str
+        :keyword string_index_type: Specifies the method used to interpret string offsets. For
+         additional information see `https://aka.ms/text-analytics-offsets
+         <https://aka.ms/text-analytics-offsets>`_. "Utf16CodeUnit" Required.
+        :paramtype string_index_type: str or ~azure.ai.language.text.authoring.models.StringIndexType
+        :keyword top: The number of result items to return. Default value is None.
+        :paramtype top: int
+        :keyword skip: The number of result items to skip. Default value is None.
+        :paramtype skip: int
+        :return: An iterator like instance of DocumentEvalResult
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.ai.language.text.authoring.models.DocumentEvalResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         return super().get_model_evaluation_results(
             project_name=self._project_name,

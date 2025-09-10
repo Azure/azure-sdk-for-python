@@ -8,8 +8,6 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from azure.core.tracing.decorator import distributed_trace
-
 from ._project_op_patch import ProjectOperations
 from ._trained_model_op_patch import TrainedModelOperations
 from ._deployment_op_patch import DeploymentOperations

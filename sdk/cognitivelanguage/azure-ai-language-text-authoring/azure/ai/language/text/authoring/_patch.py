@@ -7,15 +7,15 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from ._configuration import TextAuthoringProjectClientConfiguration
-from ._utils.serialization import Deserializer, Serializer
 from typing import Any, TYPE_CHECKING, Union, Optional
-from ._client import TextAuthoringClient as AuthoringClientGenerated
-from ._client import TextAuthoringProjectClient as AuthoringProjectClientGenerated
-from .operations._patch import ProjectOperations, DeploymentOperations, ExportedModelOperations, TrainedModelOperations
 from azure.core import PipelineClient
 from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
+from ._configuration import TextAuthoringProjectClientConfiguration
+from ._utils.serialization import Deserializer, Serializer
+from ._client import TextAuthoringClient as AuthoringClientGenerated
+from ._client import TextAuthoringProjectClient as AuthoringProjectClientGenerated
+from .operations._patch import ProjectOperations, DeploymentOperations, ExportedModelOperations, TrainedModelOperations
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -35,10 +35,10 @@ class TextAuthoringProjectClient(AuthoringProjectClientGenerated):
     #: Trained model operations group
     trained_model: TrainedModelOperations
 
-    def __init__(
-        self, endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], *, 
+    def __init__( # pylint: disable=super-init-not-called
+        self, endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], *,
         api_version: Optional[str] = None,
-        project_name: str, 
+        project_name: str,
         **kwargs: Any
     ) -> None:
         """

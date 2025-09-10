@@ -159,7 +159,7 @@ class ExportedModelOperations(ExportedModelOperationsGenerated):
             **kwargs,
         )
 
-    @distributed_trace 
+    @distributed_trace
     async def get_exported_model_manifest(
         self, exported_model_name: str, **kwargs: Any
     ) -> ExportedModelManifest:

@@ -154,7 +154,7 @@ class ExportedModelOperations(ExportedModelOperationsGenerated):
             job_id=job_id,
             **kwargs,
         )
-    
+
     @distributed_trace
     def get_exported_model_manifest(
         self, exported_model_name: str, **kwargs: Any

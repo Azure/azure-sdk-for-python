@@ -8,20 +8,18 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from typing import Any, TYPE_CHECKING, Union, Optional
-from ._client import TextAuthoringClient as AuthoringClientGenerated
-from ._client import TextAuthoringProjectClient as AuthoringProjectClientGenerated
-from .operations._patch import ProjectOperations, DeploymentOperations, ExportedModelOperations, TrainedModelOperations
 from azure.core import AsyncPipelineClient
 from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
+from ._client import TextAuthoringClient as AuthoringClientGenerated
+from ._client import TextAuthoringProjectClient as AuthoringProjectClientGenerated
+from .operations._patch import ProjectOperations, DeploymentOperations, ExportedModelOperations, TrainedModelOperations
+
+from ._configuration import TextAuthoringProjectClientConfiguration
+from .._utils.serialization import Deserializer, Serializer
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
-
-from ._configuration import TextAuthoringClientConfiguration, TextAuthoringProjectClientConfiguration
-from .._utils.serialization import Deserializer, Serializer
-
-
 class TextAuthoringProjectClient(AuthoringProjectClientGenerated):
     """Custom TextAuthoringProjectClient that bypasses generated __init__
     and ensures project_name is mandatory.
@@ -36,7 +34,7 @@ class TextAuthoringProjectClient(AuthoringProjectClientGenerated):
     #: Trained model operations group
     trained_model: TrainedModelOperations
 
-    def __init__(
+    def __init__( # pylint: disable=super-init-not-called
         self,
         endpoint: str,
         credential: Union[AzureKeyCredential, "AsyncTokenCredential"],

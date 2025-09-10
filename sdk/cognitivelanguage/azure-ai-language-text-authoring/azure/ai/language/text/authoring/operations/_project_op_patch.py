@@ -9,15 +9,14 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from collections.abc import MutableMapping # pylint:disable=import-error
-from typing import IO, Any, Callable, Dict, Optional, TypeVar, Union, cast, overload
+from typing import IO, Any, Callable, Dict, Optional, TypeVar, Union, overload
 
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.polling import LROPoller, NoPolling, PollingMethod
+from azure.core.polling import LROPoller
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 
-from .._utils.model_base import _deserialize
 from ..models import (
     AssignedDeploymentResource,
     AssignDeploymentResourcesDetails,
@@ -71,6 +70,9 @@ class ProjectOperations(ProjectOperationsGenerated):
 
         :param body: The project data to import. Required.
         :type body: ~azure.ai.language.text.authoring.models.ExportedProject
+        :keyword format: The format of the project to import. The currently supported formats are json
+         and aml formats. If not provided, the default is set to json. Default value is None.
+        :paramtype format: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body. Default value is "application/json".
         :paramtype content_type: str
         :return: An instance of LROPoller that returns None.
@@ -87,6 +89,9 @@ class ProjectOperations(ProjectOperationsGenerated):
 
         :param body: The project data to import. Required.
         :type body: JSON
+        :keyword format: The format of the project to import. The currently supported formats are json
+         and aml formats. If not provided, the default is set to json. Default value is None.
+        :paramtype format: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body. Default value is "application/json".
         :paramtype content_type: str
         :return: An instance of LROPoller that returns None.
@@ -103,6 +108,9 @@ class ProjectOperations(ProjectOperationsGenerated):
 
         :param body: The project data to import. Required.
         :type body: IO[bytes]
+        :keyword format: The format of the project to import. The currently supported formats are json
+         and aml formats. If not provided, the default is set to json. Default value is None.
+        :paramtype format: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body. Default value is "application/json".
         :paramtype content_type: str
         :return: An instance of LROPoller that returns None.
@@ -114,12 +122,17 @@ class ProjectOperations(ProjectOperationsGenerated):
     def begin_import(
         self, body: Union[ExportedProject, JSON, IO[bytes]], *, format: Optional[str] = None, **kwargs: Any
     ) -> LROPoller[None]:
-        """Triggers a job to import a project. If a project with the same name already exists,
-        the data of that project is replaced.
+        """Triggers a job to import a project. If a project with the same name already exists, the data of
+        that project is replaced.
 
-        :param body: The project data to import. Required.
-        :type body: ~azure.ai.language.text.authoring.models.ExportedProject or JSON or IO[bytes]
-        :return: An instance of LROPoller that returns None.
+        :param body: The project data to import. Is one of the following types: ExportedProject, JSON,
+         IO[bytes] Required.
+        :type body: ~azure.ai.language.text.authoring.models._models.ExportedProject or JSON or
+         IO[bytes]
+        :keyword format: The format of the project to import. The currently supported formats are json
+         and aml formats. If not provided, the default is set to json. Default value is None.
+        :paramtype format: str
+        :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """

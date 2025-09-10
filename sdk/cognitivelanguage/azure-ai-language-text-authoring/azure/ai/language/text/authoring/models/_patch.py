@@ -10,14 +10,11 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 from ._models import (
     AssignDeploymentResourcesDetails,
-    AssignDeploymentResourcesDetails,
     UnassignDeploymentResourcesDetails,
     SwapDeploymentsDetails,
-    DeploymentResourcesState,
     CopyProjectState,
     ExportProjectState,
     SwapDeploymentsState,
-    DeploymentResourcesState,
     DeleteDeploymentDetails,
     CreateDeploymentDetails,
     DeploymentDeleteFromResourcesState,
@@ -31,7 +28,6 @@ from ._models import (
     ImportProjectState,
     CopyProjectDetails,
     TrainingJobDetails,
-    CopyProjectDetails,
     EvaluationJobResult,
     EvaluationState,
     ExportedCustomSingleLabelClassificationProjectAsset,

@@ -9,16 +9,15 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from collections.abc import MutableMapping # pylint:disable=import-error
-from typing import IO, Any, Callable, Dict, Optional, TypeVar, Union, cast, overload
+from typing import IO, Any, Callable, Dict, Optional, TypeVar, Union, overload
 
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
+from azure.core.polling import AsyncLROPoller
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
-from ..._utils.model_base import _deserialize
 from ...models import (
     AssignedDeploymentResource,
     AssignDeploymentResourcesDetails,
