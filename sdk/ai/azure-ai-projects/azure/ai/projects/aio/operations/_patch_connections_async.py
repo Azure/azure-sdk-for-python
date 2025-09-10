@@ -43,7 +43,9 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
             if connection.type == ConnectionType.CUSTOM:
                 if isinstance(connection.credentials, CustomCredential):
                     # Why do we do this? See comment in the sync version of this code (file _patch_connections.py)
-                    connection.credentials.credential_keys = {k: v for k, v in connection.credentials.as_dict().items() if k != "type"}
+                    connection.credentials.credential_keys = {
+                        k: v for k, v in connection.credentials.as_dict().items() if k != "type"
+                    }
                 else:
                     raise TypeError("Connection credentials should have been of type CustomCredential.")
             return connection

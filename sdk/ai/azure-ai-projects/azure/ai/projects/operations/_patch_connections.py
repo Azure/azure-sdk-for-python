@@ -62,13 +62,15 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
                                 "NameOfPublicKey2": "PublicKey2"
                             }
                         }
-                    If you look at the `credentials` field above, you will see that it does not match the definition of the Python class 
-                    `CustomCredential` defined in this package. In class `CustomCredential`, the `credential_keys` field is expected to 
+                    If you look at the `credentials` field above, you will see that it does not match the definition of the Python class
+                    `CustomCredential` defined in this package. In class `CustomCredential`, the `credential_keys` field is expected to
                     be a dictionary containing all the custom private keys. Therefore private keys fail to be deserialized into
                     `credential_keys` dictionary by the auto-generated code. To fix this, we manually copy all the fields in `credentials`,
                     except `type`, into `credential_keys`.
                     """
-                    connection.credentials.credential_keys = {k: v for k, v in connection.credentials.as_dict().items() if k != "type"}
+                    connection.credentials.credential_keys = {
+                        k: v for k, v in connection.credentials.as_dict().items() if k != "type"
+                    }
                 else:
                     raise TypeError("Connection credentials should have been of type CustomCredential.")
             return connection
