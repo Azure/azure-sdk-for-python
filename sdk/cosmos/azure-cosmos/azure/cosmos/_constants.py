@@ -298,6 +298,9 @@ class _Constants:
         CONTENT_TYPE: Final[str] = "content_type"
         """Content type kwarg for the request."""
 
+        CONTAINER_PROPERTIES: Final[str] = "containerProperties"
+        """Container properties function kwarg for retrieving container properties."""
+
         CONTINUATION: Final[str] = "continuation"
         """Continuation token kwarg for paginated queries."""
 

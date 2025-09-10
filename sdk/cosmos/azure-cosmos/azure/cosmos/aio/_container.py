@@ -1788,7 +1788,7 @@ class ContainerProxy:
 
         async def get_next(continuation_token:str) -> List[Dict[str, Any]]: # pylint: disable=unused-argument
             partition_key_ranges = \
-                await self.client_connection._routing_map_provider.get_overlapping_ranges( # pylint: disable=protected-access
+                await self.client_connection._routing_map_provider.get_overlapping_ranges(  # pylint: disable=protected-access
                     self.container_link,
                     # default to full range
                     [Range("", "FF", True, False)],

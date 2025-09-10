@@ -2366,7 +2366,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         async def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], CaseInsensitiveDict]:
             await kwargs["containerProperties"](options)
             new_options = dict(options)
-            new_options[_InternalOptions.CONTAINER_RID] = self.__container_properties_cache[database_or_container_link]["_rid"]
+            new_options[_InternalOptions.CONTAINER_RID] = (
+                self.__container_properties_cache[database_or_container_link]["_rid"]
+            )
             return (
                 await self.__QueryFeed(
                     path,
