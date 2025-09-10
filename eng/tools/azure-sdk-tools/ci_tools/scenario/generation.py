@@ -20,6 +20,7 @@ from ci_tools.parsing import ParsedSetup, parse_require
 from ci_tools.functions import get_package_from_repo_or_folder, find_whl, get_pip_list_output, pytest
 from .managed_virtual_env import ManagedVirtualEnv
 
+from ci_tools.logging import logger
 
 def prepare_environment(package_folder: str, venv_directory: str, env_name: str) -> str:
     """
@@ -84,7 +85,7 @@ def create_package_and_install(
                 shutil.copy(built_pkg_path, distribution_directory)
 
     if skip_install:
-        logging.info("Flag to skip install whl is passed. Skipping package installation")
+        logger.info("Flag to skip install whl is passed. Skipping package installation")
     else:
         for built_package in discovered_packages:
             if os.getenv("PREBUILT_WHEEL_DIR") is not None and not force_create:
@@ -93,21 +94,21 @@ def create_package_and_install(
                 if os.path.isfile(package_path):
                     built_pkg_path = package_path
 
-                    logging.info("Installing {w} from directory".format(w=built_package))
+                    logger.info("Installing {w} from directory".format(w=built_package))
                 # it does't exist, so we need to error out
                 else:
-                    logging.error("{w} not present in the prebuilt package directory. Exiting.".format(w=built_package))
+                    logger.error("{w} not present in the prebuilt package directory. Exiting.".format(w=built_package))
                     exit(1)
             else:
                 built_pkg_path = os.path.abspath(os.path.join(distribution_directory, built_package))
-                logging.info("Installing {w} from fresh built package.".format(w=built_package))
+                logger.info("Installing {w} from fresh built package.".format(w=built_package))
 
             if not pre_download_disabled:
                 requirements = ParsedSetup.from_path(os.path.join(os.path.abspath(target_setup))).requires
                 azure_requirements = [req.split(";")[0] for req in requirements if req.startswith("azure-")]
 
                 if azure_requirements:
-                    logging.info(
+                    logger.debug(
                         "Found {} azure requirement(s): {}".format(len(azure_requirements), azure_requirements)
                     )
 
@@ -130,7 +131,7 @@ def create_package_and_install(
                         addition_necessary = True
                         # get all installed packages
                         installed_pkgs = get_pip_list_output(python_exe)
-                        logging.info("Installed packages: {}".format(installed_pkgs))
+                        logger.debug("Installed packages: {}".format(installed_pkgs))
 
                         # parse the specifier
                         requirement = parse_require(req)
@@ -180,11 +181,11 @@ def create_package_and_install(
             commands.extend(commands_options)
 
             if work_dir and os.path.exists(work_dir):
-                logging.info("Executing command from {0}:{1}".format(work_dir, commands))
+                logger.info("Executing command from {0}:{1}".format(work_dir, commands))
                 subprocess.check_call(commands, cwd=work_dir)
             else:
                 subprocess.check_call(commands)
-            logging.info("Installed {w}".format(w=built_package))
+            logger.info("Installed {w}".format(w=built_package))
 
 
 def replace_dev_reqs(file: str, pkg_root: str, wheel_dir: Optional[str]) -> None:
@@ -238,7 +239,7 @@ def discover_packages(
         pkg = ParsedSetup.from_path(setup_path)
 
         if not packages:
-            logging.error(
+            logger.error(
                 "Package is missing in prebuilt directory {0} for package {1} and version {2}".format(
                     os.getenv("PREBUILT_WHEEL_DIR"), pkg.name, pkg.version
                 )
@@ -316,7 +317,7 @@ def build_whl_for_req(req: str, package_path: str, wheel_dir: Optional[str]) -> 
     """Builds a whl from the dev_requirements file.
 
     :param str req: a requirement from the dev_requirements.txt
-    :param str package_path: the absolute path to the package's root
+    :param str package_path: the absolute path to the package's root (used as relative path root)
     :param Optional[str] wheel_dir: the absolute path to the prebuilt wheel directory
     :return: The absolute path to the whl built or the requirement if a third-party package
     """
@@ -363,7 +364,7 @@ def build_and_discover_package(setup_path: str, dist_dir: str, target_setup: str
     ]
 
     if not in_ci():
-        logging.info("Cleaning up build directories and files")
+        logger.info("Cleaning up build directories and files")
         cleanup_build_artifacts(target_setup)
     return prebuilt_packages
 

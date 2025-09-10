@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 import logging
 
-import requests
+import requests # type: ignore[import-untyped]
 from azure.monitor.opentelemetry import configure_azure_monitor
 from opentelemetry import trace
 

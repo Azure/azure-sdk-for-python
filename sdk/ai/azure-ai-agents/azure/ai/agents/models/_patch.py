@@ -53,6 +53,8 @@ from ._models import (
     CodeInterpreterToolResource,
     ConnectedAgentToolDefinition,
     ConnectedAgentDetails,
+    ComputerUseToolDefinition,
+    ComputerUseToolParameters,
     FileSearchToolDefinition,
     FileSearchToolResource,
     FunctionDefinition,
@@ -971,6 +973,36 @@ class McpTool(Tool[MCPToolDefinition]):
         :type tool_call: Any
         """
 
+    @staticmethod
+    def merge_resources(mcp_tools: List["McpTool"]) -> ToolResources:
+        """
+        Merge the tool resources from multiple MCP tool instances into a single ToolResources object.
+
+        This is useful when creating a run that should have access to multiple MCP servers at once.
+
+        :param mcp_tools: A list of McpTool instances whose resources will be merged.
+        :type mcp_tools: List[McpTool]
+        :return: A ToolResources object containing all MCP tool resources from the provided tools.
+        :rtype: ToolResources
+        :raises ValueError: If the provided list is empty.
+        :raises TypeError: If any item in the list is not an instance of McpTool.
+        """
+        if not mcp_tools:
+            raise ValueError("mcp_tools must be a non-empty list of McpTool instances.")
+
+        flat_resources: List[MCPToolResource] = []
+        for tool in mcp_tools:
+            if not isinstance(tool, McpTool):
+                raise TypeError("All items in mcp_tools must be instances of McpTool.")
+            # Combine all MCP resources; duplicates are harmless and can be filtered by the service if needed
+            res = tool.resources.get("mcp")  # May be a list or a single MCPToolResource depending on model behavior
+            if isinstance(res, list):
+                flat_resources.extend(cast(List[MCPToolResource], res))
+            elif res is not None:
+                flat_resources.append(cast(MCPToolResource, res))
+
+        return ToolResources(mcp=flat_resources)
+
 
 class AzureFunctionTool(Tool[AzureFunctionToolDefinition]):
     """
@@ -1161,6 +1193,45 @@ class BrowserAutomationTool(Tool[BrowserAutomationToolDefinition]):
         return ToolResources()
 
     def execute(self, tool_call: Any) -> Any:
+        pass
+
+
+class ComputerUseTool(Tool[ComputerUseToolDefinition]):
+    """
+    A tool that enables the agent to perform computer use actions (preview).
+
+    :param display_width: The display width for the computer use tool.
+    :type display_width: int
+    :param display_height: The display height for the computer use tool.
+    :type display_height: int
+    :param environment: The target environment for computer use, e.g. "browser", "windows", "mac", or "linux".
+    :type environment: str
+    """
+
+    def __init__(self, display_width: int, display_height: int, environment: str):
+        self._params = ComputerUseToolParameters(
+            display_width=display_width, display_height=display_height, environment=environment
+        )
+
+    @property
+    def definitions(self) -> List[ComputerUseToolDefinition]:
+        """
+        Get the Computer Use tool definitions.
+
+        :rtype: List[ToolDefinition]
+        """
+        return [ComputerUseToolDefinition(computer_use_preview=self._params)]
+
+    @property
+    def resources(self) -> ToolResources:
+        """
+        Get the tool resources.
+
+        :rtype: ToolResources
+        """
+        return ToolResources()
+
+    def execute(self, tool_call: Any) -> Any:  # noqa: D401 - client-side execution not applicable
         pass
 
 
@@ -2196,6 +2267,7 @@ __all__: List[str] = [
     "BaseAsyncAgentEventHandler",
     "BaseAgentEventHandler",
     "BrowserAutomationTool",
+    "ComputerUseTool",
     "CodeInterpreterTool",
     "ConnectedAgentTool",
     "DeepResearchTool",
