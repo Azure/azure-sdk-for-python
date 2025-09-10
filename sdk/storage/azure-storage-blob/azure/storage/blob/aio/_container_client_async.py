@@ -834,12 +834,10 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
             include = [include]
 
         results_per_page = kwargs.pop('results_per_page', None)
-        start_from = kwargs.pop("start_from", None)
         timeout = kwargs.pop('timeout', None)
         command = functools.partial(
             self._client.container.list_blob_flat_segment,
             include=include,
-            start_from=start_from,
             timeout=timeout,
             **kwargs
         )
