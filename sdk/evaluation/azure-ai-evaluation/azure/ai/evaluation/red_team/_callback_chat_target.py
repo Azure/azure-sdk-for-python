@@ -63,9 +63,11 @@ class _CallbackChatTarget(PromptChatTarget):
 
         # response_context contains "messages", "stream", "session_state, "context"
         response_context = await self._callback(messages=messages, stream=self._stream, session_state=None, context=context_dict)  # type: ignore
-
         response_text = response_context["messages"][-1]["content"]
-        response_entry = construct_response_from_request(request=request, response_text_pieces=[response_text])
+        if type(response_text) is tuple:
+            response_text = response_text[0]
+            response_tool_calls = response_text[1]
+        response_entry = construct_response_from_request(request=request, response_text_pieces=[response_text], prompt_metadata={"tool_calls": response_tool_calls})
 
         logger.info("Received the following response from the prompt target" + f"{response_text}")
         return response_entry
