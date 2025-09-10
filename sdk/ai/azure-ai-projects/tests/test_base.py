@@ -118,11 +118,11 @@ class TestBase(AzureRecordedTestCase):
         if expected_is_default is not None:
             assert connection.is_default == expected_is_default
 
-        if type(connection.credentials) == ApiKeyCredentials:
+        if isinstance(connection.credentials, ApiKeyCredentials):
             assert connection.credentials.type == CredentialType.API_KEY
             if include_credentials:
                 assert connection.credentials.api_key is not None
-        elif type(connection.credentials) == CustomCredential:
+        elif isinstance(connection.credentials, CustomCredential):
             assert connection.credentials.type == CredentialType.CUSTOM
             if include_credentials:
                 assert TestBase.is_valid_dict(connection.credentials.credential_keys)
