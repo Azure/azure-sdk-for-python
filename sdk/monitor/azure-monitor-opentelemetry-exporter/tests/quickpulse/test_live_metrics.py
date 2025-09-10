@@ -81,6 +81,12 @@ class TestLiveMetrics(unittest.TestCase):
 
 class TestQuickpulseManager(unittest.TestCase):
 
+    def setUp(self):
+        """Set up test fixtures."""
+        # Reset singleton state - only clear QuickpulseManager instances
+        if _QuickpulseManager in _QuickpulseManager._instances:
+            del _QuickpulseManager._instances[_QuickpulseManager]
+
     @classmethod
     def setUpClass(cls):
         _set_global_quickpulse_state(_QuickpulseState.PING_SHORT)

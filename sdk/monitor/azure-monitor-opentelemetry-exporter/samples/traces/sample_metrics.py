@@ -7,6 +7,7 @@ for the full list. Calls made with the underlying instrumented libraries will tr
 metrics explorer view in Application Insights.
 """
 # mypy: disable-error-code="attr-defined"
+# mypy: disable-error-code="import-untyped"
 import flask
 import os
 import requests
