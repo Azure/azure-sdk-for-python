@@ -21,6 +21,7 @@ from ._operations import PolicyAssignmentsOperations  # type: ignore
 from ._operations import PolicyExemptionsOperations  # type: ignore
 from ._operations import VariablesOperations  # type: ignore
 from ._operations import VariableValuesOperations  # type: ignore
+from ._operations import PolicyTokensOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -36,6 +37,7 @@ __all__ = [
     "PolicyExemptionsOperations",
     "VariablesOperations",
     "VariableValuesOperations",
+    "PolicyTokensOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

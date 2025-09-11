@@ -98,6 +98,13 @@ class ExemptionCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     scope."""
 
 
+class ExternalEndpointResult(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The result of the external endpoint. Possible values are Succeeded and Failed."""
+
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+
+
 class OverrideKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The override kind."""
 
@@ -115,6 +122,15 @@ class ParameterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     INTEGER = "Integer"
     FLOAT = "Float"
     DATE_TIME = "DateTime"
+
+
+class PolicyTokenResult(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The result of the completed token acquisition operation. Possible values are Succeeded and
+    Failed.
+    """
+
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
 
 
 class PolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

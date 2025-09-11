@@ -28,6 +28,7 @@ from .operations import (
     PolicyExemptionsOperations,
     PolicySetDefinitionVersionsOperations,
     PolicySetDefinitionsOperations,
+    PolicyTokensOperations,
     VariableValuesOperations,
     VariablesOperations,
 )
@@ -62,12 +63,16 @@ class PolicyClient:  # pylint: disable=client-accepts-api-version-keyword,too-ma
     :vartype variables: azure.mgmt.resource.policy.operations.VariablesOperations
     :ivar variable_values: VariableValuesOperations operations
     :vartype variable_values: azure.mgmt.resource.policy.operations.VariableValuesOperations
+    :ivar policy_tokens: PolicyTokensOperations operations
+    :vartype policy_tokens: azure.mgmt.resource.policy.operations.PolicyTokensOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is None.
     :type base_url: str
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+     Retry-After header is present.
     """
 
     def __init__(
@@ -129,6 +134,7 @@ class PolicyClient:  # pylint: disable=client-accepts-api-version-keyword,too-ma
         )
         self.variables = VariablesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.variable_values = VariableValuesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.policy_tokens = PolicyTokensOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
