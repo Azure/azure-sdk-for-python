@@ -147,7 +147,6 @@ class ExportedModelOperations(ExportedModelOperationsGenerated):
         self, exported_model_name: str, job_id: str, **kwargs: Any
     ) -> ExportedModelState:
         return super()._get_exported_model_job_status(
-            project_name=self._project_name,
             exported_model_name=exported_model_name,
             job_id=job_id,
             **kwargs,
