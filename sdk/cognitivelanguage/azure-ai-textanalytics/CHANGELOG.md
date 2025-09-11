@@ -1,6 +1,6 @@
 # Release History
 
-## 6.0.0b1 (Unreleased)
+## 6.0.0b1 (2025-09-11)
 
 This version of the client library defaults to the service API version `2025-05-15-preview`.
 
