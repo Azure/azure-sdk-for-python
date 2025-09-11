@@ -505,7 +505,8 @@ def get_venv_python(venv_path: str) -> str:
 
     # cross-platform python in a venv
     bin_dir = "Scripts" if os.name == "nt" else "bin"
-    return os.path.join(venv_path, bin_dir, "python")
+    python_exe =  "python.exe" if os.name == "nt" else "python"
+    return os.path.join(venv_path, bin_dir, python_exe)
 
 
 def install_into_venv(
@@ -526,7 +527,7 @@ def install_into_venv(
 
     if pip_cmd[0] == "uv":
         cmd += ["--python", py]
-
+    breakpoint()
     # todo: clean this up so that we're using run_logged from #42862
     subprocess.check_call(cmd, cwd=working_directory)
 
