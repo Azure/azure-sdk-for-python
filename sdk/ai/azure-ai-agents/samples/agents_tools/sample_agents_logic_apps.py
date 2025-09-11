@@ -41,20 +41,18 @@ import sys
 from typing import Set
 
 from azure.ai.projects import AIProjectClient
-from azure.ai.agents.models import ToolSet, FunctionTool
+from azure.ai.agents.models import ListSortOrder, ToolSet, FunctionTool
 from azure.identity import DefaultAzureCredential
 
-# Example user function
-current_path = os.path.dirname(__file__)
-root_path = os.path.abspath(os.path.join(current_path, os.pardir, os.pardir))
-if root_path not in sys.path:
-    sys.path.insert(0, root_path)
+# Add package directory to sys.path to import user_functions
+current_dir = os.path.dirname(os.path.abspath(__file__))
+package_dir = os.path.abspath(os.path.join(current_dir, os.pardir, os.pardir))
+if package_dir not in sys.path:
+    sys.path.insert(0, package_dir)
 from samples.utils.user_functions import fetch_current_datetime
 
 # Import AzureLogicAppTool and the function factory from user_logic_apps
 from utils.user_logic_apps import AzureLogicAppTool, create_send_email_function
-
-# [START register_logic_app]
 
 # Create the agents client
 project_client = AIProjectClient(
@@ -62,6 +60,7 @@ project_client = AIProjectClient(
     credential=DefaultAzureCredential(),
 )
 
+# [START register_logic_app]
 # Extract subscription and resource group from the project scope
 subscription_id = os.environ["SUBSCRIPTION_ID"]
 resource_group = os.environ["resource_group_name"]
@@ -127,7 +126,7 @@ with project_client:
     print("Deleted agent")
 
     # Fetch and log all messages
-    messages = agents_client.messages.list(thread_id=thread.id)
+    messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
     for msg in messages:
         if msg.text_messages:
             last_text = msg.text_messages[-1]

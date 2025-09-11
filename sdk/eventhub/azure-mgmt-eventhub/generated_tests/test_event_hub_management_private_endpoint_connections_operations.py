@@ -24,7 +24,7 @@ class TestEventHubManagementPrivateEndpointConnectionsOperations(AzureMgmtRecord
         response = self.client.private_endpoint_connections.list(
             resource_group_name=resource_group.name,
             namespace_name="str",
-            api_version="2024-01-01",
+            api_version="2022-01-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -54,7 +54,7 @@ class TestEventHubManagementPrivateEndpointConnectionsOperations(AzureMgmtRecord
                 },
                 "type": "str",
             },
-            api_version="2024-01-01",
+            api_version="2022-01-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -67,7 +67,7 @@ class TestEventHubManagementPrivateEndpointConnectionsOperations(AzureMgmtRecord
             resource_group_name=resource_group.name,
             namespace_name="str",
             private_endpoint_connection_name="str",
-            api_version="2024-01-01",
+            api_version="2022-01-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -80,7 +80,7 @@ class TestEventHubManagementPrivateEndpointConnectionsOperations(AzureMgmtRecord
             resource_group_name=resource_group.name,
             namespace_name="str",
             private_endpoint_connection_name="str",
-            api_version="2024-01-01",
+            api_version="2022-01-01-preview",
         )
 
         # please add some check logic here by yourself

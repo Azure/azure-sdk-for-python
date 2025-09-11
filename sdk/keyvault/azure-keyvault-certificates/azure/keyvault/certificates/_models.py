@@ -61,22 +61,30 @@ class AdministratorContact(object):
 
     @property
     def email(self) -> Optional[str]:
-        """:rtype: str or None"""
+        """Email address of the issuer.
+
+        :rtype: str or None"""
         return self._email
 
     @property
     def first_name(self) -> Optional[str]:
-        """:rtype: str or None"""
+        """First name of the issuer.
+
+        :rtype: str or None"""
         return self._first_name
 
     @property
     def last_name(self) -> Optional[str]:
-        """:rtype: str or None"""
+        """Last name of the issuer.
+
+        :rtype: str or None"""
         return self._last_name
 
     @property
     def phone(self) -> Optional[str]:
-        """:rtype: str or None"""
+        """Phone number of the issuer.
+
+        :rtype: str or None"""
         return self._phone
 
 
@@ -86,10 +94,10 @@ class CertificateOperationError(object):
     :param str code: The error code.
     :param str message: The error message.
     :param inner_error: The error object itself
-    :type inner_error: ~azure.keyvault.certificates.CertificateOperationError
+    :type inner_error: ~azure.keyvault.certificates.CertificateOperationError or None
     """
 
-    def __init__(self, code: str, message: str, inner_error: "CertificateOperationError") -> None:
+    def __init__(self, code: str, message: str, inner_error: "Optional[CertificateOperationError]") -> None:
         self._code = code
         self._message = message
         self._inner_error = inner_error
@@ -102,7 +110,7 @@ class CertificateOperationError(object):
         return cls(
             code=error_bundle.code,  # type: ignore
             message=error_bundle.message,  # type: ignore
-            inner_error=cls._from_error_bundle(error_bundle.inner_error),  # type: ignore
+            inner_error=cls._from_error_bundle(error_bundle.inner_error) if error_bundle.inner_error else None,
         )
 
     @property
@@ -124,11 +132,11 @@ class CertificateOperationError(object):
         return self._message
 
     @property
-    def inner_error(self) -> "CertificateOperationError":
+    def inner_error(self) -> "Optional[CertificateOperationError]":
         """The error itself.
 
         :returns: The error itself.
-        :rtype: ~azure.keyvault.certificates.CertificateOperationError
+        :rtype: ~azure.keyvault.certificates.CertificateOperationError or None
         """
         return self._inner_error
 
@@ -1134,17 +1142,23 @@ class CertificateContact(object):
 
     @property
     def email(self) -> Optional[str]:
-        """:rtype: str or None"""
+        """Email address of a contact for the certificate.
+
+        :rtype: str or None"""
         return self._email
 
     @property
     def name(self) -> Optional[str]:
-        """:rtype: str or None"""
+        """Name of a contact for the certificate.
+
+        :rtype: str or None"""
         return self._name
 
     @property
     def phone(self) -> Optional[str]:
-        """:rtype: str or None"""
+        """Phone number of a contact for the certificate.
+
+        :rtype: str or None"""
         return self._phone
 
 

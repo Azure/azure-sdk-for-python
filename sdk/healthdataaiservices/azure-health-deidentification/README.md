@@ -4,7 +4,7 @@ This package contains a client library for the de-identification service in Azur
 enables users to tag, redact, or surrogate health data containing Protected Health Information (PHI).
 For more on service functionality and important usage considerations, see [the de-identification service overview][product_documentation].
 
-This library support API versions `2024-11-15` and earlier.
+This library supports API versions `2025-07-15-preview` and earlier.
 
 Use the client library for the de-identification service to:
 - Discover PHI in unstructured text
@@ -48,10 +48,10 @@ Here's an example of setting an environment variable in Bash using Azure CLI:
 
 ```bash
 # Get the service URL for the resource
-export AZURE_HEALTH_DEIDENTIFICATION_ENDPOINT=$(az deidservice show --name "<resource-name>" --resource-group "<resource-group-name>" --query "properties.serviceUrl")
+export HEALTHDATAAISERVICES_DEID_SERVICE_ENDPOINT=$(az deidservice show --name "<resource-name>" --resource-group "<resource-group-name>" --query "properties.serviceUrl")
 ```
 
-Optionally, save the service URL as an environment variable named `AZURE_HEALTH_DEIDENTIFICATION_ENDPOINT` for the sample client initialization code.
+Optionally, save the service URL as an environment variable named `HEALTHDATAAISERVICES_DEID_SERVICE_ENDPOINT` for the sample client initialization code.
 
 Create a client with the endpoint and credential:
 <!-- SNIPPET: examples.create_client -->
@@ -62,7 +62,7 @@ from azure.identity import DefaultAzureCredential
 import os
 
 
-endpoint = os.environ["AZURE_HEALTH_DEIDENTIFICATION_ENDPOINT"]
+endpoint = os.environ["HEALTHDATAAISERVICES_DEID_SERVICE_ENDPOINT"]
 credential = DefaultAzureCredential()
 client = DeidentificationClient(endpoint, credential)
 ```
@@ -72,10 +72,17 @@ client = DeidentificationClient(endpoint, credential)
 ## Key concepts
 
 ### De-identification operations:
-Given an input text, the de-identification service can perform three main operations:
+Given an input text, the de-identification service can perform four main operations:
 - `Tag` returns the category and location within the text of detected PHI entities.
-- `Redact` returns output text where detected PHI entities are replaced with placeholder text. For example `John` replaced with `[name]`.
+- `Redact` returns output text where detected PHI entities are replaced with placeholder text. For example, `John` would be replaced with `[name]`.
 - `Surrogate` returns output text where detected PHI entities are replaced with realistic replacement values. For example, `My name is John Smith` could become `My name is Tom Jones`.
+- `SurrogateOnly` returns output text where user-defined PHI entities are replaced with realistic replacement values.
+
+### String Encoding
+When using the `Tag` operation, the service will return the locations of PHI entities in the input text. These locations will be represented as offsets and lengths, each of which is a [StringIndex][string_index] containing
+three properties corresponding to three different text encodings. **Python applications should use the `code_point` property.**
+
+For more on text encoding, see [Character encoding in .NET][character_encoding].
 
 ### Available endpoints
 There are two ways to interact with the de-identification service. You can send text directly, or you can create jobs 
@@ -94,7 +101,7 @@ from azure.health.deidentification.models import (
 from azure.identity import DefaultAzureCredential
 import os
 
-endpoint = os.environ["AZURE_HEALTH_DEIDENTIFICATION_ENDPOINT"]
+endpoint = os.environ["HEALTHDATAAISERVICES_DEID_SERVICE_ENDPOINT"]
 credential = DefaultAzureCredential()
 client = DeidentificationClient(endpoint, credential)
 
@@ -136,7 +143,7 @@ Your target Azure Storage account and container where documents will be written 
 
 Set the following environment variables, updating the storage account and container with real values:
 ```bash
-export AZURE_STORAGE_ACCOUNT_LOCATION="https://<storageaccount>.blob.core.windows.net/<container>"
+export HEALTHDATAAISERVICES_STORAGE_ACCOUNT_LOCATION="https://<storageaccount>.blob.core.windows.net/<container>"
 export INPUT_PREFIX="example_patient_1"
 export OUTPUT_PREFIX="_output"
 ```
@@ -156,9 +163,9 @@ from azure.identity import DefaultAzureCredential
 import os
 import uuid
 
-endpoint = os.environ["AZURE_HEALTH_DEIDENTIFICATION_ENDPOINT"]
-storage_location = os.environ["AZURE_STORAGE_ACCOUNT_LOCATION"]
-inputPrefix = os.environ["INPUT_PREFIX"]
+endpoint = os.environ["HEALTHDATAAISERVICES_DEID_SERVICE_ENDPOINT"]
+storage_location = os.environ["HEALTHDATAAISERVICES_STORAGE_ACCOUNT_LOCATION"]
+inputPrefix = os.environ.get("INPUT_PREFIX", "example_patient_1")
 outputPrefix = os.environ.get("OUTPUT_PREFIX", "_output")
 
 credential = DefaultAzureCredential()
@@ -191,6 +198,7 @@ The following sections provide code samples covering some of the most common cli
 - [Discover PHI in unstructured text](#discover-phi-in-unstructured-text)
 - [Replace PHI in unstructured text with placeholder values](#replace-phi-in-unstructured-text-with-placeholder-values)
 - [Replace PHI in unstructured text with realistic surrogate values](#replace-phi-in-unstructured-text-with-realistic-surrogate-values)
+- [Replace only specific PHI entities with surrogate values](#replace-only-specific-phi-entities-with-surrogate-values)
 
 See the [samples][samples] for code files illustrating common patterns, including creating and managing jobs to de-identify documents in Azure Storage. 
 
@@ -208,7 +216,7 @@ from azure.health.deidentification.models import (
 from azure.identity import DefaultAzureCredential
 import os
 
-endpoint = os.environ["AZURE_HEALTH_DEIDENTIFICATION_ENDPOINT"]
+endpoint = os.environ["HEALTHDATAAISERVICES_DEID_SERVICE_ENDPOINT"]
 credential = DefaultAzureCredential()
 client = DeidentificationClient(endpoint, credential)
 
@@ -244,7 +252,7 @@ from azure.health.deidentification.models import (
 from azure.identity import DefaultAzureCredential
 import os
 
-endpoint = os.environ["AZURE_HEALTH_DEIDENTIFICATION_ENDPOINT"]
+endpoint = os.environ["HEALTHDATAAISERVICES_DEID_SERVICE_ENDPOINT"]
 credential = DefaultAzureCredential()
 client = DeidentificationClient(endpoint, credential)
 
@@ -272,7 +280,7 @@ from azure.health.deidentification.models import (
 from azure.identity import DefaultAzureCredential
 import os
 
-endpoint = os.environ["AZURE_HEALTH_DEIDENTIFICATION_ENDPOINT"]
+endpoint = os.environ["HEALTHDATAAISERVICES_DEID_SERVICE_ENDPOINT"]
 credential = DefaultAzureCredential()
 client = DeidentificationClient(endpoint, credential)
 
@@ -282,6 +290,52 @@ body = DeidentificationContent(
 result: DeidentificationResult = client.deidentify_text(body)
 print(f'\nOriginal Text:     "{body.input_text}"')
 print(f'Surrogated Text:   "{result.output_text}"')  # Surrogated output: Hello, my name is <synthetic name>.
+```
+
+<!-- END SNIPPET -->
+
+### Replace only specific PHI entities with surrogate values
+The `SURROGATE_ONLY` operation returns output text where user-defined PHI entities are replaced with realistic replacement values.
+<!-- SNIPPET: deidentify_text_surrogate_only.surrogate_only -->
+
+```python
+from azure.health.deidentification import DeidentificationClient
+from azure.health.deidentification.models import (
+    DeidentificationContent,
+    DeidentificationCustomizationOptions,
+    DeidentificationOperationType,
+    DeidentificationResult,
+    PhiCategory,
+    SimplePhiEntity,
+    TaggedPhiEntities,
+    TextEncodingType,
+)
+from azure.identity import DefaultAzureCredential
+import os
+
+endpoint = os.environ["HEALTHDATAAISERVICES_DEID_SERVICE_ENDPOINT"]
+credential = DefaultAzureCredential()
+client = DeidentificationClient(endpoint, credential)
+
+# Define the entities to be surrogated - targeting "John Smith" at position 18-28
+tagged_entities = TaggedPhiEntities(
+    encoding=TextEncodingType.CODE_POINT,
+    entities=[SimplePhiEntity(category=PhiCategory.PATIENT, offset=18, length=10)],
+)
+
+# Use SurrogateOnly operation with input locale specification
+body = DeidentificationContent(
+    input_text="Hello, my name is John Smith.",
+    operation_type=DeidentificationOperationType.SURROGATE_ONLY,
+    tagged_entities=tagged_entities,
+    customizations=DeidentificationCustomizationOptions(
+        input_locale="en-US"  # Specify input text locale for better PHI detection
+    ),
+)
+
+result: DeidentificationResult = client.deidentify_text(body)
+print(f'\nOriginal Text:        "{body.input_text}"')
+print(f'Surrogate Only Text:  "{result.output_text}"')  # Surrogated output: Hello, my name is <synthetic name>.
 ```
 
 <!-- END SNIPPET -->
@@ -349,6 +403,8 @@ additional questions or comments.
 [pip]: https://pypi.org/project/pip/
 [azure_sub]: https://azure.microsoft.com/free/
 [deid_quickstart]: https://learn.microsoft.com/azure/healthcare-apis/deidentification/quickstart
+[string_index]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/healthdataaiservices/azure-health-deidentification/azure/health/deidentification/models/_models.py#L548
+[character_encoding]: https://learn.microsoft.com/dotnet/standard/base-types/character-encoding-introduction
 [deid_redact]: https://learn.microsoft.com/azure/healthcare-apis/deidentification/redaction-format
 [deid_rbac]: https://learn.microsoft.com/azure/healthcare-apis/deidentification/manage-access-rbac
 [deid_managed_identity]: https://learn.microsoft.com/azure/healthcare-apis/deidentification/managed-identities

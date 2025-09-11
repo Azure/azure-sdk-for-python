@@ -43,7 +43,7 @@ class AzureOpenAILabelGrader(AzureOpenAIGrader):
 
     """
 
-    id = "aoai://label_model"
+    id = "azureai://built-in/evaluators/azure-openai/label_grader"
 
     def __init__(
         self,

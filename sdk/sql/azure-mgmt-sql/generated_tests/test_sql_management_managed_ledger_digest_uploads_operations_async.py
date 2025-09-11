@@ -26,7 +26,7 @@ class TestSqlManagementManagedLedgerDigestUploadsOperationsAsync(AzureMgmtRecord
             resource_group_name=resource_group.name,
             managed_instance_name="str",
             database_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2022-08-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -40,7 +40,7 @@ class TestSqlManagementManagedLedgerDigestUploadsOperationsAsync(AzureMgmtRecord
             managed_instance_name="str",
             database_name="str",
             ledger_digest_uploads="str",
-            api_version="2024-05-01-preview",
+            api_version="2022-08-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -56,7 +56,7 @@ class TestSqlManagementManagedLedgerDigestUploadsOperationsAsync(AzureMgmtRecord
                 database_name="str",
                 ledger_digest_uploads="str",
                 parameters={"digestStorageEndpoint": "str", "id": "str", "name": "str", "state": "str", "type": "str"},
-                api_version="2024-05-01-preview",
+                api_version="2022-08-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -72,7 +72,7 @@ class TestSqlManagementManagedLedgerDigestUploadsOperationsAsync(AzureMgmtRecord
                 managed_instance_name="str",
                 database_name="str",
                 ledger_digest_uploads="str",
-                api_version="2024-05-01-preview",
+                api_version="2022-08-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 

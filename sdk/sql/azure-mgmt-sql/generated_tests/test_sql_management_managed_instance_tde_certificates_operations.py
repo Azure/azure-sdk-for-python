@@ -25,7 +25,7 @@ class TestSqlManagementManagedInstanceTdeCertificatesOperations(AzureMgmtRecorde
             resource_group_name=resource_group.name,
             managed_instance_name="str",
             parameters={"certPassword": "str", "id": "str", "name": "str", "privateBlob": "str", "type": "str"},
-            api_version="2024-05-01-preview",
+            api_version="2020-11-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

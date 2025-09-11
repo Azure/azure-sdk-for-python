@@ -25,9 +25,38 @@ class TestSqlManagementJobExecutionsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             server_name="str",
             job_agent_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2020-11-01-preview",
         )
         result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_job_executions_cancel(self, resource_group):
+        response = self.client.job_executions.cancel(
+            resource_group_name=resource_group.name,
+            server_name="str",
+            job_agent_name="str",
+            job_name="str",
+            job_execution_id="str",
+            api_version="2020-11-01-preview",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_job_executions_begin_create(self, resource_group):
+        response = self.client.job_executions.begin_create(
+            resource_group_name=resource_group.name,
+            server_name="str",
+            job_agent_name="str",
+            job_name="str",
+            api_version="2020-11-01-preview",
+        ).result()  # call '.result()' to poll until service return final result
+
         # please add some check logic here by yourself
         # ...
 
@@ -39,7 +68,7 @@ class TestSqlManagementJobExecutionsOperations(AzureMgmtRecordedTestCase):
             server_name="str",
             job_agent_name="str",
             job_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2020-11-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -54,7 +83,7 @@ class TestSqlManagementJobExecutionsOperations(AzureMgmtRecordedTestCase):
             job_agent_name="str",
             job_name="str",
             job_execution_id="str",
-            api_version="2024-05-01-preview",
+            api_version="2020-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -69,36 +98,7 @@ class TestSqlManagementJobExecutionsOperations(AzureMgmtRecordedTestCase):
             job_agent_name="str",
             job_name="str",
             job_execution_id="str",
-            api_version="2024-05-01-preview",
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_job_executions_cancel(self, resource_group):
-        response = self.client.job_executions.cancel(
-            resource_group_name=resource_group.name,
-            server_name="str",
-            job_agent_name="str",
-            job_name="str",
-            job_execution_id="str",
-            api_version="2024-05-01-preview",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_job_executions_begin_create(self, resource_group):
-        response = self.client.job_executions.begin_create(
-            resource_group_name=resource_group.name,
-            server_name="str",
-            job_agent_name="str",
-            job_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2020-11-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

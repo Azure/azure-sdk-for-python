@@ -552,6 +552,70 @@ class TestAzureLogExporter(unittest.TestCase):
         self.assertEqual(envelope.time, ns_to_iso_str(record.observed_timestamp))
         self._log_data.log_record = old_record
 
+    def test_log_to_envelope_synthetic_source(self):
+        exporter = self._exporter
+        resource = Resource.create(
+            {
+                "service.name": "testServiceName",
+                "service.namespace": "testServiceNamespace",
+                "service.instance.id": "testServiceInstanceId",
+            }
+        )
+        log_data = _logs.LogData(
+            _logs.LogRecord(
+                timestamp=1646865018558419456,
+                trace_id=125960616039069540489478540494783893221,
+                span_id=2909973987304607650,
+                severity_text="WARNING",
+                trace_flags=None,
+                severity_number=SeverityNumber.WARN,
+                body="Test message",
+                resource=resource,
+                attributes={
+                    "test": "attribute",
+                    "user_agent.synthetic.type": "bot",
+                },
+            ),
+            InstrumentationScope("test_name"),
+        )
+        envelope = exporter._log_to_envelope(log_data)
+
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_OPERATION_SYNTHETIC_SOURCE), "True")
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_CLOUD_ROLE), "testServiceNamespace.testServiceName")
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_CLOUD_ROLE_INSTANCE), "testServiceInstanceId")
+
+    def test_log_to_envelope_synthetic_load_always_on(self):
+        exporter = self._exporter
+        resource = Resource.create(
+            {
+                "service.name": "testServiceName",
+                "service.namespace": "testServiceNamespace",
+                "service.instance.id": "testServiceInstanceId",
+            }
+        )
+        log_data = _logs.LogData(
+            _logs.LogRecord(
+                timestamp=1646865018558419456,
+                trace_id=125960616039069540489478540494783893221,
+                span_id=2909973987304607650,
+                severity_text="WARNING",
+                trace_flags=None,
+                severity_number=SeverityNumber.WARN,
+                body="Test message",
+                resource=resource,
+                attributes={
+                    "test": "attribute",
+                    "http.user_agent": "Azure-Load-Testing/1.0 AlwaysOn",
+                },
+            ),
+            InstrumentationScope("test_name"),
+        )
+        envelope = exporter._log_to_envelope(log_data)
+
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_OPERATION_SYNTHETIC_SOURCE), "True")
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_CLOUD_ROLE), "testServiceNamespace.testServiceName")
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_CLOUD_ROLE_INSTANCE), "testServiceInstanceId")
+
 
 class TestAzureLogExporterWithDisabledStorage(TestAzureLogExporter):
     _exporter_class = partial(AzureMonitorLogExporter, disable_offline_storage=True)

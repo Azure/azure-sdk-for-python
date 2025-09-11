@@ -27,7 +27,7 @@ USAGE:
                           page of your Azure AI Foundry portal.
     2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Azure AI Foundry project.
-    3) AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED - Optional. Set to `true` to trace the content of chat
+    3) OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT - Optional. Set to `true` to trace the content of chat
        messages, which may contain personal data. False by default.
 """
 
@@ -48,6 +48,7 @@ from azure.ai.agents.telemetry import AIAgentsInstrumentor
 
 # Define the custom span processor that is used for adding the custom
 # attributes to spans when they are started.
+# [START custom_attribute_span_processor]
 class CustomAttributeSpanProcessor(SpanProcessor):
     def __init__(self):
         pass
@@ -65,6 +66,8 @@ class CustomAttributeSpanProcessor(SpanProcessor):
         pass
 
 
+# [END custom_attribute_span_processor]
+
 # Setup tracing to console
 # Requires opentelemetry-sdk
 span_exporter = ConsoleSpanExporter()
@@ -81,8 +84,10 @@ project_client = AIProjectClient(
 )
 
 # Add the custom span processor to the global tracer provider
+# [START add_custom_span_processor_to_tracer_provider]
 provider = cast(TracerProvider, trace.get_tracer_provider())
 provider.add_span_processor(CustomAttributeSpanProcessor())
+# [END add_custom_span_processor_to_tracer_provider]
 
 scenario = os.path.basename(__file__)
 tracer = trace.get_tracer(__name__)

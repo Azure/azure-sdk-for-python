@@ -22,6 +22,9 @@
 """Represents a request object.
 """
 from typing import Optional, Mapping, Any, Dict, List
+from .documents import _OperationType
+from .http_constants import ResourceType
+from ._constants import _Constants as Constants
 
 class RequestObject(object): # pylint: disable=too-many-instance-attributes
     def __init__(
@@ -29,6 +32,7 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
             resource_type: str,
             operation_type: str,
             headers: Dict[str, Any],
+            pk_val: Optional[Any] = None,
             endpoint_override: Optional[str] = None,
     ) -> None:
         self.resource_type = resource_type
@@ -43,6 +47,8 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
         self.excluded_locations: Optional[List[str]] = None
         self.excluded_locations_circuit_breaker: List[str] = []
         self.healthy_tentative_location: Optional[str] = None
+        self.pk_val = pk_val
+        self.retry_write: bool = False
 
     def route_to_location_with_preferred_location_flag(  # pylint: disable=name-too-long
         self,
@@ -79,6 +85,15 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
     def set_excluded_location_from_options(self, options: Mapping[str, Any]) -> None:
         if self._can_set_excluded_location(options):
             self.excluded_locations = options['excludedLocations']
+
+    def set_retry_write(self, request_options: Mapping[str, Any], client_retry_write: bool) -> None:
+        if self.resource_type == ResourceType.Document:
+            if request_options and request_options.get(Constants.Kwargs.RETRY_WRITE):
+                # If request retry write is True, set the option
+                self.retry_write = request_options[Constants.Kwargs.RETRY_WRITE]
+            elif client_retry_write and self.operation_type != _OperationType.Patch:
+                # If it is not a patch operation and the client config is set, set the retry write to True
+                self.retry_write = client_retry_write
 
     def set_excluded_locations_from_circuit_breaker(self, excluded_locations: List[str]) -> None: # pylint: disable=name-too-long
         self.excluded_locations_circuit_breaker = excluded_locations

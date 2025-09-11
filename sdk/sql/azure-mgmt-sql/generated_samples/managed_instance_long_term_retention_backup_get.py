@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -34,11 +35,11 @@ def main():
         location_name="japaneast",
         managed_instance_name="testInstance",
         database_name="testDatabase",
-        backup_name="55555555-6666-7777-8888-999999999999;131637960820000000;Archive",
+        backup_name="55555555-6666-7777-8888-999999999999;131637960820000000",
     )
     print(response)
 
 
-# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2024-05-01-preview/examples/ManagedInstanceLongTermRetentionBackupGet.json
+# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2021-05-01-preview/examples/ManagedInstanceLongTermRetentionBackupGet.json
 if __name__ == "__main__":
     main()

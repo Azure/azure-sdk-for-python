@@ -34,9 +34,13 @@ async def _create_file_share_oauth(
     file_name: str,
     bearer_token_string: str,
     storage_account_name: str,
-    data: bytes
+    data: bytes,
+    is_live: bool
 ) -> Tuple[str, str]:
     base_url = f"https://{storage_account_name}.file.core.windows.net/{share_name}"
+
+    if not is_live:
+        return file_name, base_url
 
     async with aiohttp.ClientSession() as session:
         # Creates file share
