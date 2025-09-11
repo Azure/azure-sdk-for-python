@@ -15,7 +15,10 @@ from azure.mgmt.core import ARMPipelineClient
 
 from . import models
 from ._configuration import AzureMachineLearningWorkspacesConfiguration
-from .operations import BatchJobDeploymentOperations, BatchJobEndpointOperations
+from .operations import (
+    BatchJobDeploymentOperations,
+    BatchJobEndpointOperations,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -23,6 +26,7 @@ if TYPE_CHECKING:
 
     from azure.core.credentials import TokenCredential
     from azure.core.rest import HttpRequest, HttpResponse
+
 
 class AzureMachineLearningWorkspaces(object):
     """AzureMachineLearningWorkspaces.
@@ -52,16 +56,25 @@ class AzureMachineLearningWorkspaces(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        self._config = AzureMachineLearningWorkspacesConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
-        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._config = AzureMachineLearningWorkspacesConfiguration(
+            credential=credential, subscription_id=subscription_id, **kwargs
+        )
+        self._client = ARMPipelineClient(
+            base_url=base_url, config=self._config, **kwargs
+        )
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {
+            k: v for k, v in models.__dict__.items() if isinstance(v, type)
+        }
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.batch_job_deployment = BatchJobDeploymentOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.batch_job_endpoint = BatchJobEndpointOperations(self._client, self._config, self._serialize, self._deserialize)
-
+        self.batch_job_deployment = BatchJobDeploymentOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.batch_job_endpoint = BatchJobEndpointOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
     def _send_request(
         self,

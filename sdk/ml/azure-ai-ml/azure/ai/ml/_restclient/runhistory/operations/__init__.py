@@ -16,12 +16,12 @@ from ._run_operations import RunOperations
 from ._spans_operations import SpansOperations
 
 __all__ = [
-    'DeleteOperations',
-    'EventsOperations',
-    'ExperimentsOperations',
-    'MetricOperations',
-    'RunsOperations',
-    'RunArtifactsOperations',
-    'RunOperations',
-    'SpansOperations',
+    "DeleteOperations",
+    "EventsOperations",
+    "ExperimentsOperations",
+    "MetricOperations",
+    "RunsOperations",
+    "RunArtifactsOperations",
+    "RunOperations",
+    "SpansOperations",
 ]

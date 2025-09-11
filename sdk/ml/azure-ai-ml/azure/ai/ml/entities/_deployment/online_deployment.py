@@ -419,7 +419,7 @@ class KubernetesOnlineDeployment(OnlineDeployment):
         self.resources = resources
 
     def _to_dict(self) -> Dict:
-        res: dict = KubernetesOnlineDeploymentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = KubernetesOnlineDeploymentSchema().dump(self, context={BASE_PATH_CONTEXT_KEY: "./"})
         return res
 
     # pylint: disable=arguments-differ
@@ -625,7 +625,7 @@ class ManagedOnlineDeployment(OnlineDeployment):
         self.egress_public_network_access = egress_public_network_access
 
     def _to_dict(self) -> Dict:
-        res: dict = ManagedOnlineDeploymentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = ManagedOnlineDeploymentSchema().dump(self, context={BASE_PATH_CONTEXT_KEY: "./"})
         return res
 
     # pylint: disable=arguments-differ

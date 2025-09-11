@@ -144,7 +144,7 @@ class MonitorSchedule(Schedule, RestTranslatableMixin):
         dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
 
     def _to_dict(self) -> Dict:
-        res: dict = MonitorScheduleSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = MonitorScheduleSchema().dump(self, context={BASE_PATH_CONTEXT_KEY: "./"})
         return res
 
     @classmethod

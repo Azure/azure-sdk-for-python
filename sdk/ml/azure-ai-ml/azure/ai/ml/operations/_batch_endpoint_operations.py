@@ -349,7 +349,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
             PARAMS_OVERRIDE_KEY: params_override,
         }
 
-        batch_job = BatchJobSchema(context=context).load(data={})
+        batch_job = BatchJobSchema().load(data={}, context=context)
         # update output datastore to arm id if needed
         # TODO: Unify datastore name -> arm id logic, TASK: 1104172
         request = {}

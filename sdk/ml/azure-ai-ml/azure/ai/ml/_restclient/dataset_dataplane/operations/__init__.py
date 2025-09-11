@@ -16,12 +16,12 @@ from ._data_version_operations import DataVersionOperations
 from ._get_operation_status_operations import GetOperationStatusOperations
 
 __all__ = [
-    'DataCallOperations',
-    'DataContainerOperations',
-    'DeleteOperations',
-    'DatasetsV1Operations',
-    'DatasetControllerV2Operations',
-    'DatasetV2Operations',
-    'DataVersionOperations',
-    'GetOperationStatusOperations',
+    "DataCallOperations",
+    "DataContainerOperations",
+    "DeleteOperations",
+    "DatasetsV1Operations",
+    "DatasetControllerV2Operations",
+    "DatasetV2Operations",
+    "DataVersionOperations",
+    "GetOperationStatusOperations",
 ]

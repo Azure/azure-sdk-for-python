@@ -13,8 +13,7 @@ from ..._restclient.v2024_01_01_preview.models import (
     ComponentContainer,
     ComponentContainerProperties,
     ComponentVersion,
-    ComponentVersionProperties,
-)
+    ComponentVersionProperties)
 from ..._schema import PathAwareSchema
 from ..._schema.component import ComponentSchema
 from ..._utils.utils import dump_yaml_to_file, hash_dict
@@ -25,8 +24,7 @@ from ...constants._common import (
     REGISTRY_URI_FORMAT,
     SOURCE_PATH_CONTEXT_KEY,
     CommonYamlFields,
-    SchemaUrl,
-)
+    SchemaUrl)
 from ...constants._component import ComponentSource, IOConstants, NodeType
 from ...entities._assets.asset import Asset
 from ...entities._inputs_outputs import Input, Output
@@ -52,8 +50,7 @@ class Component(
     TelemetryMixin,
     YamlTranslatableMixin,
     PathAwareSchemaValidatableMixin,
-    LocalizableMixin,
-):
+    LocalizableMixin):
     """Base class for component version, used to define a component. Can't be instantiated directly.
 
     :param name: Name of the resource.
@@ -107,8 +104,7 @@ class Component(
         yaml_str: Optional[str] = None,
         _schema: Optional[str] = None,
         creation_context: Optional[SystemData] = None,
-        **kwargs: Any,
-    ) -> None:
+        **kwargs: Any) -> None:
         self.latest_version = None
         self._intellectual_property = kwargs.pop("intellectual_property", None)
         # Setting this before super init because when asset init version, _auto_increment_version's value may change
@@ -134,8 +130,7 @@ class Component(
             creation_context=creation_context,
             is_anonymous=is_anonymous,
             base_path=kwargs.pop(BASE_PATH_CONTEXT_KEY, None),
-            source_path=kwargs.pop(SOURCE_PATH_CONTEXT_KEY, None),
-        )
+            source_path=kwargs.pop(SOURCE_PATH_CONTEXT_KEY, None))
         # store kwargs to self._other_parameter instead of pop to super class to allow component have extra
         # fields not defined in current schema.
 
@@ -243,8 +238,7 @@ class Component(
                     message=msg,
                     target=ErrorTarget.COMPONENT,
                     no_personal_data_message=msg,
-                    error_category=ErrorCategory.USER_ERROR,
-                )
+                    error_category=ErrorCategory.USER_ERROR)
         self._version = value
         self._auto_increment_version = self.name and not self._version
 
@@ -265,8 +259,7 @@ class Component(
 
     @staticmethod
     def _resolve_component_source_from_id(  # pylint: disable=docstring-type-do-not-use-class
-        id: Optional[Union["Component", str]],
-    ) -> Any:
+        id: Optional[Union["Component", str]]) -> Any:
         """Resolve the component source from id.
 
         :param id: The component ID
@@ -342,8 +335,7 @@ class Component(
         return ValidationException(
             message=message,
             no_personal_data_message=no_personal_data_message,
-            target=ErrorTarget.COMPONENT,
-        )
+            target=ErrorTarget.COMPONENT)
 
     @classmethod
     def _is_flow(cls, data: Any) -> bool:
@@ -359,8 +351,7 @@ class Component(
         data: Optional[Dict] = None,
         yaml_path: Optional[Union[PathLike, str]] = None,
         params_override: Optional[list] = None,
-        **kwargs: Any,
-    ) -> "Component":
+        **kwargs: Any) -> "Component":
         data = data or {}
         params_override = params_override or []
         base_path = Path(yaml_path).parent if yaml_path else Path("./")
@@ -380,8 +371,7 @@ class Component(
 
         create_instance_func, _ = component_factory.get_create_funcs(
             data,
-            for_load=True,
-        )
+            for_load=True)
         new_instance: Component = create_instance_func()
         # specific keys must be popped before loading with schema using kwargs
         init_kwargs = {
@@ -396,10 +386,8 @@ class Component(
                     SOURCE_PATH_CONTEXT_KEY: yaml_path,
                     PARAMS_OVERRIDE_KEY: params_override,
                 },
-                unknown=INCLUDE,
                 raise_original_exception=True,
-                **kwargs,
-            )
+                **kwargs)
         )
         # Set base path separately to avoid doing this in post load, as return types of post load are not unified,
         # could be object or dict.
@@ -409,8 +397,7 @@ class Component(
             init_kwargs[SOURCE_PATH_CONTEXT_KEY] = Path(yaml_path).absolute().as_posix()
         # TODO: Bug Item number: 2883415
         new_instance.__init__(  # type: ignore
-            **init_kwargs,
-        )
+            **init_kwargs)
         return new_instance
 
     @classmethod
@@ -470,7 +457,7 @@ class Component(
         origin_name = rest_component_version.component_spec[CommonYamlFields.NAME]
         rest_component_version.component_spec[CommonYamlFields.NAME] = ANONYMOUS_COMPONENT_NAME
         init_kwargs = cls._load_with_schema(
-            rest_component_version.component_spec, context={BASE_PATH_CONTEXT_KEY: Path.cwd()}, unknown=INCLUDE
+            rest_component_version.component_spec, context={BASE_PATH_CONTEXT_KEY: Path.cwd()}
         )
         init_kwargs.update(
             {
@@ -576,8 +563,7 @@ class Component(
             description=self.description,
             is_anonymous=self._is_anonymous,
             properties=dict(self.properties) if self.properties else {},
-            tags=self.tags,
-        )
+            tags=self.tags)
         result = ComponentVersion(properties=properties)
         if self._is_anonymous:
             result.name = ANONYMOUS_COMPONENT_NAME
@@ -636,6 +622,5 @@ class Component(
                 message=msg,
                 target=ErrorTarget.COMPONENT,
                 no_personal_data_message=msg,
-                error_category=ErrorCategory.USER_ERROR,
-            )
+                error_category=ErrorCategory.USER_ERROR)
         return self._func(*args, **kwargs)  # pylint: disable=not-callable

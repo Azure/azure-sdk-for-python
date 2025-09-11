@@ -222,5 +222,5 @@ class FeatureStore(Workspace):
         return FeatureStore(**loaded_schema)
 
     def _to_dict(self) -> Dict:
-        res: dict = FeatureStoreSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = FeatureStoreSchema().dump(self, context={BASE_PATH_CONTEXT_KEY: "./"})
         return res

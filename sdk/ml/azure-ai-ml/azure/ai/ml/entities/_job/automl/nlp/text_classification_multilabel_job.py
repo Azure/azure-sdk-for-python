@@ -236,7 +236,7 @@ class TextClassificationMultilabelJob(AutoMLNLPJob):
             res_autoML: dict = AutoMLTextClassificationMultilabelNode(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
             return res_autoML
 
-        res: dict = TextClassificationMultilabelSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = TextClassificationMultilabelSchema().dump(self, context={BASE_PATH_CONTEXT_KEY: "./"})
         return res
 
     def __eq__(self, other: object) -> bool:

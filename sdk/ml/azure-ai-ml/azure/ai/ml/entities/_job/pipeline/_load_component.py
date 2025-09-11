@@ -24,8 +24,7 @@ from azure.ai.ml.entities._builders import (
     Import,
     Parallel,
     Spark,
-    Sweep,
-)
+    Sweep)
 from azure.ai.ml.entities._builders.condition_node import ConditionNode
 from azure.ai.ml.entities._builders.control_flow_node import ControlFlowNode
 from azure.ai.ml.entities._builders.do_while import DoWhile
@@ -48,86 +47,72 @@ class _PipelineNodeFactory:
             _type=NodeType.COMMAND,
             create_instance_func=lambda: Command.__new__(Command),
             load_from_rest_object_func=Command._from_rest_object,
-            nested_schema=None,
-        )
+            nested_schema=None)
         self.register_type(
             _type=NodeType.IMPORT,
             create_instance_func=lambda: Import.__new__(Import),
             load_from_rest_object_func=Import._from_rest_object,
-            nested_schema=None,
-        )
+            nested_schema=None)
         self.register_type(
             _type=NodeType.PARALLEL,
             create_instance_func=lambda: Parallel.__new__(Parallel),
             load_from_rest_object_func=Parallel._from_rest_object,
-            nested_schema=None,
-        )
+            nested_schema=None)
         self.register_type(
             _type=NodeType.PIPELINE,
             create_instance_func=lambda: Pipeline.__new__(Pipeline),
             load_from_rest_object_func=Pipeline._from_rest_object,
-            nested_schema=None,
-        )
+            nested_schema=None)
         self.register_type(
             _type=NodeType.SWEEP,
             create_instance_func=lambda: Sweep.__new__(Sweep),
             load_from_rest_object_func=Sweep._from_rest_object,
-            nested_schema=NestedField(SweepSchema, unknown=INCLUDE),
-        )
+            nested_schema=NestedField(SweepSchema))
         self.register_type(
             _type=NodeType.AUTOML,
             create_instance_func=None,
             load_from_rest_object_func=self._automl_from_rest_object,
-            nested_schema=None,
-        )
+            nested_schema=None)
         self.register_type(
             _type=NodeType.SPARK,
             create_instance_func=lambda: Spark.__new__(Spark),
             load_from_rest_object_func=Spark._from_rest_object,
-            nested_schema=None,
-        )
+            nested_schema=None)
         self.register_type(
             _type=ControlFlowType.DO_WHILE,
             create_instance_func=None,
             load_from_rest_object_func=DoWhile._from_rest_object,
-            nested_schema=None,
-        )
+            nested_schema=None)
         self.register_type(
             _type=ControlFlowType.IF_ELSE,
             create_instance_func=None,
             load_from_rest_object_func=ConditionNode._from_rest_object,
-            nested_schema=None,
-        )
+            nested_schema=None)
         self.register_type(
             _type=ControlFlowType.PARALLEL_FOR,
             create_instance_func=None,
             load_from_rest_object_func=ParallelFor._from_rest_object,
-            nested_schema=None,
-        )
+            nested_schema=None)
         self.register_type(
             _type="_".join([NodeType.DATA_TRANSFER, DataTransferTaskType.COPY_DATA]),
             create_instance_func=lambda: DataTransferCopy.__new__(DataTransferCopy),
             load_from_rest_object_func=DataTransferCopy._from_rest_object,
-            nested_schema=None,
-        )
+            nested_schema=None)
         self.register_type(
             _type="_".join([NodeType.DATA_TRANSFER, DataTransferTaskType.IMPORT_DATA]),
             create_instance_func=lambda: DataTransferImport.__new__(DataTransferImport),
             load_from_rest_object_func=DataTransferImport._from_rest_object,
-            nested_schema=None,
-        )
+            nested_schema=None)
         self.register_type(
             _type="_".join([NodeType.DATA_TRANSFER, DataTransferTaskType.EXPORT_DATA]),
             create_instance_func=lambda: DataTransferExport.__new__(DataTransferExport),
             load_from_rest_object_func=DataTransferExport._from_rest_object,
-            nested_schema=None,
-        )
+            nested_schema=None)
         self.register_type(
             _type=NodeType.FLOW_PARALLEL,
             create_instance_func=lambda: Parallel.__new__(Parallel),
             load_from_rest_object_func=None,
-            nested_schema=None,
-        )
+            nested_schema=None)
 
     @classmethod
     def _get_func(cls, _type: str, funcs: Dict[str, Callable]) -> Callable:
@@ -140,8 +125,7 @@ class _PipelineNodeFactory:
                 message=msg,
                 no_personal_data_message=msg,
                 target=ErrorTarget.COMPONENT,
-                error_category=ErrorCategory.USER_ERROR,
-            )
+                error_category=ErrorCategory.USER_ERROR)
         _type = get_type_from_spec({CommonYamlFields.TYPE: _type}, valid_keys=funcs)
         return funcs[_type]
 
@@ -171,8 +155,7 @@ class _PipelineNodeFactory:
         *,
         create_instance_func: Optional[Callable[..., Union[BaseNode, AutoMLJob]]] = None,
         load_from_rest_object_func: Optional[Callable] = None,
-        nested_schema: Optional[Union[NestedField, List[NestedField]]] = None,
-    ) -> None:
+        nested_schema: Optional[Union[NestedField, List[NestedField]]] = None) -> None:
         """Register a type of node.
 
         :param _type: The type of the node.
@@ -231,8 +214,7 @@ class _PipelineNodeFactory:
             if component_key in data and isinstance(data[component_key], dict):
                 data[component_key] = Component._load(
                     data=data[component_key],
-                    yaml_path=data[component_key].pop(SOURCE_PATH_CONTEXT_KEY, None),
-                )
+                    yaml_path=data[component_key].pop(SOURCE_PATH_CONTEXT_KEY, None))
         # TODO: Bug Item number: 2883415
         new_instance.__init__(**data)  # type: ignore
         return new_instance
@@ -281,8 +263,7 @@ class _PipelineNodeFactory:
             node,
             context={BASE_PATH_CONTEXT_KEY: "./"},
             additional_message="Failed to load automl task from backend.",
-            inside_pipeline=True,
-        )
+            inside_pipeline=True)
 
 
 def _generate_component_function(
@@ -299,12 +280,10 @@ def _generate_component_function(
             if component_entity.task == DataTransferTaskType.IMPORT_DATA:  # type: ignore
                 return pipeline_node_factory.load_from_dict(
                     data={"component": component_entity, "_from_component_func": True, **kwargs},
-                    _type=_type,
-                )
+                    _type=_type)
         return pipeline_node_factory.load_from_dict(
             data={"component": component_entity, "inputs": kwargs, "_from_component_func": True},
-            _type=_type,
-        )
+            _type=_type)
 
     res: Callable = to_component_func(component_entity, create_component_func)
     return res

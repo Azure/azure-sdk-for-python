@@ -52,7 +52,7 @@ class _BaseJob(Job):
         super().__init__(**kwargs)
 
     def _to_dict(self) -> Dict:
-        res: dict = BaseJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = BaseJobSchema().dump(self, context={BASE_PATH_CONTEXT_KEY: "./"})
         return res
 
     @classmethod

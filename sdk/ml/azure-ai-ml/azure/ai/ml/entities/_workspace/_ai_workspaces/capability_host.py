@@ -99,7 +99,7 @@ class CapabilityHost(Resource):
         :rtype: Dict
         """
 
-        return CapabilityHostSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return CapabilityHostSchema().dump(self, context={BASE_PATH_CONTEXT_KEY: "./"})
 
     @classmethod
     def _load(
