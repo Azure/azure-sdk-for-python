@@ -300,20 +300,6 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             "context": eval_input["context"],
         }
 
-        # print("--------------------------------")
-        # for key in simplified_eval_input:
-        #     # if it's an instance of list or dict, json dumpt it
-        #     if isinstance(simplified_eval_input[key], (list, dict)):
-        #         print(f"{key}: {json.dumps(simplified_eval_input[key], indent=2)}")
-        #     else:
-        #         print(f"{key}: {simplified_eval_input[key]}")
-        # print("--------------------------------")
-
-        # llm_output = await self._flow(
-        #     timeout=self._LLM_CALL_TIMEOUT, **simplified_eval_input
-        # )
-        # print(f"LLM output: {llm_output}")
-
         # Replace and call the parent method
         return await super()._do_eval(simplified_eval_input)
 
@@ -358,13 +344,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 target=ErrorTarget.GROUNDEDNESS_EVALUATOR,
             )
         context = self._get_context_from_agent_response(response, tool_definitions)
-        # if not context:
-        #     raise EvaluationException(
-        #         message=f"Context could not be extracted from agent response. Supported tools for groundedness are {self._SUPPORTED_TOOLS}. If supported tools are not used groundedness is not calculated.",
-        #         blame=ErrorBlame.USER_ERROR,
-        #         category=ErrorCategory.NOT_APPLICABLE,
-        #         target=ErrorTarget.GROUNDEDNESS_EVALUATOR,
-        #     )
+
         filtered_response = self._filter_file_search_results(response)
         return super()._convert_kwargs_to_eval_input(
             response=filtered_response, context=context, query=query
@@ -406,12 +386,6 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 tool_name = tool_call.get("name")
                 if tool_name != "file_search":
                     continue
-
-                # Ensure tool is in supported tools # TODO: skip this and not use tool_definitions
-                # if not any(
-                #     t.get("type") in self._SUPPORTED_TOOLS for t in tool_definitions
-                # ):
-                #     continue
 
                 # Extract tool results
                 for result in tool_call.get("tool_result", []):
