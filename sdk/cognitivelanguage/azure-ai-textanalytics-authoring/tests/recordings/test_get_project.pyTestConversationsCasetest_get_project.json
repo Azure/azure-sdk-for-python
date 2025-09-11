@@ -1,0 +1,40 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/authoring/analyze-text/projects/single-class-project?api-version=2025-05-15-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Ocp-Apim-Subscription-Key": "Sanitized",
+        "User-Agent": "azsdk-python-ai-textanalytics-authoring/1.0.0b1 Python/3.13.7 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": "*",
+        "apim-request-id": "e814be30-f544-4f7b-8ec6-cd77b0d2c94c",
+        "Content-Length": "284",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 11 Sep 2025 22:46:15 GMT",
+        "request-id": "e814be30-f544-4f7b-8ec6-cd77b0d2c94c",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "18",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": {
+        "createdDateTime": "2025-05-28T17:07:12Z",
+        "lastModifiedDateTime": "2025-09-11T22:41:31Z",
+        "projectKind": "CustomSingleLabelClassification",
+        "storageInputContainerName": "single-class-example",
+        "projectName": "single-class-project",
+        "multilingual": true,
+        "description": "example",
+        "language": "en"
+      }
+    }
+  ],
+  "Variables": {}
+}

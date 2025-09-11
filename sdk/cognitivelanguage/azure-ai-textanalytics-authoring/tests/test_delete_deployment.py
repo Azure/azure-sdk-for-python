@@ -27,7 +27,7 @@ class TestConversationsDeleteDeploymentSync(TestConversations):
         client = self.create_client(authoring_endpoint, authoring_key)
 
         project_name = "single-class-project"
-        deployment_name = "deployment0728"
+        deployment_name = "deniz-model1"
 
         project_client = client.get_project_client(project_name)
 

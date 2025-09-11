@@ -1,0 +1,49 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/authoring/analyze-text/projects/MyTextProject0902?api-version=2025-05-15-preview",
+      "RequestMethod": "PATCH",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "255",
+        "Content-Type": "application/merge-patch+json",
+        "Ocp-Apim-Subscription-Key": "Sanitized",
+        "User-Agent": "azsdk-python-ai-textanalytics-authoring/1.0.0b1 Python/3.13.7 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": {
+        "projectKind": "CustomMultiLabelClassification",
+        "storageInputContainerName": "multi-class-example",
+        "projectName": "MyTextProject0902",
+        "language": "en",
+        "description": "Project description for a Custom Entity Recognition project",
+        "multilingual": true
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": "*",
+        "apim-request-id": "f56b3719-a0e9-4ac0-ab60-c875de4c3cf8",
+        "Content-Length": "331",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 11 Sep 2025 22:37:38 GMT",
+        "request-id": "f56b3719-a0e9-4ac0-ab60-c875de4c3cf8",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "142",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": {
+        "createdDateTime": "0001-01-01T00:00:00Z",
+        "lastModifiedDateTime": "0001-01-01T00:00:00Z",
+        "projectKind": "CustomMultiLabelClassification",
+        "storageInputContainerName": "multi-class-example",
+        "projectName": "MyTextProject0902",
+        "multilingual": true,
+        "description": "Project description for a Custom Entity Recognition project",
+        "language": "en"
+      }
+    }
+  ],
+  "Variables": {}
+}

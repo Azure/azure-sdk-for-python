@@ -1,0 +1,132 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/authoring/analyze-text/projects/single-class-project/deployments/deployment0902?api-version=2025-05-15-preview",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "31",
+        "Content-Type": "application/json",
+        "Ocp-Apim-Subscription-Key": "Sanitized",
+        "User-Agent": "azsdk-python-ai-textanalytics-authoring/1.0.0b1 Python/3.13.7 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": {
+        "trainedModelLabel": "model5"
+      },
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": "*",
+        "apim-request-id": "06482d10-5884-45a9-a205-d6d8af981eb5",
+        "Content-Length": "0",
+        "Date": "Thu, 11 Sep 2025 22:41:27 GMT",
+        "operation-location": "https://Sanitized.cognitiveservices.azure.com/language/authoring/analyze-text/projects/single-class-project/deployments/deployment0902/jobs/eebaa4ff-45e4-4333-ac42-db3f081eb5b0_638931456000000000?api-version=2025-05-15-preview",
+        "request-id": "06482d10-5884-45a9-a205-d6d8af981eb5",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "98",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/authoring/analyze-text/projects/single-class-project/deployments/deployment0902/jobs/eebaa4ff-45e4-4333-ac42-db3f081eb5b0_638931456000000000?api-version=2025-05-15-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Ocp-Apim-Subscription-Key": "Sanitized",
+        "User-Agent": "azsdk-python-ai-textanalytics-authoring/1.0.0b1 Python/3.13.7 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": "*",
+        "apim-request-id": "e3780a93-aaf3-40d1-a6da-91b6840e4a3c",
+        "Content-Length": "219",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 11 Sep 2025 22:41:27 GMT",
+        "request-id": "e3780a93-aaf3-40d1-a6da-91b6840e4a3c",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "36",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": {
+        "jobId": "eebaa4ff-45e4-4333-ac42-db3f081eb5b0_638931456000000000",
+        "createdDateTime": "2025-09-11T22:41:28Z",
+        "lastUpdatedDateTime": "2025-09-11T22:41:28Z",
+        "expirationDateTime": "2025-09-18T22:41:28Z",
+        "status": "notStarted"
+      }
+    },
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/authoring/analyze-text/projects/single-class-project/deployments/deployment0902/jobs/eebaa4ff-45e4-4333-ac42-db3f081eb5b0_638931456000000000?api-version=2025-05-15-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Ocp-Apim-Subscription-Key": "Sanitized",
+        "User-Agent": "azsdk-python-ai-textanalytics-authoring/1.0.0b1 Python/3.13.7 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": "*",
+        "apim-request-id": "e72bcd6b-3cf2-42e2-9719-d7638aa94b9b",
+        "Content-Length": "218",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 11 Sep 2025 22:41:57 GMT",
+        "request-id": "e72bcd6b-3cf2-42e2-9719-d7638aa94b9b",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "29",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": {
+        "jobId": "eebaa4ff-45e4-4333-ac42-db3f081eb5b0_638931456000000000",
+        "createdDateTime": "2025-09-11T22:41:28Z",
+        "lastUpdatedDateTime": "2025-09-11T22:41:31Z",
+        "expirationDateTime": "2025-09-18T22:41:28Z",
+        "status": "succeeded"
+      }
+    },
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/authoring/analyze-text/projects/single-class-project/deployments/deployment0902?api-version=2025-05-15-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Ocp-Apim-Subscription-Key": "Sanitized",
+        "User-Agent": "azsdk-python-ai-textanalytics-authoring/1.0.0b1 Python/3.13.7 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": "*",
+        "apim-request-id": "8fed05af-8936-42f3-b6f8-5ca294f3a4e3",
+        "Content-Length": "284",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 11 Sep 2025 22:41:58 GMT",
+        "request-id": "8fed05af-8936-42f3-b6f8-5ca294f3a4e3",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "24",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": {
+        "deploymentName": "deployment0902",
+        "modelId": "model5-20250902T090101-c85ec6241f9c43ecb4bae456098a2d96",
+        "lastTrainedDateTime": "2025-09-02T21:01:01.2598675Z",
+        "lastDeployedDateTime": "2025-09-11T22:41:31Z",
+        "deploymentExpirationDate": "2027-04-30",
+        "modelTrainingConfigVersion": "2022-05-01"
+      }
+    }
+  ],
+  "Variables": {}
+}
