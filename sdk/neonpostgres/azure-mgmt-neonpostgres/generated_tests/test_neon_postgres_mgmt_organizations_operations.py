@@ -222,9 +222,6 @@ class TestNeonPostgresMgmtOrganizationsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             organization_name="str",
             properties={
-                "location": "str",
-                "id": "str",
-                "name": "str",
                 "properties": {
                     "companyDetails": {
                         "businessPhone": "str",
@@ -245,13 +242,6 @@ class TestNeonPostgresMgmtOrganizationsOperations(AzureMgmtRecordedTestCase):
                         },
                         "subscriptionId": "str",
                         "subscriptionStatus": "str",
-                    },
-                    "userDetails": {
-                        "emailAddress": "str",
-                        "firstName": "str",
-                        "lastName": "str",
-                        "phoneNumber": "str",
-                        "upn": "str",
                     },
                     "partnerOrganizationProperties": {
                         "organizationName": "str",
@@ -383,18 +373,15 @@ class TestNeonPostgresMgmtOrganizationsOperations(AzureMgmtRecordedTestCase):
                         ],
                         "storage": 0,
                     },
-                    "provisioningState": "str",
-                },
-                "systemData": {
-                    "createdAt": "2020-02-20 00:00:00",
-                    "createdBy": "str",
-                    "createdByType": "str",
-                    "lastModifiedAt": "2020-02-20 00:00:00",
-                    "lastModifiedBy": "str",
-                    "lastModifiedByType": "str",
+                    "userDetails": {
+                        "emailAddress": "str",
+                        "firstName": "str",
+                        "lastName": "str",
+                        "phoneNumber": "str",
+                        "upn": "str",
+                    },
                 },
                 "tags": {"str": "str"},
-                "type": "str",
             },
         ).result()  # call '.result()' to poll until service return final result
 

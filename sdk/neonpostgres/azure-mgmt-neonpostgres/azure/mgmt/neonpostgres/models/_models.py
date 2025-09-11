@@ -1369,6 +1369,100 @@ class OrganizationResource(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
+class OrganizationResourceUpdate(_Model):
+    """The type used for update operations of the OrganizationResource.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.neonpostgres.models.OrganizationResourceUpdateProperties
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    properties: Optional["_models.OrganizationResourceUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.OrganizationResourceUpdateProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class OrganizationResourceUpdateProperties(_Model):
+    """The updatable properties of the OrganizationResource.
+
+    :ivar marketplace_details: Marketplace details of the resource.
+    :vartype marketplace_details: ~azure.mgmt.neonpostgres.models.MarketplaceDetails
+    :ivar user_details: Details of the user.
+    :vartype user_details: ~azure.mgmt.neonpostgres.models.UserDetails
+    :ivar company_details: Details of the company.
+    :vartype company_details: ~azure.mgmt.neonpostgres.models.CompanyDetails
+    :ivar partner_organization_properties: Neon Organization properties.
+    :vartype partner_organization_properties:
+     ~azure.mgmt.neonpostgres.models.PartnerOrganizationProperties
+    :ivar project_properties: Neon Project Properties.
+    :vartype project_properties: ~azure.mgmt.neonpostgres.models.ProjectProperties
+    """
+
+    marketplace_details: Optional["_models.MarketplaceDetails"] = rest_field(
+        name="marketplaceDetails", visibility=["read", "create", "update"]
+    )
+    """Marketplace details of the resource."""
+    user_details: Optional["_models.UserDetails"] = rest_field(
+        name="userDetails", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Details of the user."""
+    company_details: Optional["_models.CompanyDetails"] = rest_field(
+        name="companyDetails", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Details of the company."""
+    partner_organization_properties: Optional["_models.PartnerOrganizationProperties"] = rest_field(
+        name="partnerOrganizationProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Neon Organization properties."""
+    project_properties: Optional["_models.ProjectProperties"] = rest_field(
+        name="projectProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Neon Project Properties."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        marketplace_details: Optional["_models.MarketplaceDetails"] = None,
+        user_details: Optional["_models.UserDetails"] = None,
+        company_details: Optional["_models.CompanyDetails"] = None,
+        partner_organization_properties: Optional["_models.PartnerOrganizationProperties"] = None,
+        project_properties: Optional["_models.ProjectProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class PartnerOrganizationProperties(_Model):
     """Properties specific to Partner's organization.
 
