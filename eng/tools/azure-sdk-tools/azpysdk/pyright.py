@@ -2,7 +2,6 @@ import argparse
 import json
 import os
 import sys
-import tempfile
 
 from typing import Optional, List
 from subprocess import CalledProcessError, check_call
