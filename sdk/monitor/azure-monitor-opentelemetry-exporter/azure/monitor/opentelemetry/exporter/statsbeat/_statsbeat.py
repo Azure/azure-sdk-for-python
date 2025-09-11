@@ -14,9 +14,10 @@ def collect_statsbeat_metrics(exporter) -> None:  # pyright: ignore
     config = StatsbeatConfig.from_exporter(exporter)
     if config:
         initialized = StatsbeatManager().initialize(config)
-        if initialized:
-            # Register the callback that will be invoked on configuration changes to statsbeat
-            _ConfigurationManager().register_callback(get_statsbeat_configuration_callback)
+        # TODO: Enable with _ConfigurationManager
+        # if initialized:
+        #     # Register the callback that will be invoked on configuration changes to statsbeat
+        #     _ConfigurationManager().register_callback(get_statsbeat_configuration_callback)
 
 def get_statsbeat_configuration_callback(settings: Dict[str, str]):
     current_config = StatsbeatManager().get_current_config()
