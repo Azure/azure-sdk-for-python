@@ -9,7 +9,8 @@ import json
 from unittest import mock
 from datetime import datetime
 
-from azure.core.exceptions import HttpResponseError, ServiceRequestError
+from azure.core.exceptions import HttpResponseError, ServiceRequestError, ServiceRequestTimeoutError
+from requests import ConnectTimeout, ReadTimeout, Timeout, ConnectionError
 from azure.core.pipeline.transport import HttpResponse
 from azure.monitor.opentelemetry.exporter.export._base import (
     _MONITOR_DOMAIN_MAPPING,
@@ -20,7 +21,13 @@ from azure.monitor.opentelemetry.exporter.export._base import (
     ExportResult,
 )
 from azure.monitor.opentelemetry.exporter._storage import StorageExportResult
-from azure.monitor.opentelemetry.exporter.statsbeat._state import _REQUESTS_MAP, _STATSBEAT_STATE, _LOCAL_STORAGE_SETUP_STATE
+from azure.monitor.opentelemetry.exporter.statsbeat._state import (
+    _REQUESTS_MAP, 
+    _STATSBEAT_STATE, 
+    _LOCAL_STORAGE_SETUP_STATE,
+    set_customer_sdkstats_metrics,
+    get_customer_sdkstats_metrics
+)
 from azure.monitor.opentelemetry.exporter.statsbeat import _customer_sdkstats
 from azure.monitor.opentelemetry.exporter.statsbeat._customer_sdkstats import _CUSTOMER_SDKSTATS_STATE, CustomerSdkStatsMetrics
 from azure.monitor.opentelemetry.exporter.export.metrics._exporter import AzureMonitorMetricExporter
@@ -36,6 +43,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     DropCode,
     RetryCode,
     _UNKNOWN,
+    _exception_categories,
 )
 from azure.monitor.opentelemetry.exporter._generated import AzureMonitorClient
 from azure.monitor.opentelemetry.exporter._generated.models import (
@@ -115,8 +123,8 @@ class TestBaseExporter(unittest.TestCase):
         _CUSTOMER_SDKSTATS_STATE.update({
             "SHUTDOWN": False,
         })
-        # Reset customer sdkstats singleton for test isolation
-        _customer_sdkstats._STATSBEAT_METRICS = None
+        # Reset customer sdkstats global state for test isolation
+        set_customer_sdkstats_metrics(None)
         _CUSTOMER_SDKSTATS_STATE["SHUTDOWN"] = False
 
     def tearDown(self):
@@ -1530,7 +1538,7 @@ class TestBaseExporter(unittest.TestCase):
                 
                 retry_code, message = _determine_client_retry_code(error)
                 self.assertEqual(retry_code, RetryCode.CLIENT_EXCEPTION)
-                self.assertEqual(message, str(error))
+                self.assertEqual(message, _exception_categories.CLIENT_EXCEPTION.value)
 
     def test_determine_client_retry_code_http_status_codes(self):
         exporter = BaseExporter(disable_offline_storage=True)
@@ -1553,20 +1561,16 @@ class TestBaseExporter(unittest.TestCase):
         
         retry_code, message = _determine_client_retry_code(error)
         self.assertEqual(retry_code, RetryCode.CLIENT_EXCEPTION)
-        self.assertEqual(message, "Connection failed")
+        self.assertEqual(message, _exception_categories.CLIENT_EXCEPTION.value)
 
     def test_determine_client_retry_code_service_request_error_with_message(self):
         exporter = BaseExporter(disable_offline_storage=True)
         
-        error = ServiceRequestError("Network error")
-        error.message = "Specific network error"
+        error = ReadTimeout("Network error")
         
         retry_code, message = _determine_client_retry_code(error)
-        self.assertEqual(retry_code, RetryCode.CLIENT_EXCEPTION)
-        self.assertEqual(message, "Specific network error")
-
-    def test_determine_client_retry_code_timeout_error(self):
-        exporter = BaseExporter(disable_offline_storage=True)
+        self.assertEqual(retry_code, RetryCode.CLIENT_TIMEOUT)
+        self.assertEqual(message, _exception_categories.TIMEOUT_EXCEPTION.value)
 
 
 def validate_telemetry_item(item1, item2):
