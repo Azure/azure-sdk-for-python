@@ -1,5 +1,9 @@
 # Release History
 
+## 4.0.0b23 (2025-09-11)
+
+change log generation was timeout!!! You need to write it manually!!!
+
 ## 4.0.0b23 (2025-08-17)
 
 change log generation failed!!! You need to write it manually!!!

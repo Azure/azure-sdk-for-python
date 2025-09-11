@@ -30,7 +30,7 @@ keywords = [
 ]
 dependencies = [
     "msrest>=0.7.1",
-    "azure-mgmt-core>=1.5.0",
+    "azure-mgmt-core>=1.6.0",
     "typing-extensions>=4.6.0",
 ]
 dynamic = [

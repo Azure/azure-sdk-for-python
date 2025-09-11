@@ -50,9 +50,9 @@ from ...operations._managed_instances_operations import (
 )
 from .._configuration import SqlManagementClientConfiguration
 
-List = list
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
 class ManagedInstancesOperations:
