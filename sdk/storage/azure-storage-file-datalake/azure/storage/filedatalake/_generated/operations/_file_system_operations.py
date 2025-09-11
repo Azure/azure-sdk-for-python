@@ -47,7 +47,7 @@ def build_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     resource: Literal["filesystem"] = kwargs.pop("resource", _params.pop("resource", "filesystem"))
-    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -88,7 +88,7 @@ def build_set_properties_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     resource: Literal["filesystem"] = kwargs.pop("resource", _params.pop("resource", "filesystem"))
-    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -126,7 +126,7 @@ def build_get_properties_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     resource: Literal["filesystem"] = kwargs.pop("resource", _params.pop("resource", "filesystem"))
-    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -164,7 +164,7 @@ def build_delete_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     resource: Literal["filesystem"] = kwargs.pop("resource", _params.pop("resource", "filesystem"))
-    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -203,13 +203,14 @@ def build_list_paths_request(
     path: Optional[str] = None,
     max_results: Optional[int] = None,
     upn: Optional[bool] = None,
+    begin_from: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     resource: Literal["filesystem"] = kwargs.pop("resource", _params.pop("resource", "filesystem"))
-    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -233,6 +234,8 @@ def build_list_paths_request(
         _params["maxResults"] = _SERIALIZER.query("max_results", max_results, "int", minimum=1)
     if upn is not None:
         _params["upn"] = _SERIALIZER.query("upn", upn, "bool")
+    if begin_from is not None:
+        _params["beginFrom"] = _SERIALIZER.query("begin_from", begin_from, "str")
 
     # Construct headers
     if request_id_parameter is not None:
@@ -261,7 +264,7 @@ def build_list_blob_hierarchy_segment_request(  # pylint: disable=name-too-long
 
     restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
     comp: Literal["list"] = kwargs.pop("comp", _params.pop("comp", "list"))
-    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -667,6 +670,7 @@ class FileSystemOperations:
         path: Optional[str] = None,
         max_results: Optional[int] = None,
         upn: Optional[bool] = None,
+        begin_from: Optional[str] = None,
         **kwargs: Any
     ) -> _models.PathList:
         """List Paths.
@@ -704,6 +708,14 @@ class FileSystemOperations:
          false. Note that group and application Object IDs are not translated because they do not have
          unique friendly names. Default value is None.
         :type upn: bool
+        :param begin_from: Optional. A relative path within the specified directory where the listing
+         will start from. For example, a recursive listing under directory folder1/folder2 with
+         beginFrom as folder3/readmefile.txt will start listing from
+         folder1/folder2/folder3/readmefile.txt. Please note that, multiple entity levels are supported
+         for recursive listing. Non-recursive listing supports only one entity level. An error will
+         appear if multiple entity levels are specified for non-recursive listing. Default value is
+         None.
+        :type begin_from: str
         :return: PathList or the result of cls(response)
         :rtype: ~azure.storage.filedatalake.models.PathList
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -730,6 +742,7 @@ class FileSystemOperations:
             path=path,
             max_results=max_results,
             upn=upn,
+            begin_from=begin_from,
             resource=self._config.resource,
             version=self._config.version,
             headers=_headers,
