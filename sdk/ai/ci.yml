@@ -34,6 +34,11 @@ extends:
     TestTimeoutInMinutes: 60
     # The job "Test ubuntu2404_pypy39" in the "python - ai" pipeline hangs and eventually times out.
     # Disable it until the issue is understood.
+    MatrixConfigs:
+      - Name: communication_ci_matrix
+        Path: sdk/ai/platform-matrix.json
+        Selection: sparse
+        GenerateVMJobs: true
     MatrixFilters:
       - PythonVersion=^(?!pypy3).*
     # The below were set before when azure-ai-generative and azure-ai-resources packages were built:
@@ -44,7 +49,7 @@ extends:
     # This custom matrix config should be dropped once:
     #  * The Azure SDKs removes Python 3.7 from the test matrix
     #  * Once all of azure-ai-generative's extra packages can be installed on Python3.12
-    # MatrixConfigs: 
+    # MatrixConfigs:
     #  - Name: ai_ci_matrix
     #    Path: eng/pipelines/templates/stages/platform-matrix-ai.json
     #    Selection: sparse
@@ -56,6 +61,8 @@ extends:
       safeName: azureaiinference
     - name: azure-ai-agents
       safeName: azureaiagents
+    - name: azure-ai-voicelive
+      safeName: azureaivoicelive
     # These packages are deprecated:
     # - name: azure-ai-generative
     #   safeName: azureaigenerative

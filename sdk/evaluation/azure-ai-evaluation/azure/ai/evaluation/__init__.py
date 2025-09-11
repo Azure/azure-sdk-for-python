@@ -45,6 +45,8 @@ from ._aoai.aoai_grader import AzureOpenAIGrader
 from ._aoai.label_grader import AzureOpenAILabelGrader
 from ._aoai.string_check_grader import AzureOpenAIStringCheckGrader
 from ._aoai.text_similarity_grader import AzureOpenAITextSimilarityGrader
+from ._aoai.score_model_grader import AzureOpenAIScoreModelGrader
+from ._aoai.python_grader import AzureOpenAIPythonGrader
 
 
 _patch_all = []
@@ -52,15 +54,46 @@ _patch_all = []
 # The converter from the AI service to the evaluator schema requires a dependency on
 # ai.projects, but we also don't want to force users installing ai.evaluations to pull
 # in ai.projects. So we only import it if it's available and the user has ai.projects.
-try:
-    from ._converters._ai_services import AIAgentConverter
+# We use lazy loading to avoid printing messages during import unless the classes are actually used.
+_lazy_imports = {}
 
-    _patch_all.append("AIAgentConverter")
-except ImportError:
-    print(
-        "[INFO] Could not import AIAgentConverter. Please install the dependency with `pip install azure-ai-projects`."
-    )
 
+def _create_lazy_import(class_name, module_path, dependency_name):
+    """Create a lazy import function for optional dependencies.
+
+    Args:
+        class_name: Name of the class to import
+        module_path: Module path to import from
+        dependency_name: Name of the dependency package for error message
+
+    Returns:
+        A function that performs the lazy import when called
+    """
+
+    def lazy_import():
+        try:
+            module = __import__(module_path, fromlist=[class_name])
+            cls = getattr(module, class_name)
+            _patch_all.append(class_name)
+            return cls
+        except ImportError:
+            raise ImportError(
+                f"Could not import {class_name}. Please install the dependency with `pip install {dependency_name}`."
+            )
+
+    return lazy_import
+
+
+_lazy_imports["AIAgentConverter"] = _create_lazy_import(
+    "AIAgentConverter",
+    "azure.ai.evaluation._converters._ai_services",
+    "azure-ai-projects",
+)
+_lazy_imports["SKAgentConverter"] = _create_lazy_import(
+    "SKAgentConverter",
+    "azure.ai.evaluation._converters._sk_services",
+    "semantic-kernel",
+)
 
 __all__ = [
     "evaluate",
@@ -102,6 +135,15 @@ __all__ = [
     "AzureOpenAILabelGrader",
     "AzureOpenAIStringCheckGrader",
     "AzureOpenAITextSimilarityGrader",
+    "AzureOpenAIScoreModelGrader",
+    "AzureOpenAIPythonGrader",
 ]
 
 __all__.extend([p for p in _patch_all if p not in __all__])
+
+
+def __getattr__(name):
+    """Handle lazy imports for optional dependencies."""
+    if name in _lazy_imports:
+        return _lazy_imports[name]()
+    raise AttributeError(f"module '{__name__}' has no attribute '{name}'")

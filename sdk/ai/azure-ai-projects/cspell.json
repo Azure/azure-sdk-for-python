@@ -1,7 +1,6 @@
 {
     "ignoreWords": [
         "aiproject",
-        "Prompty",
         "azureopenai",
         "GLEU",
         "aiservices",
@@ -12,6 +11,7 @@
         "getconnectionwithcredentials",
         "quantitive",
         "balapvbyostoragecanary",
+        "fspath",
     ],
     "ignorePaths": [
     ]

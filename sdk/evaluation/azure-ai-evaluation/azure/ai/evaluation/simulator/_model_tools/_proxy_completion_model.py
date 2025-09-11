@@ -10,7 +10,7 @@ from typing import Any, Dict, List, Optional, cast, Union
 
 from azure.ai.evaluation._http_utils import AsyncHttpPipeline, get_async_http_client
 from azure.ai.evaluation._user_agent import UserAgentSingleton
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError, ServiceResponseError
 from azure.core.pipeline.policies import AsyncRetryPolicy, RetryMode
 from azure.ai.evaluation._common.onedp._client import AIProjectClient
 from azure.ai.evaluation._common.onedp.models import SimulationDTO
@@ -208,7 +208,7 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
             flag = True
             while flag:
                 try:
-                    response = session.evaluations.operation_results(operation_id, headers=headers)
+                    response = session.red_teams.operation_results(operation_id, headers=headers)
                 except Exception as e:
                     from types import SimpleNamespace  # pylint: disable=forgotten-debug-statement
 
@@ -217,15 +217,34 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
                     response_data = response
                     flag = False
                     break
-                if response.status_code == 200:
-                    response_data = cast(List[Dict], response.json())
+                if not isinstance(response, SimpleNamespace) and response.get("object") == "chat.completion":
+                    response_data = response
                     flag = False
+                    break
                 else:
                     request_count += 1
                     sleep_time = RAIService.SLEEP_TIME**request_count
                     await asyncio.sleep(sleep_time)
         else:
-            response = await session.post(url=self.endpoint_url, headers=proxy_headers, json=sim_request_dto.to_dict())
+            # Retry policy for POST request to RAI service
+            service_call_retry_policy = AsyncRetryPolicy(
+                retry_on_exceptions=[ServiceResponseError],
+                retry_total=7,
+                retry_backoff_factor=10.0,
+                retry_backoff_max=180,
+                retry_mode=RetryMode.Exponential,
+            )
+
+            response = None
+            async with get_async_http_client().with_policies(retry_policy=service_call_retry_policy) as retry_client:
+                try:
+                    response = await retry_client.post(
+                        url=self.endpoint_url, headers=proxy_headers, json=sim_request_dto.to_dict()
+                    )
+                except ServiceResponseError as e:
+                    self.logger.error("ServiceResponseError during POST request to rai svc after retries: %s", str(e))
+                    raise
+
             # response.raise_for_status()
             if response.status_code != 202:
                 raise HttpResponseError(

@@ -37,6 +37,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/resources/resource-manager/Microsoft.Resources/stable/2022-09-01/examples/GetTagsResource.json
+# x-ms-original-file: specification/resources/resource-manager/Microsoft.Resources/stable/2025-04-01/examples/GetTagsResource.json
 if __name__ == "__main__":
     main()

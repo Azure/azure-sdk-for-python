@@ -1,6 +1,20 @@
 # Release History
 
-## 1.35.0 (Unreleased)
+## 1.35.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+- Fixed an issue where the `retry_backoff_max` parameter in `RetryPolicy` and `AsyncRetryPolicy` constructors was being ignored, causing retry operations to use default maximum backoff values instead of the user-specified limits. #42444
+
+### Other Changes
+
+- `BearerTokenCredentialPolicy` and `AsyncBearerTokenCredentialPolicy` will now properly surface credential exceptions when handling claims challenges. Previously, exceptions from credential token requests were suppressed; now they are raised and chained with the original 401 `HttpResponseError` response for better debugging visibility. #42536
+
+## 1.35.0 (2025-07-02)
 
 ### Features Added
 
@@ -10,14 +24,11 @@
 - Added `is_generated_model` method to `azure.core.serialization`. Returns whether a given input is a model from one of our generated sdks. #41445
 - Added `attribute_list` method to `azure.core.serialization`. Returns all of the attributes of a given model from one of our generated sdks. #41571
 
-### Breaking Changes
-
-### Bugs Fixed
-
 ### Other Changes
 
 - A timeout error when using the `aiohttp` transport (the default for async SDKs) will now be raised as a `azure.core.exceptions.ServiceResponseTimeoutError`, a subtype of the previously raised `ServiceResponseError`.
 - When using with `aiohttp` 3.10 or later, a connection timeout error will now be raised as a `azure.core.exceptions.ServiceRequestTimeoutError`, which can be retried.
+- The default implementation of `on_challenge` in `BearerTokenCredentialPolicy` and `AsyncBearerTokenCredentialPolicy` will now cache the retrieved token. #41857
 
 ## 1.34.0 (2025-05-01)
 

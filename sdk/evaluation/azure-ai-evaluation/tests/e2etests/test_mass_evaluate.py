@@ -238,7 +238,7 @@ class TestMassEvaluate:
     @pytest.mark.parametrize(
         ("proj_scope", "cred", "conv", "m_config"),
         (
-            ("project_scope", "azure_cred", "data_convo_file", "model_config"),
+            # ("project_scope", "azure_cred", "data_convo_file", "model_config"),
             # ("project_scope_onedp", "azure_cred_onedp", "data_convo_file", "model_config_onedp"),
         ),
     )

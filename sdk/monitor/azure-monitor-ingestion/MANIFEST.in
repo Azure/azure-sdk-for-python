@@ -1,7 +1,7 @@
-recursive-include tests *.py
-recursive-include samples *.py
 include *.md
 include LICENSE
+include azure/monitor/ingestion/py.typed
+recursive-include tests *.py
+recursive-include samples *.py *.md
 include azure/__init__.py
 include azure/monitor/__init__.py
-include azure/monitor/ingestion/py.typed

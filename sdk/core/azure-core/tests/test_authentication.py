@@ -4,6 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 from collections import namedtuple
+import base64
 import time
 from itertools import product
 from requests import Response
@@ -15,8 +16,8 @@ from azure.core.credentials import (
     AzureNamedKeyCredential,
     AccessTokenInfo,
 )
-from azure.core.exceptions import ServiceRequestError
-from azure.core.pipeline import Pipeline, PipelineRequest, PipelineContext
+from azure.core.exceptions import ServiceRequestError, HttpResponseError, ClientAuthenticationError
+from azure.core.pipeline import Pipeline, PipelineRequest, PipelineContext, PipelineResponse
 from azure.core.pipeline.transport import HttpTransport, HttpRequest
 from azure.core.pipeline.policies import (
     BearerTokenCredentialPolicy,
@@ -791,3 +792,138 @@ def test_access_token_subscriptable():
     assert len(token) == 2
     assert token[0] == "token"
     assert token[1] == 42
+
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_bearer_policy_on_challenge_caches_token_with_claims(http_request):
+    """Test that on_challenge caches the token when handling claims challenges"""
+    # Setup credentials that return different tokens for different calls
+    initial_token = AccessToken("initial_token", int(time.time()) + 3600)
+    claims_token = AccessToken("claims_token", int(time.time()) + 3600)
+
+    call_count = 0
+
+    def mock_get_token_info(*scopes, options):
+        nonlocal call_count
+        call_count += 1
+        if options and "claims" in options:
+            return claims_token
+        return initial_token
+
+    fake_credential = Mock(spec_set=["get_token_info"], get_token_info=mock_get_token_info)
+    policy = BearerTokenCredentialPolicy(fake_credential, "scope")
+
+    # Create request and initial response
+    http_req = http_request("GET", "https://example.com")
+    request = PipelineRequest(
+        http_req, PipelineContext(None)
+    )  # Create a 401 response with insufficient_claims challenge
+    test_claims = '{"access_token":{"foo":"bar"}}'
+    encoded_claims = base64.urlsafe_b64encode(test_claims.encode()).decode().rstrip("=")
+    challenge_header = f'Bearer error="insufficient_claims", claims="{encoded_claims}"'
+
+    response_mock = Mock(status_code=401, headers={"WWW-Authenticate": challenge_header})
+    response = PipelineResponse(request, response_mock, PipelineContext(None))
+
+    # Call on_challenge
+    result = policy.on_challenge(request, response)
+
+    # Verify the challenge was handled successfully
+    assert result is True
+
+    # Verify the token was cached
+    assert policy._token is claims_token
+    assert policy._token.token == "claims_token"
+
+    # Verify the Authorization header was set correctly
+    assert request.http_request.headers["Authorization"] == "Bearer claims_token"
+
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_bearer_policy_on_challenge_exception_chaining(http_request):
+    """Test that exceptions during on_challenge are chained with HttpResponseError"""
+
+    # Mock credential that raises an exception during get_token_info with claims
+    def mock_get_token_info(*scopes, options=None):
+        if options and "claims" in options:
+            raise ClientAuthenticationError("Failed to request token info with claims")
+        return AccessTokenInfo("initial_token", int(time.time()) + 3600)
+
+    fake_credential = Mock(
+        spec_set=["get_token", "get_token_info"],
+        get_token=Mock(return_value=AccessToken("fallback", int(time.time()) + 3600)),
+        get_token_info=mock_get_token_info,
+    )
+    policy = BearerTokenCredentialPolicy(fake_credential, "scope")
+
+    # Create a 401 response with insufficient_claims challenge
+    test_claims = '{"access_token":{"foo":"bar"}}'
+    encoded_claims = base64.urlsafe_b64encode(test_claims.encode()).decode().rstrip("=")
+    challenge_header = f'Bearer error="insufficient_claims", claims="{encoded_claims}"'
+
+    response_mock = Mock(status_code=401, headers={"WWW-Authenticate": challenge_header})
+
+    # Mock transport that returns the 401 response
+    def mock_transport_send(request):
+        return response_mock
+
+    transport = Mock(send=mock_transport_send)
+    pipeline = Pipeline(transport=transport, policies=[policy])
+
+    # Execute the request and verify exception chaining
+    with pytest.raises(ClientAuthenticationError) as exc_info:
+        pipeline.run(http_request("GET", "https://example.com"))
+
+    # Verify the original exception is preserved
+    original_exception = exc_info.value
+    assert original_exception.message == "Failed to request token info with claims"
+
+    # Verify the exception is chained with HttpResponseError
+    assert original_exception.__cause__ is not None
+    assert isinstance(original_exception.__cause__, HttpResponseError)
+
+    # Verify the HttpResponseError contains the original 401 response
+    http_response_error = original_exception.__cause__
+    assert http_response_error.response is response_mock
+
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_bearer_policy_reads_streamed_response_on_challenge_exception(http_request):
+    """Test that the policy reads streamed response body when on_challenge raises exception"""
+
+    # Create a credential that will raise an exception when get_token is called with claims
+    def failing_get_token(*scopes, **kwargs):
+        if "claims" in kwargs:
+            raise ClientAuthenticationError("Failed to get token with claims")
+        return AccessToken("initial_token", int(time.time()) + 3600)
+
+    credential = Mock(spec_set=["get_token"], get_token=failing_get_token)
+    policy = BearerTokenCredentialPolicy(credential, "scope")
+
+    # Create a 401 response with insufficient_claims challenge that will trigger the exception
+    test_claims = '{"access_token":{"foo":"bar"}}'
+    encoded_claims = base64.urlsafe_b64encode(test_claims.encode()).decode().rstrip("=")
+    challenge_header = f'Bearer error="insufficient_claims", claims="{encoded_claims}"'
+
+    # Create the mock HTTP response with stream reading capability
+    http_response_mock = Mock()
+    http_response_mock.status_code = 401
+    http_response_mock.headers = {"WWW-Authenticate": challenge_header}
+    http_response_mock.read = Mock(return_value=b"Error details from server")
+
+    # Mock transport that returns the HTTP response directly (it will be wrapped by Pipeline)
+    transport = Mock(send=Mock(return_value=http_response_mock))
+
+    # Create pipeline with stream option
+    pipeline = Pipeline(transport=transport, policies=[policy])
+
+    # Execute the request and verify exception handling
+    with pytest.raises(ClientAuthenticationError) as exc_info:
+        pipeline.run(http_request("GET", "https://example.com"), stream=True)
+
+    # Verify that the response.read() was called to consume the stream
+    http_response_mock.read.assert_called_once()
+
+    # Verify the exception chaining
+    assert exc_info.value.__cause__ is not None
+    assert isinstance(exc_info.value.__cause__, HttpResponseError)

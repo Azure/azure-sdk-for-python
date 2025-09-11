@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -11,10 +11,42 @@
 import datetime
 from typing import Any, Dict, List, Mapping, Optional, TYPE_CHECKING, Union, overload
 
+from azure.core.exceptions import ODataV4Format
+
 from .._utils.model_base import Model as _Model, rest_field
 
 if TYPE_CHECKING:
     from .. import models as _models
+
+
+class CancelOccurrenceRequest(_Model):
+    """The request to cancel an occurrence.
+
+    :ivar resource_ids: The resources the cancellation should act on. If no resource is passed in
+     the list, Scheduled Action will cancel the occurrence for all resources. Required.
+    :vartype resource_ids: list[str]
+    """
+
+    resource_ids: List[str] = rest_field(name="resourceIds", visibility=["read", "create", "update", "delete", "query"])
+    """The resources the cancellation should act on. If no resource is passed in the list, Scheduled
+     Action will cancel the occurrence for all resources. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_ids: List[str],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class CancelOperationsRequest(_Model):
@@ -157,6 +189,42 @@ class DeallocateResourceOperationResponse(_Model):
         type: str,
         location: str,
         results: Optional[List["_models.ResourceOperation"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DelayRequest(_Model):
+    """Request to ask for a delay in an occurrence, delay should be set to client local time eg (ACST)
+    2025-05-30T22:03:00+09:30, (PST) 2025-05-30T06:35:00-07:00.
+
+    :ivar delay: The exact time to delay the operations to. Required.
+    :vartype delay: ~datetime.datetime
+    :ivar resource_ids: The resources that should be delayed. If empty, the delay will apply to the
+     all resources in the occurrence. Required.
+    :vartype resource_ids: list[str]
+    """
+
+    delay: datetime.datetime = rest_field(visibility=["read", "create", "update", "delete", "query"], format="rfc3339")
+    """The exact time to delay the operations to. Required."""
+    resource_ids: List[str] = rest_field(name="resourceIds", visibility=["read", "create", "update", "delete", "query"])
+    """The resources that should be delayed. If empty, the delay will apply to the all resources in
+     the occurrence. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        delay: datetime.datetime,
+        resource_ids: List[str],
     ) -> None: ...
 
     @overload
@@ -537,6 +605,51 @@ class ExecutionParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
+class Resource(_Model):
+    """Resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.computeschedule.models.SystemData
+    """
+
+    id: Optional[str] = rest_field(visibility=["read"])
+    """Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}."""
+    name: Optional[str] = rest_field(visibility=["read"])
+    """The name of the resource."""
+    type: Optional[str] = rest_field(visibility=["read"])
+    """The type of the resource. E.g. \"Microsoft.Compute/virtualMachines\" or
+     \"Microsoft.Storage/storageAccounts\"."""
+    system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
+    """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
+
+
+class ExtensionResource(Resource):
+    """The base extension resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.computeschedule.models.SystemData
+    """
+
+
 class GetOperationErrorsRequest(_Model):
     """This is the request to get errors per vm operations.
 
@@ -692,6 +805,349 @@ class HibernateResourceOperationResponse(_Model):
         type: str,
         location: str,
         results: Optional[List["_models.ResourceOperation"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NotificationProperties(_Model):
+    """The information about notifications to be send to about upcoming operations.
+
+    :ivar destination: Where the notification should be sent. For email, it should follow email
+     format. Required.
+    :vartype destination: str
+    :ivar type: Type of notification to be sent. Required. "Email"
+    :vartype type: str or ~azure.mgmt.computeschedule.models.NotificationType
+    :ivar language: The language the notification should be sent on. Required. "en-us"
+    :vartype language: str or ~azure.mgmt.computeschedule.models.Language
+    :ivar disabled: Tells if the notification is enabled or not.
+    :vartype disabled: bool
+    """
+
+    destination: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Where the notification should be sent. For email, it should follow email format. Required."""
+    type: Union[str, "_models.NotificationType"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Type of notification to be sent. Required. \"Email\""""
+    language: Union[str, "_models.Language"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The language the notification should be sent on. Required. \"en-us\""""
+    disabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Tells if the notification is enabled or not."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        destination: str,
+        type: Union[str, "_models.NotificationType"],
+        language: Union[str, "_models.Language"],
+        disabled: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ProxyResource(Resource):
+    """Proxy Resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.computeschedule.models.SystemData
+    """
+
+
+class Occurrence(ProxyResource):
+    """Concrete proxy resource types can be created by aliasing this type using a specific property
+    type.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.computeschedule.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.computeschedule.models.OccurrenceProperties
+    """
+
+    properties: Optional["_models.OccurrenceProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.OccurrenceProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class OccurrenceExtensionProperties(_Model):
+    """The properties of the occurrence extension.
+
+    :ivar resource_id: The ARM Id of the resource.
+     "subscriptions/{subId}/resourceGroups/{rgName}/providers/Microsoft.Compute/virtualMachines/{vmName}".
+     Required.
+    :vartype resource_id: str
+    :ivar notification_settings: The desired notification settings for the specified resource.
+    :vartype notification_settings: list[~azure.mgmt.computeschedule.models.NotificationProperties]
+    :ivar scheduled_time: The time the occurrence is scheduled for the resource. Specified in UTC.
+     Required.
+    :vartype scheduled_time: ~datetime.datetime
+    :ivar provisioning_state: The current state of the resource. Known values are: "Succeeded",
+     "Failed", and "Canceled".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.computeschedule.models.ResourceProvisioningState
+    :ivar error_details: Error details for the resource. Only populated if resource is in failed
+     state.
+    :vartype error_details: ~azure.core.ODataV4Format
+    :ivar scheduled_action_id: The arm identifier of the scheduled action the occurrence belongs
+     to. Required.
+    :vartype scheduled_action_id: str
+    """
+
+    resource_id: str = rest_field(name="resourceId", visibility=["read", "create", "update", "delete", "query"])
+    """The ARM Id of the resource.
+     \"subscriptions/{subId}/resourceGroups/{rgName}/providers/Microsoft.Compute/virtualMachines/{vmName}\".
+     Required."""
+    notification_settings: Optional[List["_models.NotificationProperties"]] = rest_field(
+        name="notificationSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The desired notification settings for the specified resource."""
+    scheduled_time: datetime.datetime = rest_field(name="scheduledTime", visibility=["read"], format="rfc3339")
+    """The time the occurrence is scheduled for the resource. Specified in UTC. Required."""
+    provisioning_state: Optional[Union[str, "_models.ResourceProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The current state of the resource. Known values are: \"Succeeded\", \"Failed\", and
+     \"Canceled\"."""
+    error_details: Optional[ODataV4Format] = rest_field(name="errorDetails", visibility=["read"])
+    """Error details for the resource. Only populated if resource is in failed state."""
+    scheduled_action_id: str = rest_field(
+        name="scheduledActionId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The arm identifier of the scheduled action the occurrence belongs to. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_id: str,
+        scheduled_action_id: str,
+        notification_settings: Optional[List["_models.NotificationProperties"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class OccurrenceExtensionResource(ExtensionResource):
+    """The scheduled action extension.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.computeschedule.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.computeschedule.models.OccurrenceExtensionProperties
+    """
+
+    properties: Optional["_models.OccurrenceExtensionProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.OccurrenceExtensionProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class OccurrenceProperties(_Model):
+    """Properties for an occurrence.
+
+    :ivar scheduled_time: The time the occurrence is scheduled for. This value can be changed by
+     calling the delay API. Required.
+    :vartype scheduled_time: ~datetime.datetime
+    :ivar result_summary: The result for occurrences that achieved a terminal state. Required.
+    :vartype result_summary: ~azure.mgmt.computeschedule.models.OccurrenceResultSummary
+    :ivar provisioning_state: The aggregated provisioning state of the occurrence. Known values
+     are: "Created", "Rescheduling", "Scheduled", "Succeeded", "Failed", "Cancelling", and
+     "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.computeschedule.models.OccurrenceState
+    """
+
+    scheduled_time: datetime.datetime = rest_field(name="scheduledTime", visibility=["read"], format="rfc3339")
+    """The time the occurrence is scheduled for. This value can be changed by calling the delay API.
+     Required."""
+    result_summary: "_models.OccurrenceResultSummary" = rest_field(name="resultSummary", visibility=["read"])
+    """The result for occurrences that achieved a terminal state. Required."""
+    provisioning_state: Optional[Union[str, "_models.OccurrenceState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The aggregated provisioning state of the occurrence. Known values are: \"Created\",
+     \"Rescheduling\", \"Scheduled\", \"Succeeded\", \"Failed\", \"Cancelling\", and \"Canceled\"."""
+
+
+class OccurrenceResource(_Model):
+    """Represents an scheduled action resource metadata.
+
+    :ivar name: The name of the resource. Required.
+    :vartype name: str
+    :ivar id: The compute RP resource id of the resource in the scheduled actions scope. Required.
+    :vartype id: str
+    :ivar type: The type of resource.
+    :vartype type: str
+    :ivar resource_id: The ARM Id of the resource.
+     "subscriptions/{subId}/resourceGroups/{rgName}/providers/Microsoft.Compute/virtualMachines/{vmName}".
+     Required.
+    :vartype resource_id: str
+    :ivar notification_settings: The desired notification settings for the specified resource.
+    :vartype notification_settings: list[~azure.mgmt.computeschedule.models.NotificationProperties]
+    :ivar scheduled_time: The time the occurrence is scheduled for the resource. Required.
+    :vartype scheduled_time: ~datetime.datetime
+    :ivar provisioning_state: The current state of the resource. Known values are: "Succeeded",
+     "Failed", and "Canceled".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.computeschedule.models.ResourceProvisioningState
+    :ivar error_details: Error details for the resource. Only populated if resource is in failed
+     state.
+    :vartype error_details: ~azure.core.ODataV4Format
+    """
+
+    name: str = rest_field(visibility=["read"])
+    """The name of the resource. Required."""
+    id: str = rest_field(visibility=["read"])
+    """The compute RP resource id of the resource in the scheduled actions scope. Required."""
+    type: Optional[str] = rest_field(visibility=["read"])
+    """The type of resource."""
+    resource_id: str = rest_field(name="resourceId", visibility=["read", "create", "update", "delete", "query"])
+    """The ARM Id of the resource.
+     \"subscriptions/{subId}/resourceGroups/{rgName}/providers/Microsoft.Compute/virtualMachines/{vmName}\".
+     Required."""
+    notification_settings: Optional[List["_models.NotificationProperties"]] = rest_field(
+        name="notificationSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The desired notification settings for the specified resource."""
+    scheduled_time: datetime.datetime = rest_field(name="scheduledTime", visibility=["read"], format="rfc3339")
+    """The time the occurrence is scheduled for the resource. Required."""
+    provisioning_state: Optional[Union[str, "_models.ResourceProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The current state of the resource. Known values are: \"Succeeded\", \"Failed\", and
+     \"Canceled\"."""
+    error_details: Optional[ODataV4Format] = rest_field(name="errorDetails", visibility=["read"])
+    """Error details for the resource. Only populated if resource is in failed state."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_id: str,
+        notification_settings: Optional[List["_models.NotificationProperties"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class OccurrenceResultSummary(_Model):
+    """The summarized provisioning result of an occurrence.
+
+    :ivar total: The total number of resources that the occurrence was supposed to act on.
+     Required.
+    :vartype total: int
+    :ivar statuses: The summarized status of the resources. Required.
+    :vartype statuses: list[~azure.mgmt.computeschedule.models.ResourceResultSummary]
+    """
+
+    total: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The total number of resources that the occurrence was supposed to act on. Required."""
+    statuses: List["_models.ResourceResultSummary"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The summarized status of the resources. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        total: int,
+        statuses: List["_models.ResourceResultSummary"],
     ) -> None: ...
 
     @overload
@@ -927,6 +1383,100 @@ class OperationErrorsResult(_Model):
         super().__init__(*args, **kwargs)
 
 
+class RecurringActionsResourceOperationResult(_Model):
+    """The response from scheduled action resource requests, which contains the status of each
+    resource.
+
+    :ivar total_resources: The total number of resources operated on. Required.
+    :vartype total_resources: int
+    :ivar resources_statuses: The resource status of for each resource. Required.
+    :vartype resources_statuses: list[~azure.mgmt.computeschedule.models.ResourceStatus]
+    """
+
+    total_resources: int = rest_field(name="totalResources", visibility=["read", "create", "update", "delete", "query"])
+    """The total number of resources operated on. Required."""
+    resources_statuses: List["_models.ResourceStatus"] = rest_field(
+        name="resourcesStatuses", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource status of for each resource. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        total_resources: int,
+        resources_statuses: List["_models.ResourceStatus"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ResourceAttachRequest(_Model):
+    """Request model to attach a list of scheduled action resources.
+
+    :ivar resources: List of resources to be attached/patched. Required.
+    :vartype resources: list[~azure.mgmt.computeschedule.models.ScheduledActionResource]
+    """
+
+    resources: List["_models.ScheduledActionResource"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of resources to be attached/patched. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resources: List["_models.ScheduledActionResource"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ResourceDetachRequest(_Model):
+    """Request model to detach a list of scheduled action resources.
+
+    :ivar resources: List of resources to be detached. Required.
+    :vartype resources: list[str]
+    """
+
+    resources: List[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """List of resources to be detached. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resources: List[str],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ResourceOperation(_Model):
     """High level response from an operation on a resource.
 
@@ -1118,6 +1668,36 @@ class ResourceOperationError(_Model):
         super().__init__(*args, **kwargs)
 
 
+class ResourcePatchRequest(_Model):
+    """Request model perform a resource operation in a list of resources.
+
+    :ivar resources: The list of resources we watch to patch. Required.
+    :vartype resources: list[~azure.mgmt.computeschedule.models.ScheduledActionResource]
+    """
+
+    resources: List["_models.ScheduledActionResource"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of resources we watch to patch. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resources: List["_models.ScheduledActionResource"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ResourceProvisionPayload(_Model):
     """Resource creation data model.
 
@@ -1179,6 +1759,48 @@ class ResourceProvisionPayload(_Model):
         super().__init__(*args, **kwargs)
 
 
+class ResourceResultSummary(_Model):
+    """The status of the resources.
+
+    :ivar code: The error code for those resources. In case of success, code is populated with
+     Success. Required.
+    :vartype code: str
+    :ivar count: The number of resources that the code applies to. Required.
+    :vartype count: int
+    :ivar error_details: The error details for the resources. Not populated on success cases.
+    :vartype error_details: ~azure.core.ODataV4Format
+    """
+
+    code: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The error code for those resources. In case of success, code is populated with Success.
+     Required."""
+    count: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The number of resources that the code applies to. Required."""
+    error_details: Optional[ODataV4Format] = rest_field(
+        name="errorDetails", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The error details for the resources. Not populated on success cases."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        code: str,
+        count: int,
+        error_details: Optional[ODataV4Format] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class Resources(_Model):
     """The resources needed for the user request.
 
@@ -1194,6 +1816,48 @@ class Resources(_Model):
         self,
         *,
         ids: List[str],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ResourceStatus(_Model):
+    """The status of a resource after a resource level operation was performed.
+
+    :ivar resource_id: The arm identifier of the resource. Required.
+    :vartype resource_id: str
+    :ivar status: The state the resource is currently on. Required. Known values are: "Succeeded"
+     and "Failed".
+    :vartype status: str or ~azure.mgmt.computeschedule.models.ResourceOperationStatus
+    :ivar error: Errors encountered while trying to perform.
+    :vartype error: ~azure.core.ODataV4Format
+    """
+
+    resource_id: str = rest_field(name="resourceId", visibility=["read", "create", "update", "delete", "query"])
+    """The arm identifier of the resource. Required."""
+    status: Union[str, "_models.ResourceOperationStatus"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The state the resource is currently on. Required. Known values are: \"Succeeded\" and
+     \"Failed\"."""
+    error: Optional[ODataV4Format] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Errors encountered while trying to perform."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_id: str,
+        status: Union[str, "_models.ResourceOperationStatus"],
+        error: Optional[ODataV4Format] = None,
     ) -> None: ...
 
     @overload
@@ -1287,6 +1951,457 @@ class Schedule(_Model):
         dead_line: Optional[datetime.datetime] = None,
         timezone: Optional[str] = None,
         time_zone: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TrackedResource(Resource):
+    """Tracked Resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.computeschedule.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    """
+
+    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    location: str = rest_field(visibility=["read", "create"])
+    """The geo-location where the resource lives. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[Dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ScheduledAction(TrackedResource):
+    """The scheduled action resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.computeschedule.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.computeschedule.models.ScheduledActionProperties
+    """
+
+    properties: Optional["_models.ScheduledActionProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[Dict[str, str]] = None,
+        properties: Optional["_models.ScheduledActionProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ScheduledActionProperties(_Model):
+    """Scheduled action properties.
+
+    :ivar resource_type: The type of resource the scheduled action is targeting. Required. Known
+     values are: "VirtualMachine" and "VirtualMachineScaleSet".
+    :vartype resource_type: str or ~azure.mgmt.computeschedule.models.ResourceType
+    :ivar action_type: The action the scheduled action should perform in the resources. Required.
+     Known values are: "Start", "Deallocate", and "Hibernate".
+    :vartype action_type: str or ~azure.mgmt.computeschedule.models.ScheduledActionType
+    :ivar start_time: The time which the scheduled action is supposed to start running. Required.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: The time when the scheduled action is supposed to stop scheduling.
+    :vartype end_time: ~datetime.datetime
+    :ivar schedule: The schedule the scheduled action is supposed to follow. Required.
+    :vartype schedule: ~azure.mgmt.computeschedule.models.ScheduledActionsSchedule
+    :ivar notification_settings: The notification settings for the scheduled action. Required.
+    :vartype notification_settings: list[~azure.mgmt.computeschedule.models.NotificationProperties]
+    :ivar disabled: Tell if the scheduled action is disabled or not.
+    :vartype disabled: bool
+    :ivar provisioning_state: The status of the last provisioning operation performed on the
+     resource. Known values are: "Succeeded", "Failed", "Canceled", and "Deleting".
+    :vartype provisioning_state: str or ~azure.mgmt.computeschedule.models.ProvisioningState
+    """
+
+    resource_type: Union[str, "_models.ResourceType"] = rest_field(
+        name="resourceType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The type of resource the scheduled action is targeting. Required. Known values are:
+     \"VirtualMachine\" and \"VirtualMachineScaleSet\"."""
+    action_type: Union[str, "_models.ScheduledActionType"] = rest_field(
+        name="actionType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The action the scheduled action should perform in the resources. Required. Known values are:
+     \"Start\", \"Deallocate\", and \"Hibernate\"."""
+    start_time: datetime.datetime = rest_field(
+        name="startTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time which the scheduled action is supposed to start running. Required."""
+    end_time: Optional[datetime.datetime] = rest_field(
+        name="endTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time when the scheduled action is supposed to stop scheduling."""
+    schedule: "_models.ScheduledActionsSchedule" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The schedule the scheduled action is supposed to follow. Required."""
+    notification_settings: List["_models.NotificationProperties"] = rest_field(
+        name="notificationSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The notification settings for the scheduled action. Required."""
+    disabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Tell if the scheduled action is disabled or not."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The status of the last provisioning operation performed on the resource. Known values are:
+     \"Succeeded\", \"Failed\", \"Canceled\", and \"Deleting\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_type: Union[str, "_models.ResourceType"],
+        action_type: Union[str, "_models.ScheduledActionType"],
+        start_time: datetime.datetime,
+        schedule: "_models.ScheduledActionsSchedule",
+        notification_settings: List["_models.NotificationProperties"],
+        end_time: Optional[datetime.datetime] = None,
+        disabled: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ScheduledActionResource(_Model):
+    """Represents an scheduled action resource metadata.
+
+    :ivar name: The name of the resource. Required.
+    :vartype name: str
+    :ivar id: The compute RP resource id of the resource in the scheduled actions scope. Required.
+    :vartype id: str
+    :ivar type: The type of resource.
+    :vartype type: str
+    :ivar resource_id: The ARM Id of the resource.
+     "subscriptions/{subId}/resourceGroups/{rgName}/providers/Microsoft.Compute/virtualMachines/{vmName}".
+     Required.
+    :vartype resource_id: str
+    :ivar notification_settings: The desired notification settings for the specified resource.
+    :vartype notification_settings: list[~azure.mgmt.computeschedule.models.NotificationProperties]
+    """
+
+    name: str = rest_field(visibility=["read"])
+    """The name of the resource. Required."""
+    id: str = rest_field(visibility=["read"])
+    """The compute RP resource id of the resource in the scheduled actions scope. Required."""
+    type: Optional[str] = rest_field(visibility=["read"])
+    """The type of resource."""
+    resource_id: str = rest_field(name="resourceId", visibility=["read", "create", "update", "delete", "query"])
+    """The ARM Id of the resource.
+     \"subscriptions/{subId}/resourceGroups/{rgName}/providers/Microsoft.Compute/virtualMachines/{vmName}\".
+     Required."""
+    notification_settings: Optional[List["_models.NotificationProperties"]] = rest_field(
+        name="notificationSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The desired notification settings for the specified resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_id: str,
+        notification_settings: Optional[List["_models.NotificationProperties"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ScheduledActionResources(ExtensionResource):
+    """The scheduled action extension.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.computeschedule.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.computeschedule.models.ScheduledActionProperties
+    """
+
+    properties: Optional["_models.ScheduledActionProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.ScheduledActionProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ScheduledActionsSchedule(_Model):
+    """Specify the schedule in which the scheduled action is supposed to follow.
+
+    :ivar scheduled_time: The time the scheduled action is supposed to run on. Required.
+    :vartype scheduled_time: ~datetime.time
+    :ivar time_zone: The timezone the scheduled time is specified on. Required.
+    :vartype time_zone: str
+    :ivar requested_week_days: The week days the scheduled action is supposed to run on. Required.
+    :vartype requested_week_days: list[str or ~azure.mgmt.computeschedule.models.WeekDay]
+    :ivar requested_months: The months the scheduled action is supposed to run on. Required.
+    :vartype requested_months: list[str or ~azure.mgmt.computeschedule.models.Month]
+    :ivar requested_days_of_the_month: The days of the month the scheduled action is supposed to
+     run on. If empty, it means it will run on every day of the month. Required.
+    :vartype requested_days_of_the_month: list[int]
+    :ivar execution_parameters: The execution parameters the scheduled action is supposed to
+     follow.
+    :vartype execution_parameters: ~azure.mgmt.computeschedule.models.ExecutionParameters
+    :ivar deadline_type: The type of deadline the scheduled action is supposed to follow for the
+     schedule. If no value is passed, it will default to InitiateAt. Known values are: "Unknown",
+     "InitiateAt", and "CompleteBy".
+    :vartype deadline_type: str or ~azure.mgmt.computeschedule.models.DeadlineType
+    """
+
+    scheduled_time: datetime.time = rest_field(
+        name="scheduledTime", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The time the scheduled action is supposed to run on. Required."""
+    time_zone: str = rest_field(name="timeZone", visibility=["read", "create", "update", "delete", "query"])
+    """The timezone the scheduled time is specified on. Required."""
+    requested_week_days: List[Union[str, "_models.WeekDay"]] = rest_field(
+        name="requestedWeekDays", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The week days the scheduled action is supposed to run on. Required."""
+    requested_months: List[Union[str, "_models.Month"]] = rest_field(
+        name="requestedMonths", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The months the scheduled action is supposed to run on. Required."""
+    requested_days_of_the_month: List[int] = rest_field(
+        name="requestedDaysOfTheMonth", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The days of the month the scheduled action is supposed to run on. If empty, it means it will
+     run on every day of the month. Required."""
+    execution_parameters: Optional["_models.ExecutionParameters"] = rest_field(
+        name="executionParameters", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The execution parameters the scheduled action is supposed to follow."""
+    deadline_type: Optional[Union[str, "_models.DeadlineType"]] = rest_field(
+        name="deadlineType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The type of deadline the scheduled action is supposed to follow for the schedule. If no value
+     is passed, it will default to InitiateAt. Known values are: \"Unknown\", \"InitiateAt\", and
+     \"CompleteBy\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        scheduled_time: datetime.time,
+        time_zone: str,
+        requested_week_days: List[Union[str, "_models.WeekDay"]],
+        requested_months: List[Union[str, "_models.Month"]],
+        requested_days_of_the_month: List[int],
+        execution_parameters: Optional["_models.ExecutionParameters"] = None,
+        deadline_type: Optional[Union[str, "_models.DeadlineType"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ScheduledActionUpdate(_Model):
+    """The type used for update operations of the ScheduledAction.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.computeschedule.models.ScheduledActionUpdateProperties
+    """
+
+    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    properties: Optional["_models.ScheduledActionUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tags: Optional[Dict[str, str]] = None,
+        properties: Optional["_models.ScheduledActionUpdateProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ScheduledActionUpdateProperties(_Model):
+    """The updatable properties of the ScheduledAction.
+
+    :ivar resource_type: The type of resource the scheduled action is targeting. Known values are:
+     "VirtualMachine" and "VirtualMachineScaleSet".
+    :vartype resource_type: str or ~azure.mgmt.computeschedule.models.ResourceType
+    :ivar action_type: The action the scheduled action should perform in the resources. Known
+     values are: "Start", "Deallocate", and "Hibernate".
+    :vartype action_type: str or ~azure.mgmt.computeschedule.models.ScheduledActionType
+    :ivar start_time: The time which the scheduled action is supposed to start running.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: The time when the scheduled action is supposed to stop scheduling.
+    :vartype end_time: ~datetime.datetime
+    :ivar schedule: The schedule the scheduled action is supposed to follow.
+    :vartype schedule: ~azure.mgmt.computeschedule.models.ScheduledActionsSchedule
+    :ivar notification_settings: The notification settings for the scheduled action.
+    :vartype notification_settings: list[~azure.mgmt.computeschedule.models.NotificationProperties]
+    :ivar disabled: Tell if the scheduled action is disabled or not.
+    :vartype disabled: bool
+    """
+
+    resource_type: Optional[Union[str, "_models.ResourceType"]] = rest_field(
+        name="resourceType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The type of resource the scheduled action is targeting. Known values are: \"VirtualMachine\"
+     and \"VirtualMachineScaleSet\"."""
+    action_type: Optional[Union[str, "_models.ScheduledActionType"]] = rest_field(
+        name="actionType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The action the scheduled action should perform in the resources. Known values are: \"Start\",
+     \"Deallocate\", and \"Hibernate\"."""
+    start_time: Optional[datetime.datetime] = rest_field(
+        name="startTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time which the scheduled action is supposed to start running."""
+    end_time: Optional[datetime.datetime] = rest_field(
+        name="endTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time when the scheduled action is supposed to stop scheduling."""
+    schedule: Optional["_models.ScheduledActionsSchedule"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The schedule the scheduled action is supposed to follow."""
+    notification_settings: Optional[List["_models.NotificationProperties"]] = rest_field(
+        name="notificationSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The notification settings for the scheduled action."""
+    disabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Tell if the scheduled action is disabled or not."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_type: Optional[Union[str, "_models.ResourceType"]] = None,
+        action_type: Optional[Union[str, "_models.ScheduledActionType"]] = None,
+        start_time: Optional[datetime.datetime] = None,
+        end_time: Optional[datetime.datetime] = None,
+        schedule: Optional["_models.ScheduledActionsSchedule"] = None,
+        notification_settings: Optional[List["_models.NotificationProperties"]] = None,
+        disabled: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -1467,6 +2582,73 @@ class SubmitStartRequest(_Model):
         execution_parameters: "_models.ExecutionParameters",
         resources: "_models.Resources",
         correlationid: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SystemData(_Model):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", and "Key".
+    :vartype created_by_type: str or ~azure.mgmt.computeschedule.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", and "Key".
+    :vartype last_modified_by_type: str or ~azure.mgmt.computeschedule.models.CreatedByType
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
+    """
+
+    created_by: Optional[str] = rest_field(name="createdBy", visibility=["read", "create", "update", "delete", "query"])
+    """The identity that created the resource."""
+    created_by_type: Optional[Union[str, "_models.CreatedByType"]] = rest_field(
+        name="createdByType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The type of identity that created the resource. Known values are: \"User\", \"Application\",
+     \"ManagedIdentity\", and \"Key\"."""
+    created_at: Optional[datetime.datetime] = rest_field(
+        name="createdAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The timestamp of resource creation (UTC)."""
+    last_modified_by: Optional[str] = rest_field(
+        name="lastModifiedBy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The identity that last modified the resource."""
+    last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = rest_field(
+        name="lastModifiedByType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The type of identity that last modified the resource. Known values are: \"User\",
+     \"Application\", \"ManagedIdentity\", and \"Key\"."""
+    last_modified_at: Optional[datetime.datetime] = rest_field(
+        name="lastModifiedAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The timestamp of resource last modification (UTC)."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        created_by: Optional[str] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
+        created_at: Optional[datetime.datetime] = None,
+        last_modified_by: Optional[str] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
+        last_modified_at: Optional[datetime.datetime] = None,
     ) -> None: ...
 
     @overload

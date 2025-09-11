@@ -20,12 +20,12 @@ USAGE:
 import os
 from azure.communication.phonenumbers.siprouting import SipRoutingClient
 
-connection_string = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
+connection_string = os.environ["COMMUNICATION_SAMPLES_CONNECTION_STRING"]
 client = SipRoutingClient.from_connection_string(connection_string)
 
 
 def get_sip_trunk_sample():
-    trunk_fqdn = os.getenv("COMMUNICATION_SAMPLES_TRUNK_FQDN")
+    trunk_fqdn = os.environ["COMMUNICATION_SAMPLES_TRUNK_FQDN"]
     try:
         sip_trunk = client.get_trunk(trunk_fqdn)
         print(sip_trunk.fqdn)

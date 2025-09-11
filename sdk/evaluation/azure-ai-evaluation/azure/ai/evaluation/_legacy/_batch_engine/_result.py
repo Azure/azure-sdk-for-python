@@ -55,6 +55,8 @@ class BatchRunDetails:
     """The token metrics of the line run."""
     error: Optional[BatchRunError]
     """The error of the line run. This will only be set if the status is Failed."""
+    index: int
+    """The line run index."""
 
     @property
     def duration(self) -> timedelta:

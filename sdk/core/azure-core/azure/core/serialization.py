@@ -11,7 +11,7 @@ from datetime import datetime, date, time, timedelta
 from datetime import timezone
 
 
-__all__ = ["NULL", "AzureJSONEncoder"]
+__all__ = ["NULL", "AzureJSONEncoder", "is_generated_model", "as_attribute_dict", "attribute_list"]
 TZ_UTC = timezone.utc
 
 

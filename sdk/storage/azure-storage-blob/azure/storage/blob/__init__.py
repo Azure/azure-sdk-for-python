@@ -125,8 +125,8 @@ def upload_blob_to_url(
     :return: Blob-updated property dict (Etag and last modified)
     :rtype: dict(str, Any)
     """
-    with BlobClient.from_blob_url(blob_url, credential=credential) as client:
-        return cast(BlobClient, client).upload_blob(data=data, blob_type=BlobType.BLOCKBLOB, **kwargs)
+    with BlobClient.from_blob_url(blob_url, credential=credential) as client:  # pylint: disable=not-context-manager
+        return client.upload_blob(data=data, blob_type=BlobType.BLOCKBLOB, **kwargs)
 
 
 def _download_to_stream(client: BlobClient, handle: IO[bytes], **kwargs: Any) -> None:
@@ -194,7 +194,7 @@ def download_blob_from_url(
     :rtype: None
     """
     overwrite = kwargs.pop('overwrite', False)
-    with BlobClient.from_blob_url(blob_url, credential=credential) as client:
+    with BlobClient.from_blob_url(blob_url, credential=credential) as client: # pylint: disable=not-context-manager
         if hasattr(output, 'write'):
             _download_to_stream(client, cast(IO[bytes], output), **kwargs)
         else:

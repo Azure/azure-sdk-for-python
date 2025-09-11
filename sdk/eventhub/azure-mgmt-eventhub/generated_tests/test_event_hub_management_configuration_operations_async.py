@@ -26,7 +26,7 @@ class TestEventHubManagementConfigurationOperationsAsync(AzureMgmtRecordedTestCa
             resource_group_name=resource_group.name,
             cluster_name="str",
             parameters={"settings": {"str": "str"}},
-            api_version="2024-01-01",
+            api_version="2022-01-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestEventHubManagementConfigurationOperationsAsync(AzureMgmtRecordedTestCa
         response = await self.client.configuration.get(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2024-01-01",
+            api_version="2022-01-01-preview",
         )
 
         # please add some check logic here by yourself

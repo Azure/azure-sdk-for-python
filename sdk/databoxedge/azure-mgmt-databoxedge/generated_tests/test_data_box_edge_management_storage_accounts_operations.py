@@ -24,7 +24,7 @@ class TestDataBoxEdgeManagementStorageAccountsOperations(AzureMgmtRecordedTestCa
         response = self.client.storage_accounts.list_by_data_box_edge_device(
             device_name="str",
             resource_group_name=resource_group.name,
-            api_version="2019-08-01",
+            api_version="2021-02-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestDataBoxEdgeManagementStorageAccountsOperations(AzureMgmtRecordedTestCa
             device_name="str",
             storage_account_name="str",
             resource_group_name=resource_group.name,
-            api_version="2019-08-01",
+            api_version="2021-02-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -51,17 +51,25 @@ class TestDataBoxEdgeManagementStorageAccountsOperations(AzureMgmtRecordedTestCa
             storage_account_name="str",
             resource_group_name=resource_group.name,
             storage_account={
+                "dataPolicy": "str",
                 "blobEndpoint": "str",
                 "containerCount": 0,
-                "dataPolicy": "str",
                 "description": "str",
                 "id": "str",
                 "name": "str",
                 "storageAccountCredentialId": "str",
                 "storageAccountStatus": "str",
+                "systemData": {
+                    "createdAt": "2020-02-20 00:00:00",
+                    "createdBy": "str",
+                    "createdByType": "str",
+                    "lastModifiedAt": "2020-02-20 00:00:00",
+                    "lastModifiedBy": "str",
+                    "lastModifiedByType": "str",
+                },
                 "type": "str",
             },
-            api_version="2019-08-01",
+            api_version="2021-02-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -74,7 +82,7 @@ class TestDataBoxEdgeManagementStorageAccountsOperations(AzureMgmtRecordedTestCa
             device_name="str",
             storage_account_name="str",
             resource_group_name=resource_group.name,
-            api_version="2019-08-01",
+            api_version="2021-02-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

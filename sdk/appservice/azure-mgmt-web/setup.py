@@ -22,11 +22,9 @@ namespace_name = PACKAGE_NAME.replace("-", ".")
 
 # Version extraction inspired from 'requests'
 with open(
-    (
-        os.path.join(package_folder_path, "version.py")
-        if os.path.exists(os.path.join(package_folder_path, "version.py"))
-        else os.path.join(package_folder_path, "_version.py")
-    ),
+    os.path.join(package_folder_path, "version.py")
+    if os.path.exists(os.path.join(package_folder_path, "version.py"))
+    else os.path.join(package_folder_path, "_version.py"),
     "r",
 ) as fd:
     version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]', fd.read(), re.MULTILINE).group(1)
@@ -59,6 +57,7 @@ setup(
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
         "License :: OSI Approved :: MIT License",
     ],
     zip_safe=False,
@@ -78,7 +77,7 @@ setup(
         "isodate>=0.6.1",
         "typing-extensions>=4.6.0",
         "azure-common>=1.1",
-        "azure-mgmt-core>=1.5.0",
+        "azure-mgmt-core>=1.6.0",
     ],
     python_requires=">=3.9",
 )

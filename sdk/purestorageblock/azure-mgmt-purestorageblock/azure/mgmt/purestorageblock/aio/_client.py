@@ -58,9 +58,8 @@ class PureStorageBlockMgmtClient:  # pylint: disable=too-many-instance-attribute
     :type subscription_id: str
     :param base_url: Service host. Default value is None.
     :type base_url: str
-    :keyword api_version: The API version to use for this operation. Default value is
-     "2024-11-01-preview". Note that overriding this default value may result in unsupported
-     behavior.
+    :keyword api_version: The API version to use for this operation. Default value is "2024-11-01".
+     Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.

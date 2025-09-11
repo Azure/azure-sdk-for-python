@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
+from typing import Any, MutableMapping, List, cast
 import uuid
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
@@ -53,17 +54,17 @@ try:
 
     # - AZURE_URL: The tenant ID in Azure Active Directory
     url = os.getenv("AZURE_URL")
-
+    if url is None:
+        raise ValueError("AZURE_URL environment variable is not set")
     # DefaultAzureCredential expects the following three environment variables:
     # - AZURE_TENANT_ID: The tenant ID in Azure Active Directory
     # - AZURE_CLIENT_ID: The application (client) ID registered in the AAD tenant
     # - AZURE_CLIENT_SECRET: The client secret for the registered application
     credential = DefaultAzureCredential()
-    service_client = DigitalTwinsClient(url, credential)
+    service_client = DigitalTwinsClient(url, credential) # type: ignore
 
     # Create model first from sample dtdl
-    new_model_list = [temporary_model]
-    model = service_client.create_models(new_model_list)
+    model = service_client.create_models(cast(List[MutableMapping[str, Any]], [temporary_model]))
     print('Created Model:')
     print(model)
 

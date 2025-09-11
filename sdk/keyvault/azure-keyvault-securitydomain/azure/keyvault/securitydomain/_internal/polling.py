@@ -16,7 +16,7 @@ from .._utils.model_base import _deserialize
 
 PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
 
-# The correct success response should be "Succeeded", but this has already shipped. Handle "Success" just in case.
+# Correct success response should be "Succeeded", but this has already shipped. Still, handle "Succeeded" just in case.
 _FINISHED = frozenset(["succeeded", "success", "canceled", "failed"])
 
 
@@ -38,6 +38,13 @@ def _is_empty(response: Union[HttpResponse, AsyncHttpResponse]) -> bool:
 
 
 class PollingTerminationMixin(LROBasePolling):
+    """Mixin to correctly handle polling termination.
+
+    Uses a custom implementation of `finished` because Security Domain LROs return "Success" as a terminal response
+    instead of the standard "Succeeded". At the time of writing, there's no way to more easily patch the base poller
+    from `azure-core` to handle this.
+    """
+
     def finished(self) -> bool:
         """Is this polling finished?
 
@@ -72,6 +79,12 @@ class PollingTerminationMixin(LROBasePolling):
 
 
 class NoPollingMixin(LROBasePolling):
+    """Mixin that intentionally bypasses any polling by immediately returning a success status.
+
+    The Azure CLI accepts a `--no-wait` parameter in download and upload operations, allowing users to immediately get
+    the result before HSM activation completes. This polling logic is used to support that behavior.
+    """
+
     def finished(self) -> bool:
         """Is this polling finished?
 
@@ -93,6 +106,8 @@ class NoPollingMixin(LROBasePolling):
 
 
 class SecurityDomainDownloadPolling(OperationResourcePolling):
+    """Adapts to the non-standard response pattern for security domain download."""
+
     def __init__(self) -> None:
         self._polling_url = ""
         super().__init__(operation_location_header="azure-asyncoperation")
@@ -101,9 +116,28 @@ class SecurityDomainDownloadPolling(OperationResourcePolling):
         return self._polling_url
 
     def get_final_get_url(self, pipeline_response: "PipelineResponse") -> None:
+        """Returns None instead of a URL because the final result includes a status monitor but no resource URL.
+
+        :param pipeline_response: The response object. Unused here.
+        :type pipeline_response: ~azure.core.pipeline.PipelineResponse
+
+        :rtype: None
+        :return: None
+        """
         return None
 
     def set_initial_status(self, pipeline_response: "PipelineResponse") -> str:
+        """Manually marks the operation as "InProgress".
+
+        This is necessary because the initial response includes the security domain object -- which would usually be the
+        result fetched from a final resource URL -- but no status monitor.
+
+        :param pipeline_response: The response object.
+        :type pipeline_response: ~azure.core.pipeline.PipelineResponse
+
+        :rtype: str
+        :return: The initial status, which is always "InProgress".
+        """
         response: HttpResponse = pipeline_response.http_response
         self._polling_url = response.headers["azure-asyncoperation"]
 
@@ -115,6 +149,8 @@ class SecurityDomainDownloadPolling(OperationResourcePolling):
 
 
 class SecurityDomainDownloadPollingMethod(PollingTerminationMixin, LROBasePolling):
+    """Polling method for the unique pattern of security domain download operations."""
+
     def initialize(
         self,
         client: PipelineClient[Any, Any],
@@ -142,20 +178,32 @@ class SecurityDomainDownloadPollingMethod(PollingTerminationMixin, LROBasePollin
         super().initialize(client, initial_response, get_long_running_output)
 
     def resource(self) -> SecurityDomain:
-        """Return the built resource.
+        """Return the security domain deserialized from the initial response.
 
-        :rtype: any
-        :return: The built resource.
+        This returns the final result of the `SecurityDomainClient.begin_download` operation by deserializing the
+        initial response. This is an unusual LRO pattern and requires custom support. Usually, the object returned from
+        an LRO is only returned as part of the terminal status response; in Security Domain, the download operation
+        instead immediately returns the security domain object, and the terminal response only includes the activation
+        status.
+
+        :rtype: ~azure.keyvault.securitydomain.SecurityDomain
+        :return: The security domain object.
         """
         # The final response should actually be the security domain object that was returned in the initial response
         return cast(SecurityDomain, self.parse_resource(self._initial_response))
 
 
 class SecurityDomainDownloadNoPolling(SecurityDomainDownloadPollingMethod, NoPollingMixin):
-    pass
+    """Polling method for security domain download operations that bypass polling."""
 
 
 class SecurityDomainUploadPolling(SecurityDomainDownloadPolling):
+    """Polling logic for security domain upload operations.
+
+    This class inherits from `SecurityDomainDownloadPolling` but uses the actual initial response status since the
+    upload operation has a more typical LRO resource pattern.
+    """
+
     def set_initial_status(self, pipeline_response: PipelineResponse) -> str:
         response: HttpResponse = pipeline_response.http_response
         self._polling_url = response.headers["azure-asyncoperation"]
@@ -166,6 +214,13 @@ class SecurityDomainUploadPolling(SecurityDomainDownloadPolling):
 
 
 class SecurityDomainUploadPollingMethod(PollingTerminationMixin, LROBasePolling):
+    """Polling method that will poll the HSM's activation but returns None.
+
+    This is manually done because the generated implementation returns a poller with a status monitor for a final
+    result. Python guidelines suggest returning None instead in this scenario, since the polling status can already be
+    accessed from the poller object.
+    """
+
     def initialize(
         self,
         client: PipelineClient[Any, Any],
@@ -192,12 +247,13 @@ class SecurityDomainUploadPollingMethod(PollingTerminationMixin, LROBasePolling)
         super().initialize(client, initial_response, get_long_running_output)
 
     def resource(self) -> None:
-        """Return the built resource.
+        """Return the final resource -- in this case, None.
 
-        :rtype: any
-        :return: The built resource.
+        :rtype: None
+        :return: The final resource -- in this case, None.
         """
         return None
 
+
 class SecurityDomainUploadNoPolling(SecurityDomainUploadPollingMethod, NoPollingMixin):
-    pass
+    """Polling method for security domain upload operations that bypass polling."""
