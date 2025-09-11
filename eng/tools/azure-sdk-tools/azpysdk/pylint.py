@@ -29,7 +29,7 @@ class pylint(Check):
             "--next",
             default=False,
             help="Next version of pylint is being tested.",
-            required=False,      
+            required=False,
         )
 
     def run(self, args: argparse.Namespace) -> int:
@@ -49,7 +49,7 @@ class pylint(Check):
 
             # install dependencies
             try:
-                install_into_venv(executable, ["azure-pylint-guidelines-checker==0.5.6", "--index-url=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"])
+                install_into_venv(executable, ["azure-pylint-guidelines-checker==0.5.6", "--index-url=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"], package_dir)
             except CalledProcessError as e:
                 logger.error("Failed to install dependencies:", e)
                 return e.returncode
@@ -58,9 +58,9 @@ class pylint(Check):
             try:
                 if args.next:
                     # use latest version of pylint
-                    install_into_venv(executable, ["pylint"])
+                    install_into_venv(executable, ["pylint"], package_dir)
                 else:
-                    install_into_venv(executable, [f"pylint=={PYLINT_VERSION}"])
+                    install_into_venv(executable, [f"pylint=={PYLINT_VERSION}"], package_dir)
             except CalledProcessError as e:
                 logger.error("Failed to install pylint:", e)
                 return e.returncode

@@ -509,7 +509,7 @@ def get_venv_python(venv_path: str) -> str:
 
 
 def install_into_venv(
-    venv_path_or_executable: str, requirements: List[str]
+    venv_path_or_executable: str, requirements: List[str], working_directory: str
 ) -> None:
     """
     Install the requirements into an existing venv (venv_path) without activating it.
@@ -528,7 +528,7 @@ def install_into_venv(
         cmd += ["--python", py]
 
     # todo: clean this up so that we're using run_logged from #42862
-    subprocess.check_call(cmd)
+    subprocess.check_call(cmd, cwd=working_directory)
 
 
 def pip_install_requirements_file(requirements_file: str, python_executable: Optional[str] = None) -> bool:
