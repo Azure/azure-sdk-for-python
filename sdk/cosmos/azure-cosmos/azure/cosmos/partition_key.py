@@ -77,9 +77,12 @@ class _PartitionKeyVersion:
     V2: int = 2
 
 class NonePartitionKeyValue:
-    """Represents None value for partitionKey when it's missing in a container.
+    """Represents partition key missing from the document.
     """
 
+class NullPartitionKeyValue:
+    """Represents null value for a partition key.
+    """
 
 class _Empty:
     """Represents empty value for partitionKey when it's missing in an item belonging
@@ -96,7 +99,7 @@ class _Undefined:
 class _Infinity:
     """Represents infinity value for partitionKey."""
 
-_SingularPartitionKeyType = Union[None, bool, float, int, str, Type[NonePartitionKeyValue], _Empty, _Undefined]
+_SingularPartitionKeyType = Union[None, bool, float, int, str, Type[NonePartitionKeyValue], Type[NullPartitionKeyValue], _Empty, _Undefined] # pylint: disable=line-too-long
 _SequentialPartitionKeyType = Sequence[_SingularPartitionKeyType]
 _PartitionKeyType = Union[_SingularPartitionKeyType, _SequentialPartitionKeyType]
 
@@ -405,7 +408,8 @@ def _to_hex_encoded_binary_string(components: Sequence[object]) -> str:
 def _to_hex_encoded_binary_string_v1(components: Sequence[object]) -> str:
     ms = BytesIO()
     for component in components:
-        if isinstance(component, (bool, int, float, str, _Infinity, _Undefined)):
+        if (isinstance(component, (bool, int, float, str, _Infinity, _Undefined, type))
+                or component is None):
             component = cast(_SingularPartitionKeyType, component)
             _write_for_binary_encoding_v1(component, ms)
         else:

@@ -8,18 +8,32 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+import sys
 import json
 import logging
 from contextlib import AbstractContextManager
 from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
 
-try:  # Python 3.11+
-    from typing import NotRequired  # type: ignore[attr-defined]
-except Exception:  # Python <=3.10
-    from typing_extensions import NotRequired
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Dict,
+    Iterator,
+    List,
+    Mapping,
+    Optional,
+    Sequence,
+    Tuple,
+    Union,
+    cast,
+)
 
-from typing import TYPE_CHECKING, Optional, Mapping, Sequence, Tuple, Union, Iterator, Any, Dict, List, cast
+# === Third-party ===
 from typing_extensions import TypedDict
+from azure.core.credentials import AzureKeyCredential, TokenCredential
+from azure.core.exceptions import AzureError
+
+# === Local ===
 from azure.ai.voicelive.models._models import (
     ClientEventConversationItemCreate,
     ClientEventConversationItemDelete,
@@ -31,21 +45,29 @@ from azure.ai.voicelive.models._models import (
     ClientEventResponseCancel,
     ClientEventResponseCreate,
     ClientEventSessionUpdate,
+    ConversationRequestItem,
+    ResponseCreateParams,
 )
-from azure.core.credentials import AzureKeyCredential, TokenCredential
-from azure.core.exceptions import AzureError
 from .models import ClientEvent, RequestSession, ServerEvent
 
+# === Conditional typing/runtime ===
 if TYPE_CHECKING:
     from websockets.typing import Subprotocol as WSSubprotocol  # exact type for checkers
 else:
     try:
         from websockets.typing import Subprotocol as WSSubprotocol  # runtime if available
     except Exception:
-
         class WSSubprotocol(str):  # fallback, keeps runtime simple
             pass
 
+if TYPE_CHECKING:
+    # Not imported at runtime; only for type checkers (mypy/pyright).
+    from websockets.sync.client import ClientConnection as _WSClientConnection
+
+if sys.version_info >= (3, 11):
+    from typing import NotRequired  # noqa: F401
+else:
+    from typing_extensions import NotRequired  # noqa: F401
 
 __all__: List[str] = [
     "connect",
@@ -198,21 +220,33 @@ class ResponseResource:
         """
         self._connection = connection
 
-    def create(self, *, response: Optional[Mapping[str, Any]] = None, event_id: Optional[str] = None) -> None:
-        """Create a new response.
+    def create(
+        self,
+        *,
+        response: Optional[Union[ResponseCreateParams, Mapping[str, Any]]] = None,
+        event_id: Optional[str] = None,
+        additional_instructions: Optional[str] = None,
+    ) -> None:
+        """
+        Create a new response.
 
-        :keyword response: Optional mapping of response parameters to send.
-        :keyword type response: Mapping[str, Any] or None
+        :keyword response: Optional response parameters to send.
+        :keyword type response: ~azure.ai.voicelive.models.ResponseCreateParams or Mapping[str, Any] or None
         :keyword event_id: Optional ID for the event.
         :keyword type event_id: str or None
-        :return: None
+        :keyword additional_instructions: Extra system prompt appended to the session's default, for this response only.
+        :keyword type additional_instructions: str or None
         :rtype: None
         """
-        event = ClientEventResponseCreate()
-        if response:
-            event["response"] = dict(response)
-        if event_id:
-            event["event_id"] = event_id
+        if response is not None and not isinstance(response, ResponseCreateParams):
+            response = ResponseCreateParams(**dict(response))
+
+        # Use constructor kwargs (typed) instead of item-assignment
+        event = ClientEventResponseCreate(
+            event_id=event_id,
+            response=response,
+            additional_instructions=additional_instructions,
+        )
         self._connection.send(event)
 
     def cancel(self, *, response_id: Optional[str] = None, event_id: Optional[str] = None) -> None:
@@ -323,12 +357,16 @@ class ConversationItemResource:
         self._connection = connection
 
     def create(
-        self, *, item: Mapping[str, Any], previous_item_id: Optional[str] = None, event_id: Optional[str] = None
+        self,
+        *,
+        item: Mapping[str, Any],
+        previous_item_id: Optional[str] = None,
+        event_id: Optional[str] = None
     ) -> None:
         """Create a new conversation item.
 
         :keyword item: The item to create (message, function call, etc.).
-        :keyword type item: Mapping[str, Any]
+        :keyword ConversationRequestItem | Mapping[str, Any] item: The item to create (message/functions/etc.).
         :keyword previous_item_id: Insert after this item, if provided.
         :keyword type previous_item_id: str or None
         :keyword event_id: Optional ID for the event.
@@ -336,11 +374,14 @@ class ConversationItemResource:
         :return: None
         :rtype: None
         """
-        event = ClientEventConversationItemCreate({"item": dict(item)})
-        if previous_item_id:
-            event["previous_item_id"] = previous_item_id
-        if event_id:
-            event["event_id"] = event_id
+        if not isinstance(item, ConversationRequestItem):
+            item = ConversationRequestItem(**dict(item))
+
+        event = ClientEventConversationItemCreate(
+            event_id=event_id,
+            previous_item_id=previous_item_id,
+            item=item,
+        )
         self._connection.send(event)
 
     def delete(self, *, item_id: str, event_id: Optional[str] = None) -> None:
@@ -471,7 +512,14 @@ class VoiceLiveConnection:
     :vartype transcription_session: ~azure.ai.voicelive.TranscriptionSessionResource
     """
 
-    def __init__(self, connection) -> None:
+    session: SessionResource
+    response: ResponseResource
+    input_audio_buffer: InputAudioBufferResource
+    conversation: ConversationResource
+    output_audio_buffer: OutputAudioBufferResource
+    transcription_session: TranscriptionSessionResource
+
+    def __init__(self, connection: "_WSClientConnection") -> None:
         """Initialize a VoiceLiveConnection.
 
         :param connection: The underlying WebSocket connection.

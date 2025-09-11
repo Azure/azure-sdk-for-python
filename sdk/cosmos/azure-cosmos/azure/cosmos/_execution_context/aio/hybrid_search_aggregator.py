@@ -7,7 +7,7 @@
 from azure.cosmos._execution_context.aio.base_execution_context import _QueryExecutionContextBase
 from azure.cosmos._execution_context.aio import document_producer
 from azure.cosmos._execution_context.hybrid_search_aggregator import _retrieve_component_scores, _rewrite_query_infos, \
-    _compute_rrf_scores, _compute_ranks, _coalesce_duplicate_rids
+    _compute_rrf_scores, _compute_ranks, _coalesce_duplicate_rids, _attach_parameters
 from azure.cosmos._routing import routing_range
 from azure.cosmos import exceptions
 
@@ -53,9 +53,15 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
         self._client = client
         self._resource_link = resource_link
         self._partitioned_query_ex_info = partitioned_query_execution_info
+        self._parameters = None
         # If the query uses parameters, we must save them to add them back to the component queries
         query_execution_info = getattr(self._partitioned_query_ex_info, "_query_execution_info", None)
-        self._parameters = getattr(query_execution_info, "parameters", None) if query_execution_info else None
+        if query_execution_info:
+            self._parameters = (
+                query_execution_info.get("parameters")
+                if isinstance(query_execution_info, dict)
+                else getattr(query_execution_info, "parameters", None)
+            )
         self._hybrid_search_query_info = hybrid_search_query_info
         self._final_results = []
         self._aggregated_global_statistics = None
@@ -68,13 +74,8 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
         if self._hybrid_search_query_info['requiresGlobalStatistics']:
             target_partition_key_ranges = await self._get_target_partition_key_range(target_all_ranges=True)
             global_statistics_doc_producers = []
-            global_statistics_query = self._hybrid_search_query_info['globalStatisticsQuery']
-            # If query was given parameters we must add them back in
-            if self._parameters:
-                global_statistics_query = {
-                    'query': global_statistics_query,
-                    'parameters': self._parameters
-                }
+            global_statistics_query = self._attach_parameters(self._hybrid_search_query_info['globalStatisticsQuery'])
+
             partitioned_query_execution_context_list = []
             for partition_key_target_range in target_partition_key_ranges:
                 # create a document producer for each partition key range
@@ -113,7 +114,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
         component_query_infos = self._hybrid_search_query_info['componentQueryInfos']
         if self._aggregated_global_statistics:
             rewritten_query_infos = _rewrite_query_infos(self._hybrid_search_query_info,
-                                                         self._aggregated_global_statistics)
+                                                         self._aggregated_global_statistics, self._parameters)
         else:
             rewritten_query_infos = component_query_infos
 
@@ -123,10 +124,8 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
         for rewritten_query in rewritten_query_infos:
             for pk_range in target_partition_key_ranges:
                 if self._parameters:
-                    rewritten_query['rewrittenQuery'] = {
-                        'query': rewritten_query['rewrittenQuery'],
-                        'parameters': self._parameters
-                    }
+                    rewritten_query['rewrittenQuery'] = _attach_parameters(rewritten_query['rewrittenQuery'],
+                                                                           self._parameters)
                 component_query_execution_list.append(
                     document_producer._DocumentProducer(
                         pk_range,
@@ -194,6 +193,26 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
         # Finally, sort on the RRF scores to build the final result to return
         drained_results.sort(key=lambda x: x['Score'], reverse=True)
         self._format_final_results(drained_results)
+
+    def _attach_parameters(self, query):
+        """Attach original query parameters (if any) without mutating the passed query object.
+
+        :param query: The original query (string or dict) to which saved parameters should be attached.
+        :type query: str or dict
+        :return: The query with parameters attached. Returns the original object if no parameters are stored.
+                 If the input was a string and parameters exist, a new dict is returned. If the input was a
+                 dict without "parameters", a shallow copied dict with "parameters" added is returned.
+        :rtype: str or dict
+        """
+        if not self._parameters:
+            return query
+        if isinstance(query, dict):
+            if "parameters" not in query:
+                new_query = dict(query)
+                new_query["parameters"] = self._parameters
+                return new_query
+            return query
+        return {"query": query, "parameters": self._parameters}
 
     def _format_final_results(self, results):
         skip = self._hybrid_search_query_info['skip'] or 0

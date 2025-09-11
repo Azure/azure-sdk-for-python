@@ -26,7 +26,7 @@ from ..._credentials.azd_cli import (
     sanitize_output,
     extract_cli_error_message,
 )
-from ..._internal import resolve_tenant, within_dac, validate_tenant_id, validate_scope
+from ..._internal import encode_base64, resolve_tenant, within_dac, validate_tenant_id, validate_scope
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -176,7 +176,7 @@ class AzureDeveloperCliCredential(AsyncContextManager):
         if tenant:
             command_args += ["--tenant-id", tenant]
         if claims:
-            command_args += ["--claims", claims]
+            command_args += ["--claims", encode_base64(claims)]
         output = await _run_command(command_args, self._process_timeout)
 
         token = parse_token(output)
