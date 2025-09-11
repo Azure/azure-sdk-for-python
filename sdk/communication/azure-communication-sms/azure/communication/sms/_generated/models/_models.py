@@ -9,43 +9,412 @@
 import msrest.serialization
 
 
+class DeliveryAttempt(msrest.serialization.Model):
+    """Details of a delivery attempt.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar timestamp: Required. The timestamp of the delivery attempt.
+    :vartype timestamp: ~datetime.datetime
+    :ivar segments_succeeded: Required. Number of message segments that were successfully
+     delivered.
+    :vartype segments_succeeded: int
+    :ivar segments_failed: Required. Number of message segments that failed to be delivered.
+    :vartype segments_failed: int
+    """
+
+    _validation = {
+        'timestamp': {'required': True},
+        'segments_succeeded': {'required': True, 'minimum': 0},
+        'segments_failed': {'required': True, 'minimum': 0},
+    }
+
+    _attribute_map = {
+        'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
+        'segments_succeeded': {'key': 'segmentsSucceeded', 'type': 'int'},
+        'segments_failed': {'key': 'segmentsFailed', 'type': 'int'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword timestamp: Required. The timestamp of the delivery attempt.
+        :paramtype timestamp: ~datetime.datetime
+        :keyword segments_succeeded: Required. Number of message segments that were successfully
+         delivered.
+        :paramtype segments_succeeded: int
+        :keyword segments_failed: Required. Number of message segments that failed to be delivered.
+        :paramtype segments_failed: int
+        """
+        super(DeliveryAttempt, self).__init__(**kwargs)
+        self.timestamp = kwargs['timestamp']
+        self.segments_succeeded = kwargs['segments_succeeded']
+        self.segments_failed = kwargs['segments_failed']
+
+
+class DeliveryReport(msrest.serialization.Model):
+    """Delivery report for an outgoing SMS message.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar delivery_status: Required. The delivery status of the message. Possible values include:
+     "Delivered", "Failed".
+    :vartype delivery_status: str or ~azure.communication.sms.models.DeliveryReportDeliveryStatus
+    :ivar delivery_status_details: Detailed information about the delivery status.
+    :vartype delivery_status_details: str
+    :ivar delivery_attempts: Array of delivery attempts made for this message.
+    :vartype delivery_attempts: list[~azure.communication.sms.models.DeliveryAttempt]
+    :ivar received_timestamp: The timestamp when the delivery report was received.
+    :vartype received_timestamp: ~datetime.datetime
+    :ivar tag: Custom tag provided when sending the message.
+    :vartype tag: str
+    :ivar message_id: Required. The identifier of the outgoing message.
+    :vartype message_id: str
+    :ivar from_property: Required. The sender's phone number in E.164 format.
+    :vartype from_property: str
+    :ivar to: Required. The recipient's phone number in E.164 format.
+    :vartype to: str
+    """
+
+    _validation = {
+        'delivery_status': {'required': True},
+        'message_id': {'required': True},
+        'from_property': {'required': True},
+        'to': {'required': True},
+    }
+
+    _attribute_map = {
+        'delivery_status': {'key': 'deliveryStatus', 'type': 'str'},
+        'delivery_status_details': {'key': 'deliveryStatusDetails', 'type': 'str'},
+        'delivery_attempts': {'key': 'deliveryAttempts', 'type': '[DeliveryAttempt]'},
+        'received_timestamp': {'key': 'receivedTimestamp', 'type': 'iso-8601'},
+        'tag': {'key': 'tag', 'type': 'str'},
+        'message_id': {'key': 'messageId', 'type': 'str'},
+        'from_property': {'key': 'from', 'type': 'str'},
+        'to': {'key': 'to', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword delivery_status: Required. The delivery status of the message. Possible values
+         include: "Delivered", "Failed".
+        :paramtype delivery_status: str or ~azure.communication.sms.models.DeliveryReportDeliveryStatus
+        :keyword delivery_status_details: Detailed information about the delivery status.
+        :paramtype delivery_status_details: str
+        :keyword delivery_attempts: Array of delivery attempts made for this message.
+        :paramtype delivery_attempts: list[~azure.communication.sms.models.DeliveryAttempt]
+        :keyword received_timestamp: The timestamp when the delivery report was received.
+        :paramtype received_timestamp: ~datetime.datetime
+        :keyword tag: Custom tag provided when sending the message.
+        :paramtype tag: str
+        :keyword message_id: Required. The identifier of the outgoing message.
+        :paramtype message_id: str
+        :keyword from_property: Required. The sender's phone number in E.164 format.
+        :paramtype from_property: str
+        :keyword to: Required. The recipient's phone number in E.164 format.
+        :paramtype to: str
+        """
+        super(DeliveryReport, self).__init__(**kwargs)
+        self.delivery_status = kwargs['delivery_status']
+        self.delivery_status_details = kwargs.get('delivery_status_details', None)
+        self.delivery_attempts = kwargs.get('delivery_attempts', None)
+        self.received_timestamp = kwargs.get('received_timestamp', None)
+        self.tag = kwargs.get('tag', None)
+        self.message_id = kwargs['message_id']
+        self.from_property = kwargs['from_property']
+        self.to = kwargs['to']
+
+
+class ErrorResponse(msrest.serialization.Model):
+    """Error response for failed requests.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar type: Required. A URI reference that identifies the problem type.
+    :vartype type: str
+    :ivar title: Required. A short, human-readable summary of the problem type.
+    :vartype title: str
+    :ivar status: Required. The HTTP status code.
+    :vartype status: int
+    :ivar trace_id: The trace identifier for the request.
+    :vartype trace_id: str
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'title': {'required': True},
+        'status': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'title': {'key': 'title', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'int'},
+        'trace_id': {'key': 'traceId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword type: Required. A URI reference that identifies the problem type.
+        :paramtype type: str
+        :keyword title: Required. A short, human-readable summary of the problem type.
+        :paramtype title: str
+        :keyword status: Required. The HTTP status code.
+        :paramtype status: int
+        :keyword trace_id: The trace identifier for the request.
+        :paramtype trace_id: str
+        """
+        super(ErrorResponse, self).__init__(**kwargs)
+        self.type = kwargs['type']
+        self.title = kwargs['title']
+        self.status = kwargs['status']
+        self.trace_id = kwargs.get('trace_id', None)
+
+
+class MessagingConnectOptions(msrest.serialization.Model):
+    """Defines optional parameters for connecting with the Messaging Connect Partner to deliver SMS.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar api_key: Required. Represents the API key associated with the customer's account in the
+     Messaging Connect Partner portal.
+    :vartype api_key: str
+    :ivar partner: Required. Specifies the partner associated with the API key.
+    :vartype partner: str
+    """
+
+    _validation = {
+        'api_key': {'required': True},
+        'partner': {'required': True},
+    }
+
+    _attribute_map = {
+        'api_key': {'key': 'apiKey', 'type': 'str'},
+        'partner': {'key': 'partner', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword api_key: Required. Represents the API key associated with the customer's account in
+         the Messaging Connect Partner portal.
+        :paramtype api_key: str
+        :keyword partner: Required. Specifies the partner associated with the API key.
+        :paramtype partner: str
+        """
+        super(MessagingConnectOptions, self).__init__(**kwargs)
+        self.api_key = kwargs['api_key']
+        self.partner = kwargs['partner']
+
+
+class OptOutRecipient(msrest.serialization.Model):
+    """A single opt out recipient number.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar to: Required. The recipient's phone number (in E.164 format).
+    :vartype to: str
+    """
+
+    _validation = {
+        'to': {'required': True, 'min_length': 1},
+    }
+
+    _attribute_map = {
+        'to': {'key': 'to', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword to: Required. The recipient's phone number (in E.164 format).
+        :paramtype to: str
+        """
+        super(OptOutRecipient, self).__init__(**kwargs)
+        self.to = kwargs['to']
+
+
+class OptOutRequest(msrest.serialization.Model):
+    """An opt out request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar from_property: Required. The sender's identifier (typically phone number in E.164 format)
+     that is owned by the authenticated account.
+    :vartype from_property: str
+    :ivar recipients: Required.
+    :vartype recipients: list[~azure.communication.sms.models.OptOutRecipient]
+    """
+
+    _validation = {
+        'from_property': {'required': True, 'min_length': 1},
+        'recipients': {'required': True, 'max_items': 100, 'min_items': 1},
+    }
+
+    _attribute_map = {
+        'from_property': {'key': 'from', 'type': 'str'},
+        'recipients': {'key': 'recipients', 'type': '[OptOutRecipient]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword from_property: Required. The sender's identifier (typically phone number in E.164
+         format) that is owned by the authenticated account.
+        :paramtype from_property: str
+        :keyword recipients: Required.
+        :paramtype recipients: list[~azure.communication.sms.models.OptOutRecipient]
+        """
+        super(OptOutRequest, self).__init__(**kwargs)
+        self.from_property = kwargs['from_property']
+        self.recipients = kwargs['recipients']
+
+
+class OptOutResponse(msrest.serialization.Model):
+    """Response for an opt out request. Validate the returned items in the response to see which recipients were successfully added or removed from the opt outs list.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar value: Required.
+    :vartype value: list[~azure.communication.sms.models.OptOutResponseItem]
+    """
+
+    _validation = {
+        'value': {'required': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[OptOutResponseItem]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword value: Required.
+        :paramtype value: list[~azure.communication.sms.models.OptOutResponseItem]
+        """
+        super(OptOutResponse, self).__init__(**kwargs)
+        self.value = kwargs['value']
+
+
+class OptOutResponseItem(msrest.serialization.Model):
+    """OptOutResponseItem.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar to: Required. The recipient phone number (in E.164 format).
+    :vartype to: str
+    :ivar http_status_code: Required.
+    :vartype http_status_code: int
+    :ivar is_opted_out: Optional flag specifying if number was Opted Out from receiving messages.
+    :vartype is_opted_out: bool
+    :ivar error_message: Optional error message in case of 4xx/5xx errors.
+    :vartype error_message: str
+    """
+
+    _validation = {
+        'to': {'required': True, 'min_length': 1},
+        'http_status_code': {'required': True},
+    }
+
+    _attribute_map = {
+        'to': {'key': 'to', 'type': 'str'},
+        'http_status_code': {'key': 'httpStatusCode', 'type': 'int'},
+        'is_opted_out': {'key': 'isOptedOut', 'type': 'bool'},
+        'error_message': {'key': 'errorMessage', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword to: Required. The recipient phone number (in E.164 format).
+        :paramtype to: str
+        :keyword http_status_code: Required.
+        :paramtype http_status_code: int
+        :keyword is_opted_out: Optional flag specifying if number was Opted Out from receiving
+         messages.
+        :paramtype is_opted_out: bool
+        :keyword error_message: Optional error message in case of 4xx/5xx errors.
+        :paramtype error_message: str
+        """
+        super(OptOutResponseItem, self).__init__(**kwargs)
+        self.to = kwargs['to']
+        self.http_status_code = kwargs['http_status_code']
+        self.is_opted_out = kwargs.get('is_opted_out', None)
+        self.error_message = kwargs.get('error_message', None)
+
+
 class SendMessageRequest(msrest.serialization.Model):
     """Represents the properties of a send message request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param from_property: Required. The sender's phone number in E.164 format that is owned by the
+    :ivar from_property: Required. The sender's phone number in E.164 format that is owned by the
      authenticated account.
-    :type from_property: str
-    :param sms_recipients: Required. The recipient's phone number in E.164 format. In this version,
+    :vartype from_property: str
+    :ivar sms_recipients: Required. The recipient's phone number in E.164 format. In this version,
      a minimum of 1 and upto 100 recipients in the list are supported.
-    :type sms_recipients: list[~azure.communication.sms.models.SmsRecipient]
-    :param message: Required. The contents of the message that will be sent to the recipient. The
+    :vartype sms_recipients: list[~azure.communication.sms.models.SmsRecipient]
+    :ivar message: Required. The contents of the message that will be sent to the recipient. The
      allowable content is defined by RFC 5724.
-    :type message: str
-    :param sms_send_options: Optional configuration for sending SMS messages.
-    :type sms_send_options: ~azure.communication.sms.models.SmsSendOptions
+    :vartype message: str
+    :ivar sms_send_options: Optional configuration for sending SMS messages.
+    :vartype sms_send_options: ~azure.communication.sms.models.SmsSendOptions
     """
 
     _validation = {
-        "from_property": {"required": True},
-        "sms_recipients": {"required": True},
-        "message": {"required": True, "max_length": 2048, "min_length": 0},
+        'from_property': {'required': True},
+        'sms_recipients': {'required': True},
+        'message': {'required': True, 'max_length': 2048, 'min_length': 0},
     }
 
     _attribute_map = {
-        "from_property": {"key": "from", "type": "str"},
-        "sms_recipients": {"key": "smsRecipients", "type": "[SmsRecipient]"},
-        "message": {"key": "message", "type": "str"},
-        "sms_send_options": {"key": "smsSendOptions", "type": "SmsSendOptions"},
+        'from_property': {'key': 'from', 'type': 'str'},
+        'sms_recipients': {'key': 'smsRecipients', 'type': '[SmsRecipient]'},
+        'message': {'key': 'message', 'type': 'str'},
+        'sms_send_options': {'key': 'smsSendOptions', 'type': 'SmsSendOptions'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword from_property: Required. The sender's phone number in E.164 format that is owned by
+         the authenticated account.
+        :paramtype from_property: str
+        :keyword sms_recipients: Required. The recipient's phone number in E.164 format. In this
+         version, a minimum of 1 and upto 100 recipients in the list are supported.
+        :paramtype sms_recipients: list[~azure.communication.sms.models.SmsRecipient]
+        :keyword message: Required. The contents of the message that will be sent to the recipient. The
+         allowable content is defined by RFC 5724.
+        :paramtype message: str
+        :keyword sms_send_options: Optional configuration for sending SMS messages.
+        :paramtype sms_send_options: ~azure.communication.sms.models.SmsSendOptions
+        """
         super(SendMessageRequest, self).__init__(**kwargs)
-        self.from_property = kwargs["from_property"]
-        self.sms_recipients = kwargs["sms_recipients"]
-        self.message = kwargs["message"]
-        self.sms_send_options = kwargs.get("sms_send_options", None)
+        self.from_property = kwargs['from_property']
+        self.sms_recipients = kwargs['sms_recipients']
+        self.message = kwargs['message']
+        self.sms_send_options = kwargs.get('sms_send_options', None)
 
 
 class SmsRecipient(msrest.serialization.Model):
@@ -53,36 +422,54 @@ class SmsRecipient(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param to: Required. The recipient's phone number in E.164 format.
-    :type to: str
-    :param repeatability_request_id: If specified, the client directs that the request is
+    :ivar to: Required. The recipient's phone number in E.164 format.
+    :vartype to: str
+    :ivar repeatability_request_id: If specified, the client directs that the request is
      repeatable; that is, the client can make the request multiple times with the same
      Repeatability-Request-ID and get back an appropriate response without the server executing the
      request multiple times. The value of the Repeatability-Request-ID is an opaque string
      representing a client-generated, 36-character hexadecimal case-insensitive encoding of a UUID
      (GUID), identifier for the request.
-    :type repeatability_request_id: str
-    :param repeatability_first_sent: MUST be sent by clients to specify that a request is
+    :vartype repeatability_request_id: str
+    :ivar repeatability_first_sent: MUST be sent by clients to specify that a request is
      repeatable. Repeatability-First-Sent is used to specify the date and time at which the request
      was first created.eg- Tue, 26 Mar 2019 16:06:51 GMT.
-    :type repeatability_first_sent: str
+    :vartype repeatability_first_sent: str
     """
 
     _validation = {
-        "to": {"required": True},
+        'to': {'required': True},
     }
 
     _attribute_map = {
-        "to": {"key": "to", "type": "str"},
-        "repeatability_request_id": {"key": "repeatabilityRequestId", "type": "str"},
-        "repeatability_first_sent": {"key": "repeatabilityFirstSent", "type": "str"},
+        'to': {'key': 'to', 'type': 'str'},
+        'repeatability_request_id': {'key': 'repeatabilityRequestId', 'type': 'str'},
+        'repeatability_first_sent': {'key': 'repeatabilityFirstSent', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword to: Required. The recipient's phone number in E.164 format.
+        :paramtype to: str
+        :keyword repeatability_request_id: If specified, the client directs that the request is
+         repeatable; that is, the client can make the request multiple times with the same
+         Repeatability-Request-ID and get back an appropriate response without the server executing the
+         request multiple times. The value of the Repeatability-Request-ID is an opaque string
+         representing a client-generated, 36-character hexadecimal case-insensitive encoding of a UUID
+         (GUID), identifier for the request.
+        :paramtype repeatability_request_id: str
+        :keyword repeatability_first_sent: MUST be sent by clients to specify that a request is
+         repeatable. Repeatability-First-Sent is used to specify the date and time at which the request
+         was first created.eg- Tue, 26 Mar 2019 16:06:51 GMT.
+        :paramtype repeatability_first_sent: str
+        """
         super(SmsRecipient, self).__init__(**kwargs)
-        self.to = kwargs["to"]
-        self.repeatability_request_id = kwargs.get("repeatability_request_id", None)
-        self.repeatability_first_sent = kwargs.get("repeatability_first_sent", None)
+        self.to = kwargs['to']
+        self.repeatability_request_id = kwargs.get('repeatability_request_id', None)
+        self.repeatability_first_sent = kwargs.get('repeatability_first_sent', None)
 
 
 class SmsSendOptions(msrest.serialization.Model):
@@ -90,27 +477,55 @@ class SmsSendOptions(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param enable_delivery_report: Required. Enable this flag to receive a delivery report for this
+    :ivar enable_delivery_report: Required. Enable this flag to receive a delivery report for this
      message on the Azure Resource EventGrid.
-    :type enable_delivery_report: bool
-    :param tag: Use this field to provide metadata that will then be sent back in the corresponding
+    :vartype enable_delivery_report: bool
+    :ivar tag: Use this field to provide metadata that will then be sent back in the corresponding
      Delivery Report.
-    :type tag: str
+    :vartype tag: str
+    :ivar delivery_report_timeout_in_seconds: Time to wait for a delivery report. After this time a
+     delivery report with timeout error code is generated.
+    :vartype delivery_report_timeout_in_seconds: int
+    :ivar messaging_connect: Defines optional parameters for connecting with the Messaging Connect
+     Partner to deliver SMS.
+    :vartype messaging_connect: ~azure.communication.sms.models.MessagingConnectOptions
     """
 
     _validation = {
-        "enable_delivery_report": {"required": True},
+        'enable_delivery_report': {'required': True},
+        'delivery_report_timeout_in_seconds': {'maximum': 43200, 'minimum': 60},
     }
 
     _attribute_map = {
-        "enable_delivery_report": {"key": "enableDeliveryReport", "type": "bool"},
-        "tag": {"key": "tag", "type": "str"},
+        'enable_delivery_report': {'key': 'enableDeliveryReport', 'type': 'bool'},
+        'tag': {'key': 'tag', 'type': 'str'},
+        'delivery_report_timeout_in_seconds': {'key': 'deliveryReportTimeoutInSeconds', 'type': 'int'},
+        'messaging_connect': {'key': 'messagingConnect', 'type': 'MessagingConnectOptions'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword enable_delivery_report: Required. Enable this flag to receive a delivery report for
+         this message on the Azure Resource EventGrid.
+        :paramtype enable_delivery_report: bool
+        :keyword tag: Use this field to provide metadata that will then be sent back in the
+         corresponding Delivery Report.
+        :paramtype tag: str
+        :keyword delivery_report_timeout_in_seconds: Time to wait for a delivery report. After this
+         time a delivery report with timeout error code is generated.
+        :paramtype delivery_report_timeout_in_seconds: int
+        :keyword messaging_connect: Defines optional parameters for connecting with the Messaging
+         Connect Partner to deliver SMS.
+        :paramtype messaging_connect: ~azure.communication.sms.models.MessagingConnectOptions
+        """
         super(SmsSendOptions, self).__init__(**kwargs)
-        self.enable_delivery_report = kwargs["enable_delivery_report"]
-        self.tag = kwargs.get("tag", None)
+        self.enable_delivery_report = kwargs['enable_delivery_report']
+        self.tag = kwargs.get('tag', None)
+        self.delivery_report_timeout_in_seconds = kwargs.get('delivery_report_timeout_in_seconds', None)
+        self.messaging_connect = kwargs.get('messaging_connect', None)
 
 
 class SmsSendResponse(msrest.serialization.Model):
@@ -118,21 +533,28 @@ class SmsSendResponse(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required.
-    :type value: list[~azure.communication.sms.models.SmsSendResponseItem]
+    :ivar value: Required.
+    :vartype value: list[~azure.communication.sms.models.SmsSendResponseItem]
     """
 
     _validation = {
-        "value": {"required": True},
+        'value': {'required': True},
     }
 
     _attribute_map = {
-        "value": {"key": "value", "type": "[SmsSendResponseItem]"},
+        'value': {'key': 'value', 'type': '[SmsSendResponseItem]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword value: Required.
+        :paramtype value: list[~azure.communication.sms.models.SmsSendResponseItem]
+        """
         super(SmsSendResponse, self).__init__(**kwargs)
-        self.value = kwargs["value"]
+        self.value = kwargs['value']
 
 
 class SmsSendResponseItem(msrest.serialization.Model):
@@ -140,43 +562,63 @@ class SmsSendResponseItem(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param to: Required. The recipient's phone number in E.164 format.
-    :type to: str
-    :param message_id: The identifier of the outgoing Sms message. Only present if message
+    :ivar to: Required. The recipient's phone number in E.164 format.
+    :vartype to: str
+    :ivar message_id: The identifier of the outgoing Sms message. Only present if message
      processed.
-    :type message_id: str
-    :param http_status_code: Required. HTTP Status code.
-    :type http_status_code: int
-    :param repeatability_result: The result of a repeatable request with one of the
-     case-insensitive values accepted or rejected. Possible values include: "accepted", "rejected".
-    :type repeatability_result: str or
+    :vartype message_id: str
+    :ivar http_status_code: Required. HTTP Status code.
+    :vartype http_status_code: int
+    :ivar repeatability_result: The result of a repeatable request with one of the case-insensitive
+     values accepted or rejected. Possible values include: "accepted", "rejected".
+    :vartype repeatability_result: str or
      ~azure.communication.sms.models.SmsSendResponseItemRepeatabilityResult
-    :param successful: Required. Indicates if the message is processed successfully or not.
-    :type successful: bool
-    :param error_message: Optional error message in case of 4xx/5xx/repeatable errors.
-    :type error_message: str
+    :ivar successful: Required. Indicates if the message is processed successfully or not.
+    :vartype successful: bool
+    :ivar error_message: Optional error message in case of 4xx/5xx/repeatable errors.
+    :vartype error_message: str
     """
 
     _validation = {
-        "to": {"required": True},
-        "http_status_code": {"required": True},
-        "successful": {"required": True},
+        'to': {'required': True},
+        'http_status_code': {'required': True},
+        'successful': {'required': True},
     }
 
     _attribute_map = {
-        "to": {"key": "to", "type": "str"},
-        "message_id": {"key": "messageId", "type": "str"},
-        "http_status_code": {"key": "httpStatusCode", "type": "int"},
-        "repeatability_result": {"key": "repeatabilityResult", "type": "str"},
-        "successful": {"key": "successful", "type": "bool"},
-        "error_message": {"key": "errorMessage", "type": "str"},
+        'to': {'key': 'to', 'type': 'str'},
+        'message_id': {'key': 'messageId', 'type': 'str'},
+        'http_status_code': {'key': 'httpStatusCode', 'type': 'int'},
+        'repeatability_result': {'key': 'repeatabilityResult', 'type': 'str'},
+        'successful': {'key': 'successful', 'type': 'bool'},
+        'error_message': {'key': 'errorMessage', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword to: Required. The recipient's phone number in E.164 format.
+        :paramtype to: str
+        :keyword message_id: The identifier of the outgoing Sms message. Only present if message
+         processed.
+        :paramtype message_id: str
+        :keyword http_status_code: Required. HTTP Status code.
+        :paramtype http_status_code: int
+        :keyword repeatability_result: The result of a repeatable request with one of the
+         case-insensitive values accepted or rejected. Possible values include: "accepted", "rejected".
+        :paramtype repeatability_result: str or
+         ~azure.communication.sms.models.SmsSendResponseItemRepeatabilityResult
+        :keyword successful: Required. Indicates if the message is processed successfully or not.
+        :paramtype successful: bool
+        :keyword error_message: Optional error message in case of 4xx/5xx/repeatable errors.
+        :paramtype error_message: str
+        """
         super(SmsSendResponseItem, self).__init__(**kwargs)
-        self.to = kwargs["to"]
-        self.message_id = kwargs.get("message_id", None)
-        self.http_status_code = kwargs["http_status_code"]
-        self.repeatability_result = kwargs.get("repeatability_result", None)
-        self.successful = kwargs["successful"]
-        self.error_message = kwargs.get("error_message", None)
+        self.to = kwargs['to']
+        self.message_id = kwargs.get('message_id', None)
+        self.http_status_code = kwargs['http_status_code']
+        self.repeatability_result = kwargs.get('repeatability_result', None)
+        self.successful = kwargs['successful']
+        self.error_message = kwargs.get('error_message', None)

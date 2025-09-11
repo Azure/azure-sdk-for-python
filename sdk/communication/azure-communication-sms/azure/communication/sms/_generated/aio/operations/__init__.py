@@ -7,7 +7,11 @@
 # --------------------------------------------------------------------------
 
 from ._sms_operations import SmsOperations
+from ._opt_outs_operations import OptOutsOperations
+from ._delivery_reports_operations import DeliveryReportsOperations
 
 __all__ = [
-    "SmsOperations",
+    'SmsOperations',
+    'OptOutsOperations',
+    'DeliveryReportsOperations',
 ]

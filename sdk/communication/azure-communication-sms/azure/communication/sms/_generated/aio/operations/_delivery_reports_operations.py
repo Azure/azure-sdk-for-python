@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import functools
-from typing import Any, Callable, Dict, Generic, Optional, TypeVar
+from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
@@ -17,13 +17,13 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._sms_operations import build_send_request
+from ...operations._delivery_reports_operations import build_get_request
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class SmsOperations:
-    """SmsOperations async operations.
+class DeliveryReportsOperations:
+    """DeliveryReportsOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -45,36 +45,33 @@ class SmsOperations:
         self._config = config
 
     @distributed_trace_async
-    async def send(
+    async def get(
         self,
-        send_message_request: "_models.SendMessageRequest",
+        outgoing_message_id: str,
         **kwargs: Any
-    ) -> "_models.SmsSendResponse":
-        """Sends a SMS message from a phone number that belongs to the authenticated account.
+    ) -> Union["_models.DeliveryReport", "_models.ErrorResponse"]:
+        """Gets delivery report for a specific outgoing message.
 
-        Sends a SMS message from a phone number that belongs to the authenticated account.
+        Gets delivery report for a specific outgoing message.
 
-        :param send_message_request: Represents the body of the send message request.
-        :type send_message_request: ~azure.communication.sms.models.SendMessageRequest
+        :param outgoing_message_id: The identifier of the outgoing message.
+        :type outgoing_message_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: SmsSendResponse, or the result of cls(response)
-        :rtype: ~azure.communication.sms.models.SmsSendResponse
+        :return: DeliveryReport or ErrorResponse, or the result of cls(response)
+        :rtype: ~azure.communication.sms.models.DeliveryReport or
+         ~azure.communication.sms.models.ErrorResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SmsSendResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Union["_models.DeliveryReport", "_models.ErrorResponse"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-
-        json = self._serialize.body(send_message_request, 'SendMessageRequest')
-
-        request = build_send_request(
-            content_type=content_type,
-            json=json,
-            template_url=self.send.metadata['url'],
+        
+        request = build_get_request(
+            outgoing_message_id=outgoing_message_id,
+            template_url=self.get.metadata['url'],
         )
         request = _convert_request(request)
         path_format_arguments = {
@@ -85,16 +82,20 @@ class SmsOperations:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize('SmsSendResponse', pipeline_response)
+        if response.status_code == 200:
+            deserialized = self._deserialize('DeliveryReport', pipeline_response)
+
+        if response.status_code == 404:
+            deserialized = self._deserialize('ErrorResponse', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    send.metadata = {'url': '/sms'}  # type: ignore
+    get.metadata = {'url': '/deliveryReports/{outgoingMessageId}'}  # type: ignore
 

@@ -7,10 +7,18 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
+from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class SmsSendResponseItemRepeatabilityResult(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class DeliveryReportDeliveryStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The delivery status of the message.
+    """
+
+    DELIVERED = "Delivered"
+    FAILED = "Failed"
+
+class SmsSendResponseItemRepeatabilityResult(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The result of a repeatable request with one of the case-insensitive values accepted or
     rejected.
     """
