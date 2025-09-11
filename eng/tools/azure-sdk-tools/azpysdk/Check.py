@@ -113,7 +113,7 @@ class Check(abc.ABC):
         return targeted
 
     def install_dev_reqs(self, executable: str, args: argparse.Namespace, package_dir: str) -> None:
-        """Install dev requirements for the current package."""
+        """Install dev requirements for the given package."""
         dev_requirements = os.path.join(package_dir, "dev_requirements.txt")
 
         requirements = []
