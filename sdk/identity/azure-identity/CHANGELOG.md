@@ -1,13 +1,11 @@
 # Release History
 
-## 1.24.1 (Unreleased)
+## 1.25.0 (2025-09-11)
 
 ### Features Added
 
 - `AzureDeveloperCliCredential` now supports `claims` in `get_token` and `get_token_info`. ([#42568](https://github.com/Azure/azure-sdk-for-python/pull/42568))
 - Added new keyword argument `require_envvar` to `DefaultAzureCredential` to enforce the presence of the `AZURE_TOKEN_CREDENTIALS` environment variable. ([#42660](https://github.com/Azure/azure-sdk-for-python/pull/42660))
-
-### Breaking Changes
 
 ### Bugs Fixed
 
@@ -17,7 +15,6 @@
 ### Other Changes
 
 - Updated `SharedTokenCacheCredential` to raise `CredentialUnavailableError` instead of `ClientAuthenticationError` during token refresh failures when within the context of `DefaultAzureCredential`. ([#42934](https://github.com/Azure/azure-sdk-for-python/pull/42934))
-
 
 ## 1.24.0 (2025-08-07)
 

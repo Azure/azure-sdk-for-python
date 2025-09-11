@@ -197,12 +197,13 @@ class _SharedTokenCacheCredential(SharedTokenCacheBase):
                     scopes, refresh_token, claims=claims, tenant_id=tenant_id, enable_cae=is_cae, **kwargs
                 )
                 return token
-            except ClientAuthenticationError as e:
+            except Exception as e:  # pylint: disable=broad-except
                 if within_dac.get():
                     raise CredentialUnavailableError(  # pylint: disable=raise-missing-from
-                        message=e.message, response=e.response
+                        message=getattr(e, "message", str(e)), response=getattr(e, "response", None)
                     )
                 raise
+
         raise CredentialUnavailableError(message=NO_TOKEN.format(account.get("username")))
 
     def _get_auth_client(self, **kwargs: Any) -> AadClientBase:
