@@ -35,7 +35,7 @@ def build_add_request(
     # type: (...) -> HttpRequest
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2026-01-23"
+    api_version = kwargs.pop('api_version', "2026-01-23")
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/sms/optouts:add')
@@ -65,7 +65,7 @@ def build_remove_request(
     # type: (...) -> HttpRequest
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2026-01-23"
+    api_version = kwargs.pop('api_version', "2026-01-23")
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/sms/optouts:remove')
@@ -95,7 +95,7 @@ def build_check_request(
     # type: (...) -> HttpRequest
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2026-01-23"
+    api_version = kwargs.pop('api_version', "2026-01-23")
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/sms/optouts:check')
@@ -172,6 +172,7 @@ class OptOutsOperations(object):
         request = build_add_request(
             content_type=content_type,
             json=json,
+            api_version=self._config.api_version,
             template_url=self.add.metadata['url'],
         )
         request = _convert_request(request)
@@ -228,6 +229,7 @@ class OptOutsOperations(object):
         request = build_remove_request(
             content_type=content_type,
             json=json,
+            api_version=self._config.api_version,
             template_url=self.remove.metadata['url'],
         )
         request = _convert_request(request)
@@ -284,6 +286,7 @@ class OptOutsOperations(object):
         request = build_check_request(
             content_type=content_type,
             json=json,
+            api_version=self._config.api_version,
             template_url=self.check.metadata['url'],
         )
         request = _convert_request(request)

@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Union, Any
+from typing import Union, Any, Optional
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.credentials import TokenCredential, AzureKeyCredential
 
@@ -23,6 +23,8 @@ class DeliveryReportsClient(object):  # pylint: disable=client-accepts-api-versi
         The endpoint url for Azure Communication Service resource.
     :param Union[TokenCredential, AzureKeyCredential] credential:
         The credential we use to authenticate against the service.
+    :keyword str api_version:
+        The API version to use for requests. If not specified, the default API version will be used.
 
     .. admonition:: Example:
 
@@ -45,6 +47,8 @@ class DeliveryReportsClient(object):  # pylint: disable=client-accepts-api-versi
             self,
             endpoint: str,
             credential: Union[TokenCredential, AzureKeyCredential],
+            *,
+            api_version: Optional[str] = None,
             **kwargs: Any
     ) -> None:
         try:
@@ -58,20 +62,30 @@ class DeliveryReportsClient(object):  # pylint: disable=client-accepts-api-versi
 
         self._endpoint = endpoint
         self._authentication_policy = get_authentication_policy(endpoint, credential)
+        
+        # If api_version is provided, pass it to the service client
+        service_kwargs = kwargs.copy()
+        if api_version is not None:
+            service_kwargs['api_version'] = api_version
+            
         self._sms_service_client = AzureCommunicationSMSService(
-            self._endpoint, authentication_policy=self._authentication_policy, sdk_moniker=SDK_MONIKER, **kwargs
+            self._endpoint, authentication_policy=self._authentication_policy, sdk_moniker=SDK_MONIKER, **service_kwargs
         )
 
     @classmethod
     def from_connection_string(
             cls,
             conn_str: str,
+            *,
+            api_version: Optional[str] = None,
             **kwargs: Any
     ) -> "DeliveryReportsClient":
         """Create DeliveryReportsClient from a Connection String.
 
         :param str conn_str:
             A connection string to an Azure Communication Service resource.
+        :keyword str api_version:
+            The API version to use for requests. If not specified, the default API version will be used.
         :returns: Instance of DeliveryReportsClient.
         :rtype: ~azure.communication.sms.DeliveryReportsClient
 
@@ -86,7 +100,7 @@ class DeliveryReportsClient(object):  # pylint: disable=client-accepts-api-versi
         """
         endpoint, access_key = parse_connection_str(conn_str)
 
-        return cls(endpoint, AzureKeyCredential(access_key), **kwargs)
+        return cls(endpoint, AzureKeyCredential(access_key), api_version=api_version, **kwargs)
 
     @distributed_trace
     def get_status(

@@ -38,7 +38,7 @@ class AzureCommunicationSMSServiceConfiguration(Configuration):
         super(AzureCommunicationSMSServiceConfiguration, self).__init__(**kwargs)
 
         self.endpoint = endpoint
-        self.api_version = "2026-01-23"
+        self.api_version = kwargs.pop('api_version', "2026-01-23")
         kwargs.setdefault('sdk_moniker', 'azurecommunicationsmsservice/{}'.format(VERSION))
         self._configure(**kwargs)
 

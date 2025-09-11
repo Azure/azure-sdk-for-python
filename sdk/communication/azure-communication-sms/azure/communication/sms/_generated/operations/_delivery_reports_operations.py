@@ -34,7 +34,7 @@ def build_get_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2026-01-23"
+    api_version = kwargs.pop('api_version', "2026-01-23")
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/deliveryReports/{outgoingMessageId}')
@@ -111,6 +111,7 @@ class DeliveryReportsOperations(object):
         
         request = build_get_request(
             outgoing_message_id=outgoing_message_id,
+            api_version=self._config.api_version,
             template_url=self.get.metadata['url'],
         )
         request = _convert_request(request)

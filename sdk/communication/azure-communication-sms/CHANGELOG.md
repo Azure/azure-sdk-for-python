@@ -11,6 +11,7 @@
 - Added sample files demonstrating usage of the new clients.
 - `SmsClient.send` now supports `delivery_report_timeout_in_seconds` option (60-43200 seconds). If no delivery report is received within the configured time, the service generates an Expired report.
 - `SmsClient.send` now supports MessagingConnect option, where clients can pass `messaging_connect_api_key` and `messaging_connect_partner_name` for Messaging Connect feature to enable SMS delivery through partner networks.
+- All clients now support optional `api_version` parameter to specify a custom API version. Supports both direct instantiation and `from_connection_string` methods.
 
 ## 1.1.0 (2024-10-03)
 

@@ -33,6 +33,8 @@ class SmsClient(object):  # pylint: disable=client-accepts-api-version-keyword
         The endpoint url for Azure Communication Service resource.
     :param Union[TokenCredential, AzureKeyCredential] credential:
         The credential we use to authenticate against the service.
+    :keyword str api_version:
+        The API version to use for requests. If not specified, the default API version will be used.
 
     .. admonition:: Example:
 
@@ -48,6 +50,8 @@ class SmsClient(object):  # pylint: disable=client-accepts-api-version-keyword
             self,
             endpoint,  # type: str
             credential,  # type: Union[TokenCredential, AzureKeyCredential]
+            *,
+            api_version: Optional[str] = None,
             **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -62,20 +66,31 @@ class SmsClient(object):  # pylint: disable=client-accepts-api-version-keyword
 
         self._endpoint = endpoint
         self._authentication_policy = get_authentication_policy(endpoint, credential)
+        
+        # If api_version is provided, pass it to the service client
+        service_kwargs = kwargs.copy()
+        if api_version is not None:
+            # The service client configuration will pick up api_version from kwargs
+            service_kwargs['api_version'] = api_version
+            
         self._sms_service_client = AzureCommunicationSMSService(
-            self._endpoint, authentication_policy=self._authentication_policy, sdk_moniker=SDK_MONIKER, **kwargs
+            self._endpoint, authentication_policy=self._authentication_policy, sdk_moniker=SDK_MONIKER, **service_kwargs
         )
 
     @classmethod
     def from_connection_string(
             cls,
             conn_str,  # type: str
+            *,
+            api_version: Optional[str] = None,
             **kwargs  # type: Any
     ):  # type: (...) -> SmsClient
         """Create SmsClient from a Connection String.
 
         :param str conn_str:
             A connection string to an Azure Communication Service resource.
+        :keyword str api_version:
+            The API version to use for requests. If not specified, the default API version will be used.
         :returns: Instance of SmsClient.
         :rtype: ~azure.communication.sms.SmsClient
 
@@ -90,7 +105,7 @@ class SmsClient(object):  # pylint: disable=client-accepts-api-version-keyword
         """
         endpoint, access_key = parse_connection_str(conn_str)
 
-        return cls(endpoint, AzureKeyCredential(access_key), **kwargs)
+        return cls(endpoint, AzureKeyCredential(access_key), api_version=api_version, **kwargs)
 
     @distributed_trace
     def send(

@@ -7,8 +7,8 @@
 # --------------------------------------------------------------------------
 
 try:
-    from ._models_py3 import SmsSendResult
+    from ._models_py3 import SmsSendResult, OptOutResult, OptOutCheckResult
 except (SyntaxError, ImportError):
-    from ._models import SmsSendResult  # type: ignore
+    from ._models import SmsSendResult, OptOutResult, OptOutCheckResult  # type: ignore
 
-__all__ = ["SmsSendResult"]
+__all__ = ["SmsSendResult", "OptOutResult", "OptOutCheckResult"]

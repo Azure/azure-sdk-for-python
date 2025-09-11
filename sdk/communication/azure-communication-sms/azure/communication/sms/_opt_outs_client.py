@@ -4,11 +4,13 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Any, Union
+from typing import Any, Union, Optional, List
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.credentials import TokenCredential, AzureKeyCredential
 
 from ._generated._azure_communication_sms_service import AzureCommunicationSMSService
+from ._generated.models import OptOutRequest, OptOutRecipient
+from ._models import OptOutResult, OptOutCheckResult
 from ._shared.auth_policy_utils import get_authentication_policy
 from ._shared.utils import parse_connection_str
 from ._version import SDK_MONIKER
@@ -23,6 +25,8 @@ class OptOutsClient(object):  # pylint: disable=client-accepts-api-version-keywo
         The endpoint url for Azure Communication Service resource.
     :param Union[TokenCredential, AzureKeyCredential] credential:
         The credential we use to authenticate against the service.
+    :keyword str api_version:
+        The API version to use for requests. If not specified, the default API version will be used.
 
     .. admonition:: Example:
 
@@ -45,6 +49,8 @@ class OptOutsClient(object):  # pylint: disable=client-accepts-api-version-keywo
             self,
             endpoint: str,
             credential: Union[TokenCredential, AzureKeyCredential],
+            *,
+            api_version: Optional[str] = None,
             **kwargs: Any
     ) -> None:
         try:
@@ -58,20 +64,30 @@ class OptOutsClient(object):  # pylint: disable=client-accepts-api-version-keywo
 
         self._endpoint = endpoint
         self._authentication_policy = get_authentication_policy(endpoint, credential)
+        
+        # If api_version is provided, pass it to the service client
+        service_kwargs = kwargs.copy()
+        if api_version is not None:
+            service_kwargs['api_version'] = api_version
+            
         self._sms_service_client = AzureCommunicationSMSService(
-            self._endpoint, authentication_policy=self._authentication_policy, sdk_moniker=SDK_MONIKER, **kwargs
+            self._endpoint, authentication_policy=self._authentication_policy, sdk_moniker=SDK_MONIKER, **service_kwargs
         )
 
     @classmethod
     def from_connection_string(
             cls,
             conn_str: str,
+            *,
+            api_version: Optional[str] = None,
             **kwargs: Any
     ) -> "OptOutsClient":
         """Create OptOutsClient from a Connection String.
 
         :param str conn_str:
             A connection string to an Azure Communication Service resource.
+        :keyword str api_version:
+            The API version to use for requests. If not specified, the default API version will be used.
         :returns: Instance of OptOutsClient.
         :rtype: ~azure.communication.sms.OptOutsClient
 
@@ -86,20 +102,22 @@ class OptOutsClient(object):  # pylint: disable=client-accepts-api-version-keywo
         """
         endpoint, access_key = parse_connection_str(conn_str)
 
-        return cls(endpoint, AzureKeyCredential(access_key), **kwargs)
+        return cls(endpoint, AzureKeyCredential(access_key), api_version=api_version, **kwargs)
 
     @distributed_trace
     def add_opt_out(
             self,
-            request: Any,
+            from_: str,
+            to: Union[str, List[str]],
             **kwargs: Any
-    ) -> Any:
+    ) -> List[OptOutResult]:
         """Add phone numbers to the opt-out list which shall stop receiving messages from a sender number.
 
-        :param request: The opt-out request containing sender and recipient phone numbers.
-        :type request: ~azure.communication.sms.models.OptOutRequest
-        :return: OptOutResponse containing the result of the operation.
-        :rtype: ~azure.communication.sms.models.OptOutResponse
+        :param str from_: The sender phone number.
+        :param to: The recipient phone number(s) to add to the opt-out list.
+        :type to: Union[str, List[str]]
+        :return: A list of OptOutResult containing the result of the operation for each recipient.
+        :rtype: List[~azure.communication.sms.models.OptOutResult]
 
         .. admonition:: Example:
 
@@ -110,25 +128,43 @@ class OptOutsClient(object):  # pylint: disable=client-accepts-api-version-keywo
                 :dedent: 8
                 :caption: Adding a phone number to opt-out list.
         """
+        # Convert single string to list
+        if isinstance(to, str):
+            to = [to]
+        
+        # Create OptOutRecipient objects for each recipient
+        recipients = [OptOutRecipient(to=phone_number) for phone_number in to]
+        
+        request = OptOutRequest(from_property=from_, recipients=recipients)
+        
         response = self._sms_service_client.opt_outs.add(
             body=request,
             **kwargs
         )
 
-        return response
+        return [
+            OptOutResult(
+                to=item.to,
+                http_status_code=item.http_status_code,
+                error_message=item.error_message
+            ) for item in response.value
+        ]
 
     @distributed_trace
     def remove_opt_out(
             self,
-            request: Any,
+            from_: str,
+            to: Union[str, List[str]],
             **kwargs: Any
-    ) -> Any:
+    ) -> List[OptOutResult]:
         """Remove phone numbers from the opt-out list.
 
-        :param request: The opt-out request containing sender and recipient phone numbers.
-        :type request: ~azure.communication.sms.models.OptOutRequest
-        :return: OptOutResponse containing the result of the operation.
-        :rtype: ~azure.communication.sms.models.OptOutResponse
+        :param from_: The sender phone number to remove opt-outs for.
+        :type from_: str
+        :param to: The recipient phone number(s) to remove from opt-out list.
+        :type to: Union[str, List[str]]
+        :return: A list of OptOutResult containing the result of the operation for each recipient.
+        :rtype: List[~azure.communication.sms.models.OptOutResult]
 
         .. admonition:: Example:
 
@@ -139,25 +175,43 @@ class OptOutsClient(object):  # pylint: disable=client-accepts-api-version-keywo
                 :dedent: 8
                 :caption: Removing a phone number from opt-out list.
         """
+        # Convert single string to list
+        if isinstance(to, str):
+            to = [to]
+        
+        # Create OptOutRecipient objects for each recipient
+        recipients = [OptOutRecipient(to=phone_number) for phone_number in to]
+        
+        request = OptOutRequest(from_property=from_, recipients=recipients)
+        
         response = self._sms_service_client.opt_outs.remove(
             body=request,
             **kwargs
         )
 
-        return response
+        return [
+            OptOutResult(
+                to=item.to,
+                http_status_code=item.http_status_code,
+                error_message=item.error_message
+            ) for item in response.value
+        ]
 
     @distributed_trace
     def check_opt_out(
             self,
-            request: Any,
+            from_: str,
+            to: Union[str, List[str]],
             **kwargs: Any
-    ) -> Any:
+    ) -> List[OptOutCheckResult]:
         """Check the opt-out status for a recipient phone number with a sender phone number.
 
-        :param request: The opt-out request containing sender and recipient phone numbers.
-        :type request: ~azure.communication.sms.models.OptOutRequest
-        :return: OptOutResponse containing the opt-out status.
-        :rtype: ~azure.communication.sms.models.OptOutResponse
+        :param from_: The sender phone number to check opt-outs for.
+        :type from_: str
+        :param to: The recipient phone number(s) to check opt-out status for.
+        :type to: Union[str, List[str]]
+        :return: A list of OptOutCheckResult containing the opt-out status for each recipient.
+        :rtype: List[~azure.communication.sms.models.OptOutCheckResult]
 
         .. admonition:: Example:
 
@@ -168,9 +222,25 @@ class OptOutsClient(object):  # pylint: disable=client-accepts-api-version-keywo
                 :dedent: 8
                 :caption: Checking opt-out status for a phone number.
         """
+        # Convert single string to list
+        if isinstance(to, str):
+            to = [to]
+        
+        # Create OptOutRecipient objects for each recipient
+        recipients = [OptOutRecipient(to=phone_number) for phone_number in to]
+        
+        request = OptOutRequest(from_property=from_, recipients=recipients)
+        
         response = self._sms_service_client.opt_outs.check(
             body=request,
             **kwargs
         )
 
-        return response
+        return [
+            OptOutCheckResult(
+                to=item.to,
+                http_status_code=item.http_status_code,
+                is_opted_out=item.is_opted_out or False,
+                error_message=item.error_message
+            ) for item in response.value
+        ]
