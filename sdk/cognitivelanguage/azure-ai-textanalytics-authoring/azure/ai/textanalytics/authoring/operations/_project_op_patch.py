@@ -7,7 +7,7 @@
 """Customize generated code here.
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from collections.abc import MutableMapping # pylint:disable=import-error
+from collections.abc import MutableMapping  # pylint:disable=import-error
 from typing import IO, Any, Callable, Dict, Optional, TypeVar, Union, overload
 
 from azure.core.paging import ItemPaged
@@ -43,9 +43,7 @@ from ._operations import ProjectOperations as ProjectOperationsGenerated
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 _Unset: Any = object()
-ClsType = Optional[
-    Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]
-]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 
 class ProjectOperations(ProjectOperationsGenerated):
@@ -196,7 +194,11 @@ class ProjectOperations(ProjectOperationsGenerated):
 
     @distributed_trace
     def begin_assign_deployment_resources(
-        self, body: Union[AssignDeploymentResourcesDetails, JSON, IO[bytes]], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        body: Union[AssignDeploymentResourcesDetails, JSON, IO[bytes]],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> LROPoller[None]:
         """Assign new Azure resources to a project to allow deploying new deployments to them.
         This API is available only via AAD authentication and not supported via subscription key authentication.
@@ -209,9 +211,7 @@ class ProjectOperations(ProjectOperationsGenerated):
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return super()._begin_assign_deployment_resources(
-            body=body, content_type=content_type, **kwargs
-        )
+        return super()._begin_assign_deployment_resources(body=body, content_type=content_type, **kwargs)
 
     @overload
     def begin_swap_deployments(
@@ -260,7 +260,11 @@ class ProjectOperations(ProjectOperationsGenerated):
 
     @distributed_trace
     def begin_swap_deployments(
-        self, body: Union[SwapDeploymentsDetails, JSON, IO[bytes]], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        body: Union[SwapDeploymentsDetails, JSON, IO[bytes]],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> LROPoller[None]:
         """Swaps two existing deployments with each other.
         :param body: The job object to swap two deployments. Required.
@@ -270,9 +274,7 @@ class ProjectOperations(ProjectOperationsGenerated):
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return super()._begin_swap_deployments(
-            body=body, content_type=content_type, **kwargs
-        )
+        return super()._begin_swap_deployments(body=body, content_type=content_type, **kwargs)
 
     @overload
     def begin_unassign_deployment_resources(
@@ -324,7 +326,11 @@ class ProjectOperations(ProjectOperationsGenerated):
 
     @distributed_trace
     def begin_unassign_deployment_resources(
-        self, body: Union[UnassignDeploymentResourcesDetails, JSON, IO[bytes]], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        body: Union[UnassignDeploymentResourcesDetails, JSON, IO[bytes]],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> LROPoller[None]:
         """Unassign resources from a project. This disallows deploying new deployments to these resources,
         and deletes existing deployments assigned to them.
@@ -335,27 +341,21 @@ class ProjectOperations(ProjectOperationsGenerated):
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return super()._begin_unassign_deployment_resources(
-            body=body, content_type=content_type, **kwargs
-        )
+        return super()._begin_unassign_deployment_resources(body=body, content_type=content_type, **kwargs)
 
     @distributed_trace
     def begin_cancel_training_job(  # pylint: disable=function-redefined
-        self,
-        job_id: str,
-        **kwargs: Any
+        self, job_id: str, **kwargs: Any
     ) -> LROPoller[TrainingJobResult]:
         """
         Cancel a training job without requiring project_name explicitly.
-        
+
         :param job_id: The identifier of the training job to cancel. Required.
         :type job_id: str
         :return: An instance of LROPoller that returns TrainingJobResult.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.textanalytics.authoring.models.TrainingJobResult]
         """
-        return super()._begin_cancel_training_job(
-            job_id=job_id, **kwargs
-        )
+        return super()._begin_cancel_training_job(job_id=job_id, **kwargs)
 
     @overload
     def begin_copy_project(

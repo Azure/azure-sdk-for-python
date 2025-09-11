@@ -7,7 +7,7 @@
 """Customize generated code here.
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from collections.abc import MutableMapping # pylint:disable=import-error
+from collections.abc import MutableMapping  # pylint:disable=import-error
 from typing import IO, Any, Callable, Dict, Optional, TypeVar, Union, overload
 
 from azure.core.pipeline import PipelineResponse
@@ -27,9 +27,7 @@ from ._operations import DeploymentOperations as DeploymentOperationsGenerated
 
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
-ClsType = Optional[
-    Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]
-]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 
 class DeploymentOperations(DeploymentOperationsGenerated):
@@ -51,9 +49,7 @@ class DeploymentOperations(DeploymentOperationsGenerated):
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return await super()._begin_delete_deployment(
-            deployment_name=deployment_name, **kwargs
-        )
+        return await super()._begin_delete_deployment(deployment_name=deployment_name, **kwargs)
 
     @overload
     async def begin_delete_deployment_from_resources(
@@ -110,7 +106,12 @@ class DeploymentOperations(DeploymentOperationsGenerated):
 
     @distributed_trace_async
     async def begin_delete_deployment_from_resources(
-        self, deployment_name: str, body: Union[DeleteDeploymentDetails, JSON, IO[bytes]], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        deployment_name: str,
+        body: Union[DeleteDeploymentDetails, JSON, IO[bytes]],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
     ) -> AsyncLROPoller[None]:
         """Deletes a project deployment from the specified assigned resources.
         :param deployment_name: The name of the specific deployment of the project to use. Required.
@@ -186,7 +187,12 @@ class DeploymentOperations(DeploymentOperationsGenerated):
 
     @distributed_trace_async
     async def begin_deploy_project(
-        self, deployment_name: str, body: Union[CreateDeploymentDetails, JSON, IO[bytes]], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        deployment_name: str,
+        body: Union[CreateDeploymentDetails, JSON, IO[bytes]],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
     ) -> AsyncLROPoller[None]:
         """Creates a new deployment or replaces an existing one.
         :param deployment_name: The name of the specific deployment of the project to use. Required.
@@ -198,7 +204,7 @@ class DeploymentOperations(DeploymentOperationsGenerated):
         :return: An instance of AsyncLROPoller that returns None.
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
-        
+
         """
         return await super()._begin_deploy_project(
             deployment_name=deployment_name,

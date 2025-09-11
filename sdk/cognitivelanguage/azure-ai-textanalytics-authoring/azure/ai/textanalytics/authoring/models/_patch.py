@@ -33,8 +33,9 @@ from ._models import (
     ExportedCustomSingleLabelClassificationDocument,
     ExportedDocumentClass,
     ExportedClass,
-    ResourceMetadata
+    ResourceMetadata,
 )
+
 
 def patch_sdk():
     """Do not remove from this file.

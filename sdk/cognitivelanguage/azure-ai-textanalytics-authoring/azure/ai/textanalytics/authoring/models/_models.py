@@ -338,29 +338,29 @@ class CreateDeploymentDetails(_Model):
 
     :ivar trained_model_label: Represents the trained model label. Required.
     :vartype trained_model_label: str
-    :ivar assigned_resources: Represents the resources to be assigned to the deployment. If
+    :ivar assigned_resource_ids: Represents the resource IDs to be assigned to the deployment. If
      provided, the deployment will be rolled out to the resources provided here as well as the
      original resource in which the project is created.
-    :vartype assigned_resources: list[~azure.ai.textanalytics.authoring.models.DeploymentResource]
+    :vartype assigned_resource_ids: list[str]
     """
 
     trained_model_label: str = rest_field(
         name="trainedModelLabel", visibility=["read", "create", "update", "delete", "query"]
     )
     """Represents the trained model label. Required."""
-    assigned_resources: Optional[list["_models.DeploymentResource"]] = rest_field(
-        name="assignedResources", visibility=["read", "create", "update", "delete", "query"]
+    assigned_resource_ids: Optional[list[str]] = rest_field(
+        name="assignedResourceIds", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Represents the resources to be assigned to the deployment. If provided, the deployment will be
-     rolled out to the resources provided here as well as the original resource in which the project
-     is created."""
+    """Represents the resource IDs to be assigned to the deployment. If provided, the deployment will
+     be rolled out to the resources provided here as well as the original resource in which the
+     project is created."""
 
     @overload
     def __init__(
         self,
         *,
         trained_model_label: str,
-        assigned_resources: Optional[list["_models.DeploymentResource"]] = None,
+        assigned_resource_ids: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -1142,7 +1142,7 @@ class DataGenerationSetting(_Model):
     :ivar data_generation_connection_info: Represents the connection info for the Azure resource to
      use during data generation as part of training a custom model. Required.
     :vartype data_generation_connection_info:
-     ~azure.ai.textanalytics.authoring.models.DataGenerationConnectionInfo
+     ~azure.ai.textanalytics.authoring.models._models.DataGenerationConnectionInfo
     """
 
     enable_data_generation: bool = rest_field(
@@ -1150,7 +1150,7 @@ class DataGenerationSetting(_Model):
     )
     """If set to true, augment customer provided training data with synthetic data to improve model
      quality. Required."""
-    data_generation_connection_info: "_models.DataGenerationConnectionInfo" = rest_field(
+    data_generation_connection_info: "_models._models.DataGenerationConnectionInfo" = rest_field(
         name="dataGenerationConnectionInfo", visibility=["read", "create", "update", "delete", "query"]
     )
     """Represents the connection info for the Azure resource to use during data generation as part of
@@ -1161,7 +1161,7 @@ class DataGenerationSetting(_Model):
         self,
         *,
         enable_data_generation: bool,
-        data_generation_connection_info: "_models.DataGenerationConnectionInfo",
+        data_generation_connection_info: "_models._models.DataGenerationConnectionInfo",
     ) -> None: ...
 
     @overload
@@ -1284,19 +1284,12 @@ class DeploymentResource(_Model):
     :vartype resource_id: str
     :ivar region: Represents the resource region. Required.
     :vartype region: str
-    :ivar assigned_aoai_resource: Represents the AOAI resource assigned for data generation.
-    :vartype assigned_aoai_resource:
-     ~azure.ai.textanalytics.authoring.models.DataGenerationConnectionInfo
     """
 
     resource_id: str = rest_field(name="resourceId", visibility=["read", "create", "update", "delete", "query"])
     """Represents the Azure resource Id. Required."""
     region: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Represents the resource region. Required."""
-    assigned_aoai_resource: Optional["_models.DataGenerationConnectionInfo"] = rest_field(
-        name="assignedAoaiResource", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Represents the AOAI resource assigned for data generation."""
 
     @overload
     def __init__(
@@ -1304,7 +1297,6 @@ class DeploymentResource(_Model):
         *,
         resource_id: str,
         region: str,
-        assigned_aoai_resource: Optional["_models.DataGenerationConnectionInfo"] = None,
     ) -> None: ...
 
     @overload
@@ -2109,8 +2101,8 @@ class ExportedCompositeEntity(_Model):
     :ivar composition_setting: The behavior to follow when the entity's components overlap with
      each other. Known values are: "separateComponents" and "combineComponents".
     :vartype composition_setting: str or ~azure.ai.textanalytics.authoring.models.CompositionMode
-    :ivar entity_list: The list component of the entity.
-    :vartype entity_list: ~azure.ai.textanalytics.authoring.models._models.ExportedEntityList
+    :ivar list: The list component of the entity.
+    :vartype list: ~azure.ai.textanalytics.authoring.models._models.ExportedEntityList
     :ivar prebuilts: The prebuilt entities components.
     :vartype prebuilts:
      list[~azure.ai.textanalytics.authoring.models._models.ExportedPrebuiltEntity]
@@ -2123,7 +2115,7 @@ class ExportedCompositeEntity(_Model):
     )
     """The behavior to follow when the entity's components overlap with each other. Known values are:
      \"separateComponents\" and \"combineComponents\"."""
-    entity_list: Optional["_models._models.ExportedEntityList"] = rest_field(
+    list: Optional["_models._models.ExportedEntityList"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The list component of the entity."""
@@ -3794,8 +3786,6 @@ class ProjectDetails(_Model):
      "CustomSingleLabelClassification", "CustomMultiLabelClassification", "CustomEntityRecognition",
      "CustomAbstractiveSummarization", "CustomHealthcare", and "CustomTextSentiment".
     :vartype project_kind: str or ~azure.ai.textanalytics.authoring.models.ProjectKind
-    :ivar storage_account_resource_id: The project storage account resource ID.
-    :vartype storage_account_resource_id: str
     :ivar storage_input_container_name: The storage container name. Required.
     :vartype storage_input_container_name: str
     :ivar settings: The project settings.
@@ -3833,10 +3823,6 @@ class ProjectDetails(_Model):
     """The project kind. Required. Known values are: \"CustomSingleLabelClassification\",
      \"CustomMultiLabelClassification\", \"CustomEntityRecognition\",
      \"CustomAbstractiveSummarization\", \"CustomHealthcare\", and \"CustomTextSentiment\"."""
-    storage_account_resource_id: Optional[str] = rest_field(
-        name="storageAccountResourceId", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The project storage account resource ID."""
     storage_input_container_name: str = rest_field(
         name="storageInputContainerName", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3866,7 +3852,6 @@ class ProjectDetails(_Model):
         language: str,
         last_trained_on: Optional[datetime.datetime] = None,
         last_deployed_on: Optional[datetime.datetime] = None,
-        storage_account_resource_id: Optional[str] = None,
         settings: Optional["_models.ProjectSettings"] = None,
         multilingual: Optional[bool] = None,
         description: Optional[str] = None,

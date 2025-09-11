@@ -19,6 +19,8 @@ from .._utils.serialization import Deserializer, Serializer
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
+
+
 class TextAuthoringProjectClient(AuthoringProjectClientGenerated):
     """Custom TextAuthoringProjectClient that bypasses generated __init__
     and ensures project_name is mandatory.
@@ -33,14 +35,14 @@ class TextAuthoringProjectClient(AuthoringProjectClientGenerated):
     #: Trained model operations group
     trained_model: TrainedModelOperations
 
-    def __init__( # pylint: disable=super-init-not-called
+    def __init__(  # pylint: disable=super-init-not-called
         self,
         endpoint: str,
         credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
         *,
         api_version: Optional[str] = None,
         project_name: str,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Initialize a TextAuthoringProjectClient.
         :param str endpoint: Supported Cognitive Services endpoint, e.g.

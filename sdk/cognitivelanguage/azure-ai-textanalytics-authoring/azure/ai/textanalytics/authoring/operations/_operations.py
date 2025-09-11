@@ -5162,7 +5162,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def _begin_cancel_training_job(self, job_id: str, **kwargs: Any) -> LROPoller[_models.TrainingJobResult]:
+    def begin_cancel_training_job(self, job_id: str, **kwargs: Any) -> LROPoller[_models.TrainingJobResult]:
         """Triggers a cancellation for a running training job.
 
         :param job_id: The job ID. Required.
@@ -5662,7 +5662,7 @@ class ExportedModelOperations:
         params_added_on={"2024-11-15-preview": ["api_version", "project_name", "exported_model_name", "accept"]},
         api_versions_list=["2024-11-15-preview", "2025-05-15-preview"],
     )
-    def _get_exported_model_manifest(self, exported_model_name: str, **kwargs: Any) -> _models.ExportedModelManifest:
+    def get_exported_model_manifest(self, exported_model_name: str, **kwargs: Any) -> _models.ExportedModelManifest:
         """Gets the details and URL needed to download the exported model.
 
         :param exported_model_name: The exported model name. Required.

@@ -19,7 +19,6 @@
         "azure.ai.textanalytics.authoring.models.CustomSingleLabelClassificationEvalSummary": "Language.Text.Authoring.TextAnalysisAuthoringCustomSingleLabelClassificationEvaluationSummary",
         "azure.ai.textanalytics.authoring.models.CustomTextSentimentDocumentEvalResult": "Language.Text.Authoring.TextAnalysisAuthoringCustomTextSentimentDocumentEvaluationResult",
         "azure.ai.textanalytics.authoring.models.CustomTextSentimentEvalSummary": "Language.Text.Authoring.TextAnalysisAuthoringCustomTextSentimentEvaluationSummary",
-        "azure.ai.textanalytics.authoring.models.DataGenerationConnectionInfo": "Language.Text.Authoring.TextAnalysisAuthoringDataGenerationConnectionInfo",
         "azure.ai.textanalytics.authoring.models.DeploymentResource": "Language.Text.Authoring.TextAnalysisAuthoringDeploymentResource",
         "azure.ai.textanalytics.authoring.models.DocumentEntityLabelEvalResult": "Language.Text.Authoring.TextAnalysisAuthoringDocumentEntityLabelEvaluationResult",
         "azure.ai.textanalytics.authoring.models.DocumentEntityRecognitionEvalResult": "Language.Text.Authoring.TextAnalysisAuthoringDocumentEntityRecognitionEvaluationResult",

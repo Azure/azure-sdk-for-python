@@ -9,7 +9,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 
 from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, overload
-from collections.abc import MutableMapping # pylint: disable=import-error
+from collections.abc import MutableMapping  # pylint: disable=import-error
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.paging import ItemPaged
 from azure.core.polling import LROPoller

@@ -34,11 +34,14 @@ class TextAuthoringProjectClient(AuthoringProjectClientGenerated):
     #: Trained model operations group
     trained_model: TrainedModelOperations
 
-    def __init__( # pylint: disable=super-init-not-called
-        self, endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], *,
+    def __init__(  # pylint: disable=super-init-not-called
+        self,
+        endpoint: str,
+        credential: Union[AzureKeyCredential, "TokenCredential"],
+        *,
         api_version: Optional[str] = None,
         project_name: str,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """
         Initialize a TextAuthoringProjectClient.
