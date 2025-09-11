@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -36,6 +37,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: specification/quota/resource-manager/Microsoft.Quota/stable/2025-03-01/examples/GroupQuotas/DeleteGroupQuotas.json
+# x-ms-original-file: specification/quota/resource-manager/Microsoft.Quota/stable/2025-09-01/examples/GroupQuotas/DeleteGroupQuotas.json
 if __name__ == "__main__":
     main()
