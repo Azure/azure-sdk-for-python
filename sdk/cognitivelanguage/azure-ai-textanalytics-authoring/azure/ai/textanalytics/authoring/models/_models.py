@@ -2109,8 +2109,8 @@ class ExportedCompositeEntity(_Model):
     :ivar composition_setting: The behavior to follow when the entity's components overlap with
      each other. Known values are: "separateComponents" and "combineComponents".
     :vartype composition_setting: str or ~azure.ai.textanalytics.authoring.models.CompositionMode
-    :ivar list: The list component of the entity.
-    :vartype list: ~azure.ai.textanalytics.authoring.models._models.ExportedEntityList
+    :ivar entity_list: The list component of the entity.
+    :vartype entity_list: ~azure.ai.textanalytics.authoring.models._models.ExportedEntityList
     :ivar prebuilts: The prebuilt entities components.
     :vartype prebuilts:
      list[~azure.ai.textanalytics.authoring.models._models.ExportedPrebuiltEntity]
@@ -2123,7 +2123,7 @@ class ExportedCompositeEntity(_Model):
     )
     """The behavior to follow when the entity's components overlap with each other. Known values are:
      \"separateComponents\" and \"combineComponents\"."""
-    list: Optional["_models._models.ExportedEntityList"] = rest_field(
+    entity_list: Optional["_models._models.ExportedEntityList"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The list component of the entity."""
