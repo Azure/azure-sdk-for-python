@@ -1,0 +1,98 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/:query-knowledgebases?api-version=2025-05-15-preview&projectName=test-project&deploymentName=test",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "254",
+        "Content-Type": "application/json",
+        "Ocp-Apim-Subscription-Key": "Sanitized",
+        "User-Agent": "azsdk-python-ai-language-questionanswering/1.0.0b1 Python/3.13.7 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": {
+        "question": "Battery life",
+        "top": 3,
+        "filters": {
+          "metadataFilter": {
+            "metadata": [
+              {
+                "key": "explicitlytaggedheading",
+                "value": "check the battery level"
+              },
+              {
+                "key": "explicitlytaggedheading",
+                "value": "make your battery last"
+              }
+            ],
+            "logicalOperation": "OR"
+          }
+        }
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "87afb829-82d1-45c8-93e0-cd78b445a058",
+        "Content-Length": "996",
+        "Content-Type": "application/json; charset=utf-8",
+        "csp-billing-usage": "CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=1",
+        "Date": "Thu, 11 Sep 2025 07:52:14 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "831",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": {
+        "answers": [
+          {
+            "questions": [
+              "Check the battery level"
+            ],
+            "answer": "**Check the battery level**\n\nYou can check the battery level from the lock screen or on the desktop.",
+            "confidenceScore": 0.6142,
+            "id": 96,
+            "source": "Sanitized",
+            "metadata": {
+              "system_metadata_qna_edited_manually": "true",
+              "explicitlytaggedheading": "check the battery level"
+            },
+            "dialog": {
+              "isContextOnly": false,
+              "prompts": [
+                {
+                  "displayOrder": 0,
+                  "qnaId": 97,
+                  "displayText": "Lock screen"
+                },
+                {
+                  "displayOrder": 1,
+                  "qnaId": 98,
+                  "displayText": "Desktop taskbar"
+                }
+              ]
+            }
+          },
+          {
+            "questions": [
+              "Making your battery last"
+            ],
+            "answer": "**Making your battery last**\n\nTo learn ways to conserve power and make your battery last longer, see  [Surface battery and power](https://www.microsoft.com/surface/support/hardware-and-drivers/battery-and-power-pro)  on Surface.com.",
+            "confidenceScore": 0.4434,
+            "id": 99,
+            "source": "Sanitized",
+            "metadata": {
+              "system_metadata_qna_edited_manually": "true",
+              "explicitlytaggedheading": "make your battery last"
+            },
+            "dialog": {
+              "isContextOnly": false,
+              "prompts": []
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "Variables": {}
+}

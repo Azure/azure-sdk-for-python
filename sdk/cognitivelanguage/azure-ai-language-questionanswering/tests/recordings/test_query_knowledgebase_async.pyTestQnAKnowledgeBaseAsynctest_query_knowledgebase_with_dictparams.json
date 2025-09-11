@@ -1,0 +1,103 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/:query-knowledgebases?api-version=2025-05-15-preview&projectName=test-project&deploymentName=test",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "207",
+        "Content-Type": "application/json",
+        "Ocp-Apim-Subscription-Key": "Sanitized",
+        "User-Agent": "azsdk-python-ai-language-questionanswering/1.0.0b1 Python/3.13.7 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": {
+        "question": "How long should my Surface battery last?",
+        "top": 3,
+        "userId": "Sanitized",
+        "confidenceScoreThreshold": 0.2,
+        "shortAnswerOptions": {
+          "confidence_threshold": 0.2,
+          "top": 1
+        },
+        "includeUnstructuredSources": true
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "10dfe464-fdac-4c71-bf75-1338fd1d1541",
+        "Content-Length": "1420",
+        "Content-Type": "application/json; charset=utf-8",
+        "csp-billing-usage": "CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=1",
+        "Date": "Thu, 11 Sep 2025 07:52:24 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "744",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": {
+        "answers": [
+          {
+            "questions": [
+              "Making your battery last"
+            ],
+            "answer": "**Making your battery last**\n\nTo learn ways to conserve power and make your battery last longer, see  [Surface battery and power](https://www.microsoft.com/surface/support/hardware-and-drivers/battery-and-power-pro)  on Surface.com.",
+            "confidenceScore": 0.8515,
+            "id": 99,
+            "source": "Sanitized",
+            "metadata": {
+              "system_metadata_qna_edited_manually": "true",
+              "explicitlytaggedheading": "make your battery last"
+            },
+            "dialog": {
+              "isContextOnly": false,
+              "prompts": []
+            }
+          },
+          {
+            "questions": [
+              "Desktop taskbar"
+            ],
+            "answer": "**Desktop taskbar**\n\nOn the desktop, select the battery status icon on the right side of the taskbar. The battery status pane shows the charging level for both batteries.\n\nWhen your Surface Book is fully charged, it should last up to 10 hours for web browsing.",
+            "confidenceScore": 0.5123,
+            "id": 98,
+            "source": "Sanitized",
+            "metadata": {},
+            "dialog": {
+              "isContextOnly": false,
+              "prompts": []
+            }
+          },
+          {
+            "questions": [
+              "Check the battery level"
+            ],
+            "answer": "**Check the battery level**\n\nYou can check the battery level from the lock screen or on the desktop.",
+            "confidenceScore": 0.3232,
+            "id": 96,
+            "source": "Sanitized",
+            "metadata": {
+              "system_metadata_qna_edited_manually": "true",
+              "explicitlytaggedheading": "check the battery level"
+            },
+            "dialog": {
+              "isContextOnly": false,
+              "prompts": [
+                {
+                  "displayOrder": 0,
+                  "qnaId": 97,
+                  "displayText": "Lock screen"
+                },
+                {
+                  "displayOrder": 1,
+                  "qnaId": 98,
+                  "displayText": "Desktop taskbar"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "Variables": {}
+}

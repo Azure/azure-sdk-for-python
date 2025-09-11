@@ -1,0 +1,81 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/:query-text?api-version=2025-05-15-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "1171",
+        "Content-Type": "application/json",
+        "Ocp-Apim-Subscription-Key": "Sanitized",
+        "User-Agent": "azsdk-python-ai-language-questionanswering/1.0.0b1 Python/3.13.7 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": {
+        "question": "What is the meaning of life?",
+        "records": [
+          {
+            "text": "abc Graphics  Surprise, surprise -- our 4K  ",
+            "id": "doc1"
+          },
+          {
+            "text": "e graphics card. While the Nvidia GeForce MX250 GPU isn't meant for demanding gaming, it is a step up from integrated graphics as proven by comparing it to the UHD 620 GPU in the FHD model.   The MX250-equipped Envy 13 scored a 116,575 on the Ice Storm Unlimited benchmark while the base model scored a 82,270. Upgrading to the discrete graphics gives the Envy 13 better performance than the Notebook 9 Pro (61,662; UHD 620), Surface Laptop 2 (71,647; UHD 620) and the premium laptop average (86,937).   While the Nvidia GeForce MX250 GPU isn't meant for demanding gaming, it is a step up from integrated graphics as proven by comparing it to the UHD 620 GPU in the FHD model.   We played the racing game Dirt 3 at 92 frames per second on the MX250 model, which is well above our 30-fps playability, the category average (69 fps) and what the Surface Laptop 2 (82 fps) achieved. The ZenBook S UX391UA (45 fps) fell flat on this real-world test but ran better than the base model Envy 13 (31 fps).",
+            "id": "doc3"
+          }
+        ],
+        "language": "en"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "2e907e8f-3321-4da4-a7e8-649a336a8ea9",
+        "Content-Length": "2023",
+        "Content-Type": "application/json; charset=utf-8",
+        "csp-billing-usage": "CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=2",
+        "Date": "Thu, 11 Sep 2025 07:52:34 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "1070",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": {
+        "answers": [
+          {
+            "answer": "While the Nvidia GeForce MX250 GPU isn't meant for demanding gaming, it is a step up from integrated graphics as proven by comparing it to the UHD 620 GPU in the FHD model.   The MX250-equipped Envy 13 scored a 116,575 on the Ice Storm Unlimited benchmark while the base model scored a 82,270. Upgrading to the discrete graphics gives the Envy 13 better performance than the Notebook 9 Pro (61,662; UHD 620), Surface Laptop 2 (71,647; UHD 620) and the premium laptop average (86,937).",
+            "confidenceScore": 0.020682387053966522,
+            "id": "doc3",
+            "answerSpan": {
+              "text": "demanding gaming",
+              "confidenceScore": 0.2595611,
+              "offset": 50,
+              "length": 17
+            },
+            "offset": 17,
+            "length": 484
+          },
+          {
+            "answer": "While the Nvidia GeForce MX250 GPU isn't meant for demanding gaming, it is a step up from integrated graphics as proven by comparing it to the UHD 620 GPU in the FHD model.   We played the racing game Dirt 3 at 92 frames per second on the MX250 model, which is well above our 30-fps playability, the category average (69 fps) and what the Surface Laptop 2 (82 fps) achieved. The ZenBook S UX391UA (45 fps) fell flat on this real-world test but ran better than the base model Envy 13 (31 fps).",
+            "confidenceScore": 0.018237875774502754,
+            "id": "doc3",
+            "answerSpan": {
+              "text": "demanding gaming",
+              "confidenceScore": 0.17440762,
+              "offset": 50,
+              "length": 17
+            },
+            "offset": 504,
+            "length": 492
+          },
+          {
+            "answer": "e graphics card. While the Nvidia GeForce MX250 GPU isn't meant for demanding gaming, it is a step up from integrated graphics as proven by comparing it to the UHD 620 GPU in the FHD model.   The MX250-equipped Envy 13 scored a 116,575 on the Ice Storm Unlimited benchmark while the base model scored a 82,270.",
+            "confidenceScore": 0.01619340479373932,
+            "id": "doc3",
+            "offset": 0,
+            "length": 310
+          }
+        ]
+      }
+    }
+  ],
+  "Variables": {}
+}

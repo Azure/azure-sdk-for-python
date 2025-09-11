@@ -23,7 +23,7 @@ ENV_CLIENT_ID = "AZURE_CLIENT_ID"
 ENV_CLIENT_SECRET = "AZURE_CLIENT_SECRET"
 
 # Fake values
-TEST_ENDPOINT = "https://test-resource.api.cognitive.microsoft.com/"
+TEST_ENDPOINT = "https://test-resource.cognitiveservices.azure.com/"
 TEST_KEY = "0000000000000000"
 TEST_PROJECT = "test-project"
 TEST_ID = "00000000-0000-0000-0000-000000000000"
