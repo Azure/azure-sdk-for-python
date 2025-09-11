@@ -43,7 +43,7 @@ from azure.ai.voicelive.models import (
     ServerEventResponseCreated,
 )
 
-from voicelive_preparer import VoiceLivePreparer
+from .voicelive_preparer import VoiceLivePreparer
 
 def _b64_pcm_from_wav(path: Path) -> str:
     """Load 16-bit PCM WAV and return base64-encoded PCM16LE bytes (mono)."""
