@@ -34,6 +34,7 @@ from typing import (
     overload,
     Type,
     MutableMapping,
+    Union,
 )
 from types import TracebackType
 from urllib3.exceptions import (
@@ -52,7 +53,7 @@ from azure.core.exceptions import (
     IncompleteReadError,
     HttpResponseError,
 )
-from azure.core.pipeline import Pipeline
+from azure.core.pipeline import AsyncPipeline
 from ._base import HttpRequest
 from ._base_async import (
     AsyncHttpResponse,
@@ -91,14 +92,12 @@ class TrioStreamDownloadGenerator(AsyncIterator):
         on the *content-encoding* header.
     """
 
-    def __init__(self, pipeline: Pipeline, response: AsyncHttpResponse, **kwargs) -> None:
+    def __init__(self, pipeline: AsyncPipeline, response: AsyncHttpResponse, *, decompress: bool = True) -> None:
         self.pipeline = pipeline
         self.request = response.request
         self.response = response
         self.block_size = response.block_size
-        decompress = kwargs.pop("decompress", True)
-        if len(kwargs) > 0:
-            raise TypeError("Got an unexpected keyword argument: {}".format(list(kwargs.keys())[0]))
+        self.decompress = decompress
         internal_response = response.internal_response
         if decompress:
             self.iter_content_func = internal_response.iter_content(self.block_size)
@@ -148,7 +147,9 @@ class TrioStreamDownloadGenerator(AsyncIterator):
 class TrioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportResponse):  # type: ignore
     """Asynchronous streaming of data from the response."""
 
-    def stream_download(self, pipeline, **kwargs) -> AsyncIteratorType[bytes]:  # type: ignore
+    def stream_download(
+        self, pipeline: AsyncPipeline[HttpRequest, "AsyncHttpResponse"], **kwargs
+    ) -> AsyncIteratorType[bytes]:
         """Generator for streaming response data.
 
         :param pipeline: The pipeline object
@@ -184,7 +185,7 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):
     ) -> None:
         return super(TrioRequestsTransport, self).__exit__(exc_type, exc_value, traceback)
 
-    async def sleep(self, duration):  # pylint:disable=invalid-overridden-method
+    async def sleep(self, duration: float) -> None:  # pylint:disable=invalid-overridden-method
         await trio.sleep(duration)
 
     @overload  # type: ignore
@@ -216,8 +217,12 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):
         """
 
     async def send(
-        self, request, *, proxies: Optional[MutableMapping[str, str]] = None, **kwargs: Any
-    ):  # pylint:disable=invalid-overridden-method
+        self,
+        request: Union[HttpRequest, "RestHttpRequest"],
+        *,
+        proxies: Optional[MutableMapping[str, str]] = None,
+        **kwargs: Any
+    ) -> Union[AsyncHttpResponse, "RestAsyncHttpResponse"]:
         """Send the request using this HTTP sender.
 
         :param request: The HttpRequest

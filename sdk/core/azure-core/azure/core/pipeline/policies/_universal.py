@@ -203,11 +203,20 @@ class UserAgentPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
     _USERAGENT = "User-Agent"
     _ENV_ADDITIONAL_USER_AGENT = "AZURE_HTTP_USER_AGENT"
 
-    def __init__(self, base_user_agent: Optional[str] = None, **kwargs: Any) -> None:
-        self.overwrite: bool = kwargs.pop("user_agent_overwrite", False)
-        self.use_env: bool = kwargs.pop("user_agent_use_env", True)
-        application_id: Optional[str] = kwargs.pop("user_agent", None)
-        sdk_moniker: str = kwargs.pop("sdk_moniker", "core/{}".format(azcore_version))
+    def __init__(
+        self,
+        base_user_agent: Optional[str] = None,
+        *,
+        user_agent_overwrite: bool = False,
+        user_agent_use_env: bool = True,
+        user_agent: Optional[str] = None,
+        sdk_moniker: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        self.overwrite = user_agent_overwrite
+        self.use_env = user_agent_use_env
+        application_id = user_agent
+        sdk_moniker = sdk_moniker or "core/{}".format(azcore_version)
 
         if base_user_agent:
             self._user_agent = base_user_agent

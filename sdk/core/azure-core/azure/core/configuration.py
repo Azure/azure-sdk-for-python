@@ -71,7 +71,7 @@ class Configuration(Generic[HTTPRequestType, HTTPResponseType]):  # pylint: disa
             :caption: Creates the service configuration and adds policies.
     """
 
-    def __init__(self, **kwargs: Any) -> None:
+    def __init__(self, *, polling_interval: float = 30, **kwargs: Any) -> None:  # pylint: disable=unused-argument
         # Headers (sent with every request)
         self.headers_policy: Optional[AnyPolicy[HTTPRequestType, HTTPResponseType]] = None
 
@@ -103,7 +103,7 @@ class Configuration(Generic[HTTPRequestType, HTTPResponseType]):  # pylint: disa
         self.request_id_policy: Optional[AnyPolicy[HTTPRequestType, HTTPResponseType]] = None
 
         # Polling interval if no retry-after in polling calls results
-        self.polling_interval: float = kwargs.get("polling_interval", 30)
+        self.polling_interval: float = polling_interval
 
 
 class ConnectionConfiguration:

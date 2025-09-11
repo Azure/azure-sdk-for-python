@@ -290,8 +290,8 @@ class AzureError(Exception):
      and will be `None` where continuation is either unavailable or not applicable.
     """
 
-    def __init__(self, message: Optional[object], *args: Any, **kwargs: Any) -> None:
-        self.inner_exception: Optional[BaseException] = kwargs.get("error")
+    def __init__(self, message: Optional[object], *args: Any, error: Optional[Exception] = None, **kwargs: Any) -> None:
+        self.inner_exception: Optional[BaseException] = error
 
         exc_info = sys.exc_info()
         self.exc_type: Optional[Type[Any]] = exc_info[0]

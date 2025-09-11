@@ -43,13 +43,13 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
         tokens. Defaults to False.
     """
 
-    def __init__(self, credential: AsyncTokenProvider, *scopes: str, **kwargs: Any) -> None:
+    def __init__(self, credential: AsyncTokenProvider, *scopes: str, enable_cae: bool = False, **kwargs: Any) -> None:
         super().__init__()
         self._credential = credential
         self._scopes = scopes
         self._lock_instance = None
         self._token: Optional[Union["AccessToken", "AccessTokenInfo"]] = None
-        self._enable_cae: bool = kwargs.get("enable_cae", False)
+        self._enable_cae = enable_cae
 
     @property
     def _lock(self):

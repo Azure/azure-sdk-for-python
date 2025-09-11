@@ -35,11 +35,14 @@ from typing import (
     Generic,
     Optional,
     Type,
+    Union,
     cast,
+    TYPE_CHECKING,
 )
 from types import TracebackType
 from .configuration import Configuration
 from .pipeline import AsyncPipeline
+from .pipeline.transport import AsyncHttpTransport
 from .pipeline.transport._base import PipelineClientBase
 from .pipeline.policies import (
     ContentDecodePolicy,
@@ -48,6 +51,8 @@ from .pipeline.policies import (
     RequestIdPolicy,
     AsyncRetryPolicy,
     SensitiveHeaderCleanupPolicy,
+    SansIOHTTPPolicy,
+    AsyncHTTPPolicy,
 )
 
 
@@ -156,14 +161,29 @@ class AsyncPipelineClient(
         self,
         base_url: str,
         *,
-        pipeline: Optional[AsyncPipeline[HTTPRequestType, AsyncHTTPResponseType]] = None,
         config: Optional[Configuration[HTTPRequestType, AsyncHTTPResponseType]] = None,
+        pipeline: Optional[AsyncPipeline[HTTPRequestType, AsyncHTTPResponseType]] = None,
+        policies: Optional[list[AsyncHTTPPolicy]] = None,
+        per_call_policies: Optional[
+            Union[AsyncHTTPPolicy, SansIOHTTPPolicy, list[AsyncHTTPPolicy], list[SansIOHTTPPolicy]]
+        ] = None,
+        per_retry_policies: Optional[
+            Union[AsyncHTTPPolicy, SansIOHTTPPolicy, list[AsyncHTTPPolicy], list[SansIOHTTPPolicy]]
+        ] = None,
+        transport: Optional[AsyncHttpTransport] = None,
         **kwargs: Any,
     ):
         super(AsyncPipelineClient, self).__init__(base_url)
         self._config: Configuration[HTTPRequestType, AsyncHTTPResponseType] = config or Configuration(**kwargs)
         self._base_url = base_url
-        self._pipeline = pipeline or self._build_pipeline(self._config, **kwargs)
+        self._pipeline = pipeline or self._build_pipeline(
+            self._config,
+            policies=policies,
+            per_call_policies=per_call_policies,
+            per_retry_policies=per_retry_policies,
+            transport=transport,
+            **kwargs,
+        )
 
     async def __aenter__(
         self,
@@ -189,9 +209,9 @@ class AsyncPipelineClient(
         policies=None,
         per_call_policies=None,
         per_retry_policies=None,
+        transport=None,
         **kwargs,
     ) -> AsyncPipeline[HTTPRequestType, AsyncHTTPResponseType]:
-        transport = kwargs.get("transport")
         per_call_policies = per_call_policies or []
         per_retry_policies = per_retry_policies or []
 

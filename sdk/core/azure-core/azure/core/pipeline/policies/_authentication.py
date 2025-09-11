@@ -48,12 +48,12 @@ class _BearerTokenCredentialPolicyBase:
         tokens. Defaults to False.
     """
 
-    def __init__(self, credential: TokenProvider, *scopes: str, **kwargs: Any) -> None:
+    def __init__(self, credential: TokenProvider, *scopes: str, enable_cae: bool = False, **kwargs: Any) -> None:
         super(_BearerTokenCredentialPolicyBase, self).__init__()
         self._scopes = scopes
         self._credential = credential
         self._token: Optional[Union["AccessToken", "AccessTokenInfo"]] = None
-        self._enable_cae: bool = kwargs.get("enable_cae", False)
+        self._enable_cae = enable_cae
 
     @staticmethod
     def _enforce_https(request: PipelineRequest[HTTPRequestType]) -> None:

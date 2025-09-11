@@ -78,15 +78,27 @@ class RetryPolicyBase:
     _SAFE_CODES = set(range(506)) - set([408, 429, 500, 502, 503, 504])
     _RETRY_CODES = set(range(999)) - _SAFE_CODES
 
-    def __init__(self, **kwargs: Any) -> None:
-        self.total_retries: int = kwargs.pop("retry_total", 10)
-        self.connect_retries: int = kwargs.pop("retry_connect", 3)
-        self.read_retries: int = kwargs.pop("retry_read", 3)
-        self.status_retries: int = kwargs.pop("retry_status", 3)
-        self.backoff_factor: float = kwargs.pop("retry_backoff_factor", 0.8)
-        self.backoff_max: int = kwargs.pop("retry_backoff_max", self.BACKOFF_MAX)
-        self.retry_mode: RetryMode = kwargs.pop("retry_mode", RetryMode.Exponential)
-        self.timeout: int = kwargs.pop("timeout", 604800)
+    def __init__(
+        self,
+        *,
+        retry_total: int = 10,
+        retry_connect: int = 3,
+        retry_read: int = 3,
+        retry_status: int = 3,
+        retry_backoff_factor: float = 0.8,
+        retry_backoff_max: int = BACKOFF_MAX,
+        retry_mode: RetryMode = RetryMode.Exponential,
+        timeout: int = 604800,
+        **kwargs: Any
+    ) -> None:
+        self.total_retries: int = retry_total
+        self.connect_retries: int = retry_connect
+        self.read_retries: int = retry_read
+        self.status_retries: int = retry_status
+        self.backoff_factor: float = retry_backoff_factor
+        self.backoff_max: int = retry_backoff_max
+        self.retry_mode: RetryMode = retry_mode
+        self.timeout: int = timeout
 
         retry_codes = self._RETRY_CODES
         status_codes = kwargs.pop("retry_on_status_codes", [])
@@ -437,7 +449,7 @@ class RetryPolicy(RetryPolicyBase, HTTPPolicy[HTTPRequestType, HTTPResponseType]
      seconds. If the backoff_factor is 0.1, then the retry will sleep
      for [0.0s, 0.2s, 0.4s, ...] between retries. The default value is 0.8.
     :keyword int retry_backoff_max: The maximum back off time. Default value is 120 seconds (2 minutes).
-    :keyword RetryMode retry_mode: Fixed or exponential delay between attemps, default is exponential.
+    :keyword RetryMode retry_mode: Fixed or exponential delay between attempts, default is exponential.
     :keyword int timeout: Timeout setting for the operation in seconds, default is 604800s (7 days).
 
     .. admonition:: Example:
