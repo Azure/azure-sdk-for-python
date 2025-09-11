@@ -7,7 +7,8 @@
 #### Breaking Changes
 
 #### Bugs Fixed
-
+* Fixed bug where client provided session token was not respected when client-side session management was disabled. See [PR 42965](https://github.com/Azure/azure-sdk-for-python/pull/42965)
+ 
 #### Other Changes
 
 ### 4.14.0b3 (2025-09-09)
