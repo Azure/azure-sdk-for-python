@@ -7,42 +7,42 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, TYPE_CHECKING
+from typing import Any, Awaitable, TYPE_CHECKING
 from typing_extensions import Self
 
-from azure.core import PipelineClient
+from azure.core import AsyncPipelineClient
 from azure.core.pipeline import policies
-from azure.core.rest import HttpRequest, HttpResponse
+from azure.core.rest import AsyncHttpResponse, HttpRequest
 
+from .._utils.serialization import Deserializer, Serializer
 from ._configuration import AttestationClientConfiguration
-from ._utils.serialization import Deserializer, Serializer
 from .operations import AttestationOperations, MetadataConfigurationOperations, PolicyCertificatesOperations, PolicyOperations, SigningCertificatesOperations, TcbBaselinesOperations
 
 if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
+    from azure.core.credentials_async import AsyncTokenCredential
 
 class AttestationClient:
     """Describes the interface for the per-tenant enclave service.
 
     :ivar policy: PolicyOperations operations
-    :vartype policy: azure.security.attestation.operations.PolicyOperations
+    :vartype policy: azure.security.attestation.aio.operations.PolicyOperations
     :ivar policy_certificates: PolicyCertificatesOperations operations
     :vartype policy_certificates:
-     azure.security.attestation.operations.PolicyCertificatesOperations
+     azure.security.attestation.aio.operations.PolicyCertificatesOperations
     :ivar attestation: AttestationOperations operations
-    :vartype attestation: azure.security.attestation.operations.AttestationOperations
+    :vartype attestation: azure.security.attestation.aio.operations.AttestationOperations
     :ivar tcb_baselines: TcbBaselinesOperations operations
-    :vartype tcb_baselines: azure.security.attestation.operations.TcbBaselinesOperations
+    :vartype tcb_baselines: azure.security.attestation.aio.operations.TcbBaselinesOperations
     :ivar signing_certificates: SigningCertificatesOperations operations
     :vartype signing_certificates:
-     azure.security.attestation.operations.SigningCertificatesOperations
+     azure.security.attestation.aio.operations.SigningCertificatesOperations
     :ivar metadata_configuration: MetadataConfigurationOperations operations
     :vartype metadata_configuration:
-     azure.security.attestation.operations.MetadataConfigurationOperations
+     azure.security.attestation.aio.operations.MetadataConfigurationOperations
     :param endpoint: Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Required.
-    :type credential: ~azure.core.credentials.TokenCredential
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :keyword api_version: The API version to use for this operation. Default value is "2025-06-01".
      Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
@@ -51,7 +51,7 @@ class AttestationClient:
     def __init__(
         self,
         endpoint: str,
-        credential: "TokenCredential",
+        credential: "AsyncTokenCredential",
         **kwargs: Any
     ) -> None:
         _endpoint = '{endpoint}'
@@ -60,7 +60,7 @@ class AttestationClient:
         _policies = kwargs.pop('policies', None)
         if _policies is None:
             _policies = [policies.RequestIdPolicy(**kwargs),self._config.headers_policy,self._config.user_agent_policy,self._config.proxy_policy,policies.ContentDecodePolicy(**kwargs),self._config.redirect_policy,self._config.retry_policy,self._config.authentication_policy,self._config.custom_hook_policy,self._config.logging_policy,policies.DistributedTracingPolicy(**kwargs),policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,self._config.http_logging_policy]
-        self._client: PipelineClient = PipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
+        self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
 
 
         self._serialize = Serializer()
@@ -90,14 +90,14 @@ class AttestationClient:
         self,
         request: HttpRequest, *, stream: bool = False,
         **kwargs: Any
-    ) -> HttpResponse:
+    ) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
         >>> request = HttpRequest("GET", "https://www.example.org/")
         <HttpRequest [GET], url: 'https://www.example.org/'>
-        >>> response = client.send_request(request)
-        <HttpResponse: 200 OK>
+        >>> response = await client.send_request(request)
+        <AsyncHttpResponse: 200 OK>
 
         For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
@@ -105,7 +105,7 @@ class AttestationClient:
         :type request: ~azure.core.rest.HttpRequest
         :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
         :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.rest.HttpResponse
+        :rtype: ~azure.core.rest.AsyncHttpResponse
         """
 
         request_copy = deepcopy(request)
@@ -116,12 +116,12 @@ class AttestationClient:
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
         return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
-    def close(self) -> None:
-        self._client.close()
+    async def close(self) -> None:
+        await self._client.close()
 
-    def __enter__(self) -> Self:
-        self._client.__enter__()
+    async def __aenter__(self) -> Self:
+        await self._client.__aenter__()
         return self
 
-    def __exit__(self, *exc_details: Any) -> None:
-        self._client.__exit__(*exc_details)
+    async def __aexit__(self, *exc_details: Any) -> None:
+        await self._client.__aexit__(*exc_details)
