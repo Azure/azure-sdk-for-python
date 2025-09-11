@@ -1791,6 +1791,14 @@
       ]
     },
     {
+      "filename": "sdk/confidentialledger/azure-confidentialledger/**",
+      "words": [
+        "mrenclave",
+        "MRENCLAVE",
+        "oeverify"
+      ]
+    },
+    {
       "filename": "sdk/confidentialledger/azure-confidentialledger/azure/confidentialledger/_operations/*.py",
       "words": [
         "mrenclave",

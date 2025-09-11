@@ -169,9 +169,7 @@ def _compute_ledger_entry_claim_digest(ledger_entry_claim: LedgerEntryClaim) -> 
 
 def _compute_claim_digest_from_object(claim_digest_object: ClaimDigest) -> bytes:
     # Compute the SHA-256 of the concatenation of the protocol and the digest value
-    return sha256(
-        claim_digest_object.protocol.encode() + bytes.fromhex(claim_digest_object.value)
-    ).digest()
+    return sha256(claim_digest_object.protocol.encode() + bytes.fromhex(claim_digest_object.value)).digest()
 
 
 def _compute_claims_hexdigest(application_claims_list: List[ApplicationClaim]) -> str:
@@ -201,9 +199,7 @@ def _compute_claims_hexdigest(application_claims_list: List[ApplicationClaim]) -
 
         elif claim_kind == DIGEST_CLAIM_TYPE:
             # Compute the digest of the ClaimDigest claim
-            claim_digest = _compute_claim_digest_from_object(
-                cast(ClaimDigest, application_claim_object.digest)
-            )
+            claim_digest = _compute_claim_digest_from_object(cast(ClaimDigest, application_claim_object.digest))
 
         else:
             raise ValueError(f"Unsupported claim kind: {claim_kind}")
@@ -213,8 +209,7 @@ def _compute_claims_hexdigest(application_claims_list: List[ApplicationClaim]) -
 
     # Prepend the size of application claims to the concatenation of the digests
     claims_digests_concatenation = (
-        len(application_claims_list).to_bytes(length=4, byteorder="little")
-        + claims_digests_concatenation
+        len(application_claims_list).to_bytes(length=4, byteorder="little") + claims_digests_concatenation
     )
 
     # Hash the concatenation of application claims and return the digest in hexadecimal form
