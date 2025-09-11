@@ -55,7 +55,7 @@ class DataLakeFileClient(PathClient):
     async def __aexit__(
         self, typ: Optional[type[BaseException]], exc: Optional[BaseException], tb: Optional[TracebackType]
     ) -> None: ...
-    async def close(self) -> None: ...  # type: ignore
+    async def close(self) -> None: ...
     @classmethod
     def from_connection_string(
         cls,
