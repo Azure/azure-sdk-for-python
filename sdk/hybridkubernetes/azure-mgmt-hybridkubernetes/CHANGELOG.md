@@ -1,5 +1,25 @@
 # Release History
 
+## 1.2.0b3 (2025-07-29)
+
+### Features Added
+
+  - Model `Operation` added property `is_data_action`
+  - Model `Operation` added property `origin`
+  - Model `Operation` added property `action_type`
+  - Model `Resource` added property `system_data`
+  - Model `TrackedResource` added property `system_data`
+  - Added enum `ActionType`
+  - Added enum `Origin`
+
+### Breaking Changes
+
+  - Deleted or renamed client `ConnectedKubernetesClient`
+  - Model `Gateway` deleted or renamed its instance variable `resource_id`
+  - Deleted or renamed model `ConnectedClusterList`
+  - Deleted or renamed model `LastModifiedByType`
+  - Deleted or renamed model `OperationList`
+
 ## 1.2.0b2 (2025-03-24)
 
 ### Features Added

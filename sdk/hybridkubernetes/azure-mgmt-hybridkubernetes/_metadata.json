@@ -1,0 +1,7 @@
+{
+  "apiVersion": "2025-08-01-preview",
+  "commit": "b4d390a022fce54820906bd34a77759e0a26a1ba",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/hybridkubernetes/HybridKubernetes.Management",
+  "emitterVersion": "0.47.1"
+}
