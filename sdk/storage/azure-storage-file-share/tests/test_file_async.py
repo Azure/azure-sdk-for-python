@@ -4109,6 +4109,6 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
         )
         size = 4 * 1024 * 1024
         data = b"A" * size
-        await file_client.create_file(size, data=data, length=size)
+        await file_client.create_file(size, data=data)
         downloaded_data = await (await file_client.download_file()).readall()
         assert downloaded_data == data
