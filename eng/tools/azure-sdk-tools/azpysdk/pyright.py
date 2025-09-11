@@ -1,6 +1,8 @@
 import argparse
+import json
 import os
 import sys
+import tempfile
 
 from typing import Optional, List
 from subprocess import CalledProcessError, check_call
@@ -10,11 +12,37 @@ from ci_tools.functions import install_into_venv
 from ci_tools.variables import in_ci, set_envvar_defaults
 from ci_tools.variables import discover_repo_root
 from ci_tools.environment_exclusions import is_check_enabled, is_typing_ignored
+from ci_tools.scenario.generation import create_package_and_install
 
 from ci_tools.logging import logger
 
 PYRIGHT_VERSION = "1.1.391"
 REPO_ROOT = discover_repo_root()
+
+def get_pyright_config_path(package_dir: str, staging_dir: str) -> str:
+    if os.path.exists(os.path.join(package_dir, "pyrightconfig.json")):
+        config_path = os.path.join(package_dir, "pyrightconfig.json") 
+    else:
+        config_path = os.path.join(REPO_ROOT, "pyrightconfig.json")
+
+    # read the config and adjust relative paths
+    with open(config_path, "r") as f:
+        config_text = f.read()
+        config_text = config_text.replace("\"**", "\"../../../../**")
+        config = json.loads(config_text)
+
+    # add or update the execution environment
+    if config.get("executionEnvironments"):
+        config["executionEnvironments"].append({"root": package_dir})
+    else:
+        config.update({"executionEnvironments": [{"root": package_dir}]})
+
+    pyright_config_path = os.path.join(staging_dir, "pyrightconfig.json")
+
+    with open(pyright_config_path, "w+") as f:
+        f.write(json.dumps(config, indent=4))
+    return pyright_config_path
+    
 
 class pyright(Check):
     def __init__(self) -> None:
@@ -59,6 +87,18 @@ class pyright(Check):
             except CalledProcessError as e:
                 logger.error("Failed to install pyright:", e)
                 return e.returncode
+            
+            create_package_and_install(
+                distribution_directory=staging_directory,
+                target_setup=package_dir,
+                skip_install=False,
+                cache_dir=None,
+                work_dir=staging_directory,
+                force_create=False,
+                package_type="sdist",
+                pre_download_disabled=False,
+                python_executable=executable,
+            )
 
             top_level_module = parsed.namespace.split(".")[0] 
             paths = [
@@ -81,10 +121,7 @@ class pyright(Check):
                 else:
                     paths.append(os.path.join(package_dir, "samples" if samples else "generated_samples"))
 
-            if os.path.exists(os.path.join(package_dir, "pyrightconfig.json")):
-                config_path = os.path.join(package_dir, "pyrightconfig.json") 
-            else:
-                config_path = os.path.join(REPO_ROOT, "pyrightconfig.json")
+            config_path = get_pyright_config_path(package_dir, staging_directory)
 
             commands = [
                 executable,

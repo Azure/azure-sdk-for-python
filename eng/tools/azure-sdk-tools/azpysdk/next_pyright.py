@@ -19,3 +19,4 @@ class next_pyright(pyright):
         """Run the next-pyright check command."""
         args.next = True
         return super().run(args)
+    
