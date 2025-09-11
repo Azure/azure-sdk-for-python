@@ -16,7 +16,7 @@ from azure.mgmt.datamigration import DataMigrationManagementClient
     pip install azure-identity
     pip install azure-mgmt-datamigration
 # USAGE
-    python delete_sql_migration_service.py
+    python sql_db_retry_database_migration.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -31,12 +31,15 @@ def main():
         subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
-    client.sql_migration_services.begin_delete(
+    response = client.database_migrations_sql_db.begin_retry(
         resource_group_name="testrg",
-        sql_migration_service_name="service1",
+        sql_db_instance_name="sqldbinstance",
+        target_db_name="db1",
+        migration_operation_input={"migrationOperationId": "9a90bb84-e70f-46f7-b0ae-1aef5b3b9f07"},
     ).result()
+    print(response)
 
 
-# x-ms-original-file: specification/datamigration/resource-manager/Microsoft.DataMigration/stable/2025-06-30/examples/DeleteSqlMigrationService.json
+# x-ms-original-file: specification/datamigration/resource-manager/Microsoft.DataMigration/stable/2025-06-30/examples/SqlDbRetryDatabaseMigration.json
 if __name__ == "__main__":
     main()

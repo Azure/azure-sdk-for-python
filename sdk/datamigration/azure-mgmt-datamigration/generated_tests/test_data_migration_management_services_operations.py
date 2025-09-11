@@ -48,7 +48,7 @@ class TestDataMigrationManagementServicesOperations(AzureMgmtRecordedTestCase):
                 "virtualNicId": "str",
                 "virtualSubnetId": "str",
             },
-            api_version="2025-03-15-preview",
+            api_version="2025-06-30",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -60,7 +60,7 @@ class TestDataMigrationManagementServicesOperations(AzureMgmtRecordedTestCase):
         response = self.client.services.get(
             group_name="str",
             service_name="str",
-            api_version="2025-03-15-preview",
+            api_version="2025-06-30",
         )
 
         # please add some check logic here by yourself
@@ -72,7 +72,7 @@ class TestDataMigrationManagementServicesOperations(AzureMgmtRecordedTestCase):
         response = self.client.services.begin_delete(
             group_name="str",
             service_name="str",
-            api_version="2025-03-15-preview",
+            api_version="2025-06-30",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -108,7 +108,7 @@ class TestDataMigrationManagementServicesOperations(AzureMgmtRecordedTestCase):
                 "virtualNicId": "str",
                 "virtualSubnetId": "str",
             },
-            api_version="2025-03-15-preview",
+            api_version="2025-06-30",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -120,7 +120,7 @@ class TestDataMigrationManagementServicesOperations(AzureMgmtRecordedTestCase):
         response = self.client.services.check_status(
             group_name="str",
             service_name="str",
-            api_version="2025-03-15-preview",
+            api_version="2025-06-30",
         )
 
         # please add some check logic here by yourself
@@ -132,7 +132,7 @@ class TestDataMigrationManagementServicesOperations(AzureMgmtRecordedTestCase):
         response = self.client.services.begin_start(
             group_name="str",
             service_name="str",
-            api_version="2025-03-15-preview",
+            api_version="2025-06-30",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -144,7 +144,7 @@ class TestDataMigrationManagementServicesOperations(AzureMgmtRecordedTestCase):
         response = self.client.services.begin_stop(
             group_name="str",
             service_name="str",
-            api_version="2025-03-15-preview",
+            api_version="2025-06-30",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -156,7 +156,7 @@ class TestDataMigrationManagementServicesOperations(AzureMgmtRecordedTestCase):
         response = self.client.services.list_skus(
             group_name="str",
             service_name="str",
-            api_version="2025-03-15-preview",
+            api_version="2025-06-30",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -169,7 +169,7 @@ class TestDataMigrationManagementServicesOperations(AzureMgmtRecordedTestCase):
             group_name="str",
             service_name="str",
             parameters={"name": "str", "type": "str"},
-            api_version="2025-03-15-preview",
+            api_version="2025-06-30",
         )
 
         # please add some check logic here by yourself
@@ -180,7 +180,7 @@ class TestDataMigrationManagementServicesOperations(AzureMgmtRecordedTestCase):
     def test_services_list_by_resource_group(self, resource_group):
         response = self.client.services.list_by_resource_group(
             group_name="str",
-            api_version="2025-03-15-preview",
+            api_version="2025-06-30",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -190,7 +190,7 @@ class TestDataMigrationManagementServicesOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_services_list(self, resource_group):
         response = self.client.services.list(
-            api_version="2025-03-15-preview",
+            api_version="2025-06-30",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -202,7 +202,7 @@ class TestDataMigrationManagementServicesOperations(AzureMgmtRecordedTestCase):
         response = self.client.services.check_name_availability(
             location="str",
             parameters={"name": "str", "type": "str"},
-            api_version="2025-03-15-preview",
+            api_version="2025-06-30",
         )
 
         # please add some check logic here by yourself
