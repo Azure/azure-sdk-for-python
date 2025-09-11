@@ -65,7 +65,7 @@ class Check(abc.ABC):
 
             # TODO: we should reuse part of build_whl_for_req to integrate with PREBUILT_WHL_DIR so that we don't have to fresh build for each
             # venv
-            install_into_venv(venv_location, [os.path.join(REPO_ROOT, "eng/tools/azure-sdk-tools[build]")])
+            install_into_venv(venv_location, [os.path.join(REPO_ROOT, "eng/tools/azure-sdk-tools[build]")], REPO_ROOT)
             venv_python_exe = get_venv_python(venv_location)
 
             return venv_python_exe
