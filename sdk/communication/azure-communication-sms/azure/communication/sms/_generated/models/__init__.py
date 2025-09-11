@@ -7,12 +7,28 @@
 # --------------------------------------------------------------------------
 
 try:
+    from ._models_py3 import DeliveryAttempt
+    from ._models_py3 import DeliveryReport
+    from ._models_py3 import ErrorResponse
+    from ._models_py3 import MessagingConnectOptions
+    from ._models_py3 import OptOutRecipient
+    from ._models_py3 import OptOutRequest
+    from ._models_py3 import OptOutResponse
+    from ._models_py3 import OptOutResponseItem
     from ._models_py3 import SendMessageRequest
     from ._models_py3 import SmsRecipient
     from ._models_py3 import SmsSendOptions
     from ._models_py3 import SmsSendResponse
     from ._models_py3 import SmsSendResponseItem
 except (SyntaxError, ImportError):
+    from ._models import DeliveryAttempt  # type: ignore
+    from ._models import DeliveryReport  # type: ignore
+    from ._models import ErrorResponse  # type: ignore
+    from ._models import MessagingConnectOptions  # type: ignore
+    from ._models import OptOutRecipient  # type: ignore
+    from ._models import OptOutRequest  # type: ignore
+    from ._models import OptOutResponse  # type: ignore
+    from ._models import OptOutResponseItem  # type: ignore
     from ._models import SendMessageRequest  # type: ignore
     from ._models import SmsRecipient  # type: ignore
     from ._models import SmsSendOptions  # type: ignore
@@ -20,14 +36,24 @@ except (SyntaxError, ImportError):
     from ._models import SmsSendResponseItem  # type: ignore
 
 from ._azure_communication_sms_service_enums import (
+    DeliveryReportDeliveryStatus,
     SmsSendResponseItemRepeatabilityResult,
 )
 
 __all__ = [
-    "SendMessageRequest",
-    "SmsRecipient",
-    "SmsSendOptions",
-    "SmsSendResponse",
-    "SmsSendResponseItem",
-    "SmsSendResponseItemRepeatabilityResult",
+    'DeliveryAttempt',
+    'DeliveryReport',
+    'ErrorResponse',
+    'MessagingConnectOptions',
+    'OptOutRecipient',
+    'OptOutRequest',
+    'OptOutResponse',
+    'OptOutResponseItem',
+    'SendMessageRequest',
+    'SmsRecipient',
+    'SmsSendOptions',
+    'SmsSendResponse',
+    'SmsSendResponseItem',
+    'DeliveryReportDeliveryStatus',
+    'SmsSendResponseItemRepeatabilityResult',
 ]

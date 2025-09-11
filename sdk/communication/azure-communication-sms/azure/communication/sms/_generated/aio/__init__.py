@@ -7,5 +7,4 @@
 # --------------------------------------------------------------------------
 
 from ._azure_communication_sms_service import AzureCommunicationSMSService
-
-__all__ = ["AzureCommunicationSMSService"]
+__all__ = ['AzureCommunicationSMSService']

@@ -17,11 +17,11 @@ from azure.core.tracing.decorator import distributed_trace
 from msrest import Serializer
 
 from .. import models as _models
-from .._vendor import _convert_request
+from .._vendor import _convert_request, _format_url_section
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Optional, TypeVar
+    from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
 
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -29,16 +29,20 @@ if TYPE_CHECKING:
 _SERIALIZER = Serializer()
 # fmt: off
 
-def build_send_request(
+def build_get_request(
+    outgoing_message_id,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
-
     api_version = "2026-01-23"
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/sms')
+    url = kwargs.pop("template_url", '/deliveryReports/{outgoingMessageId}')
+    path_format_arguments = {
+        "outgoingMessageId": _SERIALIZER.url("outgoing_message_id", outgoing_message_id, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -46,12 +50,10 @@ def build_send_request(
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    if content_type is not None:
-        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
     header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
-        method="POST",
+        method="GET",
         url=url,
         params=query_parameters,
         headers=header_parameters,
@@ -59,8 +61,8 @@ def build_send_request(
     )
 
 # fmt: on
-class SmsOperations(object):
-    """SmsOperations operations.
+class DeliveryReportsOperations(object):
+    """DeliveryReportsOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -82,37 +84,34 @@ class SmsOperations(object):
         self._config = config
 
     @distributed_trace
-    def send(
+    def get(
         self,
-        send_message_request,  # type: "_models.SendMessageRequest"
+        outgoing_message_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.SmsSendResponse"
-        """Sends a SMS message from a phone number that belongs to the authenticated account.
+        # type: (...) -> Union["_models.DeliveryReport", "_models.ErrorResponse"]
+        """Gets delivery report for a specific outgoing message.
 
-        Sends a SMS message from a phone number that belongs to the authenticated account.
+        Gets delivery report for a specific outgoing message.
 
-        :param send_message_request: Represents the body of the send message request.
-        :type send_message_request: ~azure.communication.sms.models.SendMessageRequest
+        :param outgoing_message_id: The identifier of the outgoing message.
+        :type outgoing_message_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: SmsSendResponse, or the result of cls(response)
-        :rtype: ~azure.communication.sms.models.SmsSendResponse
+        :return: DeliveryReport or ErrorResponse, or the result of cls(response)
+        :rtype: ~azure.communication.sms.models.DeliveryReport or
+         ~azure.communication.sms.models.ErrorResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SmsSendResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Union["_models.DeliveryReport", "_models.ErrorResponse"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-
-        json = self._serialize.body(send_message_request, 'SendMessageRequest')
-
-        request = build_send_request(
-            content_type=content_type,
-            json=json,
-            template_url=self.send.metadata['url'],
+        
+        request = build_get_request(
+            outgoing_message_id=outgoing_message_id,
+            template_url=self.get.metadata['url'],
         )
         request = _convert_request(request)
         path_format_arguments = {
@@ -123,16 +122,20 @@ class SmsOperations(object):
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize('SmsSendResponse', pipeline_response)
+        if response.status_code == 200:
+            deserialized = self._deserialize('DeliveryReport', pipeline_response)
+
+        if response.status_code == 404:
+            deserialized = self._deserialize('ErrorResponse', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    send.metadata = {'url': '/sms'}  # type: ignore
+    get.metadata = {'url': '/deliveryReports/{outgoingMessageId}'}  # type: ignore
 
