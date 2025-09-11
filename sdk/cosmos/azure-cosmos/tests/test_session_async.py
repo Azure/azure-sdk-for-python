@@ -48,6 +48,36 @@ class TestSessionAsync(unittest.IsolatedAsyncioTestCase):
     async def asyncTearDown(self):
         await self.client.close()
 
+    async def test_manual_session_token_override_async(self):
+        # Create an item to get a valid session token from the response
+        created_document = await self.created_container.create_item(
+            body={'id': 'doc_for_manual_session' + str(uuid.uuid4()), 'pk': 'mypk'}
+        )
+        session_token = self.client.client_connection.last_response_headers.get(HttpHeaders.SessionToken)
+        self.assertIsNotNone(session_token)
+
+        # temporarily disable client-side session management to test manual override
+        original_session = self.client.client_connection.session
+        self.client.client_connection.session = None
+
+        try:
+            # Define a hook to inspect the request headers
+            def manual_token_hook(request):
+                self.assertIn(HttpHeaders.SessionToken, request.http_request.headers)
+                self.assertEqual(request.http_request.headers[HttpHeaders.SessionToken], session_token)
+
+            # Read the item, passing the session token manually.
+            # The hook will verify it's correctly added to the request headers.
+            await self.created_container.read_item(
+                item=created_document['id'],
+                partition_key='mypk',
+                session_token=session_token,  # Manually provide the session token
+                raw_request_hook=manual_token_hook
+            )
+        finally:
+            # Restore the original session object to avoid affecting other tests
+            self.client.client_connection.session = original_session
+
     async def test_session_token_swr_for_ops_async(self):
         # Session token should not be sent for control plane operations
         test_container = await self.created_db.create_container(str(uuid.uuid4()), PartitionKey(path="/id"), raw_response_hook=test_config.no_token_response_hook)

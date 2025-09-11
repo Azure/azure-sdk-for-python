@@ -46,6 +46,36 @@ class TestSession(unittest.TestCase):
         cls.created_db = cls.client.get_database_client(cls.TEST_DATABASE_ID)
         cls.created_collection = cls.created_db.get_container_client(cls.TEST_COLLECTION_ID)
 
+    def test_manual_session_token_override(self):
+        # Create an item to get a valid session token from the response
+        created_document = self.created_collection.create_item(
+            body={'id': 'doc_for_manual_session' + str(uuid.uuid4()), 'pk': 'mypk'}
+        )
+        session_token = self.client.client_connection.last_response_headers.get(HttpHeaders.SessionToken)
+        self.assertIsNotNone(session_token)
+
+        # temporarily disable client-side session management to test manual override
+        original_session = self.client.client_connection.session
+        self.client.client_connection.session = None
+
+        try:
+            # Define a hook to inspect the request headers
+            def manual_token_hook(request):
+                self.assertIn(HttpHeaders.SessionToken, request.http_request.headers)
+                self.assertEqual(request.http_request.headers[HttpHeaders.SessionToken], session_token)
+
+            # Read the item, passing the session token manually.
+            # The hook will verify it's correctly added to the request headers.
+            self.created_collection.read_item(
+                item=created_document['id'],
+                partition_key='mypk',
+                session_token=session_token,  # Manually provide the session token
+                raw_request_hook=manual_token_hook
+            )
+        finally:
+            # Restore the original session object to avoid affecting other tests
+            self.client.client_connection.session = original_session
+
     def test_session_token_sm_for_ops(self):
 
         # Session token should not be sent for control plane operations
