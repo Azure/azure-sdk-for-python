@@ -11,7 +11,7 @@ urlFragment: textauthoring-samples
 
 # Samples for Azure Text Analytics Authoring client library for Python
 
-These code samples show common **Text Authoring** operations with the Azure `azure-ai-language-text-authoring` client library.
+These code samples show common **Text Authoring** operations with the Azure `azure-ai-textanalytics-authoring` client library.
 
 You can authenticate your client with a Text Authoring API key:
 
@@ -51,7 +51,7 @@ These sample programs show common scenarios for the Text Authoring client’s of
 1. Install the Azure Text Authoring client library for Python with [pip][pip]:
 
 ```bash
-pip install azure-ai-language-text-authoring
+pip install azure-ai-textanalytics-authoring
 ```
 For more information about how the versioning of the SDK corresponds to the versioning of the service's API, see [here][versioning_story_readme].
 
@@ -74,60 +74,60 @@ Check out the [API reference documentation][api_reference_authoring] to explore 
 [azure_subscription]: https://azure.microsoft.com/free/
 [language_resource]: https://portal.azure.com/#create/Microsoft.CognitiveServicesTextAnalytics
 [pip]: https://pypi.org/project/pip/
-[api_reference_authoring]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-text-authoring
+[api_reference_authoring]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics-authoring
 <!-- TODO: change api_reference_documentation to azuresdkdocs link after first publish -->
-[sample_authentication]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-text-authoring/samples/sample_authentication.py
-[sample_authentication_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-text-authoring/samples/async/sample_authentication_async.py
+[sample_authentication]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics-authoring/samples/sample_authentication.py
+[sample_authentication_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics-authoring/samples/async/sample_authentication_async.py
 
-[sample_assign_deployment_resources]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-text-authoring/samples/sample_assign_deployment_resources.py
-[sample_assign_deployment_resources_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-text-authoring/samples/async/sample_assign_deployment_resources_async.py
+[sample_assign_deployment_resources]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics-authoring/samples/sample_assign_deployment_resources.py
+[sample_assign_deployment_resources_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics-authoring/samples/async/sample_assign_deployment_resources_async.py
 
-[sample_cancel_training_job]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-text-authoring/samples/sample_cancel_training_job.py
-[sample_cancel_training_job_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-text-authoring/samples/async/sample_cancel_training_job_async.py
+[sample_cancel_training_job]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics-authoring/samples/sample_cancel_training_job.py
+[sample_cancel_training_job_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics-authoring/samples/async/sample_cancel_training_job_async.py
 
-[sample_create_project]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-text-authoring/samples/sample_create_project.py
-[sample_create_project_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-text-authoring/samples/async/sample_create_project_async.py
+[sample_create_project]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics-authoring/samples/sample_create_project.py
+[sample_create_project_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics-authoring/samples/async/sample_create_project_async.py
 
-[sample_delete_deployment]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-text-authoring/samples/sample_delete_deployment.py
-[sample_delete_deployment_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-text-authoring/samples/async/sample_delete_deployment_async.py
+[sample_delete_deployment]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics-authoring/samples/sample_delete_deployment.py
+[sample_delete_deployment_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics-authoring/samples/async/sample_delete_deployment_async.py
 
-[sample_delete_project]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-text-authoring/samples/sample_delete_project.py
-[sample_delete_project_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-text-authoring/samples/async/sample_delete_project_async.py
+[sample_delete_project]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics-authoring/samples/sample_delete_project.py
+[sample_delete_project_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics-authoring/samples/async/sample_delete_project_async.py
 
-[sample_delete_trained_model]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-text-authoring/samples/sample_delete_trained_model.py
-[sample_delete_trained_model_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-text-authoring/samples/async/sample_delete_trained_model_async.py
+[sample_delete_trained_model]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics-authoring/samples/sample_delete_trained_model.py
+[sample_delete_trained_model_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics-authoring/samples/async/sample_delete_trained_model_async.py
 
-[sample_deploy_project]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-text-authoring/samples/sample_deploy_project.py
-[sample_deploy_project_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-text-authoring/samples/async/sample_deploy_project_async.py
+[sample_deploy_project]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics-authoring/samples/sample_deploy_project.py
+[sample_deploy_project_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics-authoring/samples/async/sample_deploy_project_async.py
 
-[sample_export_project]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-text-authoring/samples/sample_export_project.py
-[sample_export_project_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-text-authoring/samples/async/sample_export_project_async.py
+[sample_export_project]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics-authoring/samples/sample_export_project.py
+[sample_export_project_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics-authoring/samples/async/sample_export_project_async.py
 
-[sample_get_deployment]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-text-authoring/samples/sample_get_deployment.py
-[sample_get_deployment_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-text-authoring/samples/async/sample_get_deployment_async.py
+[sample_get_deployment]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics-authoring/samples/sample_get_deployment.py
+[sample_get_deployment_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics-authoring/samples/async/sample_get_deployment_async.py
 
-[sample_get_model_evaluation_results]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-text-authoring/samples/sample_get_model_evaluation_results.py
-[sample_get_model_evaluation_results_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-text-authoring/samples/async/sample_get_model_evaluation_results_async.py
+[sample_get_model_evaluation_results]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics-authoring/samples/sample_get_model_evaluation_results.py
+[sample_get_model_evaluation_results_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics-authoring/samples/async/sample_get_model_evaluation_results_async.py
 
-[sample_get_model_evaluation_summary]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-text-authoring/samples/sample_get_model_evaluation_summary.py
-[sample_get_model_evaluation_summary_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-text-authoring/samples/async/sample_get_model_evaluation_summary_async.py
+[sample_get_model_evaluation_summary]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics-authoring/samples/sample_get_model_evaluation_summary.py
+[sample_get_model_evaluation_summary_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics-authoring/samples/async/sample_get_model_evaluation_summary_async.py
 
-[sample_get_project]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-text-authoring/samples/sample_get_project.py
-[sample_get_project_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-text-authoring/samples/async/sample_get_project_async.py
+[sample_get_project]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics-authoring/samples/sample_get_project.py
+[sample_get_project_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics-authoring/samples/async/sample_get_project_async.py
 
-[sample_import_project]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-text-authoring/samples/sample_import_project.py
-[sample_import_project_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-text-authoring/samples/async/sample_import_project_async.py
+[sample_import_project]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics-authoring/samples/sample_import_project.py
+[sample_import_project_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics-authoring/samples/async/sample_import_project_async.py
 
-[sample_load_snapshot]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-text-authoring/samples/sample_load_snapshot.py
-[sample_load_snapshot_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-text-authoring/samples/async/sample_load_snapshot_async.py
+[sample_load_snapshot]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics-authoring/samples/sample_load_snapshot.py
+[sample_load_snapshot_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics-authoring/samples/async/sample_load_snapshot_async.py
 
-[sample_swap_deployments]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-text-authoring/samples/sample_swap_deployments.py
-[sample_swap_deployments_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-text-authoring/samples/async/sample_swap_deployments_async.py
+[sample_swap_deployments]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics-authoring/samples/sample_swap_deployments.py
+[sample_swap_deployments_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics-authoring/samples/async/sample_swap_deployments_async.py
 
-[sample_train]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-text-authoring/samples/sample_train_project.py
-[sample_train_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-text-authoring/samples/async/sample_train_project_async.py
+[sample_train]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics-authoring/samples/sample_train_project.py
+[sample_train_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics-authoring/samples/async/sample_train_project_async.py
 
-[sample_unassign_deployment_resources]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-text-authoring/samples/sample_unassign_deployment_resources.py
-[sample_unassign_deployment_resources_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-text-authoring/samples/async/sample_unassign_deployment_resources_async.py
+[sample_unassign_deployment_resources]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics-authoring/samples/sample_unassign_deployment_resources.py
+[sample_unassign_deployment_resources_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics-authoring/samples/async/sample_unassign_deployment_resources_async.py
 
-[versioning_story_readme]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-text-authoring#install-the-package
+[versioning_story_readme]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics-authoring#install-the-package
