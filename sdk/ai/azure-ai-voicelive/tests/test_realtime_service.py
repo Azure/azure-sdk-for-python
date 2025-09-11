@@ -121,6 +121,7 @@ async def _collect_event(conn, *, event_type: ServerEventType, timeout: int = 10
 
         try:
             evt = await asyncio.wait_for(conn.recv(), timeout=remaining)
+            print(f"Received event: {evt.type}")
         except asyncio.TimeoutError:
             break  # no event arrived before the overall timeout
 
@@ -614,8 +615,6 @@ class TestRealtimeService():
             await conn.session.update(session=new_session)
             await conn.input_audio_buffer.append(audio=_load_audio_b64(audio_file))
             await conn.input_audio_buffer.append(audio=_get_trailing_silence_bytes())
-            if ("realtime" not in model):
-                await conn.response.create()
 
             function_call_output = await _wait_for_event(conn, {ServerEventType.RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE})
             assert isinstance(function_call_output, ServerEventResponseFunctionCallArgumentsDone)
