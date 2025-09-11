@@ -11,7 +11,7 @@ from typing import Any, Optional, Union
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ._operations import ConnectionsOperations as ConnectionsOperationsGenerated
-from ...models._models import Connection, CustomCredential
+from ...models._models import Connection
 from ...models._enums import ConnectionType
 
 
@@ -41,16 +41,13 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
         if include_credentials:
             connection = await super()._get_with_credentials(name, **kwargs)
             if connection.type == ConnectionType.CUSTOM:
-                if isinstance(connection.credentials, CustomCredential):
-                    # Why do we do this? See comment in the sync version of this code (file _patch_connections.py).
-                    # Use setattr() to avoid Pylance reporting "attribute unknown" for CustomCredential.
-                    setattr(
-                        connection.credentials,
-                        "credential_keys",
-                        {k: v for k, v in connection.credentials.as_dict().items() if k != "type"},
-                    )
-                else:
-                    raise TypeError("Connection credentials should have been of type CustomCredential.")
+                # Why do we do this? See comment in the sync version of this code (file _patch_connections.py).
+                setattr(
+                    connection.credentials,
+                    "credential_keys",
+                    {k: v for k, v in connection.credentials.as_dict().items() if k != "type"},
+                )
+
             return connection
 
         return await super()._get(name, **kwargs)

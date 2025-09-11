@@ -10,6 +10,7 @@ from typing import List, Dict
 from ._patch_evaluations import EvaluatorIds
 from ._models import CustomCredential as CustomCredentialGenerated
 
+
 class CustomCredential(CustomCredentialGenerated):
     """Custom credential definition.
 
