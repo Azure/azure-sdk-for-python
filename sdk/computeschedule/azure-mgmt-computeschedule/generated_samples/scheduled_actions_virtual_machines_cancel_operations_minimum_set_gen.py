@@ -31,15 +31,12 @@ def main():
     )
 
     response = client.scheduled_actions.virtual_machines_cancel_operations(
-        locationparameter="fhdunfivmjiltaiakwhhwdgemfcld",
-        request_body={
-            "correlationid": "b211f086-4b91-4686-a453-2f5c012e4d80",
-            "operationIds": ["b211f086-4b91-4686-a453-2f5c012e4d80"],
-        },
+        locationparameter="ouubdthkhmkgcijtcc",
+        request_body={"correlationid": "lacjacfbxixdmg", "operationIds": ["rcudibq"]},
     )
     print(response)
 
 
-# x-ms-original-file: 2025-04-15-preview/ScheduledActions_VirtualMachinesCancelOperations_MinimumSet_Gen.json
+# x-ms-original-file: 2025-05-01/ScheduledActions_VirtualMachinesCancelOperations_MinimumSet_Gen.json
 if __name__ == "__main__":
     main()

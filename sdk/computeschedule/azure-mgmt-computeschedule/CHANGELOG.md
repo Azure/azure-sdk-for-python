@@ -1,5 +1,11 @@
 # Release History
 
+## 1.2.0 (2025-09-11)
+
+### Features Added
+
+  - Model `ComputeScheduleMgmtClient` added parameter `cloud_setting` in method `__init__`
+
 ## 1.2.0b1 (2025-07-24)
 
 ### Features Added
