@@ -12,6 +12,7 @@ from _keys_test_case import KeysTestCase
 
 all_api_versions = get_decorator(only_vault=True)
 
+
 class TestCryptoExamples(KeyVaultTestCase, KeysTestCase):
     @pytest.mark.parametrize("api_version,is_hsm", all_api_versions)
     @KeysClientPreparer()
@@ -59,7 +60,9 @@ class TestCryptoExamples(KeyVaultTestCase, KeysTestCase):
         key = key_client.create_rsa_key(key_name)
         client = CryptographyClient(key, credential, api_version=key_client.api_version)
 
-        key_bytes = b'\xc5\xb0\xfc\xf1C\x8a\x88pj\x11\x8d\xe5\x94\xe8\xff\x04\x0eY\xfeu\x8a\xe9<\x06(\xdb\x7f\xa9~\x85\x02\x04'
+        key_bytes = (
+            b"\xc5\xb0\xfc\xf1C\x8a\x88pj\x11\x8d\xe5\x94\xe8\xff\x04\x0eY\xfeu\x8a\xe9<\x06(\xdb\x7f\xa9~\x85\x02\x04"
+        )
 
         # [START wrap_key]
         from azure.keyvault.keys.crypto import KeyWrapAlgorithm
