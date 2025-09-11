@@ -2,8 +2,8 @@
 # Licensed under the MIT License.
 """Customer SDK Stats Manager for Azure Monitor OpenTelemetry Exporter.
 
-This module provides the CustomerSdkStatsManager class for collecting and reporting 
-Customer SDK Stats metrics that track the usage and performance of the Azure Monitor 
+This module provides the CustomerSdkStatsManager class for collecting and reporting
+Customer SDK Stats metrics that track the usage and performance of the Azure Monitor
 OpenTelemetry Exporter.
 """
 
@@ -55,16 +55,16 @@ class CustomerSdkStatsManager(metaclass=Singleton): # pylint: disable=too-many-i
         # Initialize instance attributes that remain constant. Called only once due to Singleton metaclass.
         self._initialization_lock = threading.Lock()  # For initialization/shutdown operations
         self._counters_lock = threading.Lock()        # For counter operations and callbacks
-        
+
         # Determine initial status based on environment
         if is_customer_sdkstats_enabled():
             self._status = CustomerSdkStatsStatus.UNINITIALIZED
         else:
             self._status = CustomerSdkStatsStatus.DISABLED
-            
+
         self._counters = _CustomerSdkStatsTelemetryCounters()
         self._language = _CUSTOMER_SDKSTATS_LANGUAGE
-        
+
         # Initialize connection-dependent attributes to None
         self._customer_sdkstats_exporter = None
         self._customer_sdkstats_metric_reader = None
@@ -75,14 +75,14 @@ class CustomerSdkStatsManager(metaclass=Singleton): # pylint: disable=too-many-i
         if self._status != CustomerSdkStatsStatus.DISABLED:
             from azure.monitor.opentelemetry.exporter import VERSION
             # Pre-build base attributes for all metrics to avoid recreation on each callback
-            self._base_attributes: Optional[Dict[str, Any]] = {
+            self._base_attributes: Optional[Dict[str, Any]] = {  # type: ignore
                 "language": self._language,
                 "version": VERSION,
                 "compute_type": get_compute_type(),
             }
         else:
             self._base_attributes = None
-            
+
         # Initialize gauge references (gauges will be created in initialize method once meter is available)
         self._success_gauge = None
         self._dropped_gauge = None
@@ -91,42 +91,42 @@ class CustomerSdkStatsManager(metaclass=Singleton): # pylint: disable=too-many-i
     @property
     def status(self) -> CustomerSdkStatsStatus:
         """Get the current status of the manager.
-        
+
         :return: Current status
         :rtype: CustomerSdkStatsStatus
         """
-        return self._status
+        return self._status  # type: ignore
 
-    @property 
+    @property
     def is_enabled(self) -> bool:
         """Check if customer SDK stats collection is enabled.
-        
+
         :return: True if enabled, False otherwise
         :rtype: bool
         """
-        return self._status != CustomerSdkStatsStatus.DISABLED
+        return self._status != CustomerSdkStatsStatus.DISABLED  # type: ignore
 
     @property
     def is_initialized(self) -> bool:
         """Check if the manager is initialized and ready to collect stats.
-        
+
         :return: True if initialized, False otherwise
         :rtype: bool
         """
-        return self._status == CustomerSdkStatsStatus.ACTIVE
+        return self._status == CustomerSdkStatsStatus.ACTIVE  # type: ignore
 
     @property
     def is_shutdown(self) -> bool:
         """Check if the manager has been shut down.
-        
+
         :return: True if shut down, False otherwise
         :rtype: bool
         """
-        return self._status == CustomerSdkStatsStatus.SHUTDOWN
+        return self._status == CustomerSdkStatsStatus.SHUTDOWN  # type: ignore
 
     def initialize(self, connection_string: str) -> bool:
         """Initialize Customer SDKStats collection with the provided connection string.
-        
+
         :param connection_string: Azure Monitor connection string
         :type connection_string: str
         :return: True if initialization was successful, False otherwise
@@ -147,7 +147,7 @@ class CustomerSdkStatsManager(metaclass=Singleton): # pylint: disable=too-many-i
 
     def _do_initialize(self, connection_string: str) -> bool:
         """Internal initialization method.
-        
+
         :param connection_string: Azure Monitor connection string
         :type connection_string: str
         :return: True if initialization was successful, False otherwise
@@ -211,7 +211,7 @@ class CustomerSdkStatsManager(metaclass=Singleton): # pylint: disable=too-many-i
 
     def shutdown(self) -> bool:
         """Shutdown customer SDKStats metrics collection.
-        
+
         :return: True if shutdown was successful, False otherwise
         :rtype: bool
         """
@@ -219,7 +219,7 @@ class CustomerSdkStatsManager(metaclass=Singleton): # pylint: disable=too-many-i
             return False
 
         shutdown_success = False
-        
+
         with self._initialization_lock:
             try:
                 if self._customer_sdkstats_meter_provider is not None:
@@ -232,7 +232,7 @@ class CustomerSdkStatsManager(metaclass=Singleton): # pylint: disable=too-many-i
                 self._cleanup()
                 # Mark as shutdown if we attempted shutdown (even if it failed)
                 self._status = CustomerSdkStatsStatus.SHUTDOWN
-                
+
         return shutdown_success
 
     def count_successful_items(self, count: int, telemetry_type: str) -> None:
@@ -304,7 +304,7 @@ class CustomerSdkStatsManager(metaclass=Singleton): # pylint: disable=too-many-i
                     attributes = self._base_attributes.copy()
                     attributes["telemetry_type"] = telemetry_type
                     observations.append(Observation(count, attributes))
-            
+
             # Reset counts after reading
             self._counters.total_item_success_count.clear()
 
@@ -330,7 +330,7 @@ class CustomerSdkStatsManager(metaclass=Singleton): # pylint: disable=too-many-i
                                 if telemetry_type in (_REQUEST, _DEPENDENCY):
                                     attributes["telemetry_success"] = success_tracker
                                 observations.append(Observation(count, attributes))
-            
+
             # Reset counts after reading
             self._counters.total_item_drop_count.clear()
 
@@ -352,7 +352,7 @@ class CustomerSdkStatsManager(metaclass=Singleton): # pylint: disable=too-many-i
                             attributes["retry.reason"] = reason
                             attributes["telemetry_type"] = telemetry_type
                             observations.append(Observation(count, attributes))
-            
+
             # Reset counts after reading
             self._counters.total_item_retry_count.clear()
 

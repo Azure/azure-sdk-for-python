@@ -6,14 +6,14 @@ from azure.monitor.opentelemetry.exporter.statsbeat._manager import (
     StatsbeatConfig,
     StatsbeatManager,
 )
-from azure.monitor.opentelemetry.exporter._configuration import _ConfigurationManager
+# from azure.monitor.opentelemetry.exporter._configuration import _ConfigurationManager
 
 logger = logging.getLogger(__name__)
 
 def collect_statsbeat_metrics(exporter) -> None:  # pyright: ignore
     config = StatsbeatConfig.from_exporter(exporter)
     if config:
-        initialized = StatsbeatManager().initialize(config)
+        StatsbeatManager().initialize(config)
         # TODO: Enable with _ConfigurationManager
         # if initialized:
         #     # Register the callback that will be invoked on configuration changes to statsbeat

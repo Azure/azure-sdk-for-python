@@ -164,15 +164,6 @@ def track_dropped_items(
         drop_code: DropCodeType,
         error_message: Optional[str] = None
     ):
-    """Track dropped telemetry items in customer SDK stats.
-    
-    :param envelopes: List of telemetry envelopes that were dropped
-    :type envelopes: List[TelemetryItem]
-    :param drop_code: The reason the items were dropped
-    :type drop_code: DropCodeType
-    :param error_message: Optional error message
-    :type error_message: Optional[str]
-    """
     customer_stats = get_customer_stats_manager()
 
     if error_message is None:
@@ -197,14 +188,8 @@ def track_dropped_items(
 
 
 def track_retry_items(envelopes: List[TelemetryItem], error) -> None:
-    """Track retry attempts for telemetry items in customer SDK stats.
-    
-    :param envelopes: List of telemetry envelopes that are being retried
-    :type envelopes: List[TelemetryItem]
-    :param error: The error that caused the retry
-    """
     customer_stats = get_customer_stats_manager()
-    
+
     retry_code, message = _determine_client_retry_code(error)
     for envelope in envelopes:
         telemetry_type = _get_telemetry_type(envelope)
@@ -233,12 +218,6 @@ def track_retry_items(envelopes: List[TelemetryItem], error) -> None:
 
 
 def track_dropped_items_from_storage(result_from_storage_put, envelopes):
-    """Track items dropped due to storage issues in customer SDK stats.
-    
-    :param result_from_storage_put: Result from storage operation
-    :param envelopes: List of telemetry envelopes that were dropped
-    :type envelopes: List[TelemetryItem]
-    """
     # Use delayed import to avoid circular import
     from azure.monitor.opentelemetry.exporter._storage import StorageExportResult
 

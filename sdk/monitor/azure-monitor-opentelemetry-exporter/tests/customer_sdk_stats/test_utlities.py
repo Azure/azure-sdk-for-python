@@ -22,10 +22,6 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW,
     _APPLICATIONINSIGHTS_SDKSTATS_EXPORT_INTERVAL,
     _DEFAULT_STATS_SHORT_EXPORT_INTERVAL,
-    _REQUEST,
-    _DEPENDENCY,
-    _CUSTOM_EVENT,
-    _UNKNOWN,
     _exception_categories,
 )
 from azure.monitor.opentelemetry.exporter._storage import StorageExportResult

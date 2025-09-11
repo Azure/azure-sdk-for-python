@@ -472,7 +472,7 @@ class BaseExporter:
         manager = get_customer_stats_manager()
         return (
             manager.is_enabled
-            and not manager.is_shutdown  
+            and not manager.is_shutdown
             and not self._is_stats_exporter()
             and not self._is_customer_sdkstats_exporter()
             and not self._instrumentation_collection

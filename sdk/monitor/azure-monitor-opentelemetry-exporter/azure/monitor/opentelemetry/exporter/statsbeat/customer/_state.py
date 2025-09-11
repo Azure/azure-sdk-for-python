@@ -6,15 +6,11 @@ import threading
 _customer_stats_manager = None
 
 def get_customer_stats_manager():
-    """Get the global CustomerSdkStatsManager singleton instance.
-    
-    This provides a single access point to the manager and handles lazy initialization
-    to avoid circular import issues.
-    
-    :return: CustomerSdkStatsManager instance
-    :rtype: CustomerSdkStatsManager
-    """
-    global _customer_stats_manager
+    #Get the global CustomerSdkStatsManager singleton instance.
+    # This provides a single access point to the manager and handles lazy initialization
+    # to avoid circular import issues.
+
+    global _customer_stats_manager  # pylint: disable=global-statement
     if _customer_stats_manager is None:
         from ._manager import CustomerSdkStatsManager
         _customer_stats_manager = CustomerSdkStatsManager()

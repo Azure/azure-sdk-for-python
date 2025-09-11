@@ -128,7 +128,7 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
                     TelemetryErrorDetails(index=0, status_code=500, message="should retry"),
                 ],
             )
-            result = exporter._transmit(self.__class__._envelopes_to_export * 2)
+            result = exporter._transmit(self._envelopes_to_export * 2)
 
         track_retry_mock.assert_called_once()
         # With storage disabled by default, retryable errors become non-retryable
@@ -146,7 +146,7 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
                     TelemetryErrorDetails(index=0, status_code=400, message="should drop"),
                 ],
             )
-            result = exporter._transmit(self.__class__._envelopes_to_export * 2)
+            result = exporter._transmit(self._envelopes_to_export * 2)
 
         track_dropped_mock.assert_called_once()
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
