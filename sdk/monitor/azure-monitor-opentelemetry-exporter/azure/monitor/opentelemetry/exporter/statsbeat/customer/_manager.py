@@ -16,7 +16,6 @@ from opentelemetry.sdk.metrics import MeterProvider
 from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
 
 from azure.monitor.opentelemetry.exporter._constants import (
-    CustomerSdkStatsProperties,
     DropCode,
     DropCodeType,
     RetryCode,
@@ -75,13 +74,14 @@ class CustomerSdkStatsManager(metaclass=Singleton): # pylint: disable=too-many-i
         # Initialize customer properties if enabled
         if self._status != CustomerSdkStatsStatus.DISABLED:
             from azure.monitor.opentelemetry.exporter import VERSION
-            self._customer_properties = CustomerSdkStatsProperties(
-                language=self._language,
-                version=VERSION,
-                compute_type=get_compute_type(),
-            )
+            # Pre-build base attributes for all metrics to avoid recreation on each callback
+            self._base_attributes: Optional[Dict[str, Any]] = {
+                "language": self._language,
+                "version": VERSION,
+                "compute_type": get_compute_type(),
+            }
         else:
-            self._customer_properties = None
+            self._base_attributes = None
             
         # Initialize gauge references (gauges will be created in initialize method once meter is available)
         self._success_gauge = None
@@ -292,7 +292,7 @@ class CustomerSdkStatsManager(metaclass=Singleton): # pylint: disable=too-many-i
             reason_map[reason] = current_count + count
 
     def _item_success_callback(self, options: CallbackOptions) -> Iterable[Observation]: # pylint: disable=unused-argument
-        if not self.is_initialized or not self._customer_properties:
+        if not self.is_initialized or not self._base_attributes:
             return []
 
         observations: List[Observation] = []
@@ -300,18 +300,18 @@ class CustomerSdkStatsManager(metaclass=Singleton): # pylint: disable=too-many-i
         with self._counters_lock:
             for telemetry_type, count in self._counters.total_item_success_count.items():
                 if count > 0:
-                    attributes = {
-                        "language": self._customer_properties.language,
-                        "version": self._customer_properties.version,
-                        "compute_type": self._customer_properties.compute_type,
-                        "telemetry_type": telemetry_type
-                    }
-                    observations.append(Observation(count, dict(attributes)))
+                    # Create attributes by copying base and adding telemetry-specific data
+                    attributes = self._base_attributes.copy()
+                    attributes["telemetry_type"] = telemetry_type
+                    observations.append(Observation(count, attributes))
+            
+            # Reset counts after reading
+            self._counters.total_item_success_count.clear()
 
         return observations
 
     def _item_drop_callback(self, options: CallbackOptions) -> Iterable[Observation]: # pylint: disable=unused-argument
-        if not self.is_initialized or not self._customer_properties:
+        if not self.is_initialized or not self._base_attributes:
             return []
         observations: List[Observation] = []
         # pylint: disable=too-many-nested-blocks
@@ -322,22 +322,22 @@ class CustomerSdkStatsManager(metaclass=Singleton): # pylint: disable=too-many-i
                     for reason, success_map in reason_map.items():
                         for success_tracker, count in success_map.items():
                             if count > 0:
-                                attributes = {
-                                    "language": self._customer_properties.language,
-                                    "version": self._customer_properties.version,
-                                    "compute_type": self._customer_properties.compute_type,
-                                    "drop.code": drop_code,
-                                    "drop.reason": reason,
-                                    "telemetry_type": telemetry_type
-                                }
+                                # Create attributes by copying base and adding drop-specific data
+                                attributes = self._base_attributes.copy()
+                                attributes["drop.code"] = drop_code
+                                attributes["drop.reason"] = reason
+                                attributes["telemetry_type"] = telemetry_type
                                 if telemetry_type in (_REQUEST, _DEPENDENCY):
                                     attributes["telemetry_success"] = success_tracker
-                                observations.append(Observation(count, dict(attributes)))
+                                observations.append(Observation(count, attributes))
+            
+            # Reset counts after reading
+            self._counters.total_item_drop_count.clear()
 
         return observations
 
     def _item_retry_callback(self, options: CallbackOptions) -> Iterable[Observation]: # pylint: disable=unused-argument
-        if not self.is_initialized or not self._customer_properties:
+        if not self.is_initialized or not self._base_attributes:
             return []
         observations: List[Observation] = []
 
@@ -346,15 +346,15 @@ class CustomerSdkStatsManager(metaclass=Singleton): # pylint: disable=too-many-i
                 for retry_code, reason_map in retry_code_map.items():
                     for reason, count in reason_map.items():
                         if count > 0:
-                            attributes = {
-                                "language": self._customer_properties.language,
-                                "version": self._customer_properties.version,
-                                "compute_type": self._customer_properties.compute_type,
-                                "retry.code": retry_code,
-                                "retry.reason": reason,
-                                "telemetry_type": telemetry_type
-                            }
-                            observations.append(Observation(count, dict(attributes)))
+                            # Create attributes by copying base and adding retry-specific data
+                            attributes = self._base_attributes.copy()
+                            attributes["retry.code"] = retry_code
+                            attributes["retry.reason"] = reason
+                            attributes["telemetry_type"] = telemetry_type
+                            observations.append(Observation(count, attributes))
+            
+            # Reset counts after reading
+            self._counters.total_item_retry_count.clear()
 
         return observations
 
