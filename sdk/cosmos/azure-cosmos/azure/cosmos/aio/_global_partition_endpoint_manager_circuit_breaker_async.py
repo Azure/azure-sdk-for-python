@@ -24,9 +24,7 @@
 from typing import TYPE_CHECKING, Optional
 
 from azure.cosmos._constants import _Constants as Constants
-# Shorter aliases for convenient usage
-_InternalOptions = Constants.InternalOptions
-_Kwargs = Constants.Kwargs
+
 from azure.cosmos.partition_key import _get_partition_key_from_partition_key_definition
 from azure.cosmos._global_partition_endpoint_manager_circuit_breaker_core import \
     _GlobalPartitionEndpointManagerForCircuitBreakerCore
@@ -39,6 +37,9 @@ from azure.cosmos.http_constants import HttpHeaders
 if TYPE_CHECKING:
     from azure.cosmos.aio._cosmos_client_connection_async import CosmosClientConnection
 
+# Shorter aliases for convenient usage
+_InternalOptions = Constants.InternalOptions
+_Kwargs = Constants.Kwargs
 
 # pylint: disable=protected-access
 class _GlobalPartitionEndpointManagerForCircuitBreakerAsync(_GlobalEndpointManager):
@@ -68,7 +69,7 @@ class _GlobalPartitionEndpointManagerForCircuitBreakerAsync(_GlobalEndpointManag
 
         options = {}
         if request.excluded_locations:
-            options[__Kwargs.EXCLUDED_LOCATIONS] = request.excluded_locations
+            options[_Kwargs.EXCLUDED_LOCATIONS] = request.excluded_locations
         if request.pk_val:
             partition_key_value = request.pk_val
             # get the partition key range for the given partition key
