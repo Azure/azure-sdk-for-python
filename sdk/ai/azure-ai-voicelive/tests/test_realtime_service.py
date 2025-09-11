@@ -5,7 +5,7 @@ import base64
 import asyncio
 import json
 from pathlib import Path
-from typing import Callable, Iterator, Literal, Mapping, Union, Any
+from typing import Callable, Iterator, Literal, Mapping, Union, Any, Type
 import pytest
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.voicelive.aio import connect
@@ -162,7 +162,7 @@ async def _collect_audio_trans_outputs(conn, duration_s: float) -> int:
 
 class TestRealtimeService():
 
-    @pytest.mark.live_test_only
+
     @VoiceLivePreparer()
     @pytest.mark.asyncio
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
@@ -211,7 +211,7 @@ class TestRealtimeService():
             assert audio_delta_evt.type in {ServerEventType.RESPONSE_AUDIO_DELTA}
             assert audio_delta_evt.delta is not None and len(audio_delta_evt.delta) > 0
 
-    @pytest.mark.live_test_only
+
     @VoiceLivePreparer()
     @pytest.mark.asyncio
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
@@ -237,7 +237,7 @@ class TestRealtimeService():
             )
             assert audio_segments == 5
 
-    @pytest.mark.live_test_only
+
     @VoiceLivePreparer()
     @pytest.mark.asyncio
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
@@ -279,7 +279,7 @@ class TestRealtimeService():
             assert audio_delta_evt.type in {ServerEventType.RESPONSE_AUDIO_DELTA}
             assert audio_delta_evt.delta is not None and len(audio_delta_evt.delta) > 0
 
-    @pytest.mark.live_test_only
+
     @VoiceLivePreparer()
     @pytest.mark.asyncio
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
@@ -318,7 +318,7 @@ class TestRealtimeService():
             assert audio_segments == 5
             assert audio_bytes > 0
 
-    @pytest.mark.live_test_only
+
     @VoiceLivePreparer()
     @pytest.mark.asyncio
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
@@ -348,7 +348,7 @@ class TestRealtimeService():
             )
             assert audio_segments == 1
 
-    @pytest.mark.live_test_only
+
     @VoiceLivePreparer()
     @pytest.mark.asyncio
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
@@ -384,7 +384,7 @@ class TestRealtimeService():
             )
             assert audio_segments == 1
 
-    @pytest.mark.live_test_only
+
     @VoiceLivePreparer()
     @pytest.mark.asyncio
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
@@ -433,7 +433,7 @@ class TestRealtimeService():
 
             assert len(function_call_results) > 0
 
-    @pytest.mark.live_test_only
+
     @VoiceLivePreparer()
     @pytest.mark.asyncio
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
@@ -515,7 +515,7 @@ class TestRealtimeService():
             assert function_done.arguments in ['{"location":"北京"}', '{"location":"Beijing"}']
             assert function_done.name == "get_time"
 
-    @pytest.mark.live_test_only
+
     @VoiceLivePreparer()
     @pytest.mark.asyncio
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
@@ -591,7 +591,7 @@ class TestRealtimeService():
             assert "晴" in transcript or "sunny" in transcript
             assert "25" in transcript
 
-    @pytest.mark.live_test_only
+
     @VoiceLivePreparer()
     @pytest.mark.asyncio
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
@@ -650,7 +650,7 @@ class TestRealtimeService():
             assert audio_bytes > 50 * 1000
             assert transcripts == 1
 
-    @pytest.mark.live_test_only
+
     @VoiceLivePreparer()
     @pytest.mark.asyncio
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
@@ -700,7 +700,7 @@ class TestRealtimeService():
             
             assert len(message_types) == 2
 
-    @pytest.mark.live_test_only
+
     @VoiceLivePreparer()
     @pytest.mark.asyncio
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
@@ -732,7 +732,7 @@ class TestRealtimeService():
 
             assert input_audio_transcription_completed_evt.transcript.strip() == "What's the largest lake in the world?"
 
-    @pytest.mark.live_test_only
+
     @VoiceLivePreparer()
     @pytest.mark.asyncio
     @pytest.mark.skip
@@ -761,7 +761,7 @@ class TestRealtimeService():
         self,
         test_data_dir: Path,
         model: str,
-        turn_detection_cls: type[ServerVad | AzureSemanticVad | AzureMultilingualSemanticVad],
+        turn_detection_cls: Type[Union["ServerVad", "AzureSemanticVad", "AzureMultilingualSemanticVad"]],
         eou_model: str,
         voicelive_openai_endpoint: str,
         voicelive_openai_key: str,
@@ -780,7 +780,7 @@ class TestRealtimeService():
             assert events == 2
             assert audio_bytes > 0
 
-    @pytest.mark.live_test_only
+
     @VoiceLivePreparer()
     @pytest.mark.asyncio
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
@@ -827,7 +827,7 @@ class TestRealtimeService():
             assert len(response_audio_word_timestamps) > 0
             assert len(response_blendshape_visemes) > 0
 
-    @pytest.mark.live_test_only
+
     @VoiceLivePreparer()
     @pytest.mark.asyncio
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
@@ -853,7 +853,7 @@ class TestRealtimeService():
             assert audio_events > 0
             assert trans_events > 0
 
-    @pytest.mark.live_test_only
+
     @VoiceLivePreparer()
     @pytest.mark.asyncio
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
@@ -876,7 +876,7 @@ class TestRealtimeService():
             content_part_added_events, _ = await _collect_event(conn, event_type=ServerEventType.RESPONSE_CONTENT_PART_ADDED)
             assert content_part_added_events == 1
 
-    @pytest.mark.live_test_only
+
     @VoiceLivePreparer()
     @pytest.mark.asyncio
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
@@ -916,7 +916,7 @@ class TestRealtimeService():
                 conversation_retrieved_event.item.content[0], ContentPart
             ), f"Retrieved item content should be audio: {conversation_retrieved_event.item.content[0]}."
 
-    @pytest.mark.live_test_only
+
     @VoiceLivePreparer()
     @pytest.mark.asyncio
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
@@ -946,7 +946,7 @@ class TestRealtimeService():
                 conversation_retrieved_event, ServerEventConversationItemTruncated
             ), f"Retrieved item should be an ServerEventConversationItemTruncated: {conversation_retrieved_event}."
 
-    @pytest.mark.live_test_only
+
     @VoiceLivePreparer()
     @pytest.mark.asyncio
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
@@ -1056,7 +1056,7 @@ class TestRealtimeService():
             _, audio_bytes = await _collect_event(conn, event_type=None)
             assert audio_bytes > 50 * 1000, f"Output audio too short for {audio_format} format: {audio_bytes} bytes"
 
-    @pytest.mark.live_test_only
+
     @VoiceLivePreparer()
     @pytest.mark.asyncio
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
@@ -1113,7 +1113,7 @@ class TestRealtimeService():
             )
             assert audio_bytes > 50 * 1000, f"Output audio too short for {audio_file}: {audio_bytes} bytes"
 
-    @pytest.mark.live_test_only
+
     @VoiceLivePreparer()
     @pytest.mark.asyncio
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
@@ -1160,7 +1160,7 @@ class TestRealtimeService():
             assert events == 1
             assert audio_bytes > 10 * 1024
 
-    @pytest.mark.live_test_only
+
     @VoiceLivePreparer()
     @pytest.mark.asyncio
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
@@ -1201,7 +1201,7 @@ class TestRealtimeService():
             assert events == 1
             assert audio_bytes > 10 * 1024
 
-    @pytest.mark.live_test_only
+
     @VoiceLivePreparer()
     @pytest.mark.asyncio
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
@@ -1226,7 +1226,7 @@ class TestRealtimeService():
             assert segments > 1, "Expected more than 1 speech segment"
             assert audio_bytes > 0, "Audio bytes should be greater than 0"
 
-    @pytest.mark.live_test_only
+
     @VoiceLivePreparer()
     @pytest.mark.asyncio
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
