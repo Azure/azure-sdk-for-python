@@ -63,6 +63,7 @@ from ._utils import (
     GEN_AI_MESSAGE_STATUS,
     GEN_AI_RESPONSE_MODEL,
     GEN_AI_SYSTEM,
+    GEN_AI_PROVIDER_NAME,
     GEN_AI_SYSTEM_MESSAGE,
     GEN_AI_THREAD_ID,
     GEN_AI_THREAD_RUN_ID,
@@ -319,7 +320,7 @@ class _AIAgentsInstrumentorPreview:
         run_step_last_error: Optional[RunStepError] = None,
         usage: Optional[_models.RunStepCompletionUsage] = None,
     ) -> Dict[str, Any]:
-        attrs: Dict[str, Any] = {GEN_AI_SYSTEM: AZ_AI_AGENT_SYSTEM}
+        attrs: Dict[str, Any] = {GEN_AI_SYSTEM: AZ_AI_AGENT_SYSTEM, GEN_AI_PROVIDER_NAME: AZ_AI_AGENT_SYSTEM}
         if thread_id:
             attrs[GEN_AI_THREAD_ID] = thread_id
 

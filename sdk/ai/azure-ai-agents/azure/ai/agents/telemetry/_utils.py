@@ -36,6 +36,7 @@ GEN_AI_REQUEST_MAX_INPUT_TOKENS = "gen_ai.request.max_input_tokens"
 GEN_AI_REQUEST_MAX_OUTPUT_TOKENS = "gen_ai.request.max_output_tokens"
 GEN_AI_RESPONSE_MODEL = "gen_ai.response.model"
 GEN_AI_SYSTEM = "gen_ai.system"
+GEN_AI_PROVIDER_NAME = "gen_ai.provider.name"
 SERVER_ADDRESS = "server.address"
 AZ_AI_AGENT_SYSTEM = "az.ai.agents"
 AZ_NAMESPACE = "az.namespace"
@@ -124,7 +125,7 @@ def start_span(
     if span and span.span_instance.is_recording:
         span.add_attribute(AZ_NAMESPACE, AZ_NAMESPACE_VALUE)
         if gen_ai_system:
-            span.add_attribute(GEN_AI_SYSTEM, AZ_AI_AGENT_SYSTEM)
+            span.add_attribute(GEN_AI_SYSTEM, AZ_AI_AGENT_SYSTEM, GEN_AI_PROVIDER_NAME, AZ_AI_AGENT_SYSTEM)
 
         span.add_attribute(GEN_AI_OPERATION_NAME, operation_name.value)
 
