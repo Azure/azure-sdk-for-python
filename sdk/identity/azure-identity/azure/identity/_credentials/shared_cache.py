@@ -4,7 +4,6 @@
 # ------------------------------------
 from typing import Any, Optional, TypeVar, cast
 from azure.core.credentials import AccessToken, TokenRequestOptions, AccessTokenInfo, SupportsTokenInfo, TokenCredential
-from azure.core.exceptions import ClientAuthenticationError
 
 from .silent import SilentAuthenticationCredential
 from .. import CredentialUnavailableError

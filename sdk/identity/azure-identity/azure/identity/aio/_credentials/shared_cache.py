@@ -4,7 +4,6 @@
 # ------------------------------------
 from typing import Any, Optional, cast
 from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions
-from azure.core.exceptions import ClientAuthenticationError
 from ..._internal.aad_client import AadClientBase
 from ... import CredentialUnavailableError
 from ..._constants import DEVELOPER_SIGN_ON_CLIENT_ID
