@@ -23,6 +23,22 @@ class OptOutsClient(object):  # pylint: disable=client-accepts-api-version-keywo
         The endpoint url for Azure Communication Service resource.
     :param Union[TokenCredential, AzureKeyCredential] credential:
         The credential we use to authenticate against the service.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/opt_outs_sample.py
+            :start-after: [START create_opt_outs_client]
+            :end-before: [END create_opt_outs_client]
+            :language: python
+            :dedent: 4
+            :caption: Creating an OptOutsClient
+
+        .. literalinclude:: ../samples/opt_outs_sample.py
+            :start-after: [START manage_opt_out_list]
+            :end-before: [END manage_opt_out_list]
+            :language: python
+            :dedent: 4
+            :caption: Managing opt-out lists
     """
 
     def __init__(
@@ -84,6 +100,15 @@ class OptOutsClient(object):  # pylint: disable=client-accepts-api-version-keywo
         :type request: ~azure.communication.sms.models.OptOutRequest
         :return: OptOutResponse containing the result of the operation.
         :rtype: ~azure.communication.sms.models.OptOutResponse
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/opt_outs_sample.py
+                :start-after: [START add_opt_out]
+                :end-before: [END add_opt_out]
+                :language: python
+                :dedent: 8
+                :caption: Adding a phone number to opt-out list.
         """
         response = self._sms_service_client.opt_outs.add(
             body=request,
@@ -104,6 +129,15 @@ class OptOutsClient(object):  # pylint: disable=client-accepts-api-version-keywo
         :type request: ~azure.communication.sms.models.OptOutRequest
         :return: OptOutResponse containing the result of the operation.
         :rtype: ~azure.communication.sms.models.OptOutResponse
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/opt_outs_sample.py
+                :start-after: [START remove_opt_out]
+                :end-before: [END remove_opt_out]
+                :language: python
+                :dedent: 8
+                :caption: Removing a phone number from opt-out list.
         """
         response = self._sms_service_client.opt_outs.remove(
             body=request,
@@ -124,6 +158,15 @@ class OptOutsClient(object):  # pylint: disable=client-accepts-api-version-keywo
         :type request: ~azure.communication.sms.models.OptOutRequest
         :return: OptOutResponse containing the opt-out status.
         :rtype: ~azure.communication.sms.models.OptOutResponse
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/opt_outs_sample.py
+                :start-after: [START check_opt_out]
+                :end-before: [END check_opt_out]
+                :language: python
+                :dedent: 8
+                :caption: Checking opt-out status for a phone number.
         """
         response = self._sms_service_client.opt_outs.check(
             body=request,

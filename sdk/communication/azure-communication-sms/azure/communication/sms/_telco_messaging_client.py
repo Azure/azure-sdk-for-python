@@ -31,6 +31,29 @@ class TelcoMessagingClient(object):  # pylint: disable=client-accepts-api-versio
     :vartype delivery_reports: ~azure.communication.sms.DeliveryReportsClient
     :ivar opt_outs: Opt-out management operations client
     :vartype opt_outs: ~azure.communication.sms.OptOutsClient
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/telco_messaging_comprehensive_sample.py
+            :start-after: [START create_telco_messaging_client]
+            :end-before: [END create_telco_messaging_client]
+            :language: python
+            :dedent: 4
+            :caption: Creating a TelcoMessagingClient
+
+        .. literalinclude:: ../samples/telco_messaging_comprehensive_sample.py
+            :start-after: [START send_sms_with_delivery_reports]
+            :end-before: [END send_sms_with_delivery_reports]
+            :language: python
+            :dedent: 4
+            :caption: Sending SMS and checking delivery reports
+
+        .. literalinclude:: ../samples/telco_messaging_comprehensive_sample.py
+            :start-after: [START manage_opt_outs]
+            :end-before: [END manage_opt_outs]
+            :language: python
+            :dedent: 4
+            :caption: Managing opt-out lists
     """
 
     def __init__(

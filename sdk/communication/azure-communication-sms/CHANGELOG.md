@@ -1,5 +1,15 @@
 # Release History
 
+## 1.2.0 (Unreleased)
+
+### Features Added
+
+- Added `TelcoMessagingClient` as a unified client providing access to all SMS-related operations through organized sub-clients.
+- Added `DeliveryReportsClient` for retrieving SMS delivery reports.
+- Added `OptOutsClient` for managing SMS opt-out lists.
+- Enhanced documentation with comprehensive examples for all new clients.
+- Added sample files demonstrating usage of the new clients.
+
 ## 1.1.0 (2024-10-03)
 
 ### Other Changes

@@ -23,6 +23,22 @@ class DeliveryReportsClient(object):  # pylint: disable=client-accepts-api-versi
         The endpoint url for Azure Communication Service resource.
     :param Union[TokenCredential, AzureKeyCredential] credential:
         The credential we use to authenticate against the service.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/delivery_reports_sample.py
+            :start-after: [START create_delivery_reports_client]
+            :end-before: [END create_delivery_reports_client]
+            :language: python
+            :dedent: 4
+            :caption: Creating a DeliveryReportsClient
+
+        .. literalinclude:: ../samples/delivery_reports_sample.py
+            :start-after: [START get_delivery_status]
+            :end-before: [END get_delivery_status]
+            :language: python
+            :dedent: 4
+            :caption: Retrieving delivery report status
     """
 
     def __init__(
@@ -83,6 +99,15 @@ class DeliveryReportsClient(object):  # pylint: disable=client-accepts-api-versi
         :param str outgoing_message_id: The identifier of the outgoing message.
         :return: DeliveryReport if the message was found, ErrorResponse if not found or error occurred.
         :rtype: Union[DeliveryReport, ErrorResponse]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/delivery_reports_sample.py
+                :start-after: [START get_delivery_status]
+                :end-before: [END get_delivery_status]
+                :language: python
+                :dedent: 8
+                :caption: Getting delivery status for an SMS message.
         """
         response = self._sms_service_client.delivery_reports.get(
             outgoing_message_id=outgoing_message_id,
