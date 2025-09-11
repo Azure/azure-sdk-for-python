@@ -19,7 +19,7 @@ USAGE:
     python basic_voice_assistant.py
     
     Set the environment variables with your own values before running the sample:
-    1) AZURE_VOICELIVE_KEY - The Azure VoiceLive API key
+    1) AZURE_VOICELIVE_API_KEY - The Azure VoiceLive API key
     2) AZURE_VOICELIVE_ENDPOINT - The Azure VoiceLive endpoint
     
     Or copy .env.template to .env and fill in your values.
