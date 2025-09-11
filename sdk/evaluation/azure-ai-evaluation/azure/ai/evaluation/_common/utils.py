@@ -146,7 +146,7 @@ def validate_azure_ai_project(o: object) -> AzureAIProject:
         return o
 
     if not isinstance(o, dict):
-        msg = "The 'azure_ai_project' parameter must be a dictionary."
+        msg = "The 'azure_ai_project' parameter must be a dictionary or a project URI string."
         raise EvaluationException(
             message=msg,
             category=ErrorCategory.INVALID_VALUE,
