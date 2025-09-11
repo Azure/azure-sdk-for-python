@@ -9,7 +9,13 @@ import functools
 from typing import TYPE_CHECKING
 import warnings
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
 from azure.core.rest import HttpRequest
@@ -23,11 +29,11 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any, Callable, Dict, Generic, Optional, TypeVar
 
-    T = TypeVar('T')
+    T = TypeVar("T")
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
-
 _SERIALIZER = Serializer()
 # fmt: off
+
 
 def build_send_request(
     **kwargs  # type: Any
@@ -99,25 +105,23 @@ class SmsOperations(object):
         :rtype: ~azure.communication.sms.models.SmsSendResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SmsSendResponse"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.SmsSendResponse"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
-        json = self._serialize.body(send_message_request, 'SendMessageRequest')
+        json = self._serialize.body(send_message_request, "SendMessageRequest")
 
         request = build_send_request(
             content_type=content_type,
             json=json,
             api_version=self._config.api_version,
-            template_url=self.send.metadata['url'],
+            template_url=self.send.metadata["url"],
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
@@ -127,13 +131,10 @@ class SmsOperations(object):
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
-
-        deserialized = self._deserialize('SmsSendResponse', pipeline_response)
+        deserialized = self._deserialize("SmsSendResponse", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
-
         return deserialized
 
-    send.metadata = {'url': '/sms'}  # type: ignore
-
+    send.metadata = {"url": "/sms"}  # type: ignore

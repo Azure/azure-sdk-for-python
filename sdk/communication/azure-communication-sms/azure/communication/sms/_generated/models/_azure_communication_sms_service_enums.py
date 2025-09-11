@@ -12,11 +12,11 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class DeliveryReportDeliveryStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The delivery status of the message.
-    """
+    """The delivery status of the message."""
 
     DELIVERED = "Delivered"
     FAILED = "Failed"
+
 
 class SmsSendResponseItemRepeatabilityResult(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The result of a repeatable request with one of the case-insensitive values accepted or

@@ -9,7 +9,13 @@ import functools
 from typing import TYPE_CHECKING
 import warnings
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
 from azure.core.rest import HttpRequest
@@ -23,11 +29,11 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any, Callable, Dict, Generic, Optional, TypeVar
 
-    T = TypeVar('T')
+    T = TypeVar("T")
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
-
 _SERIALIZER = Serializer()
 # fmt: off
+
 
 def build_add_request(
     **kwargs  # type: Any
@@ -159,25 +165,23 @@ class OptOutsOperations(object):
         :rtype: ~azure.communication.sms.models.OptOutResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OptOutResponse"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.OptOutResponse"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
-        json = self._serialize.body(body, 'OptOutRequest')
+        json = self._serialize.body(body, "OptOutRequest")
 
         request = build_add_request(
             content_type=content_type,
             json=json,
             api_version=self._config.api_version,
-            template_url=self.add.metadata['url'],
+            template_url=self.add.metadata["url"],
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
@@ -187,16 +191,13 @@ class OptOutsOperations(object):
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
-
-        deserialized = self._deserialize('OptOutResponse', pipeline_response)
+        deserialized = self._deserialize("OptOutResponse", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
-
         return deserialized
 
-    add.metadata = {'url': '/sms/optouts:add'}  # type: ignore
-
+    add.metadata = {"url": "/sms/optouts:add"}  # type: ignore
 
     @distributed_trace
     def remove(
@@ -216,25 +217,23 @@ class OptOutsOperations(object):
         :rtype: ~azure.communication.sms.models.OptOutResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OptOutResponse"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.OptOutResponse"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
-        json = self._serialize.body(body, 'OptOutRequest')
+        json = self._serialize.body(body, "OptOutRequest")
 
         request = build_remove_request(
             content_type=content_type,
             json=json,
             api_version=self._config.api_version,
-            template_url=self.remove.metadata['url'],
+            template_url=self.remove.metadata["url"],
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
@@ -244,16 +243,13 @@ class OptOutsOperations(object):
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
-
-        deserialized = self._deserialize('OptOutResponse', pipeline_response)
+        deserialized = self._deserialize("OptOutResponse", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
-
         return deserialized
 
-    remove.metadata = {'url': '/sms/optouts:remove'}  # type: ignore
-
+    remove.metadata = {"url": "/sms/optouts:remove"}  # type: ignore
 
     @distributed_trace
     def check(
@@ -273,25 +269,23 @@ class OptOutsOperations(object):
         :rtype: ~azure.communication.sms.models.OptOutResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OptOutResponse"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.OptOutResponse"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
-        json = self._serialize.body(body, 'OptOutRequest')
+        json = self._serialize.body(body, "OptOutRequest")
 
         request = build_check_request(
             content_type=content_type,
             json=json,
             api_version=self._config.api_version,
-            template_url=self.check.metadata['url'],
+            template_url=self.check.metadata["url"],
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
@@ -301,13 +295,10 @@ class OptOutsOperations(object):
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
-
-        deserialized = self._deserialize('OptOutResponse', pipeline_response)
+        deserialized = self._deserialize("OptOutResponse", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
-
         return deserialized
 
-    check.metadata = {'url': '/sms/optouts:check'}  # type: ignore
-
+    check.metadata = {"url": "/sms/optouts:check"}  # type: ignore

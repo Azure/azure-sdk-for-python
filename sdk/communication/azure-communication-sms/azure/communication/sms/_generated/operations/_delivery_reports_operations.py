@@ -9,7 +9,13 @@ import functools
 from typing import TYPE_CHECKING
 import warnings
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
 from azure.core.rest import HttpRequest
@@ -23,11 +29,11 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
 
-    T = TypeVar('T')
+    T = TypeVar("T")
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
-
 _SERIALIZER = Serializer()
 # fmt: off
+
 
 def build_get_request(
     outgoing_message_id,  # type: str
@@ -102,21 +108,18 @@ class DeliveryReportsOperations(object):
          ~azure.communication.sms.models.ErrorResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Union["_models.DeliveryReport", "_models.ErrorResponse"]]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[Union["_models.DeliveryReport", "_models.ErrorResponse"]]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_get_request(
             outgoing_message_id=outgoing_message_id,
             api_version=self._config.api_version,
-            template_url=self.get.metadata['url'],
+            template_url=self.get.metadata["url"],
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
@@ -126,17 +129,12 @@ class DeliveryReportsOperations(object):
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
-
         if response.status_code == 200:
-            deserialized = self._deserialize('DeliveryReport', pipeline_response)
-
+            deserialized = self._deserialize("DeliveryReport", pipeline_response)
         if response.status_code == 404:
-            deserialized = self._deserialize('ErrorResponse', pipeline_response)
-
+            deserialized = self._deserialize("ErrorResponse", pipeline_response)
         if cls:
             return cls(pipeline_response, deserialized, {})
-
         return deserialized
 
-    get.metadata = {'url': '/deliveryReports/{outgoingMessageId}'}  # type: ignore
-
+    get.metadata = {"url": "/deliveryReports/{outgoingMessageId}"}  # type: ignore

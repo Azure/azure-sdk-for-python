@@ -29,5 +29,5 @@ no-async: false
 add-credential: false
 title: Azure Communication SMS Service
 use-extension:
-  "@autorest/python": "5.9.3"
+  "@autorest/python": "6.1.1"
 ```
