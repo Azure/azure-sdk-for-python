@@ -8,7 +8,6 @@ from azure.cosmos.aio import CosmosClient
 import azure.cosmos.exceptions as exceptions
 from azure.cosmos.partition_key import PartitionKey
 import urllib3
-from requests.utils import DEFAULT_CA_BUNDLE_PATH as CaCertPath
 
 import asyncio
 import config
