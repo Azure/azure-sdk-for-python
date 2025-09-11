@@ -57,6 +57,25 @@ class RedTeamError(Exception):
         self.original_exception = original_exception
 
 
+class NonRetryableError(RedTeamError):
+    """Exception for errors that should not be retried and should fail the operation immediately."""
+
+    def __init__(
+        self,
+        message: str,
+        category: ErrorCategory = ErrorCategory.UNKNOWN,
+        context: Optional[Dict[str, Any]] = None,
+        original_exception: Optional[Exception] = None,
+    ):
+        super().__init__(
+            message=message,
+            category=category,
+            severity=ErrorSeverity.HIGH,  # Non-retryable errors are high severity
+            context=context,
+            original_exception=original_exception,
+        )
+
+
 class ExceptionHandler:
     """Centralized exception handling for Red Team operations."""
 
@@ -67,6 +86,47 @@ class ExceptionHandler:
         """
         self.logger = logger or logging.getLogger(__name__)
         self.error_counts: Dict[ErrorCategory, int] = {category: 0 for category in ErrorCategory}
+
+    def is_non_retryable_error(self, exception: Exception) -> bool:
+        """Determine if an exception represents a non-retryable error.
+
+        Non-retryable errors are those that won't be resolved by retrying,
+        such as authentication failures, bad requests, configuration errors, etc.
+
+        :param exception: The exception to check
+        :return: True if the error should not be retried
+        """
+        import httpx
+
+        # HTTP status code specific non-retryable errors
+        if hasattr(exception, "response") and hasattr(exception.response, "status_code"):
+            status_code = exception.response.status_code
+            # 4xx errors (except 429 rate limiting, 400 content filter triggered) are generally non-retryable
+            if 400 < status_code < 500 and status_code != 429:
+                return True
+
+        # Specific HTTP status errors that are non-retryable
+        if isinstance(exception, httpx.HTTPStatusError):
+            status_code = exception.response.status_code
+            if 400 < status_code < 500 and status_code != 429:
+                return True
+
+        # Authentication and permission errors
+        auth_error_messages = ["authentication", "unauthorized", "forbidden", "access denied"]
+        message = str(exception).lower()
+        if any(keyword in message for keyword in auth_error_messages):
+            return True
+
+        # Configuration and validation errors
+        config_error_messages = ["configuration", "invalid", "malformed", "bad request"]
+        if any(keyword in message for keyword in config_error_messages):
+            return True
+
+        # File not found and similar errors
+        if isinstance(exception, (FileNotFoundError, PermissionError)):
+            return True
+
+        return False
 
     def categorize_exception(self, exception: Exception) -> ErrorCategory:
         """Categorize an exception based on its type and message.
@@ -188,6 +248,30 @@ class ExceptionHandler:
             if reraise:
                 raise exception
             return exception
+
+        # Check if this is a non-retryable error that should fail immediately
+        if self.is_non_retryable_error(exception):
+            category = self.categorize_exception(exception)
+
+            # Create a NonRetryableError to signal immediate failure
+            message = f"Non-retryable {category.value} error"
+            if task_name:
+                message += f" in {task_name}"
+            message += f": {str(exception)}"
+
+            non_retryable_error = NonRetryableError(
+                message=message, category=category, context=context, original_exception=exception
+            )
+
+            # Update error counts
+            self.error_counts[category] += 1
+
+            # Log the error
+            self._log_error(non_retryable_error, task_name)
+
+            if reraise:
+                raise non_retryable_error
+            return non_retryable_error
 
         # Categorize the exception
         category = self.categorize_exception(exception)
