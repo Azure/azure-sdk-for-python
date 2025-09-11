@@ -20,7 +20,7 @@ class TestDnsResolverManagementForwardingRulesOperations(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_or_update(self, resource_group):
+    def test_forwarding_rules_create_or_update(self, resource_group):
         response = self.client.forwarding_rules.create_or_update(
             resource_group_name=resource_group.name,
             dns_forwarding_ruleset_name="str",
@@ -44,7 +44,7 @@ class TestDnsResolverManagementForwardingRulesOperations(AzureMgmtRecordedTestCa
                 },
                 "type": "str",
             },
-            api_version="2023-07-01-preview",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself
@@ -52,7 +52,7 @@ class TestDnsResolverManagementForwardingRulesOperations(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_update(self, resource_group):
+    def test_forwarding_rules_update(self, resource_group):
         response = self.client.forwarding_rules.update(
             resource_group_name=resource_group.name,
             dns_forwarding_ruleset_name="str",
@@ -62,7 +62,7 @@ class TestDnsResolverManagementForwardingRulesOperations(AzureMgmtRecordedTestCa
                 "metadata": {"str": "str"},
                 "targetDnsServers": [{"ipAddress": "str", "port": 53}],
             },
-            api_version="2023-07-01-preview",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself
@@ -70,12 +70,12 @@ class TestDnsResolverManagementForwardingRulesOperations(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_delete(self, resource_group):
+    def test_forwarding_rules_delete(self, resource_group):
         response = self.client.forwarding_rules.delete(
             resource_group_name=resource_group.name,
             dns_forwarding_ruleset_name="str",
             forwarding_rule_name="str",
-            api_version="2023-07-01-preview",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself
@@ -83,12 +83,12 @@ class TestDnsResolverManagementForwardingRulesOperations(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_forwarding_rules_get(self, resource_group):
         response = self.client.forwarding_rules.get(
             resource_group_name=resource_group.name,
             dns_forwarding_ruleset_name="str",
             forwarding_rule_name="str",
-            api_version="2023-07-01-preview",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself
@@ -96,11 +96,11 @@ class TestDnsResolverManagementForwardingRulesOperations(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_forwarding_rules_list(self, resource_group):
         response = self.client.forwarding_rules.list(
             resource_group_name=resource_group.name,
             dns_forwarding_ruleset_name="str",
-            api_version="2023-07-01-preview",
+            api_version="2025-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

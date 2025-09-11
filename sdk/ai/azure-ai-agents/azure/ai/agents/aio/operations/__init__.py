@@ -20,7 +20,7 @@ from ._operations import FilesOperations  # type: ignore
 from ._operations import VectorStoresOperations  # type: ignore
 from ._operations import VectorStoreFilesOperations  # type: ignore
 from ._operations import VectorStoreFileBatchesOperations  # type: ignore
-from ._operations import AgentsClientOperationsMixin  # type: ignore
+from ._operations import _AgentsClientOperationsMixin  # type: ignore # pylint: disable=unused-import
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -35,7 +35,6 @@ __all__ = [
     "VectorStoresOperations",
     "VectorStoreFilesOperations",
     "VectorStoreFileBatchesOperations",
-    "AgentsClientOperationsMixin",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import logging
 import threading
 import uuid
 from typing import Any, Callable, cast, Optional
@@ -14,8 +13,6 @@ from azure.core.polling import PollingMethod, LROPoller, NoPolling
 
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.common import with_current_context
-
-logger = logging.getLogger(__name__)
 
 
 class KeyVaultOperationPoller(LROPoller):
@@ -89,14 +86,15 @@ class DeleteRecoverPollingMethod(PollingMethod):
     :param bool finished: Whether or not the polling operation is completed.
     :param int interval: The polling interval, in seconds.
     """
+
     def __init__(
-            self,
-            pipeline_response: PipelineResponse,
-            command: Callable,
-            final_resource: Any,
-            finished: bool,
-            interval: int = 2
-        ) -> None:
+        self,
+        pipeline_response: PipelineResponse,
+        command: Callable,
+        final_resource: Any,
+        finished: bool,
+        interval: int = 2,
+    ) -> None:
         self._pipeline_response = pipeline_response
         self._command = command
         self._resource = final_resource
@@ -121,16 +119,12 @@ class DeleteRecoverPollingMethod(PollingMethod):
         pass
 
     def run(self) -> None:
-        try:
-            while not self.finished():
-                self._update_status()
-                if not self.finished():
-                    # We should always ask the client's transport to sleep, instead of sleeping directly
-                    transport: HttpTransport = cast(HttpTransport, self._pipeline_response.context.transport)
-                    transport.sleep(self._polling_interval)
-        except Exception as e:
-            logger.warning(str(e))
-            raise
+        while not self.finished():
+            self._update_status()
+            if not self.finished():
+                # We should always ask the client's transport to sleep, instead of sleeping directly
+                transport: HttpTransport = cast(HttpTransport, self._pipeline_response.context.transport)
+                transport.sleep(self._polling_interval)
 
     def finished(self) -> bool:
         return self._finished

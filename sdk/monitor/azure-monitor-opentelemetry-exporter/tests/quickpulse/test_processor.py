@@ -14,16 +14,18 @@ class TestQuickpulseLogRecordProcessor(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.qpm = mock.Mock()
-        _QuickpulseManager._instance = cls.qpm
+        _QuickpulseManager._instances[_QuickpulseManager] = cls.qpm
 
     @classmethod
     def tearDownClass(cls) -> None:
-        _QuickpulseManager._instance = None
+        # Reset singleton state - only clear QuickpulseManager instances
+        if _QuickpulseManager in _QuickpulseManager._instances:
+            del _QuickpulseManager._instances[_QuickpulseManager]
 
     def test_emit(self):
         processor = _QuickpulseLogRecordProcessor()
         log_data = mock.Mock()
-        processor.emit(log_data)
+        processor.on_emit(log_data)
         self.qpm._record_log_record.assert_called_once_with(log_data)
 
 
@@ -31,11 +33,13 @@ class TestQuickpulseSpanProcessor(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.qpm = mock.Mock()
-        _QuickpulseManager._instance = cls.qpm
+        _QuickpulseManager._instances[_QuickpulseManager] = cls.qpm
 
     @classmethod
     def tearDownClass(cls) -> None:
-        _QuickpulseManager._instance = None
+        # Reset singleton state - only clear QuickpulseManager instances
+        if _QuickpulseManager in _QuickpulseManager._instances:
+            del _QuickpulseManager._instances[_QuickpulseManager]
 
     def test_on_end(self):
         processor = _QuickpulseSpanProcessor()

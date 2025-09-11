@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -30,11 +31,11 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.provider.list_operations()
+    response = client.certificate_registration_provider.list_operations()
     for item in response:
         print(item)
 
 
-# x-ms-original-file: specification/web/resource-manager/Microsoft.Web/stable/2024-04-01/examples/ListOperations.json
+# x-ms-original-file: specification/web/resource-manager/Microsoft.CertificateRegistration/stable/2024-11-01/examples/ListOperations.json
 if __name__ == "__main__":
     main()

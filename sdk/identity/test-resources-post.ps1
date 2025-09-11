@@ -64,6 +64,7 @@ $MIName = $DeploymentOutputs['IDENTITY_USER_DEFINED_IDENTITY_NAME']
 $SaAccountName = 'workload-identity-sa'
 $PodName = $DeploymentOutputs['IDENTITY_AKS_POD_NAME']
 $storageName = $DeploymentOutputs['IDENTITY_STORAGE_NAME_2']
+$FICAudience = 'api://AzureADTokenExchange'
 
 # Get the aks cluster credentials
 Write-Host "Getting AKS credentials"
@@ -75,7 +76,7 @@ $AKS_OIDC_ISSUER = az aks show -n $DeploymentOutputs['IDENTITY_AKS_CLUSTER_NAME'
 
 # Create the federated identity
 Write-Host "Creating federated identity"
-az identity federated-credential create --name $MIName --identity-name $MIName --resource-group $DeploymentOutputs['IDENTITY_RESOURCE_GROUP'] --issuer $AKS_OIDC_ISSUER --subject system:serviceaccount:default:workload-identity-sa
+az identity federated-credential create --name $MIName --identity-name $MIName --resource-group $DeploymentOutputs['IDENTITY_RESOURCE_GROUP'] --issuer $AKS_OIDC_ISSUER --subject system:serviceaccount:default:workload-identity-sa  --audiences $FICAudience
 
 # Build the kubernetes deployment yaml
 $kubeConfig = @"
@@ -120,7 +121,7 @@ Write-Host "Applied kubeconfig.yaml"
 $vmScript = @"
 sudo apt update && sudo apt install python3-pip -y --no-install-recommends &&
 git clone https://github.com/Azure/azure-sdk-for-python.git --depth 1 --single-branch --branch main /sdk &&
-cd /sdk/sdk/identity/azure-identity/tests/integration/azure-vms &&
+cd /sdk/sdk/identity/azure-identity/tests/integration/azure-vms && pip install --upgrade pip setuptools wheel &&
 pip install -r requirements.txt
 "@
 az vm run-command invoke -n $DeploymentOutputs['IDENTITY_VM_NAME'] -g $DeploymentOutputs['IDENTITY_RESOURCE_GROUP'] --command-id RunShellScript --scripts "$vmScript"

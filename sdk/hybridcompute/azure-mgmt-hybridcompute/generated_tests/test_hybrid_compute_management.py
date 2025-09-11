@@ -25,7 +25,46 @@ class TestHybridComputeManagement(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             machine_name="str",
             extension_upgrade_parameters={"extensionTargets": {"str": {"targetVersion": "str"}}},
-            api_version="2024-07-31-preview",
+            api_version="2025-02-19-preview",
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_begin_setup_extensions(self, resource_group):
+        response = self.client.begin_setup_extensions(
+            resource_group_name=resource_group.name,
+            machine_name="str",
+            extensions={
+                "extensions": [
+                    {
+                        "autoUpgradeMinorVersion": bool,
+                        "enableAutomaticUpgrade": bool,
+                        "forceUpdateTag": "str",
+                        "instanceView": {
+                            "name": "str",
+                            "status": {
+                                "code": "str",
+                                "displayStatus": "str",
+                                "level": "str",
+                                "message": "str",
+                                "time": "2020-02-20 00:00:00",
+                            },
+                            "type": "str",
+                            "typeHandlerVersion": "str",
+                        },
+                        "protectedSettings": {"str": {}},
+                        "provisioningState": "str",
+                        "publisher": "str",
+                        "settings": {"str": {}},
+                        "type": "str",
+                        "typeHandlerVersion": "str",
+                    }
+                ]
+            },
+            api_version="2025-02-19-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

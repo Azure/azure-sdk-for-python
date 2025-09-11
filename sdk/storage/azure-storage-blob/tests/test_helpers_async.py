@@ -3,16 +3,20 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
+import asyncio
 import aiohttp
+from collections import deque
 from datetime import datetime, timezone
 from io import IOBase, UnsupportedOperation
 from typing import Any, Dict, Optional, Tuple
+from unittest.mock import Mock, AsyncMock
 
 from azure.core.pipeline.transport import AioHttpTransportResponse, AsyncHttpTransport
 from azure.core.rest import HttpRequest
 from azure.storage.blob._serialize import get_api_version
 from aiohttp import ClientResponse
+from aiohttp.streams import StreamReader
+from aiohttp.client_proto import ResponseHandler
 
 
 def _build_base_file_share_headers(bearer_token_string: str, content_length: int = 0) -> Dict[str, Any]:
@@ -30,9 +34,13 @@ async def _create_file_share_oauth(
     file_name: str,
     bearer_token_string: str,
     storage_account_name: str,
-    data: bytes
+    data: bytes,
+    is_live: bool
 ) -> Tuple[str, str]:
     base_url = f"https://{storage_account_name}.file.core.windows.net/{share_name}"
+
+    if not is_live:
+        return file_name, base_url
 
     async with aiohttp.ClientSession() as session:
         # Creates file share
@@ -126,11 +134,15 @@ class MockAioHttpClientResponse(ClientResponse):
         self._loop = None
         self.status = status
         self.reason = reason
+        self.content = StreamReader(ResponseHandler(asyncio.get_event_loop()), 65535)
+        self.content.total_bytes = len(body_bytes)
+        self.content._buffer = deque([body_bytes])
+        self.content._eof = True
 
 
-class MockStorageTransport(AsyncHttpTransport):
+class MockLegacyTransport(AsyncHttpTransport):
     """
-    This transport returns legacy http response objects from azure core and is 
+    This transport returns legacy http response objects from azure core and is
     intended only to test our backwards compatibility support.
     """
     async def send(self, request: HttpRequest, **kwargs: Any) -> AioHttpTransportResponse:
@@ -199,7 +211,7 @@ class MockStorageTransport(AsyncHttpTransport):
                 decompress=False
             )
         else:
-            raise ValueError("The request is not accepted as part of MockStorageTransport.")
+            raise ValueError("The request is not accepted as part of MockLegacyTransport.")
 
         await rest_response.load_body()
         return rest_response

@@ -9,8 +9,8 @@ pr:
       - eng/pipelines/aggregate-reports.yml
 
 pool:
-  name: azsdk-pool-mms-win-2022-general
-  vmImage: MMS2022
+  name: azsdk-pool
+  demands: ImageOverride -equals windows-2022
 
 variables:
   - template: ./templates/variables/globals.yml
@@ -23,6 +23,13 @@ stages:
       - job: ValidateDependencies
         timeoutInMinutes: 120
         steps:
+          - task: UsePythonVersion@0
+            displayName: 'Use Python $(PythonVersion)'
+            condition: succeededOrFailed()
+            inputs:
+              versionSpec: '$(PythonVersion)'
+
+          - template: /eng/pipelines/templates/steps/use-venv.yml
 
           - template: /eng/pipelines/templates/steps/analyze_dependency.yml
             parameters:
@@ -99,14 +106,13 @@ stages:
     displayName: Compliance Tools
     dependsOn: []
 
+    variables:
+      Codeql.SkipTaskAutoInjection: false
+
     jobs:
       - job: ComplianceTools
         timeoutInMinutes: 120
         steps:
-          - template: /eng/common/pipelines/templates/steps/credscan.yml
-            parameters:
-              BaselineFilePath: $(Build.SourcesDirectory)\eng\python.gdnbaselines
-
           - template: /eng/common/pipelines/templates/steps/policheck.yml
             parameters:
               PublishAnalysisLogs: false

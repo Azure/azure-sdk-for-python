@@ -9,6 +9,15 @@ from typing import Optional
 from azure.core.exceptions import AzureError
 
 
+class ErrorMessage(Enum):
+    """Error messages to be used when raising EvaluationException.
+
+    These messages are used to provide a consistent error message format across the SDK.
+    """
+
+    MALFORMED_CONVERSATION_HISTORY = "Malformed Conversation History: Query parameter representing conversation history should have exactly one more user query than agent responses"
+
+
 class ErrorCategory(Enum):
     """Error category to be specified when using EvaluationException class.
 
@@ -39,6 +48,7 @@ class ErrorCategory(Enum):
     PROJECT_ACCESS_ERROR = "PROJECT ACCESS ERROR"
     UNKNOWN = "UNKNOWN"
     UPLOAD_ERROR = "UPLOAD ERROR"
+    NOT_APPLICABLE = "NOT APPLICABLE"
 
 
 class ErrorBlame(Enum):
@@ -87,6 +97,7 @@ class ErrorTarget(Enum):
     TOOL_CALL_ACCURACY_EVALUATOR = "ToolCallAccuracyEvaluator"
     RED_TEAM = "RedTeam"
     AOAI_GRADER = "AoaiGrader"
+    CONVERSATION_HISTORY_PARSING = "_get_conversation_history"
 
 
 class EvaluationException(AzureError):

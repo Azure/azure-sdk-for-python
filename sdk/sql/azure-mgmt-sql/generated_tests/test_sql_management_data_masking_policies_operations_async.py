@@ -27,7 +27,7 @@ class TestSqlManagementDataMaskingPoliciesOperationsAsync(AzureMgmtRecordedTestC
             server_name="str",
             database_name="str",
             data_masking_policy_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -52,7 +52,7 @@ class TestSqlManagementDataMaskingPoliciesOperationsAsync(AzureMgmtRecordedTestC
                 "name": "str",
                 "type": "str",
             },
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
 
         # please add some check logic here by yourself

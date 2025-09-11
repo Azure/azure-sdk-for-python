@@ -20,7 +20,7 @@ autorest
 ### Settings
 
 ```yaml
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/webpubsub/data-plane/WebPubSub/stable/2024-01-01/webpubsub.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/webpubsub/data-plane/WebPubSub/stable/2024-12-01/webpubsub.json
 output-folder: ../
 namespace: azure.messaging.webpubsubservice
 package-name: azure-messaging-webpubsubservice
@@ -61,6 +61,7 @@ directive:
         }
 ```
 
+### Rename parameters in "GenerateToken" operation
 ```yaml
 directive:
   - from: swagger-document
@@ -71,6 +72,10 @@ directive:
     where: $["paths"]["/api/hubs/{hub}/:generateToken"].post.parameters
     transform: >
         $[5]["x-ms-client-name"] = "groups"
+  - from: swagger-document
+    where: $["paths"]["/api/hubs/{hub}/:generateToken"].post.parameters
+    transform: >
+        $[6]["x-ms-client-name"] = "clientProtocol"
 ```
 
 ```yaml
@@ -86,6 +91,14 @@ directive:
     where: $["paths"]["/api/hubs/{hub}/:generateToken"].post
     transform: $["operationId"] = "GetClientAccessToken"
 ```
+
+### Remove operations
+```yaml
+directive:
+ - remove-operation: "AddConnectionsToGroups"
+ - remove-operation: "RemoveConnectionsFromGroups"
+```
+
 
 ### Add hub to client on generate token
 
@@ -255,4 +268,17 @@ directive:
 - from: swagger-document
   where: $.paths["/api/hubs/{hub}/users/{userId}/:closeConnections"].post.parameters["0"]
   transform: $["x-ms-parameter-location"] = "client"
+```
+
+### ListConnectionsInGroup
+``` yaml
+directive:
+- from: swagger-document
+  where: $.paths["/api/hubs/{hub}/groups/{group}/connections"].get.parameters["0"]
+  transform: $["x-ms-parameter-location"] = "client"
+
+  # Use keyword-only "group" parameter instead of putting it in the method name
+- rename-operation:
+    from: ListConnectionsInGroup
+    to: ListConnections
 ```

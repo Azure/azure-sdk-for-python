@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, overload
+from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -503,7 +503,7 @@ class QueueOperations:
         maxpagesize: Optional[str] = None,
         filter: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.ListQueue"]:
+    ) -> AsyncItemPaged["_models.ListQueue"]:
         """Gets a list of all the queues under the specified storage account.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The

@@ -20,7 +20,7 @@ class TestDnsResolverManagementDnsResolverPoliciesOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_dns_resolver_policies_begin_create_or_update(self, resource_group):
         response = self.client.dns_resolver_policies.begin_create_or_update(
             resource_group_name=resource_group.name,
             dns_resolver_policy_name="str",
@@ -42,7 +42,7 @@ class TestDnsResolverManagementDnsResolverPoliciesOperations(AzureMgmtRecordedTe
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2023-07-01-preview",
+            api_version="2025-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -50,12 +50,12 @@ class TestDnsResolverManagementDnsResolverPoliciesOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_update(self, resource_group):
+    def test_dns_resolver_policies_begin_update(self, resource_group):
         response = self.client.dns_resolver_policies.begin_update(
             resource_group_name=resource_group.name,
             dns_resolver_policy_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2023-07-01-preview",
+            api_version="2025-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -63,11 +63,11 @@ class TestDnsResolverManagementDnsResolverPoliciesOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_dns_resolver_policies_begin_delete(self, resource_group):
         response = self.client.dns_resolver_policies.begin_delete(
             resource_group_name=resource_group.name,
             dns_resolver_policy_name="str",
-            api_version="2023-07-01-preview",
+            api_version="2025-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -75,11 +75,11 @@ class TestDnsResolverManagementDnsResolverPoliciesOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_dns_resolver_policies_get(self, resource_group):
         response = self.client.dns_resolver_policies.get(
             resource_group_name=resource_group.name,
             dns_resolver_policy_name="str",
-            api_version="2023-07-01-preview",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself
@@ -87,10 +87,10 @@ class TestDnsResolverManagementDnsResolverPoliciesOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_resource_group(self, resource_group):
+    def test_dns_resolver_policies_list_by_resource_group(self, resource_group):
         response = self.client.dns_resolver_policies.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2023-07-01-preview",
+            api_version="2025-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -98,9 +98,9 @@ class TestDnsResolverManagementDnsResolverPoliciesOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_dns_resolver_policies_list(self, resource_group):
         response = self.client.dns_resolver_policies.list(
-            api_version="2023-07-01-preview",
+            api_version="2025-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -108,11 +108,11 @@ class TestDnsResolverManagementDnsResolverPoliciesOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_virtual_network(self, resource_group):
+    def test_dns_resolver_policies_list_by_virtual_network(self, resource_group):
         response = self.client.dns_resolver_policies.list_by_virtual_network(
             resource_group_name=resource_group.name,
             virtual_network_name="str",
-            api_version="2023-07-01-preview",
+            api_version="2025-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

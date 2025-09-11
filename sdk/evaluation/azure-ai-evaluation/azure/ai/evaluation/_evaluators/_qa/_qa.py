@@ -49,17 +49,17 @@ class QAEvaluator(MultiEvaluatorBase[Union[str, float]]):
             :caption: Initialize and call a QAEvaluator.
 
     .. admonition:: Example using Azure AI Project URL:
-        
+
         .. literalinclude:: ../samples/evaluation_samples_evaluate_fdp.py
             :start-after: [START qa_evaluator]
             :end-before: [END qa_evaluator]
             :language: python
             :dedent: 8
-            :caption: Initialize and call QAEvaluator using Azure AI Project URL in the following format 
+            :caption: Initialize and call QAEvaluator using Azure AI Project URL in the following format
                 https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
 
     .. admonition:: Example with Threshold:
-    
+
         .. literalinclude:: ../samples/evaluation_samples_threshold.py
             :start-after: [START threshold_qa_evaluator]
             :end-before: [END threshold_qa_evaluator]
@@ -74,7 +74,7 @@ class QAEvaluator(MultiEvaluatorBase[Union[str, float]]):
         however, it is recommended to use the new keys moving forward as the old keys will be deprecated in the future.
     """
 
-    id = "qa"
+    id = "azureai://built-in/evaluators/qa"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     def __init__(
@@ -87,7 +87,7 @@ class QAEvaluator(MultiEvaluatorBase[Union[str, float]]):
         fluency_threshold: int = 3,
         similarity_threshold: int = 3,
         f1_score_threshold: float = 0.5,
-        **kwargs
+        **kwargs,
     ):
         # Type checking
         for name, value in [

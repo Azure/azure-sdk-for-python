@@ -33,7 +33,7 @@ from ._constants import (
     AzureWebAppEnvironmentVariable,
     ContainerAppEnvironmentVariable,
     KubernetesEnvironmentVariable,
-    EMPTY_LABEL,
+    NULL_CHAR,
     CUSTOM_FILTER_KEY,
     PERCENTAGE_FILTER_KEY,
     TIME_WINDOW_FILTER_KEY,
@@ -166,7 +166,7 @@ def _build_sentinel(setting: Union[str, Tuple[str, str]]) -> Tuple[str, str]:
         key, label = setting  # type:ignore
     except IndexError:
         key = setting
-        label = EMPTY_LABEL
+        label = NULL_CHAR
     if "*" in key or "*" in label:
         raise ValueError("Wildcard key or label filters are not supported for refresh.")
     return key, label
@@ -263,7 +263,7 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
         self._origin_endpoint = kwargs.get("endpoint", None)
         self._dict: Dict[str, Any] = {}
         self._selects: List[SettingSelector] = kwargs.pop(
-            "selects", [SettingSelector(key_filter="*", label_filter=EMPTY_LABEL)]
+            "selects", [SettingSelector(key_filter="*", label_filter=NULL_CHAR)]
         )
 
         trim_prefixes: List[str] = kwargs.pop("trim_prefixes", [])

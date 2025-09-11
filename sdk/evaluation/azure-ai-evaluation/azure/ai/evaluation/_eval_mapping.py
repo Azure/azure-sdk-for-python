@@ -38,7 +38,7 @@ from azure.ai.evaluation import (
     TaskAdherenceEvaluator,
     ToolCallAccuracyEvaluator,
     UngroundedAttributesEvaluator,
-    ViolenceEvaluator
+    ViolenceEvaluator,
 )
 
 EVAL_CLASS_MAP = {

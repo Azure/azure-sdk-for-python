@@ -2,11 +2,14 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import inspect
+import contextlib
 import json
 import logging
 import os
 import re
-from typing import Any, Callable, Dict, List, Optional, Set, Tuple, TypedDict, Union, cast
+import tempfile
+import json
+from typing import Any, Callable, Dict, List, Literal, Optional, Set, Tuple, TypedDict, Union, cast
 
 from openai import OpenAI, AzureOpenAI
 from azure.ai.evaluation._legacy._adapters._constants import LINE_NUMBER
@@ -27,10 +30,10 @@ from .._constants import (
     Prefixes,
     _InternalEvaluationMetrics,
     BINARY_AGGREGATE_SUFFIX,
-    DEFAULT_OAI_EVAL_RUN_NAME
+    DEFAULT_OAI_EVAL_RUN_NAME,
 )
 from .._model_configurations import AzureAIProject, EvaluationResult, EvaluatorConfig
-from .._user_agent import USER_AGENT
+from .._user_agent import UserAgentSingleton
 from ._batch_run import (
     EvalRunContext,
     CodeClient,
@@ -43,7 +46,8 @@ from ._utils import (
     _log_metrics_and_instance_results,
     _trace_destination_from_project_scope,
     _write_output,
-    DataLoaderFactory, _log_metrics_and_instance_results_onedp,
+    DataLoaderFactory,
+    _log_metrics_and_instance_results_onedp,
 )
 from ._batch_run.batch_clients import BatchClient, BatchClientRun
 
@@ -51,8 +55,9 @@ from ._evaluate_aoai import (
     _begin_aoai_evaluation,
     _split_evaluators_and_grader_configs,
     _get_evaluation_run_results,
-    OAIEvalRunCreationInfo
+    OAIEvalRunCreationInfo,
 )
+
 LOGGER = logging.getLogger(__name__)
 
 # For metrics (aggregates) whose metric names intentionally differ from their
@@ -69,11 +74,13 @@ class __EvaluatorInfo(TypedDict):
     metrics: Dict[str, Any]
     run_summary: Dict[str, Any]
 
+
 class __ValidatedData(TypedDict):
-    '''
+    """
     Simple dictionary that contains ALL pre-processed data and
     the resultant objects that are needed for downstream evaluation.
-    '''
+    """
+
     evaluators: Dict[str, Callable]
     graders: Dict[str, AzureOpenAIGrader]
     input_data_df: pd.DataFrame
@@ -255,7 +262,9 @@ def _aggregation_binary_output(df: pd.DataFrame) -> Dict[str, float]:
         if len(parts) >= 3:
             evaluator_name = parts[1]
         else:
-            LOGGER.warning("Skipping column '%s' due to unexpected format. Expected at least three parts separated by '.'", col)
+            LOGGER.warning(
+                "Skipping column '%s' due to unexpected format. Expected at least three parts separated by '.'", col
+            )
             continue
         if evaluator_name:
             # Count the occurrences of each unique value (pass/fail)
@@ -455,7 +464,7 @@ def _validate_columns_for_evaluators(
         )
 
 
-def _validate_and_load_data(target, data, evaluators, output_path, azure_ai_project, evaluation_name):
+def _validate_and_load_data(target, data, evaluators, output_path, azure_ai_project, evaluation_name, tags):
     if data is None:
         msg = "The 'data' parameter is required for evaluation."
         raise EvaluationException(
@@ -604,6 +613,18 @@ def _apply_target_to_data(
             category=ErrorCategory.FAILED_EXECUTION,
             blame=ErrorBlame.USER_ERROR,
         )
+
+    # Log a warning if some rows failed
+    failed_lines = run_summary.get("failed_lines", 0)
+    completed_lines = run_summary["completed_lines"]
+    total_lines = failed_lines + completed_lines
+
+    if failed_lines > 0:
+        LOGGER.warning(
+            f"Target function completed {completed_lines} out of {total_lines} rows. "
+            f"{failed_lines} rows failed and will be filled with NaN values."
+        )
+
     # Remove input and output prefix
     generated_columns = {
         col[len(Prefixes.OUTPUTS) :] for col in target_output.columns if col.startswith(Prefixes.OUTPUTS)
@@ -611,6 +632,13 @@ def _apply_target_to_data(
     # Sort output by line numbers
     target_output.set_index(f"inputs.{LINE_NUMBER}", inplace=True)
     target_output.sort_index(inplace=True)
+
+    initial_data_with_line_numbers = initial_data.copy()
+    initial_data_with_line_numbers[LINE_NUMBER] = range(len(initial_data))
+
+    complete_index = initial_data_with_line_numbers[LINE_NUMBER]
+    target_output = target_output.reindex(complete_index)
+
     target_output.reset_index(inplace=True, drop=False)
     # target_output contains only input columns, taken by function,
     # so we need to concatenate it to the input data frame.
@@ -619,8 +647,8 @@ def _apply_target_to_data(
     # Rename outputs columns to __outputs
     rename_dict = {col: col.replace(Prefixes.OUTPUTS, Prefixes.TSG_OUTPUTS) for col in target_output.columns}
     target_output.rename(columns=rename_dict, inplace=True)
-    # Concatenate output to input
-    target_output = pd.concat([target_output, initial_data], axis=1)
+    # Concatenate output to input - now both dataframes have the same number of rows
+    target_output = pd.concat([initial_data, target_output], axis=1)
 
     return target_output, generated_columns, run
 
@@ -638,7 +666,7 @@ def _process_column_mappings(
 
     processed_config: Dict[str, Dict[str, str]] = {}
 
-    expected_references = re.compile(r"^\$\{(target|data)\.[a-zA-Z0-9_]+\}$")
+    expected_references = re.compile(r"^\$\{(target|data)\.([a-zA-Z0-9_]+(?:\.[a-zA-Z0-9_]+)*)\}$")
 
     if column_mapping:
         for evaluator, mapping_config in column_mapping.items():
@@ -697,6 +725,7 @@ def evaluate(
     azure_ai_project: Optional[Union[str, AzureAIProject]] = None,
     output_path: Optional[Union[str, os.PathLike]] = None,
     fail_on_evaluator_errors: bool = False,
+    tags: Optional[Dict[str, str]] = None,
     **kwargs,
 ) -> EvaluationResult:
     """Evaluates target or data with built-in or custom evaluators. If both target and data are provided,
@@ -721,14 +750,20 @@ def evaluate(
     :keyword output_path: The local folder or file path to save evaluation results to if set. If folder path is provided
           the results will be saved to a file named `evaluation_results.json` in the folder.
     :paramtype output_path: Optional[str]
-    :keyword azure_ai_project: The Azure AI project, which can either be a string representing the project endpoint 
-        or an instance of AzureAIProject. It contains subscription id, resource group, and project name. 
+    :keyword azure_ai_project: The Azure AI project, which can either be a string representing the project endpoint
+        or an instance of AzureAIProject. It contains subscription id, resource group, and project name.
     :paramtype azure_ai_project: Optional[Union[str, ~azure.ai.evaluation.AzureAIProject]]
     :keyword fail_on_evaluator_errors: Whether or not the evaluation should cancel early with an EvaluationException
         if ANY evaluator fails during their evaluation.
         Defaults to false, which means that evaluations will continue regardless of failures.
         If such failures occur, metrics may be missing, and evidence of failures can be found in the evaluation's logs.
     :paramtype fail_on_evaluator_errors: bool
+    :keyword tags: A dictionary of tags to be added to the evaluation run for tracking and organization purposes.
+        Keys and values must be strings. For more information about tag limits, see:
+        https://learn.microsoft.com/en-us/azure/machine-learning/resource-limits-capacity?view=azureml-api-2#runs
+    :paramtype tags: Optional[Dict[str, str]]
+    :keyword user_agent: A string to append to the default user-agent sent with evaluation http requests
+    :paramtype user_agent: Optional[str]
     :return: Evaluation results.
     :rtype: ~azure.ai.evaluation.EvaluationResult
 
@@ -740,29 +775,32 @@ def evaluate(
             :language: python
             :dedent: 8
             :caption: Run an evaluation on local data with one or more evaluators using azure.ai.evaluation.AzureAIProject
-        
+
     .. admonition:: Example using Azure AI Project URL:
-                
+
         .. literalinclude:: ../samples/evaluation_samples_evaluate_fdp.py
             :start-after: [START evaluate_method]
             :end-before: [END evaluate_method]
             :language: python
             :dedent: 8
-            :caption: Run an evaluation on local data with one or more evaluators using Azure AI Project URL in following format 
+            :caption: Run an evaluation on local data with one or more evaluators using Azure AI Project URL in following format
                 https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
     """
     try:
-        return _evaluate(
-            evaluation_name=evaluation_name,
-            target=target,
-            data=data,
-            evaluators_and_graders=evaluators,
-            evaluator_config=evaluator_config,
-            azure_ai_project=azure_ai_project,
-            output_path=output_path,
-            fail_on_evaluator_errors=fail_on_evaluator_errors,
-            **kwargs,
-        )
+        user_agent: Optional[str] = kwargs.get("user_agent")
+        with UserAgentSingleton().add_useragent_product(user_agent) if user_agent else contextlib.nullcontext():
+            return _evaluate(
+                evaluation_name=evaluation_name,
+                target=target,
+                data=data,
+                evaluators_and_graders=evaluators,
+                evaluator_config=evaluator_config,
+                azure_ai_project=azure_ai_project,
+                output_path=output_path,
+                fail_on_evaluator_errors=fail_on_evaluator_errors,
+                tags=tags,
+                **kwargs,
+            )
     except Exception as e:
         # Handle multiprocess bootstrap error
         bootstrap_error = (
@@ -829,11 +867,12 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     azure_ai_project: Optional[Union[str, AzureAIProject]] = None,
     output_path: Optional[Union[str, os.PathLike]] = None,
     fail_on_evaluator_errors: bool = False,
+    tags: Optional[Dict[str, str]] = None,
     **kwargs,
 ) -> EvaluationResult:
     if fail_on_evaluator_errors:
         _print_fail_flag_warning()
-    
+
     # Turn inputted mess of data into a dataframe, apply targets if needed
     # split graders and evaluators, and verify that column mappings are sensible.
     validated_data = _preprocess_data(
@@ -844,9 +883,11 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
         output_path=output_path,
         azure_ai_project=azure_ai_project,
         evaluation_name=evaluation_name,
+        fail_on_evaluator_errors=fail_on_evaluator_errors,
+        tags=tags,
         **kwargs,
     )
-    
+
     # extract relevant info from validated data
     column_mapping = validated_data["column_mapping"]
     evaluators = validated_data["evaluators"]
@@ -864,29 +905,25 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     if need_oai_run:
         try:
             aoi_name = evaluation_name if evaluation_name else DEFAULT_OAI_EVAL_RUN_NAME
-            eval_run_info_list = _begin_aoai_evaluation(
-                graders,
-                column_mapping,
-                input_data_df,
-                aoi_name
-            )
+            eval_run_info_list = _begin_aoai_evaluation(graders, column_mapping, input_data_df, aoi_name)
             need_get_oai_results = len(eval_run_info_list) > 0
         except EvaluationException as e:
             if need_local_run:
                 # If there are normal evaluators, don't stop execution and try to run
                 # those.
-                LOGGER.warning("Remote Azure Open AI grader evaluations failed during run creation." +
-                               " Continuing with local evaluators.")
+                LOGGER.warning(
+                    "Remote Azure Open AI grader evaluations failed during run creation."
+                    + " Continuing with local evaluators."
+                )
                 LOGGER.warning(e)
             else:
                 raise e
-    
+
     # Evaluate 'normal' evaluators. This includes built-in evaluators and any user-supplied callables.
     if need_local_run:
         try:
-            eval_result_df, eval_metrics, per_evaluator_results = _run_callable_evaluators(     
-                validated_data=validated_data,
-                fail_on_evaluator_errors=fail_on_evaluator_errors
+            eval_result_df, eval_metrics, per_evaluator_results = _run_callable_evaluators(
+                validated_data=validated_data, fail_on_evaluator_errors=fail_on_evaluator_errors
             )
             results_df = eval_result_df
             metrics = eval_metrics
@@ -904,7 +941,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     # Retrieve OAI eval run results if needed.
     if need_get_oai_results:
         try:
-            aoai_results, aoai_metrics = _get_evaluation_run_results(eval_run_info_list) # type: ignore
+            aoai_results, aoai_metrics = _get_evaluation_run_results(eval_run_info_list)  # type: ignore
             # Post build TODO: add equivalent of  _print_summary(per_evaluator_results) here
 
             # Combine results if both evaluators and graders are present
@@ -927,7 +964,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     name_map = _map_names_to_builtins(evaluators, graders)
     if is_onedp_project(azure_ai_project):
         studio_url = _log_metrics_and_instance_results_onedp(
-            metrics, results_df, azure_ai_project, evaluation_name, name_map, **kwargs
+            metrics, results_df, azure_ai_project, evaluation_name, name_map, tags=tags, **kwargs
         )
     else:
         # Since tracing is disabled, pass None for target_run so a dummy evaluation run will be created each time.
@@ -935,7 +972,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
         studio_url = None
         if trace_destination:
             studio_url = _log_metrics_and_instance_results(
-                metrics, results_df, trace_destination, None, evaluation_name, name_map, **kwargs
+                metrics, results_df, trace_destination, None, evaluation_name, name_map, tags=tags, **kwargs
             )
 
     result_df_dict = results_df.to_dict("records")
@@ -955,23 +992,20 @@ def _preprocess_data(
     output_path: Optional[Union[str, os.PathLike]] = None,
     azure_ai_project: Optional[Union[str, AzureAIProject]] = None,
     evaluation_name: Optional[str] = None,
+    fail_on_evaluator_errors: bool = False,
+    tags: Optional[Dict[str, str]] = None,
     **kwargs,
-    ) -> __ValidatedData:
+) -> __ValidatedData:
     # Process evaluator config to replace ${target.} with ${data.}
     if evaluator_config is None:
         evaluator_config = {}
 
     input_data_df = _validate_and_load_data(
-        target,
-        data,
-        evaluators_and_graders,
-        output_path,
-        azure_ai_project,
-        evaluation_name
+        target, data, evaluators_and_graders, output_path, azure_ai_project, evaluation_name, tags
     )
     if target is not None:
         _validate_columns_for_target(input_data_df, target)
-        
+
     # extract column mapping dicts into dictionary mapping evaluator name to column mapping
     column_mapping = _process_column_mappings(
         {
@@ -993,15 +1027,49 @@ def _preprocess_data(
     batch_run_client: BatchClient
     batch_run_data: Union[str, os.PathLike, pd.DataFrame] = data
 
-    if kwargs.pop("_use_run_submitter_client", False):
-        batch_run_client = RunSubmitterClient()
+    def get_client_type(evaluate_kwargs: Dict[str, Any]) -> Literal["run_submitter", "pf_client", "code_client"]:
+        """Determines the BatchClient to use from provided kwargs (_use_run_submitter_client and _use_pf_client)"""
+        _use_run_submitter_client = cast(Optional[bool], kwargs.pop("_use_run_submitter_client", None))
+        _use_pf_client = cast(Optional[bool], kwargs.pop("_use_pf_client", None))
+
+        if _use_run_submitter_client is None and _use_pf_client is None:
+            # If both are unset, return default
+            return "run_submitter"
+
+        if _use_run_submitter_client and _use_pf_client:
+            raise EvaluationException(
+                message="Only one of _use_pf_client and _use_run_submitter_client should be set to True.",
+                target=ErrorTarget.EVALUATE,
+                category=ErrorCategory.INVALID_VALUE,
+                blame=ErrorBlame.USER_ERROR,
+            )
+
+        if _use_run_submitter_client == False and _use_pf_client == False:
+            return "code_client"
+
+        if _use_run_submitter_client:
+            return "run_submitter"
+        if _use_pf_client:
+            return "pf_client"
+
+        if _use_run_submitter_client is None and _use_pf_client == False:
+            return "run_submitter"
+        if _use_run_submitter_client == False and _use_pf_client is None:
+            return "pf_client"
+
+        assert False, "This should be impossible"
+
+    client_type: Literal["run_submitter", "pf_client", "code_client"] = get_client_type(kwargs)
+
+    if client_type == "run_submitter":
+        batch_run_client = RunSubmitterClient(raise_on_errors=fail_on_evaluator_errors)
         batch_run_data = input_data_df
-    elif kwargs.pop("_use_pf_client", True):
-        batch_run_client = ProxyClient(user_agent=USER_AGENT)
+    elif client_type == "pf_client":
+        batch_run_client = ProxyClient(user_agent=UserAgentSingleton().value)
         # Ensure the absolute path is passed to pf.run, as relative path doesn't work with
         # multiple evaluators. If the path is already absolute, abspath will return the original path.
         batch_run_data = os.path.abspath(data)
-    else:
+    elif client_type == "code_client":
         batch_run_client = CodeClient()
         batch_run_data = input_data_df
 
@@ -1011,17 +1079,50 @@ def _preprocess_data(
             target, batch_run_data, batch_run_client, input_data_df, evaluation_name, **kwargs
         )
 
-        for evaluator_name, mapping in column_mapping.items():
-            mapped_to_values = set(mapping.values())
-            for col in target_generated_columns:
-                # If user defined mapping differently, do not change it.
-                # If it was mapped to target, we have already changed it
-                # in _process_column_mappings
-                run_output = f"${{run.outputs.{col}}}"
-                # We will add our mapping only if
-                # customer did not mapped target output.
-                if col not in mapping and run_output not in mapped_to_values:
-                    column_mapping[evaluator_name][col] = run_output  # pylint: disable=unnecessary-dict-index-lookup
+        # IMPORTANT FIX: For ProxyClient, create a temporary file with the complete dataframe
+        # This ensures that evaluators get all rows (including failed ones with NaN values)
+        if isinstance(batch_run_client, ProxyClient):
+            # Create a temporary JSONL file with the complete dataframe
+            temp_file = tempfile.NamedTemporaryFile(mode="w", suffix=".jsonl", delete=False)
+            try:
+                for _, row in input_data_df.iterrows():
+                    row_dict = row.to_dict()
+                    temp_file.write(json.dumps(row_dict) + "\n")
+                temp_file.close()
+                batch_run_data = temp_file.name
+
+                # Update column mappings to use data references instead of run outputs
+                for evaluator_name, mapping in column_mapping.items():
+                    mapped_to_values = set(mapping.values())
+                    for col in target_generated_columns:
+                        # Use data reference instead of run output to ensure we get all rows
+                        target_reference = f"${{data.{Prefixes.TSG_OUTPUTS}{col}}}"
+
+                        # We will add our mapping only if customer did not map target output.
+                        if col not in mapping and target_reference not in mapped_to_values:
+                            column_mapping[evaluator_name][col] = target_reference
+
+                # Don't pass the target_run since we're now using the complete dataframe
+                target_run = None
+
+            except Exception as e:
+                # Clean up the temp file if something goes wrong
+                if os.path.exists(temp_file.name):
+                    os.unlink(temp_file.name)
+                raise e
+        else:
+            # For DataFrame-based clients, update batch_run_data to use the updated input_data_df
+            batch_run_data = input_data_df
+
+            # Update column mappings for DataFrame clients
+            for evaluator_name, mapping in column_mapping.items():
+                mapped_to_values = set(mapping.values())
+                for col in target_generated_columns:
+                    target_reference = f"${{data.{Prefixes.TSG_OUTPUTS}{col}}}"
+
+                    # We will add our mapping only if customer did not map target output.
+                    if col not in mapping and target_reference not in mapped_to_values:
+                        column_mapping[evaluator_name][col] = target_reference
 
     # After we have generated all columns, we can check if we have everything we need for evaluators.
     _validate_columns_for_evaluators(input_data_df, evaluators, target, target_generated_columns, column_mapping)
@@ -1060,30 +1161,50 @@ def _run_callable_evaluators(
     batch_run_data = validated_data["batch_run_data"]
     column_mapping = validated_data["column_mapping"]
     evaluators = validated_data["evaluators"]
-    with EvalRunContext(batch_run_client):
-        runs = {
-            evaluator_name: batch_run_client.run(
-                flow=evaluator,
-                data=batch_run_data,
-                run=target_run,
-                evaluator_name=evaluator_name,
-                column_mapping=column_mapping.get(evaluator_name, column_mapping.get("default", None)),
-                stream=True,
-                name=kwargs.get("_run_name"),
-            )
-            for evaluator_name, evaluator in evaluators.items()
-        }
 
-        # get_details needs to be called within EvalRunContext scope in order to have user agent populated
-        per_evaluator_results: Dict[str, __EvaluatorInfo] = {
-            evaluator_name: {
-                "result": batch_run_client.get_details(run, all_results=True),
-                "metrics": batch_run_client.get_metrics(run),
-                "run_summary": batch_run_client.get_run_summary(run),
+    # Clean up temporary file after evaluation if it was created
+    temp_file_to_cleanup = None
+    if (
+        isinstance(batch_run_client, ProxyClient)
+        and isinstance(batch_run_data, str)
+        and batch_run_data.endswith(".jsonl")
+    ):
+        # Check if it's a temporary file (contains temp directory path)
+        if tempfile.gettempdir() in batch_run_data:
+            temp_file_to_cleanup = batch_run_data
+
+    try:
+        with EvalRunContext(batch_run_client):
+            runs = {
+                evaluator_name: batch_run_client.run(
+                    flow=evaluator,
+                    data=batch_run_data,
+                    # Don't pass target_run when using complete dataframe
+                    run=target_run,
+                    evaluator_name=evaluator_name,
+                    column_mapping=column_mapping.get(evaluator_name, column_mapping.get("default", None)),
+                    stream=True,
+                    name=kwargs.get("_run_name"),
+                )
+                for evaluator_name, evaluator in evaluators.items()
             }
-            for evaluator_name, run in runs.items()
-        }
 
+            # get_details needs to be called within EvalRunContext scope in order to have user agent populated
+            per_evaluator_results: Dict[str, __EvaluatorInfo] = {
+                evaluator_name: {
+                    "result": batch_run_client.get_details(run, all_results=True),
+                    "metrics": batch_run_client.get_metrics(run),
+                    "run_summary": batch_run_client.get_run_summary(run),
+                }
+                for evaluator_name, run in runs.items()
+            }
+    finally:
+        # Clean up temporary file if it was created
+        if temp_file_to_cleanup and os.path.exists(temp_file_to_cleanup):
+            try:
+                os.unlink(temp_file_to_cleanup)
+            except Exception as e:
+                LOGGER.warning(f"Failed to clean up temporary file {temp_file_to_cleanup}: {e}")
     # Concatenate all results
     evaluators_result_df = pd.DataFrame()
     evaluators_metric = {}
@@ -1128,10 +1249,11 @@ def _run_callable_evaluators(
 
     return eval_result_df, eval_metrics, per_evaluator_results
 
+
 def _map_names_to_builtins(
-        evaluators: Dict[str, Callable],
-        graders: Dict[str, AzureOpenAIGrader],
-    ) -> Dict[str, str]:
+    evaluators: Dict[str, Callable],
+    graders: Dict[str, AzureOpenAIGrader],
+) -> Dict[str, str]:
     """
     Construct a mapping from user-supplied evaluator names to which known, built-in
     evaluator or grader they refer to. Custom evaluators are excluded from the mapping
@@ -1143,9 +1265,10 @@ def _map_names_to_builtins(
     :type graders: Dict[str, AzureOpenAIGrader]
     :param evaluator_config: The configuration for evaluators.
     :type evaluator_config: Optional[Dict[str, EvaluatorConfig]]
-    
+
     """
     from .._eval_mapping import EVAL_CLASS_MAP
+
     name_map = {}
 
     for name, evaluator in evaluators.items():
@@ -1159,11 +1282,12 @@ def _map_names_to_builtins(
         if not found_eval:
             # Skip custom evaluators - we only want to track built-in evaluators
             pass
-    
-    for  name, grader in graders.items():
+
+    for name, grader in graders.items():
         name_map[name] = grader.id
 
     return name_map
+
 
 def _turn_error_logs_into_exception(log_path: str) -> None:
     """Produce an EvaluationException using the contents of the inputted

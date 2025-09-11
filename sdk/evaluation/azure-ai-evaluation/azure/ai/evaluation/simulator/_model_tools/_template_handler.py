@@ -149,14 +149,16 @@ class AdversarialTemplateHandler:
     """
     Initialize the AdversarialTemplateHandler.
 
-    :param azure_ai_project: The Azure AI project, which can either be a string representing the project endpoint 
-        or an instance of AzureAIProject. It contains subscription id, resource group, and project name. 
+    :param azure_ai_project: The Azure AI project, which can either be a string representing the project endpoint
+        or an instance of AzureAIProject. It contains subscription id, resource group, and project name.
     :type azure_ai_project: Union[str, AzureAIProject]
     :param rai_client: The RAI client or AI Project client used for fetching parameters.
     :type rai_client: Union[~azure.ai.evaluation.simulator._model_tools.RAIClient, ~azure.ai.evaluation._common.onedp._client.AIProjectClient]
     """
 
-    def __init__(self, azure_ai_project: Union[str, AzureAIProject], rai_client: Union[RAIClient, AIProjectClient]) -> None:
+    def __init__(
+        self, azure_ai_project: Union[str, AzureAIProject], rai_client: Union[RAIClient, AIProjectClient]
+    ) -> None:
         self.azure_ai_project = azure_ai_project
         self.categorized_ch_parameters: Optional[Dict[str, _CategorizedParameter]] = None
         self.rai_client = rai_client
@@ -165,12 +167,11 @@ class AdversarialTemplateHandler:
         if self.categorized_ch_parameters is None:
             categorized_parameters: Dict[str, _CategorizedParameter] = {}
             util = ContentHarmTemplatesUtils
-
             if isinstance(self.rai_client, RAIClient):
                 parameters = await self.rai_client.get_contentharm_parameters()
             elif isinstance(self.rai_client, AIProjectClient):
                 parameters = literal_eval(self.rai_client.red_teams.get_template_parameters())
-            
+
             for k in parameters.keys():
                 template_key = util.get_template_key(k)
                 categorized_parameters[template_key] = {
@@ -181,24 +182,30 @@ class AdversarialTemplateHandler:
             self.categorized_ch_parameters = categorized_parameters
 
         template_category = collection_key.split("adv_")[-1]
-        if template_category == "qa_enterprise":
+
+        # Handle both qa_enterprise and qa_documents mapping to qa
+        if template_category in ["qa_enterprise", "qa_documents"]:
             template_category = "qa"
 
         plist = self.categorized_ch_parameters
         ch_templates = []
+
         for key, value in plist.items():
+            # Skip enterprise templates for ADVERSARIAL_QA
             if collection_key == AdversarialScenario.ADVERSARIAL_QA.value and "enterprise" in key:
                 continue
-            if collection_key == AdversarialScenario.ADVERSARIAL_QA_ENTERPRISE.value and "enterprise" not in key:
+            # Skip non-enterprise templates for ADVERSARIAL_QA_DOCUMENTS
+            if collection_key == AdversarialScenario.ADVERSARIAL_QA_DOCUMENTS.value and "enterprise" not in key:
                 continue
+
             if value["category"] == template_category:
                 params = value["parameters"]
                 for p in params:
                     p.update({"ch_template_placeholder": "{{ch_template_placeholder}}"})
 
                 template = AdversarialTemplate(template_name=key, text=None, context_key=[], template_parameters=params)
-
                 ch_templates.append(template)
+
         return ch_templates
 
     def get_template(self, template_name: str) -> Optional[AdversarialTemplate]:

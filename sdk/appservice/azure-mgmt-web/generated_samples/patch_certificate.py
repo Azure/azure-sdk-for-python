@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -33,11 +34,15 @@ def main():
     response = client.certificates.update(
         resource_group_name="testrg123",
         name="testc6282",
-        certificate_envelope={"properties": {"password": "<password>"}},
+        certificate_envelope={
+            "properties": {
+                "keyVaultId": "/subscriptions/34adfa4f-cedf-4dc0-ba29-b6d1a69ab345/resourceGroups/testrg123/providers/Microsoft.KeyVault/vaults/testKV"
+            }
+        },
     )
     print(response)
 
 
-# x-ms-original-file: specification/web/resource-manager/Microsoft.Web/stable/2024-04-01/examples/PatchCertificate.json
+# x-ms-original-file: specification/web/resource-manager/Microsoft.Web/stable/2024-11-01/examples/PatchCertificate.json
 if __name__ == "__main__":
     main()

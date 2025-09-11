@@ -22,8 +22,8 @@ USAGE:
 import os
 from azure.communication.phonenumbers import PhoneNumbersClient
 
-connection_str = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
-search_id = os.getenv("AZURE_COMMUNICATION_SERVICE_SEARCH_ID_TO_PURCHASE")
+connection_str = os.environ["COMMUNICATION_SAMPLES_CONNECTION_STRING"]
+search_id = os.environ["AZURE_COMMUNICATION_SERVICE_SEARCH_ID_TO_PURCHASE"]
 phone_numbers_client = PhoneNumbersClient.from_connection_string(connection_str)
 
 

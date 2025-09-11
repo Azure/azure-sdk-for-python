@@ -45,7 +45,7 @@ class FluencyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             :caption: Initialize with threshold and call a FluencyEvaluator.
 
     .. admonition:: Example using Azure AI Project URL:
-                
+
         .. literalinclude:: ../samples/evaluation_samples_evaluate_fdp.py
             :start-after: [START fluency_evaluator]
             :end-before: [END fluency_evaluator]
@@ -64,11 +64,11 @@ class FluencyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     _PROMPTY_FILE = "fluency.prompty"
     _RESULT_KEY = "fluency"
 
-    id = "azureml://registries/azureml/models/Fluency-Evaluator/versions/4"
+    id = "azureai://built-in/evaluators/fluency"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(self, model_config, *, threshold=3):
+    def __init__(self, model_config, *, credential=None, threshold=3):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         self._threshold = threshold
@@ -78,7 +78,8 @@ class FluencyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             prompty_file=prompty_path,
             result_key=self._RESULT_KEY,
             threshold=threshold,
-            _higher_is_better=self._higher_is_better
+            credential=credential,
+            _higher_is_better=self._higher_is_better,
         )
 
     @overload

@@ -25,10 +25,10 @@ class ProtectedMaterialEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
 
     :param credential: The credential required for connecting to the Azure AI project.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param azure_ai_project: The Azure AI project, which can either be a string representing the project endpoint 
-        or an instance of AzureAIProject. It contains subscription id, resource group, and project name. 
+    :param azure_ai_project: The Azure AI project, which can either be a string representing the project endpoint
+        or an instance of AzureAIProject. It contains subscription id, resource group, and project name.
     :type azure_ai_project: Union[str, ~azure.ai.evaluation.AzureAIProject]
-    
+
     .. admonition:: Example:
 
         .. literalinclude:: ../samples/evaluation_samples_evaluate.py
@@ -37,32 +37,39 @@ class ProtectedMaterialEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
             :language: python
             :dedent: 8
             :caption: Initialize and call a ProtectedMaterialEvaluator.
-    
+
     .. admonition:: Example using Azure AI Project URL:
-        
+
         .. literalinclude:: ../samples/evaluation_samples_evaluate_fdp.py
             :start-after: [START protected_material_evaluator]
             :end-before: [END protected_material_evaluator]
             :language: python
             :dedent: 8
-            :caption: Initialize and call ProtectedMaterialEvaluator using Azure AI Project URL in the following format 
+            :caption: Initialize and call ProtectedMaterialEvaluator using Azure AI Project URL in the following format
                 https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
 
     """
 
-    id = "azureml://registries/azureml/models/Protected-Material-Evaluator/versions/3"
+    id = "azureai://built-in/evaluators/protected_material"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
+    _OPTIONAL_PARAMS = ["query"]
 
     @override
     def __init__(
         self,
         credential,
         azure_ai_project,
+        **kwargs,
     ):
+        # Set default for evaluate_query if not provided
+        if "evaluate_query" not in kwargs:
+            kwargs["evaluate_query"] = True
+
         super().__init__(
             eval_metric=EvaluationMetrics.PROTECTED_MATERIAL,
             azure_ai_project=azure_ai_project,
             credential=credential,
+            **kwargs,
         )
 
     @overload

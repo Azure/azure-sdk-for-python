@@ -24,7 +24,7 @@ class TestSqlManagementManagedInstanceAzureADOnlyAuthenticationsOperations(Azure
         response = self.client.managed_instance_azure_ad_only_authentications.list_by_instance(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestSqlManagementManagedInstanceAzureADOnlyAuthenticationsOperations(Azure
             resource_group_name=resource_group.name,
             managed_instance_name="str",
             authentication_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -51,7 +51,7 @@ class TestSqlManagementManagedInstanceAzureADOnlyAuthenticationsOperations(Azure
             managed_instance_name="str",
             authentication_name="str",
             parameters={"azureADOnlyAuthentication": bool, "id": "str", "name": "str", "type": "str"},
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -64,7 +64,7 @@ class TestSqlManagementManagedInstanceAzureADOnlyAuthenticationsOperations(Azure
             resource_group_name=resource_group.name,
             managed_instance_name="str",
             authentication_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

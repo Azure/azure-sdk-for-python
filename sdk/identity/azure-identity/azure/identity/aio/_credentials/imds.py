@@ -3,10 +3,13 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
-from typing import Optional, Any
+from typing import Optional, Any, Dict
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 from azure.core.credentials import AccessTokenInfo
+from azure.core.pipeline.policies import AsyncRetryPolicy
+from azure.core.pipeline import PipelineResponse
+
 from ... import CredentialUnavailableError
 from ..._constants import EnvironmentVariables
 from .._internal import AsyncContextManager
@@ -16,10 +19,33 @@ from ..._internal import within_credential_chain
 from ..._credentials.imds import _get_request, _check_forbidden_response, PIPELINE_SETTINGS
 
 
+class AsyncImdsRetryPolicy(AsyncRetryPolicy):
+    """Async custom retry policy for IMDS credential with extended retry duration for 410 responses.
+
+    This policy ensures that specifically for 410 status codes, the total exponential backoff duration
+    is at least 70 seconds to handle temporary IMDS endpoint unavailability.
+    For other status codes, it uses the standard retry behavior.
+    """
+
+    def __init__(self, **kwargs: Any) -> None:
+        # Increased backoff factor to ensure at least 70 seconds retry duration for 410 responses.
+        # Five retries, with each retry sleeping for [0.0s, 5.0s, 10.0s, 20.0s, 40.0s] between attempts (75s total)
+        self.backoff_factor_for_410 = 2.5
+        super().__init__(**kwargs)
+
+    def is_retry(self, settings: Dict[str, Any], response: PipelineResponse[Any, Any]) -> bool:
+        if response.http_response.status_code == 410:
+            settings["backoff"] = self.backoff_factor_for_410
+        else:
+            settings["backoff"] = self.backoff_factor
+        return super().is_retry(settings, response)
+
+
 class ImdsCredential(AsyncContextManager, GetTokenMixin):
     def __init__(self, **kwargs: Any) -> None:
         super().__init__()
 
+        kwargs["retry_policy_class"] = AsyncImdsRetryPolicy
         self._client = AsyncManagedIdentityClient(_get_request, **dict(PIPELINE_SETTINGS, **kwargs))
         if EnvironmentVariables.AZURE_POD_IDENTITY_AUTHORITY_HOST in os.environ:
             self._endpoint_available: Optional[bool] = True

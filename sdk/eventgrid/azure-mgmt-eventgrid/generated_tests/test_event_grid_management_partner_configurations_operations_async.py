@@ -24,7 +24,7 @@ class TestEventGridManagementPartnerConfigurationsOperationsAsync(AzureMgmtRecor
     async def test_partner_configurations_get(self, resource_group):
         response = await self.client.partner_configurations.get(
             resource_group_name=resource_group.name,
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -62,7 +62,7 @@ class TestEventGridManagementPartnerConfigurationsOperationsAsync(AzureMgmtRecor
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-02-15",
+                api_version="2025-04-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -75,7 +75,7 @@ class TestEventGridManagementPartnerConfigurationsOperationsAsync(AzureMgmtRecor
         response = await (
             await self.client.partner_configurations.begin_delete(
                 resource_group_name=resource_group.name,
-                api_version="2025-02-15",
+                api_version="2025-04-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -92,7 +92,7 @@ class TestEventGridManagementPartnerConfigurationsOperationsAsync(AzureMgmtRecor
                     "defaultMaximumExpirationTimeInDays": 0,
                     "tags": {"str": "str"},
                 },
-                api_version="2025-02-15",
+                api_version="2025-04-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -104,7 +104,7 @@ class TestEventGridManagementPartnerConfigurationsOperationsAsync(AzureMgmtRecor
     async def test_partner_configurations_list_by_resource_group(self, resource_group):
         response = self.client.partner_configurations.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -114,7 +114,7 @@ class TestEventGridManagementPartnerConfigurationsOperationsAsync(AzureMgmtRecor
     @recorded_by_proxy_async
     async def test_partner_configurations_list_by_subscription(self, resource_group):
         response = self.client.partner_configurations.list_by_subscription(
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -130,7 +130,7 @@ class TestEventGridManagementPartnerConfigurationsOperationsAsync(AzureMgmtRecor
                 "partnerName": "str",
                 "partnerRegistrationImmutableId": "str",
             },
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -146,7 +146,7 @@ class TestEventGridManagementPartnerConfigurationsOperationsAsync(AzureMgmtRecor
                 "partnerName": "str",
                 "partnerRegistrationImmutableId": "str",
             },
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
 
         # please add some check logic here by yourself

@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -30,16 +31,15 @@ def main():
         subscription_id="34adfa4f-cedf-4dc0-ba29-b6d1a69ab345",
     )
 
-    response = client.diagnostics.execute_site_detector_slot(
+    response = client.diagnostics.execute_site_detector(
         resource_group_name="Sample-WestUSResourceGroup",
         site_name="SampleApp",
         detector_name="sitecrashes",
         diagnostic_category="availability",
-        slot="Production",
     )
     print(response)
 
 
-# x-ms-original-file: specification/web/resource-manager/Microsoft.Web/stable/2024-04-01/examples/Diagnostics_ExecuteSiteDetector.json
+# x-ms-original-file: specification/web/resource-manager/Microsoft.Web/stable/2024-11-01/examples/Diagnostics_ExecuteSiteDetector.json
 if __name__ == "__main__":
     main()

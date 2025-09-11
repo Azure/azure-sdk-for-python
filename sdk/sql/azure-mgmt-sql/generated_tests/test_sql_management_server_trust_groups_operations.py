@@ -24,7 +24,7 @@ class TestSqlManagementServerTrustGroupsOperations(AzureMgmtRecordedTestCase):
         response = self.client.server_trust_groups.list_by_location(
             resource_group_name=resource_group.name,
             location_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestSqlManagementServerTrustGroupsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             location_name="str",
             server_trust_group_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -57,7 +57,7 @@ class TestSqlManagementServerTrustGroupsOperations(AzureMgmtRecordedTestCase):
                 "trustScopes": ["str"],
                 "type": "str",
             },
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -70,7 +70,7 @@ class TestSqlManagementServerTrustGroupsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             location_name="str",
             server_trust_group_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -82,7 +82,7 @@ class TestSqlManagementServerTrustGroupsOperations(AzureMgmtRecordedTestCase):
         response = self.client.server_trust_groups.list_by_instance(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
