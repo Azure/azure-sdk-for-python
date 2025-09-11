@@ -285,7 +285,7 @@ def sdk_allowed_kwargs(kwargs):
     return {k: v for k, v in kwargs.items() if k in allowed_kwargs}
 
 
-def validate_load_arguments(*args, **kwargs) -> dict:
+def process_load_arguments(*args, **kwargs) -> dict:
     """
     Common validation logic for load function arguments.
 
@@ -323,6 +323,14 @@ def validate_load_arguments(*args, **kwargs) -> dict:
     if (endpoint or credential) and connection_string:
         raise ValueError("Please pass either endpoint and credential, or a connection string.")
 
+    # Grabbing the endpoint for future use
+    connection_string = kwargs.get("connection_string")
+
+    if connection_string:
+        kwargs["endpoint"] = connection_string.split(";")[0].split("=")[1]
+    if not kwargs["endpoint"]:
+        raise ValueError("No endpoint specified.")
+
     return kwargs
 
 
@@ -350,22 +358,14 @@ def process_key_vault_options(**kwargs):
     if kwargs.get("keyvault_credential") is not None and kwargs.get("secret_resolver") is not None:
         raise ValueError("A keyvault credential and secret resolver can't both be configured.")
 
-    return kwargs
-
-
-def determine_uses_key_vault(**kwargs) -> bool:
-    """
-    Determine if key vault is being used based on configuration.
-
-    :return: True if key vault is being used, False otherwise.
-    :rtype: bool
-    """
-    return (
+    kwargs["uses_key_vault"] = (
         "keyvault_credential" in kwargs
         or "keyvault_client_configs" in kwargs
         or "secret_resolver" in kwargs
         or kwargs.get("uses_key_vault", False)
     )
+
+    return kwargs
 
 
 class _RefreshTimer:
@@ -503,7 +503,7 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
                 break
         return trimmed_key
 
-    def _feature_flag_telemetry(
+    def _update_ff_telemetry_metadata(
         self, endpoint: str, feature_flag: FeatureFlagConfigurationSetting, feature_flag_value: Dict
     ):
         """

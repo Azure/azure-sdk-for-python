@@ -20,9 +20,8 @@ from azure.appconfiguration.provider._azureappconfigurationproviderbase import (
     is_json_content_type,
     _build_sentinel,
     sdk_allowed_kwargs,
-    validate_load_arguments,
+    process_load_arguments,
     process_key_vault_options,
-    determine_uses_key_vault,
     _RefreshTimer,
     AzureAppConfigurationProviderBase,
 )
@@ -315,54 +314,56 @@ class TestSdkAllowedKwargs(unittest.TestCase):
 
 
 class TestValidateLoadArguments(unittest.TestCase):
-    """Test the validate_load_arguments function."""
+    """Test the process_load_arguments function."""
 
     def test_no_args_valid(self):
         """Test that no arguments raises ValueError."""
         kwargs = {}
         with self.assertRaises(ValueError) as context:
-            validate_load_arguments(**kwargs)
+            process_load_arguments(**kwargs)
         self.assertIn("Either 'endpoint' or 'connection_string' must be provided", str(context.exception))
 
     def test_endpoint_only_valid(self):
         """Test endpoint only is valid."""
         kwargs = {"endpoint": "https://test.azconfig.io"}
-        result_kwargs = validate_load_arguments(**kwargs)
+        result_kwargs = process_load_arguments(**kwargs)
         self.assertEqual(result_kwargs["endpoint"], "https://test.azconfig.io")
 
     def test_connection_string_only_valid(self):
         """Test connection string only is valid."""
-        kwargs = {"connection_string": "test_connection_string"}
-        result_kwargs = validate_load_arguments(**kwargs)
-        self.assertEqual(result_kwargs["connection_string"], "test_connection_string")
+        kwargs = {"connection_string": "Endpoint=https://test.azconfig.io;Id=test-id;Secret=test-secret"}
+        result_kwargs = process_load_arguments(**kwargs)
+        self.assertEqual(
+            result_kwargs["connection_string"], "Endpoint=https://test.azconfig.io;Id=test-id;Secret=test-secret"
+        )
 
     def test_positional_endpoint(self):
         """Test positional endpoint argument."""
-        result_kwargs = validate_load_arguments("https://test.azconfig.io")
+        result_kwargs = process_load_arguments("https://test.azconfig.io")
         self.assertEqual(result_kwargs["endpoint"], "https://test.azconfig.io")
 
     def test_positional_endpoint_and_credential(self):
         """Test positional endpoint and credential arguments."""
         mock_credential = Mock()
-        result_kwargs = validate_load_arguments("https://test.azconfig.io", mock_credential)
+        result_kwargs = process_load_arguments("https://test.azconfig.io", mock_credential)
         self.assertEqual(result_kwargs["endpoint"], "https://test.azconfig.io")
         self.assertEqual(result_kwargs["credential"], mock_credential)
 
     def test_too_many_positional_args_raises_error(self):
         """Test that too many positional arguments raises TypeError."""
         with self.assertRaises(TypeError):
-            validate_load_arguments("arg1", "arg2", "arg3")
+            process_load_arguments("arg1", "arg2", "arg3")
 
     def test_duplicate_endpoint_raises_error(self):
         """Test that duplicate endpoint specification raises TypeError."""
         with self.assertRaises(TypeError):
-            validate_load_arguments("https://test.azconfig.io", endpoint="https://other.azconfig.io")
+            process_load_arguments("https://test.azconfig.io", endpoint="https://other.azconfig.io")
 
     def test_both_endpoint_and_connection_string_raises_error(self):
         """Test that both endpoint and connection string raises ValueError."""
         kwargs = {"endpoint": "https://test.azconfig.io", "connection_string": "test_connection_string"}
         with self.assertRaises(ValueError):
-            validate_load_arguments(**kwargs)
+            process_load_arguments(**kwargs)
 
 
 class TestProcessKeyVaultOptions(unittest.TestCase):
@@ -372,7 +373,7 @@ class TestProcessKeyVaultOptions(unittest.TestCase):
         """Test with no key vault options."""
         kwargs = {"some_param": "value"}
         result = process_key_vault_options(**kwargs)
-        self.assertEqual(result, {"some_param": "value"})
+        self.assertEqual(result, {"some_param": "value", "uses_key_vault": False})
 
     def test_key_vault_options_processing(self):
         """Test key vault options are processed correctly."""
@@ -390,6 +391,7 @@ class TestProcessKeyVaultOptions(unittest.TestCase):
         self.assertEqual(result["keyvault_credential"], mock_credential)
         self.assertEqual(result["secret_resolver"], None)
         self.assertEqual(result["keyvault_client_configs"], mock_configs)
+        self.assertTrue(result["uses_key_vault"])
         self.assertNotIn("key_vault_options", result)
 
     def test_conflicting_options_raises_error(self):
@@ -405,34 +407,35 @@ class TestProcessKeyVaultOptions(unittest.TestCase):
         with self.assertRaises(ValueError):
             process_key_vault_options(**kwargs)
 
-
-class TestDetermineUsesKeyVault(unittest.TestCase):
-    """Test the determine_uses_key_vault function."""
-
-    def test_no_key_vault_usage(self):
-        """Test when no key vault is used."""
-        result = determine_uses_key_vault()
-        self.assertFalse(result)
-
     def test_keyvault_credential_indicates_usage(self):
-        """Test that keyvault_credential indicates usage."""
-        result = determine_uses_key_vault(keyvault_credential=Mock())
-        self.assertTrue(result)
+        """Test that keyvault_credential indicates key vault usage."""
+        kwargs = {"keyvault_credential": Mock()}
+        result = process_key_vault_options(**kwargs)
+        self.assertTrue(result["uses_key_vault"])
 
     def test_keyvault_client_configs_indicates_usage(self):
-        """Test that keyvault_client_configs indicates usage."""
-        result = determine_uses_key_vault(keyvault_client_configs={"config": "value"})
-        self.assertTrue(result)
+        """Test that keyvault_client_configs indicates key vault usage."""
+        kwargs = {"keyvault_client_configs": {"config": "value"}}
+        result = process_key_vault_options(**kwargs)
+        self.assertTrue(result["uses_key_vault"])
 
     def test_secret_resolver_indicates_usage(self):
-        """Test that secret_resolver indicates usage."""
-        result = determine_uses_key_vault(secret_resolver=Mock())
-        self.assertTrue(result)
+        """Test that secret_resolver indicates key vault usage."""
+        kwargs = {"secret_resolver": Mock()}
+        result = process_key_vault_options(**kwargs)
+        self.assertTrue(result["uses_key_vault"])
 
     def test_explicit_uses_key_vault_flag(self):
-        """Test explicit uses_key_vault flag."""
-        result = determine_uses_key_vault(uses_key_vault=True)
-        self.assertTrue(result)
+        """Test explicit uses_key_vault flag is preserved."""
+        kwargs = {"uses_key_vault": True}
+        result = process_key_vault_options(**kwargs)
+        self.assertTrue(result["uses_key_vault"])
+
+    def test_explicit_false_flag_overridden_by_credentials(self):
+        """Test explicit false flag is overridden when credentials are present."""
+        kwargs = {"uses_key_vault": False, "keyvault_credential": Mock()}
+        result = process_key_vault_options(**kwargs)
+        self.assertTrue(result["uses_key_vault"])
 
 
 class TestRefreshTimer(unittest.TestCase):
@@ -662,7 +665,7 @@ class TestAzureAppConfigurationProviderBase(unittest.TestCase):
         self.assertTrue(self.provider._uses_aicc_configuration)
         self.assertEqual(result, {"aicc_config": "value"})
 
-    def test_feature_flag_telemetry(self):
+    def test_update_ff_telemetry_metadata(self):
         """Test feature flag telemetry processing."""
         feature_flag = Mock(spec=FeatureFlagConfigurationSetting)
         feature_flag.etag = "test_etag"
@@ -673,7 +676,7 @@ class TestAzureAppConfigurationProviderBase(unittest.TestCase):
 
         endpoint = "https://test.azconfig.io"
 
-        self.provider._feature_flag_telemetry(endpoint, feature_flag, feature_flag_value)
+        self.provider._update_ff_telemetry_metadata(endpoint, feature_flag, feature_flag_value)
 
         # Verify telemetry structure was created
         self.assertIn(TELEMETRY_KEY, feature_flag_value)

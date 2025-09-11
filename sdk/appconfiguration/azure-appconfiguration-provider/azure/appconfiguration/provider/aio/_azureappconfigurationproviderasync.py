@@ -37,9 +37,8 @@ from .._azureappconfigurationproviderbase import (
     AzureAppConfigurationProviderBase,
     delay_failure,
     sdk_allowed_kwargs,
-    validate_load_arguments,
+    process_load_arguments,
     process_key_vault_options,
-    determine_uses_key_vault,
     update_correlation_context_header,
 )
 
@@ -182,11 +181,10 @@ async def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
 async def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
     start_time = datetime.datetime.now()
 
-    kwargs = validate_load_arguments(*args, **kwargs)
+    kwargs = process_load_arguments(*args, **kwargs)
     kwargs = process_key_vault_options(**kwargs)
-    uses_key_vault = determine_uses_key_vault(**kwargs)
 
-    provider = await _buildprovider(uses_key_vault=uses_key_vault, **kwargs)
+    provider = AzureAppConfigurationProvider(**kwargs)
     kwargs = sdk_allowed_kwargs(kwargs)
 
     try:
@@ -195,18 +193,6 @@ async def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
         delay_failure(start_time)
         raise e
     return provider
-
-
-async def _buildprovider(**kwargs) -> "AzureAppConfigurationProvider":
-    # pylint:disable=protected-access
-    connection_string = kwargs.get("connection_string")
-
-    if connection_string:
-        kwargs["endpoint"] = connection_string.split(";")[0].split("=")[1]
-    if not kwargs["endpoint"]:
-        raise ValueError("No endpoint specified.")
-
-    return AzureAppConfigurationProvider(**kwargs)
 
 
 async def _resolve_keyvault_reference(
@@ -489,7 +475,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
             if isinstance(config, FeatureFlagConfigurationSetting):
                 # Feature flags are not processed like other settings
                 feature_flag_value = json.loads(config.value)
-                self._feature_flag_telemetry(self._origin_endpoint, config, feature_flag_value)
+                self._update_ff_telemetry_metadata(self._origin_endpoint, config, feature_flag_value)
                 self._feature_flag_appconfig_telemetry(config)
                 feature_flags_processed.append(feature_flag_value)
 
