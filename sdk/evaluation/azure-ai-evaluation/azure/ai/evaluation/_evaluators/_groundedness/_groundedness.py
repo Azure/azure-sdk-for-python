@@ -300,14 +300,14 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             "context": eval_input["context"],
         }
 
-        print("--------------------------------")
-        for key in simplified_eval_input:
-            # if it's an instance of list or dict, json dumpt it
-            if isinstance(simplified_eval_input[key], (list, dict)):
-                print(f"{key}: {json.dumps(simplified_eval_input[key], indent=2)}")
-            else:
-                print(f"{key}: {simplified_eval_input[key]}")
-        print("--------------------------------")
+        # print("--------------------------------")
+        # for key in simplified_eval_input:
+        #     # if it's an instance of list or dict, json dumpt it
+        #     if isinstance(simplified_eval_input[key], (list, dict)):
+        #         print(f"{key}: {json.dumps(simplified_eval_input[key], indent=2)}")
+        #     else:
+        #         print(f"{key}: {simplified_eval_input[key]}")
+        # print("--------------------------------")
 
         # llm_output = await self._flow(
         #     timeout=self._LLM_CALL_TIMEOUT, **simplified_eval_input
@@ -338,6 +338,9 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 }
             else:
                 raise ex
+
+    def _get_version(self):
+        return "v12"
 
     def _convert_kwargs_to_eval_input(self, **kwargs):
         if kwargs.get("context") or kwargs.get("conversation"):
