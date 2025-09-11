@@ -34,6 +34,7 @@ def main():
         resource_group_name="rgcomputeschedule",
         scheduled_action_name="myScheduledAction",
         occurrence_id="67b5bada-4772-43fc-8dbb-402476d98a45",
+        api_version="2025-04-15-preview",
     )
     print(response)
 

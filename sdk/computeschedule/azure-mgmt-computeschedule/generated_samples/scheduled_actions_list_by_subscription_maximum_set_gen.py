@@ -30,7 +30,9 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.scheduled_actions.list_by_subscription()
+    response = client.scheduled_actions.list_by_subscription(
+        api_version="2025-04-15-preview",
+    )
     for item in response:
         print(item)
 

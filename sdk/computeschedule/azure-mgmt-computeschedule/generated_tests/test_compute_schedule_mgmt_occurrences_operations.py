@@ -25,6 +25,7 @@ class TestComputeScheduleMgmtOccurrencesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             scheduled_action_name="str",
             occurrence_id="str",
+            api_version="str",
         )
 
         # please add some check logic here by yourself
@@ -36,6 +37,7 @@ class TestComputeScheduleMgmtOccurrencesOperations(AzureMgmtRecordedTestCase):
         response = self.client.occurrences.list_by_scheduled_action(
             resource_group_name=resource_group.name,
             scheduled_action_name="str",
+            api_version="str",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -48,6 +50,7 @@ class TestComputeScheduleMgmtOccurrencesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             scheduled_action_name="str",
             occurrence_id="str",
+            api_version="str",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -61,6 +64,7 @@ class TestComputeScheduleMgmtOccurrencesOperations(AzureMgmtRecordedTestCase):
             scheduled_action_name="str",
             occurrence_id="str",
             body={"resourceIds": ["str"]},
+            api_version="str",
         )
 
         # please add some check logic here by yourself
@@ -74,6 +78,7 @@ class TestComputeScheduleMgmtOccurrencesOperations(AzureMgmtRecordedTestCase):
             scheduled_action_name="str",
             occurrence_id="str",
             body={"delay": "2020-02-20 00:00:00", "resourceIds": ["str"]},
+            api_version="str",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

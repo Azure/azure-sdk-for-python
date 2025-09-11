@@ -33,6 +33,7 @@ def main():
     response = client.scheduled_actions.trigger_manual_occurrence(
         resource_group_name="rgcomputeschedule",
         scheduled_action_name="myScheduledAction",
+        api_version="2025-04-15-preview",
     )
     print(response)
 

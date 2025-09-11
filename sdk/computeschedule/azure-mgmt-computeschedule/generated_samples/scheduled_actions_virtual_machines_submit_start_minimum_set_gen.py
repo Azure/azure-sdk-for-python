@@ -47,6 +47,7 @@ def main():
                 "timeZone": "aigbjdnldtzkteqi",
             },
         },
+        api_version="2025-04-15-preview",
     )
     print(response)
 

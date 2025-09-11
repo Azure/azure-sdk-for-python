@@ -23,6 +23,7 @@ class TestComputeScheduleMgmtOccurrenceExtensionOperations(AzureMgmtRecordedTest
     def test_occurrence_extension_list_occurrence_by_vms(self, resource_group):
         response = self.client.occurrence_extension.list_occurrence_by_vms(
             resource_uri="str",
+            api_version="str",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

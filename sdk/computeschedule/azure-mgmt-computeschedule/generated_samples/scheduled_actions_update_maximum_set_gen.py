@@ -58,6 +58,7 @@ def main():
             },
             "tags": {"key9989": "tryjidk"},
         },
+        api_version="2025-04-15-preview",
     )
     print(response)
 

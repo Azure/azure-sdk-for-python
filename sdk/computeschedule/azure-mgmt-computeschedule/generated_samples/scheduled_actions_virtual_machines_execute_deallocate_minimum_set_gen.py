@@ -42,6 +42,7 @@ def main():
                 ]
             },
         },
+        api_version="2025-04-15-preview",
     )
     print(response)
 

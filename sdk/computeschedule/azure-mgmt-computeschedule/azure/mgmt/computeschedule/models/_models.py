@@ -9,7 +9,7 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, Dict, List, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from azure.core.exceptions import ODataV4Format
 
@@ -27,7 +27,7 @@ class CancelOccurrenceRequest(_Model):
     :vartype resource_ids: list[str]
     """
 
-    resource_ids: List[str] = rest_field(name="resourceIds", visibility=["read", "create", "update", "delete", "query"])
+    resource_ids: list[str] = rest_field(name="resourceIds", visibility=["read", "create", "update", "delete", "query"])
     """The resources the cancellation should act on. If no resource is passed in the list, Scheduled
      Action will cancel the occurrence for all resources. Required."""
 
@@ -35,7 +35,7 @@ class CancelOccurrenceRequest(_Model):
     def __init__(
         self,
         *,
-        resource_ids: List[str],
+        resource_ids: list[str],
     ) -> None: ...
 
     @overload
@@ -58,7 +58,7 @@ class CancelOperationsRequest(_Model):
     :vartype correlationid: str
     """
 
-    operation_ids: List[str] = rest_field(
+    operation_ids: list[str] = rest_field(
         name="operationIds", visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of operation ids to cancel operations on. Required."""
@@ -69,7 +69,7 @@ class CancelOperationsRequest(_Model):
     def __init__(
         self,
         *,
-        operation_ids: List[str],
+        operation_ids: list[str],
         correlationid: str,
     ) -> None: ...
 
@@ -91,14 +91,14 @@ class CancelOperationsResponse(_Model):
     :vartype results: list[~azure.mgmt.computeschedule.models.ResourceOperation]
     """
 
-    results: List["_models.ResourceOperation"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    results: list["_models.ResourceOperation"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """An array of resource operations that were successfully cancelled. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        results: List["_models.ResourceOperation"],
+        results: list["_models.ResourceOperation"],
     ) -> None: ...
 
     @overload
@@ -131,7 +131,7 @@ class CreateResourceOperationResponse(_Model):
     """The type of resources used in the create request eg virtual machines. Required."""
     location: str = rest_field(visibility=["read", "create"])
     """The location of the start request eg westus. Required."""
-    results: Optional[List["_models.ResourceOperation"]] = rest_field(
+    results: Optional[list["_models.ResourceOperation"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The results from the start request if no errors exist."""
@@ -143,7 +143,7 @@ class CreateResourceOperationResponse(_Model):
         description: str,
         type: str,
         location: str,
-        results: Optional[List["_models.ResourceOperation"]] = None,
+        results: Optional[list["_models.ResourceOperation"]] = None,
     ) -> None: ...
 
     @overload
@@ -176,7 +176,7 @@ class DeallocateResourceOperationResponse(_Model):
     """The type of resources used in the deallocate request eg virtual machines. Required."""
     location: str = rest_field(visibility=["read", "create"])
     """The location of the deallocate request eg westus. Required."""
-    results: Optional[List["_models.ResourceOperation"]] = rest_field(
+    results: Optional[list["_models.ResourceOperation"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The results from the deallocate request if no errors exist."""
@@ -188,7 +188,7 @@ class DeallocateResourceOperationResponse(_Model):
         description: str,
         type: str,
         location: str,
-        results: Optional[List["_models.ResourceOperation"]] = None,
+        results: Optional[list["_models.ResourceOperation"]] = None,
     ) -> None: ...
 
     @overload
@@ -215,7 +215,7 @@ class DelayRequest(_Model):
 
     delay: datetime.datetime = rest_field(visibility=["read", "create", "update", "delete", "query"], format="rfc3339")
     """The exact time to delay the operations to. Required."""
-    resource_ids: List[str] = rest_field(name="resourceIds", visibility=["read", "create", "update", "delete", "query"])
+    resource_ids: list[str] = rest_field(name="resourceIds", visibility=["read", "create", "update", "delete", "query"])
     """The resources that should be delayed. If empty, the delay will apply to the all resources in
      the occurrence. Required."""
 
@@ -224,7 +224,7 @@ class DelayRequest(_Model):
         self,
         *,
         delay: datetime.datetime,
-        resource_ids: List[str],
+        resource_ids: list[str],
     ) -> None: ...
 
     @overload
@@ -257,7 +257,7 @@ class DeleteResourceOperationResponse(_Model):
     """The type of resources used in the delete request eg virtual machines. Required."""
     location: str = rest_field(visibility=["read", "create"])
     """The location of the start request eg westus. Required."""
-    results: Optional[List["_models.ResourceOperation"]] = rest_field(
+    results: Optional[list["_models.ResourceOperation"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The results from the start request if no errors exist."""
@@ -269,7 +269,7 @@ class DeleteResourceOperationResponse(_Model):
         description: str,
         type: str,
         location: str,
-        results: Optional[List["_models.ResourceOperation"]] = None,
+        results: Optional[list["_models.ResourceOperation"]] = None,
     ) -> None: ...
 
     @overload
@@ -319,9 +319,9 @@ class ErrorDetail(_Model):
     """The error message."""
     target: Optional[str] = rest_field(visibility=["read"])
     """The error target."""
-    details: Optional[List["_models.ErrorDetail"]] = rest_field(visibility=["read"])
+    details: Optional[list["_models.ErrorDetail"]] = rest_field(visibility=["read"])
     """The error details."""
-    additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = rest_field(
+    additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = rest_field(
         name="additionalInfo", visibility=["read"]
     )
     """The error additional info."""
@@ -657,7 +657,7 @@ class GetOperationErrorsRequest(_Model):
     :vartype operation_ids: list[str]
     """
 
-    operation_ids: List[str] = rest_field(
+    operation_ids: list[str] = rest_field(
         name="operationIds", visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of operation ids to query errors of. Required."""
@@ -666,7 +666,7 @@ class GetOperationErrorsRequest(_Model):
     def __init__(
         self,
         *,
-        operation_ids: List[str],
+        operation_ids: list[str],
     ) -> None: ...
 
     @overload
@@ -687,7 +687,7 @@ class GetOperationErrorsResponse(_Model):
     :vartype results: list[~azure.mgmt.computeschedule.models.OperationErrorsResult]
     """
 
-    results: List["_models.OperationErrorsResult"] = rest_field(
+    results: list["_models.OperationErrorsResult"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """An array of operationids and their corresponding errors if any. Required."""
@@ -696,7 +696,7 @@ class GetOperationErrorsResponse(_Model):
     def __init__(
         self,
         *,
-        results: List["_models.OperationErrorsResult"],
+        results: list["_models.OperationErrorsResult"],
     ) -> None: ...
 
     @overload
@@ -719,7 +719,7 @@ class GetOperationStatusRequest(_Model):
     :vartype correlationid: str
     """
 
-    operation_ids: List[str] = rest_field(
+    operation_ids: list[str] = rest_field(
         name="operationIds", visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of operation ids to get the status of. Required."""
@@ -730,7 +730,7 @@ class GetOperationStatusRequest(_Model):
     def __init__(
         self,
         *,
-        operation_ids: List[str],
+        operation_ids: list[str],
         correlationid: str,
     ) -> None: ...
 
@@ -752,14 +752,14 @@ class GetOperationStatusResponse(_Model):
     :vartype results: list[~azure.mgmt.computeschedule.models.ResourceOperation]
     """
 
-    results: List["_models.ResourceOperation"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    results: list["_models.ResourceOperation"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """An array of resource operations based on their operation ids. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        results: List["_models.ResourceOperation"],
+        results: list["_models.ResourceOperation"],
     ) -> None: ...
 
     @overload
@@ -792,7 +792,7 @@ class HibernateResourceOperationResponse(_Model):
     """The type of resources used in the Hibernate request eg virtual machines. Required."""
     location: str = rest_field(visibility=["read", "create"])
     """The location of the Hibernate request eg westus. Required."""
-    results: Optional[List["_models.ResourceOperation"]] = rest_field(
+    results: Optional[list["_models.ResourceOperation"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The results from the Hibernate request if no errors exist."""
@@ -804,7 +804,7 @@ class HibernateResourceOperationResponse(_Model):
         description: str,
         type: str,
         location: str,
-        results: Optional[List["_models.ResourceOperation"]] = None,
+        results: Optional[list["_models.ResourceOperation"]] = None,
     ) -> None: ...
 
     @overload
@@ -951,7 +951,7 @@ class OccurrenceExtensionProperties(_Model):
     """The ARM Id of the resource.
      \"subscriptions/{subId}/resourceGroups/{rgName}/providers/Microsoft.Compute/virtualMachines/{vmName}\".
      Required."""
-    notification_settings: Optional[List["_models.NotificationProperties"]] = rest_field(
+    notification_settings: Optional[list["_models.NotificationProperties"]] = rest_field(
         name="notificationSettings", visibility=["read", "create", "update", "delete", "query"]
     )
     """The desired notification settings for the specified resource."""
@@ -975,7 +975,7 @@ class OccurrenceExtensionProperties(_Model):
         *,
         resource_id: str,
         scheduled_action_id: str,
-        notification_settings: Optional[List["_models.NotificationProperties"]] = None,
+        notification_settings: Optional[list["_models.NotificationProperties"]] = None,
     ) -> None: ...
 
     @overload
@@ -1092,7 +1092,7 @@ class OccurrenceResource(_Model):
     """The ARM Id of the resource.
      \"subscriptions/{subId}/resourceGroups/{rgName}/providers/Microsoft.Compute/virtualMachines/{vmName}\".
      Required."""
-    notification_settings: Optional[List["_models.NotificationProperties"]] = rest_field(
+    notification_settings: Optional[list["_models.NotificationProperties"]] = rest_field(
         name="notificationSettings", visibility=["read", "create", "update", "delete", "query"]
     )
     """The desired notification settings for the specified resource."""
@@ -1111,7 +1111,7 @@ class OccurrenceResource(_Model):
         self,
         *,
         resource_id: str,
-        notification_settings: Optional[List["_models.NotificationProperties"]] = None,
+        notification_settings: Optional[list["_models.NotificationProperties"]] = None,
     ) -> None: ...
 
     @overload
@@ -1137,7 +1137,7 @@ class OccurrenceResultSummary(_Model):
 
     total: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The total number of resources that the occurrence was supposed to act on. Required."""
-    statuses: List["_models.ResourceResultSummary"] = rest_field(
+    statuses: list["_models.ResourceResultSummary"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The summarized status of the resources. Required."""
@@ -1147,7 +1147,7 @@ class OccurrenceResultSummary(_Model):
         self,
         *,
         total: int,
-        statuses: List["_models.ResourceResultSummary"],
+        statuses: list["_models.ResourceResultSummary"],
     ) -> None: ...
 
     @overload
@@ -1346,7 +1346,7 @@ class OperationErrorsResult(_Model):
         name="completedAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """The completion time of the operation if the operation was completed."""
-    operation_errors: Optional[List["_models.OperationErrorDetails"]] = rest_field(
+    operation_errors: Optional[list["_models.OperationErrorDetails"]] = rest_field(
         name="operationErrors", visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of errors associated with the operationid."""
@@ -1367,7 +1367,7 @@ class OperationErrorsResult(_Model):
         creation_time: Optional[datetime.datetime] = None,
         activation_time: Optional[datetime.datetime] = None,
         completed_at: Optional[datetime.datetime] = None,
-        operation_errors: Optional[List["_models.OperationErrorDetails"]] = None,
+        operation_errors: Optional[list["_models.OperationErrorDetails"]] = None,
         request_error_code: Optional[str] = None,
         request_error_details: Optional[str] = None,
     ) -> None: ...
@@ -1395,7 +1395,7 @@ class RecurringActionsResourceOperationResult(_Model):
 
     total_resources: int = rest_field(name="totalResources", visibility=["read", "create", "update", "delete", "query"])
     """The total number of resources operated on. Required."""
-    resources_statuses: List["_models.ResourceStatus"] = rest_field(
+    resources_statuses: list["_models.ResourceStatus"] = rest_field(
         name="resourcesStatuses", visibility=["read", "create", "update", "delete", "query"]
     )
     """The resource status of for each resource. Required."""
@@ -1405,7 +1405,7 @@ class RecurringActionsResourceOperationResult(_Model):
         self,
         *,
         total_resources: int,
-        resources_statuses: List["_models.ResourceStatus"],
+        resources_statuses: list["_models.ResourceStatus"],
     ) -> None: ...
 
     @overload
@@ -1426,7 +1426,7 @@ class ResourceAttachRequest(_Model):
     :vartype resources: list[~azure.mgmt.computeschedule.models.ScheduledActionResource]
     """
 
-    resources: List["_models.ScheduledActionResource"] = rest_field(
+    resources: list["_models.ScheduledActionResource"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """List of resources to be attached/patched. Required."""
@@ -1435,7 +1435,7 @@ class ResourceAttachRequest(_Model):
     def __init__(
         self,
         *,
-        resources: List["_models.ScheduledActionResource"],
+        resources: list["_models.ScheduledActionResource"],
     ) -> None: ...
 
     @overload
@@ -1456,14 +1456,14 @@ class ResourceDetachRequest(_Model):
     :vartype resources: list[str]
     """
 
-    resources: List[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    resources: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of resources to be detached. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        resources: List[str],
+        resources: list[str],
     ) -> None: ...
 
     @overload
@@ -1675,7 +1675,7 @@ class ResourcePatchRequest(_Model):
     :vartype resources: list[~azure.mgmt.computeschedule.models.ScheduledActionResource]
     """
 
-    resources: List["_models.ScheduledActionResource"] = rest_field(
+    resources: list["_models.ScheduledActionResource"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of resources we watch to patch. Required."""
@@ -1684,7 +1684,7 @@ class ResourcePatchRequest(_Model):
     def __init__(
         self,
         *,
-        resources: List["_models.ScheduledActionResource"],
+        resources: list["_models.ScheduledActionResource"],
     ) -> None: ...
 
     @overload
@@ -1717,13 +1717,13 @@ class ResourceProvisionPayload(_Model):
     :vartype resource_prefix: str
     """
 
-    base_profile: Optional[Dict[str, Any]] = rest_field(
+    base_profile: Optional[dict[str, Any]] = rest_field(
         name="baseProfile", visibility=["read", "create", "update", "delete", "query"]
     )
     """JSON object that contains VM properties that are common across all VMs in this batch (if you
      want to create 100 VMs in this request, and they all have same vmSize, then include vmSize in
      baseProfile)."""
-    resource_overrides: Optional[List[Dict[str, Any]]] = rest_field(
+    resource_overrides: Optional[list[dict[str, Any]]] = rest_field(
         name="resourceOverrides", visibility=["read", "create", "update", "delete", "query"]
     )
     """JSON array, that contains VM properties that should to be overridden for each VM in the batch
@@ -1743,8 +1743,8 @@ class ResourceProvisionPayload(_Model):
         self,
         *,
         resource_count: int,
-        base_profile: Optional[Dict[str, Any]] = None,
-        resource_overrides: Optional[List[Dict[str, Any]]] = None,
+        base_profile: Optional[dict[str, Any]] = None,
+        resource_overrides: Optional[list[dict[str, Any]]] = None,
         resource_prefix: Optional[str] = None,
     ) -> None: ...
 
@@ -1808,14 +1808,14 @@ class Resources(_Model):
     :vartype ids: list[str]
     """
 
-    ids: List[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    ids: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The resource ids used for the request. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        ids: List[str],
+        ids: list[str],
     ) -> None: ...
 
     @overload
@@ -1984,7 +1984,7 @@ class TrackedResource(Resource):
     :vartype location: str
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     location: str = rest_field(visibility=["read", "create"])
     """The geo-location where the resource lives. Required."""
@@ -1994,7 +1994,7 @@ class TrackedResource(Resource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -2040,7 +2040,7 @@ class ScheduledAction(TrackedResource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.ScheduledActionProperties"] = None,
     ) -> None: ...
 
@@ -2101,7 +2101,7 @@ class ScheduledActionProperties(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The schedule the scheduled action is supposed to follow. Required."""
-    notification_settings: List["_models.NotificationProperties"] = rest_field(
+    notification_settings: list["_models.NotificationProperties"] = rest_field(
         name="notificationSettings", visibility=["read", "create", "update", "delete", "query"]
     )
     """The notification settings for the scheduled action. Required."""
@@ -2121,7 +2121,7 @@ class ScheduledActionProperties(_Model):
         action_type: Union[str, "_models.ScheduledActionType"],
         start_time: datetime.datetime,
         schedule: "_models.ScheduledActionsSchedule",
-        notification_settings: List["_models.NotificationProperties"],
+        notification_settings: list["_models.NotificationProperties"],
         end_time: Optional[datetime.datetime] = None,
         disabled: Optional[bool] = None,
     ) -> None: ...
@@ -2164,7 +2164,7 @@ class ScheduledActionResource(_Model):
     """The ARM Id of the resource.
      \"subscriptions/{subId}/resourceGroups/{rgName}/providers/Microsoft.Compute/virtualMachines/{vmName}\".
      Required."""
-    notification_settings: Optional[List["_models.NotificationProperties"]] = rest_field(
+    notification_settings: Optional[list["_models.NotificationProperties"]] = rest_field(
         name="notificationSettings", visibility=["read", "create", "update", "delete", "query"]
     )
     """The desired notification settings for the specified resource."""
@@ -2174,7 +2174,7 @@ class ScheduledActionResource(_Model):
         self,
         *,
         resource_id: str,
-        notification_settings: Optional[List["_models.NotificationProperties"]] = None,
+        notification_settings: Optional[list["_models.NotificationProperties"]] = None,
     ) -> None: ...
 
     @overload
@@ -2203,10 +2203,10 @@ class ScheduledActionResources(ExtensionResource):
      information.
     :vartype system_data: ~azure.mgmt.computeschedule.models.SystemData
     :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: ~azure.mgmt.computeschedule.models.ScheduledActionProperties
+    :vartype properties: ~azure.mgmt.computeschedule.models.ScheduledActionsExtensionProperties
     """
 
-    properties: Optional["_models.ScheduledActionProperties"] = rest_field(
+    properties: Optional["_models.ScheduledActionsExtensionProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The resource-specific properties for this resource."""
@@ -2215,7 +2215,100 @@ class ScheduledActionResources(ExtensionResource):
     def __init__(
         self,
         *,
-        properties: Optional["_models.ScheduledActionProperties"] = None,
+        properties: Optional["_models.ScheduledActionsExtensionProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ScheduledActionsExtensionProperties(_Model):
+    """Scheduled action extension properties.
+
+    :ivar resource_type: The type of resource the scheduled action is targeting. Required. Known
+     values are: "VirtualMachine" and "VirtualMachineScaleSet".
+    :vartype resource_type: str or ~azure.mgmt.computeschedule.models.ResourceType
+    :ivar action_type: The action the scheduled action should perform in the resources. Required.
+     Known values are: "Start", "Deallocate", and "Hibernate".
+    :vartype action_type: str or ~azure.mgmt.computeschedule.models.ScheduledActionType
+    :ivar start_time: The time which the scheduled action is supposed to start running. Required.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: The time when the scheduled action is supposed to stop scheduling.
+    :vartype end_time: ~datetime.datetime
+    :ivar schedule: The schedule the scheduled action is supposed to follow. Required.
+    :vartype schedule: ~azure.mgmt.computeschedule.models.ScheduledActionsSchedule
+    :ivar notification_settings: The notification settings for the scheduled action. Required.
+    :vartype notification_settings: list[~azure.mgmt.computeschedule.models.NotificationProperties]
+    :ivar disabled: Tell if the scheduled action is disabled or not.
+    :vartype disabled: bool
+    :ivar provisioning_state: The status of the last provisioning operation performed on the
+     resource. Known values are: "Succeeded", "Failed", "Canceled", and "Deleting".
+    :vartype provisioning_state: str or ~azure.mgmt.computeschedule.models.ProvisioningState
+    :ivar resource_notification_settings: The notification settings for the scheduled action at a
+     resource level. Resource level notification settings are scope to specific resources only and
+     submitted through attach requests.
+    :vartype resource_notification_settings:
+     list[~azure.mgmt.computeschedule.models.NotificationProperties]
+    """
+
+    resource_type: Union[str, "_models.ResourceType"] = rest_field(
+        name="resourceType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The type of resource the scheduled action is targeting. Required. Known values are:
+     \"VirtualMachine\" and \"VirtualMachineScaleSet\"."""
+    action_type: Union[str, "_models.ScheduledActionType"] = rest_field(
+        name="actionType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The action the scheduled action should perform in the resources. Required. Known values are:
+     \"Start\", \"Deallocate\", and \"Hibernate\"."""
+    start_time: datetime.datetime = rest_field(
+        name="startTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time which the scheduled action is supposed to start running. Required."""
+    end_time: Optional[datetime.datetime] = rest_field(
+        name="endTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time when the scheduled action is supposed to stop scheduling."""
+    schedule: "_models.ScheduledActionsSchedule" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The schedule the scheduled action is supposed to follow. Required."""
+    notification_settings: list["_models.NotificationProperties"] = rest_field(
+        name="notificationSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The notification settings for the scheduled action. Required."""
+    disabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Tell if the scheduled action is disabled or not."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The status of the last provisioning operation performed on the resource. Known values are:
+     \"Succeeded\", \"Failed\", \"Canceled\", and \"Deleting\"."""
+    resource_notification_settings: Optional[list["_models.NotificationProperties"]] = rest_field(
+        name="resourceNotificationSettings", visibility=["read"]
+    )
+    """The notification settings for the scheduled action at a resource level. Resource level
+     notification settings are scope to specific resources only and submitted through attach
+     requests."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_type: Union[str, "_models.ResourceType"],
+        action_type: Union[str, "_models.ScheduledActionType"],
+        start_time: datetime.datetime,
+        schedule: "_models.ScheduledActionsSchedule",
+        notification_settings: list["_models.NotificationProperties"],
+        end_time: Optional[datetime.datetime] = None,
+        disabled: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -2258,15 +2351,15 @@ class ScheduledActionsSchedule(_Model):
     """The time the scheduled action is supposed to run on. Required."""
     time_zone: str = rest_field(name="timeZone", visibility=["read", "create", "update", "delete", "query"])
     """The timezone the scheduled time is specified on. Required."""
-    requested_week_days: List[Union[str, "_models.WeekDay"]] = rest_field(
+    requested_week_days: list[Union[str, "_models.WeekDay"]] = rest_field(
         name="requestedWeekDays", visibility=["read", "create", "update", "delete", "query"]
     )
     """The week days the scheduled action is supposed to run on. Required."""
-    requested_months: List[Union[str, "_models.Month"]] = rest_field(
+    requested_months: list[Union[str, "_models.Month"]] = rest_field(
         name="requestedMonths", visibility=["read", "create", "update", "delete", "query"]
     )
     """The months the scheduled action is supposed to run on. Required."""
-    requested_days_of_the_month: List[int] = rest_field(
+    requested_days_of_the_month: list[int] = rest_field(
         name="requestedDaysOfTheMonth", visibility=["read", "create", "update", "delete", "query"]
     )
     """The days of the month the scheduled action is supposed to run on. If empty, it means it will
@@ -2288,9 +2381,9 @@ class ScheduledActionsSchedule(_Model):
         *,
         scheduled_time: datetime.time,
         time_zone: str,
-        requested_week_days: List[Union[str, "_models.WeekDay"]],
-        requested_months: List[Union[str, "_models.Month"]],
-        requested_days_of_the_month: List[int],
+        requested_week_days: list[Union[str, "_models.WeekDay"]],
+        requested_months: list[Union[str, "_models.Month"]],
+        requested_days_of_the_month: list[int],
         execution_parameters: Optional["_models.ExecutionParameters"] = None,
         deadline_type: Optional[Union[str, "_models.DeadlineType"]] = None,
     ) -> None: ...
@@ -2315,7 +2408,7 @@ class ScheduledActionUpdate(_Model):
     :vartype properties: ~azure.mgmt.computeschedule.models.ScheduledActionUpdateProperties
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     properties: Optional["_models.ScheduledActionUpdateProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -2326,7 +2419,7 @@ class ScheduledActionUpdate(_Model):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.ScheduledActionUpdateProperties"] = None,
     ) -> None: ...
 
@@ -2384,7 +2477,7 @@ class ScheduledActionUpdateProperties(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The schedule the scheduled action is supposed to follow."""
-    notification_settings: Optional[List["_models.NotificationProperties"]] = rest_field(
+    notification_settings: Optional[list["_models.NotificationProperties"]] = rest_field(
         name="notificationSettings", visibility=["read", "create", "update", "delete", "query"]
     )
     """The notification settings for the scheduled action."""
@@ -2400,7 +2493,7 @@ class ScheduledActionUpdateProperties(_Model):
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
         schedule: Optional["_models.ScheduledActionsSchedule"] = None,
-        notification_settings: Optional[List["_models.NotificationProperties"]] = None,
+        notification_settings: Optional[list["_models.NotificationProperties"]] = None,
         disabled: Optional[bool] = None,
     ) -> None: ...
 
@@ -2434,7 +2527,7 @@ class StartResourceOperationResponse(_Model):
     """The type of resources used in the start request eg virtual machines. Required."""
     location: str = rest_field(visibility=["read", "create"])
     """The location of the start request eg westus. Required."""
-    results: Optional[List["_models.ResourceOperation"]] = rest_field(
+    results: Optional[list["_models.ResourceOperation"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The results from the start request if no errors exist."""
@@ -2446,7 +2539,7 @@ class StartResourceOperationResponse(_Model):
         description: str,
         type: str,
         location: str,
-        results: Optional[List["_models.ResourceOperation"]] = None,
+        results: Optional[list["_models.ResourceOperation"]] = None,
     ) -> None: ...
 
     @overload
