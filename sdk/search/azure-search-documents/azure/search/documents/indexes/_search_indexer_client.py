@@ -15,6 +15,7 @@ from ._generated.models import (
     SearchIndexerStatus,
     DocumentKeysOrIds,
     IndexerResyncOption,
+    IndexerResyncBody,
 )
 from ._utils import (
     get_access_conditions,
@@ -345,7 +346,10 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
             name = indexer.name  # type: ignore
         except AttributeError:
             name = indexer
-        return self._client.indexers.resync(name, indexer_resync_options, **kwargs)
+
+        # Create IndexerResyncBody from the list of options
+        resync_body = IndexerResyncBody(options=indexer_resync_options)
+        self._client.indexers.resync(name, resync_body, **kwargs)
 
     @distributed_trace
     def get_indexer_status(self, name: str, **kwargs: Any) -> SearchIndexerStatus:
