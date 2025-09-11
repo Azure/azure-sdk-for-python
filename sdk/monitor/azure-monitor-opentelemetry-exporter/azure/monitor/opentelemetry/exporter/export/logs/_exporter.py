@@ -126,6 +126,8 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
     envelope.tags[ContextTagKeys.AI_OPERATION_PARENT_ID] = "{:016x}".format(  # type: ignore
         log_record.span_id or _DEFAULT_SPAN_ID
     )
+    if _utils._is_any_synthetic_source(log_record.attributes):
+        envelope.tags[ContextTagKeys.AI_OPERATION_SYNTHETIC_SOURCE] = "True"  # type: ignore
     # Special use case: Customers want to be able to set location ip on log records
     location_ip = trace_utils._get_location_ip(log_record.attributes)
     if location_ip:

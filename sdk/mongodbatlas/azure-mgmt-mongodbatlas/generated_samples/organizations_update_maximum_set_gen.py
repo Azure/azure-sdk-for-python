@@ -56,6 +56,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2024-11-18-preview/Organizations_Update_MaximumSet_Gen.json
+# x-ms-original-file: 2025-06-01/Organizations_Update_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

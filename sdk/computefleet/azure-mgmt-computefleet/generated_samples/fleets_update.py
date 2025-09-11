@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -32,7 +33,7 @@ def main():
 
     response = client.fleets.begin_update(
         resource_group_name="rgazurefleet",
-        fleet_name="testFleet",
+        fleet_name="myFleet",
         properties={
             "identity": {"type": "UserAssigned", "userAssignedIdentities": {}},
             "plan": {
@@ -43,7 +44,301 @@ def main():
                 "version": "wa",
             },
             "properties": {
+                "additionalLocationsProfile": {
+                    "locationProfiles": [
+                        {
+                            "location": "v",
+                            "virtualMachineProfileOverride": {
+                                "applicationProfile": {
+                                    "galleryApplications": [
+                                        {
+                                            "configurationReference": "zdqfcpvt",
+                                            "enableAutomaticUpgrade": True,
+                                            "order": 22,
+                                            "packageReferenceId": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/applications/{applicationName}/versions/{versionName}",
+                                            "tags": "eomzidad",
+                                            "treatFailureAsDeploymentFailure": True,
+                                        }
+                                    ]
+                                },
+                                "capacityReservation": {
+                                    "capacityReservationGroup": {
+                                        "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/capacityReservationGroups/{capacityReservationGroupName}"
+                                    }
+                                },
+                                "diagnosticsProfile": {
+                                    "bootDiagnostics": {"enabled": True, "storageUri": "https://microsoft.com/a"}
+                                },
+                                "extensionProfile": {
+                                    "extensions": [
+                                        {
+                                            "name": "oredyuufsd",
+                                            "properties": {
+                                                "autoUpgradeMinorVersion": True,
+                                                "enableAutomaticUpgrade": True,
+                                                "forceUpdateTag": "muglieujh",
+                                                "protectedSettings": {},
+                                                "protectedSettingsFromKeyVault": {
+                                                    "secretUrl": "https://microsoft.com/a",
+                                                    "sourceVault": {
+                                                        "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultName}"
+                                                    },
+                                                },
+                                                "provisionAfterExtensions": ["xuefrutmgzsxrpjjayvy"],
+                                                "publisher": "ccbiyfuveemaaopgxbjpm",
+                                                "settings": {},
+                                                "suppressFailures": True,
+                                                "type": "yorumzkbfpxnrdwgczwwaeaxmda",
+                                                "typeHandlerVersion": "nlnqbmgzwubbc",
+                                            },
+                                        }
+                                    ],
+                                    "extensionsTimeBudget": "trluxrynunvdnukztblhbnsubr",
+                                },
+                                "hardwareProfile": {"vmSizeProperties": {"vCPUsAvailable": 8, "vCPUsPerCore": 17}},
+                                "licenseType": "ginsqshzwimjteiyfxhnjxfrcaat",
+                                "networkProfile": {
+                                    "healthProbe": {
+                                        "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}/probes/{probeName}"
+                                    },
+                                    "networkApiVersion": "2020-11-01",
+                                    "networkInterfaceConfigurations": [
+                                        {
+                                            "name": "gpunpcdsdphgspvgwwbnk",
+                                            "properties": {
+                                                "auxiliaryMode": "None",
+                                                "auxiliarySku": "None",
+                                                "deleteOption": "Delete",
+                                                "disableTcpStateTracking": True,
+                                                "dnsSettings": {"dnsServers": ["sjpmlu"]},
+                                                "enableAcceleratedNetworking": True,
+                                                "enableFpga": True,
+                                                "enableIPForwarding": True,
+                                                "ipConfigurations": [
+                                                    {
+                                                        "name": "fweiphgkyhbcsbfjmxzczkpg",
+                                                        "properties": {
+                                                            "applicationGatewayBackendAddressPools": [
+                                                                {
+                                                                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewayName}/backendAddressPools/{backendAddressPoolName}"
+                                                                }
+                                                            ],
+                                                            "applicationSecurityGroups": [
+                                                                {
+                                                                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationSecurityGroups/{applicationSecurityGroupName}"
+                                                                }
+                                                            ],
+                                                            "loadBalancerBackendAddressPools": [
+                                                                {
+                                                                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}/backendAddressPools/{backendAddressPoolName}"
+                                                                }
+                                                            ],
+                                                            "loadBalancerInboundNatPools": [
+                                                                {
+                                                                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}/inboundNatPools/{inboundNatPoolName}"
+                                                                }
+                                                            ],
+                                                            "primary": True,
+                                                            "privateIPAddressVersion": "IPv4",
+                                                            "publicIPAddressConfiguration": {
+                                                                "name": "dvnoamqjyshquvtmf",
+                                                                "properties": {
+                                                                    "deleteOption": "Delete",
+                                                                    "dnsSettings": {
+                                                                        "domainNameLabel": "ayofnb",
+                                                                        "domainNameLabelScope": "TenantReuse",
+                                                                    },
+                                                                    "idleTimeoutInMinutes": 1,
+                                                                    "ipTags": [
+                                                                        {
+                                                                            "ipTagType": "zqpznczmc",
+                                                                            "tag": "ugnfzikniqjisffrbvryavenhmtd",
+                                                                        }
+                                                                    ],
+                                                                    "publicIPAddressVersion": "IPv4",
+                                                                    "publicIPPrefix": {
+                                                                        "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPPrefixes/{publicIPPrefixName}"
+                                                                    },
+                                                                },
+                                                                "sku": {"name": "Basic", "tier": "Regional"},
+                                                            },
+                                                            "subnet": {
+                                                                "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}/subnets/{subnetName}"
+                                                            },
+                                                        },
+                                                    }
+                                                ],
+                                                "networkSecurityGroup": {
+                                                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkSecurityGroups/{networkSecurityGroupName}"
+                                                },
+                                                "primary": True,
+                                            },
+                                        }
+                                    ],
+                                },
+                                "osProfile": {
+                                    "adminPassword": "<a-password-goes-here>",
+                                    "adminUsername": "xdgnnqymtamdyqxy",
+                                    "allowExtensionOperations": True,
+                                    "computerNamePrefix": "tec",
+                                    "customData": "whcielwnerogvbxnbia",
+                                    "linuxConfiguration": {
+                                        "disablePasswordAuthentication": True,
+                                        "enableVMAgentPlatformUpdates": True,
+                                        "patchSettings": {
+                                            "assessmentMode": "ImageDefault",
+                                            "automaticByPlatformSettings": {
+                                                "bypassPlatformSafetyChecksOnUserSchedule": True,
+                                                "rebootSetting": "Unknown",
+                                            },
+                                            "patchMode": "ImageDefault",
+                                        },
+                                        "provisionVMAgent": True,
+                                        "ssh": {
+                                            "publicKeys": [
+                                                {"keyData": "vmgnwtwjcodavmu", "path": "ebeglujkldnntlpmazrg"}
+                                            ]
+                                        },
+                                    },
+                                    "requireGuestProvisionSignal": True,
+                                    "secrets": [
+                                        {
+                                            "sourceVault": {
+                                                "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultName}"
+                                            },
+                                            "vaultCertificates": [
+                                                {
+                                                    "certificateStore": "yycyfwpymjtwzza",
+                                                    "certificateUrl": "https://microsoft.com/a",
+                                                }
+                                            ],
+                                        }
+                                    ],
+                                    "windowsConfiguration": {
+                                        "additionalUnattendContent": [
+                                            {
+                                                "componentName": "Microsoft-Windows-Shell-Setup",
+                                                "content": "xcigofrcurxdwx",
+                                                "passName": "OobeSystem",
+                                                "settingName": "AutoLogon",
+                                            }
+                                        ],
+                                        "enableAutomaticUpdates": True,
+                                        "enableVMAgentPlatformUpdates": True,
+                                        "patchSettings": {
+                                            "assessmentMode": "ImageDefault",
+                                            "automaticByPlatformSettings": {
+                                                "bypassPlatformSafetyChecksOnUserSchedule": True,
+                                                "rebootSetting": "Unknown",
+                                            },
+                                            "enableHotpatching": True,
+                                            "patchMode": "Manual",
+                                        },
+                                        "provisionVMAgent": True,
+                                        "timeZone": "ktf",
+                                        "winRM": {
+                                            "listeners": [
+                                                {"certificateUrl": "https://microsoft.com/apzd", "protocol": "Http"}
+                                            ]
+                                        },
+                                    },
+                                },
+                                "scheduledEventsProfile": {
+                                    "osImageNotificationProfile": {
+                                        "enable": True,
+                                        "notBeforeTimeout": "ednjvcedpjmczw",
+                                    },
+                                    "terminateNotificationProfile": {
+                                        "enable": True,
+                                        "notBeforeTimeout": "plbazenobaeueixatewbey",
+                                    },
+                                },
+                                "securityPostureReference": {
+                                    "excludeExtensions": ["ragwgzswxzzz"],
+                                    "id": "/CommunityGalleries/{communityGalleryName}/securityPostures/{securityPostureName}/versions/{major.minor.patch}|{major.*}|latest",
+                                    "isOverridable": True,
+                                },
+                                "securityProfile": {
+                                    "encryptionAtHost": True,
+                                    "encryptionIdentity": {
+                                        "userAssignedIdentityResourceId": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{userAssignedIdentityName}"
+                                    },
+                                    "proxyAgentSettings": {"enabled": True, "keyIncarnationId": 6, "mode": "Audit"},
+                                    "securityType": "TrustedLaunch",
+                                    "uefiSettings": {"secureBootEnabled": True, "vTpmEnabled": True},
+                                },
+                                "serviceArtifactReference": {
+                                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/serviceArtifacts/{serviceArtifactsName}/vmArtifactsProfiles/{vmArtifactsProfileName}"
+                                },
+                                "storageProfile": {
+                                    "dataDisks": [
+                                        {
+                                            "caching": "None",
+                                            "createOption": "FromImage",
+                                            "deleteOption": "Delete",
+                                            "diskIOPSReadWrite": 24,
+                                            "diskMBpsReadWrite": 4,
+                                            "diskSizeGB": 9,
+                                            "lun": 6,
+                                            "managedDisk": {
+                                                "diskEncryptionSet": {
+                                                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/diskEncryptionSets/{diskEncryptionSetName}"
+                                                },
+                                                "securityProfile": {
+                                                    "diskEncryptionSet": {
+                                                        "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/diskEncryptionSets/{diskEncryptionSetName}"
+                                                    },
+                                                    "securityEncryptionType": "VMGuestStateOnly",
+                                                },
+                                                "storageAccountType": "Standard_LRS",
+                                            },
+                                            "name": "mhljivkyryuomrapmmxx",
+                                            "writeAcceleratorEnabled": True,
+                                        }
+                                    ],
+                                    "diskControllerType": "SCSI",
+                                    "imageReference": {
+                                        "communityGalleryImageId": "vlqe",
+                                        "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/images/{imageName}/versions/{versionName}",
+                                        "offer": "isxgumkarlkomp",
+                                        "publisher": "mqxgwbiyjzmxavhbkd",
+                                        "sharedGalleryImageId": "kmkgihoxwlawuuhcinfirktdwkmx",
+                                        "sku": "eojmppqcrnpmxirtp",
+                                        "version": "wvpcqefgtmqdgltiuz",
+                                    },
+                                    "osDisk": {
+                                        "caching": "None",
+                                        "createOption": "FromImage",
+                                        "deleteOption": "Delete",
+                                        "diffDiskSettings": {"option": "Local", "placement": "CacheDisk"},
+                                        "diskSizeGB": 9,
+                                        "image": {"uri": "https://microsoft.com/a"},
+                                        "managedDisk": {
+                                            "diskEncryptionSet": {
+                                                "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/diskEncryptionSets/{diskEncryptionSetName}"
+                                            },
+                                            "securityProfile": {
+                                                "diskEncryptionSet": {
+                                                    "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/diskEncryptionSets/{diskEncryptionSetName}"
+                                                },
+                                                "securityEncryptionType": "VMGuestStateOnly",
+                                            },
+                                            "storageAccountType": "Standard_LRS",
+                                        },
+                                        "name": "dt",
+                                        "osType": "Windows",
+                                        "vhdContainers": ["kdagj"],
+                                        "writeAcceleratorEnabled": True,
+                                    },
+                                },
+                                "userData": "zekdr",
+                            },
+                        }
+                    ]
+                },
+                "capacityType": "VM",
                 "computeProfile": {
+                    "additionalVirtualMachineCapabilities": {"hibernationEnabled": True, "ultraSSDEnabled": True},
                     "baseVirtualMachineProfile": {
                         "applicationProfile": {
                             "galleryApplications": [
@@ -333,7 +628,8 @@ def main():
                     "computeApiVersion": "2023-07-01",
                     "platformFaultDomainCount": 1,
                 },
-                "regularPriorityProfile": {"allocationStrategy": "LowestPrice", "capacity": 20, "minCapacity": 10},
+                "mode": "Managed",
+                "regularPriorityProfile": {"allocationStrategy": "Prioritized", "capacity": 20, "minCapacity": 10},
                 "spotPriorityProfile": {
                     "allocationStrategy": "PriceCapacityOptimized",
                     "capacity": 20,
@@ -342,7 +638,30 @@ def main():
                     "maxPricePerVM": 0.00865,
                     "minCapacity": 10,
                 },
-                "vmSizesProfile": [{"name": "Standard_d1_v2", "rank": 19225}],
+                "vmAttributes": {
+                    "acceleratorCount": {"max": 4, "min": 2},
+                    "acceleratorManufacturers": ["AMD"],
+                    "acceleratorSupport": "Excluded",
+                    "acceleratorTypes": ["GPU"],
+                    "architectureTypes": ["ARM64"],
+                    "burstableSupport": "Excluded",
+                    "cpuManufacturers": ["Intel"],
+                    "dataDiskCount": {"max": 4, "min": 2},
+                    "excludedVMSizes": ["Standard_A1"],
+                    "localStorageDiskTypes": ["HDD"],
+                    "localStorageInGiB": {"max": 4, "min": 2},
+                    "localStorageSupport": "Excluded",
+                    "memoryInGiB": {"max": 4, "min": 2},
+                    "memoryInGiBPerVCpu": {"max": 4, "min": 2},
+                    "networkBandwidthInMbps": {"max": 4, "min": 2},
+                    "networkInterfaceCount": {"max": 4, "min": 2},
+                    "rdmaNetworkInterfaceCount": {"max": 4, "min": 2},
+                    "rdmaSupport": "Excluded",
+                    "vCpuCount": {"max": 4, "min": 2},
+                    "vmCategories": ["GeneralPurpose"],
+                },
+                "vmSizesProfile": [{"name": "Standard_D1_v2", "rank": 0}, {"name": "Standard_D2_v2", "rank": 1}],
+                "zoneAllocationPolicy": {"distributionStrategy": "BestEffortSingleZone"},
             },
             "tags": {},
         },
@@ -350,6 +669,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2024-11-01/Fleets_Update.json
+# x-ms-original-file: 2025-07-01-preview/Fleets_Update.json
 if __name__ == "__main__":
     main()

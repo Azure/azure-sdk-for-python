@@ -24,7 +24,7 @@ class TestSearchManagementUsagesOperationsAsync(AzureMgmtRecordedTestCase):
     async def test_usages_list_by_subscription(self, resource_group):
         response = self.client.usages.list_by_subscription(
             location="str",
-            api_version="2025-02-01-preview",
+            api_version="2025-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

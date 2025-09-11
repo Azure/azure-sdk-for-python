@@ -74,11 +74,11 @@ class RetrievalEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     _PROMPTY_FILE = "retrieval.prompty"
     _RESULT_KEY = "retrieval"
 
-    id = "azureml://registries/azureml/models/Retrieval-Evaluator/versions/1"
+    id = "azureai://built-in/evaluators/retrieval"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(self, model_config, *, threshold: float = 3):  # pylint: disable=super-init-not-called
+    def __init__(self, model_config, *, threshold: float = 3, credential=None):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         self._threshold = threshold
@@ -88,6 +88,7 @@ class RetrievalEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             prompty_file=prompty_path,
             result_key=self._RESULT_KEY,
             threshold=threshold,
+            credential=credential,
             _higher_is_better=self._higher_is_better,
         )
 

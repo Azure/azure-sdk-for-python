@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar
+from typing import Any, Callable, Dict, Optional, TypeVar
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -63,7 +63,7 @@ class StorageTaskAssignmentInstancesReportOperations:  # pylint: disable=name-to
         maxpagesize: Optional[int] = None,
         filter: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.StorageTaskReportInstance"]:
+    ) -> AsyncItemPaged["_models.StorageTaskReportInstance"]:
         """Fetch the report summary of a single storage task assignment's instances.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.

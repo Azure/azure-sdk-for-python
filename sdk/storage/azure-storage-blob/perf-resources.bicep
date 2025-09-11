@@ -1,7 +1,7 @@
 param baseName string = resourceGroup().name
 param location string = resourceGroup().location
 
-resource storageAccount 'Microsoft.Storage/storageAccounts@2019-06-01' = {
+resource storageAccount 'Microsoft.Storage/storageAccounts@2025-01-01' = {
   name: '${baseName}blob'
   location: location
   kind: 'BlockBlobStorage'
@@ -17,5 +17,3 @@ var connectionString = 'DefaultEndpointsProtocol=https;AccountName=${name};Accou
 output AZURE_STORAGE_ACCOUNT_NAME string = name
 output AZURE_STORAGE_ACCOUNT_KEY string = key
 output AZURE_STORAGE_CONNECTION_STRING string = connectionString
-output STANDARD_STORAGE_CONNECTION_STRING string = connectionString
-output STORAGE_CONNECTION_STRING string = connectionString

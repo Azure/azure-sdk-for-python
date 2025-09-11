@@ -21,7 +21,7 @@ IMPORTANT NOTE: All the commands in this page assumes you have loaded the [dev_s
 ## Manual generation
 
 If the automation is not doing its job to create an auto PR, Python has a SwaggerToSdk CLI that can be used to generate a specific Readme. You need
-a virtual environment loaded with at least `tools/azure-sdk-tools` installed.
+a virtual environment loaded with at least `eng/tools/azure-sdk-tools` installed.
 
 ```shell
 # Using default configuration (this can be a Github raw link)
@@ -125,11 +125,7 @@ Example:
 - Added operation group TrafficManagerUserMetricsKeysOperations
 ```
 
-### Note on multi-api packages
 
-If a package is using multi-api, this means it contains several Autorest generated folder. The tool will then build one report per Autorest generation.
-
-To simplify the change log call, the code report also build a "merged_report" that will merge correctly all api-versions and build a report suitable *for the default floating latest*
 
 Example of output if call with network:
 ```shell

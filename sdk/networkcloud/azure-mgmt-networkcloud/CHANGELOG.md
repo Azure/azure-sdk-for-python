@@ -4,6 +4,7 @@
 
 ### Features Added
 
+  - All resources implement concurrency control via Etag/If-Match/If-None-Match parameters. As a result, customers who use create/patch/delete methods with positional arguments may need to adjust part of calls. It is recommended to switch to keyword based calls to avoid any future issues.
   - Model `AgentPool` added property `etag`
   - Model `BareMetalMachine` added property `etag`
   - Model `BareMetalMachineKeySet` added property `etag`

@@ -81,6 +81,9 @@ parameters:
   - name: oneESTemplateTag
     type: string
     default: release
+  - name: EnvVars
+    type: object
+    default: {}
 
 extends:
   template: /eng/pipelines/templates/stages/1es-redirect.yml
@@ -106,6 +109,7 @@ extends:
               InjectedPackages: ${{ parameters.InjectedPackages }}
               BuildDocs: ${{ parameters.BuildDocs }}
               DevFeedName: ${{ parameters.DevFeedName }}
+              EnvVars: ${{ parameters.EnvVars }}
               MatrixConfigs:
                 - ${{ each config in parameters.MatrixConfigs }}:
                     - ${{ config }}

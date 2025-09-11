@@ -16,7 +16,7 @@ with open("CHANGELOG.md", encoding="utf-8") as f:
 
 setup(
     name='azure-keyvault',
-    version='4.2.1b1',
+    version='4.2.0',
     description='Microsoft Azure Key Vault Client Libraries for Python',
     long_description=README + "\n\n" + CHANGELOG,
     long_description_content_type="text/markdown",

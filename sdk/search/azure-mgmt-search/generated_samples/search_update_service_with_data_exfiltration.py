@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -34,13 +35,13 @@ def main():
         resource_group_name="rg1",
         search_service_name="mysearchservice",
         service={
-            "properties": {"disabledDataExfiltrationOptions": ["All"], "replicaCount": 2},
+            "properties": {"dataExfiltrationProtections": ["BlockAll"], "replicaCount": 2},
             "tags": {"app-name": "My e-commerce app", "new-tag": "Adding a new tag"},
         },
     )
     print(response)
 
 
-# x-ms-original-file: specification/search/resource-manager/Microsoft.Search/preview/2025-02-01-preview/examples/SearchUpdateServiceWithDataExfiltration.json
+# x-ms-original-file: specification/search/resource-manager/Microsoft.Search/stable/2025-05-01/examples/SearchUpdateServiceWithDataExfiltration.json
 if __name__ == "__main__":
     main()

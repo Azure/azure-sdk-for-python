@@ -161,9 +161,21 @@ function Get-AllPackageInfoFromRepo ($serviceDirectory)
   $allPkgPropLines = $null
   try
   {
-    Push-Location $RepoRoot
-    $null = python -m pip install "./tools/azure-sdk-tools[build]" -q -I
-    $allPkgPropLines = python (Join-path eng scripts get_package_properties.py) -s $searchPath
+    $pathToBuild = (Join-Path $RepoRoot "eng" "tools" "azure-sdk-tools[build]")
+    # Use ‘uv pip install’ if uv is on PATH, otherwise fall back to python -m pip
+    if (Get-Command uv -ErrorAction SilentlyContinue) {
+      Write-Host "Using uv pip install"
+      $null = uv pip install "$pathToBuild"
+      $freezeOutput = uv pip freeze
+      Write-Host "Pip freeze output: $freezeOutput"
+    } else {
+      Write-Host "Using python -m pip install"
+      $null = python -m pip install "$pathToBuild" -q -I
+    }
+
+    $scriptLoc = Join-path $RepoRoot eng scripts get_package_properties.py
+    Write-Host "Running '$scriptLoc' to retrieve package properties"
+    $allPkgPropLines = python "$scriptLoc" -s "$(Join-Path $RepoRoot $searchPath)"
   }
   catch
   {
@@ -363,12 +375,6 @@ function Find-python-Artifacts-For-Apireview($artifactDir, $artifactName)
 {
   # Find wheel file in given artifact directory
   # Make sure to pick only package with given artifact name
-  # Skip auto API review creation for management packages
-  if ($artifactName -match "mgmt")
-  {
-    Write-Host "Skipping automatic API review for management artifact $($artifactName)"
-    return $null
-  }
 
   $packageName = $artifactName.Replace("_","-")
   $whlDirectory = (Join-Path -Path $artifactDir -ChildPath $packageName)
@@ -412,7 +418,11 @@ function SetPackageVersion ($PackageName, $Version, $ServiceDirectory, $ReleaseD
   {
     $ReleaseDate = Get-Date -Format "yyyy-MM-dd"
   }
-  python -m pip install "$RepoRoot/tools/azure-sdk-tools[build]" -q -I
+  if (Get-Command uv -ErrorAction SilentlyContinue) {
+    uv pip install "$RepoRoot/eng/tools/azure-sdk-tools[build]"
+  } else {
+    python -m pip install "$RepoRoot/eng/tools/azure-sdk-tools[build]" -q -I
+  }
   sdk_set_version --package-name $PackageName --new-version $Version `
   --service $ServiceDirectory --release-date $ReleaseDate --replace-latest-entry-title $ReplaceLatestEntryTitle
 }

@@ -7,6 +7,7 @@ import asyncio
 import importlib.resources as pkg_resources
 import json
 import os
+import random
 import re
 import warnings
 from typing import Any, Callable, Dict, List, Optional, Union, Tuple
@@ -104,6 +105,7 @@ class Simulator:
         user_simulator_prompty_options: Dict[str, Any] = {},
         conversation_turns: List[List[Union[str, Dict[str, Any]]]] = [],
         concurrent_async_tasks: int = 5,
+        randomization_seed: Optional[int] = None,
         **kwargs,
     ) -> List[JsonLineChatProtocol]:
         """
@@ -134,6 +136,9 @@ class Simulator:
         :keyword concurrent_async_tasks: The number of asynchronous tasks to run concurrently during the simulation.
             Defaults to 5.
         :paramtype concurrent_async_tasks: int
+        :keyword randomization_seed: The seed used to randomize task/query order. If unset, the system's
+            default seed is used. Defaults to None.
+        :paramtype randomization_seed: Optional[int]
         :return: A list of simulated conversations represented as JsonLineChatProtocol objects.
         :rtype: List[JsonLineChatProtocol]
 
@@ -158,6 +163,13 @@ class Simulator:
                 f"You have specified 'num_queries' < len('tasks') ({num_queries} < {len(tasks)}). "
                 f"Only the first {num_queries} lines of the specified tasks will be simulated."
             )
+
+        # Apply randomization to tasks if seed is provided
+        if randomization_seed is not None and tasks:
+            # Create a local random instance to avoid polluting global state
+            local_random = random.Random(randomization_seed)
+            tasks = tasks.copy()  # Don't modify the original list
+            local_random.shuffle(tasks)
 
         max_conversation_turns *= 2  # account for both user and assistant turns
 

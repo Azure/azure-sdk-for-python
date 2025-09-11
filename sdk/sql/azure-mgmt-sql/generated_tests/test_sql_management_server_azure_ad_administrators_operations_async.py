@@ -21,24 +21,12 @@ class TestSqlManagementServerAzureADAdministratorsOperationsAsync(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_server_azure_ad_administrators_list_by_server(self, resource_group):
-        response = self.client.server_azure_ad_administrators.list_by_server(
-            resource_group_name=resource_group.name,
-            server_name="str",
-            api_version="2024-05-01-preview",
-        )
-        result = [r async for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
     async def test_server_azure_ad_administrators_get(self, resource_group):
         response = await self.client.server_azure_ad_administrators.get(
             resource_group_name=resource_group.name,
             server_name="str",
             administrator_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2020-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -62,7 +50,7 @@ class TestSqlManagementServerAzureADAdministratorsOperationsAsync(AzureMgmtRecor
                     "tenantId": "str",
                     "type": "str",
                 },
-                api_version="2024-05-01-preview",
+                api_version="2020-11-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -77,9 +65,21 @@ class TestSqlManagementServerAzureADAdministratorsOperationsAsync(AzureMgmtRecor
                 resource_group_name=resource_group.name,
                 server_name="str",
                 administrator_name="str",
-                api_version="2024-05-01-preview",
+                api_version="2020-11-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_server_azure_ad_administrators_list_by_server(self, resource_group):
+        response = self.client.server_azure_ad_administrators.list_by_server(
+            resource_group_name=resource_group.name,
+            server_name="str",
+            api_version="2020-11-01-preview",
+        )
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...

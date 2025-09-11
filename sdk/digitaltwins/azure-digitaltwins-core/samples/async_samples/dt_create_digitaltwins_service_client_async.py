@@ -24,6 +24,8 @@ async def create_digitaltwins_service_client():
 
     # - AZURE_URL: The tenant ID in Azure Active Directory
     url = os.getenv("AZURE_URL")
+    if url is None:
+        raise ValueError("AZURE_URL environment variable is not set")
 
     # DefaultAzureCredential expects the following three environment variables:
     # - AZURE_TENANT_ID: The tenant ID in Azure Active Directory

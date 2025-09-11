@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, Callable, Dict, Iterable, Iterator, Optional, TypeVar, Union, cast
+from typing import Any, Callable, Dict, Iterator, Optional, TypeVar, Union, cast
 import urllib.parse
 
 from azure.core import PipelineClient
@@ -176,7 +176,7 @@ class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=name-
 
     models = _models
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: StorageManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
@@ -186,7 +186,7 @@ class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=name-
     @distributed_trace
     def list(
         self, resource_group_name: str, account_name: str, **kwargs: Any
-    ) -> Iterable["_models.NetworkSecurityPerimeterConfiguration"]:
+    ) -> ItemPaged["_models.NetworkSecurityPerimeterConfiguration"]:
         """Gets list of effective NetworkSecurityPerimeterConfiguration for storage account.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
