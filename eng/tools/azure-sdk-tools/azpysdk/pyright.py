@@ -80,9 +80,9 @@ class pyright(Check):
             try:
                 if args.next:
                     # use latest version of pyright
-                    install_into_venv(executable, ["pyright"])
+                    install_into_venv(executable, ["pyright"], package_dir)
                 else:
-                    install_into_venv(executable, [f"pyright=={PYRIGHT_VERSION}"])
+                    install_into_venv(executable, [f"pyright=={PYRIGHT_VERSION}"], package_dir)
             except CalledProcessError as e:
                 logger.error("Failed to install pyright:", e)
                 return e.returncode
