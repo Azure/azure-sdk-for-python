@@ -35,15 +35,16 @@ from azure.cosmos.offer import ThroughputProperties
 
 from ..cosmos_client import _parse_connection_str
 from .._constants import _Constants as Constants
-# Shorter aliases for convenient usage
-_InternalOptions = Constants.InternalOptions
-_Kwargs = Constants.Kwargs
 from ._cosmos_client_connection_async import CosmosClientConnection, CredentialDict
 from .._base import build_options as _build_options, _set_throughput_options
 from ._retry_utility_async import _ConnectionRetryPolicy
 from ._database import DatabaseProxy, _get_database_link
 from ..documents import ConnectionPolicy, DatabaseAccount
 from ..exceptions import CosmosResourceNotFoundError
+
+# Shorter aliases for convenient usage
+_InternalOptions = Constants.InternalOptions
+_Kwargs = Constants.Kwargs
 
 # pylint: disable=docstring-keyword-should-match-keyword-only
 

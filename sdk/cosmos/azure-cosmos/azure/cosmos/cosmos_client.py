@@ -35,12 +35,13 @@ from ._base import build_options, _set_throughput_options
 from .offer import ThroughputProperties
 from ._retry_utility import ConnectionRetryPolicy
 from ._constants import _Constants as Constants
-# Shorter aliases for convenient usage
-_InternalOptions = Constants.InternalOptions
-_Kwargs = Constants.Kwargs
 from .database import DatabaseProxy, _get_database_link
 from .documents import ConnectionPolicy, DatabaseAccount
 from .exceptions import CosmosResourceNotFoundError
+
+# Shorter aliases for convenient usage
+_InternalOptions = Constants.InternalOptions
+_Kwargs = Constants.Kwargs
 
 
 __all__ = ("CosmosClient",)

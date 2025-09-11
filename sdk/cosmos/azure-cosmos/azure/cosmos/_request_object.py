@@ -25,6 +25,7 @@ from typing import Optional, Mapping, Any, Dict, List
 from .documents import _OperationType
 from .http_constants import ResourceType
 from ._constants import _Constants as Constants
+
 # Shorter aliases for convenient usage
 _InternalOptions = Constants.InternalOptions
 _Kwargs = Constants.Kwargs

@@ -37,9 +37,6 @@ from .._base import (
     _replace_throughput
 )
 from .._constants import _Constants as Constants
-# Shorter aliases for convenient usage
-_InternalOptions = Constants.InternalOptions
-_Kwargs = Constants.Kwargs
 from ._container import ContainerProxy
 from ..offer import ThroughputProperties
 from ..http_constants import StatusCodes
@@ -47,6 +44,10 @@ from ..exceptions import CosmosResourceNotFoundError
 from ._user import UserProxy
 from ..documents import IndexingMode
 from ..partition_key import PartitionKey
+
+# Shorter aliases for convenient usage
+_InternalOptions = Constants.InternalOptions
+_Kwargs = Constants.Kwargs
 
 
 __all__ = ("DatabaseProxy",)
