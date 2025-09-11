@@ -3828,7 +3828,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def begin_cancel_training_job(self, job_id: str, **kwargs: Any) -> AsyncLROPoller[_models.TrainingJobResult]:
+    async def _begin_cancel_training_job(self, job_id: str, **kwargs: Any) -> AsyncLROPoller[_models.TrainingJobResult]:
         """Triggers a cancellation for a running training job.
 
         :param job_id: The job ID. Required.
