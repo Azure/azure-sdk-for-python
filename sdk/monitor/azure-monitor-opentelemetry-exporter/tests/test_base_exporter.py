@@ -24,12 +24,14 @@ from azure.monitor.opentelemetry.exporter._storage import StorageExportResult
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     _REQUESTS_MAP, 
     _STATSBEAT_STATE, 
+)
+from azure.monitor.opentelemetry.exporter.statsbeat.customer import CustomerSdkStatsManager
+from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
+    _CUSTOMER_SDKSTATS_STATE,
     _LOCAL_STORAGE_SETUP_STATE,
     set_customer_sdkstats_metrics,
     get_customer_sdkstats_metrics
 )
-from azure.monitor.opentelemetry.exporter.statsbeat import _customer_sdkstats
-from azure.monitor.opentelemetry.exporter.statsbeat._customer_sdkstats import _CUSTOMER_SDKSTATS_STATE, CustomerSdkStatsMetrics
 from azure.monitor.opentelemetry.exporter.export.metrics._exporter import AzureMonitorMetricExporter
 from azure.monitor.opentelemetry.exporter.export.trace._exporter import AzureMonitorTraceExporter
 from azure.monitor.opentelemetry.exporter._constants import (
@@ -551,7 +553,7 @@ class TestBaseExporter(unittest.TestCase):
 
     def test_local_storage_state_exception_get_set_operations(self):
         """Test the validity of get and set operations for exception state in local storage state"""
-        from azure.monitor.opentelemetry.exporter.statsbeat._state import (
+        from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
             get_local_storage_setup_state_exception,
             set_local_storage_setup_state_exception,
             _LOCAL_STORAGE_SETUP_STATE,
@@ -613,7 +615,7 @@ class TestBaseExporter(unittest.TestCase):
         """Test concurrent access to exception state get/set operations"""
         import threading
         import time
-        from azure.monitor.opentelemetry.exporter.statsbeat._state import (
+        from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
             get_local_storage_setup_state_exception,
             set_local_storage_setup_state_exception,
             _LOCAL_STORAGE_SETUP_STATE
@@ -678,7 +680,7 @@ class TestBaseExporter(unittest.TestCase):
 
     def test_local_storage_state_readonly_get_operations(self):
         """Test the get operation for readonly state in local storage state"""
-        from azure.monitor.opentelemetry.exporter.statsbeat._state import (
+        from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
             get_local_storage_setup_state_readonly,
             _LOCAL_STORAGE_SETUP_STATE,
             _LOCAL_STORAGE_SETUP_STATE_LOCK

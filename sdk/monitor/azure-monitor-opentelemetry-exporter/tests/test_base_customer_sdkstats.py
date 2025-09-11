@@ -19,8 +19,10 @@ from azure.monitor.opentelemetry.exporter._generated.models import (
     TrackResponse,
     TelemetryErrorDetails,
 )
-from azure.monitor.opentelemetry.exporter.statsbeat._customer_sdkstats import (
-    CustomerSdkStatsMetrics,
+from azure.monitor.opentelemetry.exporter.statsbeat.customer import (
+    CustomerSdkStatsManager,
+)
+from azure.monitor.opentelemetry.exporter._constants import (
     DropCode,
     RetryCode,
 )
@@ -48,7 +50,7 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
     def setUp(self):
         from azure.monitor.opentelemetry.exporter._generated.models import TelemetryEventData
         # Import here to avoid circular import
-        from azure.monitor.opentelemetry.exporter.statsbeat._state import set_customer_sdkstats_metrics
+        from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import set_customer_sdkstats_metrics
         
         # Ensure clean state at the start of each test
         set_customer_sdkstats_metrics(None)
@@ -76,16 +78,16 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
             shutil.rmtree(self._temp_dir, ignore_errors=True)
         
         # Clean up customer sdkstats state
-        from azure.monitor.opentelemetry.exporter.statsbeat._state import set_customer_sdkstats_metrics
+        from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import set_customer_sdkstats_metrics
         set_customer_sdkstats_metrics(None)
 
     def _create_exporter_with_customer_sdkstats_enabled(self, disable_offline_storage=True):
         """Helper method to create an exporter with customer sdkstats enabled"""
         # Import here to avoid circular import
-        from azure.monitor.opentelemetry.exporter.statsbeat._state import set_customer_sdkstats_metrics
+        from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import set_customer_sdkstats_metrics
         
         # Mock the customer sdkstats metrics from the correct import location
-        with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._customer_sdkstats.CustomerSdkStatsMetrics") as customer_sdkstats_mock:
+        with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat.customer.customer_sdkstats.CustomerSdkStatsMetrics") as customer_sdkstats_mock:
             customer_sdkstats_instance = mock.Mock(spec=CustomerSdkStatsMetrics)
             customer_sdkstats_mock.return_value = customer_sdkstats_instance
             
@@ -299,9 +301,9 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
             with self.subTest(error=str(error)):
                 customer_metrics.count_retry_items.reset_mock()
 
-                from azure.monitor.opentelemetry.exporter.statsbeat._utils import _track_retry_items
-                with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._utils.get_customer_sdkstats_metrics", return_value=customer_metrics):
-                    _track_retry_items(envelopes, error)
+                from azure.monitor.opentelemetry.exporter.statsbeat.customer import track_retry_items
+                with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat.customer._utils.get_customer_sdkstats_manager", return_value=customer_metrics):
+                    track_retry_items(envelopes, error)
 
                 customer_metrics.count_retry_items.assert_called_once_with(
                     1,
@@ -332,10 +334,10 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
         
         error = TimeoutError("Connection failed")
         
-        from azure.monitor.opentelemetry.exporter.statsbeat._utils import _track_retry_items
+        from azure.monitor.opentelemetry.exporter.statsbeat.customer import track_retry_items
         
-        with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._utils.get_customer_sdkstats_metrics", return_value=customer_metrics):
-            _track_retry_items(envelopes, error)
+        with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat.customer._utils.get_customer_sdkstats_manager", return_value=customer_metrics):
+            track_retry_items(envelopes, error)
         
         customer_metrics.count_retry_items.assert_called_once_with(
             1,
@@ -401,12 +403,12 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
         
         exporter = self._create_exporter_with_customer_sdkstats_enabled(disable_offline_storage=False)
         
-        # Set up side_effect for _track_dropped_items_from_storage to match the new signature
+        # Set up side_effect for track_dropped_items_from_storage to match the new signature
         def track_dropped_storage_side_effect(result_from_storage_put, envelopes):
             # Import here to avoid import error
-            from azure.monitor.opentelemetry.exporter.statsbeat._utils import _track_dropped_items_from_storage
-            # Call the real function which will use our mocked _track_dropped_items
-            _track_dropped_items_from_storage(result_from_storage_put, envelopes)
+            from azure.monitor.opentelemetry.exporter.statsbeat.customer import track_dropped_items_from_storage
+            # Call the real function which will use our mocked track_dropped_items
+            track_dropped_items_from_storage(result_from_storage_put, envelopes)
             
         track_dropped_storage_mock.side_effect = track_dropped_storage_side_effect
         
@@ -490,9 +492,9 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
 
         customer_metrics.count_dropped_items.reset_mock()
 
-        from azure.monitor.opentelemetry.exporter.statsbeat._utils import _track_dropped_items
-        with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._utils.get_customer_sdkstats_metrics", return_value=customer_metrics):
-            _track_dropped_items(envelopes, DropCode.CLIENT_EXCEPTION, _exception_categories.CLIENT_EXCEPTION.value)
+        from azure.monitor.opentelemetry.exporter.statsbeat.customer import track_dropped_items
+        with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat.customer._utils.get_customer_sdkstats_manager", return_value=customer_metrics):
+            track_dropped_items(envelopes, DropCode.CLIENT_EXCEPTION, _exception_categories.CLIENT_EXCEPTION.value)
 
         customer_metrics.count_dropped_items.assert_called_once_with(
             1,
@@ -535,9 +537,9 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
 
         customer_metrics.count_dropped_items.reset_mock()
 
-        from azure.monitor.opentelemetry.exporter.statsbeat._utils import _track_dropped_items
-        with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._utils.get_customer_sdkstats_metrics", return_value=customer_metrics):
-            _track_dropped_items(envelopes, DropCode.CLIENT_EXCEPTION, _exception_categories.CLIENT_EXCEPTION.value)
+        from azure.monitor.opentelemetry.exporter.statsbeat.customer import track_dropped_items
+        with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat.customer._utils.get_customer_sdkstats_manager", return_value=customer_metrics):
+            track_dropped_items(envelopes, DropCode.CLIENT_EXCEPTION, _exception_categories.CLIENT_EXCEPTION.value)
 
         customer_metrics.count_dropped_items.assert_called_once_with(
             1,
@@ -566,9 +568,9 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
 
         customer_metrics.count_dropped_items.reset_mock()
 
-        from azure.monitor.opentelemetry.exporter.statsbeat._utils import _track_dropped_items
-        with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._utils.get_customer_sdkstats_metrics", return_value=customer_metrics):
-            _track_dropped_items(envelopes, DropCode.CLIENT_EXCEPTION, _exception_categories.CLIENT_EXCEPTION.value)
+        from azure.monitor.opentelemetry.exporter.statsbeat.customer import track_dropped_items
+        with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat.customer._utils.get_customer_sdkstats_manager", return_value=customer_metrics):
+            track_dropped_items(envelopes, DropCode.CLIENT_EXCEPTION, _exception_categories.CLIENT_EXCEPTION.value)
 
         customer_metrics.count_dropped_items.assert_called_once_with(
             1,
@@ -610,9 +612,9 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
             with self.subTest(test_case=test_name):
                 customer_metrics.count_dropped_items.reset_mock()
 
-                from azure.monitor.opentelemetry.exporter.statsbeat._utils import _track_dropped_items
-                with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._utils.get_customer_sdkstats_metrics", return_value=customer_metrics):
-                    _track_dropped_items(envelopes, DropCode.CLIENT_EXCEPTION, _exception_categories.CLIENT_EXCEPTION.value)
+                from azure.monitor.opentelemetry.exporter.statsbeat.customer import track_dropped_items
+                with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat.customer._utils.get_customer_sdkstats_manager", return_value=customer_metrics):
+                    track_dropped_items(envelopes, DropCode.CLIENT_EXCEPTION, _exception_categories.CLIENT_EXCEPTION.value)
 
                 customer_metrics.count_dropped_items.assert_called_once_with(
                     1,

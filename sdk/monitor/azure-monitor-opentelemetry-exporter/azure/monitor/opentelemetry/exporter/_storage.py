@@ -13,7 +13,7 @@ from enum import Enum
 
 from azure.monitor.opentelemetry.exporter._utils import PeriodicTask
 
-from azure.monitor.opentelemetry.exporter.statsbeat._state import (
+from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
     get_local_storage_setup_state_exception,
     get_local_storage_setup_state_readonly,
     set_local_storage_setup_state_exception,

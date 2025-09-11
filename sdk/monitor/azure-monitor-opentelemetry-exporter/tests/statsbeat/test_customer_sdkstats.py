@@ -10,12 +10,12 @@ import types
 import copy
 
 # Import directly from module to avoid circular imports
-from azure.monitor.opentelemetry.exporter.statsbeat._customer_sdkstats import (
-    CustomerSdkStatsMetrics,
+from azure.monitor.opentelemetry.exporter.statsbeat.customer import (
+    CustomerSdkStatsManager,
     shutdown_customer_sdkstats_metrics
 )
 
-from azure.monitor.opentelemetry.exporter.statsbeat._state import (
+from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
     get_customer_sdkstats_metrics,
     set_customer_sdkstats_metrics,
     get_customer_sdkstats_shutdown,
@@ -44,7 +44,7 @@ from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 from azure.monitor.opentelemetry.exporter.export._base import ExportResult
 from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
 from azure.monitor.opentelemetry.exporter.statsbeat._state import _REQUESTS_MAP
-from azure.monitor.opentelemetry.exporter.statsbeat._utils import _get_customer_sdkstats_export_interval
+from azure.monitor.opentelemetry.exporter.statsbeat.customer import get_customer_sdkstats_export_interval
 
 class TestCustomerSdkStats(unittest.TestCase):
     """Tests for CustomerSdkStatsMetrics."""
@@ -57,8 +57,8 @@ class TestCustomerSdkStats(unittest.TestCase):
             _CUSTOMER_SDKSTATS_STATE["SHUTDOWN"] = False
         
         # Reset singleton state - only clear CustomerSdkStatsMetrics instances
-        if CustomerSdkStatsMetrics in CustomerSdkStatsMetrics._instances:
-            del CustomerSdkStatsMetrics._instances[CustomerSdkStatsMetrics]
+        if CustomerSdkStatsManager in CustomerSdkStatsManager._instances:
+            del CustomerSdkStatsManager._instances[CustomerSdkStatsManager]
 
         self.env_patcher = mock.patch.dict(os.environ, {
             "APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW": "true",
@@ -67,10 +67,10 @@ class TestCustomerSdkStats(unittest.TestCase):
         self.env_patcher.start()
         self.mock_options = mock.Mock()
         self.mock_options.instrumentation_key = "363331ca-f431-4119-bdcd-31a75920f958"
-        self.mock_options.network_collection_interval = _get_customer_sdkstats_export_interval()
+        self.mock_options.network_collection_interval = get_customer_sdkstats_export_interval()
         self.mock_options.connection_string = "InstrumentationKey=363331ca-f431-4119-bdcd-31a75920f958;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/"
         self.mock_options.language = _CUSTOMER_SDKSTATS_LANGUAGE
-        self.metrics = CustomerSdkStatsMetrics(
+        self.metrics = CustomerSdkStatsManager(
             self.mock_options.connection_string
         )
         

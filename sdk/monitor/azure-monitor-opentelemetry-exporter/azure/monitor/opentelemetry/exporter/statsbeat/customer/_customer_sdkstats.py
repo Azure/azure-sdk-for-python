@@ -1,0 +1,27 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+"""Customer SDKStats implementation for Azure Monitor OpenTelemetry Exporter.
+
+This module provides the implementation for collecting and reporting Customer SDKStats
+metrics that track the usage and performance of the Azure Monitor OpenTelemetry Exporter.
+"""
+
+from ._state import get_customer_stats_manager
+
+# pylint: disable=protected-access
+def collect_customer_sdkstats(exporter):
+    """Initialize customer SDKStats collection using global manager instance.
+    
+    Uses the global CustomerSdkStatsManager instance for better performance
+    and cleaner access patterns.
+    """
+    customer_stats = get_customer_stats_manager()
+    # Check if already initialized (thread-safe check)
+    if not customer_stats.is_initialized:
+        # The initialize method is thread-safe and handles double-initialization
+        customer_stats.initialize(connection_string=exporter._connection_string)
+
+def shutdown_customer_sdkstats_metrics() -> None:
+    """Shutdown customer SDKStats metrics collection."""
+    customer_stats = get_customer_stats_manager()
+    customer_stats.shutdown()  # Use the global manager instance
