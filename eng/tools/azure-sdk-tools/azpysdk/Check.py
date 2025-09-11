@@ -132,8 +132,6 @@ class Check(abc.ABC):
                     for line in f 
                     if "eng/tools/azure-sdk-tools" not in line
                 ]
-            print("HI")
-            print(filtered_req_lines)
             with tempfile.NamedTemporaryFile(mode="w", delete=False) as temp_req_file:
                 temp_req_file.write("\n".join(filtered_req_lines))
             if temp_req_file:
