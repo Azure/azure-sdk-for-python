@@ -68,6 +68,7 @@ async def sample_get_deployment_async():
                     print(f"    Resource ID: {aoai.resource_id}")
                     print(f"    Deployment Name: {aoai.deployment_name}")
 
+
 # [END text_authoring_get_deployment_async]
 
 

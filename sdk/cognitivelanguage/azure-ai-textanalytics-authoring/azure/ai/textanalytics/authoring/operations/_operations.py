@@ -32,23 +32,23 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
-from .._configuration import AuthoringClientConfiguration
+from .._configuration import TextAuthoringClientConfiguration, TextAuthoringProjectClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize
 from .._utils.serialization import Deserializer, Serializer
 from .._utils.utils import ClientMixinABC
 from .._validation import api_version_validation
 
 JSON = MutableMapping[str, Any]
-_Unset: Any = object()
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
+_Unset: Any = object()
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_text_authoring_project_get_import_status_request(  # pylint: disable=name-too-long
-    project_name: str, job_id: str, **kwargs: Any
+def build_text_authoring_list_projects_request(  # pylint: disable=name-too-long
+    *, top: Optional[int] = None, skip: Optional[int] = None, maxpagesize: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -57,13 +57,95 @@ def build_text_authoring_project_get_import_status_request(  # pylint: disable=n
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/authoring/analyze-text/projects/{projectName}/import/jobs/{jobId}"
-    path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, "str"),
-        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
-    }
+    _url = "/authoring/analyze-text/projects"
 
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["top"] = _SERIALIZER.query("top", top, "int")
+    if skip is not None:
+        _params["skip"] = _SERIALIZER.query("skip", skip, "int")
+    if maxpagesize is not None:
+        _params["maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_text_authoring_list_supported_languages_request(  # pylint: disable=name-too-long
+    *,
+    project_kind: Optional[Union[str, _models.ProjectKind]] = None,
+    top: Optional[int] = None,
+    skip: Optional[int] = None,
+    maxpagesize: Optional[int] = None,
+    **kwargs: Any,
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/authoring/analyze-text/projects/global/languages"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if project_kind is not None:
+        _params["projectKind"] = _SERIALIZER.query("project_kind", project_kind, "str")
+    if top is not None:
+        _params["top"] = _SERIALIZER.query("top", top, "int")
+    if skip is not None:
+        _params["skip"] = _SERIALIZER.query("skip", skip, "int")
+    if maxpagesize is not None:
+        _params["maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_text_authoring_list_assigned_resource_deployments_request(  # pylint: disable=name-too-long
+    *, top: Optional[int] = None, skip: Optional[int] = None, maxpagesize: Optional[int] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/authoring/analyze-text/projects/global/deployments/resources"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["top"] = _SERIALIZER.query("top", top, "int")
+    if skip is not None:
+        _params["skip"] = _SERIALIZER.query("skip", skip, "int")
+    if maxpagesize is not None:
+        _params["maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_text_authoring_list_supported_prebuilt_entities_request(  # pylint: disable=name-too-long
+    **kwargs: Any,
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/authoring/analyze-text/projects/global/prebuilt-entities"
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -74,8 +156,13 @@ def build_text_authoring_project_get_import_status_request(  # pylint: disable=n
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_text_authoring_project_get_export_status_request(  # pylint: disable=name-too-long
-    project_name: str, job_id: str, **kwargs: Any
+def build_text_authoring_list_training_config_versions_request(  # pylint: disable=name-too-long
+    *,
+    project_kind: Optional[Union[str, _models.ProjectKind]] = None,
+    top: Optional[int] = None,
+    skip: Optional[int] = None,
+    maxpagesize: Optional[int] = None,
+    **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -84,16 +171,18 @@ def build_text_authoring_project_get_export_status_request(  # pylint: disable=n
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/authoring/analyze-text/projects/{projectName}/export/jobs/{jobId}"
-    path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, "str"),
-        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
+    _url = "/authoring/analyze-text/projects/global/training-config-versions"
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if project_kind is not None:
+        _params["projectKind"] = _SERIALIZER.query("project_kind", project_kind, "str")
+    if top is not None:
+        _params["top"] = _SERIALIZER.query("top", top, "int")
+    if skip is not None:
+        _params["skip"] = _SERIALIZER.query("skip", skip, "int")
+    if maxpagesize is not None:
+        _params["maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -101,33 +190,7 @@ def build_text_authoring_project_get_export_status_request(  # pylint: disable=n
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_text_authoring_project_get_project_request(  # pylint: disable=name-too-long
-    project_name: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/authoring/analyze-text/projects/{projectName}"
-    path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_text_authoring_project_create_project_request(  # pylint: disable=name-too-long
+def build_text_authoring_create_project_request(  # pylint: disable=name-too-long
     project_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -156,7 +219,31 @@ def build_text_authoring_project_create_project_request(  # pylint: disable=name
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_text_authoring_project_delete_project_request(  # pylint: disable=name-too-long
+def build_text_authoring_get_project_request(project_name: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/authoring/analyze-text/projects/{projectName}"
+    path_format_arguments = {
+        "projectName": _SERIALIZER.url("project_name", project_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_text_authoring_delete_project_request(  # pylint: disable=name-too-long
     project_name: str, **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -176,20 +263,96 @@ def build_text_authoring_project_delete_project_request(  # pylint: disable=name
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
-def build_text_authoring_project_copy_project_authorization_request(  # pylint: disable=name-too-long
-    project_name: str, **kwargs: Any
+def build_text_authoring_get_export_status_request(  # pylint: disable=name-too-long
+    project_name: str, job_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/authoring/analyze-text/projects/{projectName}/:authorize-copy"
+    _url = "/authoring/analyze-text/projects/{projectName}/export/jobs/{jobId}"
     path_format_arguments = {
         "projectName": _SERIALIZER.url("project_name", project_name, "str"),
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_text_authoring_get_import_status_request(  # pylint: disable=name-too-long
+    project_name: str, job_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/authoring/analyze-text/projects/{projectName}/import/jobs/{jobId}"
+    path_format_arguments = {
+        "projectName": _SERIALIZER.url("project_name", project_name, "str"),
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_deployment_get_deployment_request(deployment_name: str, project_name: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/authoring/analyze-text/projects/{projectName}/deployments/{deploymentName}"
+    path_format_arguments = {
+        "projectName": _SERIALIZER.url("project_name", project_name, "str"),
+        "deploymentName": _SERIALIZER.url("deployment_name", deployment_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_deployment_deploy_project_request(deployment_name: str, project_name: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    # Construct URL
+    _url = "/authoring/analyze-text/projects/{projectName}/deployments/{deploymentName}"
+    path_format_arguments = {
+        "projectName": _SERIALIZER.url("project_name", project_name, "str"),
+        "deploymentName": _SERIALIZER.url("deployment_name", deployment_name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -200,12 +363,302 @@ def build_text_authoring_project_copy_project_authorization_request(  # pylint: 
     # Construct headers
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_deployment_delete_deployment_request(  # pylint: disable=name-too-long
+    deployment_name: str, project_name: str, **kwargs: Any
+) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    # Construct URL
+    _url = "/authoring/analyze-text/projects/{projectName}/deployments/{deploymentName}"
+    path_format_arguments = {
+        "projectName": _SERIALIZER.url("project_name", project_name, "str"),
+        "deploymentName": _SERIALIZER.url("deployment_name", deployment_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+
+
+def build_deployment_delete_deployment_from_resources_request(  # pylint: disable=name-too-long
+    deployment_name: str, project_name: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    # Construct URL
+    _url = "/authoring/analyze-text/projects/{projectName}/deployments/{deploymentName}/:delete-from-resources"
+    path_format_arguments = {
+        "projectName": _SERIALIZER.url("project_name", project_name, "str"),
+        "deploymentName": _SERIALIZER.url("deployment_name", deployment_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_text_authoring_project_copy_project_request(  # pylint: disable=name-too-long
+def build_deployment_get_deployment_delete_from_resources_status_request(  # pylint: disable=name-too-long
+    deployment_name: str, job_id: str, project_name: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = (
+        "/authoring/analyze-text/projects/{projectName}/deployments/{deploymentName}/delete-from-resources/jobs/{jobId}"
+    )
+    path_format_arguments = {
+        "projectName": _SERIALIZER.url("project_name", project_name, "str"),
+        "deploymentName": _SERIALIZER.url("deployment_name", deployment_name, "str"),
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_deployment_get_deployment_status_request(  # pylint: disable=name-too-long
+    deployment_name: str, job_id: str, project_name: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/authoring/analyze-text/projects/{projectName}/deployments/{deploymentName}/jobs/{jobId}"
+    path_format_arguments = {
+        "projectName": _SERIALIZER.url("project_name", project_name, "str"),
+        "deploymentName": _SERIALIZER.url("deployment_name", deployment_name, "str"),
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_project_list_trained_models_request(  # pylint: disable=name-too-long
+    project_name: str,
+    *,
+    top: Optional[int] = None,
+    skip: Optional[int] = None,
+    maxpagesize: Optional[int] = None,
+    **kwargs: Any,
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/authoring/analyze-text/projects/{projectName}/models"
+    path_format_arguments = {
+        "projectName": _SERIALIZER.url("project_name", project_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["top"] = _SERIALIZER.query("top", top, "int")
+    if skip is not None:
+        _params["skip"] = _SERIALIZER.query("skip", skip, "int")
+    if maxpagesize is not None:
+        _params["maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_project_list_training_jobs_request(
+    project_name: str,
+    *,
+    top: Optional[int] = None,
+    skip: Optional[int] = None,
+    maxpagesize: Optional[int] = None,
+    **kwargs: Any,
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/authoring/analyze-text/projects/{projectName}/train/jobs"
+    path_format_arguments = {
+        "projectName": _SERIALIZER.url("project_name", project_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["top"] = _SERIALIZER.query("top", top, "int")
+    if skip is not None:
+        _params["skip"] = _SERIALIZER.query("skip", skip, "int")
+    if maxpagesize is not None:
+        _params["maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_project_list_deployment_resources_request(  # pylint: disable=name-too-long
+    project_name: str,
+    *,
+    top: Optional[int] = None,
+    skip: Optional[int] = None,
+    maxpagesize: Optional[int] = None,
+    **kwargs: Any,
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/authoring/analyze-text/projects/{projectName}/resources"
+    path_format_arguments = {
+        "projectName": _SERIALIZER.url("project_name", project_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["top"] = _SERIALIZER.query("top", top, "int")
+    if skip is not None:
+        _params["skip"] = _SERIALIZER.query("skip", skip, "int")
+    if maxpagesize is not None:
+        _params["maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_project_list_deployments_request(
+    project_name: str,
+    *,
+    top: Optional[int] = None,
+    skip: Optional[int] = None,
+    maxpagesize: Optional[int] = None,
+    **kwargs: Any,
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/authoring/analyze-text/projects/{projectName}/deployments"
+    path_format_arguments = {
+        "projectName": _SERIALIZER.url("project_name", project_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["top"] = _SERIALIZER.query("top", top, "int")
+    if skip is not None:
+        _params["skip"] = _SERIALIZER.query("skip", skip, "int")
+    if maxpagesize is not None:
+        _params["maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_project_list_exported_models_request(  # pylint: disable=name-too-long
+    project_name: str,
+    *,
+    top: Optional[int] = None,
+    skip: Optional[int] = None,
+    maxpagesize: Optional[int] = None,
+    **kwargs: Any,
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/authoring/analyze-text/projects/{projectName}/exported-models"
+    path_format_arguments = {
+        "projectName": _SERIALIZER.url("project_name", project_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["top"] = _SERIALIZER.query("top", top, "int")
+    if skip is not None:
+        _params["skip"] = _SERIALIZER.query("skip", skip, "int")
+    if maxpagesize is not None:
+        _params["maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_project_assign_deployment_resources_request(  # pylint: disable=name-too-long
     project_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -214,7 +667,7 @@ def build_text_authoring_project_copy_project_request(  # pylint: disable=name-t
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     # Construct URL
-    _url = "/authoring/analyze-text/projects/{projectName}/:copy"
+    _url = "/authoring/analyze-text/projects/{projectName}/resources/:assign"
     path_format_arguments = {
         "projectName": _SERIALIZER.url("project_name", project_name, "str"),
     }
@@ -231,7 +684,188 @@ def build_text_authoring_project_copy_project_request(  # pylint: disable=name-t
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_text_authoring_project_export_request(  # pylint: disable=name-too-long
+def build_project_unassign_deployment_resources_request(  # pylint: disable=name-too-long
+    project_name: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    # Construct URL
+    _url = "/authoring/analyze-text/projects/{projectName}/resources/:unassign"
+    path_format_arguments = {
+        "projectName": _SERIALIZER.url("project_name", project_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_project_get_assign_deployment_resources_status_request(  # pylint: disable=name-too-long
+    job_id: str, project_name: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/authoring/analyze-text/projects/{projectName}/resources/assign/jobs/{jobId}"
+    path_format_arguments = {
+        "projectName": _SERIALIZER.url("project_name", project_name, "str"),
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_project_get_unassign_deployment_resources_status_request(  # pylint: disable=name-too-long
+    job_id: str, project_name: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/authoring/analyze-text/projects/{projectName}/resources/unassign/jobs/{jobId}"
+    path_format_arguments = {
+        "projectName": _SERIALIZER.url("project_name", project_name, "str"),
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_project_swap_deployments_request(project_name: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    # Construct URL
+    _url = "/authoring/analyze-text/projects/{projectName}/deployments/:swap"
+    path_format_arguments = {
+        "projectName": _SERIALIZER.url("project_name", project_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_project_get_swap_deployments_status_request(  # pylint: disable=name-too-long
+    job_id: str, project_name: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/authoring/analyze-text/projects/{projectName}/deployments/swap/jobs/{jobId}"
+    path_format_arguments = {
+        "projectName": _SERIALIZER.url("project_name", project_name, "str"),
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_project_get_project_request(project_name: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/authoring/analyze-text/projects/{projectName}"
+    path_format_arguments = {
+        "projectName": _SERIALIZER.url("project_name", project_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_project_get_project_deletion_status_request(  # pylint: disable=name-too-long
+    job_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/authoring/analyze-text/projects/global/deletion-jobs/{jobId}"
+    path_format_arguments = {
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_project_export_request(
     project_name: str,
     *,
     string_index_type: Union[str, _models.StringIndexType],
@@ -261,7 +895,7 @@ def build_text_authoring_project_export_request(  # pylint: disable=name-too-lon
     return HttpRequest(method="POST", url=_url, params=_params, **kwargs)
 
 
-def build_text_authoring_project_import_method_request(  # pylint: disable=name-too-long
+def build_project_import_method_request(
     project_name: str, *, format: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -289,7 +923,32 @@ def build_text_authoring_project_import_method_request(  # pylint: disable=name-
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_text_authoring_project_train_request(  # pylint: disable=name-too-long
+def build_project_get_export_status_request(job_id: str, project_name: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/authoring/analyze-text/projects/{projectName}/export/jobs/{jobId}"
+    path_format_arguments = {
+        "projectName": _SERIALIZER.url("project_name", project_name, "str"),
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_project_copy_project_authorization_request(  # pylint: disable=name-too-long
     project_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -297,8 +956,35 @@ def build_text_authoring_project_train_request(  # pylint: disable=name-too-long
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
-    _url = "/authoring/analyze-text/projects/{projectName}/:train"
+    _url = "/authoring/analyze-text/projects/{projectName}/:authorize-copy"
+    path_format_arguments = {
+        "projectName": _SERIALIZER.url("project_name", project_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_project_copy_project_request(project_name: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    # Construct URL
+    _url = "/authoring/analyze-text/projects/{projectName}/:copy"
     path_format_arguments = {
         "projectName": _SERIALIZER.url("project_name", project_name, "str"),
     }
@@ -315,8 +1001,8 @@ def build_text_authoring_project_train_request(  # pylint: disable=name-too-long
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_text_authoring_project_get_copy_project_status_request(  # pylint: disable=name-too-long
-    project_name: str, job_id: str, **kwargs: Any
+def build_project_get_copy_project_status_request(  # pylint: disable=name-too-long
+    job_id: str, project_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -342,8 +1028,32 @@ def build_text_authoring_project_get_copy_project_status_request(  # pylint: dis
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_text_authoring_project_get_training_status_request(  # pylint: disable=name-too-long
-    project_name: str, job_id: str, **kwargs: Any
+def build_project_train_request(project_name: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    # Construct URL
+    _url = "/authoring/analyze-text/projects/{projectName}/:train"
+    path_format_arguments = {
+        "projectName": _SERIALIZER.url("project_name", project_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_project_get_training_status_request(  # pylint: disable=name-too-long
+    job_id: str, project_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -369,8 +1079,8 @@ def build_text_authoring_project_get_training_status_request(  # pylint: disable
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_text_authoring_project_cancel_training_job_request(  # pylint: disable=name-too-long
-    project_name: str, job_id: str, **kwargs: Any
+def build_project_cancel_training_job_request(  # pylint: disable=name-too-long
+    job_id: str, project_name: str, **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -390,353 +1100,8 @@ def build_text_authoring_project_cancel_training_job_request(  # pylint: disable
     return HttpRequest(method="POST", url=_url, params=_params, **kwargs)
 
 
-def build_text_authoring_project_get_project_deletion_status_request(  # pylint: disable=name-too-long
-    job_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/authoring/analyze-text/projects/global/deletion-jobs/{jobId}"
-    path_format_arguments = {
-        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_text_authoring_project_unassign_deployment_resources_request(  # pylint: disable=name-too-long
-    project_name: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
-    # Construct URL
-    _url = "/authoring/analyze-text/projects/{projectName}/resources/:unassign"
-    path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_text_authoring_project_get_unassign_deployment_resources_status_request(  # pylint: disable=name-too-long
-    project_name: str, job_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/authoring/analyze-text/projects/{projectName}/resources/unassign/jobs/{jobId}"
-    path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, "str"),
-        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_text_authoring_project_assign_deployment_resources_request(  # pylint: disable=name-too-long
-    project_name: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
-    # Construct URL
-    _url = "/authoring/analyze-text/projects/{projectName}/resources/:assign"
-    path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_text_authoring_project_get_assign_deployment_resources_status_request(  # pylint: disable=name-too-long
-    project_name: str, job_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/authoring/analyze-text/projects/{projectName}/resources/assign/jobs/{jobId}"
-    path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, "str"),
-        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_text_authoring_project_swap_deployments_request(  # pylint: disable=name-too-long
-    project_name: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
-    # Construct URL
-    _url = "/authoring/analyze-text/projects/{projectName}/deployments/:swap"
-    path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_text_authoring_project_get_swap_deployments_status_request(  # pylint: disable=name-too-long
-    project_name: str, job_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/authoring/analyze-text/projects/{projectName}/deployments/swap/jobs/{jobId}"
-    path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, "str"),
-        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_text_authoring_deployment_get_deployment_request(  # pylint: disable=name-too-long
-    project_name: str, deployment_name: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/authoring/analyze-text/projects/{projectName}/deployments/{deploymentName}"
-    path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, "str"),
-        "deploymentName": _SERIALIZER.url("deployment_name", deployment_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_text_authoring_deployment_delete_deployment_request(  # pylint: disable=name-too-long
-    project_name: str, deployment_name: str, **kwargs: Any
-) -> HttpRequest:
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
-    # Construct URL
-    _url = "/authoring/analyze-text/projects/{projectName}/deployments/{deploymentName}"
-    path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, "str"),
-        "deploymentName": _SERIALIZER.url("deployment_name", deployment_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
-
-
-def build_text_authoring_deployment_delete_deployment_from_resources_request(  # pylint: disable=name-too-long
-    project_name: str, deployment_name: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
-    # Construct URL
-    _url = "/authoring/analyze-text/projects/{projectName}/deployments/{deploymentName}/:delete-from-resources"
-    path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, "str"),
-        "deploymentName": _SERIALIZER.url("deployment_name", deployment_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_text_authoring_deployment_get_deployment_delete_from_resources_status_request(  # pylint: disable=name-too-long
-    project_name: str, deployment_name: str, job_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = (
-        "/authoring/analyze-text/projects/{projectName}/deployments/{deploymentName}/delete-from-resources/jobs/{jobId}"
-    )
-    path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, "str"),
-        "deploymentName": _SERIALIZER.url("deployment_name", deployment_name, "str"),
-        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_text_authoring_deployment_get_deployment_status_request(  # pylint: disable=name-too-long
-    project_name: str, deployment_name: str, job_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/authoring/analyze-text/projects/{projectName}/deployments/{deploymentName}/jobs/{jobId}"
-    path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, "str"),
-        "deploymentName": _SERIALIZER.url("deployment_name", deployment_name, "str"),
-        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_text_authoring_deployment_deploy_project_request(  # pylint: disable=name-too-long
-    project_name: str, deployment_name: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
-    # Construct URL
-    _url = "/authoring/analyze-text/projects/{projectName}/deployments/{deploymentName}"
-    path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, "str"),
-        "deploymentName": _SERIALIZER.url("deployment_name", deployment_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_text_authoring_exported_model_get_exported_model_request(  # pylint: disable=name-too-long
-    project_name: str, exported_model_name: str, **kwargs: Any
+def build_exported_model_get_exported_model_request(  # pylint: disable=name-too-long
+    exported_model_name: str, project_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -762,8 +1127,29 @@ def build_text_authoring_exported_model_get_exported_model_request(  # pylint: d
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_text_authoring_exported_model_create_or_update_exported_model_request(  # pylint: disable=name-too-long
-    project_name: str, exported_model_name: str, **kwargs: Any
+def build_exported_model_delete_exported_model_request(  # pylint: disable=name-too-long
+    exported_model_name: str, project_name: str, **kwargs: Any
+) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    # Construct URL
+    _url = "/authoring/analyze-text/projects/{projectName}/exported-models/{exportedModelName}"
+    path_format_arguments = {
+        "projectName": _SERIALIZER.url("project_name", project_name, "str"),
+        "exportedModelName": _SERIALIZER.url("exported_model_name", exported_model_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+
+
+def build_exported_model_create_or_update_exported_model_request(  # pylint: disable=name-too-long
+    exported_model_name: str, project_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -789,29 +1175,8 @@ def build_text_authoring_exported_model_create_or_update_exported_model_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_text_authoring_exported_model_delete_exported_model_request(  # pylint: disable=name-too-long
-    project_name: str, exported_model_name: str, **kwargs: Any
-) -> HttpRequest:
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
-    # Construct URL
-    _url = "/authoring/analyze-text/projects/{projectName}/exported-models/{exportedModelName}"
-    path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, "str"),
-        "exportedModelName": _SERIALIZER.url("exported_model_name", exported_model_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
-
-
-def build_text_authoring_exported_model_get_exported_model_job_status_request(  # pylint: disable=name-too-long
-    project_name: str, exported_model_name: str, job_id: str, **kwargs: Any
+def build_exported_model_get_exported_model_job_status_request(  # pylint: disable=name-too-long
+    exported_model_name: str, job_id: str, project_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -838,8 +1203,8 @@ def build_text_authoring_exported_model_get_exported_model_job_status_request(  
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_text_authoring_exported_model_get_exported_model_manifest_request(  # pylint: disable=name-too-long
-    project_name: str, exported_model_name: str, **kwargs: Any
+def build_exported_model_get_exported_model_manifest_request(  # pylint: disable=name-too-long
+    exported_model_name: str, project_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -865,8 +1230,8 @@ def build_text_authoring_exported_model_get_exported_model_manifest_request(  # 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_text_authoring_trained_model_get_trained_model_request(  # pylint: disable=name-too-long
-    project_name: str, trained_model_label: str, **kwargs: Any
+def build_trained_model_get_trained_model_request(  # pylint: disable=name-too-long
+    trained_model_label: str, project_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -892,8 +1257,8 @@ def build_text_authoring_trained_model_get_trained_model_request(  # pylint: dis
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_text_authoring_trained_model_delete_trained_model_request(  # pylint: disable=name-too-long
-    project_name: str, trained_model_label: str, **kwargs: Any
+def build_trained_model_delete_trained_model_request(  # pylint: disable=name-too-long
+    trained_model_label: str, project_name: str, **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -913,8 +1278,8 @@ def build_text_authoring_trained_model_delete_trained_model_request(  # pylint: 
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
-def build_text_authoring_trained_model_evaluate_model_request(  # pylint: disable=name-too-long
-    project_name: str, trained_model_label: str, **kwargs: Any
+def build_trained_model_evaluate_model_request(  # pylint: disable=name-too-long
+    trained_model_label: str, project_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -940,8 +1305,8 @@ def build_text_authoring_trained_model_evaluate_model_request(  # pylint: disabl
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_text_authoring_trained_model_load_snapshot_request(  # pylint: disable=name-too-long
-    project_name: str, trained_model_label: str, **kwargs: Any
+def build_trained_model_load_snapshot_request(  # pylint: disable=name-too-long
+    trained_model_label: str, project_name: str, **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -961,8 +1326,8 @@ def build_text_authoring_trained_model_load_snapshot_request(  # pylint: disable
     return HttpRequest(method="POST", url=_url, params=_params, **kwargs)
 
 
-def build_text_authoring_trained_model_get_evaluation_status_request(  # pylint: disable=name-too-long
-    project_name: str, trained_model_label: str, job_id: str, **kwargs: Any
+def build_trained_model_get_evaluation_status_request(  # pylint: disable=name-too-long
+    trained_model_label: str, job_id: str, project_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -989,9 +1354,9 @@ def build_text_authoring_trained_model_get_evaluation_status_request(  # pylint:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_text_authoring_trained_model_get_model_evaluation_results_request(  # pylint: disable=name-too-long
-    project_name: str,
+def build_trained_model_get_model_evaluation_results_request(  # pylint: disable=name-too-long
     trained_model_label: str,
+    project_name: str,
     *,
     string_index_type: Union[str, _models.StringIndexType],
     top: Optional[int] = None,
@@ -1030,8 +1395,8 @@ def build_text_authoring_trained_model_get_model_evaluation_results_request(  # 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_text_authoring_trained_model_get_model_evaluation_summary_request(  # pylint: disable=name-too-long
-    project_name: str, trained_model_label: str, **kwargs: Any
+def build_trained_model_get_model_evaluation_summary_request(  # pylint: disable=name-too-long
+    trained_model_label: str, project_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1057,8 +1422,8 @@ def build_text_authoring_trained_model_get_model_evaluation_summary_request(  # 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_text_authoring_trained_model_get_load_snapshot_status_request(  # pylint: disable=name-too-long
-    project_name: str, trained_model_label: str, job_id: str, **kwargs: Any
+def build_trained_model_get_load_snapshot_status_request(  # pylint: disable=name-too-long
+    trained_model_label: str, job_id: str, project_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1085,366 +1450,30 @@ def build_text_authoring_trained_model_get_load_snapshot_status_request(  # pyli
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_authoring_text_analysis_authoring_list_projects_request(  # pylint: disable=name-too-long
-    *, top: Optional[int] = None, skip: Optional[int] = None, maxpagesize: Optional[int] = None, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/authoring/analyze-text/projects"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if top is not None:
-        _params["top"] = _SERIALIZER.query("top", top, "int")
-    if skip is not None:
-        _params["skip"] = _SERIALIZER.query("skip", skip, "int")
-    if maxpagesize is not None:
-        _params["maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_authoring_text_analysis_authoring_list_deployments_request(  # pylint: disable=name-too-long
-    project_name: str,
-    *,
-    top: Optional[int] = None,
-    skip: Optional[int] = None,
-    maxpagesize: Optional[int] = None,
-    **kwargs: Any,
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/authoring/analyze-text/projects/{projectName}/deployments"
-    path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if top is not None:
-        _params["top"] = _SERIALIZER.query("top", top, "int")
-    if skip is not None:
-        _params["skip"] = _SERIALIZER.query("skip", skip, "int")
-    if maxpagesize is not None:
-        _params["maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_authoring_text_analysis_authoring_list_exported_models_request(  # pylint: disable=name-too-long
-    project_name: str,
-    *,
-    top: Optional[int] = None,
-    skip: Optional[int] = None,
-    maxpagesize: Optional[int] = None,
-    **kwargs: Any,
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/authoring/analyze-text/projects/{projectName}/exported-models"
-    path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if top is not None:
-        _params["top"] = _SERIALIZER.query("top", top, "int")
-    if skip is not None:
-        _params["skip"] = _SERIALIZER.query("skip", skip, "int")
-    if maxpagesize is not None:
-        _params["maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_authoring_text_analysis_authoring_list_trained_models_request(  # pylint: disable=name-too-long
-    project_name: str,
-    *,
-    top: Optional[int] = None,
-    skip: Optional[int] = None,
-    maxpagesize: Optional[int] = None,
-    **kwargs: Any,
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/authoring/analyze-text/projects/{projectName}/models"
-    path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if top is not None:
-        _params["top"] = _SERIALIZER.query("top", top, "int")
-    if skip is not None:
-        _params["skip"] = _SERIALIZER.query("skip", skip, "int")
-    if maxpagesize is not None:
-        _params["maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_authoring_text_analysis_authoring_list_deployment_resources_request(  # pylint: disable=name-too-long
-    project_name: str,
-    *,
-    top: Optional[int] = None,
-    skip: Optional[int] = None,
-    maxpagesize: Optional[int] = None,
-    **kwargs: Any,
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/authoring/analyze-text/projects/{projectName}/resources"
-    path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if top is not None:
-        _params["top"] = _SERIALIZER.query("top", top, "int")
-    if skip is not None:
-        _params["skip"] = _SERIALIZER.query("skip", skip, "int")
-    if maxpagesize is not None:
-        _params["maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_authoring_text_analysis_authoring_list_training_jobs_request(  # pylint: disable=name-too-long
-    project_name: str,
-    *,
-    top: Optional[int] = None,
-    skip: Optional[int] = None,
-    maxpagesize: Optional[int] = None,
-    **kwargs: Any,
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/authoring/analyze-text/projects/{projectName}/train/jobs"
-    path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if top is not None:
-        _params["top"] = _SERIALIZER.query("top", top, "int")
-    if skip is not None:
-        _params["skip"] = _SERIALIZER.query("skip", skip, "int")
-    if maxpagesize is not None:
-        _params["maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_authoring_text_analysis_authoring_list_assigned_resource_deployments_request(  # pylint: disable=name-too-long
-    *, top: Optional[int] = None, skip: Optional[int] = None, maxpagesize: Optional[int] = None, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/authoring/analyze-text/projects/global/deployments/resources"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if top is not None:
-        _params["top"] = _SERIALIZER.query("top", top, "int")
-    if skip is not None:
-        _params["skip"] = _SERIALIZER.query("skip", skip, "int")
-    if maxpagesize is not None:
-        _params["maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_authoring_text_analysis_authoring_get_supported_languages_request(  # pylint: disable=name-too-long
-    *,
-    project_kind: Optional[Union[str, _models.ProjectKind]] = None,
-    top: Optional[int] = None,
-    skip: Optional[int] = None,
-    maxpagesize: Optional[int] = None,
-    **kwargs: Any,
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/authoring/analyze-text/projects/global/languages"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if project_kind is not None:
-        _params["projectKind"] = _SERIALIZER.query("project_kind", project_kind, "str")
-    if top is not None:
-        _params["top"] = _SERIALIZER.query("top", top, "int")
-    if skip is not None:
-        _params["skip"] = _SERIALIZER.query("skip", skip, "int")
-    if maxpagesize is not None:
-        _params["maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_authoring_text_analysis_authoring_get_supported_prebuilt_entities_request(  # pylint: disable=name-too-long
-    **kwargs: Any,
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/authoring/analyze-text/projects/global/prebuilt-entities"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_authoring_text_analysis_authoring_list_training_config_versions_request(  # pylint: disable=name-too-long
-    *,
-    project_kind: Optional[Union[str, _models.ProjectKind]] = None,
-    top: Optional[int] = None,
-    skip: Optional[int] = None,
-    maxpagesize: Optional[int] = None,
-    **kwargs: Any,
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/authoring/analyze-text/projects/global/training-config-versions"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if project_kind is not None:
-        _params["projectKind"] = _SERIALIZER.query("project_kind", project_kind, "str")
-    if top is not None:
-        _params["top"] = _SERIALIZER.query("top", top, "int")
-    if skip is not None:
-        _params["skip"] = _SERIALIZER.query("skip", skip, "int")
-    if maxpagesize is not None:
-        _params["maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-class TextAuthoringProjectOperations:  # pylint: disable=too-many-public-methods
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.textanalytics.authoring.AuthoringClient`'s
-        :attr:`text_authoring_project` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AuthoringClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+class _TextAuthoringClientOperationsMixin(
+    ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], TextAuthoringClientConfiguration]
+):
 
     @distributed_trace
-    def get_import_status(
-        self, project_name: str, job_id: str, **kwargs: Any
-    ) -> _models.TextAnalysisAuthoringImportProjectJobState:
-        """Gets the status for an import.
+    def list_projects(
+        self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
+    ) -> ItemPaged["_models.ProjectDetails"]:
+        """Lists the existing projects.
 
-        :param project_name: The new project name. Required.
-        :type project_name: str
-        :param job_id: The job ID. Required.
-        :type job_id: str
-        :return: TextAnalysisAuthoringImportProjectJobState. The
-         TextAnalysisAuthoringImportProjectJobState is compatible with MutableMapping
-        :rtype: ~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringImportProjectJobState
+        :keyword top: The number of result items to return. Default value is None.
+        :paramtype top: int
+        :keyword skip: The number of result items to skip. Default value is None.
+        :paramtype skip: int
+        :return: An iterator like instance of ProjectDetails
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.textanalytics.authoring.models.ProjectDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        maxpagesize = kwargs.pop("maxpagesize", None)
+        cls: ClsType[list[_models.ProjectDetails]] = kwargs.pop("cls", None)
+
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -1453,64 +1482,101 @@ class TextAuthoringProjectOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_text_authoring_list_projects_request(
+                    top=top,
+                    skip=skip,
+                    maxpagesize=maxpagesize,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(list[_models.ProjectDetails], deserialized.get("value", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    def list_supported_languages(
+        self,
+        *,
+        project_kind: Optional[Union[str, _models.ProjectKind]] = None,
+        top: Optional[int] = None,
+        skip: Optional[int] = None,
+        **kwargs: Any,
+    ) -> ItemPaged["_models.SupportedLanguage"]:
+        """Lists the supported languages.
+
+        :keyword project_kind: The project kind, default value is CustomSingleLabelClassification.
+         Known values are: "CustomSingleLabelClassification", "CustomMultiLabelClassification",
+         "CustomEntityRecognition", "CustomAbstractiveSummarization", "CustomHealthcare", and
+         "CustomTextSentiment". Default value is None.
+        :paramtype project_kind: str or ~azure.ai.textanalytics.authoring.models.ProjectKind
+        :keyword top: The number of result items to return. Default value is None.
+        :paramtype top: int
+        :keyword skip: The number of result items to skip. Default value is None.
+        :paramtype skip: int
+        :return: An iterator like instance of SupportedLanguage
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.ai.textanalytics.authoring.models.SupportedLanguage]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.TextAnalysisAuthoringImportProjectJobState] = kwargs.pop("cls", None)
+        maxpagesize = kwargs.pop("maxpagesize", None)
+        cls: ClsType[list[_models.SupportedLanguage]] = kwargs.pop("cls", None)
 
-        _request = build_text_authoring_project_get_import_status_request(
-            project_name=project_name,
-            job_id=job_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.TextAnalysisAuthoringImportProjectJobState, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def get_export_status(
-        self, project_name: str, job_id: str, **kwargs: Any
-    ) -> _models.TextAnalysisAuthoringExportProjectJobState:
-        """Gets the status of an export job. Once job completes, returns the project metadata, and assets.
-
-        :param project_name: The new project name. Required.
-        :type project_name: str
-        :param job_id: The job ID. Required.
-        :type job_id: str
-        :return: TextAnalysisAuthoringExportProjectJobState. The
-         TextAnalysisAuthoringExportProjectJobState is compatible with MutableMapping
-        :rtype: ~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringExportProjectJobState
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -1519,60 +1585,99 @@ class TextAuthoringProjectOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_text_authoring_list_supported_languages_request(
+                    project_kind=project_kind,
+                    top=top,
+                    skip=skip,
+                    maxpagesize=maxpagesize,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(list[_models.SupportedLanguage], deserialized.get("value", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2024-11-15-preview",
+        params_added_on={"2024-11-15-preview": ["api_version", "top", "skip", "maxpagesize", "accept"]},
+        api_versions_list=["2024-11-15-preview", "2025-05-15-preview"],
+    )
+    def list_assigned_resource_deployments(
+        self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
+    ) -> ItemPaged["_models.AssignedProjectDeploymentsMetadata"]:
+        """Lists the deployments to which an Azure resource is assigned. This doesn't return deployments
+        belonging to projects owned by this resource. It only returns deployments belonging to projects
+        owned by other resources.
+
+        :keyword top: The number of result items to return. Default value is None.
+        :paramtype top: int
+        :keyword skip: The number of result items to skip. Default value is None.
+        :paramtype skip: int
+        :return: An iterator like instance of AssignedProjectDeploymentsMetadata
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.ai.textanalytics.authoring.models.AssignedProjectDeploymentsMetadata]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.TextAnalysisAuthoringExportProjectJobState] = kwargs.pop("cls", None)
+        maxpagesize = kwargs.pop("maxpagesize", None)
+        cls: ClsType[list[_models.AssignedProjectDeploymentsMetadata]] = kwargs.pop("cls", None)
 
-        _request = build_text_authoring_project_get_export_status_request(
-            project_name=project_name,
-            job_id=job_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.TextAnalysisAuthoringExportProjectJobState, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def get_project(self, project_name: str, **kwargs: Any) -> _models.TextAnalysisAuthoringProjectMetadata:
-        """Gets the details of a project.
-
-        :param project_name: The new project name. Required.
-        :type project_name: str
-        :return: TextAnalysisAuthoringProjectMetadata. The TextAnalysisAuthoringProjectMetadata is
-         compatible with MutableMapping
-        :rtype: ~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringProjectMetadata
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -1581,76 +1686,288 @@ class TextAuthoringProjectOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_text_authoring_list_assigned_resource_deployments_request(
+                    top=top,
+                    skip=skip,
+                    maxpagesize=maxpagesize,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(list[_models.AssignedProjectDeploymentsMetadata], deserialized.get("value", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2024-11-15-preview",
+        params_added_on={"2024-11-15-preview": ["api_version", "accept"]},
+        api_versions_list=["2024-11-15-preview", "2025-05-15-preview"],
+    )
+    def list_supported_prebuilt_entities(self, **kwargs: Any) -> ItemPaged["_models.PrebuiltEntity"]:
+        """Lists the supported prebuilt entities that can be used while creating composed entities.
+
+        :return: An iterator like instance of PrebuiltEntity
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.textanalytics.authoring.models.PrebuiltEntity]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.TextAnalysisAuthoringProjectMetadata] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.PrebuiltEntity]] = kwargs.pop("cls", None)
 
-        _request = build_text_authoring_project_get_project_request(
-            project_name=project_name,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
+        def prepare_request(next_link=None):
+            if not next_link:
 
-        response = pipeline_response.http_response
+                _request = build_text_authoring_list_supported_prebuilt_entities_request(
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.TextAnalysisAuthoringProjectMetadata, response.json())
+            return _request
 
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(list[_models.PrebuiltEntity], deserialized.get("value", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
 
-        return deserialized  # type: ignore
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    def list_training_config_versions(
+        self,
+        *,
+        project_kind: Optional[Union[str, _models.ProjectKind]] = None,
+        top: Optional[int] = None,
+        skip: Optional[int] = None,
+        **kwargs: Any,
+    ) -> ItemPaged["_models.TrainingConfigVersion"]:
+        """Lists the support training config version for a given project type.
+
+        :keyword project_kind: The project kind, default value is CustomSingleLabelClassification.
+         Known values are: "CustomSingleLabelClassification", "CustomMultiLabelClassification",
+         "CustomEntityRecognition", "CustomAbstractiveSummarization", "CustomHealthcare", and
+         "CustomTextSentiment". Default value is None.
+        :paramtype project_kind: str or ~azure.ai.textanalytics.authoring.models.ProjectKind
+        :keyword top: The number of result items to return. Default value is None.
+        :paramtype top: int
+        :keyword skip: The number of result items to skip. Default value is None.
+        :paramtype skip: int
+        :return: An iterator like instance of TrainingConfigVersion
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.ai.textanalytics.authoring.models.TrainingConfigVersion]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        maxpagesize = kwargs.pop("maxpagesize", None)
+        cls: ClsType[list[_models.TrainingConfigVersion]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_text_authoring_list_training_config_versions_request(
+                    project_kind=project_kind,
+                    top=top,
+                    skip=skip,
+                    maxpagesize=maxpagesize,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(list[_models.TrainingConfigVersion], deserialized.get("value", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
 
     @overload
     def create_project(
         self,
         project_name: str,
-        body: _models.TextAnalysisAuthoringCreateProjectOptions,
+        body: _models.CreateProjectOptions,
         *,
         content_type: str = "application/merge-patch+json",
         **kwargs: Any,
-    ) -> _models.TextAnalysisAuthoringProjectMetadata:
+    ) -> _models.ProjectDetails:
         """The most basic operation that applies to a resource.
 
         :param project_name: The new project name. Required.
         :type project_name: str
         :param body: The request body. Required.
-        :type body: ~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringCreateProjectOptions
+        :type body: ~azure.ai.textanalytics.authoring.models.CreateProjectOptions
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :return: TextAnalysisAuthoringProjectMetadata. The TextAnalysisAuthoringProjectMetadata is
-         compatible with MutableMapping
-        :rtype: ~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringProjectMetadata
+        :return: ProjectDetails. The ProjectDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.textanalytics.authoring.models.ProjectDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def create_project(
         self, project_name: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
-    ) -> _models.TextAnalysisAuthoringProjectMetadata:
+    ) -> _models.ProjectDetails:
         """The most basic operation that applies to a resource.
 
         :param project_name: The new project name. Required.
@@ -1660,16 +1977,15 @@ class TextAuthoringProjectOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :return: TextAnalysisAuthoringProjectMetadata. The TextAnalysisAuthoringProjectMetadata is
-         compatible with MutableMapping
-        :rtype: ~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringProjectMetadata
+        :return: ProjectDetails. The ProjectDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.textanalytics.authoring.models.ProjectDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def create_project(
         self, project_name: str, body: IO[bytes], *, content_type: str = "application/merge-patch+json", **kwargs: Any
-    ) -> _models.TextAnalysisAuthoringProjectMetadata:
+    ) -> _models.ProjectDetails:
         """The most basic operation that applies to a resource.
 
         :param project_name: The new project name. Required.
@@ -1679,30 +1995,24 @@ class TextAuthoringProjectOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :return: TextAnalysisAuthoringProjectMetadata. The TextAnalysisAuthoringProjectMetadata is
-         compatible with MutableMapping
-        :rtype: ~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringProjectMetadata
+        :return: ProjectDetails. The ProjectDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.textanalytics.authoring.models.ProjectDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
     def create_project(
-        self,
-        project_name: str,
-        body: Union[_models.TextAnalysisAuthoringCreateProjectOptions, JSON, IO[bytes]],
-        **kwargs: Any,
-    ) -> _models.TextAnalysisAuthoringProjectMetadata:
+        self, project_name: str, body: Union[_models.CreateProjectOptions, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.ProjectDetails:
         """The most basic operation that applies to a resource.
 
         :param project_name: The new project name. Required.
         :type project_name: str
-        :param body: The request body. Is one of the following types:
-         TextAnalysisAuthoringCreateProjectOptions, JSON, IO[bytes] Required.
-        :type body: ~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringCreateProjectOptions
-         or JSON or IO[bytes]
-        :return: TextAnalysisAuthoringProjectMetadata. The TextAnalysisAuthoringProjectMetadata is
-         compatible with MutableMapping
-        :rtype: ~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringProjectMetadata
+        :param body: The request body. Is one of the following types: CreateProjectOptions, JSON,
+         IO[bytes] Required.
+        :type body: ~azure.ai.textanalytics.authoring.models.CreateProjectOptions or JSON or IO[bytes]
+        :return: ProjectDetails. The ProjectDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.textanalytics.authoring.models.ProjectDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1717,7 +2027,7 @@ class TextAuthoringProjectOperations:  # pylint: disable=too-many-public-methods
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.TextAnalysisAuthoringProjectMetadata] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ProjectDetails] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/merge-patch+json"
         _content = None
@@ -1726,7 +2036,7 @@ class TextAuthoringProjectOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_text_authoring_project_create_project_request(
+        _request = build_text_authoring_create_project_request(
             project_name=project_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -1735,7 +2045,7 @@ class TextAuthoringProjectOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -1758,7 +2068,67 @@ class TextAuthoringProjectOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.TextAnalysisAuthoringProjectMetadata, response.json())
+            deserialized = _deserialize(_models.ProjectDetails, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def get_project(self, project_name: str, **kwargs: Any) -> _models.ProjectDetails:
+        """Gets the details of a project.
+
+        :param project_name: The new project name. Required.
+        :type project_name: str
+        :return: ProjectDetails. The ProjectDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.textanalytics.authoring.models.ProjectDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ProjectDetails] = kwargs.pop("cls", None)
+
+        _request = build_text_authoring_get_project_request(
+            project_name=project_name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.ProjectDetails, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1779,14 +2149,14 @@ class TextAuthoringProjectOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_text_authoring_project_delete_project_request(
+        _request = build_text_authoring_delete_project_request(
             project_name=project_name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -1844,7 +2214,7 @@ class TextAuthoringProjectOperations:  # pylint: disable=too-many-public-methods
                 return cls(pipeline_response, None, {})  # type: ignore
 
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
@@ -1864,113 +2234,16 @@ class TextAuthoringProjectOperations:  # pylint: disable=too-many-public-methods
             )
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    @overload
-    def copy_project_authorization(
-        self,
-        project_name: str,
-        *,
-        project_kind: Union[str, _models.ProjectKind],
-        content_type: str = "application/json",
-        storage_input_container_name: Optional[str] = None,
-        allow_overwrite: Optional[bool] = None,
-        **kwargs: Any,
-    ) -> _models.TextAnalysisAuthoringCopyProjectOptions:
-        """Generates a copy project operation authorization to the current target Azure resource.
-
-        :param project_name: The new project name. Required.
-        :type project_name: str
-        :keyword project_kind: Represents the project kind. Known values are:
-         "CustomSingleLabelClassification", "CustomMultiLabelClassification", "CustomEntityRecognition",
-         "CustomAbstractiveSummarization", "CustomHealthcare", and "CustomTextSentiment". Required.
-        :paramtype project_kind: str or ~azure.ai.textanalytics.authoring.models.ProjectKind
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword storage_input_container_name: The name of the storage container. Default value is
-         None.
-        :paramtype storage_input_container_name: str
-        :keyword allow_overwrite: Whether to allow an existing project to be overwritten using the
-         resulting copy authorization. Default value is None.
-        :paramtype allow_overwrite: bool
-        :return: TextAnalysisAuthoringCopyProjectOptions. The TextAnalysisAuthoringCopyProjectOptions
-         is compatible with MutableMapping
-        :rtype: ~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringCopyProjectOptions
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def copy_project_authorization(
-        self, project_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.TextAnalysisAuthoringCopyProjectOptions:
-        """Generates a copy project operation authorization to the current target Azure resource.
-
-        :param project_name: The new project name. Required.
-        :type project_name: str
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: TextAnalysisAuthoringCopyProjectOptions. The TextAnalysisAuthoringCopyProjectOptions
-         is compatible with MutableMapping
-        :rtype: ~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringCopyProjectOptions
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def copy_project_authorization(
-        self, project_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.TextAnalysisAuthoringCopyProjectOptions:
-        """Generates a copy project operation authorization to the current target Azure resource.
-
-        :param project_name: The new project name. Required.
-        :type project_name: str
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: TextAnalysisAuthoringCopyProjectOptions. The TextAnalysisAuthoringCopyProjectOptions
-         is compatible with MutableMapping
-        :rtype: ~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringCopyProjectOptions
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2024-11-15-preview",
-        params_added_on={"2024-11-15-preview": ["api_version", "project_name", "content_type", "accept"]},
-        api_versions_list=["2024-11-15-preview", "2025-05-15-preview"],
-    )
-    def copy_project_authorization(
-        self,
-        project_name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
-        *,
-        project_kind: Union[str, _models.ProjectKind] = _Unset,
-        storage_input_container_name: Optional[str] = None,
-        allow_overwrite: Optional[bool] = None,
-        **kwargs: Any,
-    ) -> _models.TextAnalysisAuthoringCopyProjectOptions:
-        """Generates a copy project operation authorization to the current target Azure resource.
+    def _get_export_status(self, project_name: str, job_id: str, **kwargs: Any) -> _models._models.ExportProjectState:
+        """Gets the status of an export job. Once job completes, returns the project metadata, and assets.
 
         :param project_name: The new project name. Required.
         :type project_name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
-        :keyword project_kind: Represents the project kind. Known values are:
-         "CustomSingleLabelClassification", "CustomMultiLabelClassification", "CustomEntityRecognition",
-         "CustomAbstractiveSummarization", "CustomHealthcare", and "CustomTextSentiment". Required.
-        :paramtype project_kind: str or ~azure.ai.textanalytics.authoring.models.ProjectKind
-        :keyword storage_input_container_name: The name of the storage container. Default value is
-         None.
-        :paramtype storage_input_container_name: str
-        :keyword allow_overwrite: Whether to allow an existing project to be overwritten using the
-         resulting copy authorization. Default value is None.
-        :paramtype allow_overwrite: bool
-        :return: TextAnalysisAuthoringCopyProjectOptions. The TextAnalysisAuthoringCopyProjectOptions
-         is compatible with MutableMapping
-        :rtype: ~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringCopyProjectOptions
+        :param job_id: The job ID. Required.
+        :type job_id: str
+        :return: ExportProjectState. The ExportProjectState is compatible with MutableMapping
+        :rtype: ~azure.ai.textanalytics.authoring.models._models.ExportProjectState
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1981,38 +2254,20 @@ class TextAuthoringProjectOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.TextAnalysisAuthoringCopyProjectOptions] = kwargs.pop("cls", None)
+        cls: ClsType[_models._models.ExportProjectState] = kwargs.pop("cls", None)
 
-        if body is _Unset:
-            if project_kind is _Unset:
-                raise TypeError("missing required argument: project_kind")
-            body = {
-                "allowOverwrite": allow_overwrite,
-                "projectKind": project_kind,
-                "storageInputContainerName": storage_input_container_name,
-            }
-            body = {k: v for k, v in body.items() if v is not None}
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_text_authoring_project_copy_project_authorization_request(
+        _request = build_text_authoring_get_export_status_request(
             project_name=project_name,
-            content_type=content_type,
+            job_id=job_id,
             api_version=self._config.api_version,
-            content=_content,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -2035,805 +2290,25 @@ class TextAuthoringProjectOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.TextAnalysisAuthoringCopyProjectOptions, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @api_version_validation(
-        method_added_on="2024-11-15-preview",
-        params_added_on={"2024-11-15-preview": ["api_version", "project_name", "content_type"]},
-        api_versions_list=["2024-11-15-preview", "2025-05-15-preview"],
-    )
-    def _copy_project_initial(
-        self,
-        project_name: str,
-        body: Union[_models.TextAnalysisAuthoringCopyProjectOptions, JSON, IO[bytes]],
-        **kwargs: Any,
-    ) -> Iterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_text_authoring_project_copy_project_request(
-            project_name=project_name,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        response_headers = {}
-        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
-
-        deserialized = response.iter_bytes()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    def begin_copy_project(
-        self,
-        project_name: str,
-        body: _models.TextAnalysisAuthoringCopyProjectOptions,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any,
-    ) -> LROPoller[None]:
-        """Copies an existing project to another Azure resource.
-
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
-        :param body: The copy project info. Required.
-        :type body: ~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringCopyProjectOptions
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_copy_project(
-        self, project_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[None]:
-        """Copies an existing project to another Azure resource.
-
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
-        :param body: The copy project info. Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_copy_project(
-        self, project_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[None]:
-        """Copies an existing project to another Azure resource.
-
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
-        :param body: The copy project info. Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2024-11-15-preview",
-        params_added_on={"2024-11-15-preview": ["api_version", "project_name", "content_type"]},
-        api_versions_list=["2024-11-15-preview", "2025-05-15-preview"],
-    )
-    def begin_copy_project(
-        self,
-        project_name: str,
-        body: Union[_models.TextAnalysisAuthoringCopyProjectOptions, JSON, IO[bytes]],
-        **kwargs: Any,
-    ) -> LROPoller[None]:
-        """Copies an existing project to another Azure resource.
-
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
-        :param body: The copy project info. Is one of the following types:
-         TextAnalysisAuthoringCopyProjectOptions, JSON, IO[bytes] Required.
-        :type body: ~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringCopyProjectOptions or
-         JSON or IO[bytes]
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._copy_project_initial(
-                project_name=project_name,
-                body=body,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs,
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
-            if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
-
-        path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
-        }
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[None].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    def _export_initial(
-        self,
-        project_name: str,
-        *,
-        string_index_type: Union[str, _models.StringIndexType],
-        asset_kind: Optional[str] = None,
-        trained_model_label: Optional[str] = None,
-        **kwargs: Any,
-    ) -> Iterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        _request = build_text_authoring_project_export_request(
-            project_name=project_name,
-            string_index_type=string_index_type,
-            asset_kind=asset_kind,
-            trained_model_label=trained_model_label,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        response_headers = {}
-        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
-
-        deserialized = response.iter_bytes()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def begin_export(
-        self,
-        project_name: str,
-        *,
-        string_index_type: Union[str, _models.StringIndexType],
-        asset_kind: Optional[str] = None,
-        trained_model_label: Optional[str] = None,
-        **kwargs: Any,
-    ) -> LROPoller[None]:
-        """Triggers a job to export a project's data.
-
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
-        :keyword string_index_type: Specifies the method used to interpret string offsets. For
-         additional information see `https://aka.ms/text-analytics-offsets
-         <https://aka.ms/text-analytics-offsets>`_. "Utf16CodeUnit" Required.
-        :paramtype string_index_type: str or ~azure.ai.textanalytics.authoring.models.StringIndexType
-        :keyword asset_kind: Kind of asset to export. Default value is None.
-        :paramtype asset_kind: str
-        :keyword trained_model_label: Trained model label to export. If the trainedModelLabel is null,
-         the default behavior is to export the current working copy. Default value is None.
-        :paramtype trained_model_label: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._export_initial(
-                project_name=project_name,
-                string_index_type=string_index_type,
-                asset_kind=asset_kind,
-                trained_model_label=trained_model_label,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs,
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
-            if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
-
-        path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
-        }
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[None].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    @api_version_validation(
-        params_added_on={"2024-11-15-preview": ["format"]},
-        api_versions_list=["2023-04-01", "2024-11-15-preview", "2025-05-15-preview"],
-    )
-    def _import_method_initial(
-        self,
-        project_name: str,
-        body: Union[_models.TextAnalysisAuthoringExportedProject, JSON, IO[bytes]],
-        *,
-        format: Optional[str] = None,
-        **kwargs: Any,
-    ) -> Iterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_text_authoring_project_import_method_request(
-            project_name=project_name,
-            format=format,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        response_headers = {}
-        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
-
-        deserialized = response.iter_bytes()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    def begin_import_method(
-        self,
-        project_name: str,
-        body: _models.TextAnalysisAuthoringExportedProject,
-        *,
-        format: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any,
-    ) -> LROPoller[None]:
-        """Triggers a job to import a project. If a project with the same name already exists, the data of
-        that project is replaced.
-
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
-        :param body: The project data to import. Required.
-        :type body: ~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringExportedProject
-        :keyword format: The format of the project to import. The currently supported formats are json
-         and aml formats. If not provided, the default is set to json. Default value is None.
-        :paramtype format: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_import_method(
-        self,
-        project_name: str,
-        body: JSON,
-        *,
-        format: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any,
-    ) -> LROPoller[None]:
-        """Triggers a job to import a project. If a project with the same name already exists, the data of
-        that project is replaced.
-
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
-        :param body: The project data to import. Required.
-        :type body: JSON
-        :keyword format: The format of the project to import. The currently supported formats are json
-         and aml formats. If not provided, the default is set to json. Default value is None.
-        :paramtype format: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_import_method(
-        self,
-        project_name: str,
-        body: IO[bytes],
-        *,
-        format: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any,
-    ) -> LROPoller[None]:
-        """Triggers a job to import a project. If a project with the same name already exists, the data of
-        that project is replaced.
-
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
-        :param body: The project data to import. Required.
-        :type body: IO[bytes]
-        :keyword format: The format of the project to import. The currently supported formats are json
-         and aml formats. If not provided, the default is set to json. Default value is None.
-        :paramtype format: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    @api_version_validation(
-        params_added_on={"2024-11-15-preview": ["format"]},
-        api_versions_list=["2023-04-01", "2024-11-15-preview", "2025-05-15-preview"],
-    )
-    def begin_import_method(
-        self,
-        project_name: str,
-        body: Union[_models.TextAnalysisAuthoringExportedProject, JSON, IO[bytes]],
-        *,
-        format: Optional[str] = None,
-        **kwargs: Any,
-    ) -> LROPoller[None]:
-        """Triggers a job to import a project. If a project with the same name already exists, the data of
-        that project is replaced.
-
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
-        :param body: The project data to import. Is one of the following types:
-         TextAnalysisAuthoringExportedProject, JSON, IO[bytes] Required.
-        :type body: ~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringExportedProject or
-         JSON or IO[bytes]
-        :keyword format: The format of the project to import. The currently supported formats are json
-         and aml formats. If not provided, the default is set to json. Default value is None.
-        :paramtype format: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._import_method_initial(
-                project_name=project_name,
-                body=body,
-                format=format,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs,
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
-            if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
-
-        path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
-        }
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[None].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    def _train_initial(
-        self,
-        project_name: str,
-        body: Union[_models.TextAnalysisAuthoringTrainingJobOptions, JSON, IO[bytes]],
-        **kwargs: Any,
-    ) -> Iterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_text_authoring_project_train_request(
-            project_name=project_name,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        response_headers = {}
-        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
-
-        deserialized = response.iter_bytes()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    def begin_train(
-        self,
-        project_name: str,
-        body: _models.TextAnalysisAuthoringTrainingJobOptions,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any,
-    ) -> LROPoller[_models.TextAnalysisAuthoringTrainingJobResult]:
-        """Triggers a training job for a project.
-
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
-        :param body: The training input parameters. Required.
-        :type body: ~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringTrainingJobOptions
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns TextAnalysisAuthoringTrainingJobResult. The
-         TextAnalysisAuthoringTrainingJobResult is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringTrainingJobResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_train(
-        self, project_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[_models.TextAnalysisAuthoringTrainingJobResult]:
-        """Triggers a training job for a project.
-
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
-        :param body: The training input parameters. Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns TextAnalysisAuthoringTrainingJobResult. The
-         TextAnalysisAuthoringTrainingJobResult is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringTrainingJobResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_train(
-        self, project_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[_models.TextAnalysisAuthoringTrainingJobResult]:
-        """Triggers a training job for a project.
-
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
-        :param body: The training input parameters. Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns TextAnalysisAuthoringTrainingJobResult. The
-         TextAnalysisAuthoringTrainingJobResult is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringTrainingJobResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def begin_train(
-        self,
-        project_name: str,
-        body: Union[_models.TextAnalysisAuthoringTrainingJobOptions, JSON, IO[bytes]],
-        **kwargs: Any,
-    ) -> LROPoller[_models.TextAnalysisAuthoringTrainingJobResult]:
-        """Triggers a training job for a project.
-
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
-        :param body: The training input parameters. Is one of the following types:
-         TextAnalysisAuthoringTrainingJobOptions, JSON, IO[bytes] Required.
-        :type body: ~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringTrainingJobOptions or
-         JSON or IO[bytes]
-        :return: An instance of LROPoller that returns TextAnalysisAuthoringTrainingJobResult. The
-         TextAnalysisAuthoringTrainingJobResult is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringTrainingJobResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.TextAnalysisAuthoringTrainingJobResult] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._train_initial(
-                project_name=project_name,
-                body=body,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs,
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            response_headers = {}
-            response = pipeline_response.http_response
-            response_headers["Operation-Location"] = self._deserialize(
-                "str", response.headers.get("Operation-Location")
-            )
-
             deserialized = _deserialize(
-                _models.TextAnalysisAuthoringTrainingJobResult, response.json().get("result", {})
+                _models._models.ExportProjectState, response.json()  # pylint: disable=protected-access
             )
-            if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-            return deserialized
 
-        path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
-        }
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[_models.TextAnalysisAuthoringTrainingJobResult].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[_models.TextAnalysisAuthoringTrainingJobResult](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
+        return deserialized  # type: ignore
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2024-11-15-preview",
-        params_added_on={"2024-11-15-preview": ["api_version", "project_name", "job_id", "accept"]},
-        api_versions_list=["2024-11-15-preview", "2025-05-15-preview"],
-    )
-    def get_copy_project_status(
-        self, project_name: str, job_id: str, **kwargs: Any
-    ) -> _models.TextAnalysisAuthoringCopyProjectJobState:
-        """Gets the status of an existing copy project job.
+    def _get_import_status(self, project_name: str, job_id: str, **kwargs: Any) -> _models._models.ImportProjectState:
+        """Gets the status for an import.
 
         :param project_name: The new project name. Required.
         :type project_name: str
         :param job_id: The job ID. Required.
         :type job_id: str
-        :return: TextAnalysisAuthoringCopyProjectJobState. The TextAnalysisAuthoringCopyProjectJobState
-         is compatible with MutableMapping
-        :rtype: ~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringCopyProjectJobState
+        :return: ImportProjectState. The ImportProjectState is compatible with MutableMapping
+        :rtype: ~azure.ai.textanalytics.authoring.models._models.ImportProjectState
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2847,9 +2322,9 @@ class TextAuthoringProjectOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.TextAnalysisAuthoringCopyProjectJobState] = kwargs.pop("cls", None)
+        cls: ClsType[_models._models.ImportProjectState] = kwargs.pop("cls", None)
 
-        _request = build_text_authoring_project_get_copy_project_status_request(
+        _request = build_text_authoring_get_import_status_request(
             project_name=project_name,
             job_id=job_id,
             api_version=self._config.api_version,
@@ -2857,7 +2332,7 @@ class TextAuthoringProjectOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -2880,213 +2355,43 @@ class TextAuthoringProjectOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.TextAnalysisAuthoringCopyProjectJobState, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def get_training_status(
-        self, project_name: str, job_id: str, **kwargs: Any
-    ) -> _models.TextAnalysisAuthoringTrainingJobState:
-        """Gets the status for a training job.
-
-        :param project_name: The new project name. Required.
-        :type project_name: str
-        :param job_id: The job ID. Required.
-        :type job_id: str
-        :return: TextAnalysisAuthoringTrainingJobState. The TextAnalysisAuthoringTrainingJobState is
-         compatible with MutableMapping
-        :rtype: ~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringTrainingJobState
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.TextAnalysisAuthoringTrainingJobState] = kwargs.pop("cls", None)
-
-        _request = build_text_authoring_project_get_training_status_request(
-            project_name=project_name,
-            job_id=job_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.TextAnalysisAuthoringTrainingJobState, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    def _cancel_training_job_initial(self, project_name: str, job_id: str, **kwargs: Any) -> Iterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        _request = build_text_authoring_project_cancel_training_job_request(
-            project_name=project_name,
-            job_id=job_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        response_headers = {}
-        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
-
-        deserialized = response.iter_bytes()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def begin_cancel_training_job(
-        self, project_name: str, job_id: str, **kwargs: Any
-    ) -> LROPoller[_models.TextAnalysisAuthoringTrainingJobResult]:
-        """Triggers a cancellation for a running training job.
-
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
-        :param job_id: The job ID. Required.
-        :type job_id: str
-        :return: An instance of LROPoller that returns TextAnalysisAuthoringTrainingJobResult. The
-         TextAnalysisAuthoringTrainingJobResult is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringTrainingJobResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.TextAnalysisAuthoringTrainingJobResult] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._cancel_training_job_initial(
-                project_name=project_name,
-                job_id=job_id,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs,
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            response_headers = {}
-            response = pipeline_response.http_response
-            response_headers["Operation-Location"] = self._deserialize(
-                "str", response.headers.get("Operation-Location")
-            )
-
             deserialized = _deserialize(
-                _models.TextAnalysisAuthoringTrainingJobResult, response.json().get("result", {})
+                _models._models.ImportProjectState, response.json()  # pylint: disable=protected-access
             )
-            if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-            return deserialized
 
-        path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
-        }
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[_models.TextAnalysisAuthoringTrainingJobResult].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[_models.TextAnalysisAuthoringTrainingJobResult](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        return deserialized  # type: ignore
+
+
+class DeploymentOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.textanalytics.authoring.TextAuthoringProjectClient`'s
+        :attr:`deployment` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: TextAuthoringProjectClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
         )
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def get_project_deletion_status(
-        self, job_id: str, **kwargs: Any
-    ) -> _models.TextAnalysisAuthoringProjectDeletionJobState:
-        """Gets the status for a project deletion job.
+    def get_deployment(self, deployment_name: str, **kwargs: Any) -> _models.ProjectDeployment:
+        """Gets the details of a deployment.
 
-        :param job_id: The job ID. Required.
-        :type job_id: str
-        :return: TextAnalysisAuthoringProjectDeletionJobState. The
-         TextAnalysisAuthoringProjectDeletionJobState is compatible with MutableMapping
-        :rtype: ~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringProjectDeletionJobState
+        :param deployment_name: Represents deployment name. Required.
+        :type deployment_name: str
+        :return: ProjectDeployment. The ProjectDeployment is compatible with MutableMapping
+        :rtype: ~azure.ai.textanalytics.authoring.models.ProjectDeployment
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3100,16 +2405,17 @@ class TextAuthoringProjectOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.TextAnalysisAuthoringProjectDeletionJobState] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ProjectDeployment] = kwargs.pop("cls", None)
 
-        _request = build_text_authoring_project_get_project_deletion_status_request(
-            job_id=job_id,
+        _request = build_deployment_get_deployment_request(
+            deployment_name=deployment_name,
+            project_name=self._config.project_name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -3132,23 +2438,15 @@ class TextAuthoringProjectOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.TextAnalysisAuthoringProjectDeletionJobState, response.json())
+            deserialized = _deserialize(_models.ProjectDeployment, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-    @api_version_validation(
-        method_added_on="2024-11-15-preview",
-        params_added_on={"2024-11-15-preview": ["api_version", "project_name", "content_type"]},
-        api_versions_list=["2024-11-15-preview", "2025-05-15-preview"],
-    )
-    def _unassign_deployment_resources_initial(
-        self,
-        project_name: str,
-        body: Union[_models.TextAnalysisAuthoringUnassignDeploymentResourcesOptions, JSON, IO[bytes]],
-        **kwargs: Any,
+    def _deploy_project_initial(
+        self, deployment_name: str, body: Union[_models._models.CreateDeploymentDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -3171,8 +2469,9 @@ class TextAuthoringProjectOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_text_authoring_project_unassign_deployment_resources_request(
-            project_name=project_name,
+        _request = build_deployment_deploy_project_request(
+            deployment_name=deployment_name,
+            project_name=self._config.project_name,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -3180,7 +2479,7 @@ class TextAuthoringProjectOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -3210,641 +2509,34 @@ class TextAuthoringProjectOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    def begin_unassign_deployment_resources(
+    def _begin_deploy_project(
         self,
-        project_name: str,
-        body: _models.TextAnalysisAuthoringUnassignDeploymentResourcesOptions,
+        deployment_name: str,
+        body: _models._models.CreateDeploymentDetails,
         *,
         content_type: str = "application/json",
         **kwargs: Any,
-    ) -> LROPoller[None]:
-        """Unassign resources from a project. This disallows deploying new deployments to these resources,
-        and deletes existing deployments assigned to them.
-
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
-        :param body: The info for the deployment resources to be deleted. Required.
-        :type body:
-         ~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringUnassignDeploymentResourcesOptions
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> LROPoller[None]: ...
     @overload
-    def begin_unassign_deployment_resources(
-        self, project_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[None]:
-        """Unassign resources from a project. This disallows deploying new deployments to these resources,
-        and deletes existing deployments assigned to them.
-
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
-        :param body: The info for the deployment resources to be deleted. Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    def _begin_deploy_project(
+        self, deployment_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[None]: ...
     @overload
-    def begin_unassign_deployment_resources(
-        self, project_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[None]:
-        """Unassign resources from a project. This disallows deploying new deployments to these resources,
-        and deletes existing deployments assigned to them.
-
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
-        :param body: The info for the deployment resources to be deleted. Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    def _begin_deploy_project(
+        self, deployment_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[None]: ...
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2024-11-15-preview",
-        params_added_on={"2024-11-15-preview": ["api_version", "project_name", "content_type"]},
-        api_versions_list=["2024-11-15-preview", "2025-05-15-preview"],
-    )
-    def begin_unassign_deployment_resources(
-        self,
-        project_name: str,
-        body: Union[_models.TextAnalysisAuthoringUnassignDeploymentResourcesOptions, JSON, IO[bytes]],
-        **kwargs: Any,
+    def _begin_deploy_project(
+        self, deployment_name: str, body: Union[_models._models.CreateDeploymentDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[None]:
-        """Unassign resources from a project. This disallows deploying new deployments to these resources,
-        and deletes existing deployments assigned to them.
-
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
-        :param body: The info for the deployment resources to be deleted. Is one of the following
-         types: TextAnalysisAuthoringUnassignDeploymentResourcesOptions, JSON, IO[bytes] Required.
-        :type body:
-         ~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringUnassignDeploymentResourcesOptions
-         or JSON or IO[bytes]
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._unassign_deployment_resources_initial(
-                project_name=project_name,
-                body=body,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs,
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
-            if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
-
-        path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
-        }
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[None].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2024-11-15-preview",
-        params_added_on={"2024-11-15-preview": ["api_version", "project_name", "job_id", "accept"]},
-        api_versions_list=["2024-11-15-preview", "2025-05-15-preview"],
-    )
-    def get_unassign_deployment_resources_status(
-        self, project_name: str, job_id: str, **kwargs: Any
-    ) -> _models.TextAnalysisAuthoringDeploymentResourcesJobState:
-        """Gets the status of an existing unassign deployment resources job.
-
-        :param project_name: The new project name. Required.
-        :type project_name: str
-        :param job_id: The job ID. Required.
-        :type job_id: str
-        :return: TextAnalysisAuthoringDeploymentResourcesJobState. The
-         TextAnalysisAuthoringDeploymentResourcesJobState is compatible with MutableMapping
-        :rtype:
-         ~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringDeploymentResourcesJobState
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.TextAnalysisAuthoringDeploymentResourcesJobState] = kwargs.pop("cls", None)
-
-        _request = build_text_authoring_project_get_unassign_deployment_resources_status_request(
-            project_name=project_name,
-            job_id=job_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.TextAnalysisAuthoringDeploymentResourcesJobState, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @api_version_validation(
-        method_added_on="2024-11-15-preview",
-        params_added_on={"2024-11-15-preview": ["api_version", "project_name", "content_type"]},
-        api_versions_list=["2024-11-15-preview", "2025-05-15-preview"],
-    )
-    def _assign_deployment_resources_initial(
-        self,
-        project_name: str,
-        body: Union[_models.TextAnalysisAuthoringAssignDeploymentResourcesOptions, JSON, IO[bytes]],
-        **kwargs: Any,
-    ) -> Iterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_text_authoring_project_assign_deployment_resources_request(
-            project_name=project_name,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        response_headers = {}
-        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
-
-        deserialized = response.iter_bytes()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    def begin_assign_deployment_resources(
-        self,
-        project_name: str,
-        body: _models.TextAnalysisAuthoringAssignDeploymentResourcesOptions,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any,
-    ) -> LROPoller[None]:
-        """Assign new Azure resources to a project to allow deploying new deployments to them. This API is
-        available only via AAD authentication and not supported via subscription key authentication.
-        For more details about AAD authentication, check here:
-        `https://learn.microsoft.com/en-us/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-azure-active-directory
-        <https://learn.microsoft.com/en-us/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-azure-active-directory>`_.
-
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
-        :param body: The new project resources info. Required.
-        :type body:
-         ~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringAssignDeploymentResourcesOptions
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_assign_deployment_resources(
-        self, project_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[None]:
-        """Assign new Azure resources to a project to allow deploying new deployments to them. This API is
-        available only via AAD authentication and not supported via subscription key authentication.
-        For more details about AAD authentication, check here:
-        `https://learn.microsoft.com/en-us/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-azure-active-directory
-        <https://learn.microsoft.com/en-us/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-azure-active-directory>`_.
-
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
-        :param body: The new project resources info. Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_assign_deployment_resources(
-        self, project_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[None]:
-        """Assign new Azure resources to a project to allow deploying new deployments to them. This API is
-        available only via AAD authentication and not supported via subscription key authentication.
-        For more details about AAD authentication, check here:
-        `https://learn.microsoft.com/en-us/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-azure-active-directory
-        <https://learn.microsoft.com/en-us/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-azure-active-directory>`_.
-
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
-        :param body: The new project resources info. Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2024-11-15-preview",
-        params_added_on={"2024-11-15-preview": ["api_version", "project_name", "content_type"]},
-        api_versions_list=["2024-11-15-preview", "2025-05-15-preview"],
-    )
-    def begin_assign_deployment_resources(
-        self,
-        project_name: str,
-        body: Union[_models.TextAnalysisAuthoringAssignDeploymentResourcesOptions, JSON, IO[bytes]],
-        **kwargs: Any,
-    ) -> LROPoller[None]:
-        """Assign new Azure resources to a project to allow deploying new deployments to them. This API is
-        available only via AAD authentication and not supported via subscription key authentication.
-        For more details about AAD authentication, check here:
-        `https://learn.microsoft.com/en-us/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-azure-active-directory
-        <https://learn.microsoft.com/en-us/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-azure-active-directory>`_.
-
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
-        :param body: The new project resources info. Is one of the following types:
-         TextAnalysisAuthoringAssignDeploymentResourcesOptions, JSON, IO[bytes] Required.
-        :type body:
-         ~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringAssignDeploymentResourcesOptions
-         or JSON or IO[bytes]
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._assign_deployment_resources_initial(
-                project_name=project_name,
-                body=body,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs,
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
-            if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
-
-        path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
-        }
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[None].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2024-11-15-preview",
-        params_added_on={"2024-11-15-preview": ["api_version", "project_name", "job_id", "accept"]},
-        api_versions_list=["2024-11-15-preview", "2025-05-15-preview"],
-    )
-    def get_assign_deployment_resources_status(
-        self, project_name: str, job_id: str, **kwargs: Any
-    ) -> _models.TextAnalysisAuthoringDeploymentResourcesJobState:
-        """Gets the status of an existing assign deployment resources job.
-
-        :param project_name: The new project name. Required.
-        :type project_name: str
-        :param job_id: The job ID. Required.
-        :type job_id: str
-        :return: TextAnalysisAuthoringDeploymentResourcesJobState. The
-         TextAnalysisAuthoringDeploymentResourcesJobState is compatible with MutableMapping
-        :rtype:
-         ~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringDeploymentResourcesJobState
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.TextAnalysisAuthoringDeploymentResourcesJobState] = kwargs.pop("cls", None)
-
-        _request = build_text_authoring_project_get_assign_deployment_resources_status_request(
-            project_name=project_name,
-            job_id=job_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.TextAnalysisAuthoringDeploymentResourcesJobState, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    def _swap_deployments_initial(
-        self,
-        project_name: str,
-        body: Union[_models.TextAnalysisAuthoringSwapDeploymentsOptions, JSON, IO[bytes]],
-        **kwargs: Any,
-    ) -> Iterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_text_authoring_project_swap_deployments_request(
-            project_name=project_name,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        response_headers = {}
-        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
-
-        deserialized = response.iter_bytes()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    def begin_swap_deployments(
-        self,
-        project_name: str,
-        body: _models.TextAnalysisAuthoringSwapDeploymentsOptions,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any,
-    ) -> LROPoller[None]:
-        """Swaps two existing deployments with each other.
-
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
-        :param body: The job object to swap two deployments. Required.
-        :type body:
-         ~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringSwapDeploymentsOptions
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_swap_deployments(
-        self, project_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[None]:
-        """Swaps two existing deployments with each other.
-
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
-        :param body: The job object to swap two deployments. Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_swap_deployments(
-        self, project_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[None]:
-        """Swaps two existing deployments with each other.
-
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
-        :param body: The job object to swap two deployments. Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def begin_swap_deployments(
-        self,
-        project_name: str,
-        body: Union[_models.TextAnalysisAuthoringSwapDeploymentsOptions, JSON, IO[bytes]],
-        **kwargs: Any,
-    ) -> LROPoller[None]:
-        """Swaps two existing deployments with each other.
-
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
-        :param body: The job object to swap two deployments. Is one of the following types:
-         TextAnalysisAuthoringSwapDeploymentsOptions, JSON, IO[bytes] Required.
-        :type body:
-         ~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringSwapDeploymentsOptions or JSON or
+        """Creates a new deployment or replaces an existing one.
+
+        :param deployment_name: The name of the specific deployment of the project to use. Required.
+        :type deployment_name: str
+        :param body: The new deployment info. Is one of the following types: CreateDeploymentDetails,
+         JSON, IO[bytes] Required.
+        :type body: ~azure.ai.textanalytics.authoring.models._models.CreateDeploymentDetails or JSON or
          IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
@@ -3859,8 +2551,8 @@ class TextAuthoringProjectOperations:  # pylint: disable=too-many-public-methods
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._swap_deployments_initial(
-                project_name=project_name,
+            raw_result = self._deploy_project_initial(
+                deployment_name=deployment_name,
                 body=body,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
@@ -3876,7 +2568,7 @@ class TextAuthoringProjectOperations:  # pylint: disable=too-many-public-methods
                 return cls(pipeline_response, None, {})  # type: ignore
 
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
@@ -3896,157 +2588,7 @@ class TextAuthoringProjectOperations:  # pylint: disable=too-many-public-methods
             )
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    @distributed_trace
-    def get_swap_deployments_status(
-        self, project_name: str, job_id: str, **kwargs: Any
-    ) -> _models.TextAnalysisAuthoringSwapDeploymentsJobState:
-        """Gets the status of an existing swap deployment job.
-
-        :param project_name: The new project name. Required.
-        :type project_name: str
-        :param job_id: The job ID. Required.
-        :type job_id: str
-        :return: TextAnalysisAuthoringSwapDeploymentsJobState. The
-         TextAnalysisAuthoringSwapDeploymentsJobState is compatible with MutableMapping
-        :rtype: ~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringSwapDeploymentsJobState
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.TextAnalysisAuthoringSwapDeploymentsJobState] = kwargs.pop("cls", None)
-
-        _request = build_text_authoring_project_get_swap_deployments_status_request(
-            project_name=project_name,
-            job_id=job_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.TextAnalysisAuthoringSwapDeploymentsJobState, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-
-class TextAuthoringDeploymentOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.textanalytics.authoring.AuthoringClient`'s
-        :attr:`text_authoring_deployment` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AuthoringClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace
-    def get_deployment(
-        self, project_name: str, deployment_name: str, **kwargs: Any
-    ) -> _models.TextAnalysisAuthoringProjectDeployment:
-        """Gets the details of a deployment.
-
-        :param project_name: The new project name. Required.
-        :type project_name: str
-        :param deployment_name: Represents deployment name. Required.
-        :type deployment_name: str
-        :return: TextAnalysisAuthoringProjectDeployment. The TextAnalysisAuthoringProjectDeployment is
-         compatible with MutableMapping
-        :rtype: ~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringProjectDeployment
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.TextAnalysisAuthoringProjectDeployment] = kwargs.pop("cls", None)
-
-        _request = build_text_authoring_deployment_get_deployment_request(
-            project_name=project_name,
-            deployment_name=deployment_name,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.TextAnalysisAuthoringProjectDeployment, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    def _delete_deployment_initial(self, project_name: str, deployment_name: str, **kwargs: Any) -> Iterator[bytes]:
+    def _delete_deployment_initial(self, deployment_name: str, **kwargs: Any) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -4060,15 +2602,15 @@ class TextAuthoringDeploymentOperations:
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_text_authoring_deployment_delete_deployment_request(
-            project_name=project_name,
+        _request = build_deployment_delete_deployment_request(
             deployment_name=deployment_name,
+            project_name=self._config.project_name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -4098,11 +2640,9 @@ class TextAuthoringDeploymentOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def begin_delete_deployment(self, project_name: str, deployment_name: str, **kwargs: Any) -> LROPoller[None]:
+    def _begin_delete_deployment(self, deployment_name: str, **kwargs: Any) -> LROPoller[None]:
         """Deletes a project deployment.
 
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
         :param deployment_name: The name of the specific deployment of the project to use. Required.
         :type deployment_name: str
         :return: An instance of LROPoller that returns None
@@ -4118,12 +2658,7 @@ class TextAuthoringDeploymentOperations:
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._delete_deployment_initial(
-                project_name=project_name,
-                deployment_name=deployment_name,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs,
+                deployment_name=deployment_name, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
             )
             raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
@@ -4133,7 +2668,7 @@ class TextAuthoringDeploymentOperations:
                 return cls(pipeline_response, None, {})  # type: ignore
 
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
@@ -4159,11 +2694,7 @@ class TextAuthoringDeploymentOperations:
         api_versions_list=["2024-11-15-preview", "2025-05-15-preview"],
     )
     def _delete_deployment_from_resources_initial(  # pylint: disable=name-too-long
-        self,
-        project_name: str,
-        deployment_name: str,
-        body: Union[_models.TextAnalysisAuthoringDeleteDeploymentOptions, JSON, IO[bytes]],
-        **kwargs: Any,
+        self, deployment_name: str, body: Union[_models._models.DeleteDeploymentDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -4186,9 +2717,9 @@ class TextAuthoringDeploymentOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_text_authoring_deployment_delete_deployment_from_resources_request(
-            project_name=project_name,
+        _request = build_deployment_delete_deployment_from_resources_request(
             deployment_name=deployment_name,
+            project_name=self._config.project_name,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -4196,7 +2727,7 @@ class TextAuthoringDeploymentOperations:
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -4226,83 +2757,22 @@ class TextAuthoringDeploymentOperations:
         return deserialized  # type: ignore
 
     @overload
-    def begin_delete_deployment_from_resources(
+    def _begin_delete_deployment_from_resources(
         self,
-        project_name: str,
         deployment_name: str,
-        body: _models.TextAnalysisAuthoringDeleteDeploymentOptions,
+        body: _models._models.DeleteDeploymentDetails,
         *,
         content_type: str = "application/json",
         **kwargs: Any,
-    ) -> LROPoller[None]:
-        """Deletes a project deployment from the specified assigned resources.
-
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
-        :param deployment_name: The name of the specific deployment of the project to use. Required.
-        :type deployment_name: str
-        :param body: The options for deleting the deployment. Required.
-        :type body:
-         ~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringDeleteDeploymentOptions
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> LROPoller[None]: ...
     @overload
-    def begin_delete_deployment_from_resources(
-        self,
-        project_name: str,
-        deployment_name: str,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any,
-    ) -> LROPoller[None]:
-        """Deletes a project deployment from the specified assigned resources.
-
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
-        :param deployment_name: The name of the specific deployment of the project to use. Required.
-        :type deployment_name: str
-        :param body: The options for deleting the deployment. Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    def _begin_delete_deployment_from_resources(
+        self, deployment_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[None]: ...
     @overload
-    def begin_delete_deployment_from_resources(
-        self,
-        project_name: str,
-        deployment_name: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any,
-    ) -> LROPoller[None]:
-        """Deletes a project deployment from the specified assigned resources.
-
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
-        :param deployment_name: The name of the specific deployment of the project to use. Required.
-        :type deployment_name: str
-        :param body: The options for deleting the deployment. Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    def _begin_delete_deployment_from_resources(
+        self, deployment_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[None]: ...
 
     @distributed_trace
     @api_version_validation(
@@ -4310,24 +2780,17 @@ class TextAuthoringDeploymentOperations:
         params_added_on={"2024-11-15-preview": ["api_version", "project_name", "deployment_name", "content_type"]},
         api_versions_list=["2024-11-15-preview", "2025-05-15-preview"],
     )
-    def begin_delete_deployment_from_resources(
-        self,
-        project_name: str,
-        deployment_name: str,
-        body: Union[_models.TextAnalysisAuthoringDeleteDeploymentOptions, JSON, IO[bytes]],
-        **kwargs: Any,
+    def _begin_delete_deployment_from_resources(
+        self, deployment_name: str, body: Union[_models._models.DeleteDeploymentDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[None]:
         """Deletes a project deployment from the specified assigned resources.
 
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
         :param deployment_name: The name of the specific deployment of the project to use. Required.
         :type deployment_name: str
         :param body: The options for deleting the deployment. Is one of the following types:
-         TextAnalysisAuthoringDeleteDeploymentOptions, JSON, IO[bytes] Required.
-        :type body:
-         ~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringDeleteDeploymentOptions or JSON
-         or IO[bytes]
+         DeleteDeploymentDetails, JSON, IO[bytes] Required.
+        :type body: ~azure.ai.textanalytics.authoring.models._models.DeleteDeploymentDetails or JSON or
+         IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4342,7 +2805,6 @@ class TextAuthoringDeploymentOperations:
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._delete_deployment_from_resources_initial(
-                project_name=project_name,
                 deployment_name=deployment_name,
                 body=body,
                 content_type=content_type,
@@ -4359,7 +2821,7 @@ class TextAuthoringDeploymentOperations:
                 return cls(pipeline_response, None, {})  # type: ignore
 
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
@@ -4385,21 +2847,18 @@ class TextAuthoringDeploymentOperations:
         params_added_on={"2024-11-15-preview": ["api_version", "project_name", "deployment_name", "job_id", "accept"]},
         api_versions_list=["2024-11-15-preview", "2025-05-15-preview"],
     )
-    def get_deployment_delete_from_resources_status(  # pylint: disable=name-too-long
-        self, project_name: str, deployment_name: str, job_id: str, **kwargs: Any
-    ) -> _models.TextAnalysisAuthoringDeploymentDeleteFromResourcesJobState:
+    def _get_deployment_delete_from_resources_status(  # pylint: disable=name-too-long
+        self, deployment_name: str, job_id: str, **kwargs: Any
+    ) -> _models._models.DeploymentDeleteFromResourcesState:
         """Gets the status of an existing delete deployment from specific resources job.
 
-        :param project_name: The new project name. Required.
-        :type project_name: str
         :param deployment_name: Represents deployment name. Required.
         :type deployment_name: str
         :param job_id: The job ID. Required.
         :type job_id: str
-        :return: TextAnalysisAuthoringDeploymentDeleteFromResourcesJobState. The
-         TextAnalysisAuthoringDeploymentDeleteFromResourcesJobState is compatible with MutableMapping
-        :rtype:
-         ~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringDeploymentDeleteFromResourcesJobState
+        :return: DeploymentDeleteFromResourcesState. The DeploymentDeleteFromResourcesState is
+         compatible with MutableMapping
+        :rtype: ~azure.ai.textanalytics.authoring.models._models.DeploymentDeleteFromResourcesState
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -4413,18 +2872,18 @@ class TextAuthoringDeploymentOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.TextAnalysisAuthoringDeploymentDeleteFromResourcesJobState] = kwargs.pop("cls", None)
+        cls: ClsType[_models._models.DeploymentDeleteFromResourcesState] = kwargs.pop("cls", None)
 
-        _request = build_text_authoring_deployment_get_deployment_delete_from_resources_status_request(
-            project_name=project_name,
+        _request = build_deployment_get_deployment_delete_from_resources_status_request(
             deployment_name=deployment_name,
             job_id=job_id,
+            project_name=self._config.project_name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -4448,7 +2907,7 @@ class TextAuthoringDeploymentOperations:
             deserialized = response.iter_bytes()
         else:
             deserialized = _deserialize(
-                _models.TextAnalysisAuthoringDeploymentDeleteFromResourcesJobState, response.json()
+                _models._models.DeploymentDeleteFromResourcesState, response.json()  # pylint: disable=protected-access
             )
 
         if cls:
@@ -4457,20 +2916,17 @@ class TextAuthoringDeploymentOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_deployment_status(
-        self, project_name: str, deployment_name: str, job_id: str, **kwargs: Any
-    ) -> _models.TextAnalysisAuthoringDeploymentJobState:
+    def _get_deployment_status(
+        self, deployment_name: str, job_id: str, **kwargs: Any
+    ) -> _models._models.DeploymentState:
         """Gets the status of an existing deployment job.
 
-        :param project_name: The new project name. Required.
-        :type project_name: str
         :param deployment_name: Represents deployment name. Required.
         :type deployment_name: str
         :param job_id: The job ID. Required.
         :type job_id: str
-        :return: TextAnalysisAuthoringDeploymentJobState. The TextAnalysisAuthoringDeploymentJobState
-         is compatible with MutableMapping
-        :rtype: ~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringDeploymentJobState
+        :return: DeploymentState. The DeploymentState is compatible with MutableMapping
+        :rtype: ~azure.ai.textanalytics.authoring.models._models.DeploymentState
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -4484,18 +2940,18 @@ class TextAuthoringDeploymentOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.TextAnalysisAuthoringDeploymentJobState] = kwargs.pop("cls", None)
+        cls: ClsType[_models._models.DeploymentState] = kwargs.pop("cls", None)
 
-        _request = build_text_authoring_deployment_get_deployment_status_request(
-            project_name=project_name,
+        _request = build_deployment_get_deployment_status_request(
             deployment_name=deployment_name,
             job_id=job_id,
+            project_name=self._config.project_name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -4518,267 +2974,56 @@ class TextAuthoringDeploymentOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.TextAnalysisAuthoringDeploymentJobState, response.json())
+            deserialized = _deserialize(
+                _models._models.DeploymentState, response.json()  # pylint: disable=protected-access
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-    def _deploy_project_initial(
-        self,
-        project_name: str,
-        deployment_name: str,
-        body: Union[_models.TextAnalysisAuthoringCreateDeploymentOptions, JSON, IO[bytes]],
-        **kwargs: Any,
-    ) -> Iterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_text_authoring_deployment_deploy_project_request(
-            project_name=project_name,
-            deployment_name=deployment_name,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        response_headers = {}
-        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
-
-        deserialized = response.iter_bytes()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    def begin_deploy_project(
-        self,
-        project_name: str,
-        deployment_name: str,
-        body: _models.TextAnalysisAuthoringCreateDeploymentOptions,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any,
-    ) -> LROPoller[None]:
-        """Creates a new deployment or replaces an existing one.
-
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
-        :param deployment_name: The name of the specific deployment of the project to use. Required.
-        :type deployment_name: str
-        :param body: The new deployment info. Required.
-        :type body:
-         ~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringCreateDeploymentOptions
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_deploy_project(
-        self,
-        project_name: str,
-        deployment_name: str,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any,
-    ) -> LROPoller[None]:
-        """Creates a new deployment or replaces an existing one.
-
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
-        :param deployment_name: The name of the specific deployment of the project to use. Required.
-        :type deployment_name: str
-        :param body: The new deployment info. Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_deploy_project(
-        self,
-        project_name: str,
-        deployment_name: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any,
-    ) -> LROPoller[None]:
-        """Creates a new deployment or replaces an existing one.
-
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
-        :param deployment_name: The name of the specific deployment of the project to use. Required.
-        :type deployment_name: str
-        :param body: The new deployment info. Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def begin_deploy_project(
-        self,
-        project_name: str,
-        deployment_name: str,
-        body: Union[_models.TextAnalysisAuthoringCreateDeploymentOptions, JSON, IO[bytes]],
-        **kwargs: Any,
-    ) -> LROPoller[None]:
-        """Creates a new deployment or replaces an existing one.
-
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
-        :param deployment_name: The name of the specific deployment of the project to use. Required.
-        :type deployment_name: str
-        :param body: The new deployment info. Is one of the following types:
-         TextAnalysisAuthoringCreateDeploymentOptions, JSON, IO[bytes] Required.
-        :type body:
-         ~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringCreateDeploymentOptions or JSON
-         or IO[bytes]
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._deploy_project_initial(
-                project_name=project_name,
-                deployment_name=deployment_name,
-                body=body,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs,
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
-            if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
-
-        path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
-        }
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[None].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-
-class TextAuthoringExportedModelOperations:
+class ProjectOperations:  # pylint: disable=too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.ai.textanalytics.authoring.AuthoringClient`'s
-        :attr:`text_authoring_exported_model` attribute.
+        :class:`~azure.ai.textanalytics.authoring.TextAuthoringProjectClient`'s
+        :attr:`project` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AuthoringClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: TextAuthoringProjectClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2024-11-15-preview",
-        params_added_on={"2024-11-15-preview": ["api_version", "project_name", "exported_model_name", "accept"]},
-        api_versions_list=["2024-11-15-preview", "2025-05-15-preview"],
-    )
-    def get_exported_model(
-        self, project_name: str, exported_model_name: str, **kwargs: Any
-    ) -> _models.TextAnalysisAuthoringExportedTrainedModel:
-        """Gets the details of an exported model.
+    def list_trained_models(
+        self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
+    ) -> ItemPaged["_models.ProjectTrainedModel"]:
+        """Lists the trained models belonging to a project.
 
-        :param project_name: The new project name. Required.
-        :type project_name: str
-        :param exported_model_name: The exported model name. Required.
-        :type exported_model_name: str
-        :return: TextAnalysisAuthoringExportedTrainedModel. The
-         TextAnalysisAuthoringExportedTrainedModel is compatible with MutableMapping
-        :rtype: ~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringExportedTrainedModel
+        :keyword top: The number of result items to return. Default value is None.
+        :paramtype top: int
+        :keyword skip: The number of result items to skip. Default value is None.
+        :paramtype skip: int
+        :return: An iterator like instance of ProjectTrainedModel
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.ai.textanalytics.authoring.models.ProjectTrainedModel]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        maxpagesize = kwargs.pop("maxpagesize", None)
+        cls: ClsType[list[_models.ProjectTrainedModel]] = kwargs.pop("cls", None)
+
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -4787,60 +3032,463 @@ class TextAuthoringExportedModelOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_project_list_trained_models_request(
+                    project_name=self._config.project_name,
+                    top=top,
+                    skip=skip,
+                    maxpagesize=maxpagesize,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(list[_models.ProjectTrainedModel], deserialized.get("value", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    def list_training_jobs(
+        self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
+    ) -> ItemPaged["_models.TrainingState"]:
+        """Lists the non-expired training jobs created for a project.
+
+        :keyword top: The number of result items to return. Default value is None.
+        :paramtype top: int
+        :keyword skip: The number of result items to skip. Default value is None.
+        :paramtype skip: int
+        :return: An iterator like instance of TrainingState
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.textanalytics.authoring.models.TrainingState]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.TextAnalysisAuthoringExportedTrainedModel] = kwargs.pop("cls", None)
+        maxpagesize = kwargs.pop("maxpagesize", None)
+        cls: ClsType[list[_models.TrainingState]] = kwargs.pop("cls", None)
 
-        _request = build_text_authoring_exported_model_get_exported_model_request(
-            project_name=project_name,
-            exported_model_name=exported_model_name,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
+        def prepare_request(next_link=None):
+            if not next_link:
 
-        response = pipeline_response.http_response
+                _request = build_project_list_training_jobs_request(
+                    project_name=self._config.project_name,
+                    top=top,
+                    skip=skip,
+                    maxpagesize=maxpagesize,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.TextAnalysisAuthoringExportedTrainedModel, response.json())
+            return _request
 
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(list[_models.TrainingState], deserialized.get("value", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
 
-        return deserialized  # type: ignore
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2024-11-15-preview",
+        params_added_on={"2024-11-15-preview": ["api_version", "project_name", "top", "skip", "maxpagesize", "accept"]},
+        api_versions_list=["2024-11-15-preview", "2025-05-15-preview"],
+    )
+    def list_deployment_resources(
+        self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
+    ) -> ItemPaged["_models.AssignedDeploymentResource"]:
+        """Lists the deployments resources assigned to the project.
+
+        :keyword top: The number of result items to return. Default value is None.
+        :paramtype top: int
+        :keyword skip: The number of result items to skip. Default value is None.
+        :paramtype skip: int
+        :return: An iterator like instance of AssignedDeploymentResource
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.ai.textanalytics.authoring.models.AssignedDeploymentResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        maxpagesize = kwargs.pop("maxpagesize", None)
+        cls: ClsType[list[_models.AssignedDeploymentResource]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_project_list_deployment_resources_request(
+                    project_name=self._config.project_name,
+                    top=top,
+                    skip=skip,
+                    maxpagesize=maxpagesize,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(list[_models.AssignedDeploymentResource], deserialized.get("value", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    def list_deployments(
+        self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
+    ) -> ItemPaged["_models.ProjectDeployment"]:
+        """Lists the deployments belonging to a project.
+
+        :keyword top: The number of result items to return. Default value is None.
+        :paramtype top: int
+        :keyword skip: The number of result items to skip. Default value is None.
+        :paramtype skip: int
+        :return: An iterator like instance of ProjectDeployment
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.ai.textanalytics.authoring.models.ProjectDeployment]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        maxpagesize = kwargs.pop("maxpagesize", None)
+        cls: ClsType[list[_models.ProjectDeployment]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_project_list_deployments_request(
+                    project_name=self._config.project_name,
+                    top=top,
+                    skip=skip,
+                    maxpagesize=maxpagesize,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(list[_models.ProjectDeployment], deserialized.get("value", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2024-11-15-preview",
+        params_added_on={"2024-11-15-preview": ["api_version", "project_name", "top", "skip", "maxpagesize", "accept"]},
+        api_versions_list=["2024-11-15-preview", "2025-05-15-preview"],
+    )
+    def list_exported_models(
+        self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
+    ) -> ItemPaged["_models.ExportedTrainedModel"]:
+        """Lists the exported models belonging to a project.
+
+        :keyword top: The number of result items to return. Default value is None.
+        :paramtype top: int
+        :keyword skip: The number of result items to skip. Default value is None.
+        :paramtype skip: int
+        :return: An iterator like instance of ExportedTrainedModel
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.ai.textanalytics.authoring.models.ExportedTrainedModel]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        maxpagesize = kwargs.pop("maxpagesize", None)
+        cls: ClsType[list[_models.ExportedTrainedModel]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_project_list_exported_models_request(
+                    project_name=self._config.project_name,
+                    top=top,
+                    skip=skip,
+                    maxpagesize=maxpagesize,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(list[_models.ExportedTrainedModel], deserialized.get("value", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
 
     @api_version_validation(
         method_added_on="2024-11-15-preview",
-        params_added_on={"2024-11-15-preview": ["api_version", "project_name", "exported_model_name", "content_type"]},
+        params_added_on={"2024-11-15-preview": ["api_version", "project_name", "content_type"]},
         api_versions_list=["2024-11-15-preview", "2025-05-15-preview"],
     )
-    def _create_or_update_exported_model_initial(
-        self,
-        project_name: str,
-        exported_model_name: str,
-        body: Union[_models.TextAnalysisAuthoringExportedModelOptions, JSON, IO[bytes]],
-        **kwargs: Any,
+    def _assign_deployment_resources_initial(
+        self, body: Union[_models._models.AssignDeploymentResourcesDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -4863,9 +3511,8 @@ class TextAuthoringExportedModelOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_text_authoring_exported_model_create_or_update_exported_model_request(
-            project_name=project_name,
-            exported_model_name=exported_model_name,
+        _request = build_project_assign_deployment_resources_request(
+            project_name=self._config.project_name,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -4873,7 +3520,7 @@ class TextAuthoringExportedModelOperations:
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -4903,105 +3550,40 @@ class TextAuthoringExportedModelOperations:
         return deserialized  # type: ignore
 
     @overload
-    def begin_create_or_update_exported_model(
+    def _begin_assign_deployment_resources(
         self,
-        project_name: str,
-        exported_model_name: str,
-        body: _models.TextAnalysisAuthoringExportedModelOptions,
+        body: _models._models.AssignDeploymentResourcesDetails,
         *,
         content_type: str = "application/json",
         **kwargs: Any,
-    ) -> LROPoller[None]:
-        """Creates a new exported model or replaces an existing one.
-
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
-        :param exported_model_name: The exported model name. Required.
-        :type exported_model_name: str
-        :param body: The exported model info. Required.
-        :type body: ~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringExportedModelOptions
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> LROPoller[None]: ...
     @overload
-    def begin_create_or_update_exported_model(
-        self,
-        project_name: str,
-        exported_model_name: str,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any,
-    ) -> LROPoller[None]:
-        """Creates a new exported model or replaces an existing one.
-
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
-        :param exported_model_name: The exported model name. Required.
-        :type exported_model_name: str
-        :param body: The exported model info. Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    def _begin_assign_deployment_resources(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[None]: ...
     @overload
-    def begin_create_or_update_exported_model(
-        self,
-        project_name: str,
-        exported_model_name: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any,
-    ) -> LROPoller[None]:
-        """Creates a new exported model or replaces an existing one.
-
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
-        :param exported_model_name: The exported model name. Required.
-        :type exported_model_name: str
-        :param body: The exported model info. Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    def _begin_assign_deployment_resources(
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[None]: ...
 
     @distributed_trace
     @api_version_validation(
         method_added_on="2024-11-15-preview",
-        params_added_on={"2024-11-15-preview": ["api_version", "project_name", "exported_model_name", "content_type"]},
+        params_added_on={"2024-11-15-preview": ["api_version", "project_name", "content_type"]},
         api_versions_list=["2024-11-15-preview", "2025-05-15-preview"],
     )
-    def begin_create_or_update_exported_model(
-        self,
-        project_name: str,
-        exported_model_name: str,
-        body: Union[_models.TextAnalysisAuthoringExportedModelOptions, JSON, IO[bytes]],
-        **kwargs: Any,
+    def _begin_assign_deployment_resources(
+        self, body: Union[_models._models.AssignDeploymentResourcesDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[None]:
-        """Creates a new exported model or replaces an existing one.
+        """Assign new Azure resources to a project to allow deploying new deployments to them. This API is
+        available only via AAD authentication and not supported via subscription key authentication.
+        For more details about AAD authentication, check here:
+        `https://learn.microsoft.com/en-us/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-azure-active-directory
+        <https://learn.microsoft.com/en-us/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-azure-active-directory>`_.
 
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
-        :param exported_model_name: The exported model name. Required.
-        :type exported_model_name: str
-        :param body: The exported model info. Is one of the following types:
-         TextAnalysisAuthoringExportedModelOptions, JSON, IO[bytes] Required.
-        :type body: ~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringExportedModelOptions
+        :param body: The new project resources info. Is one of the following types:
+         AssignDeploymentResourcesDetails, JSON, IO[bytes] Required.
+        :type body: ~azure.ai.textanalytics.authoring.models._models.AssignDeploymentResourcesDetails
          or JSON or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
@@ -5016,15 +3598,8 @@ class TextAuthoringExportedModelOperations:
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._create_or_update_exported_model_initial(
-                project_name=project_name,
-                exported_model_name=exported_model_name,
-                body=body,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs,
+            raw_result = self._assign_deployment_resources_initial(
+                body=body, content_type=content_type, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
             )
             raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
@@ -5034,7 +3609,7 @@ class TextAuthoringExportedModelOperations:
                 return cls(pipeline_response, None, {})  # type: ignore
 
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
@@ -5056,11 +3631,607 @@ class TextAuthoringExportedModelOperations:
 
     @api_version_validation(
         method_added_on="2024-11-15-preview",
-        params_added_on={"2024-11-15-preview": ["api_version", "project_name", "exported_model_name"]},
+        params_added_on={"2024-11-15-preview": ["api_version", "project_name", "content_type"]},
         api_versions_list=["2024-11-15-preview", "2025-05-15-preview"],
     )
-    def _delete_exported_model_initial(
-        self, project_name: str, exported_model_name: str, **kwargs: Any
+    def _unassign_deployment_resources_initial(
+        self, body: Union[_models._models.UnassignDeploymentResourcesDetails, JSON, IO[bytes]], **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_project_unassign_deployment_resources_request(
+            project_name=self._config.project_name,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
+
+        deserialized = response.iter_bytes()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def _begin_unassign_deployment_resources(
+        self,
+        body: _models._models.UnassignDeploymentResourcesDetails,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> LROPoller[None]: ...
+    @overload
+    def _begin_unassign_deployment_resources(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[None]: ...
+    @overload
+    def _begin_unassign_deployment_resources(
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[None]: ...
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2024-11-15-preview",
+        params_added_on={"2024-11-15-preview": ["api_version", "project_name", "content_type"]},
+        api_versions_list=["2024-11-15-preview", "2025-05-15-preview"],
+    )
+    def _begin_unassign_deployment_resources(
+        self, body: Union[_models._models.UnassignDeploymentResourcesDetails, JSON, IO[bytes]], **kwargs: Any
+    ) -> LROPoller[None]:
+        """Unassign resources from a project. This disallows deploying new deployments to these resources,
+        and deletes existing deployments assigned to them.
+
+        :param body: The info for the deployment resources to be deleted. Is one of the following
+         types: UnassignDeploymentResourcesDetails, JSON, IO[bytes] Required.
+        :type body: ~azure.ai.textanalytics.authoring.models._models.UnassignDeploymentResourcesDetails
+         or JSON or IO[bytes]
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._unassign_deployment_resources_initial(
+                body=body, content_type=content_type, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2024-11-15-preview",
+        params_added_on={"2024-11-15-preview": ["api_version", "project_name", "job_id", "accept"]},
+        api_versions_list=["2024-11-15-preview", "2025-05-15-preview"],
+    )
+    def _get_assign_deployment_resources_status(
+        self, job_id: str, **kwargs: Any
+    ) -> _models._models.DeploymentResourcesState:
+        """Gets the status of an existing assign deployment resources job.
+
+        :param job_id: The job ID. Required.
+        :type job_id: str
+        :return: DeploymentResourcesState. The DeploymentResourcesState is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.textanalytics.authoring.models._models.DeploymentResourcesState
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models._models.DeploymentResourcesState] = kwargs.pop("cls", None)
+
+        _request = build_project_get_assign_deployment_resources_status_request(
+            job_id=job_id,
+            project_name=self._config.project_name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(
+                _models._models.DeploymentResourcesState, response.json()  # pylint: disable=protected-access
+            )
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2024-11-15-preview",
+        params_added_on={"2024-11-15-preview": ["api_version", "project_name", "job_id", "accept"]},
+        api_versions_list=["2024-11-15-preview", "2025-05-15-preview"],
+    )
+    def _get_unassign_deployment_resources_status(  # pylint: disable=name-too-long
+        self, job_id: str, **kwargs: Any
+    ) -> _models._models.DeploymentResourcesState:
+        """Gets the status of an existing unassign deployment resources job.
+
+        :param job_id: The job ID. Required.
+        :type job_id: str
+        :return: DeploymentResourcesState. The DeploymentResourcesState is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.textanalytics.authoring.models._models.DeploymentResourcesState
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models._models.DeploymentResourcesState] = kwargs.pop("cls", None)
+
+        _request = build_project_get_unassign_deployment_resources_status_request(
+            job_id=job_id,
+            project_name=self._config.project_name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(
+                _models._models.DeploymentResourcesState, response.json()  # pylint: disable=protected-access
+            )
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    def _swap_deployments_initial(
+        self, body: Union[_models._models.SwapDeploymentsDetails, JSON, IO[bytes]], **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_project_swap_deployments_request(
+            project_name=self._config.project_name,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
+
+        deserialized = response.iter_bytes()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def _begin_swap_deployments(
+        self, body: _models._models.SwapDeploymentsDetails, *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[None]: ...
+    @overload
+    def _begin_swap_deployments(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[None]: ...
+    @overload
+    def _begin_swap_deployments(
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[None]: ...
+
+    @distributed_trace
+    def _begin_swap_deployments(
+        self, body: Union[_models._models.SwapDeploymentsDetails, JSON, IO[bytes]], **kwargs: Any
+    ) -> LROPoller[None]:
+        """Swaps two existing deployments with each other.
+
+        :param body: The job object to swap two deployments. Is one of the following types:
+         SwapDeploymentsDetails, JSON, IO[bytes] Required.
+        :type body: ~azure.ai.textanalytics.authoring.models._models.SwapDeploymentsDetails or JSON or
+         IO[bytes]
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._swap_deployments_initial(
+                body=body, content_type=content_type, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    def _get_swap_deployments_status(self, job_id: str, **kwargs: Any) -> _models._models.SwapDeploymentsState:
+        """Gets the status of an existing swap deployment job.
+
+        :param job_id: The job ID. Required.
+        :type job_id: str
+        :return: SwapDeploymentsState. The SwapDeploymentsState is compatible with MutableMapping
+        :rtype: ~azure.ai.textanalytics.authoring.models._models.SwapDeploymentsState
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models._models.SwapDeploymentsState] = kwargs.pop("cls", None)
+
+        _request = build_project_get_swap_deployments_status_request(
+            job_id=job_id,
+            project_name=self._config.project_name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(
+                _models._models.SwapDeploymentsState, response.json()  # pylint: disable=protected-access
+            )
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def _get_project(self, **kwargs: Any) -> _models.ProjectDetails:
+        """Gets the details of a project.
+
+        :return: ProjectDetails. The ProjectDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.textanalytics.authoring.models.ProjectDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ProjectDetails] = kwargs.pop("cls", None)
+
+        _request = build_project_get_project_request(
+            project_name=self._config.project_name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.ProjectDetails, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def _get_project_deletion_status(self, job_id: str, **kwargs: Any) -> _models.ProjectDeletionState:
+        """Gets the status for a project deletion job.
+
+        :param job_id: The job ID. Required.
+        :type job_id: str
+        :return: ProjectDeletionState. The ProjectDeletionState is compatible with MutableMapping
+        :rtype: ~azure.ai.textanalytics.authoring.models.ProjectDeletionState
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ProjectDeletionState] = kwargs.pop("cls", None)
+
+        _request = build_project_get_project_deletion_status_request(
+            job_id=job_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.ProjectDeletionState, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    def _export_initial(
+        self,
+        *,
+        string_index_type: Union[str, _models.StringIndexType],
+        asset_kind: Optional[str] = None,
+        trained_model_label: Optional[str] = None,
+        **kwargs: Any,
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -5075,15 +4246,1096 @@ class TextAuthoringExportedModelOperations:
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_text_authoring_exported_model_delete_exported_model_request(
-            project_name=project_name,
-            exported_model_name=exported_model_name,
+        _request = build_project_export_request(
+            project_name=self._config.project_name,
+            string_index_type=string_index_type,
+            asset_kind=asset_kind,
+            trained_model_label=trained_model_label,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
+
+        deserialized = response.iter_bytes()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def _begin_export(
+        self,
+        *,
+        string_index_type: Union[str, _models.StringIndexType],
+        asset_kind: Optional[str] = None,
+        trained_model_label: Optional[str] = None,
+        **kwargs: Any,
+    ) -> LROPoller[None]:
+        """Triggers a job to export a project's data.
+
+        :keyword string_index_type: Specifies the method used to interpret string offsets. For
+         additional information see `https://aka.ms/text-analytics-offsets
+         <https://aka.ms/text-analytics-offsets>`_. "Utf16CodeUnit" Required.
+        :paramtype string_index_type: str or ~azure.ai.textanalytics.authoring.models.StringIndexType
+        :keyword asset_kind: Kind of asset to export. Default value is None.
+        :paramtype asset_kind: str
+        :keyword trained_model_label: Trained model label to export. If the trainedModelLabel is null,
+         the default behavior is to export the current working copy. Default value is None.
+        :paramtype trained_model_label: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._export_initial(
+                string_index_type=string_index_type,
+                asset_kind=asset_kind,
+                trained_model_label=trained_model_label,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs,
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @api_version_validation(
+        params_added_on={"2024-11-15-preview": ["format"]},
+        api_versions_list=["2023-04-01", "2024-11-15-preview", "2025-05-15-preview"],
+    )
+    def _import_method_initial(
+        self,
+        body: Union[_models._models.ExportedProject, JSON, IO[bytes]],
+        *,
+        format: Optional[str] = None,
+        **kwargs: Any,
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_project_import_method_request(
+            project_name=self._config.project_name,
+            format=format,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
+
+        deserialized = response.iter_bytes()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def _begin_import_method(
+        self,
+        body: _models._models.ExportedProject,
+        *,
+        format: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> LROPoller[None]: ...
+    @overload
+    def _begin_import_method(
+        self, body: JSON, *, format: Optional[str] = None, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[None]: ...
+    @overload
+    def _begin_import_method(
+        self, body: IO[bytes], *, format: Optional[str] = None, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[None]: ...
+
+    @distributed_trace
+    @api_version_validation(
+        params_added_on={"2024-11-15-preview": ["format"]},
+        api_versions_list=["2023-04-01", "2024-11-15-preview", "2025-05-15-preview"],
+    )
+    def _begin_import_method(
+        self,
+        body: Union[_models._models.ExportedProject, JSON, IO[bytes]],
+        *,
+        format: Optional[str] = None,
+        **kwargs: Any,
+    ) -> LROPoller[None]:
+        """Triggers a job to import a project. If a project with the same name already exists, the data of
+        that project is replaced.
+
+        :param body: The project data to import. Is one of the following types: ExportedProject, JSON,
+         IO[bytes] Required.
+        :type body: ~azure.ai.textanalytics.authoring.models._models.ExportedProject or JSON or
+         IO[bytes]
+        :keyword format: The format of the project to import. The currently supported formats are json
+         and aml formats. If not provided, the default is set to json. Default value is None.
+        :paramtype format: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._import_method_initial(
+                body=body,
+                format=format,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs,
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    def _get_export_status(self, job_id: str, **kwargs: Any) -> _models._models.ExportProjectState:
+        """Gets the status of an export job. Once job completes, returns the project metadata, and assets.
+
+        :param job_id: The job ID. Required.
+        :type job_id: str
+        :return: ExportProjectState. The ExportProjectState is compatible with MutableMapping
+        :rtype: ~azure.ai.textanalytics.authoring.models._models.ExportProjectState
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models._models.ExportProjectState] = kwargs.pop("cls", None)
+
+        _request = build_project_get_export_status_request(
+            job_id=job_id,
+            project_name=self._config.project_name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(
+                _models._models.ExportProjectState, response.json()  # pylint: disable=protected-access
+            )
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def _copy_project_authorization(
+        self,
+        *,
+        project_kind: Union[str, _models.ProjectKind],
+        content_type: str = "application/json",
+        storage_input_container_name: Optional[str] = None,
+        allow_overwrite: Optional[bool] = None,
+        **kwargs: Any,
+    ) -> _models._models.CopyProjectDetails: ...
+    @overload
+    def _copy_project_authorization(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models._models.CopyProjectDetails: ...
+    @overload
+    def _copy_project_authorization(
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models._models.CopyProjectDetails: ...
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2024-11-15-preview",
+        params_added_on={"2024-11-15-preview": ["api_version", "project_name", "content_type", "accept"]},
+        api_versions_list=["2024-11-15-preview", "2025-05-15-preview"],
+    )
+    def _copy_project_authorization(
+        self,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        project_kind: Union[str, _models.ProjectKind] = _Unset,
+        storage_input_container_name: Optional[str] = None,
+        allow_overwrite: Optional[bool] = None,
+        **kwargs: Any,
+    ) -> _models._models.CopyProjectDetails:
+        """Generates a copy project operation authorization to the current target Azure resource.
+
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword project_kind: Represents the project kind. Known values are:
+         "CustomSingleLabelClassification", "CustomMultiLabelClassification", "CustomEntityRecognition",
+         "CustomAbstractiveSummarization", "CustomHealthcare", and "CustomTextSentiment". Required.
+        :paramtype project_kind: str or ~azure.ai.textanalytics.authoring.models.ProjectKind
+        :keyword storage_input_container_name: The name of the storage container. Default value is
+         None.
+        :paramtype storage_input_container_name: str
+        :keyword allow_overwrite: Whether to allow an existing project to be overwritten using the
+         resulting copy authorization. Default value is None.
+        :paramtype allow_overwrite: bool
+        :return: CopyProjectDetails. The CopyProjectDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.textanalytics.authoring.models._models.CopyProjectDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models._models.CopyProjectDetails] = kwargs.pop("cls", None)
+
+        if body is _Unset:
+            if project_kind is _Unset:
+                raise TypeError("missing required argument: project_kind")
+            body = {
+                "allowOverwrite": allow_overwrite,
+                "projectKind": project_kind,
+                "storageInputContainerName": storage_input_container_name,
+            }
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_project_copy_project_authorization_request(
+            project_name=self._config.project_name,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(
+                _models._models.CopyProjectDetails, response.json()  # pylint: disable=protected-access
+            )
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2024-11-15-preview",
+        params_added_on={"2024-11-15-preview": ["api_version", "project_name", "content_type"]},
+        api_versions_list=["2024-11-15-preview", "2025-05-15-preview"],
+    )
+    def _copy_project_initial(
+        self, body: Union[_models._models.CopyProjectDetails, JSON, IO[bytes]], **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_project_copy_project_request(
+            project_name=self._config.project_name,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
+
+        deserialized = response.iter_bytes()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def _begin_copy_project(
+        self, body: _models._models.CopyProjectDetails, *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[None]: ...
+    @overload
+    def _begin_copy_project(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[None]: ...
+    @overload
+    def _begin_copy_project(
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[None]: ...
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2024-11-15-preview",
+        params_added_on={"2024-11-15-preview": ["api_version", "project_name", "content_type"]},
+        api_versions_list=["2024-11-15-preview", "2025-05-15-preview"],
+    )
+    def _begin_copy_project(
+        self, body: Union[_models._models.CopyProjectDetails, JSON, IO[bytes]], **kwargs: Any
+    ) -> LROPoller[None]:
+        """Copies an existing project to another Azure resource.
+
+        :param body: The copy project info. Is one of the following types: CopyProjectDetails, JSON,
+         IO[bytes] Required.
+        :type body: ~azure.ai.textanalytics.authoring.models._models.CopyProjectDetails or JSON or
+         IO[bytes]
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._copy_project_initial(
+                body=body, content_type=content_type, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2024-11-15-preview",
+        params_added_on={"2024-11-15-preview": ["api_version", "project_name", "job_id", "accept"]},
+        api_versions_list=["2024-11-15-preview", "2025-05-15-preview"],
+    )
+    def _get_copy_project_status(self, job_id: str, **kwargs: Any) -> _models._models.CopyProjectState:
+        """Gets the status of an existing copy project job.
+
+        :param job_id: The job ID. Required.
+        :type job_id: str
+        :return: CopyProjectState. The CopyProjectState is compatible with MutableMapping
+        :rtype: ~azure.ai.textanalytics.authoring.models._models.CopyProjectState
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models._models.CopyProjectState] = kwargs.pop("cls", None)
+
+        _request = build_project_get_copy_project_status_request(
+            job_id=job_id,
+            project_name=self._config.project_name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(
+                _models._models.CopyProjectState, response.json()  # pylint: disable=protected-access
+            )
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    def _train_initial(
+        self, body: Union[_models._models.TrainingJobDetails, JSON, IO[bytes]], **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_project_train_request(
+            project_name=self._config.project_name,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
+
+        deserialized = response.iter_bytes()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def _begin_train(
+        self, body: _models._models.TrainingJobDetails, *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[_models.TrainingJobResult]: ...
+    @overload
+    def _begin_train(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[_models.TrainingJobResult]: ...
+    @overload
+    def _begin_train(
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[_models.TrainingJobResult]: ...
+
+    @distributed_trace
+    def _begin_train(
+        self, body: Union[_models._models.TrainingJobDetails, JSON, IO[bytes]], **kwargs: Any
+    ) -> LROPoller[_models.TrainingJobResult]:
+        """Triggers a training job for a project.
+
+        :param body: The training input parameters. Is one of the following types: TrainingJobDetails,
+         JSON, IO[bytes] Required.
+        :type body: ~azure.ai.textanalytics.authoring.models._models.TrainingJobDetails or JSON or
+         IO[bytes]
+        :return: An instance of LROPoller that returns TrainingJobResult. The TrainingJobResult is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.ai.textanalytics.authoring.models.TrainingJobResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.TrainingJobResult] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._train_initial(
+                body=body, content_type=content_type, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response_headers = {}
+            response = pipeline_response.http_response
+            response_headers["Operation-Location"] = self._deserialize(
+                "str", response.headers.get("Operation-Location")
+            )
+
+            deserialized = _deserialize(_models.TrainingJobResult, response.json().get("result", {}))
+            if cls:
+                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.TrainingJobResult].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.TrainingJobResult](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @distributed_trace
+    def _get_training_status(self, job_id: str, **kwargs: Any) -> _models.TrainingState:
+        """Gets the status for a training job.
+
+        :param job_id: The job ID. Required.
+        :type job_id: str
+        :return: TrainingState. The TrainingState is compatible with MutableMapping
+        :rtype: ~azure.ai.textanalytics.authoring.models.TrainingState
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.TrainingState] = kwargs.pop("cls", None)
+
+        _request = build_project_get_training_status_request(
+            job_id=job_id,
+            project_name=self._config.project_name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.TrainingState, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    def _cancel_training_job_initial(self, job_id: str, **kwargs: Any) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_project_cancel_training_job_request(
+            job_id=job_id,
+            project_name=self._config.project_name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
+
+        deserialized = response.iter_bytes()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def begin_cancel_training_job(self, job_id: str, **kwargs: Any) -> LROPoller[_models.TrainingJobResult]:
+        """Triggers a cancellation for a running training job.
+
+        :param job_id: The job ID. Required.
+        :type job_id: str
+        :return: An instance of LROPoller that returns TrainingJobResult. The TrainingJobResult is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.ai.textanalytics.authoring.models.TrainingJobResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.TrainingJobResult] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._cancel_training_job_initial(
+                job_id=job_id, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response_headers = {}
+            response = pipeline_response.http_response
+            response_headers["Operation-Location"] = self._deserialize(
+                "str", response.headers.get("Operation-Location")
+            )
+
+            deserialized = _deserialize(_models.TrainingJobResult, response.json().get("result", {}))
+            if cls:
+                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.TrainingJobResult].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.TrainingJobResult](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+
+class ExportedModelOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.textanalytics.authoring.TextAuthoringProjectClient`'s
+        :attr:`exported_model` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: TextAuthoringProjectClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2024-11-15-preview",
+        params_added_on={"2024-11-15-preview": ["api_version", "project_name", "exported_model_name", "accept"]},
+        api_versions_list=["2024-11-15-preview", "2025-05-15-preview"],
+    )
+    def get_exported_model(self, exported_model_name: str, **kwargs: Any) -> _models.ExportedTrainedModel:
+        """Gets the details of an exported model.
+
+        :param exported_model_name: The exported model name. Required.
+        :type exported_model_name: str
+        :return: ExportedTrainedModel. The ExportedTrainedModel is compatible with MutableMapping
+        :rtype: ~azure.ai.textanalytics.authoring.models.ExportedTrainedModel
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ExportedTrainedModel] = kwargs.pop("cls", None)
+
+        _request = build_exported_model_get_exported_model_request(
+            exported_model_name=exported_model_name,
+            project_name=self._config.project_name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.ExportedTrainedModel, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2024-11-15-preview",
+        params_added_on={"2024-11-15-preview": ["api_version", "project_name", "exported_model_name"]},
+        api_versions_list=["2024-11-15-preview", "2025-05-15-preview"],
+    )
+    def _delete_exported_model_initial(self, exported_model_name: str, **kwargs: Any) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_exported_model_delete_exported_model_request(
+            exported_model_name=exported_model_name,
+            project_name=self._config.project_name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5118,13 +5370,9 @@ class TextAuthoringExportedModelOperations:
         params_added_on={"2024-11-15-preview": ["api_version", "project_name", "exported_model_name"]},
         api_versions_list=["2024-11-15-preview", "2025-05-15-preview"],
     )
-    def begin_delete_exported_model(
-        self, project_name: str, exported_model_name: str, **kwargs: Any
-    ) -> LROPoller[None]:
+    def _begin_delete_exported_model(self, exported_model_name: str, **kwargs: Any) -> LROPoller[None]:
         """Deletes an existing exported model.
 
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
         :param exported_model_name: The exported model name. Required.
         :type exported_model_name: str
         :return: An instance of LROPoller that returns None
@@ -5140,7 +5388,6 @@ class TextAuthoringExportedModelOperations:
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._delete_exported_model_initial(
-                project_name=project_name,
                 exported_model_name=exported_model_name,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -5155,7 +5402,166 @@ class TextAuthoringExportedModelOperations:
                 return cls(pipeline_response, None, {})  # type: ignore
 
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2024-11-15-preview",
+        params_added_on={"2024-11-15-preview": ["api_version", "project_name", "exported_model_name", "content_type"]},
+        api_versions_list=["2024-11-15-preview", "2025-05-15-preview"],
+    )
+    def _create_or_update_exported_model_initial(
+        self,
+        exported_model_name: str,
+        body: Union[_models._models.ExportedModelDetails, JSON, IO[bytes]],
+        **kwargs: Any,
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_exported_model_create_or_update_exported_model_request(
+            exported_model_name=exported_model_name,
+            project_name=self._config.project_name,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
+
+        deserialized = response.iter_bytes()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def _begin_create_or_update_exported_model(
+        self,
+        exported_model_name: str,
+        body: _models._models.ExportedModelDetails,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> LROPoller[None]: ...
+    @overload
+    def _begin_create_or_update_exported_model(
+        self, exported_model_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[None]: ...
+    @overload
+    def _begin_create_or_update_exported_model(
+        self, exported_model_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[None]: ...
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2024-11-15-preview",
+        params_added_on={"2024-11-15-preview": ["api_version", "project_name", "exported_model_name", "content_type"]},
+        api_versions_list=["2024-11-15-preview", "2025-05-15-preview"],
+    )
+    def _begin_create_or_update_exported_model(
+        self,
+        exported_model_name: str,
+        body: Union[_models._models.ExportedModelDetails, JSON, IO[bytes]],
+        **kwargs: Any,
+    ) -> LROPoller[None]:
+        """Creates a new exported model or replaces an existing one.
+
+        :param exported_model_name: The exported model name. Required.
+        :type exported_model_name: str
+        :param body: The exported model info. Is one of the following types: ExportedModelDetails,
+         JSON, IO[bytes] Required.
+        :type body: ~azure.ai.textanalytics.authoring.models._models.ExportedModelDetails or JSON or
+         IO[bytes]
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._create_or_update_exported_model_initial(
+                exported_model_name=exported_model_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs,
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
@@ -5183,20 +5589,17 @@ class TextAuthoringExportedModelOperations:
         },
         api_versions_list=["2024-11-15-preview", "2025-05-15-preview"],
     )
-    def get_exported_model_job_status(
-        self, project_name: str, exported_model_name: str, job_id: str, **kwargs: Any
-    ) -> _models.TextAnalysisAuthoringExportedModelJobState:
+    def _get_exported_model_job_status(
+        self, exported_model_name: str, job_id: str, **kwargs: Any
+    ) -> _models._models.ExportedModelState:
         """Gets the status for an existing job to create or update an exported model.
 
-        :param project_name: The new project name. Required.
-        :type project_name: str
         :param exported_model_name: The exported model name. Required.
         :type exported_model_name: str
         :param job_id: The job ID. Required.
         :type job_id: str
-        :return: TextAnalysisAuthoringExportedModelJobState. The
-         TextAnalysisAuthoringExportedModelJobState is compatible with MutableMapping
-        :rtype: ~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringExportedModelJobState
+        :return: ExportedModelState. The ExportedModelState is compatible with MutableMapping
+        :rtype: ~azure.ai.textanalytics.authoring.models._models.ExportedModelState
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -5210,18 +5613,18 @@ class TextAuthoringExportedModelOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.TextAnalysisAuthoringExportedModelJobState] = kwargs.pop("cls", None)
+        cls: ClsType[_models._models.ExportedModelState] = kwargs.pop("cls", None)
 
-        _request = build_text_authoring_exported_model_get_exported_model_job_status_request(
-            project_name=project_name,
+        _request = build_exported_model_get_exported_model_job_status_request(
             exported_model_name=exported_model_name,
             job_id=job_id,
+            project_name=self._config.project_name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5244,7 +5647,9 @@ class TextAuthoringExportedModelOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.TextAnalysisAuthoringExportedModelJobState, response.json())
+            deserialized = _deserialize(
+                _models._models.ExportedModelState, response.json()  # pylint: disable=protected-access
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -5257,18 +5662,13 @@ class TextAuthoringExportedModelOperations:
         params_added_on={"2024-11-15-preview": ["api_version", "project_name", "exported_model_name", "accept"]},
         api_versions_list=["2024-11-15-preview", "2025-05-15-preview"],
     )
-    def get_exported_model_manifest(
-        self, project_name: str, exported_model_name: str, **kwargs: Any
-    ) -> _models.TextAnalysisAuthoringExportedModelManifest:
+    def get_exported_model_manifest(self, exported_model_name: str, **kwargs: Any) -> _models.ExportedModelManifest:
         """Gets the details and URL needed to download the exported model.
 
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
         :param exported_model_name: The exported model name. Required.
         :type exported_model_name: str
-        :return: TextAnalysisAuthoringExportedModelManifest. The
-         TextAnalysisAuthoringExportedModelManifest is compatible with MutableMapping
-        :rtype: ~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringExportedModelManifest
+        :return: ExportedModelManifest. The ExportedModelManifest is compatible with MutableMapping
+        :rtype: ~azure.ai.textanalytics.authoring.models.ExportedModelManifest
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -5282,17 +5682,17 @@ class TextAuthoringExportedModelOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.TextAnalysisAuthoringExportedModelManifest] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ExportedModelManifest] = kwargs.pop("cls", None)
 
-        _request = build_text_authoring_exported_model_get_exported_model_manifest_request(
-            project_name=project_name,
+        _request = build_exported_model_get_exported_model_manifest_request(
             exported_model_name=exported_model_name,
+            project_name=self._config.project_name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5315,7 +5715,7 @@ class TextAuthoringExportedModelOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.TextAnalysisAuthoringExportedModelManifest, response.json())
+            deserialized = _deserialize(_models.ExportedModelManifest, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -5323,36 +5723,33 @@ class TextAuthoringExportedModelOperations:
         return deserialized  # type: ignore
 
 
-class TextAuthoringTrainedModelOperations:
+class TrainedModelOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.ai.textanalytics.authoring.AuthoringClient`'s
-        :attr:`text_authoring_trained_model` attribute.
+        :class:`~azure.ai.textanalytics.authoring.TextAuthoringProjectClient`'s
+        :attr:`trained_model` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AuthoringClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: TextAuthoringProjectClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def get_trained_model(
-        self, project_name: str, trained_model_label: str, **kwargs: Any
-    ) -> _models.TextAnalysisAuthoringProjectTrainedModel:
+    def get_trained_model(self, trained_model_label: str, **kwargs: Any) -> _models.ProjectTrainedModel:
         """Gets the details of a trained model.
 
-        :param project_name: The new project name. Required.
-        :type project_name: str
         :param trained_model_label: The trained model label. Required.
         :type trained_model_label: str
-        :return: TextAnalysisAuthoringProjectTrainedModel. The TextAnalysisAuthoringProjectTrainedModel
-         is compatible with MutableMapping
-        :rtype: ~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringProjectTrainedModel
+        :return: ProjectTrainedModel. The ProjectTrainedModel is compatible with MutableMapping
+        :rtype: ~azure.ai.textanalytics.authoring.models.ProjectTrainedModel
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -5366,17 +5763,17 @@ class TextAuthoringTrainedModelOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.TextAnalysisAuthoringProjectTrainedModel] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ProjectTrainedModel] = kwargs.pop("cls", None)
 
-        _request = build_text_authoring_trained_model_get_trained_model_request(
-            project_name=project_name,
+        _request = build_trained_model_get_trained_model_request(
             trained_model_label=trained_model_label,
+            project_name=self._config.project_name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5399,7 +5796,7 @@ class TextAuthoringTrainedModelOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.TextAnalysisAuthoringProjectTrainedModel, response.json())
+            deserialized = _deserialize(_models.ProjectTrainedModel, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -5408,12 +5805,10 @@ class TextAuthoringTrainedModelOperations:
 
     @distributed_trace
     def delete_trained_model(  # pylint: disable=inconsistent-return-statements
-        self, project_name: str, trained_model_label: str, **kwargs: Any
+        self, trained_model_label: str, **kwargs: Any
     ) -> None:
         """Deletes an existing trained model.
 
-        :param project_name: The new project name. Required.
-        :type project_name: str
         :param trained_model_label: The trained model label. Required.
         :type trained_model_label: str
         :return: None
@@ -5433,15 +5828,15 @@ class TextAuthoringTrainedModelOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_text_authoring_trained_model_delete_trained_model_request(
-            project_name=project_name,
+        _request = build_trained_model_delete_trained_model_request(
             trained_model_label=trained_model_label,
+            project_name=self._config.project_name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5465,11 +5860,7 @@ class TextAuthoringTrainedModelOperations:
         api_versions_list=["2024-11-15-preview", "2025-05-15-preview"],
     )
     def _evaluate_model_initial(
-        self,
-        project_name: str,
-        trained_model_label: str,
-        body: Union[_models.TextAnalysisAuthoringEvaluationOptions, JSON, IO[bytes]],
-        **kwargs: Any,
+        self, trained_model_label: str, body: Union[_models.EvaluationDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -5492,9 +5883,9 @@ class TextAuthoringTrainedModelOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_text_authoring_trained_model_evaluate_model_request(
-            project_name=project_name,
+        _request = build_trained_model_evaluate_model_request(
             trained_model_label=trained_model_label,
+            project_name=self._config.project_name,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -5502,7 +5893,7 @@ class TextAuthoringTrainedModelOperations:
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5532,88 +5923,22 @@ class TextAuthoringTrainedModelOperations:
         return deserialized  # type: ignore
 
     @overload
-    def begin_evaluate_model(
+    def _begin_evaluate_model(
         self,
-        project_name: str,
         trained_model_label: str,
-        body: _models.TextAnalysisAuthoringEvaluationOptions,
+        body: _models.EvaluationDetails,
         *,
         content_type: str = "application/json",
         **kwargs: Any,
-    ) -> LROPoller[_models.TextAnalysisAuthoringEvaluationJobResult]:
-        """Triggers evaluation operation on a trained model.
-
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
-        :param trained_model_label: The trained model label. Required.
-        :type trained_model_label: str
-        :param body: The training input parameters. Required.
-        :type body: ~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringEvaluationOptions
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns TextAnalysisAuthoringEvaluationJobResult. The
-         TextAnalysisAuthoringEvaluationJobResult is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringEvaluationJobResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> LROPoller[_models._models.EvaluationJobResult]: ...
     @overload
-    def begin_evaluate_model(
-        self,
-        project_name: str,
-        trained_model_label: str,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any,
-    ) -> LROPoller[_models.TextAnalysisAuthoringEvaluationJobResult]:
-        """Triggers evaluation operation on a trained model.
-
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
-        :param trained_model_label: The trained model label. Required.
-        :type trained_model_label: str
-        :param body: The training input parameters. Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns TextAnalysisAuthoringEvaluationJobResult. The
-         TextAnalysisAuthoringEvaluationJobResult is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringEvaluationJobResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    def _begin_evaluate_model(
+        self, trained_model_label: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[_models._models.EvaluationJobResult]: ...
     @overload
-    def begin_evaluate_model(
-        self,
-        project_name: str,
-        trained_model_label: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any,
-    ) -> LROPoller[_models.TextAnalysisAuthoringEvaluationJobResult]:
-        """Triggers evaluation operation on a trained model.
-
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
-        :param trained_model_label: The trained model label. Required.
-        :type trained_model_label: str
-        :param body: The training input parameters. Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns TextAnalysisAuthoringEvaluationJobResult. The
-         TextAnalysisAuthoringEvaluationJobResult is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringEvaluationJobResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    def _begin_evaluate_model(
+        self, trained_model_label: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[_models._models.EvaluationJobResult]: ...
 
     @distributed_trace
     @api_version_validation(
@@ -5621,40 +5946,32 @@ class TextAuthoringTrainedModelOperations:
         params_added_on={"2024-11-15-preview": ["api_version", "project_name", "trained_model_label", "content_type"]},
         api_versions_list=["2024-11-15-preview", "2025-05-15-preview"],
     )
-    def begin_evaluate_model(
-        self,
-        project_name: str,
-        trained_model_label: str,
-        body: Union[_models.TextAnalysisAuthoringEvaluationOptions, JSON, IO[bytes]],
-        **kwargs: Any,
-    ) -> LROPoller[_models.TextAnalysisAuthoringEvaluationJobResult]:
+    def _begin_evaluate_model(
+        self, trained_model_label: str, body: Union[_models.EvaluationDetails, JSON, IO[bytes]], **kwargs: Any
+    ) -> LROPoller[_models._models.EvaluationJobResult]:
         """Triggers evaluation operation on a trained model.
 
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
         :param trained_model_label: The trained model label. Required.
         :type trained_model_label: str
-        :param body: The training input parameters. Is one of the following types:
-         TextAnalysisAuthoringEvaluationOptions, JSON, IO[bytes] Required.
-        :type body: ~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringEvaluationOptions or
-         JSON or IO[bytes]
-        :return: An instance of LROPoller that returns TextAnalysisAuthoringEvaluationJobResult. The
-         TextAnalysisAuthoringEvaluationJobResult is compatible with MutableMapping
+        :param body: The training input parameters. Is one of the following types: EvaluationDetails,
+         JSON, IO[bytes] Required.
+        :type body: ~azure.ai.textanalytics.authoring.models.EvaluationDetails or JSON or IO[bytes]
+        :return: An instance of LROPoller that returns EvaluationJobResult. The EvaluationJobResult is
+         compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.LROPoller[~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringEvaluationJobResult]
+         ~azure.core.polling.LROPoller[~azure.ai.textanalytics.authoring.models._models.EvaluationJobResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.TextAnalysisAuthoringEvaluationJobResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models._models.EvaluationJobResult] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._evaluate_model_initial(
-                project_name=project_name,
                 trained_model_label=trained_model_label,
                 body=body,
                 content_type=content_type,
@@ -5674,14 +5991,15 @@ class TextAuthoringTrainedModelOperations:
             )
 
             deserialized = _deserialize(
-                _models.TextAnalysisAuthoringEvaluationJobResult, response.json().get("result", {})
+                _models._models.EvaluationJobResult,  # pylint: disable=protected-access
+                response.json().get("result", {}),
             )
             if cls:
                 return cls(pipeline_response, deserialized, response_headers)  # type: ignore
             return deserialized
 
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
@@ -5693,17 +6011,17 @@ class TextAuthoringTrainedModelOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller[_models.TextAnalysisAuthoringEvaluationJobResult].from_continuation_token(
+            return LROPoller[_models._models.EvaluationJobResult].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller[_models.TextAnalysisAuthoringEvaluationJobResult](
+        return LROPoller[_models._models.EvaluationJobResult](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
-    def _load_snapshot_initial(self, project_name: str, trained_model_label: str, **kwargs: Any) -> Iterator[bytes]:
+    def _load_snapshot_initial(self, trained_model_label: str, **kwargs: Any) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -5717,15 +6035,15 @@ class TextAuthoringTrainedModelOperations:
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_text_authoring_trained_model_load_snapshot_request(
-            project_name=project_name,
+        _request = build_trained_model_load_snapshot_request(
             trained_model_label=trained_model_label,
+            project_name=self._config.project_name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5755,11 +6073,9 @@ class TextAuthoringTrainedModelOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def begin_load_snapshot(self, project_name: str, trained_model_label: str, **kwargs: Any) -> LROPoller[None]:
+    def _begin_load_snapshot(self, trained_model_label: str, **kwargs: Any) -> LROPoller[None]:
         """Long-running operation.
 
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
         :param trained_model_label: The trained model label. Required.
         :type trained_model_label: str
         :return: An instance of LROPoller that returns None
@@ -5775,7 +6091,6 @@ class TextAuthoringTrainedModelOperations:
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._load_snapshot_initial(
-                project_name=project_name,
                 trained_model_label=trained_model_label,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -5790,7 +6105,7 @@ class TextAuthoringTrainedModelOperations:
                 return cls(pipeline_response, None, {})  # type: ignore
 
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
@@ -5818,20 +6133,17 @@ class TextAuthoringTrainedModelOperations:
         },
         api_versions_list=["2024-11-15-preview", "2025-05-15-preview"],
     )
-    def get_evaluation_status(
-        self, project_name: str, trained_model_label: str, job_id: str, **kwargs: Any
-    ) -> _models.TextAnalysisAuthoringEvaluationJobState:
+    def _get_evaluation_status(
+        self, trained_model_label: str, job_id: str, **kwargs: Any
+    ) -> _models._models.EvaluationState:
         """Gets the status for an evaluation job.
 
-        :param project_name: The new project name. Required.
-        :type project_name: str
         :param trained_model_label: The trained model label. Required.
         :type trained_model_label: str
         :param job_id: The job ID. Required.
         :type job_id: str
-        :return: TextAnalysisAuthoringEvaluationJobState. The TextAnalysisAuthoringEvaluationJobState
-         is compatible with MutableMapping
-        :rtype: ~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringEvaluationJobState
+        :return: EvaluationState. The EvaluationState is compatible with MutableMapping
+        :rtype: ~azure.ai.textanalytics.authoring.models._models.EvaluationState
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -5845,18 +6157,18 @@ class TextAuthoringTrainedModelOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.TextAnalysisAuthoringEvaluationJobState] = kwargs.pop("cls", None)
+        cls: ClsType[_models._models.EvaluationState] = kwargs.pop("cls", None)
 
-        _request = build_text_authoring_trained_model_get_evaluation_status_request(
-            project_name=project_name,
+        _request = build_trained_model_get_evaluation_status_request(
             trained_model_label=trained_model_label,
             job_id=job_id,
+            project_name=self._config.project_name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5879,7 +6191,9 @@ class TextAuthoringTrainedModelOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.TextAnalysisAuthoringEvaluationJobState, response.json())
+            deserialized = _deserialize(
+                _models._models.EvaluationState, response.json()  # pylint: disable=protected-access
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -5889,19 +6203,16 @@ class TextAuthoringTrainedModelOperations:
     @distributed_trace
     def get_model_evaluation_results(
         self,
-        project_name: str,
         trained_model_label: str,
         *,
         string_index_type: Union[str, _models.StringIndexType],
         top: Optional[int] = None,
         skip: Optional[int] = None,
         **kwargs: Any,
-    ) -> ItemPaged["_models.TextAnalysisAuthoringDocumentEvaluationResult"]:
+    ) -> ItemPaged["_models.DocumentEvalResult"]:
         """Gets the detailed results of the evaluation for a trained model. This includes the raw
         inference results for the data included in the evaluation process.
 
-        :param project_name: The new project name. Required.
-        :type project_name: str
         :param trained_model_label: The trained model label. Required.
         :type trained_model_label: str
         :keyword string_index_type: Specifies the method used to interpret string offsets. For
@@ -5912,16 +6223,16 @@ class TextAuthoringTrainedModelOperations:
         :paramtype top: int
         :keyword skip: The number of result items to skip. Default value is None.
         :paramtype skip: int
-        :return: An iterator like instance of TextAnalysisAuthoringDocumentEvaluationResult
+        :return: An iterator like instance of DocumentEvalResult
         :rtype:
-         ~azure.core.paging.ItemPaged[~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringDocumentEvaluationResult]
+         ~azure.core.paging.ItemPaged[~azure.ai.textanalytics.authoring.models.DocumentEvalResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         maxpagesize = kwargs.pop("maxpagesize", None)
-        cls: ClsType[list[_models.TextAnalysisAuthoringDocumentEvaluationResult]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.DocumentEvalResult]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -5934,9 +6245,9 @@ class TextAuthoringTrainedModelOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_text_authoring_trained_model_get_model_evaluation_results_request(
-                    project_name=project_name,
+                _request = build_trained_model_get_model_evaluation_results_request(
                     trained_model_label=trained_model_label,
+                    project_name=self._config.project_name,
                     string_index_type=string_index_type,
                     top=top,
                     skip=skip,
@@ -5946,7 +6257,9 @@ class TextAuthoringTrainedModelOperations:
                     params=_params,
                 )
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5964,7 +6277,9 @@ class TextAuthoringTrainedModelOperations:
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5972,9 +6287,7 @@ class TextAuthoringTrainedModelOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                list[_models.TextAnalysisAuthoringDocumentEvaluationResult], deserialized.get("value", [])
-            )
+            list_of_elem = _deserialize(list[_models.DocumentEvalResult], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -5997,19 +6310,14 @@ class TextAuthoringTrainedModelOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def get_model_evaluation_summary(
-        self, project_name: str, trained_model_label: str, **kwargs: Any
-    ) -> _models.TextAnalysisAuthoringEvaluationSummary:
+    def get_model_evaluation_summary(self, trained_model_label: str, **kwargs: Any) -> _models.EvalSummary:
         """Gets the evaluation summary of a trained model. The summary includes high level performance
         measurements of the model e.g., F1, Precision, Recall, etc.
 
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
         :param trained_model_label: The trained model label. Required.
         :type trained_model_label: str
-        :return: TextAnalysisAuthoringEvaluationSummary. The TextAnalysisAuthoringEvaluationSummary is
-         compatible with MutableMapping
-        :rtype: ~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringEvaluationSummary
+        :return: EvalSummary. The EvalSummary is compatible with MutableMapping
+        :rtype: ~azure.ai.textanalytics.authoring.models.EvalSummary
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -6023,17 +6331,17 @@ class TextAuthoringTrainedModelOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.TextAnalysisAuthoringEvaluationSummary] = kwargs.pop("cls", None)
+        cls: ClsType[_models.EvalSummary] = kwargs.pop("cls", None)
 
-        _request = build_text_authoring_trained_model_get_model_evaluation_summary_request(
-            project_name=project_name,
+        _request = build_trained_model_get_model_evaluation_summary_request(
             trained_model_label=trained_model_label,
+            project_name=self._config.project_name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -6056,7 +6364,7 @@ class TextAuthoringTrainedModelOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.TextAnalysisAuthoringEvaluationSummary, response.json())
+            deserialized = _deserialize(_models.EvalSummary, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -6064,20 +6372,17 @@ class TextAuthoringTrainedModelOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_load_snapshot_status(
-        self, project_name: str, trained_model_label: str, job_id: str, **kwargs: Any
-    ) -> _models.TextAnalysisAuthoringLoadSnapshotJobState:
+    def _get_load_snapshot_status(
+        self, trained_model_label: str, job_id: str, **kwargs: Any
+    ) -> _models._models.LoadSnapshotState:
         """Gets the status for loading a snapshot.
 
-        :param project_name: The new project name. Required.
-        :type project_name: str
         :param trained_model_label: The trained model label. Required.
         :type trained_model_label: str
         :param job_id: The job ID. Required.
         :type job_id: str
-        :return: TextAnalysisAuthoringLoadSnapshotJobState. The
-         TextAnalysisAuthoringLoadSnapshotJobState is compatible with MutableMapping
-        :rtype: ~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringLoadSnapshotJobState
+        :return: LoadSnapshotState. The LoadSnapshotState is compatible with MutableMapping
+        :rtype: ~azure.ai.textanalytics.authoring.models._models.LoadSnapshotState
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -6091,18 +6396,18 @@ class TextAuthoringTrainedModelOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.TextAnalysisAuthoringLoadSnapshotJobState] = kwargs.pop("cls", None)
+        cls: ClsType[_models._models.LoadSnapshotState] = kwargs.pop("cls", None)
 
-        _request = build_text_authoring_trained_model_get_load_snapshot_status_request(
-            project_name=project_name,
+        _request = build_trained_model_get_load_snapshot_status_request(
             trained_model_label=trained_model_label,
             job_id=job_id,
+            project_name=self._config.project_name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -6125,975 +6430,11 @@ class TextAuthoringTrainedModelOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.TextAnalysisAuthoringLoadSnapshotJobState, response.json())
+            deserialized = _deserialize(
+                _models._models.LoadSnapshotState, response.json()  # pylint: disable=protected-access
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-
-class _AuthoringClientOperationsMixin(
-    ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], AuthoringClientConfiguration]
-):
-
-    @distributed_trace
-    def text_analysis_authoring_list_projects(
-        self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
-    ) -> ItemPaged["_models.TextAnalysisAuthoringProjectMetadata"]:
-        """Lists the existing projects.
-
-        :keyword top: The number of result items to return. Default value is None.
-        :paramtype top: int
-        :keyword skip: The number of result items to skip. Default value is None.
-        :paramtype skip: int
-        :return: An iterator like instance of TextAnalysisAuthoringProjectMetadata
-        :rtype:
-         ~azure.core.paging.ItemPaged[~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringProjectMetadata]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        maxpagesize = kwargs.pop("maxpagesize", None)
-        cls: ClsType[list[_models.TextAnalysisAuthoringProjectMetadata]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_authoring_text_analysis_authoring_list_projects_request(
-                    top=top,
-                    skip=skip,
-                    maxpagesize=maxpagesize,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
-                path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                list[_models.TextAnalysisAuthoringProjectMetadata], deserialized.get("value", [])
-            )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
-
-    @distributed_trace
-    def text_analysis_authoring_list_deployments(
-        self, project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
-    ) -> ItemPaged["_models.TextAnalysisAuthoringProjectDeployment"]:
-        """Lists the deployments belonging to a project.
-
-        :param project_name: The new project name. Required.
-        :type project_name: str
-        :keyword top: The number of result items to return. Default value is None.
-        :paramtype top: int
-        :keyword skip: The number of result items to skip. Default value is None.
-        :paramtype skip: int
-        :return: An iterator like instance of TextAnalysisAuthoringProjectDeployment
-        :rtype:
-         ~azure.core.paging.ItemPaged[~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringProjectDeployment]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        maxpagesize = kwargs.pop("maxpagesize", None)
-        cls: ClsType[list[_models.TextAnalysisAuthoringProjectDeployment]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_authoring_text_analysis_authoring_list_deployments_request(
-                    project_name=project_name,
-                    top=top,
-                    skip=skip,
-                    maxpagesize=maxpagesize,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
-                path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                list[_models.TextAnalysisAuthoringProjectDeployment], deserialized.get("value", [])
-            )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2024-11-15-preview",
-        params_added_on={"2024-11-15-preview": ["api_version", "project_name", "top", "skip", "maxpagesize", "accept"]},
-        api_versions_list=["2024-11-15-preview", "2025-05-15-preview"],
-    )
-    def text_analysis_authoring_list_exported_models(  # pylint: disable=name-too-long
-        self, project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
-    ) -> ItemPaged["_models.TextAnalysisAuthoringExportedTrainedModel"]:
-        """Lists the exported models belonging to a project.
-
-        :param project_name: The new project name. Required.
-        :type project_name: str
-        :keyword top: The number of result items to return. Default value is None.
-        :paramtype top: int
-        :keyword skip: The number of result items to skip. Default value is None.
-        :paramtype skip: int
-        :return: An iterator like instance of TextAnalysisAuthoringExportedTrainedModel
-        :rtype:
-         ~azure.core.paging.ItemPaged[~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringExportedTrainedModel]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        maxpagesize = kwargs.pop("maxpagesize", None)
-        cls: ClsType[list[_models.TextAnalysisAuthoringExportedTrainedModel]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_authoring_text_analysis_authoring_list_exported_models_request(
-                    project_name=project_name,
-                    top=top,
-                    skip=skip,
-                    maxpagesize=maxpagesize,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
-                path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                list[_models.TextAnalysisAuthoringExportedTrainedModel], deserialized.get("value", [])
-            )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
-
-    @distributed_trace
-    def text_analysis_authoring_list_trained_models(  # pylint: disable=name-too-long
-        self, project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
-    ) -> ItemPaged["_models.TextAnalysisAuthoringProjectTrainedModel"]:
-        """Lists the trained models belonging to a project.
-
-        :param project_name: The new project name. Required.
-        :type project_name: str
-        :keyword top: The number of result items to return. Default value is None.
-        :paramtype top: int
-        :keyword skip: The number of result items to skip. Default value is None.
-        :paramtype skip: int
-        :return: An iterator like instance of TextAnalysisAuthoringProjectTrainedModel
-        :rtype:
-         ~azure.core.paging.ItemPaged[~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringProjectTrainedModel]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        maxpagesize = kwargs.pop("maxpagesize", None)
-        cls: ClsType[list[_models.TextAnalysisAuthoringProjectTrainedModel]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_authoring_text_analysis_authoring_list_trained_models_request(
-                    project_name=project_name,
-                    top=top,
-                    skip=skip,
-                    maxpagesize=maxpagesize,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
-                path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                list[_models.TextAnalysisAuthoringProjectTrainedModel], deserialized.get("value", [])
-            )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2024-11-15-preview",
-        params_added_on={"2024-11-15-preview": ["api_version", "project_name", "top", "skip", "maxpagesize", "accept"]},
-        api_versions_list=["2024-11-15-preview", "2025-05-15-preview"],
-    )
-    def text_analysis_authoring_list_deployment_resources(  # pylint: disable=name-too-long
-        self, project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
-    ) -> ItemPaged["_models.TextAnalysisAuthoringAssignedDeploymentResource"]:
-        """Lists the deployments resources assigned to the project.
-
-        :param project_name: The new project name. Required.
-        :type project_name: str
-        :keyword top: The number of result items to return. Default value is None.
-        :paramtype top: int
-        :keyword skip: The number of result items to skip. Default value is None.
-        :paramtype skip: int
-        :return: An iterator like instance of TextAnalysisAuthoringAssignedDeploymentResource
-        :rtype:
-         ~azure.core.paging.ItemPaged[~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringAssignedDeploymentResource]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        maxpagesize = kwargs.pop("maxpagesize", None)
-        cls: ClsType[list[_models.TextAnalysisAuthoringAssignedDeploymentResource]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_authoring_text_analysis_authoring_list_deployment_resources_request(
-                    project_name=project_name,
-                    top=top,
-                    skip=skip,
-                    maxpagesize=maxpagesize,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
-                path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                list[_models.TextAnalysisAuthoringAssignedDeploymentResource], deserialized.get("value", [])
-            )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
-
-    @distributed_trace
-    def text_analysis_authoring_list_training_jobs(  # pylint: disable=name-too-long
-        self, project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
-    ) -> ItemPaged["_models.TextAnalysisAuthoringTrainingJobState"]:
-        """Lists the non-expired training jobs created for a project.
-
-        :param project_name: The new project name. Required.
-        :type project_name: str
-        :keyword top: The number of result items to return. Default value is None.
-        :paramtype top: int
-        :keyword skip: The number of result items to skip. Default value is None.
-        :paramtype skip: int
-        :return: An iterator like instance of TextAnalysisAuthoringTrainingJobState
-        :rtype:
-         ~azure.core.paging.ItemPaged[~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringTrainingJobState]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        maxpagesize = kwargs.pop("maxpagesize", None)
-        cls: ClsType[list[_models.TextAnalysisAuthoringTrainingJobState]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_authoring_text_analysis_authoring_list_training_jobs_request(
-                    project_name=project_name,
-                    top=top,
-                    skip=skip,
-                    maxpagesize=maxpagesize,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
-                path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                list[_models.TextAnalysisAuthoringTrainingJobState], deserialized.get("value", [])
-            )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2024-11-15-preview",
-        params_added_on={"2024-11-15-preview": ["api_version", "top", "skip", "maxpagesize", "accept"]},
-        api_versions_list=["2024-11-15-preview", "2025-05-15-preview"],
-    )
-    def text_analysis_authoring_list_assigned_resource_deployments(  # pylint: disable=name-too-long
-        self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
-    ) -> ItemPaged["_models.TextAnalysisAuthoringAssignedProjectDeploymentsMetadata"]:
-        """Lists the deployments to which an Azure resource is assigned. This doesn't return deployments
-        belonging to projects owned by this resource. It only returns deployments belonging to projects
-        owned by other resources.
-
-        :keyword top: The number of result items to return. Default value is None.
-        :paramtype top: int
-        :keyword skip: The number of result items to skip. Default value is None.
-        :paramtype skip: int
-        :return: An iterator like instance of TextAnalysisAuthoringAssignedProjectDeploymentsMetadata
-        :rtype:
-         ~azure.core.paging.ItemPaged[~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringAssignedProjectDeploymentsMetadata]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        maxpagesize = kwargs.pop("maxpagesize", None)
-        cls: ClsType[list[_models.TextAnalysisAuthoringAssignedProjectDeploymentsMetadata]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_authoring_text_analysis_authoring_list_assigned_resource_deployments_request(
-                    top=top,
-                    skip=skip,
-                    maxpagesize=maxpagesize,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
-                path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                list[_models.TextAnalysisAuthoringAssignedProjectDeploymentsMetadata], deserialized.get("value", [])
-            )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
-
-    @distributed_trace
-    def text_analysis_authoring_get_supported_languages(  # pylint: disable=name-too-long
-        self,
-        *,
-        project_kind: Optional[Union[str, _models.ProjectKind]] = None,
-        top: Optional[int] = None,
-        skip: Optional[int] = None,
-        **kwargs: Any,
-    ) -> ItemPaged["_models.TextAnalysisAuthoringSupportedLanguage"]:
-        """Lists the supported languages.
-
-        :keyword project_kind: The project kind, default value is CustomSingleLabelClassification.
-         Known values are: "CustomSingleLabelClassification", "CustomMultiLabelClassification",
-         "CustomEntityRecognition", "CustomAbstractiveSummarization", "CustomHealthcare", and
-         "CustomTextSentiment". Default value is None.
-        :paramtype project_kind: str or ~azure.ai.textanalytics.authoring.models.ProjectKind
-        :keyword top: The number of result items to return. Default value is None.
-        :paramtype top: int
-        :keyword skip: The number of result items to skip. Default value is None.
-        :paramtype skip: int
-        :return: An iterator like instance of TextAnalysisAuthoringSupportedLanguage
-        :rtype:
-         ~azure.core.paging.ItemPaged[~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringSupportedLanguage]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        maxpagesize = kwargs.pop("maxpagesize", None)
-        cls: ClsType[list[_models.TextAnalysisAuthoringSupportedLanguage]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_authoring_text_analysis_authoring_get_supported_languages_request(
-                    project_kind=project_kind,
-                    top=top,
-                    skip=skip,
-                    maxpagesize=maxpagesize,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
-                path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                list[_models.TextAnalysisAuthoringSupportedLanguage], deserialized.get("value", [])
-            )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2024-11-15-preview",
-        params_added_on={"2024-11-15-preview": ["api_version", "accept"]},
-        api_versions_list=["2024-11-15-preview", "2025-05-15-preview"],
-    )
-    def text_analysis_authoring_get_supported_prebuilt_entities(  # pylint: disable=name-too-long
-        self, **kwargs: Any
-    ) -> ItemPaged["_models.TextAnalysisAuthoringPrebuiltEntity"]:
-        """Lists the supported prebuilt entities that can be used while creating composed entities.
-
-        :return: An iterator like instance of TextAnalysisAuthoringPrebuiltEntity
-        :rtype:
-         ~azure.core.paging.ItemPaged[~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringPrebuiltEntity]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[list[_models.TextAnalysisAuthoringPrebuiltEntity]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_authoring_text_analysis_authoring_get_supported_prebuilt_entities_request(
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
-                path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                list[_models.TextAnalysisAuthoringPrebuiltEntity], deserialized.get("value", [])
-            )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
-
-    @distributed_trace
-    def text_analysis_authoring_list_training_config_versions(  # pylint: disable=name-too-long
-        self,
-        *,
-        project_kind: Optional[Union[str, _models.ProjectKind]] = None,
-        top: Optional[int] = None,
-        skip: Optional[int] = None,
-        **kwargs: Any,
-    ) -> ItemPaged["_models.TextAnalysisAuthoringTrainingConfigVersion"]:
-        """Lists the support training config version for a given project type.
-
-        :keyword project_kind: The project kind, default value is CustomSingleLabelClassification.
-         Known values are: "CustomSingleLabelClassification", "CustomMultiLabelClassification",
-         "CustomEntityRecognition", "CustomAbstractiveSummarization", "CustomHealthcare", and
-         "CustomTextSentiment". Default value is None.
-        :paramtype project_kind: str or ~azure.ai.textanalytics.authoring.models.ProjectKind
-        :keyword top: The number of result items to return. Default value is None.
-        :paramtype top: int
-        :keyword skip: The number of result items to skip. Default value is None.
-        :paramtype skip: int
-        :return: An iterator like instance of TextAnalysisAuthoringTrainingConfigVersion
-        :rtype:
-         ~azure.core.paging.ItemPaged[~azure.ai.textanalytics.authoring.models.TextAnalysisAuthoringTrainingConfigVersion]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        maxpagesize = kwargs.pop("maxpagesize", None)
-        cls: ClsType[list[_models.TextAnalysisAuthoringTrainingConfigVersion]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_authoring_text_analysis_authoring_list_training_config_versions_request(
-                    project_kind=project_kind,
-                    top=top,
-                    skip=skip,
-                    maxpagesize=maxpagesize,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
-                path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                list[_models.TextAnalysisAuthoringTrainingConfigVersion], deserialized.get("value", [])
-            )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)

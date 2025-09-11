@@ -64,6 +64,7 @@ async def sample_swap_deployments_async():
             print(f"Operation failed: {e.message}")
             print(e.error)
 
+
 # [END text_authoring_swap_deployments_async]
 
 

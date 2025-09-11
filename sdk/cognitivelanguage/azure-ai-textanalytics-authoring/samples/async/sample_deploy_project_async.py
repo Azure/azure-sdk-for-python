@@ -64,6 +64,7 @@ async def sample_deploy_project_async():
             print(f"Operation failed: {e.message}")
             print(e.error)
 
+
 # [END text_authoring_deploy_project_async]
 
 

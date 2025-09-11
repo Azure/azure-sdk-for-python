@@ -17,6 +17,7 @@ AuthoringPreparer = functools.partial(
     authoring_key="fake_key",
 )
 
+
 class TestTextAuthoring(AzureRecordedTestCase):
     pass
 
@@ -50,10 +51,12 @@ class TestTextAuthoringGetModelEvaluationResultsAsync(TestTextAuthoring):
                 if isinstance(result, CustomSingleLabelClassificationDocumentEvalResult):
                     classification = result.custom_single_label_classification_result
                     assert classification is not None, "The classification result should not be null."
-                    assert classification.expected_class and classification.expected_class.strip(), \
-                        "The expected class should not be null or empty."
-                    assert classification.predicted_class and classification.predicted_class.strip(), \
-                        "The predicted class should not be null or empty."
+                    assert (
+                        classification.expected_class and classification.expected_class.strip()
+                    ), "The expected class should not be null or empty."
+                    assert (
+                        classification.predicted_class and classification.predicted_class.strip()
+                    ), "The predicted class should not be null or empty."
 
                     # Optional: print a couple of fields for recording visibility
                     print(f"Document Location: {result.location}")

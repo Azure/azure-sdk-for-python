@@ -15,6 +15,7 @@ ConversationsPreparer = functools.partial(
     authoring_key="fake_key",
 )
 
+
 class TestConversationsCancelTrainingAsync(AzureRecordedTestCase):
     @ConversationsPreparer()
     @recorded_by_proxy_async
@@ -30,7 +31,9 @@ class TestConversationsCancelTrainingAsync(AzureRecordedTestCase):
 
             result = await poller.result()  # TrainingJobResult
 
-            assert result.training_status.status == "succeeded", f"Cancellation failed with status: {result.training_status.status}"
+            assert (
+                result.training_status.status == "succeeded"
+            ), f"Cancellation failed with status: {result.training_status.status}"
             print(f"Model Label: {result.model_label}")
             print(f"Training Config Version: {result.training_config_version}")
             if result.training_status is not None:

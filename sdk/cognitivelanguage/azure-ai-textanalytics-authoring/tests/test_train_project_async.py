@@ -20,10 +20,12 @@ AuthoringPreparer = functools.partial(
     authoring_key="fake_key",
 )
 
+
 class TestTextAuthoring(AzureRecordedTestCase):
     # Base kept for parity; not used by the async test below.
     def create_client(self, endpoint: str, key: str) -> TextAuthoringClient:  # type: ignore[override]
         return TextAuthoringClient(endpoint, AzureKeyCredential(key))  # type: ignore[arg-type]
+
 
 class TestTextAuthoringTrainAsync(TestTextAuthoring):
     @AuthoringPreparer()

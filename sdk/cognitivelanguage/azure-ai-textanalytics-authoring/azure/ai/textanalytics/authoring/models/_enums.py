@@ -10,8 +10,8 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class CompositionSetting(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of CompositionSetting."""
+class CompositionMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of CompositionMode."""
 
     SEPARATE_COMPONENTS = "separateComponents"
     """Every component's match or prediction is returned as a separate instance of the entity."""
@@ -29,8 +29,8 @@ class EvaluationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Split the data according to the chosen dataset for every example in the data."""
 
 
-class JobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of JobStatus."""
+class OperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of OperationStatus."""
 
     NOT_STARTED = "notStarted"
     RUNNING = "running"

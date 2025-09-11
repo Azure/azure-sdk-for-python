@@ -33,13 +33,13 @@ class TestConversationsDeleteDeploymentSync(TestConversations):
 
         # Act: begin delete and wait for completion
         poller = project_client.deployment.begin_delete_deployment(deployment_name=deployment_name)
-        
+
         try:
             poller.result()
         except HttpResponseError as e:
             msg = getattr(getattr(e, "error", None), "message", str(e))
             print(f"Operation failed: {msg}")
             raise
-        
+
         # If we get here, the delete succeeded
         print(f"Delete completed. done={poller.done()} status={poller.status()}")

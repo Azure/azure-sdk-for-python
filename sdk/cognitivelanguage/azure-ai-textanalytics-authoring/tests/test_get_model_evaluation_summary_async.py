@@ -18,8 +18,10 @@ AuthoringPreparer = functools.partial(
     authoring_key="fake_key",
 )
 
+
 class TestTextAuthoring(AzureRecordedTestCase):
     pass
+
 
 class TestTextAuthoringGetModelEvaluationSummaryAsync(TestTextAuthoring):
     @AuthoringPreparer()
@@ -67,7 +69,9 @@ class TestTextAuthoringGetModelEvaluationSummaryAsync(TestTextAuthoring):
                 for row_key, row_val in cmatrix.items():
                     print(f"Row: {row_key}")
                     for col_key, cell in row_val.items():
-                        print(f"    Column: {col_key}, Normalized Value: {cell['normalizedValue']}, Raw Value: {cell['rawValue']}")
+                        print(
+                            f"    Column: {col_key}, Normalized Value: {cell['normalizedValue']}, Raw Value: {cell['rawValue']}"
+                        )
 
             # Class-specific metrics
             classes_map = sl_eval.classes

@@ -61,6 +61,7 @@ def sample_unassign_deployment_resources():
         print(f"Operation failed: {e.message}")
         print(e.error)
 
+
 # [END text_authoring_unassign_deployment_resources]
 
 

@@ -108,6 +108,7 @@ async def sample_import_project_async():
             print(f"Operation failed: {e.message}")
             print(e.error)
 
+
 # [END text_authoring_import_project_async]
 
 

@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft.
@@ -74,7 +75,9 @@ async def sample_get_model_evaluation_summary_async():
             for row_key, row_val in cmatrix.items():
                 print(f"Row: {row_key}")
                 for col_key, cell in row_val.items():
-                    print(f"    Column: {col_key}, Normalized Value: {cell['normalizedValue']}, Raw Value: {cell['rawValue']}")
+                    print(
+                        f"    Column: {col_key}, Normalized Value: {cell['normalizedValue']}, Raw Value: {cell['rawValue']}"
+                    )
 
         # Class-specific metrics
         classes_map = sl_eval.classes
@@ -89,6 +92,7 @@ async def sample_get_model_evaluation_summary_async():
                 print(f"    True Negatives: {metrics.true_negative_count}")
                 print(f"    False Positives: {metrics.false_positive_count}")
                 print(f"    False Negatives: {metrics.false_negative_count}")
+
 
 # [END text_authoring_get_model_evaluation_summary_async]
 

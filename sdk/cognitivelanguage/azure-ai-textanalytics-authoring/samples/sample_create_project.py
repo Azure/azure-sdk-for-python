@@ -70,6 +70,7 @@ def sample_text_create_project():
     print(f"Description: {result.description}")
     print(f"Storage Input Container: {result.storage_input_container_name}")
 
+
 # [END text_authoring_create_project]
 
 

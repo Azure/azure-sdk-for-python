@@ -68,6 +68,7 @@ def sample_get_model_evaluation_results():
             # If your project uses a different task type, handle other result kinds here
             print(f"  (Unsupported result type: {type(result).__name__})")
 
+
 # [END text_authoring_get_model_evaluation_results]
 
 

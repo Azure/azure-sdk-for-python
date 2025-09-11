@@ -49,6 +49,7 @@ async def sample_get_project_async():
         print(f"  last modified: {result.last_modified_on}")
         print(f"  storage container: {result.storage_input_container_name}")
 
+
 # [END text_authoring_get_project_async]
 
 

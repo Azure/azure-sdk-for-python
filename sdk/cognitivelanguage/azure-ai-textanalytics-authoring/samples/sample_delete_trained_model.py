@@ -62,6 +62,7 @@ def sample_delete_trained_model():
     print(f"Trained Model Label: {trained_model_label}")
     print(f"HTTP Status: {status}")  # 204 No Content on success
 
+
 # [END text_authoring_delete_trained_model]
 
 

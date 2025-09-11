@@ -59,6 +59,7 @@ def sample_cancel_training_job():
         print(f"Evaluation %: {result.evaluation_status.percent_complete}")
     print(f"Estimated End: {result.estimated_end_on}")
 
+
 # [END text_authoring_cancel_training_job]
 
 

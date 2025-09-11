@@ -15,6 +15,7 @@ AuthoringPreparer = functools.partial(
     authoring_key="fake_key",
 )
 
+
 class TestTextAuthoring(AzureRecordedTestCase):
     def create_client(self, endpoint, key):
         return TextAuthoringClient(endpoint, AzureKeyCredential(key))
@@ -28,7 +29,7 @@ class TestTextAuthoringGetModelEvaluationResultsSync(TestTextAuthoring):
 
         project_name = "single-class-project"
         trained_model_label = "model3"
-        
+
         # Trained-model–scoped call
         project_client = client.get_project_client(project_name)
         results = project_client.trained_model.get_model_evaluation_results(
@@ -49,10 +50,12 @@ class TestTextAuthoringGetModelEvaluationResultsSync(TestTextAuthoring):
             if isinstance(result, CustomSingleLabelClassificationDocumentEvalResult):
                 classification = result.custom_single_label_classification_result
                 assert classification is not None, "The classification result should not be null."
-                assert classification.expected_class and classification.expected_class.strip(), \
-                    "The expected class should not be null or empty."
-                assert classification.predicted_class and classification.predicted_class.strip(), \
-                    "The predicted class should not be null or empty."
+                assert (
+                    classification.expected_class and classification.expected_class.strip()
+                ), "The expected class should not be null or empty."
+                assert (
+                    classification.predicted_class and classification.predicted_class.strip()
+                ), "The predicted class should not be null or empty."
 
                 # Optional: print a couple of fields for recording visibility
                 print(f"Document Location: {result.location}")

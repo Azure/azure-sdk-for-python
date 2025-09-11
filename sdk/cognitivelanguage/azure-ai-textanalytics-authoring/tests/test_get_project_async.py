@@ -15,6 +15,7 @@ ConversationsPreparer = functools.partial(
     authoring_key="fake_key",
 )
 
+
 class TestConversationsCaseAsync(AzureRecordedTestCase):
     @ConversationsPreparer()
     @recorded_by_proxy_async

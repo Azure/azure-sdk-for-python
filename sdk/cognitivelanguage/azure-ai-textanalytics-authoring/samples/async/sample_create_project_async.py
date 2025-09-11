@@ -70,6 +70,7 @@ async def sample_create_project_async():
         print(f"Description: {result.description}")
         print(f"Storage Input Container: {result.storage_input_container_name}")
 
+
 # [END text_authoring_create_project_async]
 
 

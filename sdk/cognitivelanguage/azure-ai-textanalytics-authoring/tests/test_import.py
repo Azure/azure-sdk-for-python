@@ -23,16 +23,18 @@ ConversationsPreparer = functools.partial(
     authoring_key="fake_key",
 )
 
+
 class TestConversations(AzureRecordedTestCase):
     def create_client(self, endpoint: str, key: str) -> TextAuthoringClient:
         return TextAuthoringClient(endpoint, AzureKeyCredential(key))
+
 
 class TestConversationsCase(TestConversations):
     @ConversationsPreparer()
     @recorded_by_proxy
     def test_import(self, authoring_endpoint, authoring_key):
         client = self.create_client(authoring_endpoint, authoring_key)
-        
+
         project_name = "MyImportTextProject0902"
         project_client = client.get_project_client(project_name)
         # Arrange - metadata
@@ -80,7 +82,7 @@ class TestConversationsCase(TestConversations):
 
         # Act - long-running import
         poller = project_client.project.begin_import(body=exported_project)
-        
+
         try:
             poller.result()
         except HttpResponseError as e:
