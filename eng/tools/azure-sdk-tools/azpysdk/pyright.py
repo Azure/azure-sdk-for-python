@@ -99,6 +99,8 @@ class pyright(Check):
                 python_executable=executable,
             )
 
+            self.install_dev_reqs(executable, args, package_dir)
+
             top_level_module = parsed.namespace.split(".")[0] 
             paths = [
                 os.path.join(package_dir, top_level_module),
