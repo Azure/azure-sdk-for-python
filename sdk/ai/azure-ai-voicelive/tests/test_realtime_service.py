@@ -123,7 +123,6 @@ async def _collect_event(conn, *, event_type: ServerEventType, timeout: int = 10
 
         try:
             evt = await asyncio.wait_for(conn.recv(), timeout=remaining)
-            print(f"Received event: {evt.type}")
         except asyncio.TimeoutError:
             break  # no event arrived before the overall timeout
 
