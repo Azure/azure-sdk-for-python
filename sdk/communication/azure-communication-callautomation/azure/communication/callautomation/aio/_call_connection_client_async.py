@@ -4,7 +4,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING, Optional, List, Union, Dict, overload
+from typing import TYPE_CHECKING, Mapping, Optional, List, Sequence, Union, cast, overload
 from urllib.parse import urlparse
 import warnings
 
@@ -13,6 +13,7 @@ from typing_extensions import Literal
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.credentials import AzureKeyCredential
 
 from .._version import SDK_MONIKER
 from .._api_versions import DEFAULT_VERSION
@@ -27,13 +28,18 @@ from .._models import (
     SendDtmfTonesResult,
     CallInvite,
     CancelAddParticipantOperationResult,
+    FileSource,
+    TextSource,
+    SsmlSource,
 )
 from .._generated.aio import AzureCommunicationCallAutomationService
 from .._generated.models import (
+    CommunicationIdentifierModel,
     AddParticipantRequest,
     RemoveParticipantRequest,
     TransferToParticipantRequest,
     PlayRequest,
+    PlaySource,
     RecognizeRequest,
     ContinuousDtmfRecognitionRequest,
     SendDtmfTonesRequest,
@@ -50,22 +56,20 @@ from .._generated.models import (
     HoldRequest,
     UnholdRequest,
     StartMediaStreamingRequest,
-    StopMediaStreamingRequest
+    StopMediaStreamingRequest,
 )
 from .._generated.models._enums import RecognizeInputType
 from .._shared.auth_policy_utils import get_authentication_policy
 from .._shared.utils import parse_connection_str
 
 if TYPE_CHECKING:
-    from ._call_automation_client_async import CallAutomationClient
     from .._generated.models._enums import DtmfTone
     from .._shared.models import PhoneNumberIdentifier, CommunicationIdentifier
-    from .._models import FileSource, TextSource, SsmlSource, RecognitionChoice
+    from .._models import RecognitionChoice
     from azure.core.credentials_async import AsyncTokenCredential
-    from azure.core.credentials import AzureKeyCredential
 
 
-class CallConnectionClient:  # pylint: disable=too-many-public-methods
+class CallConnectionClient:  # pylint:disable=too-many-public-methods
     """A client to interact with an ongoing call. This client can be used to do mid-call actions,
     such as Transfer and Play Media. Call must be established to perform these actions.
 
@@ -80,10 +84,10 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
     :paramtype api_version: str
     """
 
-    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential, missing-client-constructor-parameter-kwargs
+    def __init__(
         self,
         endpoint: str,
-        credential: Union["AsyncTokenCredential", "AzureKeyCredential"],
+        credential: Union["AsyncTokenCredential", AzureKeyCredential],
         call_connection_id: str,
         *,
         api_version: Optional[str] = None,
@@ -96,15 +100,15 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             try:
                 if not endpoint.lower().startswith("http"):
                     endpoint = "https://" + endpoint
-            except AttributeError:
-                raise ValueError("Host URL must be a string")  # pylint: disable=raise-missing-from
+            except AttributeError as e:
+                raise ValueError("Host URL must be a string") from e
             parsed_url = urlparse(endpoint.rstrip("/"))
             if not parsed_url.netloc:
                 raise ValueError(f"Invalid URL: {format(endpoint)}")
 
             self._client = AzureCommunicationCallAutomationService(
                 endpoint,
-                credential,
+                credential,  # type: ignore[arg-type]
                 api_version=api_version or DEFAULT_VERSION,
                 authentication_policy=get_authentication_policy(endpoint, credential, is_async=True),
                 sdk_moniker=SDK_MONIKER,
@@ -129,11 +133,11 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.communication.callautomation.CallConnectionClient
         """
         endpoint, access_key = parse_connection_str(conn_str)
-        return cls(endpoint, access_key, call_connection_id, **kwargs)
+        return cls(endpoint, AzureKeyCredential(access_key), call_connection_id, **kwargs)
 
     @classmethod
     def _from_callautomation_client(
-        cls, callautomation_client: "CallAutomationClient", call_connection_id: str
+        cls, callautomation_client: AzureCommunicationCallAutomationService, call_connection_id: str, **kwargs
     ) -> "CallConnectionClient":
         """Internal constructor for sharing the pipeline with CallAutomationClient.
 
@@ -144,7 +148,14 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         :return: CallConnectionClient
         :rtype: ~azure.communication.callautomation.CallConnectionClient
         """
-        return cls(None, None, call_connection_id, _callautomation_client=callautomation_client)
+        # Use None for endpoint and credential since we're sharing the pipeline
+        return cls(
+            endpoint=None,  # type: ignore[arg-type]
+            credential=None,  # type: ignore[arg-type]
+            call_connection_id=call_connection_id,
+            _callautomation_client=callautomation_client,
+            **kwargs,
+        )
 
     @distributed_trace_async
     async def get_call_properties(self, **kwargs) -> CallConnectionProperties:
@@ -191,19 +202,23 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         return CallParticipant._from_generated(participant)  # pylint:disable=protected-access
 
     @distributed_trace
-    def list_participants(self, **kwargs) -> AsyncItemPaged[CallParticipant]:
+    def list_participants(self, **kwargs) -> AsyncItemPaged["CallParticipant"]:
         """List all participants in this call.
 
         :return: Async iterable of CallParticipant
         :rtype: ~azure.core.async_paging.AsyncItemPaged[azure.communication.callautomation.CallParticipant]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return self._call_connection_client.get_participants(
-            self._call_connection_id,
-            cls=lambda participants: [
-                CallParticipant._from_generated(p) for p in participants  # pylint:disable=protected-access
-            ],
-            **kwargs,
+        # Overwritting return type using cls.
+        return cast(
+            AsyncItemPaged[CallParticipant],
+            self._call_connection_client.get_participants(
+                self._call_connection_id,
+                cls=lambda participants: [
+                    CallParticipant._from_generated(p) for p in participants  # pylint:disable=protected-access
+                ],
+                **kwargs,
+            ),
         )
 
     @distributed_trace_async
@@ -214,8 +229,8 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         operation_context: Optional[str] = None,
         operation_callback_url: Optional[str] = None,
         transferee: Optional["CommunicationIdentifier"] = None,
-        sip_headers: Optional[Dict[str, str]] = None,
-        voip_headers: Optional[Dict[str, str]] = None,
+        sip_headers: Optional[Mapping[str, str]] = None,
+        voip_headers: Optional[Mapping[str, str]] = None,
         source_caller_id_number: Optional["PhoneNumberIdentifier"] = None,
         **kwargs,
     ) -> TransferCallResult:
@@ -243,11 +258,13 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.communication.callautomation.TransferCallResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        user_custom_context = (
-            CustomCallingContext(voip_headers=voip_headers, sip_headers=sip_headers)
-            if sip_headers or voip_headers
-            else None
-        )
+        if voip_headers or sip_headers:
+            user_custom_context: Optional[CustomCallingContext] = CustomCallingContext(
+                voip_headers=dict(voip_headers) if voip_headers is not None else None,
+                sip_headers=dict(sip_headers) if sip_headers is not None else None,
+            )
+        else:
+            user_custom_context = None
         request = TransferToParticipantRequest(
             target_participant=serialize_identifier(target_participant),
             operation_context=operation_context,
@@ -271,8 +288,8 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         source_caller_id_number: Optional["PhoneNumberIdentifier"] = None,
         source_display_name: Optional[str] = None,
         operation_callback_url: Optional[str] = None,
-        sip_headers: Optional[Dict[str, str]] = None,
-        voip_headers: Optional[Dict[str, str]] = None,
+        sip_headers: Optional[Mapping[str, str]] = None,
+        voip_headers: Optional[Mapping[str, str]] = None,
         **kwargs,
     ) -> AddParticipantResult:
         """Add a participant to this call.
@@ -309,9 +326,13 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             source_display_name = source_display_name or target_participant.source_display_name
             target_participant = target_participant.target
 
-        user_custom_context = None
-        if sip_headers or voip_headers:
-            user_custom_context = CustomCallingContext(voip_headers=voip_headers, sip_headers=sip_headers)
+        if voip_headers or sip_headers:
+            user_custom_context: Optional[CustomCallingContext] = CustomCallingContext(
+                voip_headers=dict(voip_headers) if voip_headers is not None else None,
+                sip_headers=dict(sip_headers) if sip_headers is not None else None,
+            )
+        else:
+            user_custom_context = None
         add_participant_request = AddParticipantRequest(
             participant_to_add=serialize_identifier(target_participant),
             source_caller_id_number=serialize_phone_identifier(source_caller_id_number),
@@ -366,14 +387,15 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
     @overload
     async def play_media(
         self,
-        play_source: Union[Union['FileSource', 'TextSource', 'SsmlSource'],
-                           List[Union['FileSource', 'TextSource', 'SsmlSource']]],
-        play_to: List['CommunicationIdentifier'],
+        play_source: Union[
+            Union[FileSource, TextSource, SsmlSource], Sequence[Union[FileSource, TextSource, SsmlSource]]
+        ],
+        play_to: Sequence["CommunicationIdentifier"],
         *,
         loop: bool = False,
         operation_context: Optional[str] = None,
         operation_callback_url: Optional[str] = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """Play media to specific participant(s) in this call.
 
@@ -404,15 +426,16 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
     @overload
     async def play_media(
         self,
-        play_source: Union[Union['FileSource', 'TextSource', 'SsmlSource'],
-                           List[Union['FileSource', 'TextSource', 'SsmlSource']]],
-        play_to: Literal["all"] = 'all',
+        play_source: Union[
+            Union[FileSource, TextSource, SsmlSource], Sequence[Union[FileSource, TextSource, SsmlSource]]
+        ],
+        play_to: Literal["all"] = "all",
         *,
         loop: bool = False,
         operation_context: Optional[str] = None,
         operation_callback_url: Optional[str] = None,
         interrupt_call_media_operation: bool = False,
-        **kwargs
+        **kwargs,
     ) -> None:
         """Play media to specific participant(s) in this call.
 
@@ -446,9 +469,10 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
     @distributed_trace_async
     async def play_media(
         self,
-        play_source: Union[Union['FileSource', 'TextSource', 'SsmlSource'],
-                           List[Union['FileSource', 'TextSource', 'SsmlSource']]],
-        play_to: Union[Literal["all"], List['CommunicationIdentifier']] = 'all',
+        play_source: Union[
+            Union[FileSource, TextSource, SsmlSource], Sequence[Union[FileSource, TextSource, SsmlSource]]
+        ],
+        play_to: Union[Literal["all"], Sequence["CommunicationIdentifier"]] = "all",
         *,
         loop: bool = False,
         operation_context: Optional[str] = None,
@@ -492,9 +516,10 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
     @distributed_trace_async
     async def _play_media(
         self,
-        play_source: Union[Union['FileSource', 'TextSource', 'SsmlSource'],
-                           List[Union['FileSource', 'TextSource', 'SsmlSource']]],
-        play_to: Union[Literal["all"], List['CommunicationIdentifier']] = 'all',
+        play_source: Union[
+            Union[FileSource, TextSource, SsmlSource], Sequence[Union[FileSource, TextSource, SsmlSource]]
+        ],
+        play_to: Union[Literal["all"], Sequence["CommunicationIdentifier"]] = "all",
         *,
         loop: bool = False,
         operation_context: Optional[str] = None,
@@ -530,19 +555,17 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        play_source_single: Optional[Union['FileSource', 'TextSource', 'SsmlSource']] = None
-        play_sources: Optional[List[Union['FileSource', 'TextSource', 'SsmlSource']]] = None
-        if isinstance(play_source, list):
-            if play_source:  # Check if the list is not empty
-                play_sources = play_source
+        if isinstance(play_source, (FileSource, TextSource, SsmlSource)):
+            play_sources: List[PlaySource] = [play_source._to_generated()]  # pylint:disable=protected-access
         else:
-            play_source_single = play_source
+            play_sources = [source._to_generated() for source in play_source]  # pylint:disable=protected-access
 
-        audience = [] if play_to == "all" else [serialize_identifier(i) for i in play_to]
+        audience: List[CommunicationIdentifierModel] = (
+            [] if play_to == "all" else [serialize_identifier(i) for i in play_to]
+        )
         interrupt_call_media_operation = interrupt_call_media_operation if play_to == "all" else False
         play_request = PlayRequest(
-            play_sources=[play_source_single._to_generated()] if play_source_single else # pylint:disable=protected-access
-            [source._to_generated() for source in play_sources] if play_sources else None, # pylint:disable=protected-access
+            play_sources=play_sources,
             play_to=audience,
             play_options=PlayOptions(loop=loop),
             interrupt_call_media_operation=interrupt_call_media_operation,
@@ -555,8 +578,9 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
     @distributed_trace_async
     async def play_media_to_all(
         self,
-        play_source: Union[Union['FileSource', 'TextSource', 'SsmlSource'],
-                           List[Union['FileSource', 'TextSource', 'SsmlSource']]],
+        play_source: Union[
+            Union[FileSource, TextSource, SsmlSource], Sequence[Union[FileSource, TextSource, SsmlSource]]
+        ],
         *,
         loop: bool = False,
         operation_context: Optional[str] = None,
@@ -608,16 +632,20 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         target_participant: "CommunicationIdentifier",
         *,
         initial_silence_timeout: Optional[int] = None,
-        play_prompt: Optional[Union[Union['FileSource', 'TextSource', 'SsmlSource'],
-                                    List[Union['FileSource', 'TextSource', 'SsmlSource']]]] = None,
+        play_prompt: Optional[
+            Union[
+                Union[FileSource, TextSource, SsmlSource],
+                Sequence[Union[FileSource, TextSource, SsmlSource]],
+            ]
+        ] = None,
         interrupt_call_media_operation: bool = False,
         operation_context: Optional[str] = None,
         interrupt_prompt: bool = False,
         dtmf_inter_tone_timeout: Optional[int] = None,
         dtmf_max_tones_to_collect: Optional[int] = None,
-        dtmf_stop_tones: Optional[List[Union[str, 'DtmfTone']]] = None,
+        dtmf_stop_tones: Optional[Sequence[Union[str, "DtmfTone"]]] = None,
         speech_language: Optional[str] = None,
-        choices: Optional[List["RecognitionChoice"]] = None,
+        choices: Optional[Sequence["RecognitionChoice"]] = None,
         end_silence_timeout: Optional[int] = None,
         speech_recognition_model_endpoint_id: Optional[str] = None,
         operation_callback_url: Optional[str] = None,
@@ -634,7 +662,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         :keyword play_prompt: The source of the audio to be played for recognition.
         :paramtype play_prompt: ~azure.communication.callautomation.FileSource or
          ~azure.communication.callautomation.TextSource or
-         ~azure.communication.callautomation.SsmlSource or         
+         ~azure.communication.callautomation.SsmlSource or
          list[~azure.communication.callautomation.FileSource] or
          list[~azure.communication.callautomation.TextSource] or
          list[~azure.communication.callautomation.SsmlSource]
@@ -679,20 +707,18 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             speech_language=speech_language,
             speech_recognition_model_endpoint_id=speech_recognition_model_endpoint_id,
         )
-
-        play_prompt_single: Optional[Union['FileSource', 'TextSource', 'SsmlSource']] = None
-        play_prompts: Optional[List[Union['FileSource', 'TextSource', 'SsmlSource']]] = None
-        if isinstance(play_prompt, list):
-            if play_prompt:  # Check if the list is not empty
-                play_prompts = play_prompt
-        else:
-            play_prompt_single = play_prompt
+        play_prompt_single: Optional[PlaySource] = None
+        play_prompts: Optional[List[PlaySource]] = None
+        if isinstance(play_prompt, (FileSource, TextSource, SsmlSource)):
+            play_prompt_single = play_prompt._to_generated()  # pylint:disable=protected-access
+        elif play_prompt:
+            play_prompts = [source._to_generated() for source in play_prompt]  # pylint:disable=protected-access
 
         if input_type == RecognizeInputType.DTMF:
             dtmf_options = DtmfOptions(
                 inter_tone_timeout_in_seconds=dtmf_inter_tone_timeout,
                 max_tones_to_collect=dtmf_max_tones_to_collect,
-                stop_tones=dtmf_stop_tones,
+                stop_tones=list(dtmf_stop_tones) if dtmf_stop_tones is not None else None,
             )
             options.dtmf_options = dtmf_options
         elif input_type == RecognizeInputType.SPEECH:
@@ -704,7 +730,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             dtmf_options = DtmfOptions(
                 inter_tone_timeout_in_seconds=dtmf_inter_tone_timeout,
                 max_tones_to_collect=dtmf_max_tones_to_collect,
-                stop_tones=dtmf_stop_tones,
+                stop_tones=list(dtmf_stop_tones) if dtmf_stop_tones is not None else None,
             )
             speech_options = SpeechOptions(
                 end_silence_timeout_in_ms=end_silence_timeout * 1000 if end_silence_timeout is not None else None
@@ -712,14 +738,16 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             options.dtmf_options = dtmf_options
             options.speech_options = speech_options
         elif input_type == RecognizeInputType.CHOICES:
-            options.choices = [choice._to_generated() for choice in choices]  # pylint:disable=protected-access
+            options.choices = (
+                [choice._to_generated() for choice in choices] if choices else None  # pylint:disable=protected-access
+            )
         else:
             raise ValueError(f"Input type '{input_type}' is not supported.")
 
         recognize_request = RecognizeRequest(
             recognize_input_type=input_type,
-            play_prompt=play_prompt_single._to_generated() if play_prompt_single else None,  # pylint:disable=protected-access
-            play_prompts=[prompt._to_generated() for prompt in play_prompts] if play_prompts else None, # pylint:disable=protected-access
+            play_prompt=play_prompt_single,
+            play_prompts=play_prompts,
             interrupt_call_media_operation=interrupt_call_media_operation,
             operation_context=operation_context,
             recognize_options=options,
@@ -757,8 +785,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         continuous_dtmf_recognition_request = ContinuousDtmfRecognitionRequest(
-            target_participant=serialize_identifier(target_participant),
-            operation_context=operation_context
+            target_participant=serialize_identifier(target_participant), operation_context=operation_context
         )
         await self._call_media_client.start_continuous_dtmf_recognition(
             self._call_connection_id, continuous_dtmf_recognition_request, **kwargs
@@ -800,7 +827,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
     @distributed_trace_async
     async def send_dtmf_tones(
         self,
-        tones: List[Union[str, "DtmfTone"]],
+        tones: Sequence[Union[str, "DtmfTone"]],
         target_participant: "CommunicationIdentifier",
         *,
         operation_context: Optional[str] = None,
@@ -825,7 +852,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         send_dtmf_tones_request = SendDtmfTonesRequest(
-            tones=tones,
+            tones=list(tones),
             target_participant=serialize_identifier(target_participant),
             operation_context=operation_context,
             operation_callback_uri=operation_callback_url,
@@ -904,7 +931,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         operation_context: Optional[str] = None,
         speech_recognition_model_endpoint_id: Optional[str] = None,
         operation_callback_url: Optional[str] = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """Starts transcription in the call.
 
@@ -928,17 +955,14 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             operation_context=operation_context,
             speech_recognition_model_endpoint_id=speech_recognition_model_endpoint_id,
             operation_callback_uri=operation_callback_url,
-            **kwargs
+            **kwargs,
         )
         await self._call_media_client.start_transcription(self._call_connection_id, start_transcription_request)
 
     @distributed_trace_async
     async def stop_transcription(
-        self,
-        *,
-        operation_context: Optional[str] = None,
-        operation_callback_url: Optional[str] = None,
-        **kwargs) -> None:
+        self, *, operation_context: Optional[str] = None, operation_callback_url: Optional[str] = None, **kwargs
+    ) -> None:
         """Stops transcription in the call.
 
         :keyword operation_context: The value to identify context of the operation.
@@ -953,9 +977,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         stop_transcription_request = StopTranscriptionRequest(
-            operation_context=operation_context,
-            operation_callback_uri=operation_callback_url,
-            **kwargs
+            operation_context=operation_context, operation_callback_uri=operation_callback_url, **kwargs
         )
         await self._call_media_client.stop_transcription(self._call_connection_id, stop_transcription_request)
 
@@ -967,7 +989,8 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         operation_context: Optional[str] = None,
         speech_recognition_model_endpoint_id: Optional[str] = None,
         operation_callback_url: Optional[str] = None,
-        **kwargs) -> None:
+        **kwargs,
+    ) -> None:
         """API to change transcription language.
 
         :keyword locale: Defines new locale for transcription.
@@ -991,7 +1014,8 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             operation_context=operation_context,
             speech_recognition_model_endpoint_id=speech_recognition_model_endpoint_id,
             operation_callback_uri=operation_callback_url,
-            **kwargs)
+            **kwargs,
+        )
         await self._call_media_client.update_transcription(self._call_connection_id, update_transcription_request)
 
     @distributed_trace_async
@@ -999,7 +1023,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         self,
         target_participant: "CommunicationIdentifier",
         *,
-        play_source: Optional[Union["FileSource", "TextSource", "SsmlSource"]] = None,
+        play_source: Optional[Union[FileSource, TextSource, SsmlSource]] = None,
         operation_context: Optional[str] = None,
         operation_callback_url: Optional[str] = None,
         **kwargs,
@@ -1024,7 +1048,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        play_source_single: Optional[Union["FileSource", "TextSource", "SsmlSource"]] = None
+        play_source_single: Optional[Union[FileSource, TextSource, SsmlSource]] = None
         if isinstance(play_source, list):
             warnings.warn("Currently only single play source per request is supported.")
             if play_source:  # Check if the list is not empty
@@ -1051,7 +1075,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         *,
         operation_context: Optional[str] = None,
         operation_callback_url: Optional[str] = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """Play media to specific participant(s) in this call.
 
@@ -1080,15 +1104,11 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def start_media_streaming(
-        self,
-        *,
-        operation_callback_url: Optional[str] = None,
-        operation_context: Optional[str] = None,
-        **kwargs
-    )->None:
+        self, *, operation_callback_url: Optional[str] = None, operation_context: Optional[str] = None, **kwargs
+    ) -> None:
         """Starts media streaming in the call.
-        
-        :keyword operation_callback_url: (Optional) Set a callback URL that overrides the default 
+
+        :keyword operation_callback_url: (Optional) Set a callback URL that overrides the default
          callback URL set by CreateCall/AnswerCall for this operation.
          This setup is per-action. If this is not set, the default callback URL set by
          CreateCall/AnswerCall will be used.
@@ -1099,26 +1119,20 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError: If there's an HTTP response error.
         """
-        start_media_streaming_request=StartMediaStreamingRequest(
-            operation_callback_uri=operation_callback_url,
-            operation_context=operation_context
+        start_media_streaming_request = StartMediaStreamingRequest(
+            operation_callback_uri=operation_callback_url, operation_context=operation_context
         )
         await self._call_media_client.start_media_streaming(
-            self._call_connection_id,
-            start_media_streaming_request,
-            **kwargs)
+            self._call_connection_id, start_media_streaming_request, **kwargs
+        )
 
     @distributed_trace_async
     async def stop_media_streaming(
-        self,
-        *,
-        operation_callback_url: Optional[str] = None,
-        operation_context: Optional[str] = None,
-        **kwargs
-    )->None:
+        self, *, operation_callback_url: Optional[str] = None, operation_context: Optional[str] = None, **kwargs
+    ) -> None:
         """Stops media streaming in the call.
-        
-        :keyword operation_callback_url: (Optional) Set a callback URL that overrides the default 
+
+        :keyword operation_callback_url: (Optional) Set a callback URL that overrides the default
          callback URL set by CreateCall/AnswerCall for this operation.
          This setup is per-action. If this is not set, the default callback URL set by
          CreateCall/AnswerCall will be used.
@@ -1129,15 +1143,12 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError: If there's an HTTP response error.
         """
-        stop_media_streaming_request=StopMediaStreamingRequest(
-            operation_callback_uri=operation_callback_url,
-            operation_context=operation_context
-            )
+        stop_media_streaming_request = StopMediaStreamingRequest(
+            operation_callback_uri=operation_callback_url, operation_context=operation_context
+        )
         await self._call_media_client.stop_media_streaming(
-            self._call_connection_id,
-            stop_media_streaming_request,
-            **kwargs
-            )
+            self._call_connection_id, stop_media_streaming_request, **kwargs
+        )
 
     async def __aenter__(self) -> "CallConnectionClient":
         await self._client.__aenter__()

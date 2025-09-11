@@ -11,7 +11,6 @@ from argparse import Namespace
 from common_tasks import (
     run_check_call,
     clean_coverage,
-    is_error_code_5_allowed,
     create_code_coverage_params,
 )
 
@@ -19,7 +18,7 @@ from ci_tools.variables import in_ci
 from ci_tools.environment_exclusions import filter_tox_environment_string
 from ci_tools.ci_interactions import output_ci_warning
 from ci_tools.scenario.generation import replace_dev_reqs
-from ci_tools.functions import cleanup_directory
+from ci_tools.functions import cleanup_directory, is_error_code_5_allowed
 from ci_tools.parsing import ParsedSetup
 from packaging.requirements import Requirement
 import logging

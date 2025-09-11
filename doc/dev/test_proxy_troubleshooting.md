@@ -7,21 +7,22 @@ GitHub repository, but this isn't necessary to read for Python testing.
 
 ## Table of contents
 
-- [Guide for test proxy troubleshooting](#guide-for-test-proxy-troubleshooting)
-  - [Table of contents](#table-of-contents)
-  - [Debugging tip](#debugging-tip)
-  - [Test collection failure](#test-collection-failure)
-  - [Errors in tests using resource preparers](#errors-in-tests-using-resource-preparers)
-  - [Test failure during `record/start` or `playback/start` requests](#test-failure-during-recordstart-or-playbackstart-requests)
-  - [Playback failures from body matching errors](#playback-failures-from-body-matching-errors)
-  - [Playback failures from inconsistent line breaks](#playback-failures-from-inconsistent-line-breaks)
-  - [Playback failures from URL mismatches](#playback-failures-from-url-mismatches)
-  - [Recordings not being produced](#recordings-not-being-produced)
-  - [ConnectionError during tests](#connectionerror-during-tests)
-  - [Different error than expected when using proxy](#different-error-than-expected-when-using-proxy)
-  - [Test setup failure in test pipeline](#test-setup-failure-in-test-pipeline)
-  - [Fixture not found error](#fixture-not-found-error)
-  - [PermissionError during startup](#permissionerror-during-startup)
+- [Debugging tip](#debugging-tip)
+- [ResourceNotFoundError: Playback failure](#resourcenotfounderror-playback-failure)
+- [Test collection failure](#test-collection-failure)
+- [Errors in tests using resource preparers](#errors-in-tests-using-resource-preparers)
+- [Test failure during `record/start` or `playback/start` requests](#test-failure-during-recordstart-or-playbackstart-requests)
+- [Playback failures from body matching errors](#playback-failures-from-body-matching-errors)
+- [Playback failures from inconsistent line breaks](#playback-failures-from-inconsistent-line-breaks)
+- [Playback failures from URL mismatches](#playback-failures-from-url-mismatches)
+- [Playback failures from inconsistent test values](#playback-failures-from-inconsistent-test-values)
+- [Recordings not being produced](#recordings-not-being-produced)
+- [ConnectionError during tests](#connectionerror-during-tests)
+- [Different error than expected when using proxy](#different-error-than-expected-when-using-proxy)
+- [Test setup failure in test pipeline](#test-setup-failure-in-test-pipeline)
+- [Fixture not found error](#fixture-not-found-error)
+- [PermissionError during startup](#permissionerror-during-startup)
+- [ServiceRequestError: Cannot connect to host](#servicerequesterror-cannot-connect-to-host)
 
 ## Debugging tip
 
@@ -38,6 +39,27 @@ Additionally, the `-k` flag can be used to collect and run tests that have a spe
 containing the strings `test_delete` or `test_upload`.
 
 For more information about `pytest` invocations, refer to [Usage and Invocations][pytest_commands].
+
+## ResourceNotFoundError: Playback failure
+
+Test playback errors typically raise with a message similar to the following:
+
+```text
+FAILED test_client.py::TestClient::test_client_method - azure.core.exceptions.ResourceNotFoundError:
+Playback failure -- for help resolving, see https://aka.ms/azsdk/python/test-proxy/troubleshoot. Error details:
+Unable to find a record for the request POST https://fake_resource.service.azure.net?api-version=2025-09-01
+```
+
+This means that the test recording didn't contain a match for the incoming playback request. This usually just means
+that the test needs to be re-recorded to pick up library updates (e.g. a new service API version).
+
+If playback errors persist after re-recording, you may need to modify session sanitizers or matchers. The following
+sections of this guide describe common scenarios:
+
+- [Playback failures from body matching errors](#playback-failures-from-body-matching-errors)
+- [Playback failures from inconsistent line breaks](#playback-failures-from-inconsistent-line-breaks)
+- [Playback failures from URL mismatches](#playback-failures-from-url-mismatches)
+- [Playback failures from inconsistent test values](#playback-failures-from-inconsistent-test-values)
 
 ## Test collection failure
 
@@ -111,9 +133,9 @@ Resource preparers need a management client to function, so test classes that us
 
 ## Test failure during `record/start` or `playback/start` requests
 
-If your library uses out-of-repo recordings and tests fail during startup, logs might indicate that POST requests to
-`record/start` or `playback/start` endpoints are returning 500 responses. In a stack trace, these errors might be raised
-[here][record_request_failure] or [here][playback_request_failure], respectively.
+If tests fail during startup, logs might indicate that POST requests to `record/start` or `playback/start` endpoints
+are returning 500 responses. In a stack trace, these errors might be raised [here][record_request_failure] or
+[here][playback_request_failure], respectively.
 
 This suggests that the test proxy failed to fetch recordings from the assets repository. This likely comes from a
 corrupted `git` configuration in `azure-sdk-for-python/.assets`. To resolve this:
@@ -139,11 +161,9 @@ These folders will be freshly recreated the next time you run tests.
 
 ## Playback failures from body matching errors
 
-In the old, `vcrpy`-based testing system, request and response bodies weren't compared in playback mode by default in
-most packages. The test proxy system enables body matching by default, which can introduce failures for tests that
-passed in the old system. For example, if a test sends a request that includes the current Unix time in its body, the
-body will contain a new value when run in playback mode at a later time. This request might still match the recording if
-body matching is disabled, but not if it's enabled.
+The test proxy system enables body matching by default. For example, if a test sends a request that includes the
+current Unix time in its body, the body will contain a new value when run in playback mode at a later time -- this
+request won't match the recording if body matching is enabled.
 
 Body matching can be turned off with the test proxy by calling the `set_bodiless_matcher` method from
 [devtools_testutils/sanitizers.py][py_sanitizers] at the very start of a test method. This matcher applies only to the
@@ -152,13 +172,12 @@ matching enabled by default.
 
 ## Playback failures from inconsistent line breaks
 
-Some tests require recording content to completely match, including line breaks (for example, when sending the content of
-a test file in a request body). Line breaks can vary between OSes and cause tests to fail on certain platforms, in which
-case it can help to specify a particular format for test files by using [`.gitattributes`][gitattributes].
+Line breaks can vary between OSes and cause tests to fail on certain platforms, in which case it can help to specify a
+particular format for test files by using [`.gitattributes`][gitattributes].
 
-A `.gitattributes` file can be placed at the root of a directory to apply git settings to each file under that directory.
-If a test directory contains files that need to have consistent line breaks, for example LF breaks instead of CRLF ones,
-you can create a `.gitattributes` file in the directory with the following content:
+A `.gitattributes` file can be placed at the root of a directory to apply git settings to each file under that
+directory. If a test directory contains files that need to have consistent line breaks, for example LF breaks instead
+of CRLF ones, you can create a `.gitattributes` file in the directory with the following content:
 
 ```text
 # Force git to checkout text files with LF (line feed) as the ending (vs CRLF)
@@ -209,11 +228,16 @@ that test, which is recommended.
 
 ### Sanitization impacting request URL/body/headers
 
-In some cases, a value in a response body is used in the following request as part of the URL, body, or headers. If this value is sanitized, the recorded request might differ than what is expected during playback. Common culprits include sanitization of "name", "id", and "Location" fields. To resolve this, you can either opt out of specific sanitization or add another sanitizer to align with the sanitized value.
+In some cases, a value in a response body is used in the following request as part of the URL, body, or headers. If
+this value is sanitized, the recorded request might differ than what is expected during playback. Common culprits
+include sanitization of "name", "id", and "Location" fields. To resolve this, you can either opt out of specific
+sanitization or add another sanitizer to align with the sanitized value.
 
 #### Opt out
 
-You can opt out of sanitization for the fields that are used for your requests by calling the `remove_batch_sanitizer` method from `devtools_testutils` with the [sanitizer IDs][test_proxy_sanitizers] to exclude. Generally, this is done in the `conftest.py` file, in the one of the session-scoped fixtures. Example:
+You can opt out of sanitization for the fields that are used for your requests by calling the `remove_batch_sanitizer`
+method from `devtools_testutils` with the [sanitizer IDs][test_proxy_sanitizers] to exclude. Generally, this is done in
+the `conftest.py` file, in the one of the session-scoped fixtures. Example:
 
 ```python
 from devtools_testutils import remove_batch_sanitizers, test_proxy
@@ -244,6 +268,48 @@ from devtools_testutils import add_uri_regex_sanitizer
 
 add_uri_regex_sanitizer(regex="(?<=https://.+/foo/bar/)(?<id>[^/?\\.]+)", group_for_replace="id", value="Sanitized")
 ```
+
+## Playback failures from inconsistent test values
+
+To run recorded tests successfully when recorded values are inconsistent or random and can't be sanitized, the test
+proxy provides a `variables` API. This makes it possible for a test to record the values of variables that were used
+during recording and use the same values in playback mode without a sanitizer.
+
+For example, imagine that a test uses a randomized `table_uuid` variable when creating resources. The same random value
+for `table_uuid` can be used in playback mode by using this `variables` API.
+
+There are two requirements for a test to use recorded variables. First, the test method should accept `**kwargs`.
+Second, the test method should `return` a dictionary with any test variables that it wants to record. This dictionary
+will be stored in the recording when the test is run live, and will be passed to the test as a `variables` keyword
+argument when the test is run in playback.
+
+Below is a code example of how a test method could use recorded variables:
+
+```python
+from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
+
+class TestExample(AzureRecordedTestCase):
+
+    @recorded_by_proxy
+    def test_example(self, **kwargs):
+        # In live mode, variables is an empty dictionary
+        # In playback mode, the value of variables is {"table_uuid": "random-value"}
+        variables = kwargs.pop("variables", {})
+
+        # To fetch variable values, use the `setdefault` method to look for a key ("table_uuid")
+        # and set a real value for that key if it's not present ("random-value")
+        table_uuid = variables.setdefault("table_uuid", "random-value")
+
+        # use variables["table_uuid"] when using the table UUID throughout the test
+        ...
+
+        # return the variables at the end of the test to record them
+        return variables
+```
+
+> **Note:** `variables` will be passed as a named argument to any test that accepts `kwargs` by the test proxy. In
+> environments that don't use the test proxy, though -- like live test pipelines -- `variables` won't be provided.
+> To avoid a KeyError, providing an empty dictionary as the default value to `kwargs.pop` is recommended.
 
 ## Recordings not being produced
 
@@ -321,8 +387,8 @@ skipped, so the `TestProxy` parameter doesn't need to be set in `tests.yml`.
 
 Tests that aren't recorded should omit the `recorded_by_proxy` decorator. However, if these unrecorded tests accept
 parameters that are provided by a preparer like the `devtools_testutils` [EnvironmentVariableLoader][env_var_loader],
-you may see a new test setup error after migrating to the test proxy. For example, imagine a test is decorated with a
-preparer that provides a Key Vault URL as a `azure_keyvault_url` parameter:
+you may see a test setup error. For example, imagine a test is decorated with a preparer that provides a Key Vault URL
+as a `azure_keyvault_url` parameter:
 
 ```python
 class TestExample(AzureRecordedTestCase):
@@ -367,9 +433,31 @@ Alternatively, you can delete the installed tool and re-run your tests to automa
 - Delete the `.proxy` folder at the root of your local `azure-sdk-for-python` clone.
 - Re-run your tests; the test proxy will be reinstalled and should correctly set file permissions.
 
+## ServiceRequestError: Cannot connect to host
+
+When [using HTTPS][proxy_https] via `PROXY_URL='https://localhost:5001'`, tests may fail during startup with the
+following exception:
+
+```text
+azure.core.exceptions.ServiceRequestError: Cannot connect to host localhost:5001
+ssl:True [SSLCertVerificationError: (1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate
+verify failed: self signed certificate (_ssl.c:1123)')]
+```
+
+This is caused by the test proxy's certificate being incorrectly configured. First, update your branch to include the
+latest changes from `main` -- this ensures you have the latest certificate version (it needs to be occasionally
+rotated).
+
+If tests continue to fail, this is likely due to an async-specific environment issue. The certificate is
+[automatically configured][cert_setup] during proxy startup, but async environments can still nondeterministically fail.
+
+To work around this, unset the `PROXY_URL` environment variable to default to HTTP, which doesn't require a certificate.
+If your tests require an HTTPS endpoint, reach out to the Azure SDK team for assistance.
+
 <!-- Links -->
 
-[custom_default_matcher]: https://github.com/Azure/azure-sdk-for-python/blob/497f5f3435162c4f2086d1429fc1bba4f31a4354/eng/tools/azure-sdk-tools/devtools_testutils/sanitizers.py#L85
+[cert_setup]: https://github.com/Azure/azure-sdk-for-python/blob/9958caf6269247f940c697a3f982bbbf0a47a19b/eng/tools/azure-sdk-tools/devtools_testutils/proxy_startup.py#L210
+[custom_default_matcher]: https://github.com/Azure/azure-sdk-for-python/blob/9958caf6269247f940c697a3f982bbbf0a47a19b/eng/tools/azure-sdk-tools/devtools_testutils/sanitizers.py#L90
 [detailed_docs]: https://github.com/Azure/azure-sdk-tools/tree/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy/README.md
 [env_var_loader]: https://github.com/Azure/azure-sdk-for-python/blob/main/eng/tools/azure-sdk-tools/devtools_testutils/envvariable_loader.py
 [gitattributes]: https://git-scm.com/docs/gitattributes
@@ -379,10 +467,11 @@ Alternatively, you can delete the installed tool and re-run your tests to automa
 [parametrize_example]: https://github.com/Azure/azure-sdk-for-python/blob/aa607b3b8c3e646928375ebcc6339d68e4e90a49/sdk/keyvault/azure-keyvault-keys/tests/test_key_client.py#L190
 [pipelines_ci]: https://github.com/Azure/azure-sdk-for-python/blob/5ba894966ed6b0e1ee8d854871f8c2da36a73d79/sdk/eventgrid/ci.yml#L30
 [pipelines_live]: https://github.com/Azure/azure-sdk-for-python/blob/e2b5852deaef04752c1323d2ab0958f83b98858f/sdk/textanalytics/tests.yml#L26-L27
-[playback_request_failure]: https://github.com/Azure/azure-sdk-for-python/blob/e23d9a6b1edcc1127ded40b9993029495b4ad08c/eng/tools/azure-sdk-tools/devtools_testutils/proxy_testcase.py#L108
+[playback_request_failure]: https://github.com/Azure/azure-sdk-for-python/blob/9958caf6269247f940c697a3f982bbbf0a47a19b/eng/tools/azure-sdk-tools/devtools_testutils/proxy_testcase.py#L102
+[proxy_https]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests-advanced.md#use-https-test-proxy-endpoint
 [py_sanitizers]: https://github.com/Azure/azure-sdk-for-python/blob/main/eng/tools/azure-sdk-tools/devtools_testutils/sanitizers.py
 [pytest_collection]: https://docs.pytest.org/latest/goodpractices.html#test-discovery
 [pytest_commands]: https://docs.pytest.org/latest/usage.html
-[record_request_failure]: https://github.com/Azure/azure-sdk-for-python/blob/e23d9a6b1edcc1127ded40b9993029495b4ad08c/eng/tools/azure-sdk-tools/devtools_testutils/proxy_testcase.py#L97
+[record_request_failure]: https://github.com/Azure/azure-sdk-for-python/blob/9958caf6269247f940c697a3f982bbbf0a47a19b/eng/tools/azure-sdk-tools/devtools_testutils/proxy_testcase.py#L91
 [test_proxy_sanitizers]: https://github.com/Azure/azure-sdk-tools/blob/57382d5dc00b10a2f9cfd597293eeee0c2dbd8fd/tools/test-proxy/Azure.Sdk.Tools.TestProxy/Common/SanitizerDictionary.cs#L65
 [wrong_exception]: https://github.com/Azure/azure-sdk-tools/issues/2907

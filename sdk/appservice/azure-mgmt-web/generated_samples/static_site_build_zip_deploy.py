@@ -37,8 +37,8 @@ def main():
         environment_name="12",
         static_site_zip_deployment_envelope={
             "properties": {
-                "apiZipUrl": "https://teststorageaccount.net/happy-sea-15afae3e-master-81828877/api-zipdeploy.zip",
-                "appZipUrl": "https://teststorageaccount.net/happy-sea-15afae3e-master-81828877/app-zipdeploy.zip",
+                "apiZipUrl": "https://[examplestorageaccount].com/happy-sea-15afae3e-master-81828877/api-zipdeploy.zip",
+                "appZipUrl": "https://[examplestorageaccount].com/happy-sea-15afae3e-master-81828877/app-zipdeploy.zip",
                 "deploymentTitle": "Update index.html",
                 "functionLanguage": "testFunctionLanguage",
                 "provider": "testProvider",

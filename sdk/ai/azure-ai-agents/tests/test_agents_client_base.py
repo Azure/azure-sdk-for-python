@@ -4,6 +4,8 @@ import logging
 import functools
 import json
 import datetime
+import os
+import base64
 from devtools_testutils import (
     AzureRecordedTestCase,
     EnvironmentVariableLoader,
@@ -35,6 +37,7 @@ agentClientPreparer = functools.partial(
     azure_ai_agents_tests_bing_custom_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.CognitiveServices/accounts/00000/projects/00000/connections/00000",
     azure_ai_agents_tests_bing_configuration_name="sample_configuration",
     azure_ai_agents_tests_fabric_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.CognitiveServices/accounts/00000/projects/00000/connections/00000",
+    azure_ai_agents_tests_sharepoint_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.CognitiveServices/accounts/00000/projects/00000/connections/00000",
 )
 
 # Set to True to enable SDK logging
@@ -73,6 +76,24 @@ def fetch_current_datetime_recordings():
     time_json = json.dumps({"current_time": "2024-10-10 12:30:19"})
     return time_json
 
+def image_to_base64(image_path: str) -> str:
+    """
+    Convert an image file to a Base64-encoded string.
+
+    :param image_path: The path to the image file (e.g. 'image_file.png')
+    :return: A Base64-encoded string representing the image.
+    :raises FileNotFoundError: If the provided file path does not exist.
+    :raises OSError: If there's an error reading the file.
+    """
+    if not os.path.isfile(image_path):
+        raise FileNotFoundError(f"File not found at: {image_path}")
+
+    try:
+        with open(image_path, "rb") as image_file:
+            file_data = image_file.read()
+        return base64.b64encode(file_data).decode("utf-8")
+    except Exception as exc:
+        raise OSError(f"Error reading file '{image_path}'") from exc
 
 class TestAgentClientBase(AzureRecordedTestCase):
     """Base class for Agents Client tests. Please put all code common to sync and async tests here."""

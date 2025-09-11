@@ -32,8 +32,6 @@ class AutoMLImage(AutoMLVertical, ABC):
     :paramtype limits: Optional[~azure.ai.ml.automl.ImageLimitSettings]
     :keyword sweep: Sweep settings for all AutoML Image jobs. Defaults to None.
     :paramtype sweep: Optional[~azure.ai.ml.automl.ImageSweepSettings]
-    :keyword kwargs: Additional keyword arguments for AutoMLImage.
-    :paramtype kwargs: Dict[str, Any]
     """
 
     def __init__(
