@@ -47,7 +47,7 @@ class TestSession(unittest.TestCase):
         cls.created_collection = cls.created_db.get_container_client(cls.TEST_COLLECTION_ID)
 
     def test_manual_session_token_takes_precedence(self):
-        # Establish an initial session state for the primary client.After this call, self.client has an internal session token.
+        # Establish an initial session state for the primary client. After this call, self.client has an internal session token.
         self.created_collection.create_item(
             body={'id': 'precedence_doc_1' + str(uuid.uuid4()), 'pk': 'mypk'}
         )
