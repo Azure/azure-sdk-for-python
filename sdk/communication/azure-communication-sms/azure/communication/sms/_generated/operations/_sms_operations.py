@@ -35,7 +35,7 @@ def build_send_request(
     # type: (...) -> HttpRequest
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2026-01-23"
+    api_version = kwargs.pop('api_version', "2026-01-23")
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/sms')
@@ -112,6 +112,7 @@ class SmsOperations(object):
         request = build_send_request(
             content_type=content_type,
             json=json,
+            api_version=self._config.api_version,
             template_url=self.send.metadata['url'],
         )
         request = _convert_request(request)

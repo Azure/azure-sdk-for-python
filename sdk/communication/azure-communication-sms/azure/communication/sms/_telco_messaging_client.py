@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Union, Any
+from typing import Union, Any, Optional
 from azure.core.credentials import TokenCredential, AzureKeyCredential
 
 from ._sms_client import SmsClient
@@ -23,6 +23,8 @@ class TelcoMessagingClient(object):  # pylint: disable=client-accepts-api-versio
         The endpoint url for Azure Communication Service resource.
     :param Union[TokenCredential, AzureKeyCredential] credential:
         The credential we use to authenticate against the service.
+    :keyword str api_version:
+        The API version to use for requests. If not specified, the default API version will be used.
     :keyword Any kwargs: Additional arguments to pass to the sub-clients.
 
     :ivar sms: SMS operations client
@@ -60,6 +62,8 @@ class TelcoMessagingClient(object):  # pylint: disable=client-accepts-api-versio
             self,
             endpoint: str,
             credential: Union[TokenCredential, AzureKeyCredential],
+            *,
+            api_version: Optional[str] = None,
             **kwargs: Any
     ) -> None:
         """Initialize the TelcoMessagingClient.
@@ -68,23 +72,29 @@ class TelcoMessagingClient(object):  # pylint: disable=client-accepts-api-versio
             The endpoint url for Azure Communication Service resource.
         :param Union[TokenCredential, AzureKeyCredential] credential:
             The credential we use to authenticate against the service.
+        :keyword str api_version:
+            The API version to use for requests. If not specified, the default API version will be used.
         :keyword Any kwargs: Additional arguments to pass to the sub-clients.
         """
         # Initialize sub-clients with the same endpoint and credential
-        self.sms = SmsClient(endpoint, credential, **kwargs)
-        self.delivery_reports = DeliveryReportsClient(endpoint, credential, **kwargs)
-        self.opt_outs = OptOutsClient(endpoint, credential, **kwargs)
+        self.sms = SmsClient(endpoint, credential, api_version=api_version, **kwargs)
+        self.delivery_reports = DeliveryReportsClient(endpoint, credential, api_version=api_version, **kwargs)
+        self.opt_outs = OptOutsClient(endpoint, credential, api_version=api_version, **kwargs)
 
     @classmethod
     def from_connection_string(
             cls,
             conn_str: str,
+            *,
+            api_version: Optional[str] = None,
             **kwargs: Any
     ) -> "TelcoMessagingClient":
         """Create TelcoMessagingClient from a Connection String.
 
         :param str conn_str:
             A connection string to an Azure Communication Service resource.
+        :keyword str api_version:
+            The API version to use for requests. If not specified, the default API version will be used.
         :returns: Instance of TelcoMessagingClient.
         :rtype: ~azure.communication.sms.TelcoMessagingClient
 
@@ -99,4 +109,4 @@ class TelcoMessagingClient(object):  # pylint: disable=client-accepts-api-versio
         """
         endpoint, access_key = parse_connection_str(conn_str)
 
-        return cls(endpoint, AzureKeyCredential(access_key), **kwargs)
+        return cls(endpoint, AzureKeyCredential(access_key), api_version=api_version, **kwargs)
