@@ -2,13 +2,17 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Optional, Any
+from typing import Optional, Any, List, Union, TYPE_CHECKING
 
 from azure.core.credentials import AccessTokenInfo
+
 from .._internal import AadClient, AsyncContextManager
 from .._internal.get_token_mixin import GetTokenMixin
 from ..._credentials.certificate import get_client_credential
 from ..._internal import AadClientCertificate, validate_tenant_id
+
+if TYPE_CHECKING:
+    from ..._persistent_cache import TokenCachePersistenceOptions
 
 
 class CertificateCredential(AsyncContextManager, GetTokenMixin):
@@ -48,16 +52,40 @@ class CertificateCredential(AsyncContextManager, GetTokenMixin):
             :caption: Create a CertificateCredential.
     """
 
-    def __init__(self, tenant_id: str, client_id: str, certificate_path: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        tenant_id: str,
+        client_id: str,
+        certificate_path: Optional[str] = None,
+        *,
+        authority: Optional[str] = None,
+        certificate_data: Optional[bytes] = None,
+        password: Optional[Union[str, bytes]] = None,
+        cache_persistence_options: Optional["TokenCachePersistenceOptions"] = None,
+        additionally_allowed_tenants: Optional[List[str]] = None,
+        **kwargs: Any
+    ) -> None:
         validate_tenant_id(tenant_id)
 
-        client_credential = get_client_credential(certificate_path, **kwargs)
+        client_credential = get_client_credential(
+            certificate_path,
+            password,
+            certificate_data,
+            kwargs.get("send_certificate_chain", False),
+        )
 
         self._certificate = AadClientCertificate(
             client_credential["private_key"], password=client_credential.get("passphrase")
         )
 
-        self._client = AadClient(tenant_id, client_id, **kwargs)
+        self._client = AadClient(
+            tenant_id,
+            client_id,
+            authority=authority,
+            cache_persistence_options=cache_persistence_options,
+            additionally_allowed_tenants=additionally_allowed_tenants,
+            **kwargs
+        )
         self._client_id = client_id
         super().__init__()
 

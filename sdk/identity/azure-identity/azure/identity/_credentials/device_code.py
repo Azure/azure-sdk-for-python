@@ -4,12 +4,16 @@
 # ------------------------------------
 from datetime import datetime, timezone
 import time
-from typing import Dict, Optional, Callable, Any
+from typing import Dict, Optional, Callable, Any, TYPE_CHECKING
 
 from azure.core.exceptions import ClientAuthenticationError
 
 from .._constants import DEVELOPER_SIGN_ON_CLIENT_ID
 from .._internal import InteractiveCredential, wrap_exceptions
+
+if TYPE_CHECKING:
+    from .._auth_record import AuthenticationRecord
+    from .._persistent_cache import TokenCachePersistenceOptions
 
 
 class DeviceCodeCredential(InteractiveCredential):
@@ -74,13 +78,31 @@ class DeviceCodeCredential(InteractiveCredential):
         self,
         client_id: str = DEVELOPER_SIGN_ON_CLIENT_ID,
         *,
+        authority: Optional[str] = None,
+        tenant_id: Optional[str] = None,
         timeout: Optional[int] = None,
         prompt_callback: Optional[Callable[[str, str, datetime], None]] = None,
+        authentication_record: Optional["AuthenticationRecord"] = None,
+        disable_automatic_authentication: Optional[bool] = None,
+        cache_persistence_options: Optional["TokenCachePersistenceOptions"] = None,
+        disable_instance_discovery: Optional[bool] = None,
+        enable_support_logging: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         self._timeout = timeout
         self._prompt_callback = prompt_callback
-        super(DeviceCodeCredential, self).__init__(client_id=client_id, **kwargs)
+
+        super(DeviceCodeCredential, self).__init__(
+            client_id=client_id,
+            authority=authority,
+            tenant_id=tenant_id,
+            authentication_record=authentication_record,
+            disable_automatic_authentication=disable_automatic_authentication or False,
+            cache_persistence_options=cache_persistence_options,
+            disable_instance_discovery=disable_instance_discovery,
+            enable_support_logging=enable_support_logging,
+            **kwargs
+        )
 
     @wrap_exceptions
     def _request_token(self, *scopes: str, **kwargs: Any) -> Dict:

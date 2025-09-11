@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Any, Optional, TypeVar, cast
+from typing import Any, Optional, TypeVar, cast, TYPE_CHECKING
 from azure.core.credentials import AccessToken, TokenRequestOptions, AccessTokenInfo, SupportsTokenInfo, TokenCredential
 
 from .silent import SilentAuthenticationCredential
@@ -11,6 +11,10 @@ from .._constants import DEVELOPER_SIGN_ON_CLIENT_ID
 from .._internal import AadClient, AadClientBase
 from .._internal.decorators import log_get_token
 from .._internal.shared_token_cache import NO_TOKEN, SharedTokenCacheBase
+
+if TYPE_CHECKING:
+    from .._auth_record import AuthenticationRecord
+    from .._persistent_cache import TokenCachePersistenceOptions
 
 
 T = TypeVar("T", bound="_SharedTokenCacheCredential")
@@ -34,11 +38,32 @@ class SharedTokenCacheCredential:
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
     """
 
-    def __init__(self, username: Optional[str] = None, **kwargs: Any) -> None:
-        if "authentication_record" in kwargs:
-            self._credential: SupportsTokenInfo = SilentAuthenticationCredential(**kwargs)
+    def __init__(
+        self,
+        username: Optional[str] = None,
+        *,
+        tenant_id: Optional[str] = None,
+        authentication_record: Optional["AuthenticationRecord"] = None,
+        authority: Optional[str] = None,
+        cache_persistence_options: Optional["TokenCachePersistenceOptions"] = None,
+        **kwargs: Any,
+    ) -> None:
+        if authentication_record:
+            self._credential: SupportsTokenInfo = SilentAuthenticationCredential(
+                authentication_record,
+                tenant_id=tenant_id,
+                authority=authority,
+                cache_persistence_options=cache_persistence_options,
+                **kwargs,
+            )
         else:
-            self._credential = _SharedTokenCacheCredential(username=username, **kwargs)
+            self._credential = _SharedTokenCacheCredential(
+                username=username,
+                tenant_id=tenant_id,
+                authority=authority,
+                cache_persistence_options=cache_persistence_options,
+                **kwargs,
+            )
 
     def __enter__(self) -> "SharedTokenCacheCredential":
         self._credential.__enter__()  # type: ignore
