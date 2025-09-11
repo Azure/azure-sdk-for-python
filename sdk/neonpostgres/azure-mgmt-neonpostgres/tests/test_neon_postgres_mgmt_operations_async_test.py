@@ -14,7 +14,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 AZURE_LOCATION = "eastus"
 
 
-@pytest.mark.live_test_only
+@pytest.mark.skipif(True, reason="does not have authorization to access")
 class TestNeonPostgresMgmtOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(NeonPostgresMgmtClient, is_async=True)

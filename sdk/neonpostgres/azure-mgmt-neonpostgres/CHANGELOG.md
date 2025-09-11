@@ -29,7 +29,7 @@
   - Added model `OrganizationResourceUpdateProperties`
   - Added model `PreflightCheckParameters`
   - Added model `PreflightCheckResult`
-  - Model `BranchesOperations` added method `preflight`
+  - Operation group `BranchesOperations` added method `preflight`
 
 ### Breaking Changes
 
@@ -46,7 +46,7 @@
   - Deleted or renamed method `NeonRolesOperations.begin_update`
   - Deleted or renamed method `NeonRolesOperations.get`
   - Deleted or renamed method `ProjectsOperations.begin_update`
-  - Deleted or renamed model `ModelsOperations`
+  - Deleted or renamed operation group `ModelsOperations`
 
 ## 2.0.0b1 (2025-09-04)
 
