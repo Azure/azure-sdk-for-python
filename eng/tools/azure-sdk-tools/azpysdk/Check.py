@@ -134,7 +134,7 @@ class Check(abc.ABC):
                 ]
             with tempfile.NamedTemporaryFile(mode="w", delete=False) as temp_req_file:
                 temp_req_file.write("\n".join(filtered_req_lines))
-            if temp_req_file:
+            if temp_req_file.name:
                 requirements = ["-r", temp_req_file.name]
         try: 
             logger.info(f"Installing dev requirements for {package_dir}")
@@ -143,5 +143,5 @@ class Check(abc.ABC):
             logger.error("Failed to install dev requirements:", e)
             raise e
         finally:
-            if temp_req_file:
+            if temp_req_file and temp_req_file.name:
                 os.remove(temp_req_file.name)
