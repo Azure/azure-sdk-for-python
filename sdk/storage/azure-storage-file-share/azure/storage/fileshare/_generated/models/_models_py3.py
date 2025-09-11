@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Optional, TYPE_CHECKING, Union
 
 from .._utils import serialization as _serialization
 
@@ -616,7 +616,7 @@ class FilesAndDirectoriesListSegment(_serialization.Model):
     _xml_map = {"name": "Entries"}
 
     def __init__(
-        self, *, directory_items: List["_models.DirectoryItem"], file_items: List["_models.FileItem"], **kwargs: Any
+        self, *, directory_items: list["_models.DirectoryItem"], file_items: list["_models.FileItem"], **kwargs: Any
     ) -> None:
         """
         :keyword directory_items: Required.
@@ -693,7 +693,7 @@ class HandleItem(_serialization.Model):
         open_time: datetime.datetime,
         parent_id: Optional[str] = None,
         last_reconnect_time: Optional[datetime.datetime] = None,
-        access_right_list: Optional[List[Union[str, "_models.AccessRight"]]] = None,
+        access_right_list: Optional[list[Union[str, "_models.AccessRight"]]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -919,7 +919,7 @@ class ListHandlesResponse(_serialization.Model):
     _xml_map = {"name": "EnumerationResults"}
 
     def __init__(
-        self, *, next_marker: str, handle_list: Optional[List["_models.HandleItem"]] = None, **kwargs: Any
+        self, *, next_marker: str, handle_list: Optional[list["_models.HandleItem"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword handle_list:
@@ -978,7 +978,7 @@ class ListSharesResponse(_serialization.Model):
         prefix: Optional[str] = None,
         marker: Optional[str] = None,
         max_results: Optional[int] = None,
-        share_items: Optional[List["_models.ShareItemInternal"]] = None,
+        share_items: Optional[list["_models.ShareItemInternal"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1115,8 +1115,8 @@ class ShareFileRangeList(_serialization.Model):
     def __init__(
         self,
         *,
-        ranges: Optional[List["_models.FileRange"]] = None,
-        clear_ranges: Optional[List["_models.ClearRange"]] = None,
+        ranges: Optional[list["_models.FileRange"]] = None,
+        clear_ranges: Optional[list["_models.ClearRange"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1172,7 +1172,7 @@ class ShareItemInternal(_serialization.Model):
         snapshot: Optional[str] = None,
         deleted: Optional[bool] = None,
         version: Optional[str] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1817,7 +1817,7 @@ class StorageServiceProperties(_serialization.Model):
         *,
         hour_metrics: Optional["_models.Metrics"] = None,
         minute_metrics: Optional["_models.Metrics"] = None,
-        cors: Optional[List["_models.CorsRule"]] = None,
+        cors: Optional[list["_models.CorsRule"]] = None,
         protocol: Optional["_models.ShareProtocolSettings"] = None,
         **kwargs: Any
     ) -> None:
