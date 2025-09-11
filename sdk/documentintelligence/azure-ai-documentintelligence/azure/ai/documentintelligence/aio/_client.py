@@ -15,30 +15,30 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
-from .._serialization import Deserializer, Serializer
+from .._utils.serialization import Deserializer, Serializer
 from ._configuration import (
     DocumentIntelligenceAdministrationClientConfiguration,
     DocumentIntelligenceClientConfiguration,
 )
 from ._operations import (
-    DocumentIntelligenceAdministrationClientOperationsMixin,
-    DocumentIntelligenceClientOperationsMixin,
+    _DocumentIntelligenceAdministrationClientOperationsMixin,
+    _DocumentIntelligenceClientOperationsMixin,
 )
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class DocumentIntelligenceClient(DocumentIntelligenceClientOperationsMixin):
+class DocumentIntelligenceClient(_DocumentIntelligenceClientOperationsMixin):
     """DocumentIntelligenceClient.
 
     :param endpoint: The Document Intelligence service endpoint. Required.
     :type endpoint: str
-    :param credential: Credential used to authenticate requests to the service. Is either a
-     AzureKeyCredential type or a TokenCredential type. Required.
+    :param credential: Credential used to authenticate requests to the service. Is either a key
+     credential type or a token credential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: The API version to use for this operation. Default value is "2024-11-30".
+    :keyword api_version: The API version to use for this operation. Default value is "2025-09-01".
      Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -50,6 +50,7 @@ class DocumentIntelligenceClient(DocumentIntelligenceClientOperationsMixin):
     ) -> None:
         _endpoint = "{endpoint}/documentintelligence"
         self._config = DocumentIntelligenceClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
+
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [
@@ -112,16 +113,16 @@ class DocumentIntelligenceClient(DocumentIntelligenceClientOperationsMixin):
         await self._client.__aexit__(*exc_details)
 
 
-class DocumentIntelligenceAdministrationClient(DocumentIntelligenceAdministrationClientOperationsMixin):
+class DocumentIntelligenceAdministrationClient(_DocumentIntelligenceAdministrationClientOperationsMixin):
     """DocumentIntelligenceAdministrationClient.
 
     :param endpoint: The Document Intelligence service endpoint. Required.
     :type endpoint: str
-    :param credential: Credential used to authenticate requests to the service. Is either a
-     AzureKeyCredential type or a TokenCredential type. Required.
+    :param credential: Credential used to authenticate requests to the service. Is either a key
+     credential type or a token credential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: The API version to use for this operation. Default value is "2024-11-30".
+    :keyword api_version: The API version to use for this operation. Default value is "2025-09-01".
      Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -135,6 +136,7 @@ class DocumentIntelligenceAdministrationClient(DocumentIntelligenceAdministratio
         self._config = DocumentIntelligenceAdministrationClientConfiguration(
             endpoint=endpoint, credential=credential, **kwargs
         )
+
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [
