@@ -51,7 +51,7 @@ class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # ty
     async def __aexit__(
         self, typ: Optional[type[BaseException]], exc: Optional[BaseException], tb: Optional[TracebackType]
     ) -> None: ...
-    async def close(self) -> None: ...  # type: ignore
+    async def close(self) -> None: ...
     async def _create(
         self,
         resource_type: str,
