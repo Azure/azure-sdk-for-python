@@ -36,11 +36,11 @@ def main():
         server_name="securitytde-42",
         database_name="testdb",
         tde_name="current",
-        parameters={"properties": {"scanState": "Suspend", "state": "Enabled"}},
+        parameters={"properties": {"state": "Enabled"}},
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2024-11-01-preview/examples/TransparentDataEncryptionUpdate.json
+# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2022-08-01-preview/examples/TransparentDataEncryptionUpdate.json
 if __name__ == "__main__":
     main()
