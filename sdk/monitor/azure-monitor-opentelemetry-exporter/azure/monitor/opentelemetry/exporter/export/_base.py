@@ -317,8 +317,6 @@ class BaseExporter:
                                 response_error.message,
                             )
                         elif response_error.status_code == 403:
-                            if self._should_collect_customer_sdkstats():
-                                track_retry_items(envelopes, response_error)
                             logger.error(
                                 "Retryable server side error: %s. " \
                                 "Your application may be configured with a token credential " \
