@@ -13,7 +13,6 @@ from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGrou
 AZURE_LOCATION = "eastus"
 
 
-
 class TestDataProtectionManagementResourceGuardsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(DataProtectionMgmtClient)
@@ -28,7 +27,6 @@ class TestDataProtectionManagementResourceGuardsOperations(AzureMgmtRecordedTest
         result = [r for r in response]
         assert result == []
 
-
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_list_by_subscription(self, resource_group):
@@ -37,4 +35,3 @@ class TestDataProtectionManagementResourceGuardsOperations(AzureMgmtRecordedTest
         )
         result = [r for r in response]
         assert response
-        

@@ -20,6 +20,13 @@ class AbsoluteMarker(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FIRST_OF_YEAR = "FirstOfYear"
 
 
+class AKSVolumeTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """AKSVolumeTypes."""
+
+    AZURE_DISK = "AzureDisk"
+    AZURE_FILE_SHARE_SMB = "AzureFileShareSMB"
+
+
 class AlertsState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """AlertsState."""
 
