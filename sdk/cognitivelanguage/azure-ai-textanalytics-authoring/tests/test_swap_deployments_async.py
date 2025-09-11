@@ -27,7 +27,7 @@ class TestConversationsSwapDeploymentsAsync(AzureRecordedTestCase):
         async with TextAuthoringClient(authoring_endpoint, AzureKeyCredential(authoring_key)) as authoring_client:
             project_name = "single-class-project"
             deployment_name_1 = "deployment1"
-            deployment_name_2 = "deployment2"
+            deployment_name_2 = "deployment0902"
 
             project_client = authoring_client.get_project_client(project_name)
 

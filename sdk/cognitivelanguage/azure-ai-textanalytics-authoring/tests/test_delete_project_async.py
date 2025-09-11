@@ -28,7 +28,7 @@ class TestConversationsCaseAsync(TestConversations):
     @pytest.mark.asyncio
     async def test_delete_project_async(self, authoring_endpoint, authoring_key):
         async with TextAuthoringClient(authoring_endpoint, AzureKeyCredential(authoring_key)) as client:
-            project_name = "MyTextProject0902"
+            project_name = "MyTextPythonProject0728"
 
             # Act: begin delete (LRO)
             poller = await client.begin_delete_project(project_name)

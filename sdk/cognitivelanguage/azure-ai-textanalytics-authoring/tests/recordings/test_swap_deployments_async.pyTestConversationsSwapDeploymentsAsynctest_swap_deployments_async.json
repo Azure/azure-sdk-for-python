@@ -1,0 +1,97 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com//language/authoring/analyze-text/projects/single-class-project/deployments/:swap?api-version=2025-05-15-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "80",
+        "Content-Type": "application/json",
+        "Ocp-Apim-Subscription-Key": "Sanitized",
+        "User-Agent": "azsdk-python-ai-textanalytics-authoring/1.0.0b1 Python/3.13.7 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": {
+        "firstDeploymentName": "deployment1",
+        "secondDeploymentName": "deployment0902"
+      },
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": "*",
+        "apim-request-id": "1a576db1-451b-4bd6-b0f6-7d02b4872dbb",
+        "Content-Length": "0",
+        "Date": "Thu, 11 Sep 2025 22:27:59 GMT",
+        "operation-location": "https://Sanitized.cognitiveservices.azure.com/language/authoring/analyze-text/projects/single-class-project/deployments/swap/jobs/f2d898e2-7146-49ec-bd25-b29d09e60c41_638931456000000000?api-version=2025-05-15-preview",
+        "request-id": "1a576db1-451b-4bd6-b0f6-7d02b4872dbb",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "204",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/authoring/analyze-text/projects/single-class-project/deployments/swap/jobs/f2d898e2-7146-49ec-bd25-b29d09e60c41_638931456000000000?api-version=2025-05-15-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Ocp-Apim-Subscription-Key": "Sanitized",
+        "User-Agent": "azsdk-python-ai-textanalytics-authoring/1.0.0b1 Python/3.13.7 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": "*",
+        "apim-request-id": "00fb3104-5604-41f0-b17e-8b25f252364f",
+        "Content-Length": "219",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 11 Sep 2025 22:27:59 GMT",
+        "request-id": "00fb3104-5604-41f0-b17e-8b25f252364f",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "30",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": {
+        "jobId": "f2d898e2-7146-49ec-bd25-b29d09e60c41_638931456000000000",
+        "createdDateTime": "2025-09-11T22:28:00Z",
+        "lastUpdatedDateTime": "2025-09-11T22:28:00Z",
+        "expirationDateTime": "2025-09-18T22:28:00Z",
+        "status": "notStarted"
+      }
+    },
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/authoring/analyze-text/projects/single-class-project/deployments/swap/jobs/f2d898e2-7146-49ec-bd25-b29d09e60c41_638931456000000000?api-version=2025-05-15-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Ocp-Apim-Subscription-Key": "Sanitized",
+        "User-Agent": "azsdk-python-ai-textanalytics-authoring/1.0.0b1 Python/3.13.7 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": "*",
+        "apim-request-id": "47496fb1-45c3-4920-b22e-f14657681ada",
+        "Content-Length": "218",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 11 Sep 2025 22:28:29 GMT",
+        "request-id": "47496fb1-45c3-4920-b22e-f14657681ada",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "23",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": {
+        "jobId": "f2d898e2-7146-49ec-bd25-b29d09e60c41_638931456000000000",
+        "createdDateTime": "2025-09-11T22:28:00Z",
+        "lastUpdatedDateTime": "2025-09-11T22:28:03Z",
+        "expirationDateTime": "2025-09-18T22:28:00Z",
+        "status": "succeeded"
+      }
+    }
+  ],
+  "Variables": {}
+}

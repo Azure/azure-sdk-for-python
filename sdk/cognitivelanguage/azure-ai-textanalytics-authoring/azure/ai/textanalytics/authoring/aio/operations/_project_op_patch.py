@@ -131,7 +131,6 @@ class ProjectOperations(ProjectOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         return await super()._begin_import_method(
-            project_name=self._project_name,
             body=body,
             format=format,
             **kwargs,
@@ -210,7 +209,7 @@ class ProjectOperations(ProjectOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         return await super()._begin_assign_deployment_resources(
-            project_name=self._project_name, body=body, content_type=content_type, **kwargs
+            body=body, content_type=content_type, **kwargs
         )
 
     @overload
@@ -271,7 +270,7 @@ class ProjectOperations(ProjectOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         return await super()._begin_swap_deployments(
-            project_name=self._project_name, body=body, content_type=content_type, **kwargs
+            body=body, content_type=content_type, **kwargs
         )
 
     @overload
@@ -336,7 +335,7 @@ class ProjectOperations(ProjectOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         return await super()._begin_unassign_deployment_resources(
-            project_name=self._project_name, body=body, content_type=content_type, **kwargs
+            body=body, content_type=content_type, **kwargs
         )
 
     @distributed_trace_async
@@ -353,7 +352,7 @@ class ProjectOperations(ProjectOperationsGenerated):
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.language.conversations.authoring.models.TrainingJobResult]
         """
         return await super()._begin_cancel_training_job(
-            project_name=self._project_name, job_id=job_id, **kwargs
+            job_id=job_id, **kwargs
         )
 
     @overload
@@ -476,7 +475,7 @@ class ProjectOperations(ProjectOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         return await super()._begin_train(
-            project_name=self._project_name, body=body, content_type=content_type, **kwargs
+            body=body, content_type=content_type, **kwargs
         )
 
     @distributed_trace_async
@@ -502,7 +501,6 @@ class ProjectOperations(ProjectOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         return await super()._begin_export(
-            project_name=self._project_name,
             string_index_type=string_index_type,
             asset_kind=asset_kind,
             trained_model_label=trained_model_label,

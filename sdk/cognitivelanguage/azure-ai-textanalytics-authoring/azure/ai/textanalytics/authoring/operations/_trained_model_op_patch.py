@@ -131,7 +131,6 @@ class TrainedModelOperations(TrainedModelOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         return super()._begin_load_snapshot(
-            project_name=self._project_name,
             trained_model_label=trained_model_label,
             **kwargs,
         )
@@ -139,7 +138,6 @@ class TrainedModelOperations(TrainedModelOperationsGenerated):
     @distributed_trace
     def delete_trained_model(self, trained_model_label: str, **kwargs: Any) -> None:  # type: ignore[override]
         return super().delete_trained_model(
-            project_name=self._project_name,
             trained_model_label=trained_model_label,
             **kwargs,
         )
@@ -194,7 +192,6 @@ class TrainedModelOperations(TrainedModelOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         return super().get_model_evaluation_results(
-            project_name=self._project_name,
             trained_model_label=trained_model_label,
             string_index_type=string_index_type,
             top=top,
@@ -207,7 +204,6 @@ class TrainedModelOperations(TrainedModelOperationsGenerated):
         self, trained_model_label: str, **kwargs: Any
     ) -> EvalSummary:
         return super().get_model_evaluation_summary(
-            project_name=self._project_name,
             trained_model_label=trained_model_label,
             **kwargs,
         )

@@ -28,7 +28,7 @@ class TestConversationsSwapDeploymentsSync(TestConversations):
         authoring_client = self.create_client(authoring_endpoint, authoring_key)
         project_name = "single-class-project"
         deployment_name_1 = "deployment1"
-        deployment_name_2 = "deployment2"
+        deployment_name_2 = "deployment0902"
 
         project_client = authoring_client.get_project_client(project_name)
 

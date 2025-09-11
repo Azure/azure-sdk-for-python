@@ -132,7 +132,6 @@ class TrainedModelOperations(TrainedModelOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         return await super()._begin_load_snapshot(
-            project_name=self._project_name,
             trained_model_label=trained_model_label,
             **kwargs,
         )
@@ -140,7 +139,6 @@ class TrainedModelOperations(TrainedModelOperationsGenerated):
     @distributed_trace_async
     async def delete_trained_model(self, trained_model_label: str, **kwargs: Any) -> None:  # type: ignore[override]
         return await super().delete_trained_model(
-            project_name=self._project_name,
             trained_model_label=trained_model_label,
             **kwargs,
         )
@@ -178,7 +176,6 @@ class TrainedModelOperations(TrainedModelOperationsGenerated):
         **kwargs: Any
     ) -> AsyncItemPaged[DocumentEvalResult]:
         return super().get_model_evaluation_results(
-            project_name=self._project_name,
             trained_model_label=trained_model_label,
             skip=skip,
             string_index_type=string_index_type,
@@ -191,7 +188,6 @@ class TrainedModelOperations(TrainedModelOperationsGenerated):
         self, trained_model_label: str, **kwargs: Any
     ) -> EvalSummary:
         return await super().get_model_evaluation_summary(
-            project_name=self._project_name,
             trained_model_label=trained_model_label,
             **kwargs,
         )

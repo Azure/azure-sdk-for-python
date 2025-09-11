@@ -1,0 +1,268 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com//language/authoring/analyze-text/projects/single-class-project/:train?api-version=2025-05-15-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "172",
+        "Content-Type": "application/json",
+        "Ocp-Apim-Subscription-Key": "Sanitized",
+        "User-Agent": "azsdk-python-ai-textanalytics-authoring/1.0.0b1 Python/3.13.7 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": {
+        "modelLabel": "model0902",
+        "trainingConfigVersion": "2022-05-01",
+        "evaluationOptions": {
+          "kind": "percentage",
+          "testingSplitPercentage": 20,
+          "trainingSplitPercentage": 80
+        }
+      },
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": "*",
+        "apim-request-id": "375a8c1f-3aaf-4bb5-acba-33fcaf98ebdc",
+        "Content-Length": "0",
+        "Date": "Thu, 11 Sep 2025 22:28:59 GMT",
+        "operation-location": "https://Sanitized.cognitiveservices.azure.com/language/authoring/analyze-text/projects/single-class-project/train/jobs/89306f46-82f6-4232-b71e-f1b0dfa3cba4_638931456000000000?api-version=2025-05-15-preview",
+        "request-id": "375a8c1f-3aaf-4bb5-acba-33fcaf98ebdc",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "159",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/authoring/analyze-text/projects/single-class-project/train/jobs/89306f46-82f6-4232-b71e-f1b0dfa3cba4_638931456000000000?api-version=2025-05-15-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Ocp-Apim-Subscription-Key": "Sanitized",
+        "User-Agent": "azsdk-python-ai-textanalytics-authoring/1.0.0b1 Python/3.13.7 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": "*",
+        "apim-request-id": "c7448b66-d1ba-4f8b-a802-e0aa4d17f9ed",
+        "Content-Length": "416",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 11 Sep 2025 22:28:59 GMT",
+        "request-id": "c7448b66-d1ba-4f8b-a802-e0aa4d17f9ed",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "19",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": {
+        "result": {
+          "modelLabel": "model0902",
+          "trainingConfigVersion": "2022-05-01",
+          "trainingStatus": {
+            "percentComplete": 0,
+            "status": "notStarted"
+          },
+          "evaluationStatus": {
+            "percentComplete": 0,
+            "status": "notStarted"
+          }
+        },
+        "jobId": "89306f46-82f6-4232-b71e-f1b0dfa3cba4_638931456000000000",
+        "createdDateTime": "2025-09-11T22:28:59Z",
+        "lastUpdatedDateTime": "2025-09-11T22:28:59Z",
+        "expirationDateTime": "2025-09-18T22:28:59Z",
+        "status": "notStarted"
+      }
+    },
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/authoring/analyze-text/projects/single-class-project/train/jobs/89306f46-82f6-4232-b71e-f1b0dfa3cba4_638931456000000000?api-version=2025-05-15-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Ocp-Apim-Subscription-Key": "Sanitized",
+        "User-Agent": "azsdk-python-ai-textanalytics-authoring/1.0.0b1 Python/3.13.7 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": "*",
+        "apim-request-id": "d8f3bd04-8a97-4f4f-97d5-90d147b21a77",
+        "Content-Length": "512",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 11 Sep 2025 22:29:29 GMT",
+        "request-id": "d8f3bd04-8a97-4f4f-97d5-90d147b21a77",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "28",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": {
+        "result": {
+          "modelLabel": "model0902",
+          "trainingConfigVersion": "2022-05-01",
+          "trainingStatus": {
+            "percentComplete": 66,
+            "startDateTime": "2025-09-11T22:29:01.6218161Z",
+            "status": "running"
+          },
+          "evaluationStatus": {
+            "percentComplete": 0,
+            "status": "notStarted"
+          },
+          "estimatedEndDateTime": "2025-09-11T22:30:42.6218161Z"
+        },
+        "jobId": "89306f46-82f6-4232-b71e-f1b0dfa3cba4_638931456000000000",
+        "createdDateTime": "2025-09-11T22:28:59Z",
+        "lastUpdatedDateTime": "2025-09-11T22:29:28Z",
+        "expirationDateTime": "2025-09-18T22:28:59Z",
+        "status": "running"
+      }
+    },
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/authoring/analyze-text/projects/single-class-project/train/jobs/89306f46-82f6-4232-b71e-f1b0dfa3cba4_638931456000000000?api-version=2025-05-15-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Ocp-Apim-Subscription-Key": "Sanitized",
+        "User-Agent": "azsdk-python-ai-textanalytics-authoring/1.0.0b1 Python/3.13.7 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": "*",
+        "apim-request-id": "87a3c90b-f823-42fd-b596-7837a2898afc",
+        "Content-Length": "557",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 11 Sep 2025 22:29:59 GMT",
+        "request-id": "87a3c90b-f823-42fd-b596-7837a2898afc",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "141",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": {
+        "result": {
+          "modelLabel": "model0902",
+          "trainingConfigVersion": "2022-05-01",
+          "trainingStatus": {
+            "percentComplete": 100,
+            "startDateTime": "2025-09-11T22:29:01.6218161Z",
+            "endDateTime": "2025-09-11T22:29:29.9734349Z",
+            "status": "succeeded"
+          },
+          "evaluationStatus": {
+            "percentComplete": 0,
+            "status": "running"
+          },
+          "estimatedEndDateTime": "2025-09-11T22:29:29.6218161Z"
+        },
+        "jobId": "89306f46-82f6-4232-b71e-f1b0dfa3cba4_638931456000000000",
+        "createdDateTime": "2025-09-11T22:28:59Z",
+        "lastUpdatedDateTime": "2025-09-11T22:29:31Z",
+        "expirationDateTime": "2025-09-18T22:28:59Z",
+        "status": "running"
+      }
+    },
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/authoring/analyze-text/projects/single-class-project/train/jobs/89306f46-82f6-4232-b71e-f1b0dfa3cba4_638931456000000000?api-version=2025-05-15-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Ocp-Apim-Subscription-Key": "Sanitized",
+        "User-Agent": "azsdk-python-ai-textanalytics-authoring/1.0.0b1 Python/3.13.7 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": "*",
+        "apim-request-id": "e7973240-bf40-4f0c-90e0-c82a5c35ac00",
+        "Content-Length": "557",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 11 Sep 2025 22:30:29 GMT",
+        "request-id": "e7973240-bf40-4f0c-90e0-c82a5c35ac00",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "31",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": {
+        "result": {
+          "modelLabel": "model0902",
+          "trainingConfigVersion": "2022-05-01",
+          "trainingStatus": {
+            "percentComplete": 100,
+            "startDateTime": "2025-09-11T22:29:01.6218161Z",
+            "endDateTime": "2025-09-11T22:29:29.9734349Z",
+            "status": "succeeded"
+          },
+          "evaluationStatus": {
+            "percentComplete": 0,
+            "status": "running"
+          },
+          "estimatedEndDateTime": "2025-09-11T22:29:29.6218161Z"
+        },
+        "jobId": "89306f46-82f6-4232-b71e-f1b0dfa3cba4_638931456000000000",
+        "createdDateTime": "2025-09-11T22:28:59Z",
+        "lastUpdatedDateTime": "2025-09-11T22:29:31Z",
+        "expirationDateTime": "2025-09-18T22:28:59Z",
+        "status": "running"
+      }
+    },
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/authoring/analyze-text/projects/single-class-project/train/jobs/89306f46-82f6-4232-b71e-f1b0dfa3cba4_638931456000000000?api-version=2025-05-15-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Ocp-Apim-Subscription-Key": "Sanitized",
+        "User-Agent": "azsdk-python-ai-textanalytics-authoring/1.0.0b1 Python/3.13.7 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": "*",
+        "apim-request-id": "c1a85940-5ab5-4931-b576-744e596c0564",
+        "Content-Length": "615",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 11 Sep 2025 22:30:59 GMT",
+        "request-id": "c1a85940-5ab5-4931-b576-744e596c0564",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "33",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": {
+        "result": {
+          "modelLabel": "model0902",
+          "trainingConfigVersion": "2022-05-01",
+          "trainingStatus": {
+            "percentComplete": 100,
+            "startDateTime": "2025-09-11T22:29:01.6218161Z",
+            "endDateTime": "2025-09-11T22:29:29.9734349Z",
+            "status": "succeeded"
+          },
+          "evaluationStatus": {
+            "percentComplete": 100,
+            "startDateTime": "2025-09-11T22:29:31.9466423Z",
+            "endDateTime": "2025-09-11T22:29:58.0333496Z",
+            "status": "succeeded"
+          }
+        },
+        "jobId": "89306f46-82f6-4232-b71e-f1b0dfa3cba4_638931456000000000",
+        "createdDateTime": "2025-09-11T22:28:59Z",
+        "lastUpdatedDateTime": "2025-09-11T22:30:32Z",
+        "expirationDateTime": "2025-09-18T22:28:59Z",
+        "status": "succeeded",
+        "warnings": []
+      }
+    }
+  ],
+  "Variables": {}
+}

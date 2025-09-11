@@ -52,7 +52,7 @@ class DeploymentOperations(DeploymentOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         return await super()._begin_delete_deployment(
-            project_name=self._project_name, deployment_name=deployment_name, **kwargs
+            deployment_name=deployment_name, **kwargs
         )
 
     @overload
@@ -201,7 +201,6 @@ class DeploymentOperations(DeploymentOperationsGenerated):
         
         """
         return await super()._begin_deploy_project(
-            project_name=self._project_name,
             deployment_name=deployment_name,
             body=body,
             content_type=content_type,
@@ -210,7 +209,7 @@ class DeploymentOperations(DeploymentOperationsGenerated):
 
     @distributed_trace
     async def get_deployment(self, deployment_name: str, **kwargs: Any) -> ProjectDeployment:  # type: ignore[override]
-        return await super().get_deployment(project_name=self._project_name, deployment_name=deployment_name, **kwargs)
+        return await super().get_deployment(deployment_name=deployment_name, **kwargs)
 
     @distributed_trace
     async def _get_deployment_delete_from_resources_status(  # type: ignore[override]

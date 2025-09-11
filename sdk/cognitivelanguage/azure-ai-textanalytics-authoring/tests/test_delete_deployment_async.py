@@ -29,7 +29,7 @@ class TestConversationsDeleteDeploymentAsync(TestConversations):
     async def test_delete_deployment_async(self, authoring_endpoint, authoring_key):
         async with TextAuthoringClient(authoring_endpoint, AzureKeyCredential(authoring_key)) as client:
             project_name = "single-class-project"
-            deployment_name = "deployment2"
+            deployment_name = "deployment0902"
 
             project_client = client.get_project_client(project_name)
 

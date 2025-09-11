@@ -23,7 +23,7 @@ class TestConversationsCancelTrainingAsync(AzureRecordedTestCase):
     async def test_cancel_training_job_async(self, authoring_endpoint, authoring_key):
         async with TextAuthoringClient(authoring_endpoint, AzureKeyCredential(authoring_key)) as client:
             project_client = client.get_project_client("single-class-project")
-            job_id = "34be8341-6c51-488e-99fc-0177a9ec26ec_638923680000000000"
+            job_id = "983d4481-b5c4-40dd-8d23-1ca159890e2f_638931456000000000"
 
             poller = await project_client.project.begin_cancel_training_job(
                 job_id=job_id,

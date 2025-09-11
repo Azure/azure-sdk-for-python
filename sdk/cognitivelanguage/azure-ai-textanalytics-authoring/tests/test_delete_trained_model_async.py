@@ -27,7 +27,7 @@ class TestConversationsDeleteTrainedModelAsync(TestConversations):
     async def test_delete_trained_model_async(self, authoring_endpoint, authoring_key):
         async with TextAuthoringClient(authoring_endpoint, AzureKeyCredential(authoring_key)) as client:
             project_name = "single-class-project"
-            trained_model_label = "model1"
+            trained_model_label = "model01"
 
             project_client = client.get_project_client(project_name)
 
