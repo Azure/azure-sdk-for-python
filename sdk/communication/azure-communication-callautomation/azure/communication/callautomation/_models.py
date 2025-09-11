@@ -510,7 +510,7 @@ class TranscriptionOptions:
             transport_type=self.transport_type,
             locale=self.locale,
             start_transcription=self.start_transcription,
-            speech_recognition_model_endpoint_id=self.speech_recognition_model_endpoint_id,
+            speech_model_endpoint_id=self.speech_recognition_model_endpoint_id,
             enable_intermediate_results=self.enable_intermediate_results,
             pii_redaction_options=self.pii_redaction._to_generated() if self.pii_redaction else None, # pylint:disable=protected-access
             enable_sentiment_analysis=self.enable_sentiment_analysis,
