@@ -527,7 +527,6 @@ def install_into_venv(
 
     if pip_cmd[0] == "uv":
         cmd += ["--python", py]
-    breakpoint()
     # todo: clean this up so that we're using run_logged from #42862
     subprocess.check_call(cmd, cwd=working_directory)
 
