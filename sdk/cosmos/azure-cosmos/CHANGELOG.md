@@ -15,6 +15,7 @@
 #### Features Added
 * Added read_items API to provide an efficient method for retrieving multiple items in a single request. See [PR 42167](https://github.com/Azure/azure-sdk-for-python/pull/42167).
 * Added ability to replace a container's indexing policy if a vector embedding policy was present. See [PR 42810](https://github.com/Azure/azure-sdk-for-python/pull/42810).
+* Added support for AvailabilityStrategy to help improve request latency and availability in multi-region deployments. See [PR 42584](https://github.com/Azure/azure-sdk-for-python/pull/42584)
 
 #### Bugs Fixed
 * Improved the resilience of Database Account Read metadata operation against short-lived network issues by increasing number of retries. See [PR 42525](https://github.com/Azure/azure-sdk-for-python/pull/42525).

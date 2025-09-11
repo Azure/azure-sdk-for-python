@@ -22,23 +22,23 @@
 """Create, read, and delete databases in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, Dict, Iterable, List, Mapping, Optional, Union, cast, Callable
 import warnings
+from typing import Any, Dict, Iterable, List, Mapping, Optional, Union, cast, Callable
 
-from azure.core.tracing.decorator import distributed_trace
-from azure.core.paging import ItemPaged
 from azure.core.credentials import TokenCredential
+from azure.core.paging import ItemPaged
 from azure.core.pipeline.policies import RetryMode
+from azure.core.tracing.decorator import distributed_trace
 
-from ._cosmos_client_connection import CosmosClientConnection, CredentialDict
+from . import CrossRegionHedgingStrategy
 from ._base import build_options, _set_throughput_options
-from .offer import ThroughputProperties
-from ._retry_utility import ConnectionRetryPolicy
 from ._constants import _Constants as Constants
+from ._cosmos_client_connection import CosmosClientConnection, CredentialDict
+from ._retry_utility import ConnectionRetryPolicy
 from .database import DatabaseProxy, _get_database_link
 from .documents import ConnectionPolicy, DatabaseAccount
 from .exceptions import CosmosResourceNotFoundError
-
+from .offer import ThroughputProperties
 
 __all__ = ("CosmosClient",)
 
@@ -199,6 +199,10 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         response payloads on write operations for items.
     :keyword int throughput_bucket: The desired throughput bucket for the client
     :keyword str user_agent_suffix: Allows user agent suffix to be specified when creating client
+    :keyword availability_strategy: The strategy for cross-region request routing. The default value is None.
+        Controls whether and how requests are automatically routed across regions based on availability
+        and response time thresholds. This helps optimize latency and availability for multi-region accounts.
+    :paramtype availability_strategy: ~azure.cosmos.CrossRegionHedgingStrategy
 
     .. admonition:: Example:
 
@@ -215,13 +219,21 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         url: str,
         credential: Union[TokenCredential, str, Dict[str, Any]],
         consistency_level: Optional[str] = None,
+        availability_strategy: Optional[CrossRegionHedgingStrategy] = None,
         **kwargs
     ) -> None:
-        """Instantiate a new CosmosClient."""
+        """Instantiate a new CosmosClient.
+        """
+
         auth = _build_auth(credential)
         connection_policy = _build_connection_policy(kwargs)
         self.client_connection = CosmosClientConnection(
-            url, auth=auth, consistency_level=consistency_level, connection_policy=connection_policy, **kwargs
+            url_connection=url,
+            auth=auth,
+            consistency_level=consistency_level,
+            connection_policy=connection_policy,
+            availability_strategy=availability_strategy,
+            **kwargs
         )
 
     def __repr__(self) -> str:

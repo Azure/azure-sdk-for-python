@@ -4,11 +4,12 @@
 # license information.
 # -------------------------------------------------------------------------
 import asyncio
-from azure.cosmos import exceptions, PartitionKey
-from azure.cosmos.aio import CosmosClient
-
 import json
 import os
+
+from azure.cosmos import exceptions, PartitionKey
+from azure.cosmos.aio import CosmosClient
+from cosmos import CrossRegionHedgingStrategy
 
 
 async def examples_async():
@@ -308,6 +309,27 @@ async def examples_async():
 
         await client.delete_database(database_name)
         print("Sample done running!")
+
+        # configure availability strategy on request level
+        # [START read_item_with_availability_strategy]
+        strategy = CrossRegionHedgingStrategy(
+            threshold_ms=500,  # Try alternate region after 500ms
+            threshold_steps_ms=100)  # Wait 100ms between region attempt
+
+        await container.read_item(
+            item="id1",
+            partition_key="pk1",
+            availability_strategy=strategy)
+        # [END read_item_with_availability_strategy]
+
+        # disable availability strategy on request level
+        # [START read_item_with_disabled_availability_strategy]
+        await container.read_item(
+            item="id1",
+            partition_key="pk1",
+            availability_strategy=None
+        )
+        # [END read_item_with_disabled_availability_strategy]
 
 if __name__ == "__main__":
     asyncio.run(examples_async())
