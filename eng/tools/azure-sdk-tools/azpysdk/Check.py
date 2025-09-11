@@ -144,4 +144,7 @@ class Check(abc.ABC):
             raise e
         finally:
             if temp_req_file and temp_req_file.name:
-                os.remove(temp_req_file.name)
+                try:
+                    os.remove(temp_req_file.name)
+                except Exception as cleanup_error:
+                    logger.warning(f"Failed to remove temporary requirements file: {cleanup_error}")
