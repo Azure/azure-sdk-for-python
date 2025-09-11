@@ -93,7 +93,6 @@ from .operations import (
     NetworkInterfaceLoadBalancersOperations,
     NetworkInterfaceTapConfigurationsOperations,
     NetworkInterfacesOperations,
-    NetworkManagementClientOperationsMixin,
     NetworkManagerCommitsOperations,
     NetworkManagerDeploymentStatusOperations,
     NetworkManagerRoutingConfigurationsOperations,
@@ -108,6 +107,7 @@ from .operations import (
     NetworkSecurityPerimeterLoggingConfigurationsOperations,
     NetworkSecurityPerimeterOperationStatusesOperations,
     NetworkSecurityPerimeterProfilesOperations,
+    NetworkSecurityPerimeterServiceTagsOperations,
     NetworkSecurityPerimetersOperations,
     NetworkVirtualApplianceConnectionsOperations,
     NetworkVirtualAppliancesOperations,
@@ -178,6 +178,7 @@ from .operations import (
     VpnSitesOperations,
     WebApplicationFirewallPoliciesOperations,
     WebCategoriesOperations,
+    _NetworkManagementClientOperationsMixin,
 )
 
 if TYPE_CHECKING:
@@ -185,7 +186,7 @@ if TYPE_CHECKING:
 
 
 class NetworkManagementClient(
-    NetworkManagementClientOperationsMixin
+    _NetworkManagementClientOperationsMixin
 ):  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """Network Client.
 
@@ -451,6 +452,10 @@ class NetworkManagementClient(
      NetworkSecurityPerimeterOperationStatusesOperations operations
     :vartype network_security_perimeter_operation_statuses:
      azure.mgmt.network.aio.operations.NetworkSecurityPerimeterOperationStatusesOperations
+    :ivar network_security_perimeter_service_tags: NetworkSecurityPerimeterServiceTagsOperations
+     operations
+    :vartype network_security_perimeter_service_tags:
+     azure.mgmt.network.aio.operations.NetworkSecurityPerimeterServiceTagsOperations
     :ivar reachability_analysis_intents: ReachabilityAnalysisIntentsOperations operations
     :vartype reachability_analysis_intents:
      azure.mgmt.network.aio.operations.ReachabilityAnalysisIntentsOperations
@@ -909,6 +914,9 @@ class NetworkManagementClient(
             )
         )
         self.network_security_perimeter_operation_statuses = NetworkSecurityPerimeterOperationStatusesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.network_security_perimeter_service_tags = NetworkSecurityPerimeterServiceTagsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.reachability_analysis_intents = ReachabilityAnalysisIntentsOperations(

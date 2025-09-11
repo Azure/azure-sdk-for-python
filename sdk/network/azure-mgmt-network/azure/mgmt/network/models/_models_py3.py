@@ -28542,6 +28542,58 @@ class NspProfileListResult(_serialization.Model):
         self.next_link = next_link
 
 
+class NspServiceTagsListResult(_serialization.Model):
+    """Result of the request to list NSP service tags.
+
+    :ivar value: Gets paged list of NSP service tags.
+    :vartype value: list[~azure.mgmt.network.models.NspServiceTagsResource]
+    :ivar next_link: Gets the URL to get the next page of results.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[NspServiceTagsResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["_models.NspServiceTagsResource"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: Gets paged list of NSP service tags.
+        :paramtype value: list[~azure.mgmt.network.models.NspServiceTagsResource]
+        :keyword next_link: Gets the URL to get the next page of results.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class NspServiceTagsResource(_serialization.Model):
+    """Resource containing list of NSP service tags.
+
+    :ivar service_tags: NSP service tags.
+    :vartype service_tags: list[str]
+    """
+
+    _attribute_map = {
+        "service_tags": {"key": "serviceTags", "type": "[str]"},
+    }
+
+    def __init__(self, *, service_tags: Optional[List[str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword service_tags: NSP service tags.
+        :paramtype service_tags: list[str]
+        """
+        super().__init__(**kwargs)
+        self.service_tags = service_tags
+
+
 class O365BreakOutCategoryPolicies(_serialization.Model):
     """Office365 breakout categories.
 
