@@ -1,7 +1,7 @@
 {
-  "apiVersion": "2025-07-01-preview",
-  "commit": "e6d42354fa0c04d56c2e5e5c061453e76ba788cb",
+  "apiVersion": "2025-05-30-preview",
+  "commit": "41471cb76d09672f45ffd941b7cab7e078ea3ab5",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/mongocluster/DocumentDB.MongoCluster.Management",
-  "emitterVersion": "0.47.0"
+  "emitterVersion": "0.48.2"
 }
