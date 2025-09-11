@@ -192,7 +192,7 @@ def track_dropped_items(
                 telemetry_type,
                 drop_code,
                 _get_telemetry_success_flag(envelope) if telemetry_type in (_REQUEST, _DEPENDENCY) else True,
-                error_message
+                exception_message=error_message
             )
 
 
